@@ -10,10 +10,16 @@ export default defineConfig({
     react(),
     sitemap({
       i18n: {
-        defaultLocale: 'es',
+        defaultLocale: 'en',
         locales: {
+          en: 'en',
           es: 'es',
+          hi: 'hi',
+          de: 'de',
           fr: 'fr',
+          pt: 'pt',
+          ru: 'ru',
+          ja: 'ja',
           zh: 'zh'
         }
       }
