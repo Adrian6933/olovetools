@@ -1,0 +1,16 @@
+---
+// Redirige localhost:4321 o dominion base a la version en inglés del Hub
+---
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="refresh" content="0;url=/en/" />
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    <script>
+      const lang = window.localStorage.getItem('olovetools_lang') || 'en';
+      window.location.href = `/${lang}`;
+    </script>
+  </body>
+</html>

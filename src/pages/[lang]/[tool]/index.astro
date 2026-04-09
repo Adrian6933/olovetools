@@ -1,0 +1,217 @@
+---
+import { Clipy as ClipyApp } from '../../../tools/clipy/Clipy';
+import Clipbolt from '../../../tools/clipbolt/Clipbolt';
+import Formatflow from '../../../tools/formatflow/Formatflow';
+import Pastesnap from '../../../tools/pastesnap/Pastesnap';
+import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
+import { useTranslation, Language } from '../../../locales/dictionary';
+import { ClientRouter } from 'astro:transitions';
+import { TOOL_FAVICONS, TOOL_THEME_COLORS } from '../../../constants';
+import '../../../styles/global.css';
+
+export function getStaticPaths() {
+  const tools = ['clipy', 'clipbolt', 'formatflow', 'pastesnap'];
+  const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+  
+  return tools.flatMap(tool => 
+    languages.map(lang => ({
+      params: { lang, tool },
+    }))
+  );
+}
+
+const { lang, tool } = Astro.params;
+const castLang = lang as Language;
+const { t, dictionary } = useTranslation(castLang, tool as any);
+
+const langs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+const baseUrl = 'https://olovetools.com';
+
+const currentFavicon = TOOL_FAVICONS[tool] || TOOL_FAVICONS.default;
+const currentThemeColor = TOOL_THEME_COLORS[tool] || TOOL_THEME_COLORS.default;
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t('seo_title')}</title>
+    <ClientRouter />
+    <meta name="description" content={t('seo_description')} />
+    <meta property="og:title" content={t('seo_title')} />
+    <meta property="og:description" content={t('seo_description')} />
+    <meta property="og:url" content={`${baseUrl}/${lang}/${tool}`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={`${baseUrl}/og-${tool}.jpg`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t('seo_title')} />
+    <meta name="twitter:description" content={t('seo_description')} />
+    <meta name="twitter:image" content={`${baseUrl}/og-${tool}.jpg`} />
+    <link rel="canonical" href={`${baseUrl}/${lang}/${tool}`} />
+    
+    <link rel="icon" type="image/svg+xml" href={currentFavicon}>
+    <meta name="theme-color" content={currentThemeColor} />
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roobert:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    {langs.map(l => (
+      <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}`} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en/${tool}`} />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": `oLoveTools - ${tool}`,
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "All",
+      "description": t('seo_description'),
+      "url": `${baseUrl}/${lang}/${tool}`
+    })} />
+    {tool === 'clipy' && (
+      <style is:inline>
+        body { 
+          background: radial-gradient(circle at top center, #100a1f 0%, #050507 100%) !important;
+          background-attachment: fixed !important;
+          color: #efeff1 !important; 
+          font-family: 'Plus Jakarta Sans', sans-serif !important; 
+        }
+        body::before {
+          content: "";
+          position: fixed;
+          top: 0; left: 0; width: 100%; height: 100%;
+          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+          opacity: 0.01;
+          pointer-events: none;
+          z-index: 100;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050507; }
+        ::-webkit-scrollbar-thumb { background: rgba(145, 70, 255, 0.4); border-radius: 10px; border: 2px solid #050507; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(145, 70, 255, 0.6); }
+
+        /* ANIMACIONES EXCLUSIVAS PARA CLIPY */
+        @keyframes rotate-continuous { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-rotate-slow { animation: rotate-continuous 12s linear infinite; }
+        .transition-premium { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        .custom-scrollbar::-webkit-scrollbar { height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(145, 70, 255, 0.5); }
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.1) transparent; }
+        
+        .glass {
+          background: rgba(255, 255, 255, 0.03);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+      </style>
+    )}
+
+    {tool === 'clipbolt' && (
+      <style is:inline>
+        body {
+          background-color: #070708 !important;
+          background-image: radial-gradient(circle at 50% -25%, #110b22 0%, #070708 50%) !important;
+          background-attachment: fixed !important;
+          color: #efeff1 !important;
+          font-family: 'Outfit', sans-serif !important;
+          min-height: 100vh !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0e0e10; }
+        ::-webkit-scrollbar-thumb { background: #2f2f35; border-radius: 5px; border: 2px solid #0e0e10; }
+        ::-webkit-scrollbar-thumb:hover { background: #9146FF; }
+        
+        .glass-card {
+          background: rgba(24, 24, 27, 0.6);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      </style>
+    )}
+
+    {tool === 'formatflow' && (
+      <style is:inline>
+        body {
+          background-color: #080c14 !important;
+          color: #e2e8f0 !important;
+          min-height: 100vh !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080c14; }
+        ::-webkit-scrollbar-thumb { background: #312e81; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4338ca; }
+        
+        .glass-card {
+          background: rgba(17, 24, 39, 0.4);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        input[type=range] { -webkit-appearance: none; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+          -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+          background: #ffffff; cursor: pointer; margin-top: -9px;
+          box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 2px solid currentColor;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+          width: 100%; height: 4px; cursor: pointer;
+          background: rgba(255,255,255,0.1); border-radius: 2px;
+        }
+        
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        
+        .glow-primary { box-shadow: 0 0 20px -5px rgba(99, 102, 241, 0.3); }
+        .glow-secondary { box-shadow: 0 0 20px -5px rgba(168, 85, 247, 0.3); }
+      </style>
+    )}
+
+    {tool === 'pastesnap' && (
+      <style is:inline>
+        body { margin: 0; background-color: #04050a !important; color: #f3f4f6 !important; min-height: 100vh !important; font-family: 'Plus Jakarta Sans', sans-serif !important; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #04050a; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        html { scroll-behavior: smooth; }
+        .glass-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .text-glow { text-shadow: 0 0 30px rgba(99, 102, 241, 0.6), 0 0 60px rgba(79, 70, 229, 0.4); }
+        @keyframes custom-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.05); } }
+        .animate-fast-pulse { animation: custom-pulse 8s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+      </style>
+    )}
+  </head>
+  <body>
+    <div id="root">
+        {tool === 'clipy' && <ClipyApp lang={castLang} dictionary={dictionary} client:load />}
+        {tool === 'clipbolt' && <Clipbolt lang={castLang} dictionary={dictionary} client:load />}
+        {tool === 'formatflow' && <Formatflow lang={castLang} dictionary={dictionary} client:load />}
+        {tool === 'pastesnap' && <Pastesnap lang={castLang} dictionary={dictionary} client:load />}
+        {tool !== 'clipy' && tool !== 'clipbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && (
+          <div class="min-h-screen bg-[#060609] text-slate-200 font-sans">
+             <ToolPlaceholder lang={castLang} toolSlug={tool!} client:load />
+          </div>
+        )}
+    </div>
+  </body>
+</html>

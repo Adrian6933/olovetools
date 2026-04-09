@@ -1,0 +1,149 @@
+@import "tailwindcss";
+
+@theme {
+  --color-twitch: #9146FF;
+  --color-twitch-base: #9146FF;
+  --color-twitch-dark: #772CE8;
+  --color-twitch-black: #050507;
+  --color-twitch-surface: rgba(18, 18, 23, 1);
+  --color-twitch-surfaceAlt: rgba(30, 30, 35, 1);
+  --color-twitch-light: #a970ff;
+  --color-twitch-darker: #451093;
+
+  --color-dark-950: #070708;
+  --color-dark-900: #0e0e10;
+  --color-dark-850: #111114;
+  --color-dark-800: #18181b;
+  --color-dark-700: #1f1f23;
+  --color-dark-600: #2f2f35;
+
+  --font-sans: "Inter", "Plus Jakarta Sans", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
+
+  --animate-fade-in: fade-in 0.6s ease-out forwards;
+  --animate-slide-up: slide-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  
+  /* FormatFlow Theme */
+  --color-primary: #6366f1;
+  --color-secondary: #a855f7;
+  --color-dark: #080c14;
+  --color-surface: #111827;
+  --color-love: #ec4899;
+  
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-fade-in-quick: fade-in 0.3s ease-out forwards;
+
+  @keyframes fade-in {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slide-up {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+}
+
+body {
+  margin: 0;
+  background-color: #020203;
+  color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@keyframes rotate-continuous { 
+  from { transform: rotate(0deg); } 
+  to { transform: rotate(360deg); } 
+}
+
+@utility transition-premium {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@utility animate-rotate-slow {
+  animation: rotate-continuous 12s linear infinite;
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 300ms;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .slide-in-from-top-4 {
+    animation-name: slide-in-top;
+  }
+  .slide-in-from-bottom-4 {
+    animation-name: slide-in-bottom;
+  }
+  .fade-in {
+    opacity: 0;
+    animation-name: fade-in;
+  }
+}
+
+@keyframes slide-in-top {
+  from { transform: translateY(-1rem); }
+  to { transform: translateY(0); }
+}
+@keyframes slide-in-bottom {
+  from { transform: translateY(1rem); }
+  to { transform: translateY(0); }
+}
+@keyframes slide-in-left {
+  from { transform: translateX(-1rem); }
+  to { transform: translateX(0); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-2px); }
+  80% { transform: translateX(2px); }
+}
+
+/* ── Global reusable classes ── */
+
+@utility animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@layer utilities {
+  .slide-in-from-left-4 {
+    animation-name: slide-in-left;
+  }
+}
+
+/* ── Glass & scrollbar classes used by Clipy ── */
+
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.custom-scrollbar::-webkit-scrollbar { height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(145, 70, 255, 0.5); }
+.custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.1) transparent; }

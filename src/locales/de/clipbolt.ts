@@ -1,0 +1,29 @@
+export default {
+  "heroTitle": "TWITCH CLIPS DOWNLOADEN",
+  "seo_title": "TWITCH CLIPS DOWNLOADEN",
+  "heroDesc": "Das ultimative Tool zum Speichern von Twitch-Momenten. Schnell, zuverlässig und ohne Anmeldung. Lade ganze Listen auf einmal herunter.",
+  "seo_description": "Das ultimative Tool zum Speichern von Twitch-Momenten. Schnell, zuverlässig und ohne Anmeldung. Lade ganze Listen auf einmal herunter.",
+  "uploadTxt": ".TXT LISTE HOCHLADEN",
+  "pastePlaceholder": "Füge deine Twitch-Links hier ein (einer pro Zeile)...",
+  "processButton": "CLIPS FINDEN",
+  "trendingNow": "JETZT IM TREND",
+  "clipsFound": "GEFUNDENE CLIPS",
+  "bestQuality": "QUELLQUALITÄT",
+  "availableQualities": "AUFLÖSUNGEN",
+  "downloading": "Wird heruntergeladen...",
+  "ctaTitle": "Suchen Sie nach Clips?",
+  "ctaDesc": "Finden Sie die besten Trending-Momente ganz einfach mit unserem Discovery-Tool. Entdecken Sie die viralsten Inhalte.",
+  "ctaButton": "CLIPY ERKUNDEN",
+  "tips1": "High Speed: Verwenden Sie für große ZIP-Archive eine schnelle Glasfaserverbindung, um Timeouts zu vermeiden.",
+  "tips2": "Mobile Ready: Unsere Dateien sind für das vertikale Format vorbereitet. Perfekt für TikTok, Reels und Shorts.",
+  "tips3": "Bulk-Modus: Nutzen Sie den .txt-Upload, um Listen mit bis zu 50 Clips zu speichern und herunterzuladen.",
+  "footerDesc": "Professioneller Twitch-Clip-Downloader. Optimierte Engine für sofortige HD-MP4-Videos.",
+  "footerSeoPara": "ClipBolt nutzt fortschrittliche Technologie zum Abrufen direkter MP4-Streams. Unsere Infrastruktur ist auf Geschwindigkeit ausgelegt.",
+  "streamer": "STREAMER",
+  "copied": "Kopiert!",
+  "legal": {
+    "privacyText": "Ihre Privatsphäre hat Priorität. Wir speichern keine persönlichen Daten auf unseren Servern.",
+    "termsText": "ClipBolt ist ein unabhängiges Tool für den persönlichen Gebrauch.",
+    "cookiesText": "Wir verwenden ausschließlich technischen LocalStorage für Einstellungen."
+  }
+};

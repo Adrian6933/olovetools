@@ -1,0 +1,29 @@
+export default {
+  "heroTitle": "TÉLÉCHARGER CLIPS TWITCH",
+  "seo_title": "TÉLÉCHARGER CLIPS TWITCH",
+  "heroDesc": "L'outil ultime pour sauvegarder les moments Twitch. Rapide, fiable et sans inscription. Téléchargez des listes entières de clips en une seule fois.",
+  "seo_description": "L'outil ultime pour sauvegarder les moments Twitch. Rapide, fiable et sans inscription. Téléchargez des listes entières de clips en une seule fois.",
+  "uploadTxt": "CHARGER LISTE .TXT",
+  "pastePlaceholder": "Collez vos liens Twitch ici (un par ligne)...",
+  "processButton": "TROUVER CLIPS",
+  "trendingNow": "TENDANCES ACTUELLES",
+  "clipsFound": "CLIPS TROUVÉS",
+  "bestQuality": "QUALITÉ SOURCE",
+  "availableQualities": "RÉSOLUTIONS",
+  "downloading": "Téléchargement...",
+  "ctaTitle": "Vous cherchez des clips ?",
+  "ctaDesc": "Trouvez facilement les meilleurs moments tendance avec notre outil de découverte. Explorez le contenu le plus viral sur Twitch en ce moment.",
+  "ctaButton": "EXPLORER CLIPY",
+  "tips1": "Haute Vitesse : Pour les gros packs ZIP, utilisez une connexion fibre à haut débit pour éviter les interruptions.",
+  "tips2": "Prêt pour Mobile : Nos fichiers sont au format vertical. Parfait pour TikTok, Reels et Shorts.",
+  "tips3": "Mode de Masse : Utilisez l'envoi .txt pour enregistrer des listes allant jusqu'à 50 clips et téléchargez-les en quelques secondes.",
+  "footerDesc": "Téléchargeur professionnel de clips Twitch. Moteur optimisé pour obtenir instantanément des vidéos MP4 en haute définition.",
+  "footerSeoPara": "ClipBolt utilise une technologie avancée pour analyser les métadonnées Twitch et récupérer des flux MP4 directs. Notre infrastructure est conçue pour la vitesse.",
+  "streamer": "STREAMER",
+  "copied": "Copié !",
+  "legal": {
+    "privacyText": "Votre confidentialité est notre priorité. Nous ne stockons aucune donnée personnelle sur nos serveurs.",
+    "termsText": "ClipBolt est un outil indépendant destiné à un usage personnel uniquement.",
+    "cookiesText": "Nous utilisons exclusivement le stockage local technique pour les paramètres."
+  }
+};

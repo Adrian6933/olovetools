@@ -1,0 +1,75 @@
+---
+import { Home } from '../../components/Home';
+import { useTranslation, Language } from '../../locales/dictionary';
+import { ClientRouter } from 'astro:transitions';
+import '../../styles/global.css';
+
+export function getStaticPaths() {
+  const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+  return languages.map(lang => ({
+    params: { lang },
+  }));
+}
+
+const { lang } = Astro.params;
+const castLang = lang as Language;
+const { t, dictionary } = useTranslation(castLang, 'hub');
+
+const langs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+const baseUrl = 'https://olovetools.com';
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="theme-color" content="#060609" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{t('seo_title')}</title>
+    <ClientRouter />
+    <meta name="description" content={t('seo_description')} />
+    <meta property="og:title" content={t('seo_title')} />
+    <meta property="og:description" content={t('seo_description')} />
+    <meta property="og:url" content={`${baseUrl}/${lang}`} />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content={`${baseUrl}/og-image.jpg`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t('seo_title')} />
+    <meta name="twitter:description" content={t('seo_description')} />
+    <meta name="twitter:image" content={`${baseUrl}/og-image.jpg`} />
+    <link rel="canonical" href={`${baseUrl}/${lang}`} />
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    {langs.map(l => (
+      <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}`} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en`} />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "oLoveTools Collection",
+      "applicationCategory": "BrowserApplication",
+      "operatingSystem": "All",
+      "description": t('seo_description'),
+      "url": `${baseUrl}/${lang}`
+    })} />
+    
+    <style is:global>
+      /* Ensure the background for the Home route covers everything if body styles leak */
+      body {
+        background-color: #060609 !important;
+        background-image: none !important;
+        margin: 0;
+      }
+      body::before {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body class="bg-[#060609]">
+    <Home lang={lang || 'en'} dictionary={dictionary} client:load />
+  </body>
+</html>
