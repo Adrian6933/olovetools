@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+
+const baseUrl = 'https://olovetools.com';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 - Page Not Found | oLoveTools</title>
+    <meta name="description" content="The page you are looking for does not exist." />
+    <meta name="theme-color" content="#060609" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style is:global>
+      body {
+        margin: 0;
+        background-color: #060609;
+        color: #f8fafc;
+        font-family: 'Inter', sans-serif;
+      }
+      h1 { font-family: 'Outfit', sans-serif; }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col items-center justify-center relative overflow-hidden bg-[#060609]">
+    
+    <!-- Efecto Glow de fondo corporativo -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[600px] md:h-[600px] bg-indigo-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+    <div class="text-center z-10 px-6">
+      <div class="inline-block px-4 py-1.5 rounded-full bg-slate-800/60 border border-slate-700/50 text-indigo-400 text-sm font-semibold tracking-wide mb-6">
+        ERROR 404
+      </div>
+      
+      <h1 class="text-7xl md:text-9xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white to-slate-500 mb-6 drop-shadow-sm">
+        Oops!
+      </h1>
+      
+      <p class="text-lg md:text-2xl text-slate-400 max-w-lg mx-auto mb-10 font-normal leading-relaxed">
+        It seems you've wandered into the web's void. 
+        <br class="hidden md:block"/>
+        This link is broken or the page no longer exists.
+      </p>
+
+      <div class="flex justify-center">
+        <!-- Truco: Enlace con script para usar el último idioma del usuario si existe -->
+        <a href="/" onclick="const l = localStorage.getItem('olovetools_lang'); if(l) { this.href = '/' + l; }" class="group inline-flex items-center gap-3 bg-indigo-500/10 border border-indigo-500/30 hover:bg-indigo-600 hover:border-indigo-600 text-indigo-300 hover:text-white px-8 py-4 rounded-full font-semibold transition-all duration-300 hover:scale-105 hover:shadow-[0_0_30px_rgba(99,102,241,0.3)]">
+          <svg class="transition-transform group-hover:-translate-x-1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"/>
+            <path d="M19 12H5"/>
+          </svg>
+          Return to oLoveTools Hub
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

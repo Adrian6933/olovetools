@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from '../types';
 import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2 } from 'lucide-react';
 import { downloadBlob } from '../services/twitchService';
-import { translations } from '../translations';
+import { useTranslation, Language } from '../../../locales/dictionary';
 
 interface ClipResultProps {
   data: ClipData;
@@ -25,7 +25,8 @@ const formatBytes = (bytes: number, decimals = 2) => {
 const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadingRes, setDownloadingRes] = useState<Record<string, { progress: number, completed: boolean, preparing: boolean, loaded: number, total: number, speed: number }>>({});
-  const t = translations[lang] || translations['en'];
+  const { dictionary } = useTranslation(lang as Language, 'clipbolt');
+  const t = dictionary;
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const abortControllers = useRef<Record<string, AbortController>>({});

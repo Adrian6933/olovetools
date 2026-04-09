@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ShieldCheck, FileText, Info, X, Copy, Check } from 'lucide-react';
-import { translations } from '../translations';
+import { useTranslation, Language } from '../../../locales/dictionary';
 
 interface LegalModalProps {
   type: 'privacy' | 'terms' | 'cookies' | null;
@@ -12,8 +12,9 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, lang, onClose }) => {
   const [copied, setCopied] = useState(false);
   if (!type) return null;
 
-  const t = translations[lang] || translations['en'];
-  const tl = t.legal || translations['en'].legal;
+  const { dictionary } = useTranslation(lang as Language, 'clipbolt');
+  const t = dictionary;
+  const tl = t.legal || {};
   
   const contentMap = {
     privacy: { icon: <ShieldCheck className="w-8 h-8 text-twitch" />, title: tl.privacy, text: tl.privacyText },

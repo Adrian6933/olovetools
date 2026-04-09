@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { translations } from '../translations';
+import { useTranslation, Language } from '../../../locales/dictionary';
 import { Mail, Search, ArrowRight, Tag, Layers, Globe, Zap, Shield } from 'lucide-react';
 
 interface FooterProps {
@@ -9,8 +9,10 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
   const [copied, setCopied] = useState(false);
-  const t = translations[lang] || translations['en'];
-  const tl = t.legal || translations['en'].legal;
+  
+  const { dictionary } = useTranslation(lang as Language, 'clipbolt');
+  const t = dictionary;
+  const tl = t.legal || {};
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("adrian.contact.me.69@gmail.com");

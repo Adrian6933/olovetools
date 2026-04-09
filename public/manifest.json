@@ -1,0 +1,16 @@
+{
+  "name": "oLoveTools Collection",
+  "short_name": "oLoveTools",
+  "description": "A centralized hub to explore and navigate all your web projects with ease.",
+  "start_url": "/en/",
+  "display": "standalone",
+  "background_color": "#060609",
+  "theme_color": "#060609",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512 any"
+    }
+  ]
+}

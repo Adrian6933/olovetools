@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { LANGUAGES } from '../constants';
+import { LANGUAGES } from '../../../constants';
 
 interface LanguageSwitcherProps {
   currentLang: string;
@@ -28,7 +28,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang,
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 bg-gray-900/50 hover:bg-gray-800 transition-colors text-sm font-bold text-gray-300 uppercase"
       >
-        {activeLang.label}
+        {activeLang.code}
       </button>
 
       {isOpen && (
@@ -45,7 +45,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang,
                   currentLang === lang.code ? 'bg-gray-800/80' : ''
                 }`}
               >
-                <span className={`font-bold mr-3 w-6 uppercase ${lang.color}`}>{lang.label}</span>
+                <span className={`font-bold mr-3 w-6 uppercase text-indigo-400`}>{lang.code}</span>
                 <span className="text-gray-300">{lang.name}</span>
               </button>
             ))}
