@@ -12,7 +12,7 @@ export default {
   "copied": "Скопировано!",
   "email_copied": "Email скопирован!",
   "download_txt": "Скачать список .txt",
-  "download_zip_web": "Скачать все / ZIP (Web)",
+  "download_zip_web": "Скачать",
   "back_categories": "Назад к категориям",
   "top_clips": "Лучшие клипы",
   "results_for": "Результаты для",

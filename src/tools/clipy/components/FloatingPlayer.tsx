@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw } from 'lucide-react';
+import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu } from 'lucide-react';
 import { Clip } from '../types';
 
 interface FloatingPlayerProps {
@@ -28,6 +28,10 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
   const [isDragging, setIsDragging] = useState(false);
   const [resizeDir, setResizeDir] = useState<ResizeDirection>(null);
   const [isCopied, setIsCopied] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  
+  const isCompact = size.width < 500;
   
   const isMockClip = clip.id.startsWith('mock-');
   const isFileProtocol = typeof window !== 'undefined' && window.location.protocol === 'file:';
@@ -209,6 +213,16 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
       setTimeout(() => setIsCopied(false), 2000);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    if (showMenu) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showMenu]);
+
   return (
     <div
       ref={playerRef}
@@ -240,70 +254,123 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
             </span>
         </div>
         
-        <div className="flex items-center gap-2">
-            
-            {/* Restaurar Button Localized */}
-            <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={resetToDefault}
-                className="group/reset flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] shadow-md"
-                title={t('restore_desc')}
-            >
-                <RotateCcw className="w-3.5 h-3.5 group-hover/reset:rotate-[-180deg] transition-transform duration-500" />
-                <span className="hidden sm:inline">{t('restore')}</span>
-            </button>
+        <div className="flex items-center gap-1.5 h-full">
+            {isCompact ? (
+              <div className="relative h-full flex items-center" ref={menuRef}>
+                  <button
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={() => setShowMenu(!showMenu)}
+                  className={`p-2 rounded-lg transition-all cursor-pointer ${showMenu ? 'bg-white/10 text-twitch-base' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                >
+                  <Menu className="w-5 h-5" />
+                </button>
 
-            <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={() => onDownloadExternal(clip.url)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/20"
-                title={t('download_zip_web')}
-            >
-                <Download className="w-3.5 h-3.5" />
-            </button>
-            <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={handleCopyLink}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border ${
-                    isCopied 
-                    ? 'bg-green-600 text-white border-green-600' 
-                    : 'bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/20'
-                }`}
-                title={t('copy_link')}
-            >
-                {isCopied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
-                <span>{isCopied ? t('copied') : t('link')}</span>
-            </button>
-            <button
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={() => onToggleSave(clip)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border ${
-                    isSaved 
-                    ? 'bg-[#9146FF] text-white border-[#9146FF] hover:bg-red-600 hover:border-red-600' 
-                    : 'bg-white/10 text-white border-white/10 hover:bg-[#9146FF] hover:border-[#9146FF]'
-                }`}
-            >
-                {isSaved ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
-                <span>{isSaved ? t('saved') : t('save')}</span>
-            </button>
-            <div className="w-px h-6 bg-white/10 mx-1"></div>
-            <div className="flex items-center gap-1">
+                {showMenu && (
+                  <div className="absolute right-0 top-10 w-48 bg-[#18181b] border border-[#2b2b2b] rounded-xl shadow-2xl py-2 z-[110] animate-in fade-in slide-in-from-top-2 duration-200">
+                    <button
+                      onClick={(e) => { e.stopPropagation(); resetToDefault(e); setShowMenu(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-blue-400 hover:bg-blue-500/10 transition-colors cursor-pointer"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                      <span>{t('restore')}</span>
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onDownloadExternal(clip.url); setShowMenu(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/10 transition-colors cursor-pointer"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>{t('download_zip_web')}</span>
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleCopyLink(e); }}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold transition-colors cursor-pointer ${isCopied ? 'text-green-400 bg-green-500/10' : 'text-gray-300 hover:bg-white/10'}`}
+                    >
+                      {isCopied ? <CheckCircle2 className="w-4 h-4" /> : <LinkIcon className="w-4 h-4" />}
+                      <span>{isCopied ? t('copied') : t('link')}</span>
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); onToggleSave(clip); }}
+                      className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold transition-colors cursor-pointer ${isSaved ? 'text-twitch-base bg-twitch-base/10' : 'text-gray-300 hover:bg-white/10'}`}
+                    >
+                      {isSaved ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                      <span>{isSaved ? t('saved') : t('save')}</span>
+                    </button>
+                    <div className="h-px bg-white/5 my-1"></div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); window.open(clip.url, '_blank'); setShowMenu(false); }}
+                      className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>Twitch</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={resetToDefault}
+                    className="group/reset flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-300 border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:bg-blue-500 hover:text-white hover:border-blue-500 hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] shadow-md cursor-pointer"
+                    title={t('restore_desc')}
+                >
+                    <RotateCcw className="w-3.5 h-3.5 group-hover/reset:rotate-[-180deg] transition-transform duration-500" />
+                    <span>{t('restore')}</span>
+                </button>
+
+                <button
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={() => onDownloadExternal(clip.url)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/20 cursor-pointer"
+                    title={t('download_zip_web')}
+                >
+                    <Download className="w-3.5 h-3.5" />
+                </button>
+                <button
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={handleCopyLink}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer ${
+                        isCopied 
+                        ? 'bg-green-600 text-white border-green-600' 
+                        : 'bg-white/10 text-white border-white/10 hover:bg-white/20 hover:border-white/20'
+                    }`}
+                    title={t('copy_link')}
+                >
+                    {isCopied ? <CheckCircle2 className="w-3.5 h-3.5" /> : <LinkIcon className="w-3.5 h-3.5" />}
+                    <span>{isCopied ? t('copied') : t('link')}</span>
+                </button>
+                <button
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onClick={() => onToggleSave(clip)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer ${
+                        isSaved 
+                        ? 'bg-[#9146FF] text-white border-[#9146FF] hover:bg-red-600 hover:border-red-600' 
+                        : 'bg-white/10 text-white border-white/10 hover:bg-[#9146FF] hover:border-[#9146FF]'
+                    }`}
+                >
+                    {isSaved ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                    <span>{isSaved ? t('saved') : t('save')}</span>
+                </button>
+                <div className="w-px h-6 bg-white/10 mx-1"></div>
                 <button
                     onMouseDown={(e) => e.stopPropagation()} 
                     onClick={() => window.open(clip.url, '_blank')}
                     title={t('open_twitch')}
-                    className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors"
+                    className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors cursor-pointer"
                 >
                     <ExternalLink className="w-4 h-4" />
                 </button>
-                <button
-                    onMouseDown={(e) => e.stopPropagation()} 
-                    onClick={onClose}
-                    className="p-2 hover:bg-red-500/20 hover:text-red-500 rounded-full text-gray-400 transition-colors"
-                >
-                    <X className="w-5 h-5" />
-                </button>
-            </div>
+              </div>
+            )}
+            
+            <button
+                onMouseDown={(e) => e.stopPropagation()} 
+                onClick={onClose}
+                className="p-2 hover:bg-red-500/20 hover:text-red-500 rounded-full text-gray-400 transition-colors cursor-pointer"
+                title={t('close')}
+            >
+                <X className="w-5 h-5" />
+            </button>
         </div>
       </div>
 

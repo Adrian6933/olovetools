@@ -12,7 +12,7 @@ export default {
   "copied": "Copiado!",
   "email_copied": "E-mail copiado para a área de transferência!",
   "download_txt": "Baixar lista .txt",
-  "download_zip_web": "Baixar tudo / ZIP (Web)",
+  "download_zip_web": "Baixar",
   "back_categories": "Voltar para categorias",
   "top_clips": "Destaques",
   "results_for": "Resultados para",

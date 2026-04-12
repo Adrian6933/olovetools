@@ -12,7 +12,7 @@ export default {
   "copied": "コピーしました！",
   "email_copied": "メールアドレスをコピーしました！",
   "download_txt": ".txtリストをダウンロード",
-  "download_zip_web": "一括ダウンロード / ZIP (Web)",
+  "download_zip_web": "ダウンロード",
   "back_categories": "カテゴリーに戻る",
   "top_clips": "人気のクリップ",
   "results_for": "検索結果:",

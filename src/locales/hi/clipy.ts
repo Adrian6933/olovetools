@@ -12,7 +12,7 @@ export default {
   "copied": "कॉपी किया गया!",
   "email_copied": "ईमेल कॉपी किया गया!",
   "download_txt": ".txt सूची डाउनलोड करें",
-  "download_zip_web": "सभी डाउनलोड करें (Web)",
+  "download_zip_web": "डाउनलोड करें",
   "back_categories": "श्रेणियों पर वापस",
   "top_clips": "प्रमुख क्लिप",
   "results_for": "परिणाम",

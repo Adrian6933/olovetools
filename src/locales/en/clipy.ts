@@ -12,7 +12,7 @@ export default {
   "copied": "Copied!",
   "email_copied": "Email copied to clipboard!",
   "download_txt": "Download .txt list",
-  "download_zip_web": "Download all / ZIP (Web)",
+  "download_zip_web": "Download",
   "back_categories": "Back to categories",
   "top_clips": "Top clips",
   "results_for": "Results for",

@@ -394,9 +394,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
       {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 z-50 h-40 md:h-28 flex items-center bg-[#0d0d12] border-b border-white/5 shadow-none transition-all duration-300">
-        <div className="w-full flex flex-wrap md:flex-nowrap items-center justify-between md:justify-start px-4 md:px-4 lg:px-12 max-w-[2200px] mx-auto gap-y-4 gap-x-2 md:gap-x-8 lg:gap-20 xl:gap-32">
+        <div className="w-full flex flex-wrap md:flex-nowrap items-center justify-between px-4 md:px-4 lg:px-12 max-w-[2200px] mx-auto gap-y-4 gap-x-2 md:gap-8">
 
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 order-1">
+          <div className="flex items-center gap-1 sm:gap-2 md:flex-1 order-1">
             <a href={`/${lang}`} className="flex items-center gap-1 sm:gap-3 group px-1 sm:px-4 py-2 hover:bg-white/5 rounded-2xl transition-all">
               <div className="flex items-center gap-1 sm:gap-3">
                 <ArrowLeft className="hidden sm:block w-5 h-5 text-gray-500 group-hover:text-white transition-all -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100" />
@@ -417,11 +417,11 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             </div>
           </div>
 
-          <div className="w-full px-4 sm:px-4 md:px-0 md:mx-4 md:flex-grow max-w-[800px] order-3 md:order-2 mt-2 md:mt-0">
+          <div className="w-full px-4 sm:px-4 md:px-0 md:mx-4 xl:ml-14 xl:mr-64 2xl:mx-4 max-w-[800px] order-3 md:order-2 mt-2 md:mt-0">
             <SearchBar onSearch={handleSearch} query={state.query} isLoading={state.isLoading && state.mode === 'categories'} t={t} />
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 flex-shrink-0 md:ml-auto order-2 md:order-3">
+          <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
             <div className="relative" ref={langMenuRef}>
               <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/10 hover:border-white/20 transition-all active:scale-95 group">
                 <span className="text-[10px] md:text-xs font-black uppercase text-gray-400 group-hover:text-white transition-colors tracking-widest">{lang}</span>

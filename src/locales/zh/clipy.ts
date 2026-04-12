@@ -12,7 +12,7 @@ export default {
   "copied": "已复制！",
   "email_copied": "邮箱已复制到剪贴板！",
   "download_txt": "下载 .txt 列表",
-  "download_zip_web": "全部下载 / ZIP (Web)",
+  "download_zip_web": "下载",
   "back_categories": "返回分类",
   "top_clips": "热门剪辑",
   "results_for": "搜索结果:",

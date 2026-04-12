@@ -20,7 +20,7 @@ const CategoryCard: React.FC<{
   return (
     <div 
       onClick={onClick} 
-      className="group cursor-pointer flex flex-col gap-6"
+      className="group cursor-pointer flex flex-col gap-3 md:gap-6"
     >
       <div 
         style={{ isolation: 'isolate', transform: 'translateZ(0)' }}
@@ -35,10 +35,10 @@ const CategoryCard: React.FC<{
         
         {/* Ranking Badge - Only shown on initial load/popular categories */}
         {showRank && rank && (
-          <div className="absolute top-6 left-6 z-20">
-              <div className="bg-twitch-base text-white px-4 py-1.5 rounded-xl text-[11px] font-black shadow-[0_4px_20px_rgba(145,70,255,0.5)] border border-white/20 flex items-center gap-1.5 animate-in slide-in-from-left-4 duration-500">
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 md:left-6 md:translate-x-0 md:top-6 z-20 whitespace-nowrap">
+              <div className="bg-twitch-base text-white px-2 py-1 md:px-4 md:py-1.5 rounded-lg md:rounded-xl text-[10px] md:text-[11px] font-black shadow-[0_4px_20px_rgba(145,70,255,0.5)] border border-white/20 flex items-center gap-1 md:gap-1.5 animate-in slide-in-from-top-4 duration-500">
                   <span className="opacity-60">{t('trending_rank')}</span>
-                  <span className="text-sm">#{rank}</span>
+                  <span className="text-xs md:text-sm">#{rank}</span>
               </div>
           </div>
         )}
@@ -65,9 +65,9 @@ const CategoryCard: React.FC<{
 const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick, isLoading, t, showRank }) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-10">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-10">
         {[...Array(12)].map((_, i) => (
-          <div key={i} className="flex flex-col gap-6">
+          <div key={i} className="flex flex-col gap-3 md:gap-6">
              <div className="aspect-[3/4] glass animate-pulse rounded-[2.5rem]"></div>
              <div className="h-6 bg-white/5 rounded-xl w-3/4 animate-pulse"></div>
           </div>
@@ -77,7 +77,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-10 pb-10">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-10 pb-10">
       {categories.map((cat, index) => (
           <CategoryCard 
               key={cat.id} 
