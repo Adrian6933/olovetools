@@ -43,7 +43,7 @@ const CookieBanner: React.FC<CookieBannerProps> = ({ language }) => {
         </div>
         <button
           onClick={handleAccept}
-          className="w-full md:w-auto whitespace-nowrap px-6 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20"
+          className="w-full md:w-auto whitespace-nowrap px-6 py-3 bg-primary hover:bg-primary/90 text-white font-bold rounded-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-primary/20 cursor-pointer"
         >
           {t.accept}
         </button>

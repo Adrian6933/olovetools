@@ -43,22 +43,9 @@ const CategoryCard: React.FC<{
           </div>
         )}
 
-        {/* Live Indicator - Subtle pulse for popularity mode */}
-        {showRank && (
-          <div className="absolute top-6 right-6 z-20">
-              <div className="bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-2 border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-                  <span className="text-[10px] font-black text-white tracking-widest">{t('live_badge')}</span>
-              </div>
-          </div>
-        )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end p-8">
-            <div className="bg-twitch-base/70 backdrop-blur-md text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-2xl flex items-center gap-3 transform translate-y-6 group-hover:translate-y-0 transition-transform duration-500">
-                <Sparkles className="w-4 h-4" />
-                {t('explore')}
-            </div>
-        </div>
+
+
       </div>
 
       <div className="flex flex-col px-4">
@@ -78,7 +65,7 @@ const CategoryCard: React.FC<{
 const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick, isLoading, t, showRank }) => {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-10">
         {[...Array(12)].map((_, i) => (
           <div key={i} className="flex flex-col gap-6">
              <div className="aspect-[3/4] glass animate-pulse rounded-[2.5rem]"></div>
@@ -90,7 +77,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-10 pb-10">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-10 pb-10">
       {categories.map((cat, index) => (
           <CategoryCard 
               key={cat.id} 

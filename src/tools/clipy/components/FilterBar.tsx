@@ -38,19 +38,19 @@ const FilterBar: React.FC<FilterBarProps> = ({
   }, []);
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-twitch-surface p-4 rounded-xl border border-twitch-surfaceAlt mb-8 shadow-sm">
+    <div className="flex flex-col lg:flex-row gap-4 lg:items-center justify-between bg-twitch-surface p-4 rounded-xl border border-twitch-surfaceAlt mb-8 shadow-sm">
       
-      <div className="flex items-center gap-3 w-full sm:w-auto">
+      <div className="flex items-center gap-3 w-full lg:w-auto">
         <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
             <Clock className="w-5 h-5 text-twitch-base" />
         </div>
-        <div className="flex gap-1 bg-twitch-black p-1 rounded-lg w-full sm:w-auto overflow-x-auto">
+        <div className="grid grid-cols-2 lg:flex lg:flex-row gap-1 bg-twitch-black p-1 rounded-lg flex-grow lg:flex-none">
           {Object.values(TimeFilter).map((filter) => (
             <button
               key={filter}
               onClick={() => onTimeChange(filter)}
               disabled={disabled}
-              className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap flex-1 sm:flex-none ${
+              className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none ${
                 currentTime === filter
                   ? 'bg-twitch-base text-white shadow-md'
                   : 'text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
@@ -62,15 +62,19 @@ const FilterBar: React.FC<FilterBarProps> = ({
         </div>
       </div>
 
-      <div className="h-px w-full bg-twitch-surfaceAlt sm:hidden"></div>
+      <div className="h-px w-full bg-twitch-surfaceAlt opacity-50 lg:hidden"></div>
 
-      <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+      <div className="flex flex-col lg:flex-row items-center gap-4 w-full lg:w-auto">
+        <div className="w-px h-8 bg-twitch-surfaceAlt mx-2 hidden lg:block opacity-30"></div>
+        
+
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
         
         {!disabled && (
             <button
                 onClick={onLoadAll}
                 disabled={isLoading}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-twitch-base/10 to-twitch-base/5 hover:from-twitch-base/20 hover:to-twitch-base/10 border border-twitch-base/30 hover:border-twitch-base text-twitch-base hover:text-white rounded-lg transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center gap-2 w-full sm:flex-1 lg:flex-none lg:w-auto px-4 py-2.5 bg-gradient-to-r from-twitch-base/10 to-twitch-base/5 hover:from-twitch-base/20 hover:to-twitch-base/10 border border-twitch-base/30 hover:border-twitch-base text-twitch-base hover:text-white rounded-lg transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
                 title={t('load_all')}
             >
                 {isLoading ? (
@@ -80,15 +84,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
                         <ChevronsDown className="w-4 h-4 absolute inset-0 group-hover:animate-bounce" style={{ animationDuration: '1.5s' }} />
                     </div>
                 )}
-                <span className="text-sm font-bold whitespace-nowrap hidden sm:inline">{t('load_all')}</span>
+                <span className="text-sm font-bold whitespace-nowrap lg:inline">{t('load_all')}</span>
             </button>
         )}
 
-        <div className="w-px h-8 bg-twitch-surfaceAlt mx-1 hidden sm:block"></div>
-
-        <span className="text-sm font-semibold text-gray-400 uppercase tracking-wider hidden lg:block">{t('sort_by')}</span>
+        <div className="w-px h-8 bg-twitch-surfaceAlt mx-1 hidden lg:block"></div>
         
-        <div className="relative w-full sm:w-48" ref={sortRef}>
+        <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] hidden lg:inline-block">{t('sort_by')}</span>
+        
+        <div className="relative w-full sm:flex-1 lg:flex-none lg:w-48" ref={sortRef}>
             <button
                 onClick={() => !disabled && setIsSortOpen(!isSortOpen)}
                 disabled={disabled}
@@ -122,9 +126,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
             )}
         </div>
       </div>
-
     </div>
-  );
+  </div>
+);
 };
 
 export default FilterBar;

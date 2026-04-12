@@ -28,7 +28,7 @@ export const CookieConsent: React.FC<CookieConsentProps> = ({ t }) => {
         <p className="text-gray-200 mb-6 font-medium">{t.cookieConsentMessage}</p>
         <button 
           onClick={accept}
-          className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+          className="w-full px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-black rounded-2xl transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
         >
           {t.acceptCookies}
         </button>

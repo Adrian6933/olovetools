@@ -86,19 +86,19 @@ const CookieBanner: React.FC<CookieBannerProps> = ({ lang }) => {
         <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
           <button 
             onClick={handleDecline}
-            className="flex-1 md:flex-none px-6 py-3 rounded-xl border border-white/10 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/5 transition-colors"
+            className="flex-1 md:flex-none px-6 py-3 rounded-xl border border-white/10 text-white font-bold text-xs uppercase tracking-widest hover:bg-white/5 transition-colors cursor-pointer"
           >
             {t.decline}
           </button>
           <button 
             onClick={handleAccept}
-            className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-twitch text-white font-bold text-xs uppercase tracking-widest hover:bg-twitch-dark transition-colors shadow-lg shadow-twitch/20"
+            className="flex-1 md:flex-none px-6 py-3 rounded-xl bg-twitch text-white font-bold text-xs uppercase tracking-widest hover:bg-twitch-dark transition-colors shadow-lg shadow-twitch/20 cursor-pointer"
           >
             {t.accept}
           </button>
           <button 
             onClick={handleDecline}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 transition-colors md:hidden"
+            className="w-10 h-10 rounded-full flex items-center justify-center text-gray-500 hover:text-white hover:bg-white/5 transition-colors md:hidden cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

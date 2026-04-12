@@ -68,23 +68,23 @@ const ClipCard: React.FC<{
         {/* Overlay negro muy transparente y suave */}
         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"></div>
 
-        <div className="absolute top-4 right-4 z-30 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
+        <div className="absolute top-4 right-4 z-30 flex items-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
             <button
                 onClick={(e) => { e.stopPropagation(); onDownloadExternal(clip.url); }}
-                className="flex items-center justify-center w-10 h-10 rounded-2xl bg-black/80 text-white border border-white/10 hover:bg-white hover:text-black transition-all shadow-xl"
+                className="flex items-center justify-center w-10 h-10 rounded-2xl bg-black/80 text-white border border-white/10 hover:bg-white hover:text-black transition-all shadow-xl cursor-pointer"
                 title={t('download_zip_web')}
             >
                 <Download className="w-4 h-4" />
             </button>
             <button
                 onClick={handleCopyLink}
-                className={`flex items-center justify-center w-10 h-10 rounded-2xl border transition-all shadow-xl ${isCopied ? 'bg-green-600 border-green-600 text-white' : 'bg-black/80 border-white/10 text-white hover:bg-white hover:text-black'}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-2xl border transition-all shadow-xl cursor-pointer ${isCopied ? 'bg-green-600 border-green-600 text-white' : 'bg-black/80 border-white/10 text-white hover:bg-white hover:text-black'}`}
             >
                 {isCopied ? <Check className="w-4 h-4" /> : <LinkIcon className="w-4 h-4" />}
             </button>
             <button
                 onClick={(e) => { e.stopPropagation(); onToggleSave(clip); }}
-                className={`flex items-center justify-center w-10 h-10 rounded-2xl border transition-all shadow-xl ${isSaved ? 'bg-twitch-base border-twitch-base text-white' : 'bg-black/80 border-white/10 text-white hover:bg-twitch-base hover:border-twitch-base'}`}
+                className={`flex items-center justify-center w-10 h-10 rounded-2xl border transition-all shadow-xl cursor-pointer ${isSaved ? 'bg-twitch-base border-twitch-base text-white' : 'bg-black/80 border-white/10 text-white hover:bg-twitch-base hover:border-twitch-base'}`}
             >
                 {isSaved ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </button>
@@ -99,7 +99,7 @@ const ClipCard: React.FC<{
           {formattedViews}
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 bg-black/10 z-20">
+        <div className="absolute inset-0 flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-500 bg-black/10 z-20">
              <div className="bg-twitch-base/80 p-6 rounded-full shadow-[0_0_40px_rgba(145,70,255,0.3)] transform scale-50 group-hover:scale-100 transition-transform duration-500">
                 <Play className="w-6 h-6 text-white fill-current ml-1" />
              </div>

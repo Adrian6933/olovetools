@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             {/* Current App Link */}
             <button 
               onClick={onReset}
-              className="flex items-center space-x-3 group outline-none transition-all hover:translate-x-1"
+              className="flex items-center space-x-3 group outline-none transition-all hover:translate-x-1 cursor-pointer"
             >
               <div className="w-9 h-9 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/50 transition-all">
                 <ImageIcon />

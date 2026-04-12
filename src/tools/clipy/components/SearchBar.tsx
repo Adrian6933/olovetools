@@ -122,7 +122,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
            {isLoading ? (
              <div className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-twitch-base border-t-transparent animate-spin"></div>
            ) : term ? (
-             <button type="button" onClick={() => { setTerm(''); onSearch('popular'); }} className="p-1.5 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-all transform active:scale-75">
+             <button type="button" onClick={() => { setTerm(''); onSearch('popular'); }} className="p-1.5 hover:bg-white/5 rounded-full text-gray-500 hover:text-white transition-all transform active:scale-75 cursor-pointer">
                <X className="h-5 w-5 md:h-6 md:w-6" />
              </button>
            ) : null}
@@ -139,7 +139,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
                 {history.map((h, index) => (
                   <li key={`hist-${index}`} className="px-2">
                     <button
-                      className="w-full text-left px-5 py-3 hover:bg-white/5 text-gray-400 hover:text-white transition-all flex items-center justify-between gap-4 text-base font-bold rounded-xl group"
+                      className="w-full text-left px-5 py-3 hover:bg-white/5 text-gray-400 hover:text-white transition-all flex items-center justify-between gap-4 text-base font-bold rounded-xl group cursor-pointer"
                       onClick={() => handleItemClick(h)}
                     >
                       <div className="flex items-center gap-4 truncate">
@@ -148,7 +148,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
                       </div>
                       <button 
                         onClick={(e) => removeFromHistory(e, h)} 
-                        className="p-2 opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-500 transition-all rounded-lg"
+                        className="p-2 opacity-0 group-hover:opacity-100 text-gray-600 hover:text-red-500 transition-all rounded-lg cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -162,7 +162,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
             {term.length > 0 && suggestions.map((s, index) => (
               <li key={`sugg-${index}`} className="px-2">
                 <button
-                  className="w-full text-left px-5 py-4 md:py-3.5 hover:bg-twitch-base/5 text-gray-300 hover:text-white transition-all flex items-center gap-4 text-base md:text-lg font-bold rounded-xl group border-l-4 border-transparent hover:border-twitch-base active:bg-twitch-base/10"
+                  className="w-full text-left px-5 py-4 md:py-3.5 hover:bg-twitch-base/5 text-gray-300 hover:text-white transition-all flex items-center gap-4 text-base md:text-lg font-bold rounded-xl group border-l-4 border-transparent hover:border-twitch-base active:bg-twitch-base/10 cursor-pointer"
                   onClick={() => handleItemClick(s)}
                 >
                   <Search className="w-5 h-5 opacity-30 group-hover:opacity-100 group-hover:text-twitch-base transition-all flex-shrink-0" />

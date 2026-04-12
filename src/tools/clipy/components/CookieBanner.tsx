@@ -29,7 +29,7 @@ const CookieBanner: React.FC<CookieBannerProps> = ({ t }) => {
         </p>
         <button
           onClick={handleAccept}
-          className="bg-twitch-base hover:bg-twitch-dark text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-twitch-base/20 whitespace-nowrap"
+          className="bg-twitch-base hover:bg-twitch-dark text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-xl shadow-twitch-base/20 whitespace-nowrap cursor-pointer"
         >
           {t('accept')}
         </button>
