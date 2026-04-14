@@ -1,5 +1,5 @@
 ---
-// Redirige localhost:4321 o dominion base a la version en inglés del Hub
+// Redirige el dominio base al idioma detectado o guardado previamente
 ---
 <!DOCTYPE html>
 <html>
@@ -9,8 +9,24 @@
   </head>
   <body>
     <script>
-      const lang = window.localStorage.getItem('olovetools_lang') || 'en';
-      window.location.href = `/${lang}`;
+      // 1. Intentar obtener el idioma guardado previamente
+      const savedLang = window.localStorage.getItem('olovetools_lang');
+      
+      // 2. Idiomas que tu web soporta actualmente
+      const supportedLangs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+      
+      let targetLang;
+
+      if (savedLang && supportedLangs.includes(savedLang)) {
+        // Si ya tenemos una preferencia guardada, usamos esa
+        targetLang = savedLang;
+      } else {
+        // Si es un usuario nuevo, detectamos el idioma de su navegador
+        const browserLang = navigator.language.split('-')[0];
+        targetLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+      }
+
+      window.location.href = `/${targetLang}`;
     </script>
   </body>
 </html>

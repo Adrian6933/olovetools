@@ -29,7 +29,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
 
   return (
     <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-2xl p-4 animate-in fade-in duration-300">
-      <div className="bg-black/60 border border-white/10 ring-1 ring-twitch-base/20 rounded-[3rem] p-8 md:p-12 max-w-2xl w-full shadow-[0_0_80px_rgba(145,70,255,0.15)] relative animate-in zoom-in-95 duration-500">
+      <div className="bg-black/60 border border-white/10 ring-1 ring-twitch-base/20 rounded-3xl md:rounded-[3rem] p-6 md:p-12 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-[0_0_80px_rgba(145,70,255,0.15)] relative animate-in zoom-in-95 duration-500 overflow-hidden">
         
         <button 
           onClick={onClose} 
@@ -47,7 +47,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
             </h2>
         </div>
 
-        <div className="space-y-8">
+        <div className="space-y-8 overflow-y-auto custom-scrollbar pr-2 flex-grow">
             <div 
               className="text-gray-300 text-base md:text-lg leading-relaxed font-medium" 
               dangerouslySetInnerHTML={{ __html: t(text) }} 
@@ -57,12 +57,12 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
                 <p className="text-gray-500 text-sm mb-4 font-bold uppercase tracking-widest">{t('contact_us_at')}</p>
                 <button 
                   onClick={handleCopyEmail}
-                  className="flex items-center gap-4 group p-1 transition-all"
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-4 group p-1 transition-all w-full overflow-hidden"
                 >
-                    <span className="text-twitch-base font-black text-lg md:text-xl group-hover:text-white group-hover:underline underline-offset-8 transition-all">
+                    <span className="text-twitch-base font-black text-xs sm:text-lg md:text-xl group-hover:text-white group-hover:underline underline-offset-8 transition-all break-all text-left">
                         {supportEmail}
                     </span>
-                    <div className={`p-2 rounded-xl border transition-all ${isCopied ? 'bg-green-500 border-green-500 text-white' : 'bg-white/5 border-white/10 text-twitch-base group-hover:bg-twitch-base group-hover:text-white'}`}>
+                    <div className={`p-2 rounded-xl border transition-all flex-shrink-0 ${isCopied ? 'bg-green-500 border-green-500 text-white' : 'bg-white/5 border-white/10 text-twitch-base group-hover:bg-twitch-base group-hover:text-white'}`}>
                         {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                     </div>
                 </button>

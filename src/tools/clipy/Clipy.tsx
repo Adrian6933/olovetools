@@ -542,7 +542,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             />
             {state.paginationCursor && (
               <div className="flex justify-center pb-32">
-                <button onClick={loadMoreCategories} disabled={state.isLoading} className="flex items-center gap-6 px-16 py-8 bg-[#1a1a24] border border-white/5 hover:border-white/20 rounded-[2rem] text-lg font-black text-gray-400 hover:text-white transition-all shadow-xl active:scale-95 group disabled:opacity-50">
+                <button onClick={loadMoreCategories} disabled={state.isLoading} className="flex items-center gap-6 px-16 py-8 bg-[#1a1a24] border border-white/5 hover:border-white/20 rounded-[2rem] text-lg font-black text-gray-400 hover:text-white transition-all shadow-xl active:scale-95 group disabled:opacity-50 cursor-pointer">
                   {state.isLoading ? <Loader2 className="w-8 h-8 animate-spin text-twitch-base" /> : <PlusCircle className="w-8 h-8 text-twitch-base" />}
                   {t('load_more_games')}
                 </button>
@@ -644,18 +644,18 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             </p>
 
             {/* Minimalist Legal Footer */}
-            <div className="flex flex-wrap justify-center gap-8 md:gap-12 items-center">
-              <button onClick={() => setLegalModal('privacy')} className="text-gray-500 hover:text-twitch-base transition-colors text-[10px] font-bold uppercase tracking-widest">{t('privacy_policy')}</button>
-              <button onClick={() => setLegalModal('terms')} className="text-gray-500 hover:text-twitch-base transition-colors text-[10px] font-bold uppercase tracking-widest">{t('terms_of_service')}</button>
-              <button onClick={() => setLegalModal('cookies')} className="text-gray-500 hover:text-twitch-base transition-colors text-[10px] font-bold uppercase tracking-widest">{t('cookie_policy')}</button>
-              <div className="w-px h-3 bg-white/10 mx-2"></div>
+            <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4 md:gap-12 items-center px-4">
+              <button onClick={() => setLegalModal('privacy')} className="text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('privacy_policy')}</button>
+              <button onClick={() => setLegalModal('terms')} className="text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('terms_of_service')}</button>
+              <button onClick={() => setLegalModal('cookies')} className="text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('cookie_policy')}</button>
+              <div className="hidden md:block w-px h-3 bg-white/10 mx-2"></div>
               <a
                 href="mailto:adrian.contact.me.69@gmail.com"
                 onClick={handleContactClick}
-                className="flex items-center gap-2 text-gray-500 hover:text-twitch-base transition-colors text-[10px] font-bold uppercase tracking-widest group"
+                className="flex items-center gap-2 text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest group break-all md:break-normal line-clamp-1 md:line-clamp-none cursor-pointer"
               >
-                <Mail className="w-3.5 h-3.5" />
-                <span>{t('contact_link')}</span>
+                <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+                <span className="truncate">{t('contact_link')}</span>
               </a>
             </div>
 

@@ -46,8 +46,8 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
             {/* Ambient emerald glow */}
             <div className="absolute -top-40 -left-40 w-80 h-80 bg-emerald-500/10 blur-[100px] rounded-full pointer-events-none" />
 
-            <div className="flex items-center justify-between p-8 border-b border-white/5 bg-white/[0.01] relative z-20">
-              <h2 className="text-3xl font-bold text-white font-outfit tracking-tight">{title}</h2>
+            <div className="flex items-center justify-between p-6 sm:p-8 border-b border-white/5 bg-white/[0.01] relative z-20">
+              <h2 className="text-xl sm:text-3xl font-bold text-white font-outfit tracking-tight">{title}</h2>
               <button 
                 onClick={onClose} 
                 className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors cursor-pointer"

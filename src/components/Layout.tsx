@@ -380,9 +380,9 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 bg-[#0f0f12] py-16 mt-auto relative overflow-hidden">
+      <footer className="border-t border-white/5 bg-[#0f0f12] py-12 md:py-16 mt-auto relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="flex flex-col md:flex-row items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-indigo-500/10">
                 <Heart className="w-4 h-4 text-indigo-500 fill-indigo-500" />
@@ -393,25 +393,25 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
             <span className="text-slate-500 text-sm font-medium">© {currentYear} {t.footerRights}</span>
           </div>
           
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex flex-col items-center md:items-end gap-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{t.contactText}</span>
-              <div className="relative">
+          <div className="flex flex-col md:flex-row items-center gap-8 w-full md:w-auto">
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center">{t.contactText}</span>
+              <div className="relative w-full max-w-[280px] md:w-auto">
                 <button 
                   onClick={handleCopyEmail}
-                  className="flex items-center gap-2 group cursor-pointer"
+                  className="flex items-center justify-center md:justify-start gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group cursor-pointer relative overflow-hidden w-full"
                 >
-                  <Mail className="w-3 h-3 text-indigo-400 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-mono text-slate-400 group-hover:text-white transition-colors">{t.contactEmail}</span>
+                  <Mail className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform shrink-0" />
+                  <span className="text-xs font-mono text-slate-400 group-hover:text-white transition-colors truncate">{t.contactEmail}</span>
                   <AnimatePresence>
                     {copied && (
                       <motion.div 
-                        initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                        animate={{ opacity: 1, y: -25, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute -top-6 left-1/2 -translate-x-1/2 px-2 py-1 bg-emerald-500 text-white text-[10px] font-bold rounded shadow-lg pointer-events-none whitespace-nowrap z-50"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 flex items-center justify-center bg-emerald-500 text-white text-xs font-bold z-10"
                       >
-                        {t.copied}
+                        <Check className="w-3.5 h-3.5 inline-block mr-1.5" /> {t.copied}
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -419,10 +419,10 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
               </div>
             </div>
             <div className="hidden md:block h-6 w-px bg-white/10" />
-            <div className="flex items-center gap-6 text-xs text-slate-500 font-bold uppercase tracking-[0.15em]">
-              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer">{t.privacyPolicy}</button>
-              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer">{t.termsOfService}</button>
-              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer">{t.cookiesPolicy}</button>
+            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-xs text-slate-500 font-bold uppercase tracking-[0.15em] w-full md:w-auto">
+              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto">{t.privacyPolicy}</button>
+              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto">{t.termsOfService}</button>
+              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto">{t.cookiesPolicy}</button>
             </div>
           </div>
         </div>
@@ -446,19 +446,19 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
           <p className="text-slate-400 text-sm mb-4">{t.contactModal}</p>
           <button 
             onClick={handleCopyEmail}
-            className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl w-fit group hover:bg-white/10 transition-all cursor-pointer relative"
+            className="flex items-center justify-center sm:justify-start gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl w-full sm:w-fit group hover:bg-white/10 transition-all cursor-pointer relative overflow-hidden"
           >
-            <Mail className="w-5 h-5 text-indigo-400" />
-            <span className="text-white font-mono">{t.contactEmail}</span>
+            <Mail className="w-5 h-5 text-indigo-400 shrink-0" />
+            <span className="text-white font-mono text-sm sm:text-base truncate">{t.contactEmail}</span>
             <AnimatePresence>
               {copied && (
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 translate-x-full px-3 py-1.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-xl"
+                  className="absolute inset-0 flex items-center justify-center bg-emerald-500 text-white text-[15px] font-bold z-10"
                 >
-                  <Check className="w-3 h-3 inline-block mr-1" /> {t.copied}
+                  <Check className="w-4 h-4 inline-block mr-1.5" /> {t.copied}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -484,19 +484,19 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
           <p className="text-slate-400 text-sm mb-4">{t.contactModal}</p>
           <button 
             onClick={handleCopyEmail}
-            className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl w-fit group hover:bg-white/10 transition-all cursor-pointer relative"
+            className="flex items-center justify-center sm:justify-start gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl w-full sm:w-fit group hover:bg-white/10 transition-all cursor-pointer relative overflow-hidden"
           >
-            <Mail className="w-5 h-5 text-indigo-400" />
-            <span className="text-white font-mono">{t.contactEmail}</span>
+            <Mail className="w-5 h-5 text-indigo-400 shrink-0" />
+            <span className="text-white font-mono text-sm sm:text-base truncate">{t.contactEmail}</span>
             <AnimatePresence>
               {copied && (
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 translate-x-full px-3 py-1.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-xl"
+                  className="absolute inset-0 flex items-center justify-center bg-emerald-500 text-white text-[15px] font-bold z-10"
                 >
-                  <Check className="w-3 h-3 inline-block mr-1" /> {t.copied}
+                  <Check className="w-4 h-4 inline-block mr-1.5" /> {t.copied}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -521,19 +521,19 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
           <p className="text-slate-400 text-sm mb-4">{t.contactModal}</p>
           <button 
             onClick={handleCopyEmail}
-            className="flex items-center gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl w-fit group hover:bg-white/10 transition-all cursor-pointer relative"
+            className="flex items-center justify-center sm:justify-start gap-3 p-4 bg-white/5 border border-white/10 rounded-2xl w-full sm:w-fit group hover:bg-white/10 transition-all cursor-pointer relative overflow-hidden"
           >
-            <Mail className="w-5 h-5 text-indigo-400" />
-            <span className="text-white font-mono">{t.contactEmail}</span>
+            <Mail className="w-5 h-5 text-indigo-400 shrink-0" />
+            <span className="text-white font-mono text-sm sm:text-base truncate">{t.contactEmail}</span>
             <AnimatePresence>
               {copied && (
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute -right-4 top-1/2 -translate-y-1/2 translate-x-full px-3 py-1.5 bg-emerald-500 text-white text-xs font-bold rounded-xl shadow-xl"
+                  className="absolute inset-0 flex items-center justify-center bg-emerald-500 text-white text-[15px] font-bold z-10"
                 >
-                  <Check className="w-3 h-3 inline-block mr-1" /> {t.copied}
+                  <Check className="w-4 h-4 inline-block mr-1.5" /> {t.copied}
                 </motion.div>
               )}
             </AnimatePresence>
