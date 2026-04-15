@@ -53,12 +53,16 @@
   }
 }
 
+html,
 body {
   margin: 0;
   background-color: #020203;
   color: #f8fafc;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
 }
 
 @keyframes rotate-continuous { 

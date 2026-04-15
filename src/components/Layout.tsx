@@ -313,9 +313,9 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
   const currentYear = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-[#020203] text-slate-200 font-sans flex flex-col">
+    <div className="min-h-screen bg-[#020203] text-slate-200 font-sans flex flex-col overflow-x-hidden">
       {/* Navigation */}
-      <nav className="sticky top-0 z-40 bg-[#0f0f12]/80 backdrop-blur-2xl border-b border-white/[0.03]">
+      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#121216] border-b border-white/[0.08] shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <a href={`/${currentLang}`} className="flex items-center gap-3 group">
@@ -332,7 +332,7 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
               <div className="relative" ref={langMenuRef}>
                 <button 
                   onClick={() => setIsLangMenuOpen(!isLangMenuOpen)}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 rounded-full transition-all duration-300 border border-white/10 text-slate-200 text-sm font-medium backdrop-blur-md cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/15 rounded-full transition-all duration-300 border border-white/20 text-slate-200 text-sm font-medium backdrop-blur-md cursor-pointer"
                 >
                   <span className="bg-indigo-500/20 text-indigo-300 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold uppercase">
                     {currentLang}
@@ -346,7 +346,7 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    className="absolute right-0 mt-3 w-56 bg-[#0a0a0c] backdrop-blur-3xl border border-white/[0.08] rounded-2xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.8)] py-3 z-50 overflow-hidden ring-1 ring-emerald-500/10 box-shadow-emerald"
+                    className="absolute right-0 mt-3 w-48 bg-[#1a1a20] border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-2 z-[60] animate-in fade-in slide-in-from-top-2 duration-200"
                   >
                     <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent" />
                     {LANGUAGES.map((language) => (
@@ -375,28 +375,29 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
         </div>
       </nav>
 
-      <div className="flex-1">
+      <div className="flex-1 pt-20">
         {children}
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 bg-[#0f0f12] py-12 md:py-16 mt-auto relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-indigo-500/10">
-                <Heart className="w-4 h-4 text-indigo-500 fill-indigo-500" />
+      <footer className="border-t border-white/[0.08] bg-[#121216] py-12 md:py-16 mt-auto relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 flex flex-col gap-12">
+          {/* Row 1: Logo & Contact */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+            <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-indigo-500/10">
+                  <Heart className="w-4 h-4 text-indigo-500 fill-indigo-500" />
+                </div>
+                <span className="font-bold text-white font-outfit text-xl tracking-tight">oLoveTools</span>
               </div>
-              <span className="font-bold text-white font-outfit text-xl tracking-tight">oLoveTools</span>
+              <div className="hidden md:block h-4 w-px bg-white/10" />
+              <span className="text-slate-400 text-sm font-medium">© {currentYear} {t.footerRights}</span>
             </div>
-            <div className="hidden md:block h-4 w-px bg-white/10" />
-            <span className="text-slate-500 text-sm font-medium">© {currentYear} {t.footerRights}</span>
-          </div>
-          
-          <div className="flex flex-col md:flex-row items-center gap-8 w-full md:w-auto">
-            <div className="flex flex-col items-center md:items-end gap-2">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest text-center">{t.contactText}</span>
-              <div className="relative w-full max-w-[280px] md:w-auto">
+            
+            <div className="flex items-center gap-4 w-full md:w-auto">
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest whitespace-nowrap">{t.contactText}</span>
+              <div className="relative w-full max-w-[240px] md:w-auto">
                 <button 
                   onClick={handleCopyEmail}
                   className="flex items-center justify-center md:justify-start gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group cursor-pointer relative overflow-hidden w-full"
@@ -418,11 +419,14 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
                 </button>
               </div>
             </div>
-            <div className="hidden md:block h-6 w-px bg-white/10" />
-            <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6 text-xs text-slate-500 font-bold uppercase tracking-[0.15em] w-full md:w-auto">
-              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto">{t.privacyPolicy}</button>
-              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto">{t.termsOfService}</button>
-              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto">{t.cookiesPolicy}</button>
+          </div>
+
+          {/* Row 2: Legal Links */}
+          <div className="pt-10 border-t border-white/5 flex items-center justify-center">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 text-[10px] md:text-xs text-slate-200 font-bold uppercase tracking-[0.2em] w-full">
+              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto text-center">{t.privacyPolicy}</button>
+              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto text-center">{t.termsOfService}</button>
+              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto text-center">{t.cookiesPolicy}</button>
             </div>
           </div>
         </div>

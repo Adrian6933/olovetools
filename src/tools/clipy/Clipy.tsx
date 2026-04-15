@@ -403,7 +403,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
                 <div className="bg-[#1c1c24] p-2.5 rounded-xl transition-all group-hover:bg-[#2c2c36] border border-white/5 group-hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.05)]">
                   <Heart className="w-5 h-5 text-white fill-current" />
                 </div>
-                <div className="hidden xl:block font-black text-lg tracking-tighter opacity-40 group-hover:opacity-100 transition-opacity">
+                <div className="hidden xl:block font-black text-lg tracking-tighter opacity-90 group-hover:opacity-100 transition-opacity">
                   <span className="text-white">oLove</span><span className="text-pink-500">Tools</span>
                 </div>
               </div>
@@ -421,13 +421,13 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             <SearchBar onSearch={handleSearch} query={state.query} isLoading={state.isLoading && state.mode === 'categories'} t={t} />
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
+            <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
             <div className="relative" ref={langMenuRef}>
-              <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/10 hover:border-white/20 transition-all active:scale-95 group">
-                <span className="text-[10px] md:text-xs font-black uppercase text-gray-400 group-hover:text-white transition-colors tracking-widest">{lang}</span>
+              <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/20 hover:border-white/30 transition-all active:scale-95 group">
+                <span className="text-[10px] md:text-xs font-black uppercase text-gray-200 group-hover:text-white transition-colors tracking-widest">{lang}</span>
               </button>
               {showLangMenu && (
-                <div className="absolute right-0 top-16 w-52 bg-[#0c0c0f] border border-white/10 rounded-2xl shadow-2xl z-[60] overflow-hidden animate-in slide-in-from-top-4 duration-300">
+                <div className="absolute right-0 top-16 w-52 bg-[#0c0c0f] border border-white/20 rounded-2xl shadow-2xl z-[60] overflow-hidden animate-in slide-in-from-top-4 duration-300">
                   {Object.keys(FLAGS).map((key) => {
                     const l = key as Language;
                     return (
@@ -490,10 +490,18 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
       <main className="container mx-auto px-6 pt-52 md:pt-48 flex-grow max-w-[1800px] relative z-10" key={state.mode}>
         <div className="mb-14">
           {state.mode === 'categories' && (
-            <div className="mb-10 flex overflow-x-auto whitespace-nowrap gap-3 pb-4 custom-scrollbar animate-in fade-in duration-700">
-              {POPULAR_TAGS.map(tag => (
-                <button key={tag} onClick={() => handleSearch(tag)} className="px-6 py-2.5 bg-[#1a1a24] border border-white/5 rounded-full text-xs font-black text-gray-400 hover:text-twitch-base hover:border-twitch-base/30 transition-all uppercase tracking-widest flex-shrink-0 cursor-pointer">#{tag}</button>
-              ))}
+            <div className="relative mb-10">
+              <div 
+                className="flex overflow-x-auto whitespace-nowrap gap-3 py-4 custom-scrollbar animate-in fade-in duration-700 relative z-10 px-0"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent)'
+                }}
+              >
+                {POPULAR_TAGS.map(tag => (
+                  <button key={tag} onClick={() => handleSearch(tag)} className="px-6 py-2.5 bg-[#1a1a24] border border-white/5 rounded-full text-xs font-black text-gray-400 hover:text-twitch-base hover:border-twitch-base/30 transition-all uppercase tracking-widest flex-shrink-0 cursor-pointer">#{tag}</button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -645,17 +653,17 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
             {/* Minimalist Legal Footer */}
             <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4 md:gap-12 items-center px-4">
-              <button onClick={() => setLegalModal('privacy')} className="text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('privacy_policy')}</button>
-              <button onClick={() => setLegalModal('terms')} className="text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('terms_of_service')}</button>
-              <button onClick={() => setLegalModal('cookies')} className="text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('cookie_policy')}</button>
+              <button onClick={() => setLegalModal('privacy')} className="text-gray-300 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('privacy_policy')}</button>
+              <button onClick={() => setLegalModal('terms')} className="text-gray-300 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('terms_of_service')}</button>
+              <button onClick={() => setLegalModal('cookies')} className="text-gray-300 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('cookie_policy')}</button>
               <div className="hidden md:block w-px h-3 bg-white/10 mx-2"></div>
               <a
                 href="mailto:adrian.contact.me.69@gmail.com"
                 onClick={handleContactClick}
-                className="flex items-center gap-2 text-gray-500 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest group break-all md:break-normal line-clamp-1 md:line-clamp-none cursor-pointer"
+                className="flex items-center gap-2 text-gray-400 hover:text-twitch-base transition-colors text-[10px] md:text-[11px] font-bold uppercase tracking-widest group whitespace-nowrap cursor-pointer"
               >
-                <Mail className="w-3.5 h-3.5 flex-shrink-0" />
-                <span className="truncate">{t('contact_link')}</span>
+                <Mail className="w-4 h-4 flex-shrink-0" />
+                <span>{t('contact_link')}</span>
               </a>
             </div>
 

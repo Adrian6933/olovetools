@@ -38,7 +38,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: "spring", duration: 0.5 }}
-            className="relative w-full max-w-2xl bg-[#020203] backdrop-blur-3xl border border-white/[0.08] rounded-[2rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col max-h-[85vh] z-10"
+            className="relative w-full max-w-2xl bg-[#121216] border border-white/[0.12] rounded-[2rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col max-h-[85vh] z-10"
           >
             {/* Top accent line */}
             <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent" />

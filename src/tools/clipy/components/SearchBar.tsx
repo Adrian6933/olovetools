@@ -105,12 +105,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
   return (
     <div ref={wrapperRef} className="w-full relative group h-12 md:h-14 m-0 p-0 flex items-center">
       <form onSubmit={handleSubmit} className="relative w-full h-full m-0 p-0 z-50">
-        <div className="absolute inset-y-0 left-0 pl-5 md:pl-7 flex items-center pointer-events-none z-10 opacity-70">
-          <Search className={`h-6 w-6 md:h-7 md:w-7 transition-all duration-500 text-twitch-base`} />
-        </div>
         <input
           type="text"
-          className={`block w-full h-full m-0 pl-14 md:pl-20 pr-14 bg-[#15151b] text-white text-base md:text-xl placeholder-gray-500/50 focus:outline-none focus:ring-4 focus:ring-twitch-base/10 border-2 border-white/5 focus:border-twitch-base/30 transition-all duration-500 ${
+          className={`block w-full h-full m-0 pl-14 md:pl-20 pr-14 bg-[#15151b] text-white text-base md:text-xl placeholder-gray-500/50 focus:outline-none focus:ring-4 focus:ring-twitch-base/10 border-2 border-white/5 focus:border-twitch-base/30 transition-all duration-500 relative z-10 ${
             showDropdown && hasContent ? 'rounded-t-[1.5rem] md:rounded-t-[2rem]' : 'rounded-[1.5rem] md:rounded-[2rem]'
           }`}
           placeholder={t('search_placeholder')}
@@ -118,6 +115,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
           onChange={(e) => setTerm(e.target.value)}
           onFocus={() => setShowDropdown(true)}
         />
+        <div className="absolute inset-y-0 left-0 pl-5 md:pl-7 flex items-center pointer-events-none z-20 opacity-90">
+          <Search className={`h-6 w-6 md:h-7 md:w-7 transition-all duration-500 text-twitch-base`} />
+        </div>
         <div className="absolute inset-y-0 right-0 flex items-center pr-4 md:pr-7">
            {isLoading ? (
              <div className="w-5 h-5 md:w-6 md:h-6 rounded-full border-2 border-twitch-base border-t-transparent animate-spin"></div>

@@ -60,11 +60,14 @@ const baseUrl = 'https://olovetools.com';
     })} />
     
     <style is:global>
-      /* Ensure the background for the Home route covers everything if body styles leak */
+      /* Reset leaking styles from other pages */
       body {
-        background-color: #060609 !important;
         background-image: none !important;
+        background-attachment: scroll !important;
+        background-color: #060609 !important;
         margin: 0;
+        overflow-x: hidden !important;
+        width: 100% !important;
       }
       body::before {
         display: none !important;

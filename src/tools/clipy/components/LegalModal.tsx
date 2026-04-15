@@ -28,8 +28,8 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
   };
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-2xl p-4 animate-in fade-in duration-300">
-      <div className="bg-black/60 border border-white/10 ring-1 ring-twitch-base/20 rounded-3xl md:rounded-[3rem] p-6 md:p-12 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-[0_0_80px_rgba(145,70,255,0.15)] relative animate-in zoom-in-95 duration-500 overflow-hidden">
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300">
+      <div className="bg-[#0c0c10] border border-white/20 ring-1 ring-twitch-base/20 rounded-3xl md:rounded-[3rem] p-6 md:p-12 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative animate-in zoom-in-95 duration-500 overflow-hidden">
         
         <button 
           onClick={onClose} 
@@ -72,7 +72,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
         <div className="mt-14 flex justify-end">
             <button 
                 onClick={onClose}
-                className="px-10 py-4 bg-twitch-base text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all hover:bg-twitch-dark hover:shadow-[0_0_30px_rgba(145,70,255,0.4)] active:scale-95"
+                className="px-10 py-4 bg-twitch-base text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all hover:bg-twitch-dark hover:shadow-[0_0_30px_rgba(145,70,255,0.4)] active:scale-95 cursor-pointer"
             >
                 {t('got_it')}
             </button>

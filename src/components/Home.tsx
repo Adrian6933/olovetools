@@ -30,10 +30,11 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         {/* Global Tech Grid Background - Now covers whole page */}
         <div className="absolute inset-0 pointer-events-none -z-10" 
           style={{ 
-            backgroundImage: 'linear-gradient(rgba(16,185,129,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.04) 1px, transparent 1px)', 
+            backgroundImage: 'linear-gradient(rgba(16,185,129,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.15) 1px, transparent 1px)', 
             backgroundSize: '40px 40px',
-            maskImage: 'linear-gradient(to bottom, black 30%, rgba(0,0,0,0.4) 70%, transparent 100%)',
-            WebkitMaskImage: 'linear-gradient(to bottom, black 30%, rgba(0,0,0,0.4) 70%, transparent 100%)'
+            maskImage: 'radial-gradient(circle at top center, black, rgba(0,0,0,0.5) 50%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(circle at top center, black, rgba(0,0,0,0.5) 50%, transparent 100%)',
+            filter: 'blur(0.5px)'
           }} 
         />
         
@@ -41,7 +42,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         <div className="absolute inset-x-0 top-0 h-[800px] bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none -z-10" />
             
         {/* Hero Section */}
-        <div className="relative pt-32 pb-20 selection:bg-indigo-500/30 selection:text-white">
+        <div className="relative pt-24 pb-20 selection:bg-indigo-500/30 selection:text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <motion.h1 
               initial={{ opacity: 0, y: 30 }}
@@ -64,45 +65,51 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
-              className="max-w-2xl mx-auto relative group"
             >
-              <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-2xl opacity-20 group-hover:opacity-40 blur-lg transition duration-500" />
-              <div className="relative bg-[#08080a]/90 backdrop-blur-2xl border border-white/5 rounded-2xl flex items-center p-1.5 shadow-2xl cursor-text">
-                <Search className="w-6 h-6 text-slate-400 ml-4" />
-                <input 
-                  type="text" 
-                  placeholder={t('searchPlaceholder')}
-                  className="w-full bg-transparent border-none text-white placeholder-slate-500 px-4 py-4 text-lg outline-none font-medium"
+              <div className="relative group max-w-2xl mx-auto z-10">
+                <input
+                  type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder={t('searchPlaceholder')}
+                  className="w-full pl-16 pr-6 py-5 bg-[#121216] border border-white/10 rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-2xl transition-all z-10 relative"
                 />
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none z-20">
+                  <Search className="w-6 h-6 text-slate-200 group-hover:text-indigo-400 group-focus-within:text-indigo-400 transition-colors" />
+                </div>
               </div>
             </motion.div>
           </div>
         </div>
 
         {/* Projects Section */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-40 relative z-10">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="flex overflow-x-auto -m-10 p-10 gap-3 mb-4 no-scrollbar md:justify-center md:flex-wrap"
-            >
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category as any)}
-                  className={`px-6 py-3 rounded-full whitespace-nowrap text-sm font-bold uppercase tracking-wider transition-all duration-300 cursor-pointer ${
-                    selectedCategory === category
-                      ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] scale-105'
-                      : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-white border border-white/5'
-                  }`}
-                >
-                  {t(`categories.${category}`)}
-                </button>
-              ))}
-            </motion.div>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pb-40 relative z-10 overflow-x-hidden">
+            <div className="relative mb-8">
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="flex overflow-x-auto -mx-10 px-10 gap-4 py-6 custom-scrollbar md:justify-center md:flex-wrap relative z-10"
+                style={{
+                  maskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)',
+                  WebkitMaskImage: 'linear-gradient(to right, transparent, black 40px, black calc(100% - 40px), transparent)'
+                }}
+              >
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category as any)}
+                    className={`px-8 py-3.5 rounded-full whitespace-nowrap text-sm font-bold uppercase tracking-widest transition-all duration-300 cursor-pointer flex-shrink-0 ${
+                      selectedCategory === category
+                        ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.25)] scale-105 border-white'
+                        : 'bg-white/25 text-white hover:bg-white/35 hover:text-white border border-white/20 shadow-sm backdrop-blur-sm'
+                    }`}
+                  >
+                    {t(`categories.${category}`)}
+                  </button>
+                ))}
+              </motion.div>
+            </div>
 
             <div className="flex items-center justify-between mb-8 text-slate-500 text-sm font-medium uppercase tracking-widest">
               <span>{t('showing')} {filteredProjects.length} {t('projectsText')}</span>
