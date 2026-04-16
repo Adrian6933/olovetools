@@ -319,7 +319,7 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <a href={`/${currentLang}`} className="flex items-center gap-3 group">
-              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-2.5 rounded-xl group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-indigo-500/20">
+              <div className="bg-gradient-to-br from-indigo-500 to-purple-600 p-2.5 rounded-xl group-hover:scale-105 transition-transform duration-300 shadow-lg shadow-indigo-500/15">
                 <Heart className="w-5 h-5 text-white fill-white" />
               </div>
               <span className="text-2xl font-bold text-white font-outfit tracking-tight">

@@ -250,7 +250,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
     <div className="min-h-screen flex flex-col bg-[#070708] selection:bg-twitch/30">
       <Header onReset={handleReset} currentLang={lang} onLangChange={handleLangChange} />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-6 pt-32 pb-40">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-6 pt-52 pb-40">
         
         {status !== 'success' && (
           <div className="flex flex-col items-center">
@@ -267,7 +267,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
             <div className="w-full max-w-4xl animate-slide-up [animation-delay:150ms]">
               <div className="bg-[#111114]/50 backdrop-blur-3xl border border-white/5 p-4 rounded-[3.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]">
                 <div className="bg-[#0e0e10] rounded-[3rem] p-10 flex flex-col md:flex-row gap-12 items-stretch">
-                  <div className="md:w-[38%] shrink-0">
+                  <div className="md:w-[38%] shrink-0 order-2 md:order-1">
                     <input type="file" ref={fileInputRef} accept=".txt" onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
@@ -278,25 +278,46 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                     }} className="hidden" />
                     <button 
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full h-full min-h-[280px] border-2 border-dashed border-white/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-6 hover:border-twitch/40 hover:bg-twitch/5 transition-all group overflow-hidden"
+                      className="w-full h-full min-h-[140px] md:min-h-[280px] border-2 border-dashed border-white/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center gap-4 md:gap-6 hover:border-twitch/40 hover:bg-twitch/5 transition-all group overflow-hidden p-6 md:p-0"
                     >
-                      <div className="p-7 bg-dark-800 rounded-[2rem] group-hover:scale-110 transition-transform shadow-inner">
-                        <FileText className="w-12 h-12 text-gray-500 group-hover:text-twitch" />
+                      <div className="p-4 md:p-7 bg-dark-800 rounded-xl md:rounded-[2rem] group-hover:scale-110 transition-transform shadow-inner shrink-0">
+                        <FileText className="w-6 h-6 md:w-12 md:h-12 text-gray-500 group-hover:text-twitch" />
                       </div>
-                      <span className="text-[11px] font-[900] uppercase tracking-[0.25em] text-white/40 group-hover:text-white/80">
+                      <span className="text-[9px] md:text-[11px] font-[900] uppercase tracking-[0.15em] md:tracking-[0.25em] text-white/40 group-hover:text-white/80 text-center">
                         {t.uploadTxt}
                       </span>
                     </button>
                   </div>
 
-                  <div className="flex-1 flex flex-col justify-between gap-10 py-2">
-                    <div className="space-y-4">
-                      <textarea 
-                        value={inputText}
-                        onChange={handleTextChange}
-                        placeholder={t.pastePlaceholder}
-                        className="w-full h-44 md:h-64 bg-transparent border-none text-xl font-medium placeholder:text-gray-700 resize-none outline-none text-white p-0 scrollbar-hide"
-                      />
+                  <div className="flex-1 flex flex-col justify-between gap-6 py-2 order-1 md:order-2">
+                    <div className="flex flex-col gap-5 h-full">
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 px-2">
+                        <div className="order-2 md:order-1 flex items-center gap-2.5">
+                          <div className="w-1.5 h-1.5 bg-twitch rounded-full animate-pulse" />
+                          <span className="text-[10px] font-black text-gray-400 md:text-gray-500 uppercase tracking-[0.2em]">Entrada de enlaces</span>
+                        </div>
+                        <div className="order-1 md:order-2 px-3 py-1 bg-twitch/10 rounded-md border border-twitch/20">
+                          <span className="text-[9px] font-black text-twitch uppercase tracking-[0.2em]">Twitch Clips</span>
+                        </div>
+                      </div>
+                      
+                      <div className={`
+                        relative flex-1 bg-white/[0.02] rounded-[2rem] p-6 border-2 transition-all duration-500
+                        ${!inputText ? 'border-twitch/20 animate-pulse' : 'border-white/5'}
+                        focus-within:border-twitch/50 focus-within:bg-white/[0.04] focus-within:animate-none
+                      `}>
+                        <textarea 
+                          value={inputText}
+                          onChange={handleTextChange}
+                          placeholder={t.pastePlaceholder}
+                          className="w-full h-44 md:h-64 bg-transparent border-none text-base md:text-xl font-medium placeholder:text-gray-700 resize-none outline-none text-white p-0 custom-scrollbar relative z-10"
+                        />
+                        {!inputText && (
+                          <div className="absolute top-6 left-6 pointer-events-none flex items-center gap-1">
+                            <div className="w-[3px] h-6 md:h-8 bg-twitch rounded-full animate-[pulse_1s_infinite] shadow-[0_0_10px_rgba(145,70,255,0.5)]" />
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <button 
@@ -343,14 +364,14 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                     <div className="bg-yellow-500/10 p-4 rounded-[1.5rem] border border-yellow-500/20">
                         <Lightbulb className="w-8 h-8 text-yellow-500" />
                     </div>
-                    <h2 className="text-4xl font-[900] uppercase italic tracking-tighter text-white">PRO TIPS FOR EDITORS</h2>
+                    <h2 className="text-4xl font-[900] uppercase italic tracking-tighter text-white">{t.proTipsTitle}</h2>
                     <div className="w-24 h-1 bg-yellow-500 rounded-full"></div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     {[
-                      { title: 'PERFORMANCE', desc: t.tips1, color: 'border-blue-500/20' },
-                      { title: 'FORMAT', desc: t.tips2, color: 'border-pink-500/20' },
-                      { title: 'WORKFLOW', desc: t.tips3, color: 'border-green-500/20' }
+                      { title: t.tip1Title, desc: t.tips1, color: 'border-blue-500/20' },
+                      { title: t.tip2Title, desc: t.tips2, color: 'border-pink-500/20' },
+                      { title: t.tip3Title, desc: t.tips3, color: 'border-green-500/20' }
                     ].map((tip, i) => (
                       <div key={i} className={`p-10 bg-[#111114] border ${tip.color} rounded-[2.5rem] space-y-4 hover:bg-[#18181b] transition-all`}>
                           <h4 className="font-black text-white uppercase tracking-widest text-xs flex items-center gap-3">

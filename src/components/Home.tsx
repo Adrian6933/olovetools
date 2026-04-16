@@ -27,19 +27,19 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   return (
     <Layout lang={lang}>
       <div className="relative isolate min-h-screen">
-        {/* Global Tech Grid Background - Now covers whole page */}
+        {/* Global Tech Grid Background - Increased visibility and green vibrancy */}
         <div className="absolute inset-0 pointer-events-none -z-10" 
           style={{ 
-            backgroundImage: 'linear-gradient(rgba(16,185,129,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.15) 1px, transparent 1px)', 
+            backgroundImage: 'linear-gradient(rgba(34,197,94,0.3) 1.5px, transparent 1.5px), linear-gradient(90deg, rgba(34,197,94,0.3) 1.5px, transparent 1.5px)', 
             backgroundSize: '40px 40px',
             maskImage: 'radial-gradient(circle at top center, black, rgba(0,0,0,0.5) 50%, transparent 100%)',
             WebkitMaskImage: 'radial-gradient(circle at top center, black, rgba(0,0,0,0.5) 50%, transparent 100%)',
-            filter: 'blur(0.5px)'
+            filter: 'blur(0.7px)'
           }} 
         />
         
         {/* Subtle atmospheric top-down glow */}
-        <div className="absolute inset-x-0 top-0 h-[800px] bg-gradient-to-b from-emerald-500/5 to-transparent pointer-events-none -z-10" />
+        <div className="absolute inset-x-0 top-0 h-[800px] bg-gradient-to-b from-green-500/15 to-transparent pointer-events-none -z-10" />
             
         {/* Hero Section */}
         <div className="relative pt-24 pb-20 selection:bg-indigo-500/30 selection:text-white">

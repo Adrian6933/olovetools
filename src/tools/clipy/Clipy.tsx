@@ -400,7 +400,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             <a href={`/${lang}`} className="flex items-center gap-1 sm:gap-3 group px-1 sm:px-4 py-2 hover:bg-white/5 rounded-2xl transition-all">
               <div className="flex items-center gap-1 sm:gap-3">
                 <ArrowLeft className="hidden sm:block w-5 h-5 text-gray-500 group-hover:text-white transition-all -translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100" />
-                <div className="bg-[#1c1c24] p-2.5 rounded-xl transition-all group-hover:bg-[#2c2c36] border border-white/5 group-hover:scale-105 shadow-[0_0_40px_rgba(255,255,255,0.05)]">
+                <div className="bg-[#1c1c24] p-2.5 rounded-xl transition-all group-hover:bg-[#2c2c36] border border-white/5 group-hover:scale-105 shadow-[0_0_25px_rgba(255,255,255,0.05)]">
                   <Heart className="w-5 h-5 text-white fill-current" />
                 </div>
                 <div className="hidden xl:block font-black text-lg tracking-tighter opacity-90 group-hover:opacity-100 transition-opacity">
@@ -421,7 +421,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             <SearchBar onSearch={handleSearch} query={state.query} isLoading={state.isLoading && state.mode === 'categories'} t={t} />
           </div>
 
-            <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
+          <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
             <div className="relative" ref={langMenuRef}>
               <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/20 hover:border-white/30 transition-all active:scale-95 group">
                 <span className="text-[10px] md:text-xs font-black uppercase text-gray-200 group-hover:text-white transition-colors tracking-widest">{lang}</span>
@@ -452,35 +452,35 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
                   {/* Backdrop for mobile */}
                   <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden" onClick={() => setShowSavedList(false)} />
                   <div className="fixed inset-x-4 top-24 md:absolute md:inset-auto md:right-0 md:top-16 w-auto md:w-[420px] bg-[#0c0c10] border border-white/10 rounded-3xl shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden z-[60] flex flex-col max-h-[80vh] md:max-h-[85vh] animate-in slide-in-from-top-4 duration-500">
-                  <div className="bg-[#15151b] p-6 border-b border-white/5 flex flex-col md:flex-row items-center md:justify-between gap-4">
-                    <h3 className="font-black text-base flex items-center gap-3"><Archive className="w-5 h-5 text-twitch-base" /> {t('saved_clips')} ({savedClips.length})</h3>
-                    <div className="flex items-center gap-4 md:gap-2">
-                      <button onClick={handleUndoDelete} disabled={deletedClipsStack.length === 0} title={t('undo_delete')} className={`p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer ${deletedClipsStack.length > 0 ? 'text-green-400' : 'text-gray-600'}`}><Undo className="w-4 h-4" /></button>
-                      <button onClick={handleRestoreHistory} title={t('restore_history')} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><History className="w-4 h-4" /></button>
-                      <button onClick={() => setShowSavedList(false)} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><X className="w-4 h-4" /></button>
-                    </div>
-                  </div>
-                  <div className="overflow-y-auto custom-scrollbar p-5 space-y-3 flex-grow">
-                    {savedClips.length === 0 ? <div className="text-center py-20 text-gray-400 font-black text-sm uppercase tracking-widest">{t('no_saved_clips')}</div> : savedClips.map(clip => (
-                      <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
-                        <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
-                        <div className="flex-grow min-w-0 flex flex-col justify-center"><div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div></div>
-                        <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                    <div className="bg-[#15151b] p-6 border-b border-white/5 flex flex-col md:flex-row items-center md:justify-between gap-4">
+                      <h3 className="font-black text-base flex items-center gap-3"><Archive className="w-5 h-5 text-twitch-base" /> {t('saved_clips')} ({savedClips.length})</h3>
+                      <div className="flex items-center gap-4 md:gap-2">
+                        <button onClick={handleUndoDelete} disabled={deletedClipsStack.length === 0} title={t('undo_delete')} className={`p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer ${deletedClipsStack.length > 0 ? 'text-green-400' : 'text-gray-600'}`}><Undo className="w-4 h-4" /></button>
+                        <button onClick={handleRestoreHistory} title={t('restore_history')} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><History className="w-4 h-4" /></button>
+                        <button onClick={() => setShowSavedList(false)} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><X className="w-4 h-4" /></button>
                       </div>
-                    ))}
-                  </div>
-                  {savedClips.length > 0 && (
-                    <div className="p-6 bg-[#15151b] border-t border-white/5 flex flex-col gap-4">
-                      <div className="grid grid-cols-2 gap-3">
-                        <button onClick={handleDownloadTxt} className="bg-white/5 py-4 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer">{t('download_txt')}</button>
-                        <button onClick={handleExternalZip} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
-                      </div>
-                      <button onClick={requestDeleteAll} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
                     </div>
-                  )}
-                </div>
-              </>
-            )}
+                    <div className="overflow-y-auto custom-scrollbar p-5 space-y-3 flex-grow">
+                      {savedClips.length === 0 ? <div className="text-center py-20 text-gray-400 font-black text-sm uppercase tracking-widest">{t('no_saved_clips')}</div> : savedClips.map(clip => (
+                        <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
+                          <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
+                          <div className="flex-grow min-w-0 flex flex-col justify-center"><div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div></div>
+                          <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                    </div>
+                    {savedClips.length > 0 && (
+                      <div className="p-6 bg-[#15151b] border-t border-white/5 flex flex-col gap-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <button onClick={handleDownloadTxt} className="bg-white/5 py-4 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer">{t('download_txt')}</button>
+                          <button onClick={handleExternalZip} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
+                        </div>
+                        <button onClick={requestDeleteAll} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -491,7 +491,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         <div className="mb-14">
           {state.mode === 'categories' && (
             <div className="relative mb-10">
-              <div 
+              <div
                 className="flex overflow-x-auto whitespace-nowrap gap-3 py-4 custom-scrollbar animate-in fade-in duration-700 relative z-10 px-0"
                 style={{
                   maskImage: 'linear-gradient(to right, transparent, black 32px, black calc(100% - 32px), transparent)',
