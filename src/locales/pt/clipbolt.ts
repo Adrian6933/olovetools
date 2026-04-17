@@ -42,9 +42,16 @@ export default {
   "views": "Visualizações",
   "ready": "PRONTO",
   "preparing": "PREPARANDO...",
+  "quickLinks": ["Twitch para MP4", "Baixar Clipes", "Download em Massa", "Salvar Clipes", "Baixar 1080p", "Ferramentas de Streamer", "Twitch para TikTok", "Downloader Mobile", "Conversor Rápido", "Assistir Twitch Offline"],
+  "seoTags": ["DOWNLOADER TWITCH", "MP4 HD", "DOWNLOAD EM MASSA", "SEM LOGIN", "FERRAMENTA GRÁTIS", "1080P", "CLIPES TWITCH", "KIT DE EDITOR", "CONVERSOR TIKTOK", "VÍDEO GAMING", "CRIADOR DE REELS", "KIT DE STREAMING", "ALTA DEFINIÇÃO", "DOWNLOAD DIRETO", "DOWNLOAD RÁPIDO", "PRONTO PARA MOBILE", "SALVAR TWITCH", "CONVERSOR DE CLIPES", "SEM MARCA D'ÁGUA", "MELHOR FERRAMENTA TWITCH"],
   "legal": {
-    "privacyText": "Sua privacidade é prioridade. Não armazenamos dados pessoais em nossos servidores.",
-    "termsText": "ClipBolt é uma ferramenta independente destinada ao uso pessoal.",
-    "cookiesText": "Usamos exclusivamente LocalStorage técnico para configurações."
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "cookies": "Cookies",
+    "contactEmail": "CONTATO POR E-MAIL",
+    "gotIt": "ENTENDI",
+    "privacyText": "Na ClipBolt, a privacidade é fundamental. Não coletamos, armazenamos ou compartilhamos dados pessoais identificáveis. Os links são processados em tempo real e nenhum registro de clipes baixados é mantido em nossos servidores. Para qualquer dúvida, entre em contato em adrian.contact.me.69@gmail.com.",
+    "termsText": "ClipBolt é uma ferramenta técnica para acessar conteúdo público da Twitch. O usuário é o único responsável pelo uso dos materiais baixados. A ClipBolt não é afiliada à Twitch.",
+    "cookiesText": "Nosso site usa apenas o LocalStorage estritamente necessário para a operação técnica do site."
   }
 };

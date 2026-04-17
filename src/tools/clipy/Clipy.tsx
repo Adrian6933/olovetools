@@ -379,6 +379,16 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
   const isTopPopularMode = state.query === 'popular' || !state.query.trim();
 
+  const totalSeconds = savedClips.reduce((acc, clip) => acc + (parseInt(clip.duration) || 0), 0);
+  const formatTotalDuration = (seconds: number) => {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${h}h ${m}m ${s}s`;
+    if (m > 0) return `${m}m ${s}s`;
+    return `${s}s`;
+  };
+
   return (
     <div className="min-h-screen flex flex-col relative">
 
@@ -453,7 +463,13 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
                   <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden" onClick={() => setShowSavedList(false)} />
                   <div className="fixed inset-x-4 top-24 md:absolute md:inset-auto md:right-0 md:top-16 w-auto md:w-[420px] bg-[#0c0c10] border border-white/10 rounded-3xl shadow-[0_30px_80px_rgba(0,0,0,0.8)] overflow-hidden z-[60] flex flex-col max-h-[80vh] md:max-h-[85vh] animate-in slide-in-from-top-4 duration-500">
                     <div className="bg-[#15151b] p-6 border-b border-white/5 flex flex-col md:flex-row items-center md:justify-between gap-4">
-                      <h3 className="font-black text-base flex items-center gap-3"><Archive className="w-5 h-5 text-twitch-base" /> {t('saved_clips')} ({savedClips.length})</h3>
+                      <h3 className="font-black text-base flex items-center gap-3">
+                        <Archive className="w-5 h-5 text-twitch-base" />
+                        <div className="flex flex-col">
+                          <span>{t('saved_clips')} ({savedClips.length})</span>
+                          {savedClips.length > 0 && <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t('total_duration')}: {formatTotalDuration(totalSeconds)}</span>}
+                        </div>
+                      </h3>
                       <div className="flex items-center gap-4 md:gap-2">
                         <button onClick={handleUndoDelete} disabled={deletedClipsStack.length === 0} title={t('undo_delete')} className={`p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer ${deletedClipsStack.length > 0 ? 'text-green-400' : 'text-gray-600'}`}><Undo className="w-4 h-4" /></button>
                         <button onClick={handleRestoreHistory} title={t('restore_history')} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><History className="w-4 h-4" /></button>
@@ -464,7 +480,10 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
                       {savedClips.length === 0 ? <div className="text-center py-20 text-gray-400 font-black text-sm uppercase tracking-widest">{t('no_saved_clips')}</div> : savedClips.map(clip => (
                         <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
                           <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
-                          <div className="flex-grow min-w-0 flex flex-col justify-center"><div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div></div>
+                          <div className="flex-grow min-w-0 flex flex-col justify-center">
+                            <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
+                            <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+                          </div>
                           <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       ))}

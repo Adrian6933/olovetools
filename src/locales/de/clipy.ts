@@ -80,5 +80,7 @@ export default {
   "cookie_banner": "Wir nutzen lokalen Speicher. Mit der Nutzung stimmst du zu.",
   "accept": "Akzeptieren",
   "restore": "Wiederherstellen",
-  "restore_desc": "Originalgröße und -position wiederherstellen"
+  "restore_desc": "Originalgröße und -position wiederherstellen",
+  "duration": "Dauer",
+  "total_duration": "Gesamtdauer"
 };

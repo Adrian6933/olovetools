@@ -80,5 +80,7 @@ export default {
   "cookie_banner": "我们使用本地存储来保存您的剪辑和设置。",
   "accept": "接受",
   "restore": "恢复",
-  "restore_desc": "恢复原始尺寸和位置"
+  "restore_desc": "恢复原始尺寸和位置",
+  "duration": "时长",
+  "total_duration": "总时长"
 };

@@ -41,27 +41,27 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
               {/* Quick Searches */}
               <div className="space-y-10">
                   <h4 className="text-white font-black uppercase text-xs flex items-center gap-3 tracking-widest italic">
-                    <Search className="w-4 h-4 text-twitch" /> QUICK SEARCHES
+                    <Search className="w-4 h-4 text-twitch" /> {t.quickSearches || 'QUICK SEARCHES'}
                   </h4>
                   <ul className="space-y-5 text-sm text-gray-500 font-bold">
-                      {['Twitch to MP4', 'Download Clips', 'Bulk Downloader', 'Clip Saver', '1080p Download', 'Stream Tools'].map(link => (
+                      {(t.quickLinks || ['Twitch to MP4', 'Download Clips', 'Bulk Downloader', 'Clip Saver', '1080p Download', 'Stream Tools']).map(link => (
                         <li key={link} className="hover:text-twitch transition-colors cursor-pointer flex items-center gap-3 group">
                            <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 -ml-5 group-hover:ml-0 transition-all" /> {link}
                         </li>
                       ))}
                   </ul>
               </div>
-
+ 
               {/* SEO Tags */}
               <div className="space-y-10">
                   <h4 className="text-white font-black uppercase text-xs flex items-center gap-3 tracking-widest italic">
-                    <Tag className="w-4 h-4 text-twitch" /> SEO KEYWORDS
+                    <Tag className="w-4 h-4 text-twitch" /> {t.seoKeywords || 'SEO KEYWORDS'}
                   </h4>
                   <div className="flex flex-wrap gap-2.5">
-                      {[
+                      {(t.seoTags || [
                         'TWITCH DOWNLOADER', 'MP4 HD', 'BULK DOWNLOAD', 'NO LOGIN', 'FREE TOOL', '1080P', 'TWITCH CLIPS', 'EDITOR KIT',
                         'TIKTOK CONVERTER', 'GAMING VIDEO', 'REELS MAKER', 'STREAMING KIT', 'HIGH DEFINITION', 'DIRECT DOWNLOAD'
-                      ].map(tag => (
+                      ]).map(tag => (
                           <span key={tag} className="px-4 py-2 bg-[#111114] border border-white/5 rounded-xl text-[10px] font-black text-gray-500 uppercase tracking-tighter hover:border-twitch/40 hover:text-white transition-all cursor-default">
                               {tag}
                           </span>
@@ -94,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                       <div className="relative group/copy">
                         <button 
                           onClick={handleCopyEmail}
-                          className="flex items-center gap-2 text-[10px] font-bold text-gray-500 hover:text-twitch transition-all"
+                          className="flex items-center gap-2 text-[10px] font-bold text-gray-500 hover:text-twitch transition-all cursor-pointer"
                         >
                           <Mail className="w-3.5 h-3.5" />
                           adrian.contact.me.69@gmail.com
@@ -107,22 +107,22 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                       </div>
                   </div>
 
-                  <nav className="flex items-center gap-8">
+                   <nav className="flex items-center gap-8">
                       <button 
                         onClick={() => onOpenLegal('privacy')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors"
+                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors cursor-pointer"
                       >
                         {tl.privacy}
                       </button>
                       <button 
                         onClick={() => onOpenLegal('terms')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors"
+                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors cursor-pointer"
                       >
                         {tl.terms}
                       </button>
                       <button 
                         onClick={() => onOpenLegal('cookies')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors"
+                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors cursor-pointer"
                       >
                         {tl.cookies}
                       </button>

@@ -80,5 +80,7 @@ export default {
   "cookie_banner": "Usamos armazenamento local. Ao continuar, você aceita.",
   "accept": "Aceitar",
   "restore": "Restaurar",
-  "restore_desc": "Restaurar tamanho e posição original"
+  "restore_desc": "Restaurar tamanho e posição original",
+  "duration": "Duração",
+  "total_duration": "Duração total"
 };

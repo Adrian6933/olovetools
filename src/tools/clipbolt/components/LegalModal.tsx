@@ -45,7 +45,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, lang, onClose }) => {
         
         <button 
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors z-50"
+          className="absolute top-6 right-6 p-2 text-gray-500 hover:text-white transition-colors z-50 cursor-pointer"
         >
           <X className="w-5 h-5" />
         </button>
@@ -68,12 +68,17 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, lang, onClose }) => {
           <div className="relative inline-block mx-auto group/copy">
               <button 
                 onClick={handleCopy}
-                className="flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5"
+                className="flex items-center gap-3 px-5 py-2.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/5 cursor-pointer"
               >
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest group-hover:text-white transition-colors">
-                  {tl.contactEmail}
-                </p>
-                {copied ? <Check className="w-3.5 h-3.5 text-green-500" /> : <Copy className="w-3.5 h-3.5 text-gray-600 group-hover:text-twitch transition-colors" />}
+                <div className="text-left">
+                  <p className="text-[9px] font-black text-twitch uppercase tracking-widest">
+                    {tl.contactEmail}
+                  </p>
+                  <p className="text-[11px] font-black text-white tracking-tight">
+                    adrian.contact.me.69@gmail.com
+                  </p>
+                </div>
+                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4 text-gray-600 group-hover:text-twitch transition-colors" />}
               </button>
               
               {copied && (
@@ -85,7 +90,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, lang, onClose }) => {
           
           <button 
             onClick={onClose}
-            className="w-full py-4 bg-twitch hover:bg-twitch-dark text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-twitch/20"
+            className="w-full py-4 bg-twitch hover:bg-twitch-dark text-white text-xs font-black uppercase tracking-[0.2em] rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-twitch/20 cursor-pointer"
           >
             {tl.gotIt}
           </button>

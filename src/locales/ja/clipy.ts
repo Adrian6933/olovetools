@@ -80,5 +80,7 @@ export default {
   "cookie_banner": "クリップ保存と設定のためにローカルストレージを使用します。",
   "accept": "同意する",
   "restore": "復元する",
-  "restore_desc": "元のサイズと位置を復元する"
+  "restore_desc": "元のサイズと位置を復元する",
+  "duration": "再生時間",
+  "total_duration": "合計時間"
 };

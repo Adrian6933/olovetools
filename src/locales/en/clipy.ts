@@ -80,5 +80,7 @@ export default {
   "cookie_banner": "We use technical local storage to save your clips and settings. By continuing to use the site, you agree to this.",
   "accept": "Accept",
   "restore": "Restore",
-  "restore_desc": "Restore original size and position"
+  "restore_desc": "Restore original size and position",
+  "duration": "Duration",
+  "total_duration": "Total Duration"
 };

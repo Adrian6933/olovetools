@@ -247,7 +247,10 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070708] selection:bg-twitch/30">
+    <div className="min-h-screen flex flex-col bg-[#050407] selection:bg-twitch/30 relative overflow-hidden" style={{ backgroundImage: 'linear-gradient(to bottom, #15121e 0%, #0f0d14 25%, #0a080f 50%, #07060a 75%, #050407 100%)' }}>
+      {/* Long Linear Atmospheric Glow */}
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-twitch/[0.05] via-transparent to-transparent pointer-events-none" />
+      
       <Header onReset={handleReset} currentLang={lang} onLangChange={handleLangChange} />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-6 pt-52 pb-40">
@@ -265,7 +268,10 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
             </div>
 
             <div className="w-full max-w-4xl animate-slide-up [animation-delay:150ms]">
-              <div className="bg-[#111114]/50 backdrop-blur-3xl border border-white/5 p-4 rounded-[3.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]">
+              <div 
+                style={{ willChange: 'transform' }}
+                className="bg-[#111114]/50 backdrop-blur-3xl border border-white/5 p-4 rounded-[3.5rem] shadow-[0_40px_100px_-20px_rgba(0,0,0,0.8)]"
+              >
                 <div className="bg-[#0e0e10] rounded-[3rem] p-10 flex flex-col md:flex-row gap-12 items-stretch">
                   <div className="md:w-[38%] shrink-0 order-2 md:order-1">
                     <input type="file" ref={fileInputRef} accept=".txt" onChange={(e) => {
@@ -278,7 +284,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                     }} className="hidden" />
                     <button 
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full h-full min-h-[140px] md:min-h-[280px] border-2 border-dashed border-white/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center gap-4 md:gap-6 hover:border-twitch/40 hover:bg-twitch/5 transition-all group overflow-hidden p-6 md:p-0"
+                      className="w-full h-full min-h-[140px] md:min-h-[280px] border-2 border-dashed border-white/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center gap-4 md:gap-6 hover:border-twitch/40 hover:bg-twitch/5 transition-all group overflow-hidden p-6 md:p-0 cursor-pointer"
                     >
                       <div className="p-4 md:p-7 bg-dark-800 rounded-xl md:rounded-[2rem] group-hover:scale-110 transition-transform shadow-inner shrink-0">
                         <FileText className="w-6 h-6 md:w-12 md:h-12 text-gray-500 group-hover:text-twitch" />
@@ -301,10 +307,12 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                         </div>
                       </div>
                       
-                      <div className={`
-                        relative flex-1 bg-white/[0.02] rounded-[2rem] p-6 border-2 transition-all duration-500
-                        ${!inputText ? 'border-twitch/20 animate-pulse' : 'border-white/5'}
-                        focus-within:border-twitch/50 focus-within:bg-white/[0.04] focus-within:animate-none
+                      <div 
+                        style={{ willChange: 'transform, opacity, border-color' }}
+                        className={`
+                        relative flex-1 bg-white/[0.02] rounded-[2rem] p-6 border-2 transition-all duration-1000
+                        ${!inputText ? 'border-twitch/30 animate-soft-pulse shadow-[0_0_30px_rgba(145,70,255,0.05)]' : 'border-white/5'}
+                        focus-within:border-twitch/50 focus-within:bg-white/[0.04] focus-within:animate-none focus-within:scale-[1.01] focus-within:shadow-[0_0_50px_rgba(145,70,255,0.1)]
                       `}>
                         <textarea 
                           value={inputText}
@@ -313,8 +321,8 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                           className="w-full h-44 md:h-64 bg-transparent border-none text-base md:text-xl font-medium placeholder:text-gray-700 resize-none outline-none text-white p-0 custom-scrollbar relative z-10"
                         />
                         {!inputText && (
-                          <div className="absolute top-6 left-6 pointer-events-none flex items-center gap-1">
-                            <div className="w-[3px] h-6 md:h-8 bg-twitch rounded-full animate-[pulse_1s_infinite] shadow-[0_0_10px_rgba(145,70,255,0.5)]" />
+                          <div className="absolute top-6 left-5 pointer-events-none flex items-center gap-1">
+                            <div className="w-[3px] h-6 md:h-8 bg-twitch rounded-full animate-caret shadow-[0_0_15px_rgba(145,70,255,0.8)]" />
                           </div>
                         )}
                       </div>
@@ -327,7 +335,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                         processClips(urls);
                       }}
                       disabled={status === 'loading' || !inputText.trim()}
-                      className="w-full h-16 bg-twitch hover:bg-twitch-dark text-white rounded-2xl font-[900] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(145,70,255,0.3)] transition-all hover:translate-y-[-2px] active:translate-y-[1px] disabled:opacity-50"
+                      className="w-full h-16 bg-twitch hover:bg-twitch-dark text-white rounded-2xl font-[900] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(145,70,255,0.3)] transition-all hover:translate-y-[-2px] active:translate-y-[1px] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                     >
                       {status === 'loading' ? <Loader2 className="w-6 h-6 animate-spin" /> : <> {t.processButton} <ArrowRight className="w-5 h-5" /> </>}
                     </button>

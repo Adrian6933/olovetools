@@ -42,9 +42,16 @@ export default {
   "views": "Vues",
   "ready": "PRÊT",
   "preparing": "PRÉPARATION...",
+  "quickLinks": ["Twitch en MP4", "Télécharger clips", "Téléchargement groupé", "Sauvegarder clips", "Télécharger 1080p", "Outils Streamer", "Twitch vers TikTok", "Téléchargeur Mobile", "Convertisseur Rapide", "Voir Twitch Hors Ligne"],
+  "seoTags": ["TÉLÉCHARGEUR TWITCH", "MP4 HD", "TÉLÉCHARGEMENT MASSIF", "SANS CONNEXION", "OUTIL GRATUIT", "1080P", "CLIPS TWITCH", "KIT ÉDITEUR", "CONVERTISSEUR TIKTOK", "VIDÉO GAMING", "CRÉATEUR REELS", "KIT STREAMING", "HAUTE DÉFINITION", "TÉLÉCHARGEMENT DIRECT", "TÉLÉCHARGEMENT RAPIDE", "COMPATIBLE MOBILE", "SAUVEGARDE TWITCH", "CONVERTISSEUR CLIPS", "SANS FILIGRANE", "MEILLEUR OUTIL TWITCH"],
   "legal": {
-    "privacyText": "Votre confidentialité est notre priorité. Nous ne stockons aucune donnée personnelle sur nos serveurs.",
-    "termsText": "ClipBolt est un outil indépendant destiné à un usage personnel uniquement.",
-    "cookiesText": "Nous utilisons exclusivement le stockage local technique pour les paramètres."
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies",
+    "contactEmail": "CONTACT PAR EMAIL",
+    "gotIt": "COMPRIS",
+    "privacyText": "Chez ClipBolt, la confidentialité est primordiale. Nous ne collectons, ne stockons ni ne partageons aucune donnée personnelle identifiable. Les liens sont traités en temps réel et aucun journal des clips téléchargés n'est conservé sur nos serveurs. Pour toute question, contactez-nous à adrian.contact.me.69@gmail.com.",
+    "termsText": "ClipBolt est un outil technique permettant d'accéder au contenu public de Twitch. L'utilisateur est seul responsable de son utilisation des contenus téléchargés. ClipBolt n'est pas affilié à Twitch.",
+    "cookiesText": "Notre site Web utilise uniquement le LocalStorage strictement nécessaire au fonctionnement technique du site."
   }
 };

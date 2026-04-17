@@ -38,13 +38,19 @@ export default {
   "copied": "¡Copiado!",
   "quickSearches": "BÚSQUEDAS RÁPIDAS",
   "seoKeywords": "PALABRAS CLAVE SEO",
-  "downloadTrends": "TENDENCIAS",
   "views": "Visualizaciones",
   "ready": "LISTO",
   "preparing": "PREPARANDO...",
+  "quickLinks": ["Twitch a MP4", "Descargar Clips", "Descarga Masiva", "Guardar Clips", "Descargar 1080p", "Herramientas Streamer", "Twitch a TikTok", "Descarga Móvil", "Conversor Rápido", "Ver Twitch Offline"],
+  "seoTags": ["DESCARGADOR TWITCH", "MP4 HD", "DESCARGA MASIVA", "SIN LOGIN", "HERRAMIENTA GRATIS", "1080P", "CLIPS TWITCH", "KIT EDITOR", "CONVERSOR TIKTOK", "VIDEO GAMING", "CREADOR REELS", "KIT STREAMING", "ALTA DEFINICIÓN", "DESCARGA DIRECTA", "DESCARGA RÁPIDA", "LISTO PARA MÓVIL", "GUARDAR TWITCH", "CONVERSOR CLIPS", "SIN MARCA DE AGUA", "MEJOR HERRAMIENTA TWITCH"],
   "legal": {
-    "privacyText": "Tu privacidad es nuestra prioridad. No almacenamos datos personales o clips descargados en nuestros servidores.",
-    "termsText": "ClipBolt es una herramienta independiente destinada al uso personal.",
-    "cookiesText": "Solamente utilizamos almacenamiento local con fines técnicos para los ajustes locales."
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "cookies": "Cookies",
+    "contactEmail": "CONTACTO POR EMAIL",
+    "gotIt": "ENTENDIDO",
+    "privacyText": "En ClipBolt, la privacidad es fundamental. No recopilamos, almacenamos ni compartimos datos personales identificables. Al usar nuestra herramienta, los enlaces se procesan en tiempo real y no se guarda registro de los clips descargados en nuestros servidores. No utilizamos bases de datos para rastrear la actividad de los usuarios. Para cualquier consulta sobre tus datos, puedes contactarnos en adrian.contact.me.69@gmail.com.",
+    "termsText": "ClipBolt es una herramienta técnica para el acceso a contenido público de Twitch. El usuario es el único responsable del uso que haga de los materiales descargados, debiendo respetar los derechos de autor y las licencias de los creadores de contenido. ClipBolt no está afiliado con Twitch Interactive Inc. El servicio se proporciona 'tal cual' sin garantías de ningún tipo.",
+    "cookiesText": "Nuestra web utiliza únicamente almacenamiento local (LocalStorage) estrictamente necesario para el funcionamiento técnico del sitio, como recordar tus preferencias de idioma. No utilizamos cookies de rastreo de terceros ni píxeles de publicidad. Al navegar en ClipBolt, aceptas este uso técnico esencial para garantizar la mejor experiencia posible."
   }
 };

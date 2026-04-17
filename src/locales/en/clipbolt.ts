@@ -38,13 +38,19 @@ export default {
   "copied": "Copied!",
   "quickSearches": "QUICK SEARCHES",
   "seoKeywords": "SEO KEYWORDS",
-  "downloadTrends": "DOWNLOAD TRENDS",
   "views": "Views",
   "ready": "READY",
   "preparing": "PREPARING...",
+  "quickLinks": ["Twitch to MP4", "Download Clips", "Bulk Downloader", "Clip Saver", "1080p Download", "Stream Tools", "Twitch to TikTok", "Mobile Downloader", "Fast Clip Converter", "Offline Twitch Viewer"],
+  "seoTags": ["TWITCH DOWNLOADER", "MP4 HD", "BULK DOWNLOAD", "NO LOGIN", "FREE TOOL", "1080P", "TWITCH CLIPS", "EDITOR KIT", "TIKTOK CONVERTER", "GAMING VIDEO", "REELS MAKER", "STREAMING KIT", "HIGH DEFINITION", "DIRECT DOWNLOAD", "FAST DOWNLOAD", "MOBILE READY", "TWITCH SAVER", "CLIP CONVERTER", "NO WATERMARK", "BEST TWITCH TOOL"],
   "legal": {
-    "privacyText": "Your privacy is our priority. We do not store personal data, browsing history, or downloaded clips on our servers.",
-    "termsText": "ClipBolt is an independent tool intended for personal use.",
-    "cookiesText": "We exclusively use technical LocalStorage to ensure the site's functionality."
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "cookies": "Cookies",
+    "contactEmail": "CONTACT BY EMAIL",
+    "gotIt": "I UNDERSTAND",
+    "privacyText": "At ClipBolt, privacy is paramount. We do not collect, store, or share any personally identifiable data. When using our tool, links are processed in real-time and no log of downloaded clips is kept on our servers. We do not use databases to track user activity. For any questions regarding your data, you can reach us at adrian.contact.me.69@gmail.com.",
+    "termsText": "ClipBolt is a technical tool for accessing public Twitch content. The user is solely responsible for their use of downloaded materials and must respect copyrights and licenses of content creators. ClipBolt is not affiliated with Twitch Interactive Inc. The service is provided 'as is' without warranties of any kind.",
+    "cookiesText": "Our website uses only strictly necessary LocalStorage for the technical operation of the site, such as remembering your language preferences. We do not use third-party tracking cookies or advertising pixels. By browsing ClipBolt, you accept this essential technical usage to ensure the best possible experience."
   }
 };

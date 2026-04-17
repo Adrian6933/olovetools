@@ -42,9 +42,16 @@ export default {
   "views": "次观看",
   "ready": "准备好",
   "preparing": "准备中...",
+  "quickLinks": ["Twitch 转 MP4", "下载剪辑", "批量下载器", "保存剪辑", "1080p 下载", "主播工具", "Twitch 转 TikTok", "移动端下载", "快速转换器", "离线观看 Twitch"],
+  "seoTags": ["TWITCH 下载器", "MP4 HD", "批量下载", "无需登录", "免费工具", "1080P", "TWITCH 剪辑", "编辑器组件", "TIKTOK 转换器", "游戏视频", "REELS 制作", "流媒体工具", "高清视频", "直接下载", "快速下载", "移动端就绪", "TWITCH 保存", "剪辑转换器", "无水印", "最佳 TWITCH 工具"],
   "legal": {
-    "privacyText": "隐私是我们的首要任务。我们不会在服务器上存储个人数据或下载的剪辑。",
-    "termsText": "ClipBolt 是一个专为个人使用设计的独立工具。",
-    "cookiesText": "我们仅使用技术性 LocalStorage 来确保功能正常。"
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "cookies": "Cookies",
+    "contactEmail": "邮件联系",
+    "gotIt": "我明白了",
+    "privacyText": "在 ClipBolt，隐私至关重要。我们不收集、存储或共享任何个人身份数据。链接是实时处理的，我们的服务器上不会保留已下载剪辑的日志。如有任何问题，请通过 adrian.contact.me.69@gmail.com 与我们联系。",
+    "termsText": "ClipBolt 是一个用于访问 Twitch 公共内容的辅助工具。用户对其下载材料的使用承担全部责任。ClipBolt 与 Twitch 无关。",
+    "cookiesText": "我们的网站仅使用技术上必需的本地存储（LocalStorage）来保证网站的运行。"
   }
 };

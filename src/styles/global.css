@@ -24,6 +24,26 @@
   --animate-slide-up: slide-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --animate-float: float 3s ease-in-out infinite;
   --animate-shimmer: shimmer 2s linear infinite;
+  --animate-soft-pulse: soft-pulse 5s cubic-bezier(0.645, 0.045, 0.355, 1) infinite;
+  --animate-caret: caret-blink 2.5s cubic-bezier(0.645, 0.045, 0.355, 1) infinite;
+
+  @keyframes soft-pulse {
+    0%, 100% { 
+      opacity: 1; 
+      transform: scale(1);
+      border-color: rgba(145, 70, 255, 0.3);
+    }
+    50% { 
+      opacity: 0.6; 
+      transform: scale(0.99);
+      border-color: rgba(145, 70, 255, 0.1);
+    }
+  }
+
+  @keyframes caret-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
 
   /* FormatFlow Theme */
   --color-primary: #6366f1;

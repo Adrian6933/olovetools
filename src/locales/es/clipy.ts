@@ -80,5 +80,7 @@ export default {
   "cookie_banner": "Usamos almacenamiento local técnico para guardar tus clips y ajustes. Al continuar, aceptas su uso.",
   "accept": "Aceptar",
   "restore": "Restaurar",
-  "restore_desc": "Restaurar tamaño y posición original"
+  "restore_desc": "Restaurar tamaño y posición original",
+  "duration": "Duración",
+  "total_duration": "Duración total"
 };
