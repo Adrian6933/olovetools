@@ -38,7 +38,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, content
           <h2 className="text-2xl font-display font-black text-white">{title}</h2>
           <button 
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
+            className="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -54,7 +54,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, content
           </p>
           <button 
             onClick={handleCopyEmail}
-            className="flex items-center gap-3 px-4 py-3 bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl transition-all group w-fit"
+            className="flex items-center gap-3 px-4 py-3 bg-slate-900 border border-slate-800 hover:border-slate-600 rounded-xl transition-all group w-fit cursor-pointer"
           >
             <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
             <span className="font-mono text-sm text-slate-300 group-hover:text-white transition-colors">

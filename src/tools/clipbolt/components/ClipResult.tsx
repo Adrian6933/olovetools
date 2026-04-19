@@ -164,7 +164,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang }) =
 
       <button 
         onClick={handleComponentReset} 
-        className="absolute -top-3 -right-3 z-40 bg-dark-700 hover:bg-red-500 text-gray-500 hover:text-white rounded-full p-2 shadow-xl transition-all ring-4 ring-[#070708]"
+        className="absolute -top-3 -right-3 z-40 bg-dark-700 hover:bg-red-500 text-gray-500 hover:text-white rounded-full p-2 shadow-xl transition-all ring-4 ring-[#070708] cursor-pointer hover:scale-110 active:scale-90"
       >
           <X className="w-4 h-4" />
       </button>
@@ -230,7 +230,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang }) =
                     <button
                         key={res.quality}
                         onClick={() => isDownloading ? handleCancelDownload(res.quality) : handleDownload(res)}
-                        className={`w-full group/btn relative rounded-2xl p-5 text-left flex items-center justify-between border border-white/5 transition-all overflow-hidden ${i === 0 ? 'bg-twitch/5 border-twitch/20 shadow-lg shadow-twitch/5' : 'bg-dark-700 hover:bg-dark-600'}`}
+                        className={`w-full group/btn relative rounded-2xl p-5 text-left flex items-center justify-between border border-white/5 transition-all overflow-hidden cursor-pointer active:scale-[0.98] ${i === 0 ? 'bg-twitch/5 border-twitch/20 shadow-lg shadow-twitch/5 hover:bg-twitch/10' : 'bg-dark-700 hover:bg-dark-600 hover:border-white/10'}`}
                     >
                         {isDownloading && (
                             <div 

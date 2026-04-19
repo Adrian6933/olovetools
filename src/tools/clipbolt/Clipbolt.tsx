@@ -284,7 +284,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                     }} className="hidden" />
                     <button 
                       onClick={() => fileInputRef.current?.click()}
-                      className="w-full h-full min-h-[140px] md:min-h-[280px] border-2 border-dashed border-white/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center gap-4 md:gap-6 hover:border-twitch/40 hover:bg-twitch/5 transition-all group overflow-hidden p-6 md:p-0 cursor-pointer"
+                      className="w-full h-full min-h-[140px] md:min-h-[280px] border-2 border-dashed border-white/5 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center gap-4 md:gap-6 hover:border-twitch/40 hover:bg-twitch/5 transition-all group overflow-hidden p-6 md:p-0 cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
                     >
                       <div className="p-4 md:p-7 bg-dark-800 rounded-xl md:rounded-[2rem] group-hover:scale-110 transition-transform shadow-inner shrink-0">
                         <FileText className="w-6 h-6 md:w-12 md:h-12 text-gray-500 group-hover:text-twitch" />
@@ -300,10 +300,10 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 md:gap-0 px-2">
                         <div className="order-2 md:order-1 flex items-center gap-2.5">
                           <div className="w-1.5 h-1.5 bg-twitch rounded-full animate-pulse" />
-                          <span className="text-[10px] font-black text-gray-400 md:text-gray-500 uppercase tracking-[0.2em]">Entrada de enlaces</span>
+                          <span className="text-[10px] font-black text-gray-400 md:text-gray-500 uppercase tracking-[0.2em]">{t.linkInputLabel}</span>
                         </div>
                         <div className="order-1 md:order-2 px-3 py-1 bg-twitch/10 rounded-md border border-twitch/20">
-                          <span className="text-[9px] font-black text-twitch uppercase tracking-[0.2em]">Twitch Clips</span>
+                          <span className="text-[9px] font-black text-twitch uppercase tracking-[0.2em]">{t.twitchClipsLabel}</span>
                         </div>
                       </div>
                       
@@ -335,7 +335,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                         processClips(urls);
                       }}
                       disabled={status === 'loading' || !inputText.trim()}
-                      className="w-full h-16 bg-twitch hover:bg-twitch-dark text-white rounded-2xl font-[900] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(145,70,255,0.3)] transition-all hover:translate-y-[-2px] active:translate-y-[1px] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
+                      className="w-full h-16 bg-twitch hover:bg-twitch-dark text-white rounded-2xl font-[900] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(145,70,255,0.3)] transition-all hover:translate-y-[-2px] hover:scale-[1.01] active:translate-y-[1px] active:scale-[0.99] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                     >
                       {status === 'loading' ? <Loader2 className="w-6 h-6 animate-spin" /> : <> {t.processButton} <ArrowRight className="w-5 h-5" /> </>}
                     </button>
@@ -413,7 +413,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                 <div className="relative flex-1 max-w-xs" ref={qualityRef}>
                     <button 
                       onClick={() => setIsQualityOpen(!isQualityOpen)}
-                      className="relative z-50 w-full bg-dark-950 text-white rounded-2xl p-4 border border-white/5 flex items-center justify-between group hover:border-twitch/30 transition-all"
+                      className="relative z-50 w-full bg-dark-950 text-white rounded-2xl p-4 border border-white/5 flex items-center justify-between group hover:border-twitch/30 transition-all cursor-pointer hover:bg-white/[0.03] active:scale-[0.98]"
                     >
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-white/5 rounded-lg group-hover:bg-twitch/10 transition-colors">
@@ -435,7 +435,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                               <button 
                                 key={opt.id}
                                 onClick={() => { setSelectedQuality(opt.id); setIsQualityOpen(false); }}
-                                className={`w-full flex items-center gap-4 p-4 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 ${selectedQuality === opt.id ? 'bg-twitch/5' : ''}`}
+                                className={`w-full flex items-center gap-4 p-4 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 cursor-pointer ${selectedQuality === opt.id ? 'bg-twitch/5' : ''}`}
                               >
                                   <div className={`p-2 rounded-lg ${selectedQuality === opt.id ? 'bg-twitch/20' : 'bg-white/5'}`}>
                                     {opt.icon}
@@ -454,10 +454,10 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                 </div>
 
                 <div className="flex items-center gap-3 px-2">
-                    <button onClick={downloadAllAsZip} disabled={!!zipProgress} className="bg-white text-black font-[900] text-xs px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50">
+                    <button onClick={downloadAllAsZip} disabled={!!zipProgress} className="bg-white text-black font-[900] text-xs px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl">
                         {zipProgress ? (
                           zipProgress.preparingZip ? (
-                            <> <Loader2 className="w-4 h-4 animate-spin" /> PREPARING ZIP... </>
+                            <> <Loader2 className="w-4 h-4 animate-spin" /> {t.preparingZip || 'PREPARING ZIP...'} </>
                           ) : (
                             <div className="flex flex-col items-center">
                               <div className="flex items-center gap-2">
@@ -472,10 +472,10 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                             </div>
                           )
                         ) : (
-                          <> <FolderDown className="w-4 h-4" /> Download ZIP </>
+                          <> <FolderDown className="w-4 h-4" /> {t.downloadZip || 'Download ZIP'} </>
                         )}
                     </button>
-                    <button onClick={handleReset} className="w-12 h-12 bg-dark-950 border border-white/5 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-colors">
+                    <button onClick={handleReset} className="w-12 h-12 bg-dark-950 border border-white/5 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer hover:bg-red-500/10 hover:border-red-500/20 active:scale-90">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -490,7 +490,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                     return (
                       <div key={c.id} className="bg-[#111114]/50 backdrop-blur-3xl border border-red-500/20 rounded-[3rem] p-6 md:p-10 flex items-center justify-between">
                         <div className="text-red-400 font-medium">Failed to load clip: <span className="text-gray-500 text-sm ml-2">{c.url}</span></div>
-                        <button onClick={() => setClips(prev => prev.filter(x => x.id !== c.id))} className="w-10 h-10 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center text-red-400 transition-colors">
+                        <button onClick={() => setClips(prev => prev.filter(x => x.id !== c.id))} className="w-10 h-10 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center text-red-400 transition-colors cursor-pointer">
                           <X className="w-5 h-5" />
                         </button>
                       </div>
@@ -512,7 +512,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
 
       <CookieBanner lang={lang} />
 
-      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 z-50`}><ArrowUp className="w-6 h-6" /></button>
+      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 z-50 cursor-pointer`}><ArrowUp className="w-6 h-6" /></button>
     </div>
   );
 };

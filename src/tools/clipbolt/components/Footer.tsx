@@ -72,7 +72,7 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
               {/* Download Trends */}
               <div className="space-y-10">
                   <h4 className="text-white font-black uppercase text-xs flex items-center gap-3 tracking-widest italic">
-                    <Layers className="w-4 h-4 text-twitch" /> DOWNLOAD TRENDS
+                    <Layers className="w-4 h-4 text-twitch" /> {t.downloadTrends || 'DOWNLOAD TRENDS'}
                   </h4>
                   <div className="p-8 bg-[#111114] border border-white/5 rounded-[2rem] relative overflow-hidden">
                       <p className="text-[11px] text-gray-500 leading-relaxed italic font-medium">
@@ -94,7 +94,7 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                       <div className="relative group/copy">
                         <button 
                           onClick={handleCopyEmail}
-                          className="flex items-center gap-2 text-[10px] font-bold text-gray-500 hover:text-twitch transition-all cursor-pointer"
+                          className="flex items-center gap-2 text-[10px] font-bold text-gray-500 hover:text-twitch transition-all cursor-pointer hover:scale-105 active:scale-95 bg-white/5 px-4 py-2 rounded-lg"
                         >
                           <Mail className="w-3.5 h-3.5" />
                           adrian.contact.me.69@gmail.com
@@ -110,19 +110,19 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                    <nav className="flex items-center gap-8">
                       <button 
                         onClick={() => onOpenLegal('privacy')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors cursor-pointer"
+                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-all cursor-pointer hover:scale-110 active:scale-90"
                       >
                         {tl.privacy}
                       </button>
                       <button 
                         onClick={() => onOpenLegal('terms')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors cursor-pointer"
+                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-all cursor-pointer hover:scale-110 active:scale-90"
                       >
                         {tl.terms}
                       </button>
                       <button 
                         onClick={() => onOpenLegal('cookies')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-colors cursor-pointer"
+                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-all cursor-pointer hover:scale-110 active:scale-90"
                       >
                         {tl.cookies}
                       </button>
@@ -131,9 +131,9 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
 
               <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
                   <div className="flex flex-wrap justify-center gap-10 text-[11px] font-[900] uppercase text-gray-700 tracking-[0.2em]">
-                      <span className="flex items-center gap-2 hover:text-white transition-colors cursor-default"><Globe className="w-4 h-4" /> GLOBAL ACCESS</span>
-                      <span className="flex items-center gap-2 hover:text-white transition-colors cursor-default"><Zap className="w-4 h-4" /> INSTANT MP4</span>
-                      <span className="flex items-center gap-2 hover:text-white transition-colors cursor-default"><Shield className="w-4 h-4" /> DMCA SAFE</span>
+                      <span className="flex items-center gap-2 hover:text-white transition-all cursor-pointer hover:scale-110 active:scale-95"><Globe className="w-4 h-4" /> {t.globalAccess || 'GLOBAL ACCESS'}</span>
+                      <span className="flex items-center gap-2 hover:text-white transition-all cursor-pointer hover:scale-110 active:scale-95"><Zap className="w-4 h-4" /> {t.instantMp4 || 'INSTANT MP4'}</span>
+                      <span className="flex items-center gap-2 hover:text-white transition-all cursor-pointer hover:scale-110 active:scale-95"><Shield className="w-4 h-4" /> {t.dmcaSafe || 'DMCA SAFE'}</span>
                   </div>
                   <p className="text-gray-600 text-xs font-bold tracking-tight">
                       Built by <a href={`/${lang}`} className="text-twitch hover:underline">oLoveTools</a>

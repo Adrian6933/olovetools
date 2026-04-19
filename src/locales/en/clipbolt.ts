@@ -38,6 +38,7 @@ export default {
   "copied": "Copied!",
   "quickSearches": "QUICK SEARCHES",
   "seoKeywords": "SEO KEYWORDS",
+  "downloadTrends": "DOWNLOAD TRENDS",
   "views": "Views",
   "ready": "READY",
   "preparing": "PREPARING...",

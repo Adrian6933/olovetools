@@ -8,7 +8,7 @@ import LegalModal from './components/LegalModal';
 import { ImageFormat, ConversionSettings, BatchImageItem, ConversionResult } from './types';
 import { useTranslation, Language } from '../../locales/dictionary';
 import { convertImage, formatBytes, readFileAsDataURL, loadImage, createBatchZip, processUploadedFile } from './services/imageService';
-import { X, ArrowRight, SplitSquareHorizontal, Layers, Ruler, ScanLine, FileImage, ShieldCheck, Zap, Maximize, FileType, Home, Sparkles, Wand2, ArrowRightLeft, Mail } from 'lucide-react';
+import { X, ArrowRight, ArrowUp, SplitSquareHorizontal, Layers, Ruler, ScanLine, FileImage, ShieldCheck, Zap, Maximize, FileType, Home, Sparkles, Wand2, ArrowRightLeft, Mail } from 'lucide-react';
 
 
 
@@ -43,6 +43,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
   const [batchProgress, setBatchProgress] = useState<{current: number, total: number} | undefined>(undefined);
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -157,8 +158,15 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
 
   useEffect(() => {
     window.addEventListener('paste', handlePaste as any);
-    return () => window.removeEventListener('paste', handlePaste as any);
-  }, [images]); // Re-bind when images change to keep handleFilesSelect fresh if needed, though useCallback/ref is better. Actually handleFilesSelect is stable enough if I use functional setImages.
+    
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('paste', handlePaste as any);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [images]);
 
   const reset = () => {
     if (previewResult) URL.revokeObjectURL(previewResult.url);
@@ -266,7 +274,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-6xl md:text-8xl font-display font-black text-white tracking-tighter leading-none"
+                className="text-5xl md:text-8xl font-display font-black text-white tracking-tighter leading-none"
               >
                 {t.title}<span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-love to-secondary animate-pulse-slow">{t.titleHighlight}</span>
               </motion.h1>
@@ -443,8 +451,8 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
             className="flex flex-col lg:flex-row gap-10 items-start max-w-[1700px] mx-auto w-full"
           >
             
-            <div className="w-full lg:w-3/4 space-y-10">
-              <div className="flex items-center justify-between px-2">
+            <div className="w-full lg:w-[68%] space-y-10">
+              <div className="flex flex-col gap-6 px-2">
                 <div className="flex items-center gap-4">
                   <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20 shadow-lg glow-primary">
                     <SplitSquareHorizontal className="w-6 h-6 text-primary" />
@@ -457,7 +465,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                 
                 <button 
                   onClick={reset}
-                  className="group flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-2xl shadow-xl transition-all active:scale-95"
+                  className="w-fit group flex items-center gap-2 px-6 py-3 text-sm font-bold text-white bg-slate-800/80 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-2xl shadow-xl transition-all active:scale-95 cursor-pointer"
                 >
                   <Home className="w-4 h-4 group-hover:scale-110 transition-transform" /> {t.startOver}
                 </button>
@@ -567,7 +575,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                             <span className={`text-[10px] font-black uppercase tracking-widest border px-2 py-0.5 rounded-md ${activeImage?.settings ? 'border-secondary/20 text-secondary/60' : 'border-primary/20 text-primary/60'}`}>
                                {getOutputFormatLabel(effectiveSettings.format)}
                             </span>
-                            <span className={`font-mono font-black px-3 py-1 rounded-lg text-sm border shadow-lg ${previewResult.size < activeImage.originalSize ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'}`}>
+                            <span className={`font-mono font-black px-3 py-1 rounded-lg text-sm border shadow-lg whitespace-nowrap ${previewResult.size < activeImage.originalSize ? 'bg-green-500/10 border-green-500/30 text-green-400' : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'}`}>
                               {formatBytes(previewResult.size)}
                             </span>
                         </div>
@@ -595,7 +603,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                      </div>
                    </div>
                    
-                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-8 pt-16 pb-8 px-12 max-h-[500px] overflow-y-auto pr-6 custom-scrollbar">
+                   <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-8 pt-16 pb-8 px-12 max-h-[500px] overflow-y-auto pr-6 custom-scrollbar">
                       <AnimatePresence mode="popLayout" initial={false}>
                       {images.length < 50 && (
                         <motion.button
@@ -626,7 +634,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                           <button
                             onClick={() => setSelectedIndex(idx)}
                             className={`
-                              w-full aspect-square rounded-2xl overflow-hidden border-4 transition-all duration-300 relative shadow-xl isolate
+                              w-full aspect-square rounded-2xl overflow-hidden border-4 transition-all duration-300 relative shadow-xl isolate cursor-pointer
                               ${idx === selectedIndex 
                                 ? 'border-primary z-20 shadow-primary/40 shadow-2xl ring-4 ring-primary/30 ring-offset-2 ring-offset-dark' 
                                 : img.settings 
@@ -655,7 +663,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                           <button
                              onClick={(e) => removeImage(e, img.id)}
                              className={`
-                               absolute -top-2 -right-2 w-7 h-7 bg-red-500 hover:bg-red-400 text-white rounded-full flex items-center justify-center shadow-[0_10px_20px_rgba(239,68,68,0.4)] z-40 opacity-100 sm:opacity-0 sm:group-hover/item:opacity-100 transition-all duration-300 hover:scale-110 active:scale-90
+                               absolute -top-2 -right-2 w-7 h-7 bg-red-500 hover:bg-red-400 text-white rounded-full flex items-center justify-center shadow-[0_10px_20px_rgba(239,68,68,0.4)] z-40 opacity-100 sm:opacity-0 sm:group-hover/item:opacity-100 transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer
                              `}
                           >
                              <X className="w-4 h-4 stroke-[3px]" />
@@ -681,7 +689,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
               )}
             </div>
 
-            <div className="w-full lg:w-1/4 h-full sticky top-32">
+            <div className="w-full lg:w-[32%] h-full sticky top-32">
               <ControlPanel
                 settings={settings}
                 onSettingsChange={setSettings}
@@ -710,7 +718,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
               </span>
               <button 
                 onClick={handleCopyEmail}
-                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group"
+                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors group cursor-pointer"
               >
                 <Mail className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
                 <span className="font-mono text-sm">
@@ -722,13 +730,13 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
             <div className="hidden md:block w-px h-12 bg-slate-800"></div>
 
             <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-              <button onClick={() => setActiveModal('privacy')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setActiveModal('privacy')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
                 {t.privacyPolicy || 'Privacy Policy'}
               </button>
-              <button onClick={() => setActiveModal('terms')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setActiveModal('terms')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
                 {t.termsOfService || 'Terms of Service'}
               </button>
-              <button onClick={() => setActiveModal('cookies')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => setActiveModal('cookies')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
                 {t.cookiePolicy || 'Cookie Policy'}
               </button>
             </div>
@@ -805,6 +813,20 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
           </div>
         }
       />
+
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-8 right-8 z-[60] w-14 h-14 bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer group"
+          >
+            <ArrowUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

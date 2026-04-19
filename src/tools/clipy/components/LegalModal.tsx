@@ -33,7 +33,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
         
         <button 
           onClick={onClose} 
-          className="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full"
+          className="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full cursor-pointer"
         >
           <X className="w-6 h-6" />
         </button>
@@ -57,7 +57,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
                 <p className="text-gray-500 text-sm mb-4 font-bold uppercase tracking-widest">{t('contact_us_at')}</p>
                 <button 
                   onClick={handleCopyEmail}
-                  className="flex flex-col sm:flex-row items-start sm:items-center gap-4 group p-1 transition-all w-full overflow-hidden"
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-4 group p-1 transition-all w-full overflow-hidden cursor-pointer"
                 >
                     <span className="text-twitch-base font-black text-xs sm:text-lg md:text-xl group-hover:text-white group-hover:underline underline-offset-8 transition-all break-all text-left">
                         {supportEmail}

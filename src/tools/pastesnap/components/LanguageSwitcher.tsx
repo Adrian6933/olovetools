@@ -6,6 +6,8 @@ interface LanguageSwitcherProps {
   onLanguageChange: (lang: string) => void;
 }
 
+import { ChevronDown } from 'lucide-react';
+
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang, onLanguageChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -23,16 +25,18 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang,
   const activeLang = LANGUAGES.find(l => l.code === currentLang) || LANGUAGES[0];
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative w-full flex justify-center" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 bg-gray-900/50 hover:bg-gray-800 transition-colors text-sm font-bold text-gray-300 uppercase"
+        className="flex items-center justify-between md:justify-center w-[70%] md:w-12 h-12 md:p-0 px-8 rounded-full border border-gray-700 bg-gray-900/50 hover:bg-gray-800 transition-colors text-xs md:text-sm font-black text-gray-300 uppercase cursor-pointer shadow-lg outline-none"
       >
-        {activeLang.code}
+        <span className="md:hidden">{activeLang.name}</span>
+        <span className="hidden md:block">{activeLang.code}</span>
+        <ChevronDown className={`w-4 h-4 ml-2 transition-transform md:hidden ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-[#141724] border border-gray-800 rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-0 mt-12 w-48 bg-[#141724] border border-gray-800 rounded-lg shadow-2xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="py-1">
             {LANGUAGES.map((lang) => (
               <button
@@ -41,7 +45,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ currentLang,
                   onLanguageChange(lang.code);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center px-4 py-3 text-sm hover:bg-gray-800/50 transition-colors ${
+                className={`w-full flex items-center px-4 py-3 text-sm hover:bg-gray-800/50 transition-colors cursor-pointer ${
                   currentLang === lang.code ? 'bg-gray-800/80' : ''
                 }`}
               >

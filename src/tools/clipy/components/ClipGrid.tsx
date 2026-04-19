@@ -173,10 +173,10 @@ const ClipGrid: React.FC<ClipGridProps> = ({
       <div className="w-full flex justify-center mt-24 mb-24">
         {!isLoading && hasMore && (
           <div className="flex flex-col sm:flex-row gap-6 w-full max-w-2xl px-6">
-            <button onClick={onLoadMore} className="flex-1 bg-[#1a1a24] hover:bg-[#2c2c36] text-white font-black py-6 px-10 rounded-[2rem] border border-white/5 transition-premium active:scale-95 flex items-center justify-center gap-3 shadow-2xl">
+            <button onClick={onLoadMore} className="flex-1 bg-[#1a1a24] hover:bg-[#2c2c36] text-white font-black py-6 px-10 rounded-[2rem] border border-white/5 transition-premium active:scale-95 flex items-center justify-center gap-3 shadow-2xl cursor-pointer">
               <ArrowDownCircle className="w-6 h-6 text-twitch-base/30" /> {t('load_more')}
             </button>
-            <button onClick={onLoadAll} className="flex-1 bg-twitch-base/60 hover:bg-twitch-base/80 text-white font-black py-6 px-10 rounded-[2rem] transition-premium shadow-xl shadow-twitch-base/5 active:scale-95 flex items-center justify-center gap-3">
+            <button onClick={onLoadAll} className="flex-1 bg-twitch-base/60 hover:bg-twitch-base/80 text-white font-black py-6 px-10 rounded-[2rem] transition-premium shadow-xl shadow-twitch-base/5 active:scale-95 flex items-center justify-center gap-3 cursor-pointer">
               <FastForward className="w-6 h-6" /> {t('load_all')}
             </button>
           </div>

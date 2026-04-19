@@ -433,7 +433,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
           <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
             <div className="relative" ref={langMenuRef}>
-              <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/20 hover:border-white/30 transition-all active:scale-95 group">
+              <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/20 hover:border-white/30 transition-all active:scale-95 group cursor-pointer">
                 <span className="text-[10px] md:text-xs font-black uppercase text-gray-200 group-hover:text-white transition-colors tracking-widest">{lang}</span>
               </button>
               {showLangMenu && (

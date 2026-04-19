@@ -142,7 +142,7 @@ const DropZone: React.FC<DropZoneProps> = ({ onFilesSelect, language }) => {
       >
         <a 
           href={`/${language.toLowerCase()}/pastesnap`}
-          className="group flex items-center gap-4 px-8 py-4 bg-slate-900/40 border border-slate-800 hover:border-secondary/50 rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:bg-slate-800"
+          className="group flex items-center gap-4 px-8 py-4 bg-slate-900/40 border border-slate-800 hover:border-secondary/50 rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:bg-slate-800 cursor-pointer"
         >
           <div className="p-2 bg-secondary/10 rounded-lg group-hover:scale-110 transition-transform">
             <ClipboardCopy className="w-4 h-4 text-secondary" />

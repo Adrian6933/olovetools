@@ -209,7 +209,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
 
           <div 
             onClick={handlePasteClick}
-            className={`relative group transition-all duration-1000 rounded-[3rem] md:rounded-[4rem] overflow-hidden border border-white/5 mx-auto w-full animate-in zoom-in stagger-2 cursor-pointer hover:shadow-[0_0_50px_rgba(79,70,229,0.15)]
+            className={`relative group transition-all duration-1000 rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-white/5 mx-auto w-full animate-in zoom-in stagger-2 cursor-pointer hover:shadow-[0_0_50px_rgba(79,70,229,0.15)]
               ${images.length > 0 ? 'bg-white/[0.03] shadow-[0_100px_150px_rgba(0,0,0,0.8)] ring-1 ring-white/10' : 'bg-white/[0.01] hover:bg-white/[0.03] border-dashed border-white/10'}
               ${isFocused && images.length === 0 ? 'ring-2 ring-indigo-500/20' : ''}`}
           >
@@ -219,7 +219,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                   <h2 className="text-3xl font-black text-white">{t.imagesInCollection} ({images.length})</h2>
                   <p className="text-indigo-400 font-bold">{t.pasteMore}</p>
                 </div>
-                <div className={`grid gap-12 ${images.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+                <div className={`grid gap-12 ${images.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
                    {images.map((img, idx) => (
                      <motion.div 
                         key={img.id} 
@@ -227,7 +227,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: -20 }}
                         transition={{ duration: 0.4, delay: idx * 0.1 }}
-                        className="relative group/card glass-card rounded-[2.5rem] md:rounded-[4rem] p-8 md:p-10 flex flex-col space-y-8"
+                        className="relative group/card glass-card rounded-2xl md:rounded-3xl p-8 md:p-10 flex flex-col space-y-8"
                       >
                         <div className="relative aspect-video flex items-center justify-center overflow-hidden rounded-3xl bg-black/60 ring-1 ring-white/5">
                           <img 
@@ -235,21 +235,19 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                             alt={`${t.title} - ${t.pastedAt} ${img.timestamp.toLocaleTimeString()}`} 
                             className="max-h-full max-w-full object-contain transition-transform duration-1000 group-hover/card:scale-105"
                           />
-                          <div className="absolute top-4 left-4 bg-indigo-500/90 text-[8px] font-black uppercase tracking-widest px-3 py-1 rounded-full text-white shadow-lg animate-in fade-in slide-in-from-top-1 duration-1000">
-                            Auto-Detected
-                          </div>
-                          <div className="absolute top-6 right-6 flex space-x-3 opacity-0 group-hover/card:opacity-100 transition-all duration-300 translate-y-2 group-hover/card:translate-y-0">
+
+                          <div className="absolute top-3 right-3 md:top-6 md:right-6 flex space-x-2 md:space-x-3 opacity-100 lg:opacity-0 lg:group-hover/card:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-2 lg:group-hover/card:translate-y-0 z-30">
                              <button 
-                              onClick={() => setExpandedImage(img)}
-                              className="p-4 bg-white/10 hover:bg-white text-white hover:text-black rounded-2xl shadow-2xl backdrop-blur-3xl border border-white/20 transition-all hover:scale-110 active:scale-90"
+                              onClick={(e) => { e.stopPropagation(); setExpandedImage(img); }}
+                              className="p-2.5 md:p-4 bg-white/10 hover:bg-white text-white hover:text-black rounded-xl md:rounded-2xl shadow-2xl backdrop-blur-3xl border border-white/20 transition-all hover:scale-110 active:scale-90 cursor-pointer"
                             >
-                              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+                              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
                             </button>
                             <button 
-                              onClick={() => removeImage(img.id)}
-                              className="p-4 bg-red-500/20 hover:bg-red-500 text-white rounded-2xl shadow-2xl backdrop-blur-3xl border border-red-500/40 transition-all hover:scale-110 active:scale-90"
+                              onClick={(e) => { e.stopPropagation(); removeImage(img.id); }}
+                              className="p-2.5 md:p-4 bg-red-500/20 hover:bg-red-500 text-white rounded-xl md:rounded-2xl shadow-2xl backdrop-blur-3xl border border-red-500/40 transition-all hover:scale-110 active:scale-90 cursor-pointer"
                             >
-                              <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
                           </div>
                         </div>
@@ -261,7 +259,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                            </div>
                            <button 
                              onClick={() => downloadImage(img)}
-                             className="w-full sm:w-auto px-6 py-3 bg-white text-black font-black text-lg rounded-xl hover:bg-indigo-500 hover:text-white transition-all flex items-center justify-center space-x-2 shadow-[0_10px_20px_-5px_rgba(255,255,255,0.1)] active:scale-95 shrink-0"
+                             className="w-full sm:w-auto px-6 py-3 bg-white text-black font-black text-lg rounded-xl hover:bg-indigo-500 hover:text-white transition-all flex items-center justify-center space-x-2 shadow-[0_10px_20px_-5px_rgba(255,255,255,0.1)] active:scale-95 shrink-0 cursor-pointer"
                            >
                              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                              <span>{t.downloadBtn}</span>
@@ -271,10 +269,10 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                    ))}
                 </div>
 
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-6 md:gap-12 border-t border-white/5 pt-16">
+                <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 border-t border-white/5 pt-16">
                    <button 
                       onClick={resetApp}
-                      className="w-full sm:w-auto px-14 py-6 bg-red-500/5 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-[2.5rem] font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95"
+                      className="w-full sm:w-auto px-14 py-6 bg-red-500/5 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-3xl font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
                     >
                       {t.clearBtn}
                     </button>
@@ -282,7 +280,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                     {images.length > 1 && (
                       <button 
                         onClick={downloadAllImages}
-                        className="w-full sm:w-auto px-14 py-6 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white border border-green-500/20 rounded-[2.5rem] font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link"
+                        className="w-full sm:w-auto px-14 py-6 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white border border-green-500/20 rounded-3xl font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link cursor-pointer"
                       >
                         <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                         <span>{t.downloadAllBtn}</span>
@@ -291,7 +289,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                     
                     <a 
                       href={`/${lang.toLowerCase()}/formatflow`}
-                      className="w-full sm:w-auto px-14 py-6 bg-indigo-600/10 hover:bg-indigo-500 text-indigo-400 hover:text-white border border-indigo-500/20 rounded-[2.5rem] font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link"
+                      className="w-full lg:w-auto px-10 py-5 bg-indigo-600/10 hover:bg-indigo-500 text-indigo-400 hover:text-white border border-indigo-500/20 rounded-3xl font-black text-lg tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link cursor-pointer"
                     >
                       <svg className="w-7 h-7 group-hover/link:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                       <span>{t.convertBtn}</span>
@@ -317,7 +315,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 pt-16">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16 pt-16">
             {t.features.map((feature, idx) => (
               <motion.div 
                 key={idx} 
@@ -325,7 +323,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: idx * 0.2 }}
-                className="p-10 md:p-12 glass-card rounded-[3rem] text-left group hover:-translate-y-4 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300"
+                className="p-8 md:p-12 glass-card rounded-3xl text-left group hover:-translate-y-4 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300"
               >
                 <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-700 origin-left inline-block">
                   {['⚡', '🛡️', '✨'][idx]}
@@ -370,7 +368,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
               </div>
             </div>
 
-            <div className="p-10 md:p-24 rounded-[3rem] md:rounded-[4rem] bg-[#0c0e1a] border border-white/5 space-y-16 animate-in slide-in-from-bottom">
+            <div className="p-8 md:p-24 rounded-3xl md:rounded-[2.5rem] bg-[#0c0e1a] border border-white/5 space-y-16 animate-in slide-in-from-bottom">
                <div className="max-w-4xl space-y-6">
                  <h3 className="text-3xl md:text-6xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h3>
                  <div className="h-2 w-24 bg-indigo-500 rounded-full"></div>
@@ -527,11 +525,11 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
           <div className="flex items-center space-x-8 text-gray-800 font-black text-xs tracking-widest pt-12 uppercase border-t border-white/5 w-full justify-center">
             <span>&copy; {new Date().getFullYear()} oLoveTools</span>
             <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
-            <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-all hover:scale-105">{t.privacyPolicy}</button>
+            <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer">{t.privacyPolicy}</button>
             <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
-            <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-all hover:scale-105">{t.termsOfService}</button>
+            <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer">{t.termsOfService}</button>
             <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
-            <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-all hover:scale-105">{t.cookiePolicy}</button>
+            <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer">{t.cookiePolicy}</button>
             <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
             <button 
               onClick={() => {
@@ -546,7 +544,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                 }
               }}
               id="copy-email-btn"
-              className="hover:text-indigo-400 transition-all hover:scale-105"
+              className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer"
             >
               {t.emailAddress}
             </button>

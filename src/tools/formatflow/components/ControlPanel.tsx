@@ -55,7 +55,7 @@ const SettingsControls: React.FC<{
                 key={fmt}
                 onClick={() => handleFormatChange(fmt)}
                 className={`
-                  py-2.5 px-1 rounded-xl text-xs font-bold transition-all duration-300 truncate
+                  py-2.5 px-1 rounded-xl text-xs font-bold transition-all duration-300 truncate cursor-pointer
                   ${settings.format === fmt
                     ? activeClass
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
@@ -264,7 +264,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               className={`
                 w-full py-4 rounded-2xl font-display font-bold text-slate-300 flex items-center justify-center gap-2.5 
                 transition-all duration-300 border border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white
-                group
+                group cursor-pointer
                 ${isProcessing ? 'opacity-30 cursor-not-allowed' : ''}
               `}
             >
@@ -286,7 +286,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               transition-all duration-500 relative overflow-hidden group
               ${isProcessing
                 ? 'bg-slate-800 text-slate-500 opacity-50 cursor-not-allowed' 
-                : 'bg-white text-slate-900 hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.4)]'
+                : 'bg-white text-slate-900 hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.4)] cursor-pointer'
               }
             `}
           >
