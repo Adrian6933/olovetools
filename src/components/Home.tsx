@@ -45,9 +45,9 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         <div className="relative pt-24 pb-20 selection:bg-indigo-500/30 selection:text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <motion.h1 
-              initial={{ opacity: 1, y: 10 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+              transition={{ duration: 0.7, delay: 0.05, ease: "easeOut" }}
               className="text-6xl md:text-8xl font-black text-white mb-10 tracking-[-0.04em] leading-[0.95] font-outfit"
             >
               {t('heroTitle')} {t('heroHighlight')}
@@ -111,7 +111,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               </motion.div>
             </div>
 
-            <div className="flex items-center justify-between mb-8 text-slate-400 text-sm font-medium uppercase tracking-widest">
+            <div className="flex items-center justify-between mb-8 text-slate-500 text-sm font-medium uppercase tracking-widest">
               <span>{t('showing')} {filteredProjects.length} {t('projectsText')}</span>
             </div>
 

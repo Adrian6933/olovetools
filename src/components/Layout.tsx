@@ -392,11 +392,11 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
                 <span className="font-bold text-white font-outfit text-xl tracking-tight">oLoveTools</span>
               </div>
               <div className="hidden md:block h-4 w-px bg-white/10" />
-              <span className="text-slate-300 text-sm font-medium">© {currentYear} {t.footerRights}</span>
+              <span className="text-slate-400 text-sm font-medium">© {currentYear} {t.footerRights}</span>
             </div>
             
             <div className="flex items-center gap-4 w-full md:w-auto">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest whitespace-nowrap">{t.contactText}</span>
+              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest whitespace-nowrap">{t.contactText}</span>
               <div className="relative w-full max-w-[240px] md:w-auto">
                 <button 
                   onClick={handleCopyEmail}
