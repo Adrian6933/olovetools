@@ -396,7 +396,7 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
             </div>
             
             <div className="flex items-center gap-4 w-full md:w-auto">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest whitespace-nowrap">{t.contactText}</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest whitespace-nowrap">{t.contactText}</span>
               <div className="relative w-full max-w-[240px] md:w-auto">
                 <button 
                   onClick={handleCopyEmail}

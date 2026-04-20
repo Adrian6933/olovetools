@@ -45,13 +45,23 @@
     ExpiresByType font/woff2 "access plus 1 year"
     ExpiresByType font/woff "access plus 1 year"
     
-    # CSS y JS: caché de 1 mes (Astro siempre hashea los archivos nuevos)
-    ExpiresByType text/css "access plus 1 month"
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
+    # CSS y JS: caché de 1 año (Astro hashea los nombres de archivo)
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType text/javascript "access plus 1 year"
     
     # HTML: No cachearlo a largo plazo para asegurar que el contenido esté actualizado
     ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# 4b. Cache-Control explícito para assets hasheados de Astro
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|css|woff2|woff|ttf|eot|svg|png|jpg|jpeg|gif|webp|avif|ico)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+    <FilesMatch "\.html$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </FilesMatch>
 </IfModule>
 
 

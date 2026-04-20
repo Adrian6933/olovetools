@@ -69,9 +69,10 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content={currentThemeColor} />
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roobert:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Preconnect to Google Fonts for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
     {langs.map(l => (
       <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}`} />
@@ -223,8 +224,16 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
         .animate-float { animation: float 6s ease-in-out infinite; }
       </style>
     )}
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999"
-     crossorigin="anonymous"></script>
+    <!-- Defer AdSense loading to avoid blocking render -->
+    <script is:inline>
+      window.addEventListener('load', function() {
+        var s = document.createElement('script');
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999';
+        s.async = true;
+        s.crossOrigin = 'anonymous';
+        document.head.appendChild(s);
+      });
+    </script>
   </head>
   <body>
     <div id="root">

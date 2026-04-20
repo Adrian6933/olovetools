@@ -12,6 +12,9 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'All'>('All');
 
+
+
+
   const filteredProjects = useMemo(() => {
     return MOCK_PROJECTS.filter(project => {
       const matchesSearch = project.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -45,17 +48,17 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         <div className="relative pt-24 pb-20 selection:bg-indigo-500/30 selection:text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
             <motion.h1 
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.05, ease: "easeOut" }}
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
               className="text-6xl md:text-8xl font-black text-white mb-10 tracking-[-0.04em] leading-[0.95] font-outfit"
             >
               {t('heroTitle')} {t('heroHighlight')}
             </motion.h1>
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
+              transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
               className="text-xl md:text-2xl text-slate-400 max-w-3xl mx-auto mb-14 leading-relaxed font-light"
             >
               {t('heroSubtitle')}
@@ -111,7 +114,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               </motion.div>
             </div>
 
-            <div className="flex items-center justify-between mb-8 text-slate-500 text-sm font-medium uppercase tracking-widest">
+            <div className="flex items-center justify-between mb-8 text-slate-400 text-sm font-medium uppercase tracking-widest">
               <span>{t('showing')} {filteredProjects.length} {t('projectsText')}</span>
             </div>
 
@@ -141,7 +144,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
             ) : (
               <div className="text-center py-32 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 border-dashed">
                 <Globe className="w-20 h-20 text-slate-600 mx-auto mb-6 opacity-50" />
-                <h3 className="text-2xl font-bold text-white mb-3 tracking-tight font-outfit">{t('noProjects')}</h3>
+                <h2 className="text-2xl font-bold text-white mb-3 tracking-tight font-outfit">{t('noProjects')}</h2>
                 <p className="text-slate-400 text-lg">{t('tryAdjusting')}</p>
               </div>
             )}
