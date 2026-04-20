@@ -82,6 +82,9 @@
     
     # Previene robo de información en URLs al hacer clic a sitios externos
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Aislamiento de orígenes (COOP) - Mejora Prácticas Recomendadas en Lighthouse
+    Header always set Cross-Origin-Opener-Policy "same-origin-allow-popups"
 </IfModule>
 
 
