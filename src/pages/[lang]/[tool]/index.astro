@@ -74,6 +74,13 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
+    
+    {tool === 'clipy' && (
+      <>
+        <link rel="preconnect" href="https://id.twitch.tv" />
+        <link rel="preconnect" href="https://static-cdn.jtvnw.net" />
+      </>
+    )}
 
     {langs.map(l => (
       <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}`} />

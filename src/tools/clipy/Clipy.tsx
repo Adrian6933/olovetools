@@ -433,7 +433,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
           <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
             <div className="relative" ref={langMenuRef}>
-              <button onClick={() => setShowLangMenu(!showLangMenu)} className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/20 hover:border-white/30 transition-all active:scale-95 group cursor-pointer">
+              <button onClick={() => setShowLangMenu(!showLangMenu)} aria-label="Change language" className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/20 hover:border-white/30 transition-all active:scale-95 group cursor-pointer">
                 <span className="text-[10px] md:text-xs font-black uppercase text-gray-200 group-hover:text-white transition-colors tracking-widest">{lang}</span>
               </button>
               {showLangMenu && (
@@ -453,7 +453,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
               )}
             </div>
             <div className="relative" ref={savedListRef}>
-              <button onClick={() => setShowSavedList(!showSavedList)} className={`w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/10 transition-all active:scale-95 cursor-pointer ${showSavedList ? 'bg-[#2c2c36] text-twitch-base' : 'text-gray-400 hover:text-white'} ${triggerShake ? 'animate-shake' : ''}`}>
+              <button onClick={() => setShowSavedList(!showSavedList)} aria-label="Saved clips" className={`w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/10 transition-all active:scale-95 cursor-pointer ${showSavedList ? 'bg-[#2c2c36] text-twitch-base' : 'text-gray-400 hover:text-white'} ${triggerShake ? 'animate-shake' : ''}`}>
                 <Archive className="w-5 h-5 md:w-6 md:h-6" />
                 {savedClips.length > 0 && <span className="absolute -top-1 -right-1 w-5 h-5 md:w-6 md:h-6 bg-twitch-base text-white text-[9px] md:text-[10px] font-black flex items-center justify-center rounded-lg md:rounded-xl border border-[#050507] shadow-lg">{savedClips.length}</span>}
               </button>
@@ -606,6 +606,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         <button
           onClick={scrollToTop}
           className={`bg-[#1a1a24] text-gray-500 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all hover:text-white hover:bg-twitch-base hover:shadow-[0_0_30px_rgba(145,70,255,0.3)] hover:-translate-y-2 active:scale-90 ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
+          aria-label="Scroll to top"
         >
           <ArrowUp className="w-6 h-6 md:w-8 md:h-8" />
         </button>

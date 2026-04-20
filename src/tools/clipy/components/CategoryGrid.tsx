@@ -16,7 +16,8 @@ const CategoryCard: React.FC<{
   onClick: () => void; 
   t: (key: string) => string;
   showRank: boolean;
-}> = ({ category, rank, onClick, t, showRank }) => {
+  index: number;
+}> = ({ category, rank, onClick, t, showRank, index }) => {
   return (
     <div 
       onClick={onClick} 
@@ -30,14 +31,15 @@ const CategoryCard: React.FC<{
           src={category.box_art_url}
           alt={category.name || 'Category artwork'}
           className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 will-change-transform"
-          loading="lazy"
+          loading={index < 6 ? "eager" : "lazy"}
+          fetchPriority={index < 6 ? "high" : undefined}
         />
         
         {/* Ranking Badge - Only shown on initial load/popular categories */}
         {showRank && rank && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 md:left-6 md:translate-x-0 md:top-6 z-20 whitespace-nowrap">
               <div className="bg-twitch-base text-white px-2 py-1 md:px-4 md:py-1.5 rounded-lg md:rounded-xl text-[10px] md:text-[11px] font-black shadow-[0_4px_20px_rgba(145,70,255,0.5)] border border-white/20 flex items-center gap-1 md:gap-1.5 animate-in slide-in-from-top-4 duration-500">
-                  <span className="opacity-60">{t('trending_rank')}</span>
+                  <span>{t('trending_rank')}</span>
                   <span className="text-xs md:text-sm">#{rank}</span>
               </div>
           </div>
@@ -49,9 +51,9 @@ const CategoryCard: React.FC<{
       </div>
 
       <div className="flex flex-col px-4">
-        <h3 className="font-black text-lg md:text-xl text-gray-200 truncate group-hover:text-twitch-base transition-colors tracking-tight leading-tight mb-2" title={category.name}>
+        <h2 className="font-black text-lg md:text-xl text-gray-200 truncate group-hover:text-twitch-base transition-colors tracking-tight leading-tight mb-2" title={category.name}>
           {category.name}
-        </h3>
+        </h2>
         <div className="flex">
             <span className="text-[9px] uppercase font-black bg-white/5 px-4 py-1.5 rounded-full text-gray-500 border border-white/5 tracking-[0.2em] opacity-40">
               {showRank ? t('tag_top_category') : t('tag_twitch_category')}
@@ -86,6 +88,7 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick
               onClick={() => onCategoryClick(cat)} 
               t={t}
               showRank={showRank}
+              index={index}
           />
       ))}
     </div>
