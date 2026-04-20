@@ -29,22 +29,37 @@ const baseUrl = 'https://olovetools.com';
 
 const currentFavicon = TOOL_FAVICONS[tool] || TOOL_FAVICONS.default;
 const currentThemeColor = TOOL_THEME_COLORS[tool] || TOOL_THEME_COLORS.default;
+
+// Standardize title: ToolName | Short Description
+const toolNames: Record<string, string> = {
+  clipy: 'Clipy',
+  clipbolt: 'ClipBolt',
+  formatflow: 'FormatFlow',
+  pastesnap: 'PasteSnap'
+};
+const name = toolNames[tool as string] || ((tool as string).charAt(0).toUpperCase() + (tool as string).slice(1));
+let seoTitle = t('seo_title');
+seoTitle = seoTitle.replace(/^oLoveTools\s*[|\-]\s*/gi, '');
+const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase()) 
+  ? seoTitle 
+  : `${name} | ${seoTitle}`;
+
 ---
 
 <html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{t('seo_title')}</title>
+    <title>{finalTitle}</title>
+    <meta property="og:title" content={finalTitle} />
+    <meta name="twitter:title" content={finalTitle} />
     <ClientRouter />
     <meta name="description" content={t('seo_description')} />
-    <meta property="og:title" content={t('seo_title')} />
     <meta property="og:description" content={t('seo_description')} />
     <meta property="og:url" content={`${baseUrl}/${lang}/${tool}`} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={`${baseUrl}/og-${tool}.jpg`} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={t('seo_title')} />
     <meta name="twitter:description" content={t('seo_description')} />
     <meta name="twitter:image" content={`${baseUrl}/og-${tool}.jpg`} />
     <link rel="canonical" href={`${baseUrl}/${lang}/${tool}`} />
@@ -54,9 +69,13 @@ const currentThemeColor = TOOL_THEME_COLORS[tool] || TOOL_THEME_COLORS.default;
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content={currentThemeColor} />
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Roobert:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="preconnect" href="https://fundingchoicesmessages.google.com">
+    
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roobert:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Roobert:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
 
     {langs.map(l => (
       <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}`} />
@@ -208,6 +227,21 @@ const currentThemeColor = TOOL_THEME_COLORS[tool] || TOOL_THEME_COLORS.default;
         .animate-float { animation: float 6s ease-in-out infinite; }
       </style>
     )}
+    <script is:inline>
+      function loadAdSense() {
+        if (window.adsLoaded) return;
+        window.adsLoaded = true;
+        const script = document.createElement('script');
+        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999";
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        document.head.appendChild(script);
+      }
+      window.addEventListener('scroll', loadAdSense, { once: true });
+      window.addEventListener('mousemove', loadAdSense, { once: true });
+      window.addEventListener('touchstart', loadAdSense, { once: true });
+      setTimeout(loadAdSense, 3500); 
+    </script>
   </head>
   <body>
     <div id="root">

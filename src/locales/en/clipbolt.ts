@@ -1,6 +1,6 @@
 export default {
   "heroTitle": "DOWNLOAD TWITCH CLIPS",
-  "seo_title": "DOWNLOAD TWITCH CLIPS",
+  "seo_title": "ClipBolt | Download Twitch Clips",
   "heroDesc": "The ultimate tool to save Twitch moments. Fast, reliable and zero registration. Download entire lists of clips at once.",
   "seo_description": "The ultimate tool to save Twitch moments. Fast, reliable and zero registration. Download entire lists of clips at once.",
   "uploadTxt": "UPLOAD .TXT LIST",

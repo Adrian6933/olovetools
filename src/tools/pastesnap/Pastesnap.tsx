@@ -287,13 +287,33 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                       </button>
                     )}
                     
-                    <a 
-                      href={`/${lang.toLowerCase()}/formatflow`}
+                    <button 
+                      onClick={async () => {
+                        try {
+                          const dataToTransfer = await Promise.all(images.map(async (img) => {
+                            const response = await fetch(img.url);
+                            const blob = await response.blob();
+                            return new Promise<{name: string, type: string, data: string}>((resolve) => {
+                              const reader = new FileReader();
+                              reader.onloadend = () => resolve({
+                                name: img.name,
+                                type: blob.type,
+                                data: reader.result as string
+                              });
+                              reader.readAsDataURL(blob);
+                            });
+                          }));
+                          localStorage.setItem('pastesnap_transfer', JSON.stringify(dataToTransfer));
+                          window.location.href = `/${lang.toLowerCase()}/formatflow`;
+                        } catch (e) {
+                          window.location.href = `/${lang.toLowerCase()}/formatflow`;
+                        }
+                      }}
                       className="w-full lg:w-auto px-10 py-5 bg-indigo-600/10 hover:bg-indigo-500 text-indigo-400 hover:text-white border border-indigo-500/20 rounded-3xl font-black text-lg tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link cursor-pointer"
                     >
                       <svg className="w-7 h-7 group-hover/link:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
                       <span>{t.convertBtn}</span>
-                    </a>
+                    </button>
                 </div>
               </div>
             ) : (
@@ -507,7 +527,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
           
           <a 
             href={`/${lang.toLowerCase()}/`}
-            className="flex items-center space-x-6 group scale-125 md:scale-[1.8] outline-none shrink-0"
+            className="flex items-center space-x-6 group scale-[1.1] md:scale-[1.6] outline-none shrink-0"
           >
             <div className="w-12 h-12 bg-indigo-600 rounded-[1.2rem] flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_15px_30px_-5px_rgba(79,70,229,0.5)]">
               <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
@@ -522,15 +542,30 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
             {t.footerTagline}
           </p>
 
-          <div className="flex items-center space-x-8 text-gray-800 font-black text-xs tracking-widest pt-12 uppercase border-t border-white/5 w-full justify-center">
-            <span>&copy; {new Date().getFullYear()} oLoveTools</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
-            <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer">{t.privacyPolicy}</button>
-            <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
-            <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer">{t.termsOfService}</button>
-            <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
-            <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer">{t.cookiePolicy}</button>
-            <span className="w-1.5 h-1.5 rounded-full bg-white/10"></span>
+          <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-gray-800 font-black text-[11px] md:text-xs tracking-widest pt-12 uppercase border-t border-white/5 w-full">
+            <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
+            
+            <button 
+              onClick={() => setActiveModal('privacy')} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl"
+            >
+              {t.privacyPolicy}
+            </button>
+            
+            <button 
+              onClick={() => setActiveModal('terms')} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl"
+            >
+              {t.termsOfService}
+            </button>
+            
+            <button 
+              onClick={() => setActiveModal('cookies')} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl"
+            >
+              {t.cookiePolicy}
+            </button>
+            
             <button 
               onClick={() => {
                 navigator.clipboard.writeText(t.emailAddress);
@@ -544,7 +579,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                 }
               }}
               id="copy-email-btn"
-              className="hover:text-indigo-400 transition-all hover:scale-105 cursor-pointer"
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer rounded-xl"
             >
               {t.emailAddress}
             </button>

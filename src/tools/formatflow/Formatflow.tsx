@@ -159,6 +159,25 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
   useEffect(() => {
     window.addEventListener('paste', handlePaste as any);
     
+    // Check for transfers from Pastesnap
+    const transfer = localStorage.getItem('pastesnap_transfer');
+    if (transfer) {
+      try {
+        const items = JSON.parse(transfer) as {name: string, type: string, data: string}[];
+        const files = items.map(item => {
+          const byteString = atob(item.data.split(',')[1]);
+          const ab = new ArrayBuffer(byteString.length);
+          const ia = new Uint8Array(ab);
+          for (let i = 0; i < byteString.length; i++) ia[i] = byteString.charCodeAt(i);
+          return new File([ab], item.name, { type: item.type });
+        });
+        handleFilesSelect(files);
+        localStorage.removeItem('pastesnap_transfer');
+      } catch (e) {
+        console.error("Transfer failed", e);
+      }
+    }
+    
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
     window.addEventListener('scroll', handleScroll);
     
@@ -663,7 +682,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                           <button
                              onClick={(e) => removeImage(e, img.id)}
                              className={`
-                               absolute -top-2 -right-2 w-7 h-7 bg-red-500 hover:bg-red-400 text-white rounded-full flex items-center justify-center shadow-[0_10px_20px_rgba(239,68,68,0.4)] z-40 opacity-100 sm:opacity-0 sm:group-hover/item:opacity-100 transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer
+                               absolute -top-2 -right-2 w-7 h-7 bg-red-500 hover:bg-red-400 text-white rounded-full flex items-center justify-center shadow-[0_10px_20px_rgba(239,68,68,0.4)] z-40 opacity-100 lg:opacity-0 lg:group-hover/item:opacity-100 transition-all duration-300 hover:scale-110 active:scale-90 cursor-pointer
                              `}
                           >
                              <X className="w-4 h-4 stroke-[3px]" />
@@ -729,14 +748,23 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
             
             <div className="hidden md:block w-px h-12 bg-slate-800"></div>
 
-            <div className="flex flex-wrap justify-center gap-x-8 gap-y-4">
-              <button onClick={() => setActiveModal('privacy')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
+            <div className="flex flex-col md:flex-row flex-wrap justify-center gap-y-2 md:gap-y-6 gap-x-6 md:gap-x-12 items-center w-full md:w-auto px-4">
+              <button 
+                onClick={() => setActiveModal('privacy')} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap"
+              >
                 {t.privacyPolicy || 'Privacy Policy'}
               </button>
-              <button onClick={() => setActiveModal('terms')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
+              <button 
+                onClick={() => setActiveModal('terms')} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap"
+              >
                 {t.termsOfService || 'Terms of Service'}
               </button>
-              <button onClick={() => setActiveModal('cookies')} className="text-sm font-bold text-slate-400 hover:text-white transition-colors cursor-pointer">
+              <button 
+                onClick={() => setActiveModal('cookies')} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap"
+              >
                 {t.cookiePolicy || 'Cookie Policy'}
               </button>
             </div>

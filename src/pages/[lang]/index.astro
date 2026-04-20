@@ -42,7 +42,13 @@ const baseUrl = 'https://olovetools.com';
     <link rel="apple-touch-icon" href="/icon.svg">
     <link rel="manifest" href="/manifest.json">
     
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://pagead2.googlesyndication.com">
+    <link rel="preconnect" href="https://fundingchoicesmessages.google.com">
+    
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
     {langs.map(l => (
       <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}`} />
@@ -73,6 +79,22 @@ const baseUrl = 'https://olovetools.com';
         display: none !important;
       }
     </style>
+    <script is:inline>
+      function loadAdSense() {
+        if (window.adsLoaded) return;
+        window.adsLoaded = true;
+        const script = document.createElement('script');
+        script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999";
+        script.async = true;
+        script.crossOrigin = "anonymous";
+        document.head.appendChild(script);
+      }
+      // Cargar AdSense al primer scroll, movimiento o tras 3 segundos
+      window.addEventListener('scroll', loadAdSense, { once: true });
+      window.addEventListener('mousemove', loadAdSense, { once: true });
+      window.addEventListener('touchstart', loadAdSense, { once: true });
+      setTimeout(loadAdSense, 3000); 
+    </script>
   </head>
   <body class="bg-[#060609]">
     <Home lang={lang || 'en'} dictionary={dictionary} client:load />

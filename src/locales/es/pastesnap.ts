@@ -30,7 +30,7 @@ export default {
   ],
   "footerCredit": "Parte de la suite oLoveTools",
   "seoHeroTitle": "Pega y guarda desde tu portapapeles en segundos.",
-  "seo_title": "Pega y guarda desde tu portapapeles en segundos.",
+  "seo_title": "PasteSnap | Guardar del Portapapeles",
   "seoHeroText": "¿Alguna vez has hecho una captura y necesitado el archivo al instante? Con PasteSnap, solo pulsa Ctrl+V y descarga tu imagen.",
   "seo_description": "¿Alguna vez has hecho una captura y necesitado el archivo al instante? Con PasteSnap, solo pulsa Ctrl+V y descarga tu imagen.",
   "seoHeroList": [

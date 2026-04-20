@@ -671,15 +671,30 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             </p>
 
             {/* Minimalist Legal Footer */}
-            <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4 md:gap-12 items-center px-4">
-              <button onClick={() => setLegalModal('privacy')} className="text-gray-300 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('privacy_policy')}</button>
-              <button onClick={() => setLegalModal('terms')} className="text-gray-300 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('terms_of_service')}</button>
-              <button onClick={() => setLegalModal('cookies')} className="text-gray-300 hover:text-twitch-base transition-colors text-[9px] md:text-[10px] font-bold uppercase tracking-widest whitespace-nowrap cursor-pointer">{t('cookie_policy')}</button>
+            <div className="flex flex-col md:flex-row flex-wrap justify-center gap-y-1 md:gap-12 items-center px-4 w-full">
+              <button 
+                onClick={() => setLegalModal('privacy')} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl"
+              >
+                {t('privacy_policy')}
+              </button>
+              <button 
+                onClick={() => setLegalModal('terms')} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl"
+              >
+                {t('terms_of_service')}
+              </button>
+              <button 
+                onClick={() => setLegalModal('cookies')} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl"
+              >
+                {t('cookie_policy')}
+              </button>
               <div className="hidden md:block w-px h-3 bg-white/10 mx-2"></div>
               <a
                 href="mailto:adrian.contact.me.69@gmail.com"
                 onClick={handleContactClick}
-                className="flex items-center gap-2 text-gray-400 hover:text-twitch-base transition-colors text-[10px] md:text-[11px] font-bold uppercase tracking-widest group whitespace-nowrap cursor-pointer"
+                className="w-full md:w-auto py-4 md:py-0 flex items-center justify-center gap-2 text-gray-400 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[10px] md:text-[11px] font-bold uppercase tracking-widest group whitespace-nowrap cursor-pointer rounded-2xl"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <span>{t('contact_link')}</span>

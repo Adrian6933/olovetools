@@ -190,6 +190,6 @@ export default {
     "privacyPolicy": "Política de Privacidad",
     "accept": "Aceptar y Continuar"
   },
-  "seo_title": "oLoveTools | FormatFlow",
+  "seo_title": "FormatFlow | Convertidor de Imágenes",
   "seo_description": "FormatFlow es la herramienta definitiva para pasar cualquier formato (JPG, PNG, WEBP) a HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, redimensionar fotos y cambiar formatos de forma segura en tu navegador."
 };

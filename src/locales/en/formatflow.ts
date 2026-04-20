@@ -190,6 +190,6 @@ export default {
     "privacyPolicy": "Privacy Policy",
     "accept": "Accept & Continue"
   },
-  "seo_title": "oLoveTools | FormatFlow",
+  "seo_title": "FormatFlow | Image Converter",
   "seo_description": "FormatFlow is the ultimate browser-based tool to change any image format (JPG, PNG, WEBP) to HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, resize photos, and compress images securely."
 };

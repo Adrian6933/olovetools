@@ -107,22 +107,22 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                       </div>
                   </div>
 
-                   <nav className="flex items-center gap-8">
+                   <nav className="flex flex-col md:flex-row items-center gap-y-2 md:gap-8 w-full md:w-auto">
                       <button 
                         onClick={() => onOpenLegal('privacy')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-all cursor-pointer hover:scale-110 active:scale-90"
+                        className="w-full md:w-auto py-4 md:py-0 text-[11px] font-[900] text-gray-500 hover:text-twitch uppercase tracking-[0.3em] transition-all cursor-pointer whitespace-nowrap active:bg-white/5 active:scale-95 rounded-2xl"
                       >
                         {tl.privacy}
                       </button>
                       <button 
                         onClick={() => onOpenLegal('terms')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-all cursor-pointer hover:scale-110 active:scale-90"
+                        className="w-full md:w-auto py-4 md:py-0 text-[11px] font-[900] text-gray-500 hover:text-twitch uppercase tracking-[0.3em] transition-all cursor-pointer whitespace-nowrap active:bg-white/5 active:scale-95 rounded-2xl"
                       >
                         {tl.terms}
                       </button>
                       <button 
                         onClick={() => onOpenLegal('cookies')}
-                        className="text-[11px] font-bold text-gray-500 hover:text-twitch uppercase tracking-widest transition-all cursor-pointer hover:scale-110 active:scale-90"
+                        className="w-full md:w-auto py-4 md:py-0 text-[11px] font-[900] text-gray-500 hover:text-twitch uppercase tracking-[0.3em] transition-all cursor-pointer whitespace-nowrap active:bg-white/5 active:scale-95 rounded-2xl"
                       >
                         {tl.cookies}
                       </button>

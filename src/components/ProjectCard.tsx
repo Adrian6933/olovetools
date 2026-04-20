@@ -43,10 +43,10 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel
       </div>
 
       <div className="flex-1 relative z-10">
-        <h3 className="text-2xl font-bold text-white mb-3 font-outfit tracking-tight group-hover:text-indigo-300 transition-colors flex items-center gap-2">
+        <h2 className="text-2xl font-bold text-white mb-3 font-outfit tracking-tight group-hover:text-indigo-300 transition-colors flex items-center gap-2">
           {project.name}
           <ExternalLink className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-slate-400" />
-        </h3>
+        </h2>
         <p className="text-slate-300 text-sm leading-relaxed mb-8 font-medium">
           {project.description}
         </p>

@@ -1,5 +1,5 @@
 export default {
-  "seo_title": "Clipy | Buscador y Descubridor de Clips de Twitch",
+  "seo_title": "Clipy | Descargar Clips de Twitch",
   "seo_description": "Busca y encuentra los mejores clips de Twitch por juego, streamer o palabra clave. Guarda tus momentos favoritos y descárgalos fácilmente.",
   "app_title": "CLIPY",
   "app_subtitle": "Descubre los mejores momentos de Twitch",

@@ -30,7 +30,7 @@ export default {
   ],
   "footerCredit": "Part of oLoveTools suite",
   "seoHeroTitle": "Paste and save from your Clipboard in seconds.",
-  "seo_title": "Paste and save from your Clipboard in seconds.",
+  "seo_title": "PasteSnap | Clipboard Saver",
   "seoHeroText": "Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.",
   "seo_description": "Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.",
   "seoHeroList": [

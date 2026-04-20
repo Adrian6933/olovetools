@@ -4,29 +4,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta http-equiv="refresh" content="0;url=/en/" />
     <title>Redirecting...</title>
+    <meta charset="utf-8" />
+    <meta name="robots" content="noindex" />
   </head>
   <body>
-    <script>
+    <script is:inline>
       // 1. Intentar obtener el idioma guardado previamente
       const savedLang = window.localStorage.getItem('olovetools_lang');
       
-      // 2. Idiomas que tu web soporta actualmente
+      // 2. Idiomas soportados
       const supportedLangs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
       
       let targetLang;
-
       if (savedLang && supportedLangs.includes(savedLang)) {
-        // Si ya tenemos una preferencia guardada, usamos esa
         targetLang = savedLang;
       } else {
-        // Si es un usuario nuevo, detectamos el idioma de su navegador
         const browserLang = navigator.language.split('-')[0];
         targetLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
       }
 
-      window.location.href = `/${targetLang}`;
+      window.location.replace(`/${targetLang}/`);
     </script>
   </body>
 </html>
