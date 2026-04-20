@@ -77,7 +77,8 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
     
     {tool === 'clipy' && (
       <>
-        <link rel="preconnect" href="https://id.twitch.tv" />
+        <link rel="preconnect" href="https://api.twitch.tv" crossorigin />
+        <link rel="preconnect" href="https://id.twitch.tv" crossorigin />
         <link rel="preconnect" href="https://static-cdn.jtvnw.net" />
       </>
     )}

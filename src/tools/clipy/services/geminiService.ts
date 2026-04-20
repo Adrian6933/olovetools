@@ -55,13 +55,13 @@ const ALIASES: Record<string, string> = {
 };
 
 const getBoxArtUrl = (url: string) => {
-    if (!url) return 'https://placehold.co/285x380/202020/white?text=No+Image';
-    // Request smaller images: displayed at ~181x241, using 285x380 for retina
-    let newUrl = url.replace(/-{width}x{height}/g, '-285x380');
+    if (!url) return 'https://placehold.co/188x250/202020/white?text=No+Image';
+    // Request perfectly sized images for 181x241 display to satisfy Lighthouse
+    let newUrl = url.replace(/-{width}x{height}/g, '-188x250');
     if (newUrl === url) {
-        newUrl = url.replace(/-\d+x\d+/g, '-285x380');
+        newUrl = url.replace(/-\d+x\d+/g, '-188x250');
     }
-    newUrl = newUrl.replace('{width}', '285').replace('{height}', '380');
+    newUrl = newUrl.replace('{width}', '188').replace('{height}', '250');
     return newUrl;
 };
 
