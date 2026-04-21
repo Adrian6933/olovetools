@@ -1,11 +1,11 @@
 import { Project, ProjectCategory, Language, LanguageCode } from './types';
 
 export const TOOL_FAVICONS: Record<string, string> = {
-  clipy: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%239146ff' d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V11h20v8z'/><g transform='rotate(-25 4 11)'><path fill='%237c3aed' d='M22 11V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3h20z'/><path fill='white' opacity='0.6' d='m6.7 6 2.7 5h-1.5l-2.7-5h1.5zm5 0 2.7 5h-1.5l-2.7-5h1.5zm5 0 2.7 5h-1.5l-2.7-5h1.5z'/></g></svg>",
-  clipbolt: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239146ff'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/></svg>",
-  formatflow: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><circle cx='9' cy='9' r='2'/><path d='m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21'/></svg>",
-  pastesnap: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><circle cx='8.5' cy='8.5' r='1.5'/><polyline points='21 15 16 10 5 21'/></svg>",
-  default: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%236366f1'><path d='M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z'/></svg>"
+  clipy: "/favicon-clipy.png",
+  clipbolt: "/favicon-clipbolt.png",
+  formatflow: "/favicon-formatflow.png",
+  pastesnap: "/favicon-pastesnap.png",
+  default: "/icon.svg"
 };
 
 export const TOOL_THEME_COLORS: Record<string, string> = {

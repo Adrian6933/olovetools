@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SearchState, TimeFilter, SortType, Category, Clip } from './types';
-import { searchTwitchCategories, searchTwitchClips, getClipById } from './services/geminiService';
+import { searchTwitchCategories, searchTwitchClips, getClipById, getTwitchUserAvatars } from './services/geminiService';
 import { useTranslation, Language, FLAGS, LANGUAGE_NAMES } from '../../locales/dictionary';
 import SearchBar from './components/SearchBar';
 import FilterBar from './components/FilterBar';
@@ -229,6 +229,30 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Background Avatar Loader: Carga las fotos de perfil en segundo plano sin bloquear la UI
+  useEffect(() => {
+    if (state.mode !== 'clips' || state.clips.length === 0) return;
+
+    const clipsToEnrich = state.clips.filter(c => !c.broadcaster_image && !c.id.startsWith('mock-'));
+    if (clipsToEnrich.length > 0) {
+      const ids = Array.from(new Set(clipsToEnrich.map(c => c.broadcaster_id)));
+      getTwitchUserAvatars(ids).then(avatars => {
+        if (Object.keys(avatars).length === 0) return;
+        
+        setState(prev => {
+          // Solo actualizamos si seguimos en el mismo set de clips
+          const updatedClips = prev.clips.map(clip => {
+            if (avatars[clip.broadcaster_id]) {
+              return { ...clip, broadcaster_image: avatars[clip.broadcaster_id] };
+            }
+            return clip;
+          });
+          return { ...prev, clips: updatedClips };
+        });
+      }).catch(e => console.error("Avatar enrichment failed", e));
+    }
+  }, [state.clips, state.mode]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -255,10 +279,24 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         const clipId = clipIdMatch ? clipIdMatch[1] : null;
 
         if (clipId) {
+          // Cambiamos a modo clips inmediatamente para mostrar skeletons
+          setState(prev => ({
+            ...prev,
+            isLoading: true,
+            error: null,
+            mode: 'clips',
+            clips: [],
+            paginationCursor: null
+          }));
+          
+          if (typeof window !== 'undefined') {
+            window.history.pushState({ view: 'clips' }, '');
+          }
+
           const clip = await getClipById(clipId);
           if (searchId !== lastSearchId.current) return;
           if (clip) {
-            setState(prev => ({ ...prev, clips: [clip], isLoading: false, mode: 'clips' }));
+            setState(prev => ({ ...prev, clips: [clip], isLoading: false }));
             return;
           }
         }
@@ -291,21 +329,33 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
   }, [state.isLoading, state.paginationCursor, state.query, state.mode]);
 
   const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter) => {
-    setState(prev => ({ ...prev, isLoading: true, error: null, clips: [], paginationCursor: null }));
+    // Cambiamos el modo inmediatamente para que el usuario entre a la sección y vea los skeletons
+    setState(prev => ({ 
+      ...prev, 
+      mode: 'clips',
+      isLoading: true, 
+      error: null, 
+      clips: [], 
+      paginationCursor: null,
+      activeCategory: category 
+    }));
+
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ view: 'clips' }, '');
+    }
+
     try {
       const { clips, cursor } = await searchTwitchClips(category.id, category.name, time, null);
       setState(prev => ({
         ...prev,
         clips,
         paginationCursor: cursor,
-        activeCategory: category,
-        mode: 'clips',
         isLoading: false
       }));
     } catch (error: any) {
       setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
     }
-  }, [t]);
+  }, [t, handleSearch]);
 
   const loadMoreClips = useCallback(async () => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
@@ -367,10 +417,28 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     setState(prev => ({ ...prev, sortType: sort }));
     if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter);
   };
-  const goBackToCategories = () => {
+  const goBackToCategories = useCallback(() => {
     handleSearch("popular");
     setPlayingClip(null);
-  };
+  }, [handleSearch]);
+
+  // Manejo del botón "Atrás" del navegador/ratón
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // Si hay un clip reproduciéndose, lo cerramos primero
+      if (playingClip) {
+        setPlayingClip(null);
+        return;
+      }
+      // Si estamos en modo clips y el usuario pulsa atrás, volvemos a categorías
+      if (state.mode === 'clips') {
+        handleSearch("popular");
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [state.mode, handleSearch, playingClip]);
 
   const handleLogoClick = () => {
     handleSearch("popular");
@@ -581,12 +649,24 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             {!state.query.includes('clip') && (
               <FilterBar currentTime={state.timeFilter} currentSort={state.sortType} onTimeChange={handleFilterChange} onSortChange={handleSortChange} onLoadAll={loadAllClips} isLoading={state.isLoading} disabled={state.isLoading && state.clips.length === 0} t={t} />
             )}
-            <ClipGrid clips={state.clips} isLoading={state.isLoading} hasMore={!!state.paginationCursor} onLoadMore={loadMoreClips} onLoadAll={loadAllClips} onClipClick={(clip) => setPlayingClip(clip)} savedClipIds={new Set(savedClips.map(c => c.id))} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />
+            <ClipGrid clips={state.clips} isLoading={state.isLoading} hasMore={!!state.paginationCursor} onLoadMore={loadMoreClips} onLoadAll={loadAllClips} onClipClick={(clip) => {
+              setPlayingClip(clip);
+              if (typeof window !== 'undefined') {
+                window.history.pushState({ view: 'player' }, '');
+              }
+            }} savedClipIds={new Set(savedClips.map(c => c.id))} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />
           </div>
         )}
       </main>
 
-      {playingClip && <FloatingPlayer clip={playingClip} onClose={() => setPlayingClip(null)} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />}
+      {playingClip && <FloatingPlayer clip={playingClip} onClose={() => {
+        setPlayingClip(null);
+        // Si el usuario cierra el player manualmente, deberíamos ir atrás en el historial 
+        // para "limpiar" la entrada que pusimos al abrirlo
+        if (window.history.state?.view === 'player') {
+          window.history.back();
+        }
+      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />}
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300">
@@ -605,10 +685,10 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
       <div className="fixed bottom-4 right-4 z-40">
         <button
           onClick={scrollToTop}
-          className={`bg-[#1a1a24] text-gray-500 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all hover:text-white hover:bg-twitch-base hover:shadow-[0_0_30px_rgba(145,70,255,0.3)] hover:-translate-y-2 active:scale-90 ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
+          className={`bg-[#1a1a24] text-gray-400 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all hover:text-white hover:bg-twitch-base hover:shadow-[0_20px_40px_rgba(145,70,255,0.3)] hover:-translate-y-3 active:scale-90 cursor-pointer group ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
           aria-label="Scroll to top"
         >
-          <ArrowUp className="w-6 h-6 md:w-8 md:h-8" />
+          <ArrowUp className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
         </button>
       </div>
 

@@ -140,6 +140,7 @@ export const getClipById = async (clipId: string): Promise<Clip | null> => {
             id: clip.id,
             title: clip.title,
             broadcaster_name: clip.broadcaster_name,
+            broadcaster_id: clip.broadcaster_id,
             view_count: clip.view_count,
             thumbnail_url: getThumbnailUrl(clip.thumbnail_url),
             url: clip.url,
@@ -188,10 +189,11 @@ export const searchTwitchClips = async (
 
         clipsData.sort((a: any, b: any) => b.view_count - a.view_count);
 
-        const mappedClips = clipsData.map((clip: any) => ({
+        const mappedClips: Clip[] = clipsData.map((clip: any) => ({
             id: clip.id,
             title: clip.title,
             broadcaster_name: clip.broadcaster_name,
+            broadcaster_id: clip.broadcaster_id,
             view_count: clip.view_count,
             thumbnail_url: getThumbnailUrl(clip.thumbnail_url),
             url: clip.url,
@@ -202,6 +204,30 @@ export const searchTwitchClips = async (
         return { clips: mappedClips, cursor: nextCursor };
     } catch (error) {
         return { clips: [], cursor: null };
+    }
+};
+
+export const getTwitchUserAvatars = async (userIds: string[]): Promise<Record<string, string>> => {
+    if (userIds.length === 0) return {};
+    try {
+        const headers = await getHeaders();
+        const batchSize = 100;
+        const avatars: Record<string, string> = {};
+
+        for (let i = 0; i < userIds.length; i += batchSize) {
+            const batch = userIds.slice(i, i + batchSize);
+            const idQuery = batch.map(id => `id=${id}`).join('&');
+            const response = await fetch(`https://api.twitch.tv/helix/users?${idQuery}`, { headers });
+            if (response.ok) {
+                const data = await response.json();
+                data.data.forEach((user: any) => {
+                    avatars[user.id] = user.profile_image_url;
+                });
+            }
+        }
+        return avatars;
+    } catch (error) {
+        return {};
     }
 };
 

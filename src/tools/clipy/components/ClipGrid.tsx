@@ -109,7 +109,13 @@ const ClipCard: React.FC<{
       <div className="flex gap-4 px-2">
         <div className="flex-shrink-0">
           <div className="w-11 h-11 rounded-2xl bg-[#1c1c24] p-0.5 overflow-hidden border border-white/5 opacity-60 group-hover:opacity-100 transition-opacity">
-            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${clip.broadcaster_name}`} alt={`Avatar de ${clip.broadcaster_name}`} loading="lazy" decoding="async" className="w-full h-full rounded-2xl" />
+            <img 
+              src={clip.broadcaster_image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${clip.broadcaster_name}`} 
+              alt={`Avatar de ${clip.broadcaster_name}`} 
+              loading="lazy" 
+              decoding="async" 
+              className="w-full h-full rounded-2xl object-cover" 
+            />
           </div>
         </div>
         <div className="flex flex-col min-w-0 justify-center">

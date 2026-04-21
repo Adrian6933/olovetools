@@ -23,11 +23,13 @@ export interface Clip {
   id: string;
   title: string;
   broadcaster_name: string;
+  broadcaster_id: string;
   view_count: number;
   thumbnail_url: string;
   url: string;
   created_at: string;
   duration: string;
+  broadcaster_image?: string;
 }
 
 export interface SearchState {

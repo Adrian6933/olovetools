@@ -50,7 +50,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               key={filter}
               onClick={() => onTimeChange(filter)}
               disabled={disabled}
-              className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none ${
+              className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none cursor-pointer hover:scale-105 active:scale-95 ${
                 currentTime === filter
                   ? 'bg-twitch-base text-white shadow-md'
                   : 'text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
@@ -74,7 +74,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <button
                 onClick={onLoadAll}
                 disabled={isLoading}
-                className="flex items-center justify-center gap-2 w-full sm:flex-1 lg:flex-none lg:w-auto px-4 py-2.5 bg-gradient-to-r from-twitch-base/10 to-twitch-base/5 hover:from-twitch-base/20 hover:to-twitch-base/10 border border-twitch-base/30 hover:border-twitch-base text-twitch-base hover:text-white rounded-lg transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center justify-center gap-2 w-full sm:flex-1 lg:flex-none lg:w-auto px-4 py-2.5 bg-gradient-to-r from-twitch-base/10 to-twitch-base/5 hover:from-twitch-base/20 hover:to-twitch-base/10 border border-twitch-base/30 hover:border-twitch-base text-twitch-base hover:text-white rounded-lg transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:scale-105 active:scale-95 shadow-lg hover:shadow-twitch-base/20"
                 title={t('load_all')}
             >
                 {isLoading ? (
@@ -96,8 +96,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <button
                 onClick={() => !disabled && setIsSortOpen(!isSortOpen)}
                 disabled={disabled}
-                className={`w-full flex items-center justify-between bg-twitch-black text-gray-200 text-sm rounded-lg border px-3 py-2.5 transition-all ${
-                    isSortOpen ? 'border-twitch-base ring-1 ring-twitch-base' : 'border-twitch-surfaceAlt hover:border-gray-500'
+                className={`w-full flex items-center justify-between bg-twitch-black text-gray-200 text-sm rounded-lg border px-3 py-2.5 transition-all cursor-pointer hover:border-twitch-base group/sort ${
+                    isSortOpen ? 'border-twitch-base ring-1 ring-twitch-base' : 'border-twitch-surfaceAlt hover:bg-twitch-surfaceAlt/50'
                 } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
                 <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                                 onSortChange(sort);
                                 setIsSortOpen(false);
                             }}
-                            className="w-full text-left px-3 py-2.5 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group"
+                            className="w-full text-left px-3 py-2.5 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
                         >
                             <span>{t(`sort_${sort}`)}</span>
                             {currentSort === sort && <Check className="w-4 h-4 text-twitch-base group-hover:text-white" />}

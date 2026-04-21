@@ -54,8 +54,11 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
       name: `pastesnap-${Date.now()}.png`,
       timestamp: new Date()
     };
+    if (images.length === 0 && typeof window !== 'undefined') {
+      window.history.pushState({ view: 'gallery' }, '');
+    }
     setImages(prev => [...prev, newImg]);
-  }, []);
+  }, [images]);
 
   const tryAutoPaste = useCallback(async () => {
     try {
@@ -116,6 +119,22 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [handlePaste, tryAutoPaste]);
+
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // Prioridad 1: Si hay una imagen expandida, la cerramos
+      if (expandedImage) {
+        setExpandedImage(null);
+        return;
+      }
+      // Prioridad 2: Si hay imágenes en la galería, volvemos al inicio vacío
+      if (images.length > 0) {
+        resetApp();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [images, expandedImage]);
 
   const downloadImage = (img: PastedImage) => {
     const link = document.createElement('a');
@@ -238,7 +257,13 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
 
                           <div className="absolute top-3 right-3 md:top-6 md:right-6 flex space-x-2 md:space-x-3 opacity-100 lg:opacity-0 lg:group-hover/card:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-2 lg:group-hover/card:translate-y-0 z-30">
                              <button 
-                              onClick={(e) => { e.stopPropagation(); setExpandedImage(img); }}
+                              onClick={(e) => { 
+                                e.stopPropagation(); 
+                                setExpandedImage(img); 
+                                if (typeof window !== 'undefined') {
+                                  window.history.pushState({ view: 'expanded' }, '');
+                                }
+                              }}
                               className="p-2.5 md:p-4 bg-white/10 hover:bg-white text-white hover:text-black rounded-xl md:rounded-2xl shadow-2xl backdrop-blur-3xl border border-white/20 transition-all hover:scale-110 active:scale-90 cursor-pointer"
                             >
                               <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
@@ -499,9 +524,9 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
       {showScrollTop && (
         <button 
           onClick={scrollToTop}
-          className="fixed bottom-10 right-10 z-[150] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 hover:-translate-y-2 animate-in slide-in-from-bottom stagger-1"
+          className="fixed bottom-10 right-10 z-[150] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 hover:-translate-y-3 cursor-pointer group animate-in slide-in-from-bottom stagger-1"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" /></svg>
+          <svg className="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" /></svg>
         </button>
       )}
 

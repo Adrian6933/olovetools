@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Globe, Sparkles, Github, Twitter } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useMemo, useEffect } from 'react';
+import { Search, Globe, Sparkles, Github, Twitter, ArrowUp } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCard } from './ProjectCard';
 import { Layout } from './Layout';
 import { ProjectCategory, LanguageCode } from '../types';
@@ -11,6 +11,13 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   const { t } = useTranslation(lang as Language, 'hub');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'All'>('All');
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
 
 
@@ -149,6 +156,22 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               </div>
             )}
           </main>
+
+          <AnimatePresence>
+            {showScrollTop && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="fixed bottom-10 right-10 z-[100] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center hover:scale-110 hover:-translate-y-2 active:scale-90 transition-all cursor-pointer group"
+                aria-label="Scroll to top"
+              >
+                <ArrowUp className="w-8 h-8 group-hover:scale-110 transition-transform" />
+                <div className="absolute inset-0 rounded-3xl bg-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </motion.button>
+            )}
+          </AnimatePresence>
       </div>
     </Layout>
   );

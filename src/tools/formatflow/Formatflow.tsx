@@ -77,7 +77,12 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
         // Limit to 50 images total if needed, or just let it be
         return updated.slice(0, 50); 
       });
-      if (images.length === 0) setSelectedIndex(0);
+      if (images.length === 0) {
+        setSelectedIndex(0);
+        if (typeof window !== 'undefined') {
+          window.history.pushState({ view: 'editor' }, '');
+        }
+      }
     } catch (error) {
       console.error("Error loading images", error);
       alert("Failed to load images.");
@@ -185,6 +190,18 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
       window.removeEventListener('paste', handlePaste as any);
       window.removeEventListener('scroll', handleScroll);
     };
+  }, [images]);
+
+  // Manejo del botón atrás del navegador/ratón
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // Si tenemos imágenes cargadas y el usuario pulsa atrás, volvemos a la landing
+      if (images.length > 0) {
+        reset();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, [images]);
 
   const reset = () => {
@@ -849,9 +866,9 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-8 right-8 z-[60] w-14 h-14 bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer group"
+            className="fixed bottom-8 right-8 z-[60] w-14 h-14 bg-primary text-white rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 hover:-translate-y-2 active:scale-95 transition-all cursor-pointer group"
           >
-            <ArrowUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+            <ArrowUp className="w-6 h-6 group-hover:scale-110 transition-transform" />
           </motion.button>
         )}
       </AnimatePresence>

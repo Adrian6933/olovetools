@@ -29,6 +29,7 @@ export default {
   "downloadZip": "Descargar ZIP",
   "failedToLoad": "Error al cargar el clip:",
   "noClipsFound": "No se encontraron clips. Verifica tus enlaces.",
+  "loadingClips": "CARGANDO CLIPS...",
   "selectLanguage": "Seleccionar Idioma",
   "globalAccess": "ACCESO GLOBAL",
   "instantMp4": "MP4 AL INSTANTE",

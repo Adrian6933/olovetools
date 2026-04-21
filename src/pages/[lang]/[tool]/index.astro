@@ -58,13 +58,13 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
     <meta property="og:description" content={t('seo_description')} />
     <meta property="og:url" content={`${baseUrl}/${lang}/${tool}`} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content={`${baseUrl}/og-${tool}.jpg`} />
+    <meta property="og:image" content={`${baseUrl}/og-${tool}.png`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content={t('seo_description')} />
-    <meta name="twitter:image" content={`${baseUrl}/og-${tool}.jpg`} />
+    <meta name="twitter:image" content={`${baseUrl}/og-${tool}.png`} />
     <link rel="canonical" href={`${baseUrl}/${lang}/${tool}`} />
     
-    <link rel="icon" type="image/svg+xml" href={currentFavicon}>
+    <link rel="icon" type={currentFavicon.endsWith('.svg') ? 'image/svg+xml' : 'image/png'} href={currentFavicon}>
     <link rel="apple-touch-icon" href="/icon.svg">
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content={currentThemeColor} />

@@ -97,6 +97,10 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
     }));
     setClips(initialClips);
 
+    if (typeof window !== 'undefined') {
+      window.history.pushState({ view: 'results' }, '');
+    }
+
     const CONCURRENCY_LIMIT = 3;
     
     for (let i = 0; i < unique.length; i += CONCURRENCY_LIMIT) {
@@ -126,10 +130,22 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
       }
       
       // Cleanup
-      if (urlClips) window.history.replaceState({}, '', window.location.pathname);
+      if (urlClips) window.history.replaceState({ view: 'results' }, '', window.location.pathname);
       if (storageClips) localStorage.removeItem('clipbolt_shared_clips');
     }
   }, [processClips]);
+
+  // Manejo del botón atrás del navegador/ratón
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      // Si estamos en la vista de resultados y el usuario pulsa atrás, volvemos al buscador
+      if (status === 'success') {
+        handleReset();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [status, handleReset]);
 
   const downloadAllAsZip = async () => {
     const validClips = clips.filter(c => c.status === 'success' && c.data).map(c => c.data!);
@@ -454,27 +470,38 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
                 </div>
 
                 <div className="flex items-center gap-3 px-2">
-                    <button onClick={downloadAllAsZip} disabled={!!zipProgress} className="bg-white text-black font-[900] text-xs px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl">
-                        {zipProgress ? (
-                          zipProgress.preparingZip ? (
-                            <> <Loader2 className="w-4 h-4 animate-spin" /> {t.preparingZip || 'PREPARING ZIP...'} </>
-                          ) : (
-                            <div className="flex flex-col items-center">
-                              <div className="flex items-center gap-2">
-                                <Loader2 className="w-4 h-4 animate-spin" /> 
-                                <span>{zipProgress.current}/{zipProgress.total} ({zipProgress.percentage}%)</span>
+                    {(() => {
+                      const isAnyLoading = clips.some(c => c.status === 'loading');
+                      return (
+                        <button 
+                          onClick={downloadAllAsZip} 
+                          disabled={!!zipProgress || isAnyLoading} 
+                          className="bg-white text-black font-[900] text-xs px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
+                        >
+                          {isAnyLoading ? (
+                            <> <Loader2 className="w-4 h-4 animate-spin" /> {t.loadingClips || 'LOADING CLIPS...'} </>
+                          ) : zipProgress ? (
+                            zipProgress.preparingZip ? (
+                              <> <Loader2 className="w-4 h-4 animate-spin" /> {t.preparingZip || 'PREPARING ZIP...'} </>
+                            ) : (
+                              <div className="flex flex-col items-center">
+                                <div className="flex items-center gap-2">
+                                  <Loader2 className="w-4 h-4 animate-spin" /> 
+                                  <span>{zipProgress.current}/{zipProgress.total} ({zipProgress.percentage}%)</span>
+                                </div>
+                                {zipProgress.speed > 0 && (
+                                  <span className="text-[9px] text-gray-500 font-bold mt-0.5">
+                                    {formatBytes(zipProgress.speed)}/s • {formatBytes(zipProgress.loadedBytes)}
+                                  </span>
+                                )}
                               </div>
-                              {zipProgress.speed > 0 && (
-                                <span className="text-[9px] text-gray-500 font-bold mt-0.5">
-                                  {formatBytes(zipProgress.speed)}/s • {formatBytes(zipProgress.loadedBytes)}
-                                </span>
-                              )}
-                            </div>
-                          )
-                        ) : (
-                          <> <FolderDown className="w-4 h-4" /> {t.downloadZip || 'Download ZIP'} </>
-                        )}
-                    </button>
+                            )
+                          ) : (
+                            <> <FolderDown className="w-4 h-4" /> {t.downloadZip || 'Download ZIP'} </>
+                          )}
+                        </button>
+                      );
+                    })()}
                     <button onClick={handleReset} className="w-12 h-12 bg-dark-950 border border-white/5 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer hover:bg-red-500/10 hover:border-red-500/20 active:scale-90">
                         <X className="w-5 h-5" />
                     </button>
@@ -512,7 +539,7 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
 
       <CookieBanner lang={lang} />
 
-      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 z-50 cursor-pointer`}><ArrowUp className="w-6 h-6" /></button>
+      <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 hover:-translate-y-2 active:scale-95 z-50 cursor-pointer group`}><ArrowUp className="w-6 h-6 group-hover:scale-110 transition-transform" /></button>
     </div>
   );
 };
