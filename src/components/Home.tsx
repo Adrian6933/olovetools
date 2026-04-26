@@ -19,6 +19,11 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Reset scroll to top when category changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [selectedCategory]);
+
 
 
 
@@ -36,7 +41,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
 
   return (
     <Layout lang={lang}>
-      <div className="relative isolate min-h-screen">
+      <div className="relative min-h-screen">
         {/* Global Tech Grid Background - Increased visibility and green vibrancy */}
         <div className="absolute inset-0 pointer-events-none -z-10" 
           style={{ 
@@ -164,7 +169,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.8, y: 20 }}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                className="fixed bottom-10 right-10 z-[100] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center hover:scale-110 hover:-translate-y-2 active:scale-90 transition-all cursor-pointer group"
+                className="fixed bottom-10 right-10 z-[200] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center hover:scale-110 hover:-translate-y-2 active:scale-90 transition-all cursor-pointer group"
                 aria-label="Scroll to top"
               >
                 <ArrowUp className="w-8 h-8 group-hover:scale-110 transition-transform" />

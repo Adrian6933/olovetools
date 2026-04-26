@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Clip } from '../types';
 import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download } from 'lucide-react';
+import ProgressiveImage from './ProgressiveImage';
 
 interface ClipGridProps {
   clips: Clip[];
@@ -50,13 +51,11 @@ const ClipCard: React.FC<{
       >
 
         {!imgError ? (
-          <img
+          <ProgressiveImage
             src={clip.thumbnail_url}
             alt={`Miniatura del clip de Twitch de ${clip.broadcaster_name} titulado ${clip.title || 'Clip'}`}
-            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            loading="lazy"
-            decoding="async"
-            onError={() => setImgError(true)}
+            className="w-full h-full transition-transform duration-1000 group-hover:scale-105"
+            isCategory={false}
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 bg-[#15151b]">

@@ -136,6 +136,13 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [images, expandedImage]);
 
+  // Reset scroll to top when entering gallery
+  useEffect(() => {
+    if (images.length > 0) {
+      window.scrollTo(0, 0);
+    }
+  }, [images.length > 0]);
+
   const downloadImage = (img: PastedImage) => {
     const link = document.createElement('a');
     link.href = img.url;
@@ -524,7 +531,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
       {showScrollTop && (
         <button 
           onClick={scrollToTop}
-          className="fixed bottom-10 right-10 z-[150] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 hover:-translate-y-3 cursor-pointer group animate-in slide-in-from-bottom stagger-1"
+          className="fixed bottom-10 right-10 z-[200] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 hover:-translate-y-3 cursor-pointer group animate-in slide-in-from-bottom stagger-1"
         >
           <svg className="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" /></svg>
         </button>

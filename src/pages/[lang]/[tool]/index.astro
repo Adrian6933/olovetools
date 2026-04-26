@@ -242,6 +242,11 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
         s.crossOrigin = 'anonymous';
         document.head.appendChild(s);
       });
+
+      // Force scroll to top on view transitions
+      document.addEventListener('astro:after-navigation', () => {
+        window.scrollTo(0, 0);
+      });
     </script>
   </head>
   <body>

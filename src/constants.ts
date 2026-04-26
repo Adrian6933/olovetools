@@ -1,10 +1,10 @@
 import { Project, ProjectCategory, Language, LanguageCode } from './types';
 
 export const TOOL_FAVICONS: Record<string, string> = {
-  clipy: "/favicon-clipy.png",
-  clipbolt: "/favicon-clipbolt.png",
-  formatflow: "/favicon-formatflow.png",
-  pastesnap: "/favicon-pastesnap.png",
+  clipy: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%239146ff' d='M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V11h20v8z'/><g transform='rotate(-25 4 11)'><path fill='%237c3aed' d='M22 11V8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v3h20z'/><path fill='white' opacity='0.6' d='m6.7 6 2.7 5h-1.5l-2.7-5h1.5zm5 0 2.7 5h-1.5l-2.7-5h1.5zm5 0 2.7 5h-1.5l-2.7-5h1.5z'/></g></svg>",
+  clipbolt: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%239146ff'><polygon points='13 2 3 14 12 14 11 22 21 10 12 10 13 2'/></svg>",
+  formatflow: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%2338bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m17 7 3 3-3 3M7 17l-3-3 3-3"/><path d="M3 14h11a4 4 0 0 0 4-4V7M21 10H10a4 4 0 0 0-4 4v3"/></svg>',
+  pastesnap: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="%236366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>',
   default: "/icon.svg"
 };
 

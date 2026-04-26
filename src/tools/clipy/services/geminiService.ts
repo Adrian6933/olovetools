@@ -55,19 +55,20 @@ const ALIASES: Record<string, string> = {
 };
 
 const getBoxArtUrl = (url: string) => {
-    if (!url) return 'https://placehold.co/450x600/202020/white?text=No+Image';
-    // Ultra high quality images (450x600) for maximum visual impact
-    let newUrl = url.replace(/-{width}x{height}/g, '-450x600');
+    if (!url) return 'https://placehold.co/600x800/202020/white?text=No+Image';
+    // Balanced high quality (600x800) for performance
+    let newUrl = url.replace(/-{width}x{height}/g, '-600x800');
     if (newUrl === url) {
-        newUrl = url.replace(/-\d+x\d+/g, '-450x600');
+        newUrl = url.replace(/-\d+x\d+/g, '-600x800');
     }
-    newUrl = newUrl.replace('{width}', '450').replace('{height}', '600');
+    newUrl = newUrl.replace('{width}', '600').replace('{height}', '800');
     return newUrl;
 };
 
 const getThumbnailUrl = (url: string) => {
-    if (!url) return 'https://placehold.co/640x360/202020/white?text=No+Preview';
-    return url.replace(/%?{width}/g, '640').replace(/%?{height}/g, '360');
+    if (!url) return 'https://placehold.co/1280x720/202020/white?text=No+Preview';
+    // Balanced HD quality (1280x720) for performance
+    return url.replace(/%?{width}/g, '1280').replace(/%?{height}/g, '720');
 };
 
 export const searchTwitchCategories = async (query: string, cursor?: string | null): Promise<{ categories: Category[], cursor: string | null }> => {

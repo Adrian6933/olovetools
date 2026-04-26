@@ -375,32 +375,34 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
         </div>
       </nav>
 
-      <div className="flex-1 pt-20">
+      <div className="flex-1 pt-20 relative z-10">
         {children}
       </div>
 
       {/* Footer */}
       <footer className="border-t border-white/[0.08] bg-[#121216] py-12 md:py-16 mt-auto relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-16 flex flex-col gap-12">
-          {/* Row 1: Logo & Contact */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-10">
-            <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-              <div className="flex items-center gap-3">
+          {/* Main Footer Content: Row 1 (Logo/Copyright) and Row 2 (Contact) on mobile, side-by-side on lg+ */}
+          <div className="flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-10">
+            {/* Logo & Copyright */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 text-center lg:text-left">
+              <div className="flex items-center justify-center gap-3">
                 <div className="p-2 rounded-lg bg-indigo-500/10">
                   <Heart className="w-4 h-4 text-indigo-500 fill-indigo-500" />
                 </div>
                 <span className="font-bold text-white font-outfit text-xl tracking-tight">oLoveTools</span>
               </div>
-              <div className="hidden md:block h-4 w-px bg-white/10" />
+              <div className="hidden sm:block h-4 w-px bg-white/10" />
               <span className="text-slate-400 text-sm font-medium">© {currentYear} {t.footerRights}</span>
             </div>
             
-            <div className="flex items-center gap-4 w-full md:w-auto">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest whitespace-nowrap">{t.contactText}</span>
-              <div className="relative w-full max-w-[240px] md:w-auto">
+            {/* Contact Row */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full lg:w-auto">
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest whitespace-nowrap text-center">{t.contactText}</span>
+              <div className="relative w-full max-w-[280px] sm:max-w-none sm:w-auto flex justify-center">
                 <button 
                   onClick={handleCopyEmail}
-                  className="flex items-center justify-center md:justify-start gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group cursor-pointer relative overflow-hidden w-full"
+                  className="flex items-center justify-center lg:justify-start gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl transition-all group cursor-pointer relative overflow-hidden w-full"
                 >
                   <Mail className="w-3.5 h-3.5 text-indigo-400 group-hover:scale-110 transition-transform shrink-0" />
                   <span className="text-xs font-mono text-slate-400 group-hover:text-white transition-colors truncate">{t.contactEmail}</span>
@@ -421,12 +423,12 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
             </div>
           </div>
 
-          {/* Row 2: Legal Links */}
+          {/* Row 3: Legal Links */}
           <div className="pt-10 border-t border-white/5 flex items-center justify-center">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-16 text-[10px] md:text-xs text-slate-200 font-bold uppercase tracking-[0.2em] w-full">
-              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto text-center">{t.privacyPolicy}</button>
-              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto text-center">{t.termsOfService}</button>
-              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-full md:w-auto text-center">{t.cookiesPolicy}</button>
+            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-16 text-[10px] md:text-xs text-slate-200 font-bold uppercase tracking-[0.2em] w-full text-center">
+              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{t.privacyPolicy}</button>
+              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{t.termsOfService}</button>
+              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{t.cookiesPolicy}</button>
             </div>
           </div>
         </div>

@@ -2,6 +2,8 @@ import React from 'react';
 import { Category } from '../types';
 import { Sparkles } from 'lucide-react';
 
+import ProgressiveImage from './ProgressiveImage';
+
 interface CategoryGridProps {
   categories: Category[];
   onCategoryClick: (category: Category) => void;
@@ -27,12 +29,11 @@ const CategoryCard: React.FC<{
         style={{ isolation: 'isolate', transform: 'translateZ(0)' }}
         className="relative aspect-[3/4] glass rounded-[2.5rem] overflow-hidden border border-white/5 transition-premium transform group-hover:-translate-y-3 group-hover:border-twitch-base/20 group-hover:shadow-[0_40px_80px_-20px_rgba(145,70,255,0.12)]"
       >
-        <img
+        <ProgressiveImage
           src={category.box_art_url}
           alt={category.name || 'Category artwork'}
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105 will-change-transform"
-          loading={index < 6 ? "eager" : "lazy"}
-          fetchPriority={index < 6 ? "high" : undefined}
+          className="w-full h-full transition-transform duration-1000 group-hover:scale-105 will-change-transform"
+          isCategory={true}
         />
         
         {/* Ranking Badge - Only shown on initial load/popular categories */}

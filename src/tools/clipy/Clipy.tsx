@@ -39,7 +39,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     paginationCursor: null,
     timeFilter: TimeFilter.DAY,
     sortType: SortType.TRENDING,
-    isLoading: false,
+    isLoading: true,
     error: null
   });
 
@@ -228,6 +228,13 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Reset scroll to top when mode or category changes
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+    }
+  }, [state.mode, state.activeCategory]);
 
   // Background Avatar Loader: Carga las fotos de perfil en segundo plano sin bloquear la UI
   useEffect(() => {
@@ -682,7 +689,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         </div>
       )}
 
-      <div className="fixed bottom-4 right-4 z-40">
+      <div className="fixed bottom-4 right-4 z-[200]">
         <button
           onClick={scrollToTop}
           className={`bg-[#1a1a24] text-gray-400 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all hover:text-white hover:bg-twitch-base hover:shadow-[0_20px_40px_rgba(145,70,255,0.3)] hover:-translate-y-3 active:scale-90 cursor-pointer group ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}

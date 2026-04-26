@@ -147,6 +147,13 @@ const Clipbolt: React.FC<ClipboltProps> = ({ lang = 'en' }) => {
     return () => window.removeEventListener('popstate', handlePopState);
   }, [status, handleReset]);
 
+  // Reset scroll to top when entering results
+  useEffect(() => {
+    if (status === 'success') {
+      window.scrollTo(0, 0);
+    }
+  }, [status]);
+
   const downloadAllAsZip = async () => {
     const validClips = clips.filter(c => c.status === 'success' && c.data).map(c => c.data!);
     if (validClips.length === 0 || zipProgress) return;
