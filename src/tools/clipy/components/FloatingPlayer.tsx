@@ -128,35 +128,59 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
     };
   }, [clip.id, isMockClip]);
 
-  const handleDragStart = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    const isTouch = 'touches' in e;
+    if (!isTouch) e.preventDefault();
+    
     setIsDragging(true);
-    startPos.current = { x: e.clientX, y: e.clientY };
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+    
+    startPos.current = { x: clientX, y: clientY };
     startDims.current = { x: position.x, y: position.y, w: size.width, h: size.height };
   };
 
-  const handleResizeStart = (direction: ResizeDirection) => (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleResizeStart = (direction: ResizeDirection) => (e: React.MouseEvent | React.TouchEvent) => {
+    const isTouch = 'touches' in e;
+    if (!isTouch) e.preventDefault();
     e.stopPropagation();
+    
     setResizeDir(direction);
-    startPos.current = { x: e.clientX, y: e.clientY };
+    const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+    const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+    
+    startPos.current = { x: clientX, y: clientY };
     startDims.current = { x: position.x, y: position.y, w: size.width, h: size.height };
   };
 
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
+      const isTouch = 'touches' in e;
+      
+      if (isTouch && (isDragging || resizeDir)) {
+        if (e.cancelable) e.preventDefault();
+      }
+
+      const clientX = isTouch ? e.touches[0].clientX : e.clientX;
+      const clientY = isTouch ? e.touches[0].clientY : e.clientY;
+
       if (isDragging) {
-        const dx = e.clientX - startPos.current.x;
-        const dy = e.clientY - startPos.current.y;
-        setPosition({
-          x: startDims.current.x + dx,
-          y: startDims.current.y + dy
-        });
+        const dx = clientX - startPos.current.x;
+        const dy = clientY - startPos.current.y;
+        
+        let newX = startDims.current.x + dx;
+        let newY = startDims.current.y + dy;
+
+        // Enforce boundaries
+        newX = Math.max(-size.width + 100, Math.min(newX, window.innerWidth - 100));
+        newY = Math.max(0, Math.min(newY, window.innerHeight - 40));
+
+        setPosition({ x: newX, y: newY });
         return;
       }
       if (resizeDir) {
-        const dx = e.clientX - startPos.current.x;
-        const dy = e.clientY - startPos.current.y;
+        const dx = clientX - startPos.current.x;
+        const dy = clientY - startPos.current.y;
         const MIN_W = 320;
         const MIN_H = 180;
         let newW = startDims.current.w;
@@ -185,23 +209,44 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
         setPosition({ x: newX, y: newY });
       }
     };
-    const handleMouseUp = () => {
+    const handleEnd = () => {
       if (isDragging || resizeDir) {
         saveDimensions(position, size);
       }
       setIsDragging(false);
       setResizeDir(null);
     };
+
+    // Ensure player stays in bounds on resize
+    const handleWindowResize = () => {
+      setPosition(prev => ({
+        x: Math.max(0, Math.min(prev.x, window.innerWidth - 100)),
+        y: Math.max(0, Math.min(prev.y, window.innerHeight - 40))
+      }));
+      setSize(prev => ({
+        width: Math.min(prev.width, window.innerWidth - 20),
+        height: Math.min(prev.height, window.innerHeight - 60)
+      }));
+    };
+
     if (isDragging || resizeDir) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleMove, { passive: false });
+      document.addEventListener('touchend', handleEnd);
       document.body.style.cursor = resizeDir ? `${resizeDir}-resize` : 'move';
     } else {
         document.body.style.cursor = '';
     }
+    
+    window.addEventListener('resize', handleWindowResize);
+
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleMove);
+      document.removeEventListener('touchend', handleEnd);
+      window.removeEventListener('resize', handleWindowResize);
       document.body.style.cursor = '';
     };
   }, [isDragging, resizeDir, position, size]);
@@ -230,22 +275,27 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
         transform: `translate(${position.x}px, ${position.y}px)`,
         width: size.width,
         height: size.height,
-        zIndex: 9999
+        maxWidth: 'calc(100vw - 20px)',
+        maxHeight: 'calc(100vh - 20px)',
+        zIndex: 9999,
+        position: 'fixed'
       }}
-      className="fixed top-0 left-0 flex flex-col bg-[#0e0e10] border border-[#2b2b2b] shadow-2xl rounded-lg overflow-visible"
+      className="bg-[#0e0e10] border-[#2b2b2b] shadow-2xl overflow-visible flex flex-col border rounded-lg"
     >
-      <div onMouseDown={handleResizeStart('n')} className="absolute -top-1.5 left-4 right-4 h-4 cursor-n-resize z-[100] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('s')} className="absolute -bottom-1.5 left-4 right-4 h-4 cursor-s-resize z-[100] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('w')} className="absolute top-4 bottom-4 -left-1.5 w-4 cursor-w-resize z-[100] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('e')} className="absolute top-4 bottom-4 -right-1.5 w-4 cursor-e-resize z-[100] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('nw')} className="absolute -top-1.5 -left-1.5 w-6 h-6 cursor-nw-resize z-[101] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('ne')} className="absolute -top-1.5 -right-1.5 w-6 h-6 cursor-ne-resize z-[101] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('sw')} className="absolute -bottom-1.5 -left-1.5 w-6 h-6 cursor-sw-resize z-[101] bg-transparent"></div>
-      <div onMouseDown={handleResizeStart('se')} className="absolute -bottom-1.5 -right-1.5 w-6 h-6 cursor-se-resize z-[101] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('n')} onTouchStart={handleResizeStart('n')} className="absolute -top-1.5 left-4 right-4 h-4 cursor-n-resize z-[100] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('s')} onTouchStart={handleResizeStart('s')} className="absolute -bottom-1.5 left-4 right-4 h-4 cursor-s-resize z-[100] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('w')} onTouchStart={handleResizeStart('w')} className="absolute top-4 bottom-4 -left-1.5 w-4 cursor-w-resize z-[100] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('e')} onTouchStart={handleResizeStart('e')} className="absolute top-4 bottom-4 -right-1.5 w-4 cursor-e-resize z-[100] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('nw')} onTouchStart={handleResizeStart('nw')} className="absolute -top-1.5 -left-1.5 w-6 h-6 cursor-nw-resize z-[101] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('ne')} onTouchStart={handleResizeStart('ne')} className="absolute -top-1.5 -right-1.5 w-6 h-6 cursor-ne-resize z-[101] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('sw')} onTouchStart={handleResizeStart('sw')} className="absolute -bottom-1.5 -left-1.5 w-6 h-6 cursor-sw-resize z-[101] bg-transparent"></div>
+      <div onMouseDown={handleResizeStart('se')} onTouchStart={handleResizeStart('se')} className="absolute -bottom-1.5 -right-1.5 w-6 h-6 cursor-se-resize z-[101] bg-transparent"></div>
 
       <div
         onMouseDown={handleDragStart}
-        className="h-12 bg-[#18181b] flex-shrink-0 flex items-center justify-between px-3 cursor-move select-none border-b border-[#2b2b2b]"
+        onTouchStart={handleDragStart}
+        style={{ touchAction: 'none' }}
+        className="h-12 bg-[#18181b] flex-shrink-0 flex items-center justify-between px-3 select-none border-b border-[#2b2b2b] cursor-move"
       >
         <div className="flex items-center gap-2 text-gray-300 flex-1 min-w-0 mr-4">
             <GripHorizontal className="w-4 h-4 text-gray-500 flex-shrink-0" />

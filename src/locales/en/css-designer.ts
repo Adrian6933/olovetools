@@ -1,0 +1,109 @@
+export default {
+  "title": "CSS-Designer",
+  "description": "Interactive playground to generate modern CSS effects like Glassmorphism, Box Shadows, Gradients, and Border Radius.",
+  
+  // Tabs
+  "tab_glassmorphism": "Glassmorphism",
+  "tab_box_shadow": "Box Shadow",
+  "tab_gradients": "Gradients",
+  "tab_border_radius": "Border Radius",
+  
+  // Controls & Labels
+  "backdrop_blur": "Backdrop Blur",
+  "bg_opacity": "Background Opacity",
+  "saturation": "Saturation",
+  "border_opacity": "Border Opacity",
+  "border_width": "Border Width",
+  "bg_color": "Background Color",
+  "border_color": "Border Color",
+  "shadow_color": "Shadow Color",
+  "shadow_blur": "Shadow Blur",
+  "shadow_opacity": "Shadow Opacity",
+  "inset_shadow": "Inset Shadow",
+  "offset_x": "Offset X",
+  "offset_y": "Offset Y",
+  "spread_radius": "Spread Radius",
+  "gradient_type": "Gradient Type",
+  "gradient_angle": "Angle (Degrees)",
+  "linear": "Linear",
+  "radial": "Radial",
+  "color_stops": "Color Stops",
+  "add_stop": "Add Color Stop",
+  "remove_stop": "Remove",
+  "position": "Position",
+  "corner_radius": "Corner Radius",
+  "fancy_radius": "Fancy Shape (8-point)",
+  "top_left": "Top-Left",
+  "top_right": "Top-Right",
+  "bottom_right": "Bottom-Right",
+  "bottom_left": "Bottom-Left",
+  
+  // UI Buttons & Text
+  "copy_css": "Copy CSS",
+  "copy_tailwind": "Copy Tailwind",
+  "copy_variables": "Copy CSS Variables",
+  "copied": "Copied!",
+  "preview_title": "Interactive Preview",
+  "bg_theme": "Background Style",
+  "theme_dark_grid": "Dark Grid",
+  "theme_light_grid": "Light Grid",
+  "theme_mesh": "Color Mesh",
+  "theme_vibrant": "Vibrant Gradient",
+  "preview_text": "CSS Playground",
+  "preview_subtext": "Change controls on the left to see modifications in real-time.",
+  
+  // SEO & Info
+  "seo_title": "CSS-Designer | Glassmorphism, Shadow and Gradient Generator",
+  "seo_description": "Create modern CSS effects with our visual playground. Generate CSS and Tailwind code for glassmorphism, advanced box shadows, gradients, and custom border radius.",
+  "seoHeroTitle": "Generate stunning CSS effects visual and fast.",
+  "seoHeroText": "Designing modern styles doesn't have to be a headache. CSS-Designer helps you visualize and generate pure CSS or Tailwind code in seconds.",
+  "seoHeroList": [
+    "No registration or payment required",
+    "Generates clean CSS & Tailwind code",
+    "Real-time visual customization"
+  ],
+  "seoBrowserSpeedTitle": "100% Client-Side Processing",
+  "seoBrowserSpeedText": "All styles are compiled locally in your browser. No files are uploaded, ensuring instant rendering and complete privacy.",
+  "seoSecondaryTitle": "The ultimate CSS companion for frontend devs and UI/UX designers.",
+  "seoKeywordsTitle": "Keywords",
+  "seoKeywords": [
+    "CSS Generator",
+    "Glassmorphism Generator",
+    "Box Shadow Generator",
+    "CSS Gradient Generator",
+    "Border Radius Generator",
+    "Tailwind Generator",
+    "Web Design Utility",
+    "UI UX Tool",
+    "Free CSS Tool",
+    "Neumorphism Generator",
+    "Fancy Border Radius",
+    "CSS Editor Online"
+  ],
+  "seoUseCaseTitle": "Interactive Use Cases",
+  "seoUseCaseText": "Quickly style cards, buttons, backgrounds, and overlay panels. Ideal for Figma-to-code translations, prototyping layouts, and styling modern dashboards.",
+  "seoPrivacyTitle": "Privacy & Security",
+  "seoPrivacyText": "Your CSS recipes remain private. Everything occurs on your local machine; we do not store, track, or upload your designs.",
+  
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Is this tool completely free?",
+      "answer": "Yes, CSS-Designer is 100% free with no registration, premium limits, or watermarks."
+    },
+    {
+      "question": "Can I use the generated code directly in Tailwind CSS?",
+      "answer": "Yes. We generate standard CSS rules along with utility-class combinations using Tailwind arbitrary values, making copy-pasting seamless."
+    },
+    {
+      "question": "What is Glassmorphism?",
+      "answer": "Glassmorphism is a UI trend that mimics frosted glass. It uses backdrop-filter blur and semi-transparent backgrounds to overlay elements elegantly on colorful backdrops."
+    },
+    {
+      "question": "Does it work on mobile?",
+      "answer": "Absolutely. The layout is optimized to work on smartphones, tablets, and desktops so you can code on the go."
+    }
+  ],
+  "footerTagline": "Helping you design, build, and optimize with simple and premium utilities.",
+  "footerCredit": "Part of the oLoveTools suite"
+};

@@ -7,6 +7,7 @@ import CookieBanner from './components/CookieBanner';
 import LegalModal from './components/LegalModal';
 import { ImageFormat, ConversionSettings, BatchImageItem, ConversionResult } from './types';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { legalTranslations } from '../../locales/legal';
 import { convertImage, formatBytes, readFileAsDataURL, loadImage, createBatchZip, processUploadedFile } from './services/imageService';
 import { X, ArrowRight, ArrowUp, SplitSquareHorizontal, Layers, Ruler, ScanLine, FileImage, ShieldCheck, Zap, Maximize, FileType, Home, Sparkles, Wand2, ArrowRightLeft, Mail } from 'lucide-react';
 
@@ -773,24 +774,30 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
             <div className="hidden md:block w-px h-12 bg-slate-800"></div>
 
             <div className="flex flex-col md:flex-row flex-wrap justify-center gap-y-2 md:gap-y-6 gap-x-6 md:gap-x-12 items-center w-full md:w-auto px-4">
-              <button 
-                onClick={() => setActiveModal('privacy')} 
-                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap"
+              <a 
+                href={`/${language}/privacy`} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap text-center"
               >
-                {t.privacyPolicy || 'Privacy Policy'}
-              </button>
-              <button 
-                onClick={() => setActiveModal('terms')} 
-                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap"
+                {legalTranslations[language]?.nav.privacy || 'Privacy Policy'}
+              </a>
+              <a 
+                href={`/${language}/terms`} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap text-center"
               >
-                {t.termsOfService || 'Terms of Service'}
-              </button>
-              <button 
-                onClick={() => setActiveModal('cookies')} 
-                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap"
+                {legalTranslations[language]?.nav.terms || 'Terms of Service'}
+              </a>
+              <a 
+                href={`/${language}/cookies`} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap text-center"
               >
-                {t.cookiePolicy || 'Cookie Policy'}
-              </button>
+                {legalTranslations[language]?.nav.cookies || 'Cookie Policy'}
+              </a>
+              <a 
+                href={`/${language}/about`} 
+                className="w-full md:w-auto py-3 md:py-2 px-4 text-slate-400 hover:text-white active:bg-white/5 active:scale-95 transition-all cursor-pointer text-[13px] font-bold rounded-xl whitespace-nowrap text-center"
+              >
+                {legalTranslations[language]?.nav.about || 'About'}
+              </a>
             </div>
           </div>
           

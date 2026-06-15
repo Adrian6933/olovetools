@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { legalTranslations } from '../locales/legal';
 import { Heart, ChevronDown, Check, Mail } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LANGUAGES } from '../constants';
@@ -426,9 +427,10 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
           {/* Row 3: Legal Links */}
           <div className="pt-10 border-t border-white/5 flex items-center justify-center">
             <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 md:gap-x-16 text-[10px] md:text-xs text-slate-200 font-bold uppercase tracking-[0.2em] w-full text-center">
-              <button onClick={() => setActiveModal('privacy')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{t.privacyPolicy}</button>
-              <button onClick={() => setActiveModal('terms')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{t.termsOfService}</button>
-              <button onClick={() => setActiveModal('cookies')} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{t.cookiesPolicy}</button>
+              <a href={`/${currentLang}/privacy`} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{legalTranslations[currentLang]?.nav.privacy || 'Privacy'}</a>
+              <a href={`/${currentLang}/terms`} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{legalTranslations[currentLang]?.nav.terms || 'Terms'}</a>
+              <a href={`/${currentLang}/cookies`} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{legalTranslations[currentLang]?.nav.cookies || 'Cookies'}</a>
+              <a href={`/${currentLang}/about`} className="hover:text-indigo-400 transition-colors cursor-pointer py-2 md:py-0 w-fit text-center">{legalTranslations[currentLang]?.nav.about || 'About'}</a>
             </div>
           </div>
         </div>

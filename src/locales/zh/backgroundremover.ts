@@ -1,0 +1,91 @@
+export default {
+  "title": "Background Remover",
+  "description": "在浏览器中本地自动且利用人工智能（AI）删除图像背景。",
+  "seo_title": "Background Remover | 免费在线 AI 智能抠图/去除背景",
+  "seo_description": "瞬间抠图并去除图像背景。100% 浏览器本地运行的 AI 抠图工具。高分辨率、隐私安全、快捷且完全免费。",
+  "dropzonePrompt": "将您的图像拖放到此处或点击选择文件",
+  "dropzoneSubtitle": "支持 JPG、PNG 和 WebP 格式。AI 模型完全在您的浏览器中运行。",
+  "downloadBtn": "下载 PNG",
+  "resetBtn": "重新开始",
+  "originalSize": "原始大小",
+  "processedSize": "处理后大小",
+  "statusDownloadingModel": "正在下载 AI 模型... (仅限首次运行, ~19MB)",
+  "statusProcessing": "正在利用 AI 抠图...",
+  "statusDone": "成功",
+  "statusError": "抠图失败",
+  "originalLabel": "原图",
+  "processedLabel": "抠图后",
+  "compareTitle": "抠图前后对比",
+  "compareBtn": "预览与对比",
+  "features": [
+    {
+      "title": "本地 AI 运行",
+      "text": "AI 模型直接在您的浏览器中运行。您的图像永远不会被上传到任何服务器。"
+    },
+    {
+      "title": "保持原始分辨率",
+      "text": "与其他在线工具不同，我们不限制输出分辨率。完全免费获取您原图尺寸的高清抠图。"
+    },
+    {
+      "title": "支持离线使用",
+      "text": "一旦下载完成，模型将被缓存在本地，即使在无网络环境下也能继续使用。"
+    }
+  ],
+  "footerCredit": "oLoveTools 工具集的一部分",
+  "seoHeroTitle": "100% 本地运行的 AI 抠图与去背景。",
+  "seoHeroText": "完美保护您的隐私。其他在线工具通常会将您的个人照片或商业素材上传到远程服务器。Background Remover 直接在您的浏览器中运行 ONNX 模型推断。快速、安全且完全本地化。",
+  "seoHeroList": [
+    "无需注册账号",
+    "无限次高清抠图下载",
+    "完全在您的网页浏览器中运行"
+  ],
+  "seoBrowserSpeedTitle": "基于浏览器的 AI 推断",
+  "seoBrowserSpeedText": "通过直接在您的设备上利用 WebAssembly 和 WebGL 执行 AI 计算，我们保证您的照片绝对不会离开您的电脑。提供完美隐私保障且无服务器延迟。",
+  "seoSecondaryTitle": "数秒内自动完成抠图",
+  "seoKeywordsTitle": "关键词",
+  "seoKeywords": [
+    "去除背景",
+    "AI 抠图工具",
+    "透明 PNG 转换",
+    "本地去除背景",
+    "免费抠图软件",
+    "ONNX 图像处理",
+    "无服务器去背景",
+    "本地 AI 抠图",
+    "电商商品图处理"
+  ],
+  "seoUseCaseTitle": "应用场景",
+  "seoUseCaseText": "非常适合制作商品图的电商卖家、需要抠图重组素材的平面设计师，或任何需要快速制作透明背景图的用户。",
+  "seoPrivacyTitle": "隐私安全保障",
+  "seoPrivacyText": "我们深知数字主权的重要性。我们绝不存储、分析，甚至无法看到您的图像。所有素材均在本地运行处理，百分百安全。",
+  "faqTitle": "常见问题解答",
+  "faq": [
+    {
+      "question": "它是免费的吗？",
+      "answer": "是的，Background Remover 完全免费使用，没有任何大小限制，也不需要注册。"
+    },
+    {
+      "question": "本地 AI 去背景是如何工作的？",
+      "answer": "我们会在您的浏览器缓存中下载一个轻量级的神经网络模型。当您上传图片时，AI 会在 Web Worker 线程中在本地处理像素。您的文件永远不会到达外部服务器。"
+    },
+    {
+      "question": "模型下载很慢吗？",
+      "answer": "该 AI 模型大小约为 19MB。在常规互联网连接下，只需几秒钟即可下载完毕。一旦下载保存后，以后再次访问时就无需重新下载。"
+    },
+    {
+      "question": "我可以在离线状态下使用它吗？",
+      "answer": "可以！一旦页面加载完毕且首次成功下载模型，您就可以断开网络，工具依然能完美地进行本地抠图。"
+    }
+  ],
+  "footerTagline": "完全在您自己设备上运行的 AI 驱动网页实用工具。",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "cookiePolicy": "Cookie 政策",
+  "contactForIdeas": "联系与反馈：",
+  "emailCopied": "邮箱已复制到剪贴板！",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "privacyContent": "您的隐私对我们至关重要。\n\n我们仅收集提供服务所必需的信息。这包括有关您的浏览器和设备的常规技术数据，以确保工具能够正常运行。\n\n我们绝不会存储、跟踪或分析您的图像。所有处理工作均在您的浏览器中本地完成，确保您的数据永远不会离开您的设备。",
+  "termsContent": "使用 Background Remover 即表示您同意以下条款。\n\n1. 本工具按“原样”提供，不提供任何形式的担保。\n2. 我们对因使用本工具而导致的任何数据丢失或问题概不负责。\n3. 您对使用本工具处理的内容承担全部责任。\n4. 我们保留随时修改这些条款的权利。",
+  "cookiesContent": "我们使用 Cookie 来提升您的体验。\n\n1. 必要 Cookie：网站基本功能运行所必需。\n2. 偏好 Cookie：用于记住您的语言选择和 Cookie 同意状态。\n\n您随时可以通过浏览器设置管理或禁用 Cookie。",
+  "contact": "联系我们"
+};

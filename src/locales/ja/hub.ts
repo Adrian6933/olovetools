@@ -29,9 +29,51 @@ export default {
     },
     "4": {
       "description": "スクリーンショットを即座に貼り付けて、高品質でダウンロードします。"
+    },
+    "5": {
+      "description": "高速で簡単なKickクリップダウンローダー。お気に入りの瞬間を即座に保存。"
+    },
+    "6": {
+      "description": "ブラウザ上で画像（JPG、PNG、WebP）をローカルかつ瞬時に圧縮・最適化します。"
+    },
+    "7": {
+      "description": "AIによりブラウザ上でローカルかつ自動的に画像の背景を消去します。"
+    },
+    "8": {
+      "description": "ブラウザ上でドキュメントや画像をローカルに結合、分割、回転、PDF変換できるツールです。"
+    },
+    "9": {
+      "description": "ブラウザ上で画面、ウェブカメラ、またはその両方を同時に録画できるツールです。"
+    },
+    "10": {
+      "description": "グラデーション、形状、センターロゴを備えたカスタムQRコードを100%ローカルに生成します。"
+    },
+    "11": {
+      "description": "コードスニペットを、ブラウザ上で100%ローカルに、美しい共有用のスクリーンショット画像に変換します。"
+    },
+    "12": {
+      "description": "カスタマイズ可能なプリセットと品質管理により、画像を100%ローカルで切り抜き、リサイズ、回転、反転します。"
+    },
+    "13": {
+      "description": "グラスモーフィズム、シャドウ、グラデーション、有機的な角丸などのモダンなCSSスタイルを100%ローカルで生成します。"
+    },
+    "14": {
+      "description": "JSONやExcelグリッドを安全に探索するための、インタラクティブなローカルバリデータ、フォーマッタ、コンバータ。"
+    },
+    "15": {
+      "description": "TikTokビデオ（ロゴなし）、Instagramリール、YouTubeショートを100%ローカルで保存します。"
+    },
+    "16": {
+      "description": "テキストを自然な音声に変換し、ブラウザ上で100%ローカルにMP3ファイルとしてダウンロードします。"
+    },
+    "17": {
+      "description": "動画や連番画像を、ブラウザ上で100%ローカルに最適化されたアニメーションGIFに変換します。"
     }
   },
   "tags": {
+    "Crop": "切り抜き",
+    "Resize": "リサイズ",
+    "Rotate": "回転",
     "Video": "動画",
     "Search": "検索",
     "Clips": "クリップ",
@@ -43,6 +85,37 @@ export default {
     "Audio": "音声",
     "Image": "写真",
     "Utility": "ユーティリティ",
-    "Quick": "高速"
+    "Quick": "高速",
+    "Compress": "圧縮",
+    "WebP": "WebP",
+    "Optimize": "最適化",
+    "AI": "AI",
+    "Background": "背景",
+    "Remove": "消去",
+    "PDF": "PDF",
+    "Merge": "結合",
+    "Split": "分割",
+    "Convert": "変換",
+    "Screen": "画面",
+    "Webcam": "カメラ",
+    "Record": "録画",
+    "QR": "QRコード",
+    "Creator": "作成",
+    "Design": "デザイン",
+    "WiFi": "WiFi",
+    "Code": "コード",
+    "Screenshot": "スクリーンショット",
+    "Share": "共有",
+    "Developer": "開発者",
+    "TikTok": "TikTok",
+    "Instagram": "Instagram",
+    "Speech": "音声",
+    "GIF": "GIF",
+    "Optimize": "最適化",
+    "TTS": "TTS",
+    "JSON": "JSON",
+    "Formatter": "フォーマッタ",
+    "CSS": "CSS",
+    "Tailwind": "Tailwind"
   }
 };

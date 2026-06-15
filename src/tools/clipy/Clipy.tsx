@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SearchState, TimeFilter, SortType, Category, Clip } from './types';
 import { searchTwitchCategories, searchTwitchClips, getClipById, getTwitchUserAvatars } from './services/geminiService';
 import { useTranslation, Language, FLAGS, LANGUAGE_NAMES } from '../../locales/dictionary';
+import { legalTranslations } from '../../locales/legal';
 import SearchBar from './components/SearchBar';
 import FilterBar from './components/FilterBar';
 import ClipGrid from './components/ClipGrid';
@@ -60,6 +61,17 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
   const lastSearchId = useRef(0);
+  const playingClipRef = useRef<Clip | null>(null);
+  const modeRef = useRef<string>(state.mode);
+  const categoriesRef = useRef<any[]>(state.categories);
+  const handleSearchRef = useRef<any>(null);
+  const prevMode = useRef<string>(state.mode);
+
+  useEffect(() => {
+    playingClipRef.current = playingClip;
+    modeRef.current = state.mode;
+    categoriesRef.current = state.categories;
+  }, [playingClip, state.mode, state.categories]);
 
   const showToast = (message: string, type: 'success' | 'info' = 'success') => {
     setToast({ message, type });
@@ -229,11 +241,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Reset scroll to top when mode or category changes
+  // Reset scroll to top ONLY when entering clips mode or changing category
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      window.scrollTo(0, 0);
+      if (state.mode === 'clips' && prevMode.current !== 'clips') {
+        window.scrollTo(0, 0);
+      }
     }
+    prevMode.current = state.mode;
   }, [state.mode, state.activeCategory]);
 
   // Background Avatar Loader: Carga las fotos de perfil en segundo plano sin bloquear la UI
@@ -281,6 +296,15 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     }));
 
     try {
+      if (typeof window !== 'undefined') {
+        const historyState = { view: isClipUrl ? 'clips' : 'categories', query };
+        if (query === 'popular' && !window.history.state) {
+          window.history.replaceState(historyState, '');
+        } else {
+          window.history.pushState(historyState, '');
+        }
+      }
+
       if (isClipUrl) {
         const clipIdMatch = query.match(/clips\.twitch\.tv\/([A-Za-z0-9_-]+)/) || query.match(/\/clip\/([A-Za-z0-9_-]+)/);
         const clipId = clipIdMatch ? clipIdMatch[1] : null;
@@ -295,10 +319,6 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             clips: [],
             paginationCursor: null
           }));
-          
-          if (typeof window !== 'undefined') {
-            window.history.pushState({ view: 'clips' }, '');
-          }
 
           const clip = await getClipById(clipId);
           if (searchId !== lastSearchId.current) return;
@@ -408,6 +428,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         await new Promise(r => setTimeout(r, 200));
       }
       setState(prev => ({ ...prev, isLoading: false }));
+      setTimeout(() => {
+        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
+      }, 100);
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
@@ -424,6 +447,10 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     setState(prev => ({ ...prev, sortType: sort }));
     if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter);
   };
+  useEffect(() => {
+    handleSearchRef.current = handleSearch;
+  }, [handleSearch]);
+
   const goBackToCategories = useCallback(() => {
     handleSearch("popular");
     setPlayingClip(null);
@@ -432,20 +459,32 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
   // Manejo del botón "Atrás" del navegador/ratón
   useEffect(() => {
     const handlePopState = (event: PopStateEvent) => {
-      // Si hay un clip reproduciéndose, lo cerramos primero
-      if (playingClip) {
+      const newState = event.state;
+      
+      // Si hay un clip reproduciéndose, lo cerramos
+      if (playingClipRef.current) {
         setPlayingClip(null);
-        return;
+        playingClipRef.current = null; // Actualizamos el ref inmediatamente
       }
-      // Si estamos en modo clips y el usuario pulsa atrás, volvemos a categorías
-      if (state.mode === 'clips') {
-        handleSearch("popular");
+      
+      // Si estamos en modo clips y el usuario pulsa atrás
+      if (modeRef.current === 'clips') {
+        // Si el estado es nulo o de otro tipo (ej. categories), volvemos a categorías
+        const isLandingOnClips = newState && newState.view === 'clips';
+        
+        if (!isLandingOnClips) {
+          if (categoriesRef.current.length > 0) {
+            setState(prev => ({ ...prev, mode: 'categories', activeCategory: null }));
+          } else if (handleSearchRef.current) {
+            handleSearchRef.current("popular");
+          }
+        }
       }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [state.mode, handleSearch, playingClip]);
+  }, []);
 
   const handleLogoClick = () => {
     handleSearch("popular");
@@ -658,9 +697,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
             )}
             <ClipGrid clips={state.clips} isLoading={state.isLoading} hasMore={!!state.paginationCursor} onLoadMore={loadMoreClips} onLoadAll={loadAllClips} onClipClick={(clip) => {
               setPlayingClip(clip);
-              if (typeof window !== 'undefined') {
-                window.history.pushState({ view: 'player' }, '');
-              }
+
             }} savedClipIds={new Set(savedClips.map(c => c.id))} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />
           </div>
         )}
@@ -668,11 +705,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
       {playingClip && <FloatingPlayer clip={playingClip} onClose={() => {
         setPlayingClip(null);
-        // Si el usuario cierra el player manualmente, deberíamos ir atrás en el historial 
-        // para "limpiar" la entrada que pusimos al abrirlo
-        if (window.history.state?.view === 'player') {
-          window.history.back();
-        }
+        playingClipRef.current = null;
       }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />}
 
       {showDeleteModal && (
@@ -760,29 +793,35 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
             {/* Minimalist Legal Footer */}
             <div className="flex flex-col md:flex-row flex-wrap justify-center gap-y-1 md:gap-12 items-center px-4 w-full">
-              <button 
-                onClick={() => setLegalModal('privacy')} 
-                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl"
+              <a 
+                href={`/${lang}/privacy`} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl text-center"
               >
-                {t('privacy_policy')}
-              </button>
-              <button 
-                onClick={() => setLegalModal('terms')} 
-                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl"
+                {legalTranslations[lang]?.nav.privacy || 'Privacy'}
+              </a>
+              <a 
+                href={`/${lang}/terms`} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl text-center"
               >
-                {t('terms_of_service')}
-              </button>
-              <button 
-                onClick={() => setLegalModal('cookies')} 
-                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl"
+                {legalTranslations[lang]?.nav.terms || 'Terms'}
+              </a>
+              <a 
+                href={`/${lang}/cookies`} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl text-center"
               >
-                {t('cookie_policy')}
-              </button>
+                {legalTranslations[lang]?.nav.cookies || 'Cookies'}
+              </a>
+              <a 
+                href={`/${lang}/about`} 
+                className="w-full md:w-auto py-4 md:py-0 text-gray-300 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[11px] font-black uppercase tracking-[0.3em] whitespace-nowrap cursor-pointer rounded-2xl text-center"
+              >
+                {legalTranslations[lang]?.nav.about || 'About'}
+              </a>
               <div className="hidden md:block w-px h-3 bg-white/10 mx-2"></div>
               <a
                 href="mailto:adrian.contact.me.69@gmail.com"
                 onClick={handleContactClick}
-                className="w-full md:w-auto py-4 md:py-0 flex items-center justify-center gap-2 text-gray-400 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[10px] md:text-[11px] font-bold uppercase tracking-widest group whitespace-nowrap cursor-pointer rounded-2xl"
+                className="w-full md:w-auto py-4 md:py-0 flex items-center justify-center gap-2 text-gray-400 hover:text-twitch-base active:bg-white/5 active:scale-95 transition-all text-[10px] md:text-[11px] font-bold uppercase tracking-widest group whitespace-nowrap cursor-pointer rounded-2xl text-center"
               >
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <span>{t('contact_link')}</span>

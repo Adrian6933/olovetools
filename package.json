@@ -14,16 +14,23 @@
     "@astrojs/react": "^5.0.1",
     "@astrojs/sitemap": "^3.7.2",
     "@google/genai": "^1.30.0",
+    "@imgly/background-removal": "^1.7.0",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "astro": "^6.0.8",
+    "cropperjs": "^2.1.1",
     "framer-motion": "^12.36.0",
+    "gifshot": "^0.4.5",
     "heic2any": "^0.0.4",
+    "html-to-image": "^1.11.13",
     "i18next": "^25.9.0",
     "jspdf": "^4.2.1",
     "jszip": "^3.10.1",
     "lucide-react": "^0.555.0",
+    "pdf-lib": "^1.17.1",
+    "prismjs": "^1.30.0",
+    "qr-code-styling": "^1.9.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-i18next": "^16.5.8",
@@ -32,6 +39,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
+    "@types/prismjs": "^1.26.6",
     "typescript": "~5.8.2"
   }
 }

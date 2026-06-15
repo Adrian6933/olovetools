@@ -10,6 +10,12 @@
   --color-twitch-light: #a970ff;
   --color-twitch-darker: #451093;
 
+  --color-kick: #53FC18;
+  --color-kick-base: #53FC18;
+  --color-kick-dark: #3eb512;
+  --color-kick-surface: rgba(20, 26, 20, 1);
+  --color-kick-surfaceAlt: rgba(30, 40, 30, 1);
+
   --color-dark-950: #070708;
   --color-dark-900: #0e0e10;
   --color-dark-850: #111114;
@@ -258,4 +264,40 @@ body {
 .custom-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* ── CropSnap: Transparent checkerboard background ── */
+.checkered-bg {
+  background-color: #161020;
+  background-image:
+    linear-gradient(45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255,255,255,0.04) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255,255,255,0.04) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255,255,255,0.04) 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* ── CropperJS v2 custom elements ── */
+cropper-canvas {
+  max-height: 100%;
+  max-width: 100%;
+}
+
+cropper-selection {
+  outline: 2px solid rgba(244, 63, 94, 0.9);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
+}
+
+cropper-handle {
+  background-color: #f43f5e;
+  border-radius: 2px;
+}
+
+cropper-crosshair {
+  background-color: rgba(244, 63, 94, 0.5);
+}
+
+cropper-grid {
+  border-color: rgba(244, 63, 94, 0.25);
 }

@@ -29,9 +29,51 @@ export default {
     },
     "4": {
       "description": "Cole as suas capturas de ecrã para descarregar em alta qualidade."
+    },
+    "5": {
+      "description": "Downloader rápido e fácil de clipes do Kick. Salve seus momentos favoritos instantaneamente."
+    },
+    "6": {
+      "description": "Comprima e otimize suas imagens (JPG, PNG, WebP) localmente e instantaneamente no seu navegador."
+    },
+    "7": {
+      "description": "Remova fundos de imagens localmente e automaticamente com Inteligência Artificial."
+    },
+    "8": {
+      "description": "Mescle, divida, rotacione e converta documentos ou imagens para PDF localmente no seu navegador."
+    },
+    "9": {
+      "description": "Grave sua tela, webcam ou ambas simultaneamente diretamente no seu navegador."
+    },
+    "10": {
+      "description": "Gere códigos QR personalizados com degradês, formas e logotipos no centro 100% localmente."
+    },
+    "11": {
+      "description": "Converta seus trechos de código em lindas imagens de captura prontas para compartilhar 100% localmente."
+    },
+    "12": {
+      "description": "Corte, redimensione, gire e inverta imagens com predefinições personalizáveis e controle de qualidade 100% local."
+    },
+    "13": {
+      "description": "Crie e gere estilos CSS modernos como glassmorphism, sombras, degradês e bordas orgânicas 100% local."
+    },
+    "14": {
+      "description": "Validador, formatador e conversor local interativo para explorar JSON e tabelas Excel com total segurança."
+    },
+    "15": {
+      "description": "Baixe vídeos do TikTok (sem marca d'água), Instagram Reels e YouTube Shorts 100% localmente."
+    },
+    "16": {
+      "description": "Converta texto em voz natural e baixe o áudio em MP3 100% localmente em seu navegador."
+    },
+    "17": {
+      "description": "Converta vídeos e sequências de imagens em GIFs animados otimizados 100% localmente no seu navegador."
     }
   },
   "tags": {
+    "Crop": "Cortar",
+    "Resize": "Redimensionar",
+    "Rotate": "Girar",
     "Video": "Vídeo",
     "Search": "Pesquisar",
     "Clips": "Clipes",
@@ -43,6 +85,37 @@ export default {
     "Audio": "Áudio",
     "Image": "Imagem",
     "Utility": "Utilidade",
-    "Quick": "Rápido"
+    "Quick": "Rápido",
+    "Compress": "Comprimir",
+    "WebP": "WebP",
+    "Optimize": "Otimizar",
+    "AI": "IA",
+    "Background": "Plano de Fundo",
+    "Remove": "Remover",
+    "PDF": "PDF",
+    "Merge": "Mesclar",
+    "Split": "Dividir",
+    "Convert": "Converter",
+    "Screen": "Tela",
+    "Webcam": "Webcam",
+    "Record": "Gravar",
+    "QR": "QR",
+    "Creator": "Criador",
+    "Design": "Design",
+    "WiFi": "WiFi",
+    "Code": "Código",
+    "Screenshot": "Captura de tela",
+    "Share": "Compartilhar",
+    "Developer": "Desenvolvedor",
+    "TikTok": "TikTok",
+    "Instagram": "Instagram",
+    "Speech": "Voz",
+    "GIF": "GIF",
+    "Optimize": "Otimizar",
+    "TTS": "TTS",
+    "JSON": "JSON",
+    "Formatter": "Formatador",
+    "CSS": "CSS",
+    "Tailwind": "Tailwind"
   }
 };

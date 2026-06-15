@@ -7,6 +7,7 @@ import { CookieConsent } from './components/CookieConsent';
 import { LegalModal } from './components/LegalModal';
 import { PastedImage } from './types';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { legalTranslations } from '../../locales/legal';
 
 interface PastesnapProps {
   lang: Language;
@@ -577,26 +578,33 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
           <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-gray-800 font-black text-[11px] md:text-xs tracking-widest pt-12 uppercase border-t border-white/5 w-full">
             <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
             
-            <button 
-              onClick={() => setActiveModal('privacy')} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl"
+            <a 
+              href={`/${lang.toLowerCase()}/privacy`} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
             >
-              {t.privacyPolicy}
-            </button>
+              {legalTranslations[lang]?.nav.privacy || 'Privacy Policy'}
+            </a>
             
-            <button 
-              onClick={() => setActiveModal('terms')} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl"
+            <a 
+              href={`/${lang.toLowerCase()}/terms`} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
             >
-              {t.termsOfService}
-            </button>
+              {legalTranslations[lang]?.nav.terms || 'Terms of Service'}
+            </a>
             
-            <button 
-              onClick={() => setActiveModal('cookies')} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl"
+            <a 
+              href={`/${lang.toLowerCase()}/cookies`} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
             >
-              {t.cookiePolicy}
-            </button>
+              {legalTranslations[lang]?.nav.cookies || 'Cookie Policy'}
+            </a>
+
+            <a 
+              href={`/${lang.toLowerCase()}/about`} 
+              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
+            >
+              {legalTranslations[lang]?.nav.about || 'About'}
+            </a>
             
             <button 
               onClick={() => {

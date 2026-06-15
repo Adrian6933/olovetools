@@ -1,5 +1,6 @@
 ---
 import { Home } from '../../components/Home';
+import { CookieBanner } from '../../components/CookieBanner';
 import { useTranslation, Language } from '../../locales/dictionary';
 import { ClientRouter } from 'astro:transitions';
 import '../../styles/global.css';
@@ -37,6 +38,8 @@ const baseUrl = 'https://olovetools.com';
     <meta name="twitter:description" content={t('seo_description')} />
     <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
     <link rel="canonical" href={`${baseUrl}/${lang}`} />
+    <meta name="google-adsense-account" content="ca-pub-4601581729676999">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999" crossorigin="anonymous"></script>
     
     <link rel="icon" type="image/svg+xml" href="/icon.svg">
     <link rel="apple-touch-icon" href="/icon.svg">
@@ -81,20 +84,38 @@ const baseUrl = 'https://olovetools.com';
   <body class="bg-[#060609]">
     <Home lang={lang || 'en'} dictionary={dictionary} client:load />
 
-    <!-- Defer AdSense loading to avoid blocking render -->
-    <script is:inline>
-      window.addEventListener('load', function() {
-        var s = document.createElement('script');
-        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999';
-        s.async = true;
-        s.crossOrigin = 'anonymous';
-        document.head.appendChild(s);
-      });
+    <!-- SSR SEO Content for AdSense Hub Approval -->
+    <div class="hidden-seo-content" style="display: none;" aria-hidden="true">
+      <h1>{t('seo_title')}</h1>
+      <p>{t('seo_description')}</p>
+      <h2>{t('hub_title')}</h2>
+      <p>{t('hub_subtitle')}</p>
+      
+      {/* List tools for better internal linking and content depth */}
+      <article>
+        <h3>Clipy</h3>
+        <p>{t('clipy_desc')}</p>
+      </article>
+      <article>
+        <h3>ClipBolt</h3>
+        <p>{t('clipbolt_desc')}</p>
+      </article>
+      <article>
+        <h3>FormatFlow</h3>
+        <p>{t('formatflow_desc')}</p>
+      </article>
+      <article>
+        <h3>PasteSnap</h3>
+        <p>{t('pastesnap_desc')}</p>
+      </article>
+    </div>
 
+    <script is:inline>
       // Force scroll to top on view transitions
       document.addEventListener('astro:after-navigation', () => {
         window.scrollTo(0, 0);
       });
     </script>
+    <CookieBanner lang={castLang} client:load />
   </body>
 </html>
