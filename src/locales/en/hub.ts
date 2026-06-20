@@ -68,6 +68,48 @@ export default {
     },
     "17": {
       "description": "Convert videos and image sequences into optimized animated GIFs 100% locally in your browser."
+    },
+    "18": {
+      "description": "Record microphone audio, trim silence, and download as WAV or native compressed files 100% locally."
+    },
+    "19": {
+      "description": "An interactive digital whiteboard to sketch ideas, draw vector shapes, and export creations as PNG or SVG 100% locally."
+    },
+    "20": {
+      "description": "Compare two text files or code snippets and inspect additions, deletions, and differences side-by-side or unified 100% locally."
+    },
+    "21": {
+      "description": "Add text or logo watermarks to multiple images simultaneously. Process all files locally inside your browser."
+    },
+    "22": {
+      "description": "Generate a complete package of standard website favicons from an image or emoji. Process all files locally inside your browser."
+    },
+    "23": {
+      "description": "Inspect and strip EXIF, GPS, and metadata from images locally in your browser. Protect your privacy online."
+    },
+    "24": {
+      "description": "Create and generate custom memes from templates or your own images 100% locally in your browser."
+    },
+    "25": {
+      "description": "An advanced word counter, character counter, readability analyzer, and text cleaning assistant 100% locally."
+    },
+    "26": {
+      "description": "A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally."
+    },
+    "27": {
+      "description": "Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally with checksum verification."
+    },
+    "28": {
+      "description": "Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization."
+    },
+    "29": {
+      "description": "An interactive regular expression builder, tester, and visualizer with real-time match highlighting and syntax breakdown 100% locally."
+    },
+    "30": {
+      "description": "Render, inspect, and edit layer colors of Lottie JSON animations 100% locally in your browser with real-time playback controls."
+    },
+    "31": {
+      "description": "Optimize, clean and compress SVG files 100% locally in your browser with real-time side-by-side previews and code formatting."
     }
   },
   "tags": {
@@ -111,11 +153,48 @@ export default {
     "Instagram": "Instagram",
     "Speech": "Speech",
     "GIF": "GIF",
-    "Optimize": "Optimize",
     "TTS": "TTS",
     "JSON": "JSON",
     "Formatter": "Formatter",
     "CSS": "CSS",
-    "Tailwind": "Tailwind"
+    "Tailwind": "Tailwind",
+    "Trim": "Trim",
+    "Draw": "Draw",
+    "Whiteboard": "Whiteboard",
+    "Creative": "Creative",
+    "Vector": "Vector",
+    "Compare": "Compare",
+    "Diff": "Diff",
+    "Watermark": "Watermark",
+    "Batch": "Batch",
+    "Branding": "Branding",
+    "Favicon": "Favicon",
+    "Generator": "Generator",
+    "Icon": "Icon",
+    "Metadata": "Metadata",
+    "EXIF": "EXIF",
+    "Privacy": "Privacy",
+    "Meme": "Meme",
+    "Editor": "Editor",
+    "Text": "Text",
+    "Analyzer": "Analyzer",
+    "SEO": "SEO",
+    "Writing": "Writing",
+    "Markdown": "Markdown",
+    "Writer": "Writer",
+    "HTML": "HTML",
+    "Cryptography": "Cryptography",
+    "Hash": "Hash",
+    "Security": "Security",
+    "ZIP": "ZIP",
+    "Extract": "Extract",
+    "Archive": "Archive",
+    "Regex": "Regex",
+    "Tester": "Tester",
+    "Tool": "Tool",
+    "Lottie": "Lottie",
+    "Animation": "Animation",
+    "SVG": "SVG",
+    "Optimizer": "Optimizer"
   }
 };

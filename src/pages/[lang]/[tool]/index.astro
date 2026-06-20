@@ -16,6 +16,21 @@ import { JSONFlow } from '../../../tools/json-flow/JSONFlow';
 import { SocialBolt } from '../../../tools/socialbolt/SocialBolt';
 import TTSBolt from '../../../tools/tts-bolt/TTSBolt';
 import GIFBolt from '../../../tools/gif-bolt/GIFBolt';
+import AudioSnap from '../../../tools/audiosnap/AudioSnap';
+import DrawSnap from '../../../tools/drawsnap/DrawSnap';
+import DiffSnap from '../../../tools/diffsnap/DiffSnap';
+import WatermarkSnap from '../../../tools/watermark-snap/WatermarkSnap';
+import FaviconBolt from '../../../tools/favicon-bolt/FaviconBolt';
+import EXIFClear from '../../../tools/exif-clear/EXIFClear';
+import MemeBolt from '../../../tools/meme-bolt/MemeBolt';
+import WordFlow from '../../../tools/wordflow/WordFlow';
+import MarkdownLive from '../../../tools/markdown-live/MarkdownLive';
+import HashBolt from '../../../tools/hash-bolt/HashBolt';
+import ZipFlow from '../../../tools/zip-flow/ZipFlow';
+import RegexFlow from '../../../tools/regex-flow/RegexFlow';
+import LottieViewer from '../../../tools/lottie-viewer/LottieViewer';
+import SVGOptimizer from '../../../tools/svg-optimizer/SVGOptimizer';
+import GraphFlow from '../../../tools/graph-flow/GraphFlow';
 import { CookieBanner } from '../../../components/CookieBanner';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
 import { useTranslation, Language } from '../../../locales/dictionary';
@@ -24,7 +39,7 @@ import { TOOL_FAVICONS, TOOL_THEME_COLORS } from '../../../constants';
 import '../../../styles/global.css';
 
 export function getStaticPaths() {
-  const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt'];
+  const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt', 'audiosnap', 'drawsnap', 'diffsnap', 'watermark-snap', 'favicon-bolt', 'exif-clear', 'meme-bolt', 'wordflow', 'markdown-live', 'hash-bolt', 'zip-flow', 'regex-flow', 'lottie-viewer', 'svg-optimizer', 'graph-flow'];
   const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
   
   return tools.flatMap(tool => 
@@ -62,7 +77,22 @@ const toolNames: Record<string, string> = {
   'json-flow': 'JSON-Flow',
   'socialbolt': 'SocialBolt',
   'tts-bolt': 'TTS-Bolt',
-  'gif-bolt': 'GIF-Bolt'
+  'gif-bolt': 'GIF-Bolt',
+  'audiosnap': 'AudioSnap'
+  , 'drawsnap': 'DrawSnap'
+  , 'diffsnap': 'DiffSnap'
+  , 'watermark-snap': 'Watermark-Snap'
+  , 'favicon-bolt': 'Favicon-Bolt'
+  , 'exif-clear': 'EXIF-Clear'
+  , 'meme-bolt': 'Meme-Bolt'
+  , 'wordflow': 'WordFlow'
+  , 'markdown-live': 'Markdown-Live'
+  , 'hash-bolt': 'Hash-Bolt'
+  , 'zip-flow': 'Zip-Flow'
+  , 'regex-flow': 'Regex-Flow'
+  , 'lottie-viewer': 'Lottie-Viewer'
+  , 'svg-optimizer': 'SVG-Optimizer'
+  , 'graph-flow': 'Graph-Flow'
 };
 const name = toolNames[tool as string] || ((tool as string).charAt(0).toUpperCase() + (tool as string).slice(1));
 let seoTitle = t('seo_title');
@@ -691,6 +721,431 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
         .glow-fuchsia { box-shadow: 0 0 25px -5px rgba(217, 70, 239, 0.35); }
       </style>
     )}
+
+    {tool === 'audiosnap' && (
+      <style is:inline>
+        body {
+          background-color: #060405 !important;
+          background-image: radial-gradient(circle at 50% -25%, #230911 0%, #060405 50%) !important;
+          background-attachment: fixed !important;
+          color: #e2e8f0 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #060405; }
+        ::-webkit-scrollbar-thumb { background: #fda4af; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f43f5e; }
+        
+        .glass-card {
+          background: rgba(20, 10, 15, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-rose { box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.35); }
+      </style>
+    )}
+
+    {tool === 'drawsnap' && (
+      <style is:inline>
+        body {
+          background-color: #08060a !important;
+          background-image: radial-gradient(circle at 50% -25%, #25102a 0%, #08060a 60%) !important;
+          background-attachment: fixed !important;
+          color: #e2e8f0 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #08060a; }
+        ::-webkit-scrollbar-thumb { background: #d8b4fe; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a855f7; }
+        
+        .glass-card {
+          background: rgba(22, 12, 30, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-purple { box-shadow: 0 0 25px -5px rgba(168, 85, 247, 0.35); }
+      </style>
+    )}
+
+    {tool === 'diffsnap' && (
+      <style is:inline>
+        body {
+          background-color: #050809 !important;
+          background-image: radial-gradient(circle at 50% -25%, #0e2025 0%, #050809 60%) !important;
+          background-attachment: fixed !important;
+          color: #e2e8f0 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050809; }
+        ::-webkit-scrollbar-thumb { background: #67e8f9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+        
+        .glass-card {
+          background: rgba(10, 20, 22, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-cyan { box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35); }
+      </style>
+    )}
+
+    {tool === 'watermark-snap' && (
+      <style is:inline>
+        body {
+          background-color: #080604 !important;
+          background-image: radial-gradient(circle at 50% -25%, #25180e 0%, #080604 60%) !important;
+          background-attachment: fixed !important;
+          color: #f7f5f3 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080604; }
+        ::-webkit-scrollbar-thumb { background: #f59e0b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d97706; }
+        
+        .glass-card {
+          background: rgba(22, 15, 10, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-amber { box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35); }
+      </style>
+    )}
+
+    {tool === 'favicon-bolt' && (
+      <style is:inline>
+        body {
+          background-color: #030712 !important;
+          background-image: radial-gradient(circle at 50% -25%, #1e1b4b 0%, #030712 60%) !important;
+          background-attachment: fixed !important;
+          color: #f3f4f6 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+        
+        .glass-card {
+          background: rgba(15, 23, 42, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-indigo { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.35); }
+      </style>
+    )}
+    {tool === 'exif-clear' && (
+      <style is:inline>
+        body {
+          background-color: #020617 !important;
+          background-image: radial-gradient(circle at 50% -25%, #064e3b 0%, #020617 60%) !important;
+          background-attachment: fixed !important;
+          color: #e2e8f0 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020617; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+        
+        .glass-card {
+          background: rgba(2, 6, 23, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-emerald { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35); }
+      </style>
+    )}
+    {tool === 'meme-bolt' && (
+      <style is:inline>
+        body {
+          background-color: #020205 !important;
+          background-image: radial-gradient(circle at 50% -25%, #4a044e 0%, #020205 60%) !important;
+          background-attachment: fixed !important;
+          color: #f3f4f6 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020205; }
+        ::-webkit-scrollbar-thumb { background: #d946ef; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #c084fc; }
+        
+        .glass-card {
+          background: rgba(15, 2, 20, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-fuchsia { box-shadow: 0 0 25px -5px rgba(217, 70, 239, 0.35); }
+      </style>
+    )}
+    {tool === 'wordflow' && (
+      <style is:inline>
+        body {
+          background-color: #030708 !important;
+          background-image: radial-gradient(circle at 50% -25%, #052e2b 0%, #030708 60%) !important;
+          background-attachment: fixed !important;
+          color: #f3f4f6 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030708; }
+        ::-webkit-scrollbar-thumb { background: #0d9488; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #14b8a6; }
+        
+        .glass-card {
+          background: rgba(10, 20, 18, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-teal { box-shadow: 0 0 25px -5px rgba(20, 184, 166, 0.35); }
+      </style>
+    )}
+    {tool === 'markdown-live' && (
+      <style is:inline>
+        body {
+          background-color: #030208 !important;
+          background-image: radial-gradient(circle at 50% -25%, #2e1065 0%, #030208 60%) !important;
+          background-attachment: fixed !important;
+          color: #f3f4f6 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030208; }
+        ::-webkit-scrollbar-thumb { background: #6d28d9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
+        
+        .glass-card {
+          background: rgba(10, 5, 20, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-violet { box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.35); }
+      </style>
+    )}
+    {tool === 'hash-bolt' && (
+      <style is:inline>
+        body {
+          background-color: #020813 !important;
+          background-image: radial-gradient(circle at 50% -25%, #082f49 0%, #020813 60%) !important;
+          background-attachment: fixed !important;
+          color: #f1f5f9 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #020813; }
+        ::-webkit-scrollbar-thumb { background: #0284c7; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+        
+        .glass-card {
+          background: rgba(2, 8, 20, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-sky { box-shadow: 0 0 25px -5px rgba(14, 165, 233, 0.35); }
+      </style>
+    )}
+    {tool === 'zip-flow' && (
+      <style is:inline>
+        body {
+          background-color: #0c0802 !important;
+          background-image: radial-gradient(circle at 50% -25%, #452a03 0%, #0c0802 60%) !important;
+          background-attachment: fixed !important;
+          color: #fef3c7 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0c0802; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+        
+        .glass-card {
+          background: rgba(20, 12, 2, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-amber { box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35); }
+      </style>
+    )}
+    {tool === 'regex-flow' && (
+      <style is:inline>
+        body {
+          background-color: #08040a !important;
+          background-image: radial-gradient(circle at 50% -25%, #2a0b29 0%, #08040a 60%) !important;
+          background-attachment: fixed !important;
+          color: #fdf3fd !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #08040a; }
+        ::-webkit-scrollbar-thumb { background: #c084fc; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d946ef; }
+        
+        .glass-card {
+          background: rgba(22, 10, 20, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-fuchsia { box-shadow: 0 0 25px -5px rgba(217, 70, 239, 0.35); }
+      </style>
+    )}
+    {tool === 'lottie-viewer' && (
+      <style is:inline>
+        body {
+          background-color: #05050a !important;
+          background-image: radial-gradient(circle at 50% -25%, #141029 0%, #05050a 60%) !important;
+          background-attachment: fixed !important;
+          color: #f1f0f7 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #05050a; }
+        ::-webkit-scrollbar-thumb { background: #818cf8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        
+        .glass-card {
+          background: rgba(15, 12, 25, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-indigo { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.35); }
+      </style>
+    )}
+    {tool === 'svg-optimizer' && (
+      <style is:inline>
+        body {
+          background-color: #04080a !important;
+          background-image: radial-gradient(circle at 50% -25%, #05222e 0%, #04080a 60%) !important;
+          background-attachment: fixed !important;
+          color: #ecf8fd !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #04080a; }
+        ::-webkit-scrollbar-thumb { background: #0891b2; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+        
+        .glass-card {
+          background: rgba(3, 15, 20, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-cyan { box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35); }
+      </style>
+    )}
+    {tool === 'graph-flow' && (
+      <style is:inline>
+        body {
+          background-color: #0a0804 !important;
+          background-image: radial-gradient(circle at 50% -25%, #1a1005 0%, #0a0804 60%) !important;
+          background-attachment: fixed !important;
+          color: #fef3c7 !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0804; }
+        ::-webkit-scrollbar-thumb { background: #d97706; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+        
+        .glass-card {
+          background: rgba(20, 12, 3, 0.45);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.06);
+          box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .glow-amber { box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35); }
+      </style>
+    )}
   </head>
   <body>
     <div id="root">
@@ -711,7 +1166,22 @@ const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
         {tool === 'socialbolt' && <SocialBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'tts-bolt' && <TTSBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'gif-bolt' && <GIFBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
-        {tool !== 'clipy' && tool !== 'twitchbolt' && tool !== 'kickbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && tool !== 'compresssnap' && tool !== 'backgroundremover' && tool !== 'pdf-flow' && tool !== 'recordsnap' && tool !== 'qr-bolt' && tool !== 'codecard' && tool !== 'cropsnap' && tool !== 'css-designer' && tool !== 'json-flow' && tool !== 'socialbolt' && tool !== 'tts-bolt' && tool !== 'gif-bolt' && (
+        {tool === 'audiosnap' && <AudioSnap lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'drawsnap' && <DrawSnap lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'diffsnap' && <DiffSnap lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'watermark-snap' && <WatermarkSnap lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'favicon-bolt' && <FaviconBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'exif-clear' && <EXIFClear lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'meme-bolt' && <MemeBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'wordflow' && <WordFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'markdown-live' && <MarkdownLive lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'hash-bolt' && <HashBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'zip-flow' && <ZipFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'regex-flow' && <RegexFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'lottie-viewer' && <LottieViewer lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'svg-optimizer' && <SVGOptimizer lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'graph-flow' && <GraphFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool !== 'clipy' && tool !== 'twitchbolt' && tool !== 'kickbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && tool !== 'compresssnap' && tool !== 'backgroundremover' && tool !== 'pdf-flow' && tool !== 'recordsnap' && tool !== 'qr-bolt' && tool !== 'codecard' && tool !== 'cropsnap' && tool !== 'css-designer' && tool !== 'json-flow' && tool !== 'socialbolt' && tool !== 'tts-bolt' && tool !== 'gif-bolt' && tool !== 'audiosnap' && tool !== 'drawsnap' && tool !== 'diffsnap' && tool !== 'watermark-snap' && tool !== 'favicon-bolt' && tool !== 'exif-clear' && tool !== 'meme-bolt' && tool !== 'wordflow' && tool !== 'markdown-live' && tool !== 'hash-bolt' && tool !== 'zip-flow' && tool !== 'regex-flow' && tool !== 'lottie-viewer' && tool !== 'svg-optimizer' && tool !== 'graph-flow' && (
           <div class="min-h-screen bg-[#060609] text-slate-200 font-sans">
              <ToolPlaceholder lang={castLang} toolSlug={tool!} client:load />
           </div>

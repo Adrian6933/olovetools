@@ -1,0 +1,61 @@
+export default {
+  "title": "Zip-Flow",
+  "description": "Komprimieren Sie Dateien im ZIP-Format und entpacken Sie ZIP-Archive 100% lokal im Browser mit einer Dateibaum-Vorschau in Echtzeit.",
+  "tab_compress": "Dateien komprimieren",
+  "tab_extract": "Archiv entpacken",
+  "compress_drop_active": "Dateien zum Hinzufügen ablegen...",
+  "compress_drop_inactive": "Ziehen Sie Dateien hierher oder klicken Sie zum Durchsuchen",
+  "compress_output_filename": "ZIP-Dateiname",
+  "compress_output_filename_placeholder": "archiv.zip",
+  "compress_level": "Komprimierungsstufe",
+  "compress_level_store": "Speichern (Keine Komprimierung - Schnell)",
+  "compress_level_deflate": "Deflate (Standardkomprimierung)",
+  "compress_add_more": "Mehr Dateien hinzufügen",
+  "compress_clear_all": "Alle löschen",
+  "compress_btn": "ZIP-Archiv erstellen",
+  "compress_stats_title": "Komprimierungsstatistik",
+  "compress_stats_original": "Originalgröße",
+  "compress_stats_compressed": "Komprimierte Größe",
+  "compress_stats_savings": "Gesparter Platz",
+  "extract_drop_active": "ZIP-Datei zum Entpacken ablegen...",
+  "extract_drop_inactive": "Ziehen Sie eine ZIP-Datei hierher oder klicken Sie zum Auswählen",
+  "extract_search_placeholder": "Dateien nach Name oder Pfad suchen...",
+  "extract_btn_all": "Alle entpacken & herunterladen",
+  "extract_single_download": "Herunterladen",
+  "extract_empty": "Keine Dateien im Archiv gefunden",
+  "extract_info_title": "ZIP-Informationen",
+  "extract_info_files": "Dateien insgesamt",
+  "extract_info_folders": "Ordner insgesamt",
+  "extract_loading": "ZIP-Dateistruktur wird analysiert...",
+  "file_name": "Dateiname",
+  "file_size": "Größe",
+  "file_path": "Pfad",
+  "file_actions": "Aktionen",
+  "copied": "Kopiert!",
+  "tooltip_copy": "In Zwischenablage kopieren",
+  "seoHeroTitle": "100% lokaler browserbasierter ZIP-Kompressor & Entpacker",
+  "seoHeroText": "Bündeln und komprimieren Sie Ihre Dateien in Standard-ZIP-Archive oder entpacken Sie ZIP-Pakete. Vollständig offline-fähig und sicher im lokalen Arbeitsspeicher.",
+  "seoBrowserSpeedTitle": "Sofortige lokale Verarbeitung",
+  "seoBrowserSpeedText": "Alle ZIP-Aufgaben werden lokal in Ihrem Browser über die JS-Engine ausgeführt. Es wird kein Internet-Datenvolumen verbraucht.",
+  "seoUseCaseTitle": "Interaktiver Datei-Explorer",
+  "seoUseCaseText": "Öffnen Sie ZIP-Dateien sofort, um deren Struktur zu inspizieren, filtern Sie nach Pfad oder Name und laden Sie einzelne Dateien herunter. Keine Installation nötig.",
+  "seoPrivacyTitle": "Keine Server-Uploads",
+  "seoPrivacyText": "Datenschutz ist standardmäßig garantiert. Ihre Dokumente, Fotos, Code-Dateien und Archive werden im RAM verarbeitet und beim Schließen des Tabs gelöscht.",
+  "faqTitle": "Häufig gestellte Fragen",
+  "faq": [
+    {
+      "question": "Werden meine Dateien beim Komprimieren oder Entpacken hochgeladen?",
+      "answer": "Nein. Zip-Flow läuft vollständig in Ihrem Browserspeicher über die JSZip-Bibliothek. Ihre Dateien verlassen niemals Ihren Computer."
+    },
+    {
+      "question": "Kann ich passwortgeschützte ZIP-Archive entpacken?",
+      "answer": "JSZip unterstützt passwortgeschützte ZIP-Archive nicht nativ. Das Entpacken solcher Archive kann fehlschlagen oder leere Dateien liefern."
+    },
+    {
+      "question": "Welche Komprimierungsalgorithmen werden unterstützt?",
+      "answer": "Wir unterstützen 'Speichern' (bündelt Dateien schnell ohne Komprimierung) und 'Deflate' (den weit verbreiteten ZIP-Standardkomprimierungsalgorithmus)."
+    }
+  ],
+  "footerTagline": "Privates und lokales ZIP-Komprimierungs- und Entpackungstool im Browser.",
+  "footerCredit": "Teil der oLoveTools-Suite"
+};

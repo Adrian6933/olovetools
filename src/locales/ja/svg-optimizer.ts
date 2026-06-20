@@ -1,0 +1,60 @@
+export default {
+  "title": "SVG-Optimizer",
+  "description": "SVGベクトルファイルをブラウザ上で100%ローカルに最適化、クリーンアップ、圧縮し、ファイルサイズを削減して読み込みパフォーマンスを向上させます。",
+  "label_svg_file": "SVGベクトルファイル",
+  "drop_active": "最適化するSVGをここにドロップ...",
+  "drop_inactive": "SVGファイルをここにドラッグ＆ドロップ、またはクリックして参照",
+  "error_invalid_svg": "無効なSVG：XML構造を解析できませんでした",
+  "label_original": "元のサイズ",
+  "label_optimized": "最適化後のサイズ",
+  "label_saving": "削減率",
+  "label_reduction": "削減",
+  "btn_download": "最適化されたSVGをダウンロード",
+  "btn_copy_svg": "SVGコードをコピー",
+  "btn_copy_react": "Reactコンポーネントをコピー",
+  "btn_copy_data_uri": "CSS Data URIをコピー",
+  "copied": "コピーしました！",
+  "tooltip_copy": "クリップボードにコピー",
+  "label_bg_color": "背景テーマ",
+  "label_presets": "プリセットデモ",
+  "preset_graphic": "詳細なベクトルグラフィック",
+  "preset_pattern": "幾何学パターン",
+  "preset_icon": "カスタムアプリのアイコン",
+  "label_options": "最適化パラメーター",
+  "opt_xml_decl": "XML宣言とDOCTYPEを削除",
+  "opt_metadata": "メタデータとコメントを削除",
+  "opt_namespaces": "エディター独自の属性と名前空間をクリーンアップ",
+  "opt_unused_ids": "未使用のIDを削除",
+  "opt_empty_groups": "未使用・空のグループとパスを削除",
+  "opt_precision": "座標の小数点丸め",
+  "opt_precision_keep": "元の値を維持",
+  "opt_precision_desc": "小数点の桁数を制限してパス文字列を圧縮します",
+  "opt_minify_path": "パスデータの余分な余白を縮小",
+  "opt_responsive": "レスポンシブ対応にする（固定のWidth/Heightを削除）",
+  "opt_style_to_attrs": "style属性をプレゼンテーション属性に変換",
+  "seoHeroTitle": "100%ローカル動作のブラウザ型SVG最適化・クリーンアップツール",
+  "seoHeroText": "ベクトルグラフィックファイルを瞬時に最適化。冗長なタグの除去、エディター名前空間の整理、コメントの削除、コードの書式設定をブラウザのRAM内で処理します。",
+  "seoBrowserSpeedTitle": "ブラウザ側での超高速圧縮",
+  "seoBrowserSpeedText": "すべてのベクトルクリーンアップは、お使いのデバイスのブラウザエンジンを使用してローカルで処理されます。サーバーへのデータ送信はなく、オフラインで安全に使えます。",
+  "seoUseCaseTitle": "カスタマイズ可能な精度コントロール",
+  "seoUseCaseText": "座標値の小数を丸め、パス文字列コマンドを簡素化し、空のネストされたグループを解除して、アセットサイズを効果的に削減します。",
+  "seoPrivacyTitle": "100%のデータ機密性",
+  "seoPrivacyText": "プライバシー第一の設計です。デザインファイルやコードスニペットがサーバーにアップロードされることはありません。すべてはお使いのPCのRAM内で実行されます。",
+  "faqTitle": "よくある質問",
+  "faq": [
+    {
+      "question": "読み込んだSVGコードは外部のサーバーへ送信されますか？",
+      "answer": "いいえ。SVG-Optimizerはブラウザのメモリ内で完全に動作します。ファイルデータがサーバーへアップロードされることはありません。"
+    },
+    {
+      "question": "座標値の小数の丸め処理はどのように機能しますか？",
+      "answer": "パス（d属性）や形状の座標値に含まれる数値を解析し、指定した桁数（例：5.123456 -> 5.12）に丸めます。見た目への影響を最小限に抑えつつ、ファイルサイズを効果的に削減します。"
+    },
+    {
+      "question": "style属性を直接の属性に変換するとSVGが壊れますか？",
+      "answer": "ほとんどすべての場合において壊れません。インラインのstyle文字列からfill、stroke、opacityなどの値を抽出し、タグの属性として直接記述することで、コードがスッキリし、互換性も高まります。"
+    }
+  ],
+  "footerTagline": "ブラウザで動くプライベートなローカルSVG最適化・コードクリーナー。",
+  "footerCredit": "oLoveToolsスイートの一部"
+};

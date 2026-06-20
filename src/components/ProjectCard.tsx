@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images } from 'lucide-react';
+import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive } from 'lucide-react';
 import { Project, LanguageCode as Language } from '../types';
 import { useTranslation } from '../locales/dictionary';
 
@@ -26,7 +26,13 @@ const IconMap: Record<string, React.ElementType> = {
   'Video': Video,
   'QrCode': QrCode,
   'Crop': Crop,
-  'Images': Images
+  'Images': Images,
+  'PenTool': PenTool,
+  'GitCompare': GitCompare,
+  'Tag': Tag,
+  'Shield': Shield,
+  'Smile': Smile,
+  'FolderArchive': FolderArchive
 };
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang }) => {

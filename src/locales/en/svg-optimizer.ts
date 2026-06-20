@@ -1,0 +1,60 @@
+export default {
+  "title": "SVG-Optimizer",
+  "description": "Optimize, clean, and minify SVG vector files 100% locally in your browser to reduce file size and improve loading performance.",
+  "label_svg_file": "SVG Vector File",
+  "drop_active": "Drop SVG here to optimize...",
+  "drop_inactive": "Drag & drop an SVG file here, or click to browse",
+  "error_invalid_svg": "Invalid SVG: Could not parse XML structure",
+  "label_original": "Original Size",
+  "label_optimized": "Optimized Size",
+  "label_saving": "Saving Progress",
+  "label_reduction": "Reduction",
+  "btn_download": "Download Optimized SVG",
+  "btn_copy_svg": "Copy SVG Code",
+  "btn_copy_react": "Copy React Component",
+  "btn_copy_data_uri": "Copy CSS Data URI",
+  "copied": "Copied!",
+  "tooltip_copy": "Copy to clipboard",
+  "label_bg_color": "Backdrop Theme",
+  "label_presets": "Preset Demos",
+  "preset_graphic": "Detailed Vector Graphic",
+  "preset_pattern": "Geometric Pattern",
+  "preset_icon": "Custom App Icon",
+  "label_options": "Optimization Parameters",
+  "opt_xml_decl": "Remove XML & DOCTYPE declaration",
+  "opt_metadata": "Remove Metadata & comments",
+  "opt_namespaces": "Strip Editor attributes & namespaces",
+  "opt_unused_ids": "Remove Unused IDs",
+  "opt_empty_groups": "Remove Unused/Empty groups & paths",
+  "opt_precision": "Round decimals precision",
+  "opt_precision_keep": "Keep raw values",
+  "opt_precision_desc": "Limit float precision digits to compress path string sizes",
+  "opt_minify_path": "Minify path data spacing",
+  "opt_responsive": "Make responsive (Remove fixed Width/Height)",
+  "opt_style_to_attrs": "Convert style attributes to presentation elements",
+  "seoHeroTitle": "100% Local Browser-Based SVG Minifier & Code Cleaner",
+  "seoHeroText": "Optimize vector graphic files instantly. Remove redundant tags, clean layout namespaces, strip comments, and format code locally in your browser RAM.",
+  "seoBrowserSpeedTitle": "Supercharged Client-Side Compressions",
+  "seoBrowserSpeedText": "All vector cleanups are processed locally using your device's browser parser. Zero server latency, secure, and offline-compatible.",
+  "seoUseCaseTitle": "Customizable Precision Control",
+  "seoUseCaseText": "Fine-tune coordinate precision, simplify path string instructions, and unwrap empty nested groups to shrink your assets sizes.",
+  "seoPrivacyTitle": "100% Data Confidentiality",
+  "seoPrivacyText": "We prioritize privacy. None of your design files, graphics, or code snippets are uploaded to our servers. Everything runs inside your device's RAM.",
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Is my SVG code uploaded to external servers?",
+      "answer": "No. SVG-Optimizer runs entirely client-side in your browser memory. Your files are processed inside your browser and never leave your machine."
+    },
+    {
+      "question": "How does decimal coordinate rounding work?",
+      "answer": "It parses numeric values in paths (d attributes) and shape coordinates, rounding them to your chosen precision (e.g. 5.123456 -> 5.12). This significantly reduces file size without any visible difference."
+    },
+    {
+      "question": "Will converting style attributes break my SVG?",
+      "answer": "In almost all cases, no. It extracts attributes like fill, stroke, and opacity from inline style strings and writes them as direct elements properties, which is cleaner and more compatible with modern rendering engines."
+    }
+  ],
+  "footerTagline": "Private and local browser-based SVG minifier and cleaner.",
+  "footerCredit": "Part of the oLoveTools suite"
+};

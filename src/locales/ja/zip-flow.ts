@@ -1,0 +1,61 @@
+export default {
+  "title": "Zip-Flow",
+  "description": "ファイルをZIPアーカイブに圧縮し、ZIPパッケージからファイルを抽出するツール。ブラウザ上で100%ローカルに動作し、リアルタイムでディレクトリツリーを表示します。",
+  "tab_compress": "ファイルを圧縮",
+  "tab_extract": "アーカイブを展開",
+  "compress_drop_active": "追加するファイルをドロップ...",
+  "compress_drop_inactive": "ファイルをここにドラッグ＆ドロップ、またはクリックして参照",
+  "compress_output_filename": "ZIPファイル名",
+  "compress_output_filename_placeholder": "archive.zip",
+  "compress_level": "圧縮レベル",
+  "compress_level_store": "ストア（無圧縮 - 高速）",
+  "compress_level_deflate": "デフレート（標準圧縮）",
+  "compress_add_more": "ファイルを追加",
+  "compress_clear_all": "すべてクリア",
+  "compress_btn": "ZIPアーカイブを作成",
+  "compress_stats_title": "圧縮統計",
+  "compress_stats_original": "元のサイズ",
+  "compress_stats_compressed": "圧縮後のサイズ",
+  "compress_stats_savings": "削減された容量",
+  "extract_drop_active": "展開するZIPファイルをドロップ...",
+  "extract_drop_inactive": "ZIPファイルをここにドラッグ＆ドロップ、またはクリックして選択",
+  "extract_search_placeholder": "名前またはパスでファイルを検索...",
+  "extract_btn_all": "すべて展開してダウンロード",
+  "extract_single_download": "ダウンロード",
+  "extract_empty": "アーカイブ内にファイルが見つかりません",
+  "extract_info_title": "ZIP情報",
+  "extract_info_files": "総ファイル数",
+  "extract_info_folders": "総フォルダ数",
+  "extract_loading": "ZIPファイルの構造を解析中...",
+  "file_name": "ファイル名",
+  "file_size": "サイズ",
+  "file_path": "パス",
+  "file_actions": "操作",
+  "copied": "コピーしました！",
+  "tooltip_copy": "クリップボードにコピー",
+  "seoHeroTitle": "100%ローカル動作のブラウザ型ZIP圧縮・解凍ツール",
+  "seoHeroText": "ファイルをまとめて標準のZIPアーカイブに圧縮したり、ZIPパッケージからファイルを取り出したりできます。完全にオフラインでブラウザのRAM内で安全に処理されます。",
+  "seoBrowserSpeedTitle": "即時ローカル処理",
+  "seoBrowserSpeedText": "すべての圧縮・解凍タスクはお使いのブラウザ内部で実行されます。インターネット帯域幅を消費せず、ファイルが外部へ送信されることもありません。",
+  "seoUseCaseTitle": "対話型ファイルエクスプローラー",
+  "seoUseCaseText": "ZIPファイルを瞬時に開き、その構造を確認したり、名前やパスでフィルタリングして、特定のファイルだけを直接抽出することができます。",
+  "seoPrivacyTitle": "サーバーへのアップロードなし",
+  "seoPrivacyText": "設計段階からプライバシーが保証されています。ドキュメント、写真、コード、アーカイブはローカルメモリ上でのみ処理され、タブを閉じると消去されます。",
+  "faqTitle": "よくある質問",
+  "faq": [
+    {
+      "question": "ファイルの圧縮や展開時に、データはネット上にアップロードされますか？",
+      "answer": "いいえ。Zip-FlowはJSZipライブラリを使用し、すべてブラウザのメモリ内で完結して実行されます。ファイルがサーバーに送信されることはありません。"
+    },
+    {
+      "question": "パスワード保護されたZIPアーカイブを展開できますか？",
+      "answer": "JSZipはパスワード保護されたZIPアーカイブの展開を標準サポートしていません。保護付きのファイルを読み込むと、エラーになるか空のファイルが表示されます。"
+    },
+    {
+      "question": "対応している圧縮アルゴリズムは何ですか？",
+      "answer": "「ストア」（圧縮を行わずに素早くファイルをまとめる）および「デフレート」（標準的な互換性の高いZIP圧縮アルゴリズム）に対応しています。"
+    }
+  ],
+  "footerTagline": "ブラウザで動くプライベートなローカルZIP圧縮・抽出ツール。",
+  "footerCredit": "oLoveToolsスイートの一部"
+};

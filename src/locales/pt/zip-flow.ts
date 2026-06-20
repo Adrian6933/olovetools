@@ -1,0 +1,61 @@
+export default {
+  "title": "Zip-Flow",
+  "description": "Comprima arquivos em formato ZIP e extraia arquivos de pacotes ZIP 100% localmente no seu navegador com visualização de estrutura de diretório em tempo real.",
+  "tab_compress": "Comprimir Arquivos",
+  "tab_extract": "Extrair Arquivo",
+  "compress_drop_active": "Solte os arquivos para adicionar...",
+  "compress_drop_inactive": "Arraste e solte arquivos aqui, ou clique para navegar",
+  "compress_output_filename": "Nome do arquivo ZIP",
+  "compress_output_filename_placeholder": "arquivo.zip",
+  "compress_level": "Nível de Compressão",
+  "compress_level_store": "Armazenar (Sem compressão - Rápido)",
+  "compress_level_deflate": "Deflate (Compressão padrão)",
+  "compress_add_more": "Adicionar mais arquivos",
+  "compress_clear_all": "Limpar tudo",
+  "compress_btn": "Criar arquivo ZIP",
+  "compress_stats_title": "Estatísticas de compressão",
+  "compress_stats_original": "Tamanho original",
+  "compress_stats_compressed": "Tamanho comprimido",
+  "compress_stats_savings": "Espaço economizado",
+  "extract_drop_active": "Solte o arquivo ZIP para extrair...",
+  "extract_drop_inactive": "Arraste e solte um arquivo ZIP aqui, ou clique para selecionar",
+  "extract_search_placeholder": "Buscar arquivos por nome ou caminho...",
+  "extract_btn_all": "Extrair e baixar tudo",
+  "extract_single_download": "Baixar",
+  "extract_empty": "Nenhum arquivo encontrado no pacote",
+  "extract_info_title": "Informações do ZIP",
+  "extract_info_files": "Arquivos totais",
+  "extract_info_folders": "Pastas totais",
+  "extract_loading": "Analisando a estrutura do arquivo ZIP...",
+  "file_name": "Nome do arquivo",
+  "file_size": "Tamanho",
+  "file_path": "Caminho",
+  "file_actions": "Ações",
+  "copied": "Copiado!",
+  "tooltip_copy": "Copiar para área de transferência",
+  "seoHeroTitle": "Compressor e extrator de arquivos ZIP 100% local no seu navegador",
+  "seoHeroText": "Agrupe e comprima seus arquivos em arquivos ZIP padrão, ou extraia arquivos de pacotes ZIP. Totalmente offline e seguro na RAM local do seu navegador.",
+  "seoBrowserSpeedTitle": "Processamento local imediato",
+  "seoBrowserSpeedText": "Todas as tarefas de compressão e extração ZIP ocorrem no seu navegador com o motor JS local. Sem desperdício de banda de internet.",
+  "seoUseCaseTitle": "Explorador de arquivos interativo",
+  "seoUseCaseText": "Abra arquivos ZIP instantaneamente para inspecionar sua estrutura, filtre arquivos por caminho ou nome e baixe itens diretamente para seu dispositivo. Sem instalações.",
+  "seoPrivacyTitle": "Sem uploads para servidores",
+  "seoPrivacyText": "Privacidade garantida por design. Seus documentos, fotos, códigos ou pacotes são processados inteiramente na RAM e somem ao fechar a aba.",
+  "faqTitle": "Perguntas frequentes",
+  "faq": [
+    {
+      "question": "Meus arquivos são enviados para internet ao comprimir ou extrair?",
+      "answer": "Não. O Zip-Flow é executado na memória do seu navegador através da biblioteca JSZip. Seus arquivos nunca são enviados a nenhum servidor."
+    },
+    {
+      "question": "Posso extrair arquivos ZIP protegidos por senha?",
+      "answer": "O JSZip não suporta arquivos ZIP protegidos por senha de forma nativa. O processo pode falhar ou resultar em arquivos vazios."
+    },
+    {
+      "question": "Quais algoritmos de compressão são suportados?",
+      "answer": "Oferecemos suporte a 'Armazenar' (agrupa arquivos de forma rápida sem compressão) e 'Deflate' (o algoritmo de compressão padrão ZIP amplamente compatível)."
+    }
+  ],
+  "footerTagline": "Ferramenta local e privada de compressão e extração de arquivos ZIP no navegador.",
+  "footerCredit": "Parte da suíte oLoveTools"
+};

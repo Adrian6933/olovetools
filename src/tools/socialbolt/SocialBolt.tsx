@@ -61,6 +61,23 @@ const COBALT_INSTANCES = [
   "https://cobalt.revolt.chat"
 ];
 
+const getPlatform = (url: string): Platform => {
+  const cleanUrl = url.trim().toLowerCase();
+  if (cleanUrl.includes('tiktok.com')) {
+    return 'tiktok';
+  }
+  if (cleanUrl.includes('instagram.com')) {
+    return 'instagram';
+  }
+  if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
+    return 'youtube';
+  }
+  if (cleanUrl.includes('twitter.com') || cleanUrl.includes('x.com')) {
+    return 'twitter';
+  }
+  return 'unknown';
+};
+
 const CORS_PROXIES = [
   (api: string) => api, // Direct first
   (api: string) => `https://corsproxy.io/?${encodeURIComponent(api)}`,
@@ -82,22 +99,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
 
   // Dynamic Platform Detection & Theme Styling
   useEffect(() => {
-    const cleanUrl = inputUrl.trim().toLowerCase();
-    if (!cleanUrl) {
-      setPlatform('unknown');
-      return;
-    }
-    if (cleanUrl.includes('tiktok.com')) {
-      setPlatform('tiktok');
-    } else if (cleanUrl.includes('instagram.com')) {
-      setPlatform('instagram');
-    } else if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
-      setPlatform('youtube');
-    } else if (cleanUrl.includes('twitter.com') || cleanUrl.includes('x.com')) {
-      setPlatform('twitter');
-    } else {
-      setPlatform('unknown');
-    }
+    setPlatform(getPlatform(inputUrl));
   }, [inputUrl]);
 
   // Determine dynamic classes based on detected platform

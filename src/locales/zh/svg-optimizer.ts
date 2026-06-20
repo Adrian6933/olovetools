@@ -1,0 +1,60 @@
+export default {
+  "title": "SVG-Optimizer",
+  "description": "100% 在线本地优化、清理并压缩 SVG 矢量图文件，有效减小文件体积并提升网页加载性能。",
+  "label_svg_file": "SVG 矢量文件",
+  "drop_active": "拖放 SVG 文件至此以优化...",
+  "drop_inactive": "拖动 SVG 文件到这里，或点击浏览文件",
+  "error_invalid_svg": "无效的 SVG：无法解析 XML 结构",
+  "label_original": "原始体积",
+  "label_optimized": "优化后体积",
+  "label_saving": "节省空间",
+  "label_reduction": "缩减比例",
+  "btn_download": "下载优化后的 SVG",
+  "btn_copy_svg": "复制 SVG 代码",
+  "btn_copy_react": "复制 React 组件",
+  "btn_copy_data_uri": "复制 CSS Data URI",
+  "copied": "已复制！",
+  "tooltip_copy": "复制到剪贴板",
+  "label_bg_color": "背景底色",
+  "label_presets": "示例 Demo",
+  "preset_graphic": "精细矢量插画",
+  "preset_pattern": "几何平铺图案",
+  "preset_icon": "自定义应用图标",
+  "label_options": "优化选项参数",
+  "opt_xml_decl": "移除 XML 声明与 DOCTYPE",
+  "opt_metadata": "移除 Metadata 元数据与注释",
+  "opt_namespaces": "清理编辑器自定义属性与命名空间",
+  "opt_unused_ids": "移除未使用的 ID",
+  "opt_empty_groups": "合并空图层组与空路径",
+  "opt_precision": "数值小数点四舍五入",
+  "opt_precision_keep": "保留原始精度",
+  "opt_precision_desc": "限制浮点数的位数，极大缩短路径 d 属性的字符串长度",
+  "opt_minify_path": "压缩路径数据中的空格与逗号",
+  "opt_responsive": "自适应响应（移除固定的宽高 Width/Height）",
+  "opt_style_to_attrs": "将 style 样式属性转为标签属性 (Presentation Attributes)",
+  "seoHeroTitle": "100% 本地浏览器端 SVG 优化与代码清理器",
+  "seoHeroText": "即时压缩并清扫矢量图形文件。一键移除冗余节点、清理编辑器专属命名空间、剔除注释，全部运行在您本地浏览器内存中。",
+  "seoBrowserSpeedTitle": "纯客户端极速压缩",
+  "seoBrowserSpeedText": "所有的矢量文件提取与过滤都在本地由您的浏览器解析器处理。无需等待服务器上传，支持离线且绝对安全。",
+  "seoUseCaseTitle": "细颗粒度精度控制",
+  "seoUseCaseText": "微调浮点坐标小数位数、重塑紧凑路径字符串格式、解包无用嵌套图层，深度缩减资源体积。",
+  "seoPrivacyTitle": "100% 离线数据保密",
+  "seoPrivacyText": "我们非常重视隐私安全。您的任何设计图、矢量资产或代码片段均不会上传至第三方服务器。一切均在本地 RAM 中消化。",
+  "faqTitle": "常见问题解答",
+  "faq": [
+    {
+      "question": "使用本工具会上传我的 SVG 代码到服务器吗？",
+      "answer": "绝对不会。SVG-Optimizer 100% 离线在客户端运行。您的文件都在本地浏览器内存中即时处理，不会泄漏任何数据。"
+    },
+    {
+      "question": "坐标小数位四舍五入是如何减小体积的？",
+      "answer": "它会自动检索路径 (d 属性) 以及常规图形坐标中的浮点数，并根据您设定的精度（例如 5.123456 -> 5.12）进行四舍五入，通常可以在肉眼无差别的情况下节省大量字节。"
+    },
+    {
+      "question": "将 style 样式转换为属性会破坏矢量图吗？",
+      "answer": "在绝大部分情况下不会。它会解析内联 style 中的 fill、stroke、opacity 等规则，重新映射为标签本身属性，使得 SVG 更加规范，对现代浏览器与跨平台更加友好。"
+    }
+  ],
+  "footerTagline": "安全、本地的浏览器端 SVG 压缩与代码净化工具。",
+  "footerCredit": "oLoveTools 套件的一部分"
+};

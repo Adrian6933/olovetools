@@ -18,6 +18,20 @@ export const TOOL_FAVICONS: Record<string, string> = {
   'socialbolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4'/><polyline points='7 10 12 15 17 10'/><line x1='12' y1='15' x2='12' y2='3'/></svg>",
   'tts-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polygon points='11 5 6 9 2 9 2 15 6 15 11 19 11 5'/><path d='M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07'/></svg>",
   'gif-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d946ef' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><circle cx='8.5' cy='8.5' r='1.5'/><polyline points='21 15 16 10 5 21'/></svg>",
+  'audiosnap': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f43f5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z'/><path d='M19 10v2a7 7 0 0 1-14 0v-2'/><line x1='12' x2='12' y1='19' y2='22'/></svg>",
+  'watermark-snap': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2H2v10l9.29 9.29c.39.39 1.02.39 1.41 0l7.59-7.59c.39-.39.39-1.02 0-1.41L12 2z'/><path d='M7 7h.01'/></svg>",
+  'favicon-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect width='20' height='20' x='2' y='2' rx='2'/><path d='M2 8h20'/><circle cx='6' cy='5' r='1'/><circle cx='10' cy='5' r='1'/></svg>",
+  'exif-clear': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z'/><path d='m9 11 2 2 4-4'/></svg>",
+  'meme-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d946ef' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10'/><path d='M8 14s1.5 2 4 2 4-2 4-2'/><line x1='9' y1='9' x2='9.01' y2='9'/><line x1='15' y1='9' x2='15.01' y2='9'/></svg>",
+  'wordflow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314b8a6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 20h9'/><path d='M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z'/></svg>",
+  'markdown-live': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='2'/><path d='M7 15V9l3 3 3-3v6M17 11l2 2 2-2M19 9v6'/></svg>",
+  'hash-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230ea5e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='11' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg>",
+  'zip-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z'/><polyline points='3.27 6.96 12 12.01 20.73 6.96'/><line x1='12' y1='22.08' x2='12' y2='12'/></svg>",
+  'regex-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d946ef' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='4' y1='6' x2='14' y2='6'/><line x1='4' y1='10' x2='10' y2='10'/><line x1='4' y1='14' x2='8' y2='14'/><circle cx='16' cy='14' r='5'/><line x1='19.5' y1='17.5' x2='23' y2='21'/></svg>",
+  'lottie-viewer': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='3' width='18' height='18' rx='2' ry='2'/><polygon points='10 8 16 12 10 16 10 8'/></svg>",
+  'svg-optimizer': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2L2 22h20L12 2z'/><circle cx='12' cy='2' r='2' fill='%2306b6d4'/><circle cx='2' cy='22' r='2' fill='%2306b6d4'/><circle cx='22' cy='22' r='2' fill='%2306b6d4'/></svg>",
+  'graph-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/><line x1='2' y1='20' x2='22' y2='20'/></svg>",
+  'url-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>",
   default: "/icon.svg"
 };
 
@@ -39,6 +53,22 @@ export const TOOL_THEME_COLORS: Record<string, string> = {
   'socialbolt': "#6366f1",
   'tts-bolt': "#f59e0b",
   'gif-bolt': "#d946ef",
+  'audiosnap': "#f43f5e",
+  'drawsnap': "#a855f7",
+  'diffsnap': "#06b6d4",
+  'watermark-snap': "#f59e0b",
+  'favicon-bolt': "#3b82f6",
+  'exif-clear': "#10b981",
+  'meme-bolt': "#d946ef",
+  'wordflow': "#14b8a6",
+  'markdown-live': "#8b5cf6",
+  'hash-bolt': "#0ea5e9",
+  'zip-flow': "#f59e0b",
+  'regex-flow': "#d946ef",
+  'lottie-viewer': "#6366f1",
+  'svg-optimizer': "#06b6d4",
+  'graph-flow': "#f59e0b",
+  'url-bolt': "#10b981",
   default: "#060609"
 };
 
@@ -224,5 +254,165 @@ export const MOCK_PROJECTS: Project[] = [
     tags: ['Video', 'Images', 'GIF', 'Optimize'],
     icon: 'Images',
     color: 'bg-gradient-to-br from-fuchsia-500 to-purple-600'
+  },
+  {
+    id: '18',
+    name: 'AudioSnap',
+    slug: 'audiosnap',
+    description: 'Record microphone audio, trim silence, and download as WAV or native compressed files 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Audio', 'Record', 'Trim', 'Utility'],
+    icon: 'Music',
+    color: 'bg-gradient-to-br from-rose-500 to-red-600'
+  },
+  {
+    id: '19',
+    name: 'DrawSnap',
+    slug: 'drawsnap',
+    description: 'An interactive digital whiteboard to sketch ideas, draw vector shapes, and export creations as PNG or SVG 100% locally.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Draw', 'Whiteboard', 'Creative', 'Vector'],
+    icon: 'PenTool',
+    color: 'bg-gradient-to-br from-purple-500 to-indigo-600'
+  },
+  {
+    id: '20',
+    name: 'DiffSnap',
+    slug: 'diffsnap',
+    description: 'Compare two text files or code snippets and inspect additions, deletions, and differences side-by-side or unified 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['Compare', 'Diff', 'Code', 'Developer'],
+    icon: 'GitCompare',
+    color: 'bg-gradient-to-br from-cyan-500 to-blue-600'
+  },
+  {
+    id: '21',
+    name: 'Watermark-Snap',
+    slug: 'watermark-snap',
+    description: 'Add text or logo watermarks to multiple images simultaneously. Process all files locally inside your browser.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Watermark', 'Batch', 'Image', 'Branding'],
+    icon: 'Tag',
+    color: 'bg-gradient-to-br from-amber-500 to-orange-600'
+  },
+  {
+    id: '22',
+    name: 'Favicon-Bolt',
+    slug: 'favicon-bolt',
+    description: 'Generate a complete package of standard website favicons from an image or emoji. Process all files locally inside your browser.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Favicon', 'Generator', 'Developer', 'Icon'],
+    icon: 'Palette',
+    color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
+  },
+  {
+    id: '23',
+    name: 'EXIF-Clear',
+    slug: 'exif-clear',
+    description: 'Inspect and strip EXIF, GPS, and metadata from images locally in your browser. Protect your privacy online.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Metadata', 'EXIF', 'Privacy', 'Image'],
+    icon: 'Shield',
+    color: 'bg-gradient-to-br from-emerald-500 to-teal-600'
+  },
+  {
+    id: '24',
+    name: 'Meme-Bolt',
+    slug: 'meme-bolt',
+    description: 'Create and generate custom memes from templates or your own images 100% locally in your browser.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Meme', 'Generator', 'Creative', 'Editor'],
+    icon: 'Smile',
+    color: 'bg-gradient-to-br from-fuchsia-500 to-purple-600'
+  },
+  {
+    id: '25',
+    name: 'WordFlow',
+    slug: 'wordflow',
+    description: 'An advanced word counter, character counter, readability analyzer, and text cleaning assistant 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Text', 'Analyzer', 'SEO', 'Writing'],
+    icon: 'FileText',
+    color: 'bg-gradient-to-br from-teal-500 to-cyan-600'
+  },
+  {
+    id: '26',
+    name: 'Markdown-Live',
+    slug: 'markdown-live',
+    description: 'A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Markdown', 'Editor', 'Writer', 'HTML'],
+    icon: 'FileText',
+    color: 'bg-gradient-to-br from-violet-500 to-indigo-600'
+  },
+  {
+    id: '27',
+    name: 'Hash-Bolt',
+    slug: 'hash-bolt',
+    description: 'Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally with checksum verification.',
+    category: ProjectCategory.DEV,
+    tags: ['Cryptography', 'Hash', 'Developer', 'Security'],
+    icon: 'Lock',
+    color: 'bg-gradient-to-br from-sky-500 to-cyan-600'
+  },
+  {
+    id: '28',
+    name: 'Zip-Flow',
+    slug: 'zip-flow',
+    description: 'Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization.',
+    category: ProjectCategory.UTILITY,
+    tags: ['ZIP', 'Compress', 'Extract', 'Archive'],
+    icon: 'FolderArchive',
+    color: 'bg-gradient-to-br from-amber-500 to-orange-600'
+  },
+  {
+    id: '29',
+    name: 'Regex-Flow',
+    slug: 'regex-flow',
+    description: 'An interactive regular expression builder, tester, and visualizer with real-time match highlighting and syntax breakdown 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['Regex', 'Tester', 'Developer', 'Tool'],
+    icon: 'Search',
+    color: 'bg-gradient-to-br from-fuchsia-500 to-violet-600'
+  },
+  {
+    id: '30',
+    name: 'Lottie-Viewer',
+    slug: 'lottie-viewer',
+    description: 'Render, inspect, and edit layer colors of Lottie JSON animations 100% locally in your browser with real-time playback controls.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Lottie', 'Animation', 'JSON', 'Design'],
+    icon: 'Play',
+    color: 'bg-gradient-to-br from-indigo-500 to-cyan-500'
+  },
+  {
+    id: '31',
+    name: 'SVG-Optimizer',
+    slug: 'svg-optimizer',
+    description: 'Optimize, clean and compress SVG files 100% locally in your browser with real-time side-by-side previews and code formatting.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['SVG', 'Optimizer', 'Developer', 'Design'],
+    icon: 'Maximize2',
+    color: 'bg-gradient-to-br from-cyan-500 to-emerald-500'
+  },
+  {
+    id: '32',
+    name: 'Graph-Flow',
+    slug: 'graph-flow',
+    description: 'Create beautiful charts from CSV data or manual input. Export as PNG, SVG, or PDF 100% locally in your browser.',
+    category: ProjectCategory.DEV,
+    tags: ['Charts', 'Graphs', 'CSV', 'Data'],
+    icon: 'BarChart3',
+    color: 'bg-gradient-to-br from-amber-500 to-orange-600'
+  },
+  {
+    id: '33',
+    name: 'Url-Bolt',
+    slug: 'url-bolt',
+    description: 'Encode, decode, and parse URLs with query string breakdown and smart formatting 100% locally in your browser.',
+    category: ProjectCategory.DEV,
+    tags: ['URL', 'Encoder', 'Decoder', 'Developer'],
+    icon: 'Link',
+    color: 'bg-gradient-to-br from-emerald-500 to-teal-600'
   }
 ];

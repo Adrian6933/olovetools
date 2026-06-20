@@ -1,0 +1,60 @@
+export default {
+  "title": "SVG-Optimizer",
+  "description": "Optimisez, nettoyez et minifiez les fichiers vectoriels SVG 100% localement dans votre navigateur pour réduire la taille du fichier et améliorer les temps de chargement.",
+  "label_svg_file": "Fichier Vectoriel SVG",
+  "drop_active": "Déposez le fichier SVG ici pour optimiser...",
+  "drop_inactive": "Glissez-déposez un fichier SVG ici, ou cliquez pour parcourir",
+  "error_invalid_svg": "SVG invalide : Impossible d'analyser la structure XML",
+  "label_original": "Taille Initiale",
+  "label_optimized": "Taille Optimisée",
+  "label_saving": "Progrès d'Économie",
+  "label_reduction": "Réduction",
+  "btn_download": "Télécharger le SVG Optimisé",
+  "btn_copy_svg": "Copier le Code SVG",
+  "btn_copy_react": "Copier le Composant React",
+  "btn_copy_data_uri": "Copier la Data URI CSS",
+  "copied": "Copié !",
+  "tooltip_copy": "Copier dans le presse-papiers",
+  "label_bg_color": "Thème d'Arrière-plan",
+  "label_presets": "Démos Prédéfinis",
+  "preset_graphic": "Graphique Vectoriel Détaillé",
+  "preset_pattern": "Motif Géométrique",
+  "preset_icon": "Icône d'App Personnalisée",
+  "label_options": "Paramètres d'Optimisation",
+  "opt_xml_decl": "Supprimer la déclaration XML et DOCTYPE",
+  "opt_metadata": "Supprimer les métadonnées et commentaires",
+  "opt_namespaces": "Nettoyer les attributs et espaces de noms de l'éditeur",
+  "opt_unused_ids": "Supprimer les IDs non utilisés",
+  "opt_empty_groups": "Supprimer les groupes et tracés vides/non utilisés",
+  "opt_precision": "Arrondir la précision décimale",
+  "opt_precision_keep": "Conserver les valeurs brutes",
+  "opt_precision_desc": "Limite les chiffres décimaux pour compresser les données de tracé",
+  "opt_minify_path": "Minifier l'espacement des données de tracé",
+  "opt_responsive": "Rendre responsive (Supprimer Largeur/Hauteur fixes)",
+  "opt_style_to_attrs": "Convertir les attributs de style en propriétés de présentation",
+  "seoHeroTitle": "Minificateur & Nettoyeur de Code SVG 100% Local",
+  "seoHeroText": "Optimisez les fichiers graphiques vectoriels instantanément. Supprimez les balises redondantes, nettoyez les métadonnées de l'éditeur, ôtez les commentaires et formatez le code directement dans votre navigateur.",
+  "seoBrowserSpeedTitle": "Compressions Côté Client Ultra-Rapides",
+  "seoBrowserSpeedText": "Tous les nettoyages vectoriels sont traités localement à l'aide de votre navigateur. Aucune latence de serveur, sécurisé et compatible hors ligne.",
+  "seoUseCaseTitle": "Contrôle de Précision Personnalisable",
+  "seoUseCaseText": "Ajustez la précision des coordonnées, simplifiez les instructions de tracé et déballez les groupes vides pour réduire la taille de vos ressources.",
+  "seoPrivacyTitle": "100% Confidentialité des Données",
+  "seoPrivacyText": "Nous accordons une grande importance à la vie privée. Aucun de vos fichiers ou codes n'est téléversé sur nos serveurs. Tout s'exécute dans votre RAM.",
+  "faqTitle": "Foire Aux Questions",
+  "faq": [
+    {
+      "question": "Mon code SVG est-il téléversé sur des serveurs externes ?",
+      "answer": "Non. SVG-Optimizer fonctionne entièrement côté client dans la mémoire de votre navigateur. Vos fichiers sont traités en local et ne quittent jamais votre machine."
+    },
+    {
+      "question": "Comment fonctionne l'arrondi des coordonnées décimales ?",
+      "answer": "Il analyse les valeurs numériques dans les tracés (attributs d) et les coordonnées des formes, les arrondissant à la précision choisie (par ex. 5.123456 -> 5.12). Cela réduit considérablement le poids du fichier sans modification visuelle perceptible."
+    },
+    {
+      "question": "Le fait de convertir les attributs de style va-t-il casser mon SVG ?",
+      "answer": "Dans presque tous les cas, non. Il extrait des attributs comme fill, stroke et opacity des styles en ligne et les écrit comme propriétés directes, ce qui est plus propre et mieux supporté par les navigateurs modernes."
+    }
+  ],
+  "footerTagline": "Minificateur et nettoyeur de SVG privé et local dans le navigateur.",
+  "footerCredit": "Fait partie de la suite oLoveTools"
+};

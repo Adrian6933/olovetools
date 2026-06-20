@@ -1,0 +1,61 @@
+export default {
+  "title": "Zip-Flow",
+  "description": "在浏览器中 100% 本地将文件压缩为 ZIP 存档，并从 ZIP 存档中提取文件，支持实时文件树形图可视化展示。",
+  "tab_compress": "压缩文件",
+  "tab_extract": "提取解压",
+  "compress_drop_active": "拖放文件至此以添加...",
+  "compress_drop_inactive": "拖放文件到此处，或点击浏览文件",
+  "compress_output_filename": "ZIP 文件名称",
+  "compress_output_filename_placeholder": "archive.zip",
+  "compress_level": "压缩级别",
+  "compress_level_store": "仅存储 (无压缩 - 速度最快)",
+  "compress_level_deflate": "Deflate (标准压缩)",
+  "compress_add_more": "添加更多文件",
+  "compress_clear_all": "清空全部",
+  "compress_btn": "创建 ZIP 压缩包",
+  "compress_stats_title": "压缩数据统计",
+  "compress_stats_original": "原始大小",
+  "compress_stats_compressed": "压缩大小",
+  "compress_stats_savings": "节省空间",
+  "extract_drop_active": "拖放 ZIP 文件到此处以提取...",
+  "extract_drop_inactive": "拖放 ZIP 文件到此处，或点击选择文件",
+  "extract_search_placeholder": "通过名称或路径搜索文件...",
+  "extract_btn_all": "全部提取并下载",
+  "extract_single_download": "下载",
+  "extract_empty": "压缩包内未找到文件",
+  "extract_info_title": "ZIP 信息",
+  "extract_info_files": "总文件数",
+  "extract_info_folders": "总文件夹数",
+  "extract_loading": "正在解析 ZIP 文件结构...",
+  "file_name": "文件名称",
+  "file_size": "大小",
+  "file_path": "路径",
+  "file_actions": "操作",
+  "copied": "已复制！",
+  "tooltip_copy": "复制到剪贴板",
+  "seoHeroTitle": "100% 离线本地的浏览器 ZIP 压缩及解压工具",
+  "seoHeroText": "在本地将文件打包并压缩为标准的 ZIP 格式存档，或从 ZIP 包中解压提取文件。完全在客户端内存中进行，沙箱化且 100% 隐私安全。",
+  "seoBrowserSpeedTitle": "即时本地处理",
+  "seoBrowserSpeedText": "所有的 ZIP 压缩和解压缩任务均通过浏览器的 JS 引擎本地运行。不消耗任何上传流量，文件永不离开您的计算机。",
+  "seoUseCaseTitle": "交互式文件浏览器",
+  "seoUseCaseText": "即时打开 ZIP 压缩包来查看其内部目录结构，根据路径或名称搜索过滤，并直接将单个文件提取下载到本地。无需安装软件。",
+  "seoPrivacyTitle": "零服务器上传",
+  "seoPrivacyText": "设计即保证隐私。您的文档、照片、代码或压缩包完全在内存中进行处理，不会跟踪、记录或上传任何文件数据。",
+  "faqTitle": "常见问题解答",
+  "faq": [
+    {
+      "question": "在压缩或解压文件时，我的文件会被上传吗？",
+      "answer": "绝对不会。Zip-Flow 基于 JSZip 库在您浏览器内存（客户端）中完全离线运行。您的文件绝不会上传到任何服务器。"
+    },
+    {
+      "question": "我能解压带密码保护的 ZIP 文件吗？",
+      "answer": "JSZip 原生不支持带密码保护的 ZIP 文件。如果尝试打开加密的 zip 压缩包，解压可能会失败或显示为空白文件。"
+    },
+    {
+      "question": "支持哪些压缩算法？",
+      "answer": "我们支持“仅存储”（仅打包文件而不进行压缩，速度极快）和“Deflate”（标准的、兼容性极广的 ZIP 压缩算法）。"
+    }
+  ],
+  "footerTagline": "私密、本地的浏览器端 ZIP 压缩和提取工具。",
+  "footerCredit": "oLoveTools 套件的一部分"
+};

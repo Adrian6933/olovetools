@@ -1,0 +1,60 @@
+export default {
+  "title": "SVG-Optimizer",
+  "description": "Optimieren, bereinigen und minimieren Sie SVG-Vektordateien zu 100% lokal in Ihrem Browser, um die Dateigröße zu reduzieren und die Ladeleistung zu verbessern.",
+  "label_svg_file": "SVG-Vektordatei",
+  "drop_active": "SVG hier ablegen zum Optimieren...",
+  "drop_inactive": "Ziehen Sie eine SVG-Datei hierher oder klicken Sie zum Durchsuchen",
+  "error_invalid_svg": "Ungültiges SVG: XML-Struktur konnte nicht analysiert werden",
+  "label_original": "Originalgröße",
+  "label_optimized": "Optimierte Größe",
+  "label_saving": "Ersparnis-Fortschritt",
+  "label_reduction": "Reduzierung",
+  "btn_download": "Optimiertes SVG herunterladen",
+  "btn_copy_svg": "SVG-Code kopieren",
+  "btn_copy_react": "React-Komponente kopieren",
+  "btn_copy_data_uri": "CSS-Data-URI kopieren",
+  "copied": "Kopiert!",
+  "tooltip_copy": "In Zwischenablage kopieren",
+  "label_bg_color": "Hintergrund-Thema",
+  "label_presets": "Vordefinierte Demos",
+  "preset_graphic": "Detaillierte Vektorgrafik",
+  "preset_pattern": "Geometrisches Muster",
+  "preset_icon": "Benutzerdefiniertes App-Symbol",
+  "label_options": "Optimierungsparameter",
+  "opt_xml_decl": "XML-Deklaration & DOCTYPE entfernen",
+  "opt_metadata": "Metadaten & Kommentare entfernen",
+  "opt_namespaces": "Editor-Attribute & Namensräume entfernen",
+  "opt_unused_ids": "Unbenutzte IDs entfernen",
+  "opt_empty_groups": "Unbenutzte/leere Gruppen & Pfade entfernen",
+  "opt_precision": "Dezimalpräzision runden",
+  "opt_precision_keep": "Rohwerte beibehalten",
+  "opt_precision_desc": "Nachkommastellen begrenzen, um Pfaddaten zu komprimieren",
+  "opt_minify_path": "Pfaddaten-Abstände minimieren",
+  "opt_responsive": "Responsiv machen (Feste Breite/Höhe entfernen)",
+  "opt_style_to_attrs": "Stil-Attribute in Präsentationsattribute umwandeln",
+  "seoHeroTitle": "100% lokaler browserbasierter SVG-Minimierer & Code-Bereiniger",
+  "seoHeroText": "Optimieren Sie Vektorgrafikdateien sofort. Entfernen Sie redundante Tags, bereinigen Sie Editor-Namensräume, entfernen Sie Kommentare und formatieren Sie Code lokal in Ihrem Browser.",
+  "seoBrowserSpeedTitle": "Superschnelle clientseitige Komprimierung",
+  "seoBrowserSpeedText": "Alle Vektorbereinigungen werden lokal mit dem Parser Ihres Browsers durchgeführt. Keine Serverlatenz, sicher und offline-kompatibel.",
+  "seoUseCaseTitle": "Anpassbare Präzisionssteuerung",
+  "seoUseCaseText": "Passen Sie die Koordinatenpräzision an, vereinfachen Sie Pfadanweisungen und entfernen Sie leere verschachtelte Gruppen, um Ihre Dateien zu verkleinern.",
+  "seoPrivacyTitle": "100% Vertraulichkeit der Daten",
+  "seoPrivacyText": "Wir legen großen Wert auf Datenschutz. Keine Ihrer Designdateien oder Code-Snippets werden auf unsere Server hochgeladen. Alles läuft in Ihrem RAM.",
+  "faqTitle": "Häufig gestellte Fragen",
+  "faq": [
+    {
+      "question": "Wird mein SVG-Code auf externe Server hochgeladen?",
+      "answer": "Nein. SVG-Optimizer läuft vollständig clientseitig im Speicher Ihres Browsers. Ihre Dateien werden lokal verarbeitet und verlassen niemals Ihr Gerät."
+    },
+    {
+      "question": "Wie funktioniert das Runden von Dezimal-Koordinaten?",
+      "answer": "Es analysiert die numerischen Werte in Pfaden (d-Attributen) und Formen und rundet sie auf die gewählte Genauigkeit (z.B. 5.123456 -> 5.12). Dies reduziert die Dateigröße erheblich ohne sichtbare Verluste."
+    },
+    {
+      "question": "Wird die Konvertierung von Stil-Attributen mein SVG beschädigen?",
+      "answer": "In fast allen Fällen nein. Es extrahiert Attribute wie Füllung, Kontur und Deckkraft aus Inline-Stilzeichenfolgen und schreibt sie als direkte Eigenschaften, was sauberer und kompatibler mit modernen Browsern ist."
+    }
+  ],
+  "footerTagline": "Privater und lokaler browserbasierter SVG-Minimierer und -Bereiniger.",
+  "footerCredit": "Teil der oLoveTools-Suite"
+};

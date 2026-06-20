@@ -1,0 +1,61 @@
+export default {
+  "title": "Zip-Flow",
+  "description": "Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization.",
+  "tab_compress": "Compress Files",
+  "tab_extract": "Extract Archive",
+  "compress_drop_active": "Drop the files to add...",
+  "compress_drop_inactive": "Drag & drop files here, or click to browse files",
+  "compress_output_filename": "ZIP File Name",
+  "compress_output_filename_placeholder": "archive.zip",
+  "compress_level": "Compression Level",
+  "compress_level_store": "Store (No Compression - Fast)",
+  "compress_level_deflate": "Deflate (Standard Compression)",
+  "compress_add_more": "Add More Files",
+  "compress_clear_all": "Clear All",
+  "compress_btn": "Create ZIP Archive",
+  "compress_stats_title": "Compression Stats",
+  "compress_stats_original": "Original Size",
+  "compress_stats_compressed": "Compressed Size",
+  "compress_stats_savings": "Space Saved",
+  "extract_drop_active": "Drop the ZIP file to extract...",
+  "extract_drop_inactive": "Drag & drop a ZIP file here, or click to select",
+  "extract_search_placeholder": "Search files by name or path...",
+  "extract_btn_all": "Extract & Download All",
+  "extract_single_download": "Download",
+  "extract_empty": "No files found in the archive",
+  "extract_info_title": "ZIP Information",
+  "extract_info_files": "Total Files",
+  "extract_info_folders": "Total Folders",
+  "extract_loading": "Parsing ZIP file structure...",
+  "file_name": "File Name",
+  "file_size": "Size",
+  "file_path": "Path",
+  "file_actions": "Actions",
+  "copied": "Copied!",
+  "tooltip_copy": "Copy to clipboard",
+  "seoHeroTitle": "100% Local Browser-Based ZIP Compressor & Extractor",
+  "seoHeroText": "Bundle and compress your files into standard ZIP archives, or extract files from ZIP packages. Fully sandboxed, offline-capable, and completely secure in client-side RAM.",
+  "seoBrowserSpeedTitle": "Instant Local Processing",
+  "seoBrowserSpeedText": "All zip compression and file extraction tasks occur inside your browser using the client JS engine. No internet bandwidth is wasted, and files never leave your computer.",
+  "seoUseCaseTitle": "Interactive File Explorer",
+  "seoUseCaseText": "Open ZIP files instantly to inspect their structure, filter files by path or name, and extract individual files directly to your machine. No installations required.",
+  "seoPrivacyTitle": "Zero Server Uploads",
+  "seoPrivacyText": "Privacy is guaranteed by design. Your documents, photos, code, or archives are processed entirely in memory. Zero file data is tracked or uploaded.",
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Are my files uploaded online during ZIP compression/extraction?",
+      "answer": "No. Zip-Flow runs entirely in your browser memory (client-side) using the JSZip library. Your files are never uploaded to any server or processed remotely."
+    },
+    {
+      "question": "Can I extract password-protected ZIP archives?",
+      "answer": "JSZip does not natively support password-protected ZIP archives. If you attempt to open a password-protected zip file, the extraction might fail or show empty files."
+    },
+    {
+      "question": "What compression algorithms are supported?",
+      "answer": "We support 'Store' (which packs files together quickly with no compression) and 'Deflate' (the standard, widely compatible ZIP compression algorithm)."
+    }
+  ],
+  "footerTagline": "Private and local browser-based ZIP compression and extraction tool.",
+  "footerCredit": "Part of the oLoveTools suite"
+};

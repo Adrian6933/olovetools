@@ -1,0 +1,60 @@
+export default {
+  "title": "SVG-Optimizer",
+  "description": "Otimize, limpe e minifique arquivos vetoriais SVG 100% localmente em seu navegador para reduzir o tamanho do arquivo e melhorar o desempenho de carregamento.",
+  "label_svg_file": "Arquivo Vetorial SVG",
+  "drop_active": "Solte o arquivo SVG aqui para otimizar...",
+  "drop_inactive": "Arraste e solte um arquivo SVG aqui, ou clique para navegar",
+  "error_invalid_svg": "SVG inválido: Não foi possível analisar a estrutura XML",
+  "label_original": "Tamanho Original",
+  "label_optimized": "Tamanho Otimizado",
+  "label_saving": "Progresso de Economia",
+  "label_reduction": "Redução",
+  "btn_download": "Baixar SVG Otimizado",
+  "btn_copy_svg": "Copiar Código SVG",
+  "btn_copy_react": "Copiar Componente React",
+  "btn_copy_data_uri": "Copiar Data URI CSS",
+  "copied": "Copiado!",
+  "tooltip_copy": "Copiar para a área de transferência",
+  "label_bg_color": "Tema de Fundo",
+  "label_presets": "Demos Predefinidas",
+  "preset_graphic": "Gráfico Vetorial Detalhado",
+  "preset_pattern": "Padrão Geométrico",
+  "preset_icon": "Ícone de App Personalizado",
+  "label_options": "Parâmetros de Otimização",
+  "opt_xml_decl": "Remover declaração XML e DOCTYPE",
+  "opt_metadata": "Remover metadados e comentários",
+  "opt_namespaces": "Limpar atributos e namespaces do editor",
+  "opt_unused_ids": "Remover IDs não usados",
+  "opt_empty_groups": "Remover grupos e caminhos vazios/não usados",
+  "opt_precision": "Arredondar precisão decimal",
+  "opt_precision_keep": "Manter valores brutos",
+  "opt_precision_desc": "Limita as casas decimais para comprimir dados de caminho",
+  "opt_minify_path": "Minificar espaçamento dos dados de caminho",
+  "opt_responsive": "Tornar responsivo (Remover Largura/Altura fixas)",
+  "opt_style_to_attrs": "Converter atributos de estilo em elementos de apresentação",
+  "seoHeroTitle": "Minificador e Limpador de Código SVG 100% Local",
+  "seoHeroText": "Otimize arquivos gráficos vetoriais instantaneamente. Remova tags redundantes, limpe namespaces do editor, retire comentários e formate o código na memória RAM do seu navegador.",
+  "seoBrowserSpeedTitle": "Compressões Ultra-Rápidas no Cliente",
+  "seoBrowserSpeedText": "Toda a limpeza vetorial é processada localmente usando o motor do seu navegador. Sem latência de servidor, seguro e compatível offline.",
+  "seoUseCaseTitle": "Controle de Precisão Personalizável",
+  "seoUseCaseText": "Ajuste a precisão das coordenadas, simplifique as instruções de caminho e remova grupos vazios para reduzir o tamanho dos seus recursos.",
+  "seoPrivacyTitle": "100% Confidencialidade de Dados",
+  "seoPrivacyText": "Priorizamos a privacidade. Nenhum de seus arquivos de design ou trechos de código são enviados para nossos servidores. Tudo roda na sua RAM.",
+  "faqTitle": "Perguntas Frequentes",
+  "faq": [
+    {
+      "question": "O meu código SVG é enviado para servidores externos?",
+      "answer": "Não. O SVG-Optimizer roda totalmente no cliente na memória do seu navegador. Seus arquivos são processados localmente e nunca saem do seu computador."
+    },
+    {
+      "question": "Como funciona o arredondamento de coordenadas decimais?",
+      "answer": "Ele analisa os valores numéricos em caminhos (atributos d) e coordenadas de formas, arredondando-os para a precisão escolhida (por exemplo, 5.123456 -> 5.12). Isso reduz significativamente o peso do arquivo sem diferença visual perceptível."
+    },
+    {
+      "question": "A conversão de atributos de estilo quebrará meu SVG?",
+      "answer": "Na grande maioria dos casos, não. Ele extrai propriedades como fill, stroke e opacity das strings de estilo inline e as escreve como propriedades diretas, tornando o arquivo mais limpo e compatível com navegadores modernos."
+    }
+  ],
+  "footerTagline": "Minificador e limpador de SVG privado e local no navegador.",
+  "footerCredit": "Parte da suíte oLoveTools"
+};

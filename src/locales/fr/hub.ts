@@ -68,6 +68,48 @@ export default {
     },
     "17": {
       "description": "Convertissez des vidéos et des séquences d'images en GIFs animés optimisés 100% localement dans votre navigateur."
+    },
+    "18": {
+      "description": "Enregistrez l'audio du micro, découpez les silences et téléchargez en WAV ou fichiers compressés 100% localement."
+    },
+    "19": {
+      "description": "Un tableau blanc numérique interactif pour esquisser des idées, dessiner des formes vectorielles et exporter en PNG ou SVG 100% localement."
+    },
+    "20": {
+      "description": "Comparez deux fichiers texte ou extraits de code et inspectez les ajouts, suppressions et différences côte à côte ou unifiés 100% localement."
+    },
+    "21": {
+      "description": "Ajoutez des filigranes de texte ou de logo à plusieurs images simultanément. Tout est traité localement dans votre navigateur."
+    },
+    "22": {
+      "description": "Générez un pack complet de favicons standard pour site web à partir d'une image ou d'un emoji. Tout est traité localement."
+    },
+    "23": {
+      "description": "Inspectez et supprimez les métadonnées EXIF, GPS et autres de vos images localement. Protégez votre vie privée."
+    },
+    "24": {
+      "description": "Créez et générez des mèmes personnalisés à partir de modèles ou de vos propres images 100% localement dans votre navigateur."
+    },
+    "25": {
+      "description": "Compteur de mots, de caractères, analyse de lisibilité et assistant de nettoyage de texte 100% local."
+    },
+    "26": {
+      "description": "Éditeur Markdown visuel en temps réel et prévisualiseur HTML avec modèles de style et exportations PDF/HTML 100% locaux."
+    },
+    "27": {
+      "description": "Calculez des empreintes cryptographiques (MD5, SHA-1, SHA-256, SHA-512) pour du texte et des fichiers 100% localement dans votre navigateur."
+    },
+    "28": {
+      "description": "Compressez vos fichiers au format ZIP et extrayez des fichiers d'archives ZIP 100% localement dans votre navigateur avec affichage de l'arborescence."
+    },
+    "29": {
+      "description": "Un générateur, testeur et visualiseur interactif d'expressions régulières avec surbrillance en temps réel et décomposition syntaxique 100% local."
+    },
+    "30": {
+      "description": "Affichez, inspectez et modifiez les couleurs des calques des animations Lottie JSON 100% localement dans votre navigateur avec contrôle de lecture."
+    },
+    "31": {
+      "description": "Optimisez, nettoyez et compressez les fichiers SVG 100% localement dans votre navigateur avec prévisualisation en temps réel."
     }
   },
   "tags": {
@@ -111,11 +153,48 @@ export default {
     "Instagram": "Instagram",
     "Speech": "Voix",
     "GIF": "GIF",
-    "Optimize": "Optimiser",
     "TTS": "TTS",
     "JSON": "JSON",
     "Formatter": "Formateur",
     "CSS": "CSS",
-    "Tailwind": "Tailwind"
+    "Tailwind": "Tailwind",
+    "Trim": "Découper",
+    "Draw": "Dessiner",
+    "Whiteboard": "Tableau Blanc",
+    "Creative": "Créatif",
+    "Vector": "Vectoriel",
+    "Compare": "Comparer",
+    "Diff": "Diff",
+    "Watermark": "Filigrane",
+    "Batch": "En lot",
+    "Branding": "Identité",
+    "Favicon": "Favicon",
+    "Generator": "Générateur",
+    "Icon": "Icône",
+    "Metadata": "Métadonnées",
+    "EXIF": "EXIF",
+    "Privacy": "Confidentialité",
+    "Meme": "Mème",
+    "Editor": "Éditeur",
+    "Text": "Texte",
+    "Analyzer": "Analyseur",
+    "SEO": "SEO",
+    "Writing": "Écriture",
+    "Markdown": "Markdown",
+    "Writer": "Écrivain",
+    "HTML": "HTML",
+    "Cryptography": "Cryptographie",
+    "Hash": "Hachage",
+    "Security": "Sécurité",
+    "ZIP": "ZIP",
+    "Extract": "Extraire",
+    "Archive": "Archive",
+    "Regex": "Regex",
+    "Tester": "Testeur",
+    "Tool": "Outil",
+    "Lottie": "Lottie",
+    "Animation": "Animation",
+    "SVG": "SVG",
+    "Optimizer": "Optimiseur"
   }
 };
