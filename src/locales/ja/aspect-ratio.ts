@@ -1,0 +1,60 @@
+export default {
+  "title": "Aspect-Ratio",
+  "seo_title": "アスペクト比計算機 | 比率を簡略化し比例リサイズ 100%ローカル",
+  "seo_description": "簡略化されたアスペクト比を計算し、画像を比例的にリサイズし、16:9、4:3、9:16などの一般的なプリセットを探索します。100%ローカルでプライベート。",
+  "seoHeroTitle": "比率計算機プロ",
+  "seoHeroText": "アスペクト比を計算し、比例リサイズし、動画、画像、画面の一般的なプリセットを100%ローカルで閲覧します。",
+  "tab_calculate": "比率を計算",
+  "tab_resize": "比例リサイズ",
+  "tab_presets": "一般的なプリセット",
+  "label_dimensions": "寸法",
+  "label_width": "幅",
+  "label_height": "高さ",
+  "button_example": "例 1920×1080",
+  "label_result": "結果",
+  "label_simplified_ratio": "簡略化された比率",
+  "label_gcd": "GCD",
+  "label_decimal": "小数",
+  "label_input": "入力",
+  "placeholder_enter_dims": "比率を計算するには幅と高さを入力してください...",
+  "label_original": "元のサイズ",
+  "label_lock_target": "目標寸法",
+  "target_width": "目標の幅",
+  "target_height": "目標の高さ",
+  "label_new_size": "新しいサイズ",
+  "label_result_dimensions": "結果の寸法",
+  "label_new_width": "新しい幅",
+  "label_new_height": "新しい高さ",
+  "placeholder_resize": "元のサイズと目標寸法を入力してください...",
+  "label_preview": "ビジュアルプレビュー",
+  "unit_proportional": "比例単位",
+  "button_reset": "すべてリセット",
+  "tooltip_copy": "コピー",
+  "seoBrowserSpeedTitle": "瞬時のローカル処理",
+  "seoBrowserSpeedText": "すべての比率計算と比例リサイズは、ネイティブJavaScriptを使用してブラウザ内で実行されます。データがサーバーに送信されることはありません。",
+  "seoUseCaseTitle": "100%クライアントサイド",
+  "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。寸法入力はデバイスから離れることはなく、何もアップロードされません。",
+  "seoPrivacyTitle": "100%プライベート＆セキュア",
+  "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。入力は厳密にローカルメモリに留まり、タブを閉じると消去されます。",
+  "seoKeywords": ["アスペクト比計算機", "画像を比例リサイズ", "16:9 比率", "比率を簡略化", "画像寸法", "動画解像度", "オンラインツール", "無料"],
+  "faqTitle": "よくある質問",
+  "faq": [
+    {
+      "question": "データはサーバーに送信されますか？",
+      "answer": "いいえ。すべての比率とリサイズ計算はブラウザ内で完全に行われます。入力がデバイスから離れることはありません。"
+    },
+    {
+      "question": "簡略化された比率は何を表していますか？",
+      "answer": "簡略化された比率は両方の寸法を最大公約数（GCD）で割り、1920×1080の場合は16:9のような最小の整数比を返します。"
+    },
+    {
+      "question": "アスペクト比を維持したまま画像をリサイズできますか？",
+      "answer": "はい。リサイズタブに切り替え、元のサイズと目標の幅または高さを入力すると、ツールが自動的に一致する寸法を計算します。"
+    }
+  ],
+  "footerTagline": "動画、画像、画面のアスペクト比と比例解像度を100%ローカルで計算します。",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "アイデアやコメントのお問い合わせ:"
+};

@@ -1,0 +1,63 @@
+export default {
+  "title": "Base64-Bolt",
+  "seo_title": "Base64-Bolt | Free Online Base64 Encoder & Decoder",
+  "seo_description": "Encode text to Base64, decode Base64 strings, and convert images to DataURL or back 100% locally in your browser. Free online Base64 tool.",
+  "seoHeroTitle": "Base64 Encoder, Decoder & Image Converter",
+  "seoHeroText": "Instantly encode text to Base64 format, decode Base64 strings back to readable text, or convert images to DataURL and vice versa. Everything runs locally in your browser with zero server processing.",
+  "tab_text": "Text",
+  "tab_image": "Image",
+  "mode_encode": "Encode",
+  "mode_decode": "Decode",
+  "mode_image_to_b64": "Image to Base64",
+  "mode_b64_to_image": "Base64 to Image",
+  "label_input": "Plain Text",
+  "label_base64_input": "Base64 String",
+  "label_base64_output": "Base64 Output",
+  "label_decoded_output": "Decoded Text",
+  "label_upload_image": "Upload Image",
+  "label_data_url": "Data URL Output",
+  "label_base64_input_image": "Base64 Input",
+  "label_image_preview": "Image Preview",
+  "placeholder_text_encode": "Type or paste text to encode to Base64...",
+  "placeholder_text_decode": "Paste a Base64 string to decode...",
+  "placeholder_output": "Result will appear here...",
+  "placeholder_data_url": "Upload an image to generate its Base64 Data URL...",
+  "placeholder_base64_image": "Paste a Base64 string or Data URL to preview and download the image...",
+  "placeholder_image_preview": "Paste Base64 to see the image...",
+  "image_drag": "Drag & drop an image here, or click to browse",
+  "image_formats": "PNG, JPG, GIF, WebP, SVG",
+  "button_swap": "Swap & Reverse",
+  "button_clear": "Clear All",
+  "button_download": "Download",
+  "tooltip_copy": "Copy to clipboard",
+  "error_invalid_base64": "Invalid Base64 string. Please check your input.",
+  "error_encode": "Failed to encode the input text.",
+  "error_not_image": "Please select an image file.",
+  "seoBrowserSpeedTitle": "Instant Local Encoding",
+  "seoBrowserSpeedText": "All Base64 encoding and decoding is executed inside your browser using native JavaScript APIs (btoa/atob). No data is ever sent to a server — results appear instantly as you type.",
+  "seoUseCaseTitle": "Image to DataURL Converter",
+  "seoUseCaseText": "Upload any image and instantly get its Base64 Data URL for embedding directly in HTML, CSS, or JSON. Or paste a Base64 string to preview and download the original image.",
+  "seoPrivacyTitle": "100% Private & Secure",
+  "seoPrivacyText": "No databases, tracking, or network uploads. Your text and images reside strictly in local memory and disappear when you close the tab.",
+  "seoKeywords": ["base64 encoder", "base64 decoder", "image to base64", "data url converter", "base64 to image", "encode base64", "decode base64"],
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "What is Base64 encoding used for?",
+      "answer": "Base64 is used to encode binary data (like images) into ASCII text so it can be safely transmitted over text-based protocols like email, JSON, or HTML. It's also used to embed images directly in CSS or HTML as Data URLs."
+    },
+    {
+      "question": "Can I convert images to Base64 Data URLs?",
+      "answer": "Yes. Switch to the Image tab, upload any image file, and the tool will generate its Base64 Data URL instantly. You can also paste a Base64 string to preview and download the original image."
+    },
+    {
+      "question": "Is my data sent to any server?",
+      "answer": "No. All encoding and decoding happens entirely inside your browser using native JavaScript APIs. Your data never leaves your device."
+    }
+  ],
+  "footerTagline": "Fast, private Base64 encoder, decoder, and image-to-DataURL converter — 100% local in your browser.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:"
+};

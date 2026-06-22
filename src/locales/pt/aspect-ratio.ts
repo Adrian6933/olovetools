@@ -1,0 +1,60 @@
+export default {
+  "title": "Aspect-Ratio",
+  "seo_title": "Calculadora de Proporção de Tela | Simplifique Proporções e Redimensione Proporcionalmente 100% Localmente",
+  "seo_description": "Calcule proporções de tela simplificadas, redimensione imagens proporcionalmente e explore predefinições comuns como 16:9, 4:3 e 9:16. 100% local e privado.",
+  "seoHeroTitle": "Calculadora de Proporção Pro",
+  "seoHeroText": "Calcule proporções de tela, redimensione proporcionalmente e navegue por predefinições comuns para vídeo, imagens e telas 100% localmente.",
+  "tab_calculate": "Calcular Proporção",
+  "tab_resize": "Redimensionar Proporcionalmente",
+  "tab_presets": "Predefinições Comuns",
+  "label_dimensions": "Dimensões",
+  "label_width": "Largura",
+  "label_height": "Altura",
+  "button_example": "Exemplo 1920×1080",
+  "label_result": "Resultado",
+  "label_simplified_ratio": "Proporção Simplificada",
+  "label_gcd": "GCD",
+  "label_decimal": "Decimal",
+  "label_input": "Entrada",
+  "placeholder_enter_dims": "Digite largura e altura para calcular a proporção...",
+  "label_original": "Tamanho Original",
+  "label_lock_target": "Dimensão Alvo",
+  "target_width": "Largura Alvo",
+  "target_height": "Altura Alvo",
+  "label_new_size": "Novo Tamanho",
+  "label_result_dimensions": "Dimensões Resultantes",
+  "label_new_width": "Nova Largura",
+  "label_new_height": "Nova Altura",
+  "placeholder_resize": "Digite o tamanho original e uma dimensão alvo...",
+  "label_preview": "Pré-visualização Visual",
+  "unit_proportional": "unidades proporcionais",
+  "button_reset": "Redefinir Tudo",
+  "tooltip_copy": "Copiar",
+  "seoBrowserSpeedTitle": "Processamento Local Instantâneo",
+  "seoBrowserSpeedText": "Todos os cálculos de proporção e redimensionamento proporcional são executados dentro do seu navegador usando JavaScript nativo. Nenhum dado é enviado a um servidor.",
+  "seoUseCaseTitle": "100% do Lado do Cliente",
+  "seoUseCaseText": "Tudo é executado localmente no seu navegador. Suas entradas de dimensões nunca saem do seu dispositivo e nada é carregado.",
+  "seoPrivacyTitle": "100% Privado e Seguro",
+  "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Suas entradas residem estritamente na memória local e desaparecem quando você fecha a aba.",
+  "seoKeywords": ["calculadora de proporção de tela", "redimensionar imagem proporcionalmente", "proporção 16:9", "simplificar proporção", "dimensões de imagem", "resolução de vídeo", "ferramenta online", "grátis"],
+  "faqTitle": "Perguntas Frequentes",
+  "faq": [
+    {
+      "question": "Meus dados são enviados a algum servidor?",
+      "answer": "Não. Todos os cálculos de proporção e redimensionamento acontecem inteiramente dentro do seu navegador. Suas entradas nunca saem do seu dispositivo."
+    },
+    {
+      "question": "O que representa a proporção simplificada?",
+      "answer": "A proporção simplificada divide ambas as dimensões pelo seu máximo divisor comum (GCD), dando a você a menor proporção de números inteiros, como 16:9 para 1920×1080."
+    },
+    {
+      "question": "Posso redimensionar uma imagem mantendo sua proporção de tela?",
+      "answer": "Sim. Mude para a aba Redimensionar, digite o tamanho original e uma largura ou altura alvo, e a ferramenta calcula a dimensão correspondente automaticamente."
+    }
+  ],
+  "footerTagline": "Calcule proporções de tela e resoluções proporcionais para vídeo, imagens e telas 100% localmente.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:"
+};

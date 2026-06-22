@@ -1,0 +1,62 @@
+export default {
+  "title": "Device Test",
+  "seo_title": "Device Test | Prueba tu cámara web y micrófono e inspecciona información del sistema 100% localmente.",
+  "seo_description": "Prueba tu cámara web, micrófono e inspecciona información del sistema, todo localmente en tu navegador.",
+  "seoHeroTitle": "Device Test",
+  "seoHeroText": "Prueba tu cámara web, micrófono e inspecciona información del sistema, todo localmente en tu navegador.",
+  "camTitle": "Cámara web",
+  "camDenied": "Acceso a cámara denegado",
+  "camPlaceholder": "Vista previa de cámara",
+  "camNone": "No se detectaron cámaras",
+  "camLabel": "Cámara",
+  "camStart": "Iniciar cámara",
+  "camStop": "Detener cámara",
+  "micTitle": "Micrófono",
+  "micRecording": "Grabando",
+  "micStart": "Iniciar micrófono",
+  "micRecord": "Grabar 5s",
+  "micPlaying": "Reproduciendo",
+  "micPlay": "Reproducir",
+  "sysTitle": "Información del sistema",
+  "statusReady": "Listo",
+  "sysNote": "Detectado localmente vía APIs navigator",
+  "sysResolution": "Resolución de pantalla",
+  "sysPixelRatio": "Relación de píxeles",
+  "sysColorDepth": "Profundidad de color",
+  "sysBrowser": "Navegador",
+  "sysOS": "Sistema operativo",
+  "sysCpuCores": "Núcleos de CPU",
+  "sysRam": "Memoria del dispositivo",
+  "sysTouch": "Soporte táctil",
+  "statusRecording": "Grabando",
+  "statusActive": "Activo",
+  "statusError": "Error",
+  "statusIdle": "Inactivo",
+  "seoBrowserSpeedTitle": "Procesamiento Local Instantáneo",
+  "seoBrowserSpeedText": "Todo el procesamiento se ejecuta dentro de tu navegador usando APIs nativas de JavaScript. Ningún dato se envía a un servidor.",
+  "seoUseCaseTitle": "100% del Lado del Cliente",
+  "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
+  "seoPrivacyTitle": "100% Privado y Seguro",
+  "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
+  "seoKeywords": ["device test", "herramienta online", "gratis", "local", "navegador"],
+  "faqTitle": "Preguntas Frecuentes",
+  "faq": [
+    {
+      "question": "¿Se envían mis datos a algún servidor?",
+      "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
+    },
+    {
+      "question": "¿Por qué el navegador pide permiso para cámara y micrófono?",
+      "answer": "Para previsualizar tu cámara web y visualizar la entrada del micrófono, el navegador requiere permiso explícito vía la API getUserMedia. No se graba ni sube nada salvo que actives la grabación de prueba de 5 segundos, que permanece solo en tu pestaña."
+    },
+    {
+      "question": "¿Qué información del sistema detecta Device Test?",
+      "answer": "Device Test lee resolución de pantalla, relación de píxeles, profundidad de color, navegador, sistema operativo, núcleos de CPU, memoria del dispositivo y soporte táctil, todo a través de APIs estándar navigator y screen disponibles localmente en tu navegador."
+    }
+  ],
+  "footerTagline": "Prueba tu cámara web, micrófono e inspecciona información del sistema, todo localmente en tu navegador.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:"
+};

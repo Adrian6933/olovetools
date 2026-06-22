@@ -1,0 +1,60 @@
+export default {
+  "title": "Aspect-Ratio",
+  "seo_title": "Calculateur de Ratio d'Aspect | Simplifiez les Ratios et Redimensionnez Proportionnellement 100% Localement",
+  "seo_description": "Calculez des ratios d'aspect simplifiés, redimensionnez des images proportionnellement et explorez des préréglages courants comme 16:9, 4:3 et 9:16. 100% local et privé.",
+  "seoHeroTitle": "Calculateur de Ratio Pro",
+  "seoHeroText": "Calculez des ratios d'aspect, redimensionnez proportionnellement et parcourez les préréglages courants pour la vidéo, les images et les écrans 100% localement.",
+  "tab_calculate": "Calculer le Ratio",
+  "tab_resize": "Redimensionner Proportionnellement",
+  "tab_presets": "Préréglages Courants",
+  "label_dimensions": "Dimensions",
+  "label_width": "Largeur",
+  "label_height": "Hauteur",
+  "button_example": "Exemple 1920×1080",
+  "label_result": "Résultat",
+  "label_simplified_ratio": "Ratio Simplifié",
+  "label_gcd": "GCD",
+  "label_decimal": "Décimal",
+  "label_input": "Entrée",
+  "placeholder_enter_dims": "Entrez la largeur et la hauteur pour calculer le ratio...",
+  "label_original": "Taille Originale",
+  "label_lock_target": "Dimension Cible",
+  "target_width": "Largeur Cible",
+  "target_height": "Hauteur Cible",
+  "label_new_size": "Nouvelle Taille",
+  "label_result_dimensions": "Dimensions Résultantes",
+  "label_new_width": "Nouvelle Largeur",
+  "label_new_height": "Nouvelle Hauteur",
+  "placeholder_resize": "Entrez la taille originale et une dimension cible...",
+  "label_preview": "Aperçu Visuel",
+  "unit_proportional": "unités proportionnelles",
+  "button_reset": "Tout Réinitialiser",
+  "tooltip_copy": "Copier",
+  "seoBrowserSpeedTitle": "Traitement Local Instantané",
+  "seoBrowserSpeedText": "Tous les calculs de ratio et redimensionnements proportionnels sont exécutés dans votre navigateur à l'aide de JavaScript natif. Aucune donnée n'est jamais envoyée à un serveur.",
+  "seoUseCaseTitle": "100% Côté Client",
+  "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos entrées de dimensions ne quittent jamais votre appareil et rien n'est téléchargé.",
+  "seoPrivacyTitle": "100% Privé et Sécurisé",
+  "seoPrivacyText": "Aucune base de données, suivi ou téléchargement réseau. Vos entrées résident strictement en mémoire locale et disparaissent lorsque vous fermez l'onglet.",
+  "seoKeywords": ["calculateur de ratio d'aspect", "redimensionner image proportionnellement", "ratio 16:9", "simplifier ratio", "dimensions d'image", "résolution vidéo", "outil en ligne", "gratuit"],
+  "faqTitle": "Questions Fréquentes",
+  "faq": [
+    {
+      "question": "Mes données sont-elles envoyées à un serveur ?",
+      "answer": "Non. Tous les calculs de ratio et de redimensionnement se produisent entièrement dans votre navigateur. Vos entrées ne quittent jamais votre appareil."
+    },
+    {
+      "question": "Que représente le ratio simplifié ?",
+      "answer": "Le ratio simplifié divise les deux dimensions par leur plus grand commun diviseur (GCD), vous donnant le plus petit ratio en nombres entiers tel que 16:9 pour 1920×1080."
+    },
+    {
+      "question": "Puis-je redimensionner une image en conservant son ratio d'aspect ?",
+      "answer": "Oui. Passez à l'onglet Redimensionner, entrez la taille originale et une largeur ou hauteur cible, et l'outil calcule automatiquement la dimension correspondante."
+    }
+  ],
+  "footerTagline": "Calculez des ratios d'aspect et des résolutions proportionnelles pour la vidéo, les images et les écrans 100% localement.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copié !",
+  "contactForIdeas": "Contact pour idées et commentaires :"
+};

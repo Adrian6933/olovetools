@@ -1,0 +1,62 @@
+export default {
+  "title": "Device Test",
+  "seo_title": "Device Test | 测试您的网络摄像头和麦克风并查看系统信息，100% 本地完成。",
+  "seo_description": "测试您的网络摄像头、麦克风并查看系统信息，全部在浏览器中本地完成。",
+  "seoHeroTitle": "Device Test",
+  "seoHeroText": "测试您的网络摄像头、麦克风并查看系统信息，全部在浏览器中本地完成。",
+  "camTitle": "网络摄像头",
+  "camDenied": "摄像头访问被拒绝",
+  "camPlaceholder": "摄像头预览",
+  "camNone": "未检测到摄像头",
+  "camLabel": "摄像头",
+  "camStart": "启动摄像头",
+  "camStop": "停止摄像头",
+  "micTitle": "麦克风",
+  "micRecording": "录制中",
+  "micStart": "启动麦克风",
+  "micRecord": "录制5秒",
+  "micPlaying": "播放中",
+  "micPlay": "播放",
+  "sysTitle": "系统信息",
+  "statusReady": "就绪",
+  "sysNote": "通过 navigator API 在本地检测",
+  "sysResolution": "屏幕分辨率",
+  "sysPixelRatio": "像素比",
+  "sysColorDepth": "颜色深度",
+  "sysBrowser": "浏览器",
+  "sysOS": "操作系统",
+  "sysCpuCores": "CPU核心",
+  "sysRam": "设备内存",
+  "sysTouch": "触摸支持",
+  "statusRecording": "录制中",
+  "statusActive": "活跃",
+  "statusError": "错误",
+  "statusIdle": "空闲",
+  "seoBrowserSpeedTitle": "即时本地处理",
+  "seoBrowserSpeedText": "所有处理均使用原生 JavaScript API 在您的浏览器内执行。数据绝不会发送到服务器。",
+  "seoUseCaseTitle": "100% 客户端",
+  "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
+  "seoPrivacyTitle": "100% 隐私与安全",
+  "seoPrivacyText": "无数据库、追踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
+  "seoKeywords": ["device test", "在线工具", "免费", "本地", "浏览器"],
+  "faqTitle": "常见问题",
+  "faq": [
+    {
+      "question": "我的数据会发送到服务器吗？",
+      "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
+    },
+    {
+      "question": "为什么浏览器会请求摄像头和麦克风权限？",
+      "answer": "为了预览您的网络摄像头和可视化麦克风输入，浏览器需要通过 getUserMedia API 获得明确许可。除非您启动5秒测试录制，否则不会录制或上传任何内容，录制仅保留在您的标签页中。"
+    },
+    {
+      "question": "Device Test 检测哪些系统信息？",
+      "answer": "Device Test 读取屏幕分辨率、像素比、颜色深度、浏览器、操作系统、CPU核心、设备内存和触摸支持，全部通过浏览器中本地可用的标准 navigator 和 screen API。"
+    }
+  ],
+  "footerTagline": "测试您的网络摄像头、麦克风并查看系统信息，全部在浏览器中本地完成。",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "已复制！",
+  "contactForIdeas": "联系提交想法和评论:"
+};

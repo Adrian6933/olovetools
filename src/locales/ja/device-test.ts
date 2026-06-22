@@ -1,0 +1,62 @@
+export default {
+  "title": "Device Test",
+  "seo_title": "Device Test | ウェブカメラとマイクをテストし、システム情報を確認 100% ローカルで。",
+  "seo_description": "ウェブカメラ、マイクをテストし、システム情報を確認、すべてブラウザ内でローカルに。",
+  "seoHeroTitle": "Device Test",
+  "seoHeroText": "ウェブカメラ、マイクをテストし、システム情報を確認、すべてブラウザ内でローカルに。",
+  "camTitle": "ウェブカメラ",
+  "camDenied": "カメラアクセスが拒否されました",
+  "camPlaceholder": "カメラプレビュー",
+  "camNone": "カメラが検出されません",
+  "camLabel": "カメラ",
+  "camStart": "カメラを開始",
+  "camStop": "カメラを停止",
+  "micTitle": "マイク",
+  "micRecording": "録音中",
+  "micStart": "マイクを開始",
+  "micRecord": "5秒録音",
+  "micPlaying": "再生中",
+  "micPlay": "再生",
+  "sysTitle": "システム情報",
+  "statusReady": "準備完了",
+  "sysNote": "navigator API経由でローカルに検出",
+  "sysResolution": "画面解像度",
+  "sysPixelRatio": "ピクセル比",
+  "sysColorDepth": "色深度",
+  "sysBrowser": "ブラウザ",
+  "sysOS": "オペレーティングシステム",
+  "sysCpuCores": "CPUコア",
+  "sysRam": "デバイスメモリ",
+  "sysTouch": "タッチ対応",
+  "statusRecording": "録音中",
+  "statusActive": "アクティブ",
+  "statusError": "エラー",
+  "statusIdle": "アイドル",
+  "seoBrowserSpeedTitle": "瞬時のローカル処理",
+  "seoBrowserSpeedText": "すべての処理はネイティブな JavaScript API を使用してブラウザ内で実行されます。データがサーバーに送信されることはありません。",
+  "seoUseCaseTitle": "100% クライアント側",
+  "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
+  "seoPrivacyTitle": "100% プライベート & セキュア",
+  "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
+  "seoKeywords": ["device test", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "faqTitle": "よくある質問",
+  "faq": [
+    {
+      "question": "データはサーバーに送信されますか？",
+      "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
+    },
+    {
+      "question": "なぜブラウザはカメラとマイクの許可を求めるのですか？",
+      "answer": "ウェブカメラのプレビューとマイク入力の可視化のため、ブラウザはgetUserMedia APIを通じて明示的な許可を必要とします。5秒間のテスト録音を開始しない限り、何も録音・アップロードされず、録音はタブ内にのみ残ります。"
+    },
+    {
+      "question": "Device Test はどのようなシステム情報を検出しますか？",
+      "answer": "Device Test は画面解像度、ピクセル比、色深度、ブラウザ、オペレーティングシステム、CPUコア、デバイスメモリ、タッチ対応を、ブラウザ内でローカルに利用可能な標準の navigator および screen API を通じて読み取ります。"
+    }
+  ],
+  "footerTagline": "ウェブカメラ、マイクをテストし、システム情報を確認、すべてブラウザ内でローカルに。",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "アイデアやコメントのお問い合わせ先:"
+};

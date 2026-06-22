@@ -1,0 +1,62 @@
+export default {
+  "title": "Device Test",
+  "seo_title": "Device Test | Teste sua webcam e microfone e inspecione informações do sistema 100% localmente.",
+  "seo_description": "Teste sua webcam, microfone e inspecione informações do sistema, tudo localmente no seu navegador.",
+  "seoHeroTitle": "Device Test",
+  "seoHeroText": "Teste sua webcam, microfone e inspecione informações do sistema, tudo localmente no seu navegador.",
+  "camTitle": "Webcam",
+  "camDenied": "Acesso à câmera negado",
+  "camPlaceholder": "Pré-visualização da câmera",
+  "camNone": "Nenhuma câmera detectada",
+  "camLabel": "Câmera",
+  "camStart": "Iniciar câmera",
+  "camStop": "Parar câmera",
+  "micTitle": "Microfone",
+  "micRecording": "Gravando",
+  "micStart": "Iniciar microfone",
+  "micRecord": "Gravar 5s",
+  "micPlaying": "Reproduzindo",
+  "micPlay": "Reproduzir",
+  "sysTitle": "Informações do sistema",
+  "statusReady": "Pronto",
+  "sysNote": "Detectado localmente via APIs navigator",
+  "sysResolution": "Resolução de tela",
+  "sysPixelRatio": "Proporção de pixels",
+  "sysColorDepth": "Profundidade de cor",
+  "sysBrowser": "Navegador",
+  "sysOS": "Sistema operacional",
+  "sysCpuCores": "Núcleos de CPU",
+  "sysRam": "Memória do dispositivo",
+  "sysTouch": "Suporte tátil",
+  "statusRecording": "Gravando",
+  "statusActive": "Ativo",
+  "statusError": "Erro",
+  "statusIdle": "Inativo",
+  "seoBrowserSpeedTitle": "Processamento Local Instantâneo",
+  "seoBrowserSpeedText": "Todo o processamento é executado dentro do seu navegador usando APIs JavaScript nativas. Nenhum dado é enviado a um servidor.",
+  "seoUseCaseTitle": "100% do Lado do Cliente",
+  "seoUseCaseText": "Tudo é executado localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
+  "seoPrivacyTitle": "100% Privado e Seguro",
+  "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
+  "seoKeywords": ["device test", "ferramenta online", "grátis", "local", "navegador"],
+  "faqTitle": "Perguntas Frequentes",
+  "faq": [
+    {
+      "question": "Meus dados são enviados a algum servidor?",
+      "answer": "Não. Todas as operações acontecem inteiramente dentro do seu navegador. Seus dados nunca saem do seu dispositivo."
+    },
+    {
+      "question": "Por que meu navegador pede permissão para câmera e microfone?",
+      "answer": "Para pré-visualizar sua webcam e visualizar a entrada do microfone, o navegador exige permissão explícita via API getUserMedia. Nada é gravado ou enviado a menos que você ative a gravação de teste de 5 segundos, que permanece apenas na sua aba."
+    },
+    {
+      "question": "Quais informações do sistema o Device Test detecta?",
+      "answer": "O Device Test lê resolução de tela, proporção de pixels, profundidade de cor, navegador, sistema operacional, núcleos de CPU, memória do dispositivo e suporte tátil, tudo através de APIs navigator e screen padrão disponíveis localmente no seu navegador."
+    }
+  ],
+  "footerTagline": "Teste sua webcam, microfone e inspecione informações do sistema, tudo localmente no seu navegador.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:"
+};

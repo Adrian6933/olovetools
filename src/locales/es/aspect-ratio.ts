@@ -1,0 +1,60 @@
+export default {
+  "title": "Aspect-Ratio",
+  "seo_title": "Calculadora de Relación de Aspecto | Simplifica Relaciones y Redimensiona Proporcionalmente 100% Localmente",
+  "seo_description": "Calcula relaciones de aspecto simplificadas, redimensiona imágenes proporcionalmente y explora presets comunes como 16:9, 4:3 y 9:16. 100% local y privado.",
+  "seoHeroTitle": "Calculadora de Relación Pro",
+  "seoHeroText": "Calcula relaciones de aspecto, redimensiona proporcionalmente y explora presets comunes para vídeo, imágenes y pantallas 100% localmente.",
+  "tab_calculate": "Calcular Relación",
+  "tab_resize": "Redimensionar Proporcionalmente",
+  "tab_presets": "Presets Comunes",
+  "label_dimensions": "Dimensiones",
+  "label_width": "Ancho",
+  "label_height": "Alto",
+  "button_example": "Ejemplo 1920×1080",
+  "label_result": "Resultado",
+  "label_simplified_ratio": "Relación Simplificada",
+  "label_gcd": "GCD",
+  "label_decimal": "Decimal",
+  "label_input": "Entrada",
+  "placeholder_enter_dims": "Introduce ancho y alto para calcular la relación...",
+  "label_original": "Tamaño Original",
+  "label_lock_target": "Dimensión Objetivo",
+  "target_width": "Ancho Objetivo",
+  "target_height": "Alto Objetivo",
+  "label_new_size": "Nuevo Tamaño",
+  "label_result_dimensions": "Dimensiones Resultantes",
+  "label_new_width": "Nuevo Ancho",
+  "label_new_height": "Nuevo Alto",
+  "placeholder_resize": "Introduce el tamaño original y una dimensión objetivo...",
+  "label_preview": "Vista Previa Visual",
+  "unit_proportional": "unidades proporcionales",
+  "button_reset": "Restablecer Todo",
+  "tooltip_copy": "Copiar",
+  "seoBrowserSpeedTitle": "Procesamiento Local Instantáneo",
+  "seoBrowserSpeedText": "Todos los cálculos de relación y redimensionamiento proporcional se ejecutan dentro de tu navegador usando JavaScript nativo. Ningún dato se envía a un servidor.",
+  "seoUseCaseTitle": "100% del Lado del Cliente",
+  "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus entradas de dimensiones nunca salen de tu dispositivo y nada se sube.",
+  "seoPrivacyTitle": "100% Privado y Seguro",
+  "seoPrivacyText": "Sin bases de datos, rastreo ni cargas a la red. Tus entradas residen estrictamente en memoria local y desaparecen cuando cierras la pestaña.",
+  "seoKeywords": ["calculadora de relación de aspecto", "redimensionar imagen proporcionalmente", "relación 16:9", "simplificar relación", "dimensiones de imagen", "resolución de vídeo", "herramienta en línea", "gratis"],
+  "faqTitle": "Preguntas Frecuentes",
+  "faq": [
+    {
+      "question": "¿Mis datos se envían a algún servidor?",
+      "answer": "No. Todos los cálculos de relación y redimensionamiento ocurren completamente dentro de tu navegador. Tus entradas nunca salen de tu dispositivo."
+    },
+    {
+      "question": "¿Qué representa la relación simplificada?",
+      "answer": "La relación simplificada divide ambas dimensiones por su máximo común divisor (GCD), dándote la relación de números enteros más pequeña como 16:9 para 1920×1080."
+    },
+    {
+      "question": "¿Puedo redimensionar una imagen manteniendo su relación de aspecto?",
+      "answer": "Sí. Cambia a la pestaña Redimensionar, introduce el tamaño original y un ancho o alto objetivo, y la herramienta calcula la dimensión correspondiente automáticamente."
+    }
+  ],
+  "footerTagline": "Calcula relaciones de aspecto y resoluciones proporcionales para vídeo, imágenes y pantallas 100% localmente.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:"
+};

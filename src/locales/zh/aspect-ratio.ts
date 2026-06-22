@@ -1,0 +1,60 @@
+export default {
+  "title": "Aspect-Ratio",
+  "seo_title": "宽高比计算器 | 简化比率并按比例调整大小 100%本地",
+  "seo_description": "计算简化的宽高比，按比例调整图像大小，并探索16:9、4:3和9:16等常见预设。100%本地且私密。",
+  "seoHeroTitle": "比率计算器专业版",
+  "seoHeroText": "计算宽高比，按比例调整大小，并100%本地浏览视频、图像和屏幕的常见预设。",
+  "tab_calculate": "计算比率",
+  "tab_resize": "按比例调整大小",
+  "tab_presets": "常见预设",
+  "label_dimensions": "尺寸",
+  "label_width": "宽度",
+  "label_height": "高度",
+  "button_example": "示例 1920×1080",
+  "label_result": "结果",
+  "label_simplified_ratio": "简化比率",
+  "label_gcd": "GCD",
+  "label_decimal": "小数",
+  "label_input": "输入",
+  "placeholder_enter_dims": "输入宽度和高度以计算比率...",
+  "label_original": "原始尺寸",
+  "label_lock_target": "目标尺寸",
+  "target_width": "目标宽度",
+  "target_height": "目标高度",
+  "label_new_size": "新尺寸",
+  "label_result_dimensions": "结果尺寸",
+  "label_new_width": "新宽度",
+  "label_new_height": "新高度",
+  "placeholder_resize": "输入原始尺寸和目标尺寸...",
+  "label_preview": "可视预览",
+  "unit_proportional": "比例单位",
+  "button_reset": "全部重置",
+  "tooltip_copy": "复制",
+  "seoBrowserSpeedTitle": "即时本地处理",
+  "seoBrowserSpeedText": "所有比率计算和比例调整都在浏览器中使用原生JavaScript执行。数据永远不会发送到服务器。",
+  "seoUseCaseTitle": "100%客户端",
+  "seoUseCaseText": "一切都在浏览器中本地运行。您的尺寸输入永远不会离开您的设备，也不会上传任何内容。",
+  "seoPrivacyTitle": "100%私密安全",
+  "seoPrivacyText": "没有数据库、跟踪或网络上传。您的输入严格驻留在本地内存中，关闭标签页时即消失。",
+  "seoKeywords": ["宽高比计算器", "按比例调整图像大小", "16:9 比率", "简化比率", "图像尺寸", "视频分辨率", "在线工具", "免费"],
+  "faqTitle": "常见问题",
+  "faq": [
+    {
+      "question": "我的数据会发送到服务器吗？",
+      "answer": "不会。所有比率和调整大小计算完全在浏览器内进行。您的输入永远不会离开您的设备。"
+    },
+    {
+      "question": "简化比率代表什么？",
+      "answer": "简化比率将两个尺寸除以它们的最大公约数（GCD），给出最小的整数比率，例如1920×1080对应16:9。"
+    },
+    {
+      "question": "我可以在保持宽高比的情况下调整图像大小吗？",
+      "answer": "可以。切换到调整大小标签页，输入原始尺寸和目标宽度或高度，工具会自动计算匹配的尺寸。"
+    }
+  ],
+  "footerTagline": "100%本地计算视频、图像和屏幕的宽高比和比例分辨率。",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "已复制！",
+  "contactForIdeas": "联系以获取想法和评论:"
+};

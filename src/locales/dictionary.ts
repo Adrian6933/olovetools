@@ -330,6 +330,236 @@ import ru_graphflow from './ru/graph-flow';
 import ja_graphflow from './ja/graph-flow';
 import zh_graphflow from './zh/graph-flow';
 
+import en_urlbolt from './en/url-bolt';
+import es_urlbolt from './es/url-bolt';
+import hi_urlbolt from './hi/url-bolt';
+import de_urlbolt from './de/url-bolt';
+import fr_urlbolt from './fr/url-bolt';
+import pt_urlbolt from './pt/url-bolt';
+import ru_urlbolt from './ru/url-bolt';
+import ja_urlbolt from './ja/url-bolt';
+import zh_urlbolt from './zh/url-bolt';
+
+import en_base64bolt from './en/base64-bolt';
+import es_base64bolt from './es/base64-bolt';
+import hi_base64bolt from './hi/base64-bolt';
+import de_base64bolt from './de/base64-bolt';
+import fr_base64bolt from './fr/base64-bolt';
+import pt_base64bolt from './pt/base64-bolt';
+import ru_base64bolt from './ru/base64-bolt';
+import ja_base64bolt from './ja/base64-bolt';
+import zh_base64bolt from './zh/base64-bolt';
+
+import en_uuidgenerator from './en/uuid-generator';
+import es_uuidgenerator from './es/uuid-generator';
+import hi_uuidgenerator from './hi/uuid-generator';
+import de_uuidgenerator from './de/uuid-generator';
+import fr_uuidgenerator from './fr/uuid-generator';
+import pt_uuidgenerator from './pt/uuid-generator';
+import ru_uuidgenerator from './ru/uuid-generator';
+import ja_uuidgenerator from './ja/uuid-generator';
+import zh_uuidgenerator from './zh/uuid-generator';
+
+import en_listmixer from './en/list-mixer';
+import es_listmixer from './es/list-mixer';
+import hi_listmixer from './hi/list-mixer';
+import de_listmixer from './de/list-mixer';
+import fr_listmixer from './fr/list-mixer';
+import pt_listmixer from './pt/list-mixer';
+import ru_listmixer from './ru/list-mixer';
+import ja_listmixer from './ja/list-mixer';
+import zh_listmixer from './zh/list-mixer';
+
+import en_htmlsanitizer from './en/html-sanitizer';
+import es_htmlsanitizer from './es/html-sanitizer';
+import hi_htmlsanitizer from './hi/html-sanitizer';
+import de_htmlsanitizer from './de/html-sanitizer';
+import fr_htmlsanitizer from './fr/html-sanitizer';
+import pt_htmlsanitizer from './pt/html-sanitizer';
+import ru_htmlsanitizer from './ru/html-sanitizer';
+import ja_htmlsanitizer from './ja/html-sanitizer';
+import zh_htmlsanitizer from './zh/html-sanitizer';
+
+import en_colorsnap from './en/colorsnap';
+import es_colorsnap from './es/colorsnap';
+import hi_colorsnap from './hi/colorsnap';
+import de_colorsnap from './de/colorsnap';
+import fr_colorsnap from './fr/colorsnap';
+import pt_colorsnap from './pt/colorsnap';
+import ru_colorsnap from './ru/colorsnap';
+import ja_colorsnap from './ja/colorsnap';
+import zh_colorsnap from './zh/colorsnap';
+
+import en_hextorgb from './en/hex-to-rgb';
+import es_hextorgb from './es/hex-to-rgb';
+import hi_hextorgb from './hi/hex-to-rgb';
+import de_hextorgb from './de/hex-to-rgb';
+import fr_hextorgb from './fr/hex-to-rgb';
+import pt_hextorgb from './pt/hex-to-rgb';
+import ru_hextorgb from './ru/hex-to-rgb';
+import ja_hextorgb from './ja/hex-to-rgb';
+import zh_hextorgb from './zh/hex-to-rgb';
+
+import en_aspectratio from './en/aspect-ratio';
+import es_aspectratio from './es/aspect-ratio';
+import hi_aspectratio from './hi/aspect-ratio';
+import de_aspectratio from './de/aspect-ratio';
+import fr_aspectratio from './fr/aspect-ratio';
+import pt_aspectratio from './pt/aspect-ratio';
+import ru_aspectratio from './ru/aspect-ratio';
+import ja_aspectratio from './ja/aspect-ratio';
+import zh_aspectratio from './zh/aspect-ratio';
+
+import en_unitflow from './en/unitflow';
+import es_unitflow from './es/unitflow';
+import hi_unitflow from './hi/unitflow';
+import de_unitflow from './de/unitflow';
+import fr_unitflow from './fr/unitflow';
+import pt_unitflow from './pt/unitflow';
+import ru_unitflow from './ru/unitflow';
+import ja_unitflow from './ja/unitflow';
+import zh_unitflow from './zh/unitflow';
+
+import en_sqlflow from './en/sql-flow';
+import es_sqlflow from './es/sql-flow';
+import hi_sqlflow from './hi/sql-flow';
+import de_sqlflow from './de/sql-flow';
+import fr_sqlflow from './fr/sql-flow';
+import pt_sqlflow from './pt/sql-flow';
+import ru_sqlflow from './ru/sql-flow';
+import ja_sqlflow from './ja/sql-flow';
+import zh_sqlflow from './zh/sql-flow';
+
+import en_cronflow from './en/cron-flow';
+import es_cronflow from './es/cron-flow';
+import hi_cronflow from './hi/cron-flow';
+import de_cronflow from './de/cron-flow';
+import fr_cronflow from './fr/cron-flow';
+import pt_cronflow from './pt/cron-flow';
+import ru_cronflow from './ru/cron-flow';
+import ja_cronflow from './ja/cron-flow';
+import zh_cronflow from './zh/cron-flow';
+
+import en_xmljson from './en/xml-json';
+import es_xmljson from './es/xml-json';
+import hi_xmljson from './hi/xml-json';
+import de_xmljson from './de/xml-json';
+import fr_xmljson from './fr/xml-json';
+import pt_xmljson from './pt/xml-json';
+import ru_xmljson from './ru/xml-json';
+import ja_xmljson from './ja/xml-json';
+import zh_xmljson from './zh/xml-json';
+
+import en_binaryflow from './en/binary-flow';
+import es_binaryflow from './es/binary-flow';
+import hi_binaryflow from './hi/binary-flow';
+import de_binaryflow from './de/binary-flow';
+import fr_binaryflow from './fr/binary-flow';
+import pt_binaryflow from './pt/binary-flow';
+import ru_binaryflow from './ru/binary-flow';
+import ja_binaryflow from './ja/binary-flow';
+import zh_binaryflow from './zh/binary-flow';
+
+import en_morseflow from './en/morse-flow';
+import es_morseflow from './es/morse-flow';
+import hi_morseflow from './hi/morse-flow';
+import de_morseflow from './de/morse-flow';
+import fr_morseflow from './fr/morse-flow';
+import pt_morseflow from './pt/morse-flow';
+import ru_morseflow from './ru/morse-flow';
+import ja_morseflow from './ja/morse-flow';
+import zh_morseflow from './zh/morse-flow';
+
+import en_epochflow from './en/epoch-flow';
+import es_epochflow from './es/epoch-flow';
+import hi_epochflow from './hi/epoch-flow';
+import de_epochflow from './de/epoch-flow';
+import fr_epochflow from './fr/epoch-flow';
+import pt_epochflow from './pt/epoch-flow';
+import ru_epochflow from './ru/epoch-flow';
+import ja_epochflow from './ja/epoch-flow';
+import zh_epochflow from './zh/epoch-flow';
+
+import en_timebolt from './en/time-bolt';
+import es_timebolt from './es/time-bolt';
+import hi_timebolt from './hi/time-bolt';
+import de_timebolt from './de/time-bolt';
+import fr_timebolt from './fr/time-bolt';
+import pt_timebolt from './pt/time-bolt';
+import ru_timebolt from './ru/time-bolt';
+import ja_timebolt from './ja/time-bolt';
+import zh_timebolt from './zh/time-bolt';
+
+import en_devicetest from './en/device-test';
+import es_devicetest from './es/device-test';
+import hi_devicetest from './hi/device-test';
+import de_devicetest from './de/device-test';
+import fr_devicetest from './fr/device-test';
+import pt_devicetest from './pt/device-test';
+import ru_devicetest from './ru/device-test';
+import ja_devicetest from './ja/device-test';
+import zh_devicetest from './zh/device-test';
+
+import en_loremflow from './en/lorem-flow';
+import es_loremflow from './es/lorem-flow';
+import hi_loremflow from './hi/lorem-flow';
+import de_loremflow from './de/lorem-flow';
+import fr_loremflow from './fr/lorem-flow';
+import pt_loremflow from './pt/lorem-flow';
+import ru_loremflow from './ru/lorem-flow';
+import ja_loremflow from './ja/lorem-flow';
+import zh_loremflow from './zh/lorem-flow';
+
+import en_keydoctor from './en/key-doctor';
+import es_keydoctor from './es/key-doctor';
+import hi_keydoctor from './hi/key-doctor';
+import de_keydoctor from './de/key-doctor';
+import fr_keydoctor from './fr/key-doctor';
+import pt_keydoctor from './pt/key-doctor';
+import ru_keydoctor from './ru/key-doctor';
+import ja_keydoctor from './ja/key-doctor';
+import zh_keydoctor from './zh/key-doctor';
+
+import en_whiteboardflow from './en/whiteboard-flow';
+import es_whiteboardflow from './es/whiteboard-flow';
+import hi_whiteboardflow from './hi/whiteboard-flow';
+import de_whiteboardflow from './de/whiteboard-flow';
+import fr_whiteboardflow from './fr/whiteboard-flow';
+import pt_whiteboardflow from './pt/whiteboard-flow';
+import ru_whiteboardflow from './ru/whiteboard-flow';
+import ja_whiteboardflow from './ja/whiteboard-flow';
+import zh_whiteboardflow from './zh/whiteboard-flow';
+
+import en_subtitlesbolt from './en/subtitles-bolt';
+import es_subtitlesbolt from './es/subtitles-bolt';
+import hi_subtitlesbolt from './hi/subtitles-bolt';
+import de_subtitlesbolt from './de/subtitles-bolt';
+import fr_subtitlesbolt from './fr/subtitles-bolt';
+import pt_subtitlesbolt from './pt/subtitles-bolt';
+import ru_subtitlesbolt from './ru/subtitles-bolt';
+import ja_subtitlesbolt from './ja/subtitles-bolt';
+import zh_subtitlesbolt from './zh/subtitles-bolt';
+
+import en_passbolt from './en/passbolt';
+import es_passbolt from './es/passbolt';
+import hi_passbolt from './hi/passbolt';
+import de_passbolt from './de/passbolt';
+import fr_passbolt from './fr/passbolt';
+import pt_passbolt from './pt/passbolt';
+import ru_passbolt from './ru/passbolt';
+import ja_passbolt from './ja/passbolt';
+import zh_passbolt from './zh/passbolt';
+
+import en_whoisbolt from './en/whois-bolt';
+import es_whoisbolt from './es/whois-bolt';
+import hi_whoisbolt from './hi/whois-bolt';
+import de_whoisbolt from './de/whois-bolt';
+import fr_whoisbolt from './fr/whois-bolt';
+import pt_whoisbolt from './pt/whois-bolt';
+import ru_whoisbolt from './ru/whois-bolt';
+import ja_whoisbolt from './ja/whois-bolt';
+import zh_whoisbolt from './zh/whois-bolt';
+
 export const hubDictionary: Record<string, any> = {
   en: en_hub,
   es: es_hub,
@@ -726,7 +956,283 @@ export const graphflowDictionary: Record<string, any> = {
   zh: zh_graphflow,
 };
 
-export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow') => {
+export const urlboltDictionary: Record<string, any> = {
+  en: en_urlbolt,
+  es: es_urlbolt,
+  hi: hi_urlbolt,
+  de: de_urlbolt,
+  fr: fr_urlbolt,
+  pt: pt_urlbolt,
+  ru: ru_urlbolt,
+  ja: ja_urlbolt,
+  zh: zh_urlbolt,
+};
+
+export const base64boltDictionary: Record<string, any> = {
+  en: en_base64bolt,
+  es: es_base64bolt,
+  hi: hi_base64bolt,
+  de: de_base64bolt,
+  fr: fr_base64bolt,
+  pt: pt_base64bolt,
+  ru: ru_base64bolt,
+  ja: ja_base64bolt,
+  zh: zh_base64bolt,
+};
+
+export const uuidGeneratorDictionary: Record<string, any> = {
+  en: en_uuidgenerator,
+  es: es_uuidgenerator,
+  fr: fr_uuidgenerator,
+  de: de_uuidgenerator,
+  pt: pt_uuidgenerator,
+  ru: ru_uuidgenerator,
+  hi: hi_uuidgenerator,
+  ja: ja_uuidgenerator,
+  zh: zh_uuidgenerator,
+};
+
+export const listMixerDictionary: Record<string, any> = {
+  en: en_listmixer,
+  es: es_listmixer,
+  fr: fr_listmixer,
+  de: de_listmixer,
+  pt: pt_listmixer,
+  ru: ru_listmixer,
+  hi: hi_listmixer,
+  ja: ja_listmixer,
+  zh: zh_listmixer,
+};
+
+export const htmlSanitizerDictionary: Record<string, any> = {
+  en: en_htmlsanitizer,
+  es: es_htmlsanitizer,
+  fr: fr_htmlsanitizer,
+  de: de_htmlsanitizer,
+  pt: pt_htmlsanitizer,
+  ru: ru_htmlsanitizer,
+  hi: hi_htmlsanitizer,
+  ja: ja_htmlsanitizer,
+  zh: zh_htmlsanitizer,
+};
+
+export const colorsnapDictionary: Record<string, any> = {
+  en: en_colorsnap,
+  es: es_colorsnap,
+  fr: fr_colorsnap,
+  de: de_colorsnap,
+  pt: pt_colorsnap,
+  ru: ru_colorsnap,
+  hi: hi_colorsnap,
+  ja: ja_colorsnap,
+  zh: zh_colorsnap,
+};
+
+export const hexToRgbDictionary: Record<string, any> = {
+  en: en_hextorgb,
+  es: es_hextorgb,
+  fr: fr_hextorgb,
+  de: de_hextorgb,
+  pt: pt_hextorgb,
+  ru: ru_hextorgb,
+  hi: hi_hextorgb,
+  ja: ja_hextorgb,
+  zh: zh_hextorgb,
+};
+
+export const aspectRatioDictionary: Record<string, any> = {
+  en: en_aspectratio,
+  es: es_aspectratio,
+  fr: fr_aspectratio,
+  de: de_aspectratio,
+  pt: pt_aspectratio,
+  ru: ru_aspectratio,
+  hi: hi_aspectratio,
+  ja: ja_aspectratio,
+  zh: zh_aspectratio,
+};
+
+export const unitflowDictionary: Record<string, any> = {
+  en: en_unitflow,
+  es: es_unitflow,
+  fr: fr_unitflow,
+  de: de_unitflow,
+  pt: pt_unitflow,
+  ru: ru_unitflow,
+  hi: hi_unitflow,
+  ja: ja_unitflow,
+  zh: zh_unitflow,
+};
+
+export const sqlFlowDictionary: Record<string, any> = {
+  en: en_sqlflow,
+  es: es_sqlflow,
+  fr: fr_sqlflow,
+  de: de_sqlflow,
+  pt: pt_sqlflow,
+  ru: ru_sqlflow,
+  hi: hi_sqlflow,
+  ja: ja_sqlflow,
+  zh: zh_sqlflow,
+};
+
+export const cronFlowDictionary: Record<string, any> = {
+  en: en_cronflow,
+  es: es_cronflow,
+  fr: fr_cronflow,
+  de: de_cronflow,
+  pt: pt_cronflow,
+  ru: ru_cronflow,
+  hi: hi_cronflow,
+  ja: ja_cronflow,
+  zh: zh_cronflow,
+};
+
+export const xmlJsonDictionary: Record<string, any> = {
+  en: en_xmljson,
+  es: es_xmljson,
+  fr: fr_xmljson,
+  de: de_xmljson,
+  pt: pt_xmljson,
+  ru: ru_xmljson,
+  hi: hi_xmljson,
+  ja: ja_xmljson,
+  zh: zh_xmljson,
+};
+
+export const binaryFlowDictionary: Record<string, any> = {
+  en: en_binaryflow,
+  es: es_binaryflow,
+  fr: fr_binaryflow,
+  de: de_binaryflow,
+  pt: pt_binaryflow,
+  ru: ru_binaryflow,
+  hi: hi_binaryflow,
+  ja: ja_binaryflow,
+  zh: zh_binaryflow,
+};
+
+export const morseFlowDictionary: Record<string, any> = {
+  en: en_morseflow,
+  es: es_morseflow,
+  fr: fr_morseflow,
+  de: de_morseflow,
+  pt: pt_morseflow,
+  ru: ru_morseflow,
+  hi: hi_morseflow,
+  ja: ja_morseflow,
+  zh: zh_morseflow,
+};
+
+export const epochFlowDictionary: Record<string, any> = {
+  en: en_epochflow,
+  es: es_epochflow,
+  fr: fr_epochflow,
+  de: de_epochflow,
+  pt: pt_epochflow,
+  ru: ru_epochflow,
+  hi: hi_epochflow,
+  ja: ja_epochflow,
+  zh: zh_epochflow,
+};
+
+export const timeBoltDictionary: Record<string, any> = {
+  en: en_timebolt,
+  es: es_timebolt,
+  fr: fr_timebolt,
+  de: de_timebolt,
+  pt: pt_timebolt,
+  ru: ru_timebolt,
+  hi: hi_timebolt,
+  ja: ja_timebolt,
+  zh: zh_timebolt,
+};
+
+export const deviceTestDictionary: Record<string, any> = {
+  en: en_devicetest,
+  es: es_devicetest,
+  fr: fr_devicetest,
+  de: de_devicetest,
+  pt: pt_devicetest,
+  ru: ru_devicetest,
+  hi: hi_devicetest,
+  ja: ja_devicetest,
+  zh: zh_devicetest,
+};
+
+export const loremFlowDictionary: Record<string, any> = {
+  en: en_loremflow,
+  es: es_loremflow,
+  fr: fr_loremflow,
+  de: de_loremflow,
+  pt: pt_loremflow,
+  ru: ru_loremflow,
+  hi: hi_loremflow,
+  ja: ja_loremflow,
+  zh: zh_loremflow,
+};
+
+export const keyDoctorDictionary: Record<string, any> = {
+  en: en_keydoctor,
+  es: es_keydoctor,
+  fr: fr_keydoctor,
+  de: de_keydoctor,
+  pt: pt_keydoctor,
+  ru: ru_keydoctor,
+  hi: hi_keydoctor,
+  ja: ja_keydoctor,
+  zh: zh_keydoctor,
+};
+
+export const whiteboardFlowDictionary: Record<string, any> = {
+  en: en_whiteboardflow,
+  es: es_whiteboardflow,
+  fr: fr_whiteboardflow,
+  de: de_whiteboardflow,
+  pt: pt_whiteboardflow,
+  ru: ru_whiteboardflow,
+  hi: hi_whiteboardflow,
+  ja: ja_whiteboardflow,
+  zh: zh_whiteboardflow,
+};
+
+export const subtitlesBoltDictionary: Record<string, any> = {
+  en: en_subtitlesbolt,
+  es: es_subtitlesbolt,
+  fr: fr_subtitlesbolt,
+  de: de_subtitlesbolt,
+  pt: pt_subtitlesbolt,
+  ru: ru_subtitlesbolt,
+  hi: hi_subtitlesbolt,
+  ja: ja_subtitlesbolt,
+  zh: zh_subtitlesbolt,
+};
+
+export const passboltDictionary: Record<string, any> = {
+  en: en_passbolt,
+  es: es_passbolt,
+  fr: fr_passbolt,
+  de: de_passbolt,
+  pt: pt_passbolt,
+  ru: ru_passbolt,
+  hi: hi_passbolt,
+  ja: ja_passbolt,
+  zh: zh_passbolt,
+};
+
+export const whoisBoltDictionary: Record<string, any> = {
+  en: en_whoisbolt,
+  es: es_whoisbolt,
+  fr: fr_whoisbolt,
+  de: de_whoisbolt,
+  pt: pt_whoisbolt,
+  ru: ru_whoisbolt,
+  hi: hi_whoisbolt,
+  ja: ja_whoisbolt,
+  zh: zh_whoisbolt,
+};
+
+export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'passbolt' | 'whois-bolt') => {
   const dictionaryObj = 
     tool === 'clipy' ? clipyDictionary : 
     tool === 'twitchbolt' ? twitchboltDictionary : 
@@ -760,6 +1266,29 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     tool === 'lottie-viewer' ? lottieviewerDictionary :
     tool === 'svg-optimizer' ? svgoptimizerDictionary :
     tool === 'graph-flow' ? graphflowDictionary :
+    tool === 'url-bolt' ? urlboltDictionary :
+    tool === 'uuid-generator' ? uuidGeneratorDictionary :
+    tool === 'list-mixer' ? listMixerDictionary :
+    tool === 'html-sanitizer' ? htmlSanitizerDictionary :
+    tool === 'colorsnap' ? colorsnapDictionary :
+    tool === 'hex-to-rgb' ? hexToRgbDictionary :
+    tool === 'aspect-ratio' ? aspectRatioDictionary :
+    tool === 'unitflow' ? unitflowDictionary :
+    tool === 'sql-flow' ? sqlFlowDictionary :
+    tool === 'cron-flow' ? cronFlowDictionary :
+    tool === 'xml-json' ? xmlJsonDictionary :
+    tool === 'binary-flow' ? binaryFlowDictionary :
+    tool === 'morse-flow' ? morseFlowDictionary :
+    tool === 'epoch-flow' ? epochFlowDictionary :
+    tool === 'time-bolt' ? timeBoltDictionary :
+    tool === 'device-test' ? deviceTestDictionary :
+    tool === 'lorem-flow' ? loremFlowDictionary :
+    tool === 'key-doctor' ? keyDoctorDictionary :
+    tool === 'whiteboard-flow' ? whiteboardFlowDictionary :
+    tool === 'subtitles-bolt' ? subtitlesBoltDictionary :
+    tool === 'passbolt' ? passboltDictionary :
+    tool === 'whois-bolt' ? whoisBoltDictionary :
+    tool === 'base64-bolt' ? base64boltDictionary :
     hubDictionary;
     
   const currentDict = dictionaryObj[lang] || dictionaryObj['en'];

@@ -69,6 +69,7 @@ export const TOOL_THEME_COLORS: Record<string, string> = {
   'svg-optimizer': "#06b6d4",
   'graph-flow': "#f59e0b",
   'url-bolt': "#10b981",
+  'base64-bolt': "#3b82f6",
   default: "#060609"
 };
 
@@ -414,5 +415,225 @@ export const MOCK_PROJECTS: Project[] = [
     tags: ['URL', 'Encoder', 'Decoder', 'Developer'],
     icon: 'Link',
     color: 'bg-gradient-to-br from-emerald-500 to-teal-600'
+  },
+  {
+    id: '34',
+    name: 'Base64-Bolt',
+    slug: 'base64-bolt',
+    description: 'Encode and decode Base64 strings and convert images to DataURL 100% locally in your browser.',
+    category: ProjectCategory.DEV,
+    tags: ['Base64', 'Encoder', 'Image', 'DataURL'],
+    icon: 'Binary',
+    color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
+  },
+  {
+    id: '35',
+    name: 'UUID-Generator',
+    slug: 'uuid-generator',
+    description: 'Generate random UUIDs (v4) and named UUIDs (v5) in bulk up to 500 at once 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['UUID', 'GUID', 'Random', 'Generator'],
+    icon: 'Fingerprint',
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+  },
+  {
+    id: '36',
+    name: 'List-Mixer',
+    slug: 'list-mixer',
+    description: 'Sort, reverse, shuffle, deduplicate, trim and clean lists of text 100% locally in your browser.',
+    category: ProjectCategory.UTILITY,
+    tags: ['List', 'Sorter', 'Shuffler', 'Dedupe'],
+    icon: 'ListOrdered',
+    color: 'bg-gradient-to-br from-orange-500 to-red-600'
+  },
+  {
+    id: '37',
+    name: 'HTML-Sanitizer',
+    slug: 'html-sanitizer',
+    description: 'Clean and sanitize HTML code by removing scripts, styles, iframes and unwanted tags 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['HTML', 'Sanitizer', 'Cleaner', 'Security'],
+    icon: 'ShieldCheck',
+    color: 'bg-gradient-to-br from-cyan-500 to-teal-600'
+  },
+  {
+    id: '38',
+    name: 'ColorSnap',
+    slug: 'colorsnap',
+    description: 'Extract dominant colors and palettes from any image 100% locally in your browser.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Color', 'Palette', 'Design', 'Extractor'],
+    icon: 'Palette',
+    color: 'bg-gradient-to-br from-rose-500 to-pink-600'
+  },
+  {
+    id: '39',
+    name: 'Hex-to-RGB',
+    slug: 'hex-to-rgb',
+    description: 'Convert between HEX, RGB, HSL and CMYK color formats with opacity and contrast tools 100% locally.',
+    category: ProjectCategory.CREATIVE,
+    tags: ['Color', 'HEX', 'RGB', 'HSL'],
+    icon: 'Palette',
+    color: 'bg-gradient-to-br from-teal-500 to-cyan-600'
+  },
+  {
+    id: '40',
+    name: 'Aspect-Ratio',
+    slug: 'aspect-ratio',
+    description: 'Calculate aspect ratios and proportional resolutions for video, images and screens 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Ratio', 'Calculator', 'Resolution', 'Video'],
+    icon: 'Ratio',
+    color: 'bg-gradient-to-br from-lime-500 to-green-600'
+  },
+  {
+    id: '41',
+    name: 'UnitFlow',
+    slug: 'unitflow',
+    description: 'Convert units of measurement: length, weight, temperature, speed, volume and more 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Unit', 'Converter', 'Measurement', 'Calculator'],
+    icon: 'Ruler',
+    color: 'bg-gradient-to-br from-blue-500 to-cyan-600'
+  },
+  {
+    id: '42',
+    name: 'SQL-Flow',
+    slug: 'sql-flow',
+    description: 'Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.',
+    category: ProjectCategory.DEV,
+    tags: ['SQL', 'Formatter', 'Validator', 'Database'],
+    icon: 'Database',
+    color: 'bg-gradient-to-br from-amber-500 to-yellow-600'
+  },
+  {
+    id: '43',
+    name: 'Cron-Flow',
+    slug: 'cron-flow',
+    description: 'Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['Cron', 'Scheduler', 'DevOps', 'Translator'],
+    icon: 'Clock',
+    color: 'bg-gradient-to-br from-violet-500 to-fuchsia-600'
+  },
+  {
+    id: '44',
+    name: 'XML-JSON',
+    slug: 'xml-json',
+    description: 'Convert XML to JSON and JSON to XML instantly 100% locally in your browser.',
+    category: ProjectCategory.DEV,
+    tags: ['XML', 'JSON', 'Converter', 'Parser'],
+    icon: 'FileCode',
+    color: 'bg-gradient-to-br from-teal-500 to-emerald-600'
+  },
+  {
+    id: '45',
+    name: 'Binary-Flow',
+    slug: 'binary-flow',
+    description: 'Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['Binary', 'Hex', 'Decimal', 'Octal'],
+    icon: 'Binary',
+    color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
+  },
+  {
+    id: '46',
+    name: 'Morse-Flow',
+    slug: 'morse-flow',
+    description: 'Encode and decode Morse code with audio playback 100% locally in your browser.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Morse', 'Audio', 'Encoder', 'Decoder'],
+    icon: 'Radio',
+    color: 'bg-gradient-to-br from-amber-500 to-orange-600'
+  },
+  {
+    id: '47',
+    name: 'Epoch-Flow',
+    slug: 'epoch-flow',
+    description: 'Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['Epoch', 'Timestamp', 'Unix', 'Converter'],
+    icon: 'Clock',
+    color: 'bg-gradient-to-br from-sky-500 to-cyan-600'
+  },
+  {
+    id: '48',
+    name: 'Time-Bolt',
+    slug: 'time-bolt',
+    description: 'Convert time between world timezones with an interactive meeting planner 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Timezone', 'Converter', 'Meeting', 'World Clock'],
+    icon: 'Globe',
+    color: 'bg-gradient-to-br from-teal-500 to-emerald-600'
+  },
+  {
+    id: '49',
+    name: 'Device-Test',
+    slug: 'device-test',
+    description: 'Test your webcam, microphone, speakers and system info 100% locally in your browser.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Webcam', 'Microphone', 'Test', 'Device'],
+    icon: 'Camera',
+    color: 'bg-gradient-to-br from-rose-500 to-red-600'
+  },
+  {
+    id: '50',
+    name: 'Lorem-Flow',
+    slug: 'lorem-flow',
+    description: 'Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Lorem', 'Generator', 'Placeholder', 'Text'],
+    icon: 'AlignLeft',
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+  },
+  {
+    id: '51',
+    name: 'Key-Doctor',
+    slug: 'key-doctor',
+    description: 'Detect and display JavaScript keyboard event properties key, code and keyCode 100% locally.',
+    category: ProjectCategory.DEV,
+    tags: ['Keyboard', 'Events', 'Developer', 'Inspector'],
+    icon: 'Keyboard',
+    color: 'bg-gradient-to-br from-amber-500 to-yellow-600'
+  },
+  {
+    id: '52',
+    name: 'Whiteboard-Flow',
+    slug: 'whiteboard-flow',
+    description: 'Organize notes in a virtual Kanban board with drag and drop 100% locally in your browser.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Kanban', 'Notes', 'Drag', 'Productivity'],
+    icon: 'StickyNote',
+    color: 'bg-gradient-to-br from-cyan-500 to-sky-600'
+  },
+  {
+    id: '53',
+    name: 'Subtitles-Bolt',
+    slug: 'subtitles-bolt',
+    description: 'Convert subtitles between SRT, VTT and SBV formats 100% locally in your browser.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Subtitles', 'SRT', 'VTT', 'Converter'],
+    icon: 'Captions',
+    color: 'bg-gradient-to-br from-blue-500 to-purple-600'
+  },
+  {
+    id: '54',
+    name: 'PassBolt',
+    slug: 'passbolt',
+    description: 'Generate secure passwords and test their strength with entropy analysis 100% locally.',
+    category: ProjectCategory.UTILITY,
+    tags: ['Password', 'Generator', 'Security', 'Entropy'],
+    icon: 'KeyRound',
+    color: 'bg-gradient-to-br from-emerald-500 to-green-600'
+  },
+  {
+    id: '55',
+    name: 'Whois-Bolt',
+    slug: 'whois-bolt',
+    description: 'Query DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) using DNS over HTTPS.',
+    category: ProjectCategory.UTILITY,
+    tags: ['DNS', 'Lookup', 'Records', 'Domain'],
+    icon: 'Search',
+    color: 'bg-gradient-to-br from-indigo-500 to-blue-600'
   }
 ];

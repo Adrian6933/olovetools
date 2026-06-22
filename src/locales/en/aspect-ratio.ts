@@ -1,0 +1,60 @@
+export default {
+  "title": "Aspect-Ratio",
+  "seo_title": "Aspect Ratio Calculator | Simplify Ratios & Resize Proportionally 100% Locally",
+  "seo_description": "Calculate simplified aspect ratios, resize images proportionally, and explore common presets like 16:9, 4:3 and 9:16. 100% local and private.",
+  "seoHeroTitle": "Ratio Calculator Pro",
+  "seoHeroText": "Calculate aspect ratios, resize proportionally, and browse common presets for video, images and screens 100% locally.",
+  "tab_calculate": "Calculate Ratio",
+  "tab_resize": "Resize Proportionally",
+  "tab_presets": "Common Presets",
+  "label_dimensions": "Dimensions",
+  "label_width": "Width",
+  "label_height": "Height",
+  "button_example": "Example 1920×1080",
+  "label_result": "Result",
+  "label_simplified_ratio": "Simplified Ratio",
+  "label_gcd": "GCD",
+  "label_decimal": "Decimal",
+  "label_input": "Input",
+  "placeholder_enter_dims": "Enter width and height to calculate the ratio...",
+  "label_original": "Original Size",
+  "label_lock_target": "Target Dimension",
+  "target_width": "Target Width",
+  "target_height": "Target Height",
+  "label_new_size": "New Size",
+  "label_result_dimensions": "Resulting Dimensions",
+  "label_new_width": "New Width",
+  "label_new_height": "New Height",
+  "placeholder_resize": "Enter original size and a target dimension...",
+  "label_preview": "Visual Preview",
+  "unit_proportional": "proportional units",
+  "button_reset": "Reset All",
+  "tooltip_copy": "Copy",
+  "seoBrowserSpeedTitle": "Instant Local Processing",
+  "seoBrowserSpeedText": "All ratio calculations and proportional resizing are executed inside your browser using native JavaScript. No data is ever sent to a server.",
+  "seoUseCaseTitle": "100% Client-Side",
+  "seoUseCaseText": "Everything runs locally in your browser. Your dimension inputs never leave your device and nothing is uploaded.",
+  "seoPrivacyTitle": "100% Private & Secure",
+  "seoPrivacyText": "No databases, tracking, or network uploads. Your inputs reside strictly in local memory and disappear when you close the tab.",
+  "seoKeywords": ["aspect ratio calculator", "resize image proportionally", "16:9 ratio", "simplify ratio", "image dimensions", "video resolution", "online tool", "free"],
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Is my data sent to any server?",
+      "answer": "No. All ratio and resize calculations happen entirely inside your browser. Your inputs never leave your device."
+    },
+    {
+      "question": "What does the simplified ratio represent?",
+      "answer": "The simplified ratio divides both dimensions by their greatest common divisor (GCD), giving you the smallest whole-number ratio such as 16:9 for 1920×1080."
+    },
+    {
+      "question": "Can I resize an image while keeping its aspect ratio?",
+      "answer": "Yes. Switch to the Resize tab, enter the original size and a target width or height, and the tool computes the matching dimension automatically."
+    }
+  ],
+  "footerTagline": "Calculate aspect ratios and proportional resolutions for video, images and screens 100% locally.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:"
+};

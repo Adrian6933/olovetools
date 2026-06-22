@@ -26,3 +26,33 @@ dist-ssr
 # Astro build and cache
 .astro/
 
+# Node
+node_modules/
+package-lock.json
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+log.txt
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Build output
+dist/
+dist-ssr/
+
+# Temporary
+*.tmp
+*.bak
+*.swp
+

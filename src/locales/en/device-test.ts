@@ -1,0 +1,62 @@
+export default {
+  "title": "Device Test",
+  "seo_title": "Device Test | Test your webcam and microphone and inspect system info 100% locally in your browser.",
+  "seo_description": "Test your webcam, microphone and inspect system info, all locally in your browser.",
+  "seoHeroTitle": "Device Test",
+  "seoHeroText": "Test your webcam, microphone and inspect system info, all locally in your browser.",
+  "camTitle": "Webcam",
+  "camDenied": "Camera access denied",
+  "camPlaceholder": "Camera preview",
+  "camNone": "No cameras detected",
+  "camLabel": "Camera",
+  "camStart": "Start Camera",
+  "camStop": "Stop Camera",
+  "micTitle": "Microphone",
+  "micRecording": "Recording",
+  "micStart": "Start Mic",
+  "micRecord": "Record 5s",
+  "micPlaying": "Playing",
+  "micPlay": "Play",
+  "sysTitle": "System Info",
+  "statusReady": "Ready",
+  "sysNote": "Detected locally via navigator APIs",
+  "sysResolution": "Screen Resolution",
+  "sysPixelRatio": "Pixel Ratio",
+  "sysColorDepth": "Color Depth",
+  "sysBrowser": "Browser",
+  "sysOS": "Operating System",
+  "sysCpuCores": "CPU Cores",
+  "sysRam": "Device Memory",
+  "sysTouch": "Touch Support",
+  "statusRecording": "Recording",
+  "statusActive": "Active",
+  "statusError": "Error",
+  "statusIdle": "Idle",
+  "seoBrowserSpeedTitle": "Instant Local Processing",
+  "seoBrowserSpeedText": "All processing is executed inside your browser using native JavaScript APIs. No data is ever sent to a server.",
+  "seoUseCaseTitle": "100% Client-Side",
+  "seoUseCaseText": "Everything runs locally in your browser. Your data never leaves your device.",
+  "seoPrivacyTitle": "100% Private & Secure",
+  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoKeywords": ["device test", "online tool", "free", "local", "browser"],
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Is my data sent to any server?",
+      "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
+    },
+    {
+      "question": "Why does my browser ask for camera and microphone permission?",
+      "answer": "To preview your webcam and visualize microphone input, the browser requires explicit permission via the getUserMedia API. Nothing is recorded or uploaded unless you trigger the 5-second test recording, which stays only in your tab."
+    },
+    {
+      "question": "What system information does Device Test detect?",
+      "answer": "Device Test reads screen resolution, pixel ratio, color depth, browser, operating system, CPU cores, device memory and touch support, all through standard navigator and screen APIs available locally in your browser."
+    }
+  ],
+  "footerTagline": "Test your webcam, microphone and inspect system info, all locally in your browser.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:"
+};
