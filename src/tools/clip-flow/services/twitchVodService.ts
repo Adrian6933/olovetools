@@ -19,9 +19,10 @@ const GQL_PROXIES = [
 
 // usher.ttvnw.net (VOD master playlist) sends CORS headers and works with a direct
 // fetch, but the actual video segment CDN (CloudFront/S3) does not, so segment and
-// media-playlist downloads need a proxy. clipflow-proxy.php (deployed alongside this
-// site on Hostinger) handles that. Leave empty to fall back to public proxies instead.
-const WORKER_PROXY_URL = 'https://olovetools.com/clipflow-proxy.php';
+// media-playlist downloads need a proxy. In dev this points at the local Node proxy
+// (server/clipflow-proxy.mjs, run via `npm run proxy`); production uses clipflow-proxy.php
+// deployed alongside the site on Hostinger. Leave empty to fall back to public proxies.
+const WORKER_PROXY_URL = import.meta.env.DEV ? 'http://localhost:8787' : 'https://olovetools.com/clipflow-proxy.php';
 
 export const DOWNLOAD_PROXIES = [
   ...(WORKER_PROXY_URL ? [(url: string) => `${WORKER_PROXY_URL}?url=${encodeURIComponent(url)}`] : []),
@@ -63,9 +64,22 @@ const gqlRequest = async (query: string, variables: Record<string, any>): Promis
 };
 
 // ---- Input parsing ----
-export type ParsedInput = { kind: 'vod'; videoId: string } | { kind: 'channel'; login: string };
+export type ParsedInput =
+  | { kind: 'vod'; videoId: string; startTime?: number }
+  | { kind: 'channel'; login: string; startTime?: number };
 
 const RESERVED_PATH_SEGMENTS = new Set(['videos', 'clip', 'clips', 'directory', 'p', 'downloads', 'settings', 'subscriptions', 'wallet', 'jobs', 'turbo', 'friends', 'inventory', 'drops']);
+
+// Parses Twitch's "?t=1h50m36s" timestamp query param into seconds.
+const parseTwitchTimestamp = (raw: string | null): number | undefined => {
+  if (!raw) return undefined;
+  const match = raw.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);
+  if (!match || !(match[1] || match[2] || match[3])) return undefined;
+  const hours = parseInt(match[1] || '0', 10);
+  const minutes = parseInt(match[2] || '0', 10);
+  const seconds = parseInt(match[3] || '0', 10);
+  return hours * 3600 + minutes * 60 + seconds;
+};
 
 export const parseInput = (raw: string): ParsedInput | null => {
   const input = raw.trim();
@@ -86,16 +100,18 @@ export const parseInput = (raw: string): ParsedInput | null => {
 
   if (!/twitch\.tv$/.test(url.hostname.replace(/^(m|www|player)\./, ''))) return null;
 
+  const startTime = parseTwitchTimestamp(url.searchParams.get('t'));
+
   const segments = url.pathname.split('/').filter(Boolean);
   if (segments.length === 0) return null;
 
   const videosIdx = segments.indexOf('videos');
   if (videosIdx !== -1 && segments[videosIdx + 1] && /^\d+$/.test(segments[videosIdx + 1])) {
-    return { kind: 'vod', videoId: segments[videosIdx + 1] };
+    return { kind: 'vod', videoId: segments[videosIdx + 1], startTime };
   }
 
   if (segments.length === 1 && !RESERVED_PATH_SEGMENTS.has(segments[0].toLowerCase())) {
-    return { kind: 'channel', login: segments[0].toLowerCase() };
+    return { kind: 'channel', login: segments[0].toLowerCase(), startTime };
   }
 
   return null;

@@ -166,6 +166,16 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
 
       <div className="relative min-h-screen bg-[#131314] text-slate-200">
         
+        {/* Fixed top-left menu trigger (mobile/tablet only — desktop already has the sidebar's own toggle) */}
+        <button
+          onClick={() => setIsMobileMenuOpen(true)}
+          className="lg:hidden fixed top-4 left-4 z-[110] w-11 h-11 rounded-full bg-[#1e1f20]/90 backdrop-blur-md border border-white/10 text-white flex items-center justify-center shadow-2xl hover:bg-[#282a2c] active:scale-95 transition-all cursor-pointer"
+          aria-label="Abrir menú de categorías"
+          title="Categorías"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
         {/* Gemini-Style desktop left sidebar */}
         <aside className={`hidden lg:flex flex-col fixed top-0 bottom-0 left-0 h-screen z-50 bg-[#1e1f20] py-5 px-3 transition-all duration-300 select-none ${
           isSidebarCollapsed ? 'w-[76px]' : 'w-68'
@@ -494,27 +504,8 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
 
             <div className="flex flex-col lg:flex-row gap-10">
               
-              {/* Mobile categories header trigger (visible below lg viewport) */}
+              {/* Mobile quick category pills (visible below lg viewport); the fixed top-left button opens the full drawer */}
               <div className="lg:hidden flex flex-col gap-4 w-full">
-                <div className="flex items-center justify-between bg-[#1e1f20] border border-white/5 rounded-2xl p-4 backdrop-blur-md relative">
-                  <div className="flex flex-col">
-                    <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest font-sans">
-                      Filtrar por Categoría
-                    </span>
-                    <span className="text-white text-base font-bold flex items-center gap-2 mt-0.5">
-                      {React.createElement(catIcon(selectedCategory), { className: "w-4 h-4 text-blue-400" })}
-                      {catLabel(selectedCategory)}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => setIsMobileMenuOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-xs font-bold active:scale-95 transition-transform"
-                  >
-                    <Menu className="w-4 h-4" />
-                    <span>Categorías</span>
-                  </button>
-                </div>
-
                 {/* Horizontal scroll list for quick mobile tap */}
                 <div className="flex overflow-x-auto gap-2 pb-2 px-1 scrollbar-none">
                   {mobileCategories.map((category) => {

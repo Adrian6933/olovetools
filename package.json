@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "proxy": "node server/clipflow-proxy.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

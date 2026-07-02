@@ -46,6 +46,7 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
   const [selectedQuality, setSelectedQuality] = useState<VodQuality | null>(null);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [pendingSeekTime, setPendingSeekTime] = useState<number | undefined>(undefined);
 
   const [cuts, setCuts] = useState<Cut[]>([]);
   const [activeCutId, setActiveCutId] = useState<string | null>(null);
@@ -55,9 +56,27 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
   const [ffmpegState, setFfmpegState] = useState<FfmpegLoadState>('unloaded');
   const [ffmpegLoadPct, setFfmpegLoadPct] = useState(0);
 
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const playerAreaRef = useRef<HTMLDivElement>(null);
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const cutAbortRefs = useRef<Record<string, AbortController>>({});
   const joinAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const onFsChange = () => { if (!document.fullscreenElement) setIsFullscreen(false); };
+    document.addEventListener('fullscreenchange', onFsChange);
+    return () => document.removeEventListener('fullscreenchange', onFsChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen(prev => {
+      const next = !prev;
+      if (next) playerAreaRef.current?.requestFullscreen?.().catch(() => {});
+      else if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -86,6 +105,9 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
     setActiveCutId(null);
     setCutStates({});
     setJoinState({ status: 'idle', progress: 0 });
+    setPendingSeekTime(undefined);
+    setIsFullscreen(false);
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   }, []);
 
   const handleSubmit = useCallback(async (raw: string) => {
@@ -118,6 +140,11 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
       setQualities(qualityList);
       setSelectedQuality(qualityList[0]);
       setDuration(info.lengthSeconds);
+      if (typeof parsed.startTime === 'number') {
+        const clamped = Math.max(0, Math.min(parsed.startTime, Math.max(0, info.lengthSeconds - 1)));
+        setPendingSeekTime(clamped);
+        setCurrentTime(clamped);
+      }
       setPhase('editor');
     } catch (e: any) {
       const code = e instanceof VodError ? e.code : null;
@@ -183,6 +210,44 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
     if (videoRef.current) videoRef.current.currentTime = time;
     setCurrentTime(time);
   }, []);
+
+  // ---- Keyboard shortcuts: space=play/pause, arrows=seek (shift=frame step), f=fullscreen, m=mute, c=add cut ----
+  useEffect(() => {
+    if (phase !== 'editor') return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const tag = target?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || target?.isContentEditable) return;
+      const video = videoRef.current;
+      if (!video) return;
+      const fps = selectedQuality?.fps || 30;
+      switch (e.key) {
+        case ' ':
+          e.preventDefault();
+          if (video.paused) video.play().catch(() => {}); else video.pause();
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          video.currentTime = Math.max(0, video.currentTime - (e.shiftKey ? 1 / fps : 5));
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          video.currentTime = Math.min(video.duration || duration, video.currentTime + (e.shiftKey ? 1 / fps : 5));
+          break;
+        case 'f': case 'F':
+          toggleFullscreen();
+          break;
+        case 'm': case 'M':
+          video.muted = !video.muted;
+          break;
+        case 'c': case 'C':
+          handleAddCutAtPlayhead();
+          break;
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [phase, selectedQuality, duration, toggleFullscreen, handleAddCutAtPlayhead]);
 
   // ---- Export: single cut ----
   const ensureFfmpegReady = useCallback(async () => {
@@ -373,28 +438,33 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
 
         {phase === 'editor' && vod && selectedQuality && (
           <div className="space-y-6">
-            <PlayerSection
-              videoRef={videoRef}
-              vod={vod}
-              qualities={qualities}
-              selectedQuality={selectedQuality}
-              onQualityChange={setSelectedQuality}
-              onTimeUpdate={setCurrentTime}
-              onDuration={(d) => { if (d > 0 && Math.abs(d - duration) > 2) setDuration(d); }}
-              t={t}
-            />
+            <div ref={playerAreaRef} className={isFullscreen ? 'fixed inset-0 z-50 bg-[#0a0408] p-4 flex flex-col gap-4 overflow-y-auto' : 'space-y-6'}>
+              <PlayerSection
+                videoRef={videoRef}
+                vod={vod}
+                qualities={qualities}
+                selectedQuality={selectedQuality}
+                onQualityChange={setSelectedQuality}
+                onTimeUpdate={setCurrentTime}
+                onDuration={(d) => { if (d > 0 && Math.abs(d - duration) > 2) setDuration(d); }}
+                initialSeekTime={pendingSeekTime}
+                isFullscreen={isFullscreen}
+                onToggleFullscreen={toggleFullscreen}
+                t={t}
+              />
 
-            <TimelineEditor
-              duration={duration}
-              currentTime={currentTime}
-              cuts={cuts}
-              activeCutId={activeCutId}
-              onSeek={handleSeek}
-              onChangeCut={handleChangeCut}
-              onSelectCut={setActiveCutId}
-              onAddCutAtPlayhead={handleAddCutAtPlayhead}
-              t={t}
-            />
+              <TimelineEditor
+                duration={duration}
+                currentTime={currentTime}
+                cuts={cuts}
+                activeCutId={activeCutId}
+                onSeek={handleSeek}
+                onChangeCut={handleChangeCut}
+                onSelectCut={setActiveCutId}
+                onAddCutAtPlayhead={handleAddCutAtPlayhead}
+                t={t}
+              />
+            </div>
 
             <AdBanner id="adsense-clip-flow-mid" />
 
