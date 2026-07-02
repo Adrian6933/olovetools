@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
@@ -349,10 +350,11 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
       />
 
       {/* Dynamic Background Glow */}
-      <div className={`absolute top-0 left-0 right-0 h-[500px] bg-gradient-to-b ${theme.bgGlow} blur-[120px] transition-all duration-700 pointer-events-none z-0`} />
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-4xl mx-auto px-6 md:px-12 pt-32 pb-24 flex flex-col space-y-12 relative z-10">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-socialbolt-top" />
         
         {/* Hero Area */}
         <section className="text-center space-y-4 max-w-2xl mx-auto">
@@ -564,6 +566,8 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
           </div>
         </section>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-socialbolt-bottom" />
       </main>
 
       {/* Footer Accordion */}

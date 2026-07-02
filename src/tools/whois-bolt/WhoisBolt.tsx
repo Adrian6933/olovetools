@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { Search, Globe, Server, Mail, FileText, RotateCcw, AlertCircle, Loader, Check } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
@@ -115,7 +116,7 @@ const RecordCard: React.FC<{
     <div className="bg-slate-950/40 border border-white/5 rounded-2xl p-4 space-y-2 hover:border-indigo-500/20 transition-colors group">
       <div className="flex items-center justify-between gap-2">
         <div className="font-mono text-sm text-white break-all min-h-[1.25rem] select-all flex-1">
-          {data || <span className="text-slate-600">—</span>}
+          {data || <span className="text-slate-600">â€”</span>}
         </div>
         <button
           onClick={onCopy}
@@ -289,8 +290,8 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#05050a] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-indigo-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -300,6 +301,8 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
       />
 
       <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-whois-bolt-top" />
 
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
@@ -544,6 +547,8 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
             {t.button_reset || 'Reset'}
           </button>
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-whois-bolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />

@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "Paste",
+  "selectImage": "Select image",
+  "dropPrompt": "Drag & drop, paste or select an image",
+  "copyBtn": "Copy",
+  "copiedBtn": "Copied!",
   "title": "PasteSnap",
   "description": "The fastest way to save images from your clipboard.",
   "pastePrompt": "Press Ctrl + V to paste an image",

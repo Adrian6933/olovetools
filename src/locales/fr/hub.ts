@@ -11,11 +11,17 @@ export default {
   "tryAdjusting": "Essayez d'ajuster votre recherche ou le filtre de catégorie.",
   "openTool": "Ouvrir l'outil",
   "categories": {
-    "All": "Tous",
-    "Utility": "Utilitaire",
-    "Creative": "Créatif",
-    "Development": "Développement",
-    "Social": "Social"
+    "All": "Tous les outils",
+    "video_audio": "Vidéo & Audio",
+    "image_design": "Image & Design",
+    "document_pdf": "Document & PDF",
+    "developer_tools": "Outils de Développement",
+    "text_utilities": "Texte & Contenu",
+    "data_conversion": "Données & Convertisseurs",
+    "security_crypto": "Sécurité & Confidentialité",
+    "network_system": "Réseau & Système",
+    "productivity": "Productivité",
+    "social_downloads": "Réseaux & Téléchargements"
   },
   "projects": {
     "1": {

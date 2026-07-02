@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "पेस्ट करें",
+  "selectImage": "छवि चुनें",
+  "dropPrompt": "खींचें और छोड़ें, पेस्ट करें या छवि चुनें",
+  "copyBtn": "कॉपी करें",
+  "copiedBtn": "कॉपी हो गया!",
   "title": "PasteSnap",
   "description": "क्लिपबोर्ड से चित्र सहेजने का सबसे तेज़ तरीका।",
   "pastePrompt": "छवि पेस्ट करने के लिए Ctrl + V दबाएं",

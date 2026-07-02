@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { Globe, Plus, Trash2, Clock, Copy, Check, Sun, Moon, Search, RotateCcw } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
@@ -26,14 +27,14 @@ const TIMEZONE_LIST: ZoneEntry[] = [
   { city: 'Toronto', tz: 'America/Toronto', country: 'Canada' },
   { city: 'Vancouver', tz: 'America/Vancouver', country: 'Canada' },
   { city: 'Mexico City', tz: 'America/Mexico_City', country: 'Mexico' },
-  { city: 'Bogotá', tz: 'America/Bogota', country: 'Colombia' },
+  { city: 'BogotÃ¡', tz: 'America/Bogota', country: 'Colombia' },
   { city: 'Lima', tz: 'America/Lima', country: 'Peru' },
   { city: 'Caracas', tz: 'America/Caracas', country: 'Venezuela' },
   { city: 'Santiago', tz: 'America/Santiago', country: 'Chile' },
   { city: 'Buenos Aires', tz: 'America/Argentina/Buenos_Aires', country: 'Argentina' },
-  { city: 'São Paulo', tz: 'America/Sao_Paulo', country: 'Brazil' },
+  { city: 'SÃ£o Paulo', tz: 'America/Sao_Paulo', country: 'Brazil' },
   { city: 'Rio de Janeiro', tz: 'America/Sao_Paulo', country: 'Brazil' },
-  { city: 'Brasília', tz: 'America/Sao_Paulo', country: 'Brazil' },
+  { city: 'BrasÃ­lia', tz: 'America/Sao_Paulo', country: 'Brazil' },
   { city: 'Reykjavik', tz: 'Atlantic/Reykjavik', country: 'Iceland' },
   { city: 'Casablanca', tz: 'Africa/Casablanca', country: 'Morocco' },
   { city: 'Lisbon', tz: 'Europe/Lisbon', country: 'Portugal' },
@@ -131,7 +132,7 @@ const getZoneParts = (tz: string, date: Date) => {
       weekday: map.weekday,
     };
   } catch {
-    return { year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, weekday: '—' };
+    return { year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, weekday: 'â€”' };
   }
 };
 
@@ -322,8 +323,8 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#020a08] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-teal-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-teal-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -333,6 +334,8 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
       />
 
       <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-time-bolt-top" />
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <Globe className="w-8 h-8 text-teal-400" />
@@ -379,7 +382,7 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
                   autoFocus
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t.search_timezones || 'Search city, country or timezone…'}
+                  placeholder={t.search_timezones || 'Search city, country or timezoneâ€¦'}
                   spellCheck={false}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-teal-500/5 border border-teal-500/20 focus:border-teal-400 focus:bg-teal-500/10 text-sm text-white placeholder-slate-500 focus:ring-0 transition-colors outline-none"
                 />
@@ -545,7 +548,7 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
                   >
                     {added.map((a) => (
                       <option key={`${a.city}|${a.tz}`} value={a.tz}>
-                        {a.city} — {a.tz}
+                        {a.city} â€” {a.tz}
                       </option>
                     ))}
                   </select>
@@ -644,7 +647,7 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
                           <div className="text-[11px] text-slate-500 truncate">
                             {dateStr}
                             {relTag && (
-                              <span className="ml-2 text-teal-400/80 font-bold">· {relTag}</span>
+                              <span className="ml-2 text-teal-400/80 font-bold">Â· {relTag}</span>
                             )}
                           </div>
                         </div>
@@ -673,6 +676,8 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
             </>
           )}
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-time-bolt-bottom" />
       </main>
 
       <Footer

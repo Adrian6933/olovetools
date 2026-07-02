@@ -11,11 +11,17 @@ export default {
   "tryAdjusting": "Попробуйте изменить параметры поиска или фильтр категорий.",
   "openTool": "Открыть инструмент",
   "categories": {
-    "All": "Все",
-    "Utility": "Утилиты",
-    "Creative": "Творчество",
-    "Development": "Разработка",
-    "Social": "Социальные сети"
+    "All": "Все инструменты",
+    "video_audio": "Видео и Аудио",
+    "image_design": "Изображения и Дизайн",
+    "document_pdf": "Документы и PDF",
+    "developer_tools": "Инструменты Разработчика",
+    "text_utilities": "Текст и Содержимое",
+    "data_conversion": "Данные и Конвертеры",
+    "security_crypto": "Безопасность и Конфиденциальность",
+    "network_system": "Сеть и Системы",
+    "productivity": "Продуктивность",
+    "social_downloads": "Социальные сети и Загрузки"
   },
   "projects": {
     "1": {

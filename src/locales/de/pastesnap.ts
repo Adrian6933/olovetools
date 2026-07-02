@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "Einfügen",
+  "selectImage": "Bild auswählen",
+  "dropPrompt": "Ziehen & ablegen, einfügen oder Bild auswählen",
+  "copyBtn": "Kopieren",
+  "copiedBtn": "Kopiert!",
   "title": "PasteSnap",
   "description": "Der schnellste Weg, Bilder aus der Zwischenablage zu speichern.",
   "pastePrompt": "Drücken Sie Strg + V, um ein Bild einzufügen",

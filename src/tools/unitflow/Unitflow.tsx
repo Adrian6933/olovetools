@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import {
   Ruler,
@@ -58,7 +59,7 @@ const CATEGORIES: CategoryDef[] = [
       { id: 'kilometer', name: 'Kilometer', symbol: 'km', factor: 1000 },
       { id: 'centimeter', name: 'Centimeter', symbol: 'cm', factor: 0.01 },
       { id: 'millimeter', name: 'Millimeter', symbol: 'mm', factor: 0.001 },
-      { id: 'micrometer', name: 'Micrometer', symbol: 'µm', factor: 1e-6 },
+      { id: 'micrometer', name: 'Micrometer', symbol: 'Âµm', factor: 1e-6 },
       { id: 'nanometer', name: 'Nanometer', symbol: 'nm', factor: 1e-9 },
       { id: 'mile', name: 'Mile', symbol: 'mi', factor: 1609.344 },
       { id: 'yard', name: 'Yard', symbol: 'yd', factor: 0.9144 },
@@ -76,7 +77,7 @@ const CATEGORIES: CategoryDef[] = [
       { id: 'kilogram', name: 'Kilogram', symbol: 'kg', factor: 1 },
       { id: 'gram', name: 'Gram', symbol: 'g', factor: 0.001 },
       { id: 'milligram', name: 'Milligram', symbol: 'mg', factor: 1e-6 },
-      { id: 'microgram', name: 'Microgram', symbol: 'µg', factor: 1e-9 },
+      { id: 'microgram', name: 'Microgram', symbol: 'Âµg', factor: 1e-9 },
       { id: 'metric_ton', name: 'Metric Ton', symbol: 't', factor: 1000 },
       { id: 'pound', name: 'Pound', symbol: 'lb', factor: 0.45359237 },
       { id: 'ounce', name: 'Ounce', symbol: 'oz', factor: 0.028349523125 },
@@ -93,14 +94,14 @@ const CATEGORIES: CategoryDef[] = [
       {
         id: 'celsius',
         name: 'Celsius',
-        symbol: '°C',
+        symbol: 'Â°C',
         toBase: (v) => v,
         fromBase: (v) => v,
       },
       {
         id: 'fahrenheit',
         name: 'Fahrenheit',
-        symbol: '°F',
+        symbol: 'Â°F',
         toBase: (v) => (v - 32) * (5 / 9),
         fromBase: (v) => v * (9 / 5) + 32,
       },
@@ -114,7 +115,7 @@ const CATEGORIES: CategoryDef[] = [
       {
         id: 'rankine',
         name: 'Rankine',
-        symbol: '°R',
+        symbol: 'Â°R',
         toBase: (v) => (v - 491.67) * (5 / 9),
         fromBase: (v) => v * (9 / 5) + 491.67,
       },
@@ -141,10 +142,10 @@ const CATEGORIES: CategoryDef[] = [
     units: [
       { id: 'liter', name: 'Liter', symbol: 'L', factor: 1 },
       { id: 'milliliter', name: 'Milliliter', symbol: 'mL', factor: 0.001 },
-      { id: 'cubic_meter', name: 'Cubic meter', symbol: 'm³', factor: 1000 },
-      { id: 'cubic_centimeter', name: 'Cubic centimeter', symbol: 'cm³', factor: 0.001 },
-      { id: 'cubic_inch', name: 'Cubic inch', symbol: 'in³', factor: 0.016387064 },
-      { id: 'cubic_foot', name: 'Cubic foot', symbol: 'ft³', factor: 28.316846592 },
+      { id: 'cubic_meter', name: 'Cubic meter', symbol: 'mÂ³', factor: 1000 },
+      { id: 'cubic_centimeter', name: 'Cubic centimeter', symbol: 'cmÂ³', factor: 0.001 },
+      { id: 'cubic_inch', name: 'Cubic inch', symbol: 'inÂ³', factor: 0.016387064 },
+      { id: 'cubic_foot', name: 'Cubic foot', symbol: 'ftÂ³', factor: 28.316846592 },
       { id: 'us_gallon', name: 'US Gallon', symbol: 'gal', factor: 3.785411784 },
       { id: 'us_quart', name: 'US Quart', symbol: 'qt', factor: 0.946352946 },
       { id: 'us_pint', name: 'US Pint', symbol: 'pt', factor: 0.473176473 },
@@ -160,16 +161,16 @@ const CATEGORIES: CategoryDef[] = [
     label: 'Area',
     icon: <Ruler className="w-4 h-4" />,
     units: [
-      { id: 'square_meter', name: 'Square meter', symbol: 'm²', factor: 1 },
-      { id: 'square_kilometer', name: 'Square kilometer', symbol: 'km²', factor: 1e6 },
-      { id: 'square_centimeter', name: 'Square centimeter', symbol: 'cm²', factor: 1e-4 },
-      { id: 'square_millimeter', name: 'Square millimeter', symbol: 'mm²', factor: 1e-6 },
+      { id: 'square_meter', name: 'Square meter', symbol: 'mÂ²', factor: 1 },
+      { id: 'square_kilometer', name: 'Square kilometer', symbol: 'kmÂ²', factor: 1e6 },
+      { id: 'square_centimeter', name: 'Square centimeter', symbol: 'cmÂ²', factor: 1e-4 },
+      { id: 'square_millimeter', name: 'Square millimeter', symbol: 'mmÂ²', factor: 1e-6 },
       { id: 'hectare', name: 'Hectare', symbol: 'ha', factor: 1e4 },
       { id: 'acre', name: 'Acre', symbol: 'ac', factor: 4046.8564224 },
-      { id: 'square_mile', name: 'Square mile', symbol: 'mi²', factor: 2589988.110336 },
-      { id: 'square_yard', name: 'Square yard', symbol: 'yd²', factor: 0.83612736 },
-      { id: 'square_foot', name: 'Square foot', symbol: 'ft²', factor: 0.09290304 },
-      { id: 'square_inch', name: 'Square inch', symbol: 'in²', factor: 0.00064516 },
+      { id: 'square_mile', name: 'Square mile', symbol: 'miÂ²', factor: 2589988.110336 },
+      { id: 'square_yard', name: 'Square yard', symbol: 'ydÂ²', factor: 0.83612736 },
+      { id: 'square_foot', name: 'Square foot', symbol: 'ftÂ²', factor: 0.09290304 },
+      { id: 'square_inch', name: 'Square inch', symbol: 'inÂ²', factor: 0.00064516 },
     ],
   },
   {
@@ -179,7 +180,7 @@ const CATEGORIES: CategoryDef[] = [
     units: [
       { id: 'second', name: 'Second', symbol: 's', factor: 1 },
       { id: 'millisecond', name: 'Millisecond', symbol: 'ms', factor: 0.001 },
-      { id: 'microsecond', name: 'Microsecond', symbol: 'µs', factor: 1e-6 },
+      { id: 'microsecond', name: 'Microsecond', symbol: 'Âµs', factor: 1e-6 },
       { id: 'nanosecond', name: 'Nanosecond', symbol: 'ns', factor: 1e-9 },
       { id: 'minute', name: 'Minute', symbol: 'min', factor: 60 },
       { id: 'hour', name: 'Hour', symbol: 'h', factor: 3600 },
@@ -223,7 +224,7 @@ const fromBaseValue = (unit: UnitDef, v: number): number => {
 };
 
 const formatNumber = (n: number): string => {
-  if (!isFinite(n)) return '—';
+  if (!isFinite(n)) return 'â€”';
   if (n === 0) return '0';
   const abs = Math.abs(n);
   if (abs >= 1e15 || abs < 1e-7) {
@@ -318,8 +319,8 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#020610] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-blue-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -329,6 +330,8 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
       />
 
       <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-unitflow-top" />
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <Ruler className="w-8 h-8 text-blue-400" />
@@ -437,7 +440,7 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
                 </button>
               </div>
               <div className="font-mono text-3xl md:text-4xl font-bold tracking-tight text-blue-300 text-left min-h-[2.5rem] break-all">
-                {isFinite(outputValue) ? formatNumber(outputValue) : <span className="text-slate-700">—</span>}
+                {isFinite(outputValue) ? formatNumber(outputValue) : <span className="text-slate-700">â€”</span>}
               </div>
               <div className="relative">
                 <select
@@ -483,7 +486,7 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
               </h3>
             </div>
             <span className="text-[10px] font-mono text-slate-500">
-              {isFinite(numericInput) ? `${formatNumber(numericInput)} ${findUnit(inputUnit)?.symbol || ''}` : '—'}
+              {isFinite(numericInput) ? `${formatNumber(numericInput)} ${findUnit(inputUnit)?.symbol || ''}` : 'â€”'}
             </span>
           </div>
 
@@ -528,6 +531,8 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
             </div>
           )}
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-unitflow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />

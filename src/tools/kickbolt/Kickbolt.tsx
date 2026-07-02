@@ -10,6 +10,7 @@ import {
 import { fetchClipInfo, fetchMovieBlob } from './services/kickService';
 import { ClipData, ClipItem, LoadingState } from './types';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import JSZip from 'jszip';
 
 const formatBytes = (bytes: number, decimals = 2) => {
@@ -276,7 +277,9 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en' }) => {
       <Header onReset={handleReset} currentLang={lang} onLangChange={handleLangChange} />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-6 pt-52 pb-40">
-        
+        {/* Bloque AdSense Horizontal — debajo del header */}
+        <AdBanner id="adsense-kickbolt-top" className="mb-12" />
+
         {status !== 'success' && (
           <div className="flex flex-col items-center">
             <div className="text-center mb-16 space-y-6 animate-slide-up">
@@ -550,6 +553,9 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en' }) => {
           </div>
         )}
       </main>
+
+      {/* Bloque AdSense Horizontal — al final, antes del footer */}
+      <AdBanner id="adsense-kickbolt-bottom" className="mb-12" />
 
       <Footer lang={lang} onOpenLegal={setActiveLegal} />
       

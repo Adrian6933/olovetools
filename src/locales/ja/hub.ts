@@ -11,11 +11,17 @@ export default {
   "tryAdjusting": "検索またはカテゴリフィルターを調整してみてください。",
   "openTool": "ツールを開く",
   "categories": {
-    "All": "すべて",
-    "Utility": "ユーティリティ",
-    "Creative": "クリエイティブ",
-    "Development": "開発",
-    "Social": "ソーシャル"
+    "All": "すべてのツール",
+    "video_audio": "ビデオ＆オーディオ",
+    "image_design": "画像＆デザイン",
+    "document_pdf": "ドキュメント＆PDF",
+    "developer_tools": "開発者ツール",
+    "text_utilities": "テキスト＆コンテンツ",
+    "data_conversion": "データ＆変換",
+    "security_crypto": "セキュリティ＆プライバシー",
+    "network_system": "ネットワーク＆システム",
+    "productivity": "生産性",
+    "social_downloads": "ソーシャル＆ダウンロード"
   },
   "projects": {
     "1": {

@@ -105,11 +105,35 @@ export const convertImage = async (
   }
 
   if (settings.format === ImageFormat.EPS) {
-    throw new Error('EPS conversion is not currently supported in the browser.');
+    console.warn('EPS format conversion not supported in browser, outputting as PNG');
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Canvas toBlob failed for PNG fallback'));
+          }
+        },
+        'image/png'
+      );
+    });
   }
 
   if (settings.format === ImageFormat.RAW) {
-    throw new Error('RAW conversion is not currently supported in the browser.');
+    console.warn('RAW format conversion not supported in browser, outputting as PNG');
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Canvas toBlob failed for PNG fallback'));
+          }
+        },
+        'image/png'
+      );
+    });
   }
 
   return new Promise((resolve, reject) => {

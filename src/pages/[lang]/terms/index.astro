@@ -15,6 +15,5 @@ const terms = t.terms;
 ---
 
 <LegalLayout title={terms.title} description={terms.description} lang={lang!}>
-  <h1 class="text-4xl font-bold text-white mb-8 font-outfit">{terms.title}</h1>
-  <div class="prose prose-invert max-w-none space-y-6 text-lg" set:html={terms.content} />
+  <Fragment set:html={terms.content} />
 </LegalLayout>

@@ -1,0 +1,24 @@
+// Shared components barrel
+export { TopNav } from './TopNav';
+export { BottomFooter } from './BottomFooter';
+export type { RichFooterContent } from './BottomFooter';
+export { AdSlot } from './AdSlot';
+export type { AdSlotPosition, AdSlotSize } from './AdSlot';
+export { AdBanner } from './AdBanner';
+export { Container } from './Container';
+export { Hero } from './Hero';
+export type { HeroVariant } from './Hero';
+export { TrustBar } from './TrustBar';
+export { FeaturesGrid } from './FeaturesGrid';
+export type { FeaturesVariant } from './FeaturesGrid';
+export { HowItWorks } from './HowItWorks';
+export type { HowToVariant } from './HowItWorks';
+export { UseCases } from './UseCases';
+export type { UseCasesVariant } from './UseCases';
+export { FAQSection } from './FAQSection';
+export type { FAQVariant } from './FAQSection';
+export { BottomCTA } from './BottomCTA';
+export { Breadcrumb } from './Breadcrumb';
+export type { BreadcrumbItem } from './Breadcrumb';
+export { LanguagePill } from './LanguagePill';
+export { ScrollToTop } from './ScrollToTop';

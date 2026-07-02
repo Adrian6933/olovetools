@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "Pegar",
+  "selectImage": "Seleccionar imagen",
+  "dropPrompt": "Arrastra y suelta, pega o selecciona una imagen",
+  "copyBtn": "Copiar",
+  "copiedBtn": "¡Copiado!",
   "title": "PasteSnap",
   "description": "La forma más rápida de guardar imágenes de tu portapapeles.",
   "pastePrompt": "Presiona Ctrl + V para pegar una imagen",

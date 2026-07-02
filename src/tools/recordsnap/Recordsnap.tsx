@@ -25,6 +25,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { RecordMode, AudioSource, ResolutionMode, FpsMode, RecordingStatus } from './types';
 
 interface RecordsnapProps {
@@ -564,14 +565,13 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
   return (
     <div className="min-h-screen flex flex-col bg-[#0b0805] text-slate-100 selection:bg-amber-500/30 overflow-x-hidden font-sans">
       {/* Background Glow Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-amber-950/10 blur-[180px] rounded-full animate-soft-pulse"></div>
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-orange-950/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3s' }}></div>
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-recordsnap-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -605,7 +605,7 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
                     exit={{ opacity: 0, y: -15 }}
                     className="glass-card rounded-3xl p-6 md:p-8 space-y-8 text-left relative overflow-hidden"
                   >
-                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/5 blur-[80px] rounded-full pointer-events-none" />
+                    
 
                     {/* Record Mode Selector */}
                     <div className="space-y-4">
@@ -1033,7 +1033,7 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
                           <span>{faqItem.question}</span>
                         </span>
                         <span className="text-amber-400 font-bold text-sm shrink-0">
-                          {isAct ? '−' : '+'}
+                          {isAct ? 'Ã¢Ë†â€™' : '+'}
                         </span>
                       </h4>
                       <AnimatePresence>
@@ -1110,6 +1110,8 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-recordsnap-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

@@ -1,0 +1,23 @@
+export default {
+  "title": "CleanSnap",
+  "seo_title": "CleanSnap | Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle. Content-aware fill plus a smart AI-assisted mode, 100% locally in your browser.",
+  "seo_description": "Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle. Content-aware fill plus a smart AI-assisted mode, 100% locally in your browser.",
+  "seoHeroTitle": "CleanSnap",
+  "seoHeroText": "Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle. Content-aware fill plus a smart AI-assisted mode, 100% locally in your browser.",
+  "seoBrowserSpeedTitle": "Instant Local Processing",
+  "seoBrowserSpeedText": "All processing is executed inside your browser using native JavaScript APIs. No data is ever sent to a server.",
+  "seoUseCaseTitle": "100% Client-Side",
+  "seoUseCaseText": "Everything runs locally in your browser. Your data never leaves your device.",
+  "seoPrivacyTitle": "100% Private & Secure",
+  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoKeywords": ["cleansnap", "online tool", "free", "local", "browser"],
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    { "question": "Is my data sent to any server?", "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device." }
+  ],
+  "footerTagline": "Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle. Content-aware fill plus a smart AI-assisted mode, 100% locally in your browser.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:"
+};

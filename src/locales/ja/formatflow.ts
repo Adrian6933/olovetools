@@ -1,7 +1,7 @@
 export default {
   "languageName": "日本語",
   "header": {
-    "subtitle": "SMART IMAGE CONVERTER"
+    "subtitle": "スマート画像コンバーター"
   },
   "dropzone": {
     "drop": "ここに画像をドロップ！",

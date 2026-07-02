@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { 
   Lock, 
@@ -187,8 +188,8 @@ export default function HashBolt({ lang, dictionary }: HashBoltProps) {
   return (
     <div className="min-h-screen flex flex-col bg-[#020813] text-slate-200 font-sans relative overflow-x-hidden pt-24">
       {/* Glow decorations */}
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-sky-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-cyan-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       {/* Header */}
       <Header 
@@ -199,6 +200,8 @@ export default function HashBolt({ lang, dictionary }: HashBoltProps) {
       />
 
       <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-hash-bolt-top" />
         
         {/* Banner Title */}
         <div className="text-center md:text-left space-y-2">
@@ -439,6 +442,8 @@ export default function HashBolt({ lang, dictionary }: HashBoltProps) {
 
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-hash-bolt-bottom" />
       </main>
 
       {/* Footer */}

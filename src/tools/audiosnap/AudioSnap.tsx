@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, Square, Play, Pause, Download, History, Sparkles, Trash2, Music, Scissors, Volume2, RefreshCw } from 'lucide-react';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
@@ -528,6 +529,8 @@ export const AudioSnap: React.FC<AudioSnapProps> = ({ lang, dictionary }) => {
       />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-12 pt-36 pb-24 relative z-10 flex flex-col justify-center">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-audiosnap-top" />
         {/* SEO Header Title */}
         <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
           <h1 className="text-4xl md:text-6xl font-black font-outfit tracking-tight text-white mb-4">
@@ -909,6 +912,8 @@ export const AudioSnap: React.FC<AudioSnapProps> = ({ lang, dictionary }) => {
           </div>
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-audiosnap-bottom" />
       </main>
 
       <Footer

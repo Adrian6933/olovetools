@@ -250,6 +250,9 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
     if (ext === 'jpeg') ext = 'jpg';
     if (ext === 'svg+xml') ext = 'svg';
     if (ext === 'x-icon') ext = 'ico';
+    if (ext === 'postscript') ext = 'png'; // EPS fallback
+    if (ext === 'x-raw') ext = 'png'; // RAW fallback
+    if (ext === 'heic') ext = 'jpg'; // HEIC outputs as JPG
     link.download = `${selectedIndex + 1}_${originalName}.${ext}`;
     link.click();
   };
@@ -275,7 +278,9 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
     if (raw === 'JPEG') return 'JPG';
     if (raw === 'SVG+XML') return 'SVG';
     if (raw === 'X-ICON') return 'ICO';
-    if (raw === 'POSTSCRIPT') return 'EPS';
+    if (raw === 'POSTSCRIPT') return 'EPS (PNG)';
+    if (raw === 'X-RAW') return 'RAW (PNG)';
+    if (raw === 'HEIC') return 'HEIC (JPG)';
     return raw;
   };
 

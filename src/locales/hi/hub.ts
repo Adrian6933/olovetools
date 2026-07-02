@@ -11,11 +11,17 @@ export default {
   "tryAdjusting": "अपनी खोज या श्रेणी फ़िल्टर को समायोजित करने का प्रयास करें।",
   "openTool": "टूल खोलें",
   "categories": {
-    "All": "सभी",
-    "Utility": "उपयोगिता",
-    "Creative": "रचनात्मक",
-    "Development": "विकास",
-    "Social": "सामाजिक"
+    "All": "सभी उपकरण",
+    "video_audio": "वीडियो और ऑडियो",
+    "image_design": "छवि और डिज़ाइन",
+    "document_pdf": "दस्तावेज़ और पीडीएफ",
+    "developer_tools": "डेवलपर उपकरण",
+    "text_utilities": "पाठ और सामग्री",
+    "data_conversion": "डेटा और कनवर्टर",
+    "security_crypto": "सुरक्षा और गोपनीयता",
+    "network_system": "नेटवर्क और सिस्टम",
+    "productivity": "उत्पादकता",
+    "social_downloads": "सोशल और डाउनलोड"
   },
   "projects": {
     "1": {

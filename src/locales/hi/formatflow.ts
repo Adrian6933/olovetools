@@ -1,7 +1,7 @@
 export default {
   "languageName": "हिन्दी",
   "header": {
-    "subtitle": "SMART IMAGE CONVERTER"
+    "subtitle": "स्मार्ट छवि कनवर्टर"
   },
   "dropzone": {
     "drop": "छवियों को यहाँ छोड़ें!",

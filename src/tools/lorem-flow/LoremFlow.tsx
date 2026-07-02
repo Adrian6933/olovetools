@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { AlignLeft, Copy, Check, Download, RotateCcw, FileText, Wand2 } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
@@ -157,8 +158,8 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0408] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-violet-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -168,6 +169,8 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
       />
 
       <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-lorem-flow-top" />
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <AlignLeft className="w-8 h-8 text-violet-400" />
@@ -324,6 +327,8 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
             </button>
           </div>
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-lorem-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />

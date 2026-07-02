@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "Colar",
+  "selectImage": "Selecionar imagem",
+  "dropPrompt": "Arraste e solte, cole ou selecione uma imagem",
+  "copyBtn": "Copiar",
+  "copiedBtn": "Copiado!",
   "title": "PasteSnap",
   "description": "A maneira mais rápida de salvar imagens da área de transferência.",
   "pastePrompt": "Pressione Ctrl + V para colar uma imagem",

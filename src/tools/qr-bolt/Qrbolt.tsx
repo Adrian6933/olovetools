@@ -23,6 +23,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { QrMode, DotType, CornerType, CornerDotType, ColorType, GradientType, WiFiConfig, EmailConfig, SmsConfig } from './types';
 
 // Preset Brand SVGs (encoded with %23 for '#' to render safely in browser Image objects)
@@ -288,14 +289,13 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
   return (
     <div className="min-h-screen flex flex-col bg-[#050907] text-slate-100 selection:bg-emerald-500/30 overflow-x-hidden font-sans">
       {/* Background Glow Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-emerald-950/10 blur-[180px] rounded-full animate-soft-pulse"></div>
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-teal-950/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3s' }}></div>
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={handleReset} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-qr-bolt-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -346,7 +346,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
 
               {/* Tab Contents Card */}
               <div className="glass-card rounded-3xl p-6 md:p-8 text-left space-y-6 relative overflow-hidden min-h-[420px]">
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/5 blur-[80px] rounded-full pointer-events-none" />
+                
 
                 {/* TAB 1: CONTENT */}
                 {activeTab === 'content' && (
@@ -428,7 +428,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
                             <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">{t.labelWifiPassword}</label>
                             <input
                               type="password"
-                              placeholder="••••••••"
+                              placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢"
                               value={wifiPassword}
                               onChange={(e) => setWifiPassword(e.target.value)}
                               className="w-full bg-[#080d0a] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-emerald-500 font-mono"
@@ -672,7 +672,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
                               <div className="space-y-2">
                                 <div className="flex justify-between text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                   <span>{t.labelGradientRotation}</span>
-                                  <span className="text-emerald-400 font-bold">{gradientRotation}°</span>
+                                  <span className="text-emerald-400 font-bold">{gradientRotation}Ã‚Â°</span>
                                 </div>
                                 <input
                                   type="range"
@@ -947,7 +947,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
                           <span>{faqItem.question}</span>
                         </span>
                         <span className="text-emerald-400 font-bold text-sm shrink-0">
-                          {isAct ? '−' : '+'}
+                          {isAct ? 'Ã¢Ë†â€™' : '+'}
                         </span>
                       </h4>
                       <AnimatePresence>
@@ -1024,6 +1024,8 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-qr-bolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

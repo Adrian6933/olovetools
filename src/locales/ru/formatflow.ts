@@ -1,7 +1,7 @@
 export default {
   "languageName": "Русский",
   "header": {
-    "subtitle": "SMART IMAGE CONVERTER"
+    "subtitle": "УМНЫЙ КОНВЕРТЕР ИЗОБРАЖЕНИЙ"
   },
   "dropzone": {
     "drop": "Перетащите изображения сюда!",

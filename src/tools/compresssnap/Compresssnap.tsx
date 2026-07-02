@@ -24,6 +24,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { CompressSettings, CompressedImageItem } from './types';
 
@@ -400,14 +401,13 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
   return (
     <div className="min-h-screen flex flex-col bg-[#05090e] text-slate-100 selection:bg-cyan-500/30 overflow-x-hidden font-sans">
       {/* Background Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-cyan-900/10 blur-[180px] rounded-full animate-soft-pulse"></div>
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-teal-900/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3s' }}></div>
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-compresssnap-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -863,9 +863,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
               </div>
 
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-teal-500/20 blur-[100px] rounded-full group-hover:opacity-100 opacity-60 transition-opacity"></div>
+                
                 <div className="relative glass-card rounded-[4rem] p-12 py-20 min-h-[420px] w-full flex flex-col items-center justify-center space-y-8 text-center overflow-hidden">
-                  <div className="text-[7.5rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">🗜️</div>
+                  <div className="text-[7.5rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">🖼️</div>
                   <div className="space-y-4 max-w-sm px-4">
                     <h3 className="text-2xl font-black text-white tracking-tight leading-tight">{t.seoBrowserSpeedTitle}</h3>
                     <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
@@ -936,6 +936,8 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-compresssnap-bottom" />
       </main>
 
       {/* Visual Image Comparison Slider Drawer */}
@@ -989,7 +991,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                 style={{ left: `${sliderPos}%` }}
               >
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-cyan-500 border-2 border-white text-black flex items-center justify-center shadow-2xl font-bold">
-                  ↔
+                  â†”
                 </div>
               </div>
 

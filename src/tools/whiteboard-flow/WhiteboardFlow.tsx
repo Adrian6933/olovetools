@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { StickyNote, Plus, Trash2, X, Check, RotateCcw, GripVertical } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
@@ -179,8 +180,8 @@ export default function WhiteboardFlow({ lang, dictionary }: WhiteboardFlowProps
 
   return (
     <div className="min-h-screen flex flex-col bg-[#04080a] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-cyan-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-cyan-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -190,6 +191,8 @@ export default function WhiteboardFlow({ lang, dictionary }: WhiteboardFlowProps
       />
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-whiteboard-flow-top" />
 
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="space-y-3">
@@ -377,6 +380,8 @@ export default function WhiteboardFlow({ lang, dictionary }: WhiteboardFlowProps
           <span>{t.dragHint || 'Drag notes between columns. Double-click to edit. Saved locally.'}</span>
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-whiteboard-flow-bottom" />
       </main>
 
       <Footer

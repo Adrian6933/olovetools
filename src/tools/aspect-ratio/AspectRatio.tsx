@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import {
   Ratio, ArrowRight, Copy, Check, RotateCcw, Monitor,
@@ -26,13 +27,13 @@ const gcd = (a: number, b: number): number => {
 };
 
 const PRESETS = [
-  { id: '16-9', w: 16, h: 9, name: '16:9', icon: 'monitor', label: 'Widescreen HD', resolutions: ['1920×1080', '1280×720', '3840×2160'] },
-  { id: '4-3', w: 4, h: 3, name: '4:3', icon: 'monitor', label: 'Standard', resolutions: ['1024×768', '800×600', '1600×1200'] },
-  { id: '21-9', w: 21, h: 9, name: '21:9', icon: 'rectangle', label: 'Ultrawide', resolutions: ['2560×1080', '3440×1440'] },
-  { id: '1-1', w: 1, h: 1, name: '1:1', icon: 'square', label: 'Square', resolutions: ['1080×1080', '512×512'] },
-  { id: '9-16', w: 9, h: 16, name: '9:16', icon: 'smartphone', label: 'Mobile Portrait', resolutions: ['1080×1920', '720×1280'] },
-  { id: '3-2', w: 3, h: 2, name: '3:2', icon: 'monitor', label: 'Photography', resolutions: ['3000×2000', '1080×720'] },
-  { id: '16-10', w: 16, h: 10, name: '16:10', icon: 'monitor', label: 'Widescreen', resolutions: ['1920×1200', '1280×800'] },
+  { id: '16-9', w: 16, h: 9, name: '16:9', icon: 'monitor', label: 'Widescreen HD', resolutions: ['1920Ã—1080', '1280Ã—720', '3840Ã—2160'] },
+  { id: '4-3', w: 4, h: 3, name: '4:3', icon: 'monitor', label: 'Standard', resolutions: ['1024Ã—768', '800Ã—600', '1600Ã—1200'] },
+  { id: '21-9', w: 21, h: 9, name: '21:9', icon: 'rectangle', label: 'Ultrawide', resolutions: ['2560Ã—1080', '3440Ã—1440'] },
+  { id: '1-1', w: 1, h: 1, name: '1:1', icon: 'square', label: 'Square', resolutions: ['1080Ã—1080', '512Ã—512'] },
+  { id: '9-16', w: 9, h: 16, name: '9:16', icon: 'smartphone', label: 'Mobile Portrait', resolutions: ['1080Ã—1920', '720Ã—1280'] },
+  { id: '3-2', w: 3, h: 2, name: '3:2', icon: 'monitor', label: 'Photography', resolutions: ['3000Ã—2000', '1080Ã—720'] },
+  { id: '16-10', w: 16, h: 10, name: '16:10', icon: 'monitor', label: 'Widescreen', resolutions: ['1920Ã—1200', '1280Ã—800'] },
 ];
 
 export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
@@ -113,12 +114,12 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
 
   const previewLabel = useMemo(() => {
     if (tab === 'calculate' && calcResult) return `${calcResult.ratioW}:${calcResult.ratioH}`;
-    if (tab === 'resize' && resizeResult) return `${resizeResult.w}×${resizeResult.h}`;
+    if (tab === 'resize' && resizeResult) return `${resizeResult.w}Ã—${resizeResult.h}`;
     if (tab === 'presets') {
       const p = PRESETS.find((x) => x.id === selectedPreset);
       if (p) return p.name;
     }
-    return '—';
+    return 'â€”';
   }, [tab, calcResult, resizeResult, selectedPreset]);
 
   const handleCopy = useCallback((field: string, value: string) => {
@@ -173,8 +174,8 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#080a02] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-lime-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-lime-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -184,6 +185,8 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
       />
 
       <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-aspect-ratio-top" />
         <div className="space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
             <Ratio className="w-8 h-8 text-lime-400" />
@@ -270,7 +273,7 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
                     className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/5 border border-white/5 text-slate-400 text-[11px] font-bold hover:bg-lime-500/10 hover:text-lime-400 hover:border-lime-500/20 transition-all cursor-pointer outline-none"
                   >
                     <RotateCcw className="w-3.5 h-3.5" />
-                    {t.button_example || 'Example 1920×1080'}
+                    {t.button_example || 'Example 1920Ã—1080'}
                   </button>
                 </div>
               </div>
@@ -319,7 +322,7 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
                           {t.label_input || 'Input'}
                         </div>
                         <div className="text-lg font-black text-lime-100 font-mono">
-                          {calcResult.w}×{calcResult.h}
+                          {calcResult.w}Ã—{calcResult.h}
                         </div>
                       </div>
                     </div>
@@ -424,7 +427,7 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
                   {t.label_new_size || 'New Size'}
                 </span>
                 {resizeResult && (
-                  <CopyButton field="resize-result" value={`${resizeResult.w}×${resizeResult.h}`} />
+                  <CopyButton field="resize-result" value={`${resizeResult.w}Ã—${resizeResult.h}`} />
                 )}
               </div>
               <div className="p-5 space-y-4">
@@ -436,7 +439,7 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
                       </div>
                       <div className="text-4xl font-black text-lime-400 tracking-tight font-mono">
                         {resizeResult.w}
-                        <span className="text-lime-500/50 mx-1">×</span>
+                        <span className="text-lime-500/50 mx-1">Ã—</span>
                         {resizeResult.h}
                       </div>
                     </div>
@@ -532,7 +535,7 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
               </div>
             </div>
             <div className="text-[11px] text-lime-400/50 font-mono">
-              {previewDims.w.toFixed(0)} × {previewDims.h.toFixed(0)} {t.unit_proportional || 'proportional units'}
+              {previewDims.w.toFixed(0)} Ã— {previewDims.h.toFixed(0)} {t.unit_proportional || 'proportional units'}
             </div>
           </div>
         </div>
@@ -546,6 +549,8 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
             {t.button_reset || 'Reset All'}
           </button>
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-aspect-ratio-bottom" />
       </main>
 
       <Footer

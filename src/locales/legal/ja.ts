@@ -78,6 +78,7 @@ export default {
     `
   },
   nav: {
+    home: "ホーム",
     privacy: "プライバシー",
     terms: "利用規約",
     cookies: "クッキー",

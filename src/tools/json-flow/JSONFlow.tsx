@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
@@ -500,10 +501,12 @@ export const JSONFlow: React.FC<JSONFlowProps> = ({ lang, dictionary }) => {
 
       {/* Main Workspace Grid */}
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:px-12 pt-32 pb-24 flex flex-col space-y-12">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-json-flow-top" />
         
         {/* SEO Premium Hero Header */}
         <section className="text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8 py-8 border-b border-white/5 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-64 h-64 bg-emerald-600/10 blur-[100px] rounded-full pointer-events-none" />
+          
           <div className="max-w-2xl space-y-4 relative z-10">
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white font-outfit">
               {t.seoHeroTitle}
@@ -935,6 +938,8 @@ export const JSONFlow: React.FC<JSONFlowProps> = ({ lang, dictionary }) => {
           </div>
         </section>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-json-flow-bottom" />
       </main>
 
       {/* FAQs & Suit Branding Footer */}

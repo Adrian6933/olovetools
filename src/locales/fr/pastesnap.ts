@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "Coller",
+  "selectImage": "Choisir une image",
+  "dropPrompt": "Glissez-déposez, collez ou choisissez une image",
+  "copyBtn": "Copier",
+  "copiedBtn": "Copié !",
   "title": "PasteSnap",
   "description": "Le moyen le plus rapide de sauvegarder des images du presse-papiers.",
   "pastePrompt": "Appuyez sur Ctrl + V pour coller une image",

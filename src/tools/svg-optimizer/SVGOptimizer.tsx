@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { PRESET_SVGS, type PresetSvg } from './utils/presetSvgs';
 import { optimizeSvg, type SvgOptimizerOptions } from './utils/svgOptimizerCore';
@@ -271,6 +272,8 @@ const SVGOptimizer: React.FC<SVGOptimizerProps> = ({ lang, dictionary }) => {
 
       {/* Main Content */}
       <main className="flex-1 pt-28 md:pt-32 pb-8 px-4 md:px-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-svg-optimizer-top" />
         <div className="max-w-7xl mx-auto space-y-6">
 
           {/* Hero Description */}
@@ -736,6 +739,8 @@ const SVGOptimizer: React.FC<SVGOptimizerProps> = ({ lang, dictionary }) => {
             </p>
           </div>
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-svg-optimizer-bottom" />
       </main>
 
       <Footer

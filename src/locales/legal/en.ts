@@ -78,6 +78,7 @@ export default {
     `
   },
   nav: {
+    home: "Home",
     privacy: "Privacy",
     terms: "Terms",
     cookies: "Cookies",

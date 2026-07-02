@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import {
   Binary, Copy, Check, RotateCcw, ArrowRight, ArrowLeft,
@@ -195,8 +196,8 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#020610] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-blue-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -206,6 +207,8 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
       />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-base64-bolt-top" />
 
         <div className="space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
@@ -343,7 +346,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                   imageMode === 'encode' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' : 'text-slate-500 hover:text-white border-transparent'
                 }`}
               >
-                {t.mode_image_to_b64 || 'Image → Base64'}
+                {t.mode_image_to_b64 || 'Image â†’ Base64'}
               </button>
               <button
                 onClick={() => setImageMode('decode')}
@@ -351,7 +354,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                   imageMode === 'decode' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' : 'text-slate-500 hover:text-white border-transparent'
                 }`}
               >
-                {t.mode_b64_to_image || 'Base64 → Image'}
+                {t.mode_b64_to_image || 'Base64 â†’ Image'}
               </button>
             </div>
 
@@ -394,7 +397,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                           </div>
                           <div>
                             <p className="text-xs font-bold text-white truncate max-w-xs">{imageFile.name}</p>
-                            <p className="text-[10px] text-slate-500">{formatBytes(imageSize)} → {formatBytes(dataUrlSize)} (base64)</p>
+                            <p className="text-[10px] text-slate-500">{formatBytes(imageSize)} â†’ {formatBytes(dataUrlSize)} (base64)</p>
                           </div>
                         </div>
                         <button
@@ -487,6 +490,8 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
           </>
         )}
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-base64-bolt-bottom" />
       </main>
 
       <Footer

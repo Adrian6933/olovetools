@@ -11,11 +11,17 @@ export default {
   "tryAdjusting": "Try adjusting your search or category filter.",
   "openTool": "Open Tool",
   "categories": {
-    "All": "All",
-    "Utility": "Utility",
-    "Creative": "Creative",
-    "Development": "Development",
-    "Social": "Social"
+    "All": "All Tools",
+    "video_audio": "Video & Audio",
+    "image_design": "Image & Design",
+    "document_pdf": "Document & PDF",
+    "developer_tools": "Developer Tools",
+    "text_utilities": "Text & Content",
+    "data_conversion": "Data & Converters",
+    "security_crypto": "Security & Privacy",
+    "network_system": "Network & System",
+    "productivity": "Productivity",
+    "social_downloads": "Social & Downloads"
   },
   "projects": {
     "1": {

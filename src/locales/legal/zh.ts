@@ -78,6 +78,7 @@ export default {
     `
   },
   nav: {
+    home: "首页",
     privacy: "隐私",
     terms: "条款",
     cookies: "Cookies",

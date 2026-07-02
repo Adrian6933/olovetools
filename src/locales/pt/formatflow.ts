@@ -1,7 +1,7 @@
 export default {
   "languageName": "Português",
   "header": {
-    "subtitle": "SMART IMAGE CONVERTER"
+    "subtitle": "CONVERSOR DE IMAGEM INTELIGENTE"
   },
   "dropzone": {
     "drop": "Solte as imagens aqui!",

@@ -32,6 +32,7 @@ export const TOOL_FAVICONS: Record<string, string> = {
   'svg-optimizer': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 2L2 22h20L12 2z'/><circle cx='12' cy='2' r='2' fill='%2306b6d4'/><circle cx='2' cy='22' r='2' fill='%2306b6d4'/><circle cx='22' cy='22' r='2' fill='%2306b6d4'/></svg>",
   'graph-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/><line x1='2' y1='20' x2='22' y2='20'/></svg>",
   'url-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>",
+  'clip-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='6' cy='6' r='3'/><circle cx='6' cy='18' r='3'/><line x1='20' y1='4' x2='8.12' y2='15.88'/><line x1='14.47' y1='14.48' x2='20' y2='20'/><line x1='8.12' y1='8.12' x2='12' y2='12'/></svg>",
   default: "/icon.svg"
 };
 
@@ -70,6 +71,7 @@ export const TOOL_THEME_COLORS: Record<string, string> = {
   'graph-flow': "#f59e0b",
   'url-bolt': "#10b981",
   'base64-bolt': "#3b82f6",
+  'clip-flow': "#8b5cf6",
   default: "#060609"
 };
 
@@ -91,7 +93,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Clipy',
     slug: 'clipy',
     description: 'A powerful tool to hunt, discover, and organize your favorite clips and videos.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.VIDEO_AUDIO,
     tags: ['Video', 'Search', 'Clips', 'Tools'],
     icon: 'Film',
     color: 'bg-gradient-to-br from-indigo-500 to-purple-600'
@@ -101,7 +103,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Twitchbolt',
     slug: 'twitchbolt',
     description: 'Fast and easy Twitch clip downloader. Save your favorite moments instantly.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.SOCIAL_DOWNLOADS,
     tags: ['Twitch', 'Download', 'Video', 'Clips'],
     icon: 'Download',
     color: 'bg-gradient-to-br from-violet-600 to-fuchsia-600'
@@ -111,7 +113,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'FormatFlow',
     slug: 'formatflow',
     description: 'A powerful online tool to convert images, audio, and documents instantly.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.DATA_CONVERSION,
     tags: ['Converter', 'Images', 'Audio', 'Tools'],
     icon: 'Repeat',
     color: 'bg-gradient-to-br from-emerald-500 to-teal-500'
@@ -121,7 +123,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'PasteSnap',
     slug: 'pastesnap',
     description: 'Instantly paste your screenshots and images to download them in high quality. No login required.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Image', 'Download', 'Utility', 'Quick'],
     icon: 'Image',
     color: 'bg-gradient-to-br from-orange-500 to-red-600'
@@ -131,7 +133,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Kickbolt',
     slug: 'kickbolt',
     description: 'Fast and easy Kick clip downloader. Save your favorite moments instantly.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.SOCIAL_DOWNLOADS,
     tags: ['Kick', 'Download', 'Video', 'Clips'],
     icon: 'Download',
     color: 'bg-gradient-to-br from-green-500 to-emerald-600'
@@ -141,7 +143,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'CompressSnap',
     slug: 'compresssnap',
     description: 'Compress and optimize your images (JPG, PNG, WebP) locally and instantly in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Image', 'Compress', 'WebP', 'Optimize'],
     icon: 'Image',
     color: 'bg-gradient-to-br from-cyan-500 to-blue-600'
@@ -151,7 +153,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Background Remover',
     slug: 'backgroundremover',
     description: 'Remove backgrounds from images locally and automatically with AI.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['AI', 'Image', 'Background', 'Remove'],
     icon: 'Image',
     color: 'bg-gradient-to-br from-fuchsia-500 to-pink-600'
@@ -161,7 +163,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'PDF-Flow',
     slug: 'pdf-flow',
     description: 'Merge, split, rotate, and convert documents or images to PDF locally in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.DOCUMENT_PDF,
     tags: ['PDF', 'Merge', 'Split', 'Convert'],
     icon: 'FileText',
     color: 'bg-gradient-to-br from-red-500 to-rose-600'
@@ -171,7 +173,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'RecordSnap',
     slug: 'recordsnap',
     description: 'Record your screen, webcam, or both simultaneously entirely in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.VIDEO_AUDIO,
     tags: ['Screen', 'Webcam', 'Record', 'Video'],
     icon: 'Video',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600'
@@ -181,7 +183,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'QR-Bolt',
     slug: 'qr-bolt',
     description: 'Generate styled, high-quality QR codes with gradients, custom shapes, and center logos 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['QR', 'Creator', 'Design', 'WiFi'],
     icon: 'QrCode',
     color: 'bg-gradient-to-br from-emerald-500 to-teal-600'
@@ -191,7 +193,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'CodeCard',
     slug: 'codecard',
     description: 'Convert your code snippets into beautiful, sharing-ready screenshot cards with custom styles 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Code', 'Share', 'Developer', 'Screenshot'],
     icon: 'Code',
     color: 'bg-gradient-to-br from-indigo-500 to-violet-600'
@@ -201,7 +203,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'CropSnap',
     slug: 'cropsnap',
     description: 'Crop, resize, rotate, and flip images with customizable presets and quality control 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Crop', 'Resize', 'Rotate', 'Image'],
     icon: 'Crop',
     color: 'bg-gradient-to-br from-rose-500 to-red-600'
@@ -211,7 +213,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'CSS-Designer',
     slug: 'css-designer',
     description: 'Create and generate custom modern CSS styles like glassmorphism, shadows, gradients and fancy borders 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['CSS', 'Design', 'Tailwind', 'Utility'],
     icon: 'Palette',
     color: 'bg-gradient-to-br from-violet-600 to-indigo-700'
@@ -221,7 +223,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'JSON-Flow',
     slug: 'json-flow',
     description: 'Format, validate, explore and convert JSON data in the browser 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['JSON', 'Formatter', 'Converter', 'Developer'],
     icon: 'Code',
     color: 'bg-gradient-to-br from-emerald-600 to-teal-700'
@@ -231,7 +233,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'SocialBolt',
     slug: 'socialbolt',
     description: 'Download TikTok videos without watermark, Instagram Reels, and YouTube Shorts 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.SOCIAL_DOWNLOADS,
     tags: ['Video', 'Download', 'TikTok', 'Instagram'],
     icon: 'Zap',
     color: 'bg-gradient-to-br from-indigo-500 to-pink-600'
@@ -241,7 +243,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'TTS-Bolt',
     slug: 'tts-bolt',
     description: 'Convert text to natural speech and download it as an MP3 file 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.VIDEO_AUDIO,
     tags: ['Audio', 'Speech', 'TTS', 'Converter'],
     icon: 'Volume2',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600'
@@ -251,7 +253,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'GIF-Bolt',
     slug: 'gif-bolt',
     description: 'Convert videos and image sequences into optimized animated GIFs 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Video', 'Images', 'GIF', 'Optimize'],
     icon: 'Images',
     color: 'bg-gradient-to-br from-fuchsia-500 to-purple-600'
@@ -261,7 +263,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'AudioSnap',
     slug: 'audiosnap',
     description: 'Record microphone audio, trim silence, and download as WAV or native compressed files 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.VIDEO_AUDIO,
     tags: ['Audio', 'Record', 'Trim', 'Utility'],
     icon: 'Music',
     color: 'bg-gradient-to-br from-rose-500 to-red-600'
@@ -271,7 +273,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'DrawSnap',
     slug: 'drawsnap',
     description: 'An interactive digital whiteboard to sketch ideas, draw vector shapes, and export creations as PNG or SVG 100% locally.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Draw', 'Whiteboard', 'Creative', 'Vector'],
     icon: 'PenTool',
     color: 'bg-gradient-to-br from-purple-500 to-indigo-600'
@@ -281,7 +283,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'DiffSnap',
     slug: 'diffsnap',
     description: 'Compare two text files or code snippets and inspect additions, deletions, and differences side-by-side or unified 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Compare', 'Diff', 'Code', 'Developer'],
     icon: 'GitCompare',
     color: 'bg-gradient-to-br from-cyan-500 to-blue-600'
@@ -291,7 +293,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Watermark-Snap',
     slug: 'watermark-snap',
     description: 'Add text or logo watermarks to multiple images simultaneously. Process all files locally inside your browser.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Watermark', 'Batch', 'Image', 'Branding'],
     icon: 'Tag',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600'
@@ -301,7 +303,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Favicon-Bolt',
     slug: 'favicon-bolt',
     description: 'Generate a complete package of standard website favicons from an image or emoji. Process all files locally inside your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Favicon', 'Generator', 'Developer', 'Icon'],
     icon: 'Palette',
     color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
@@ -311,7 +313,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'EXIF-Clear',
     slug: 'exif-clear',
     description: 'Inspect and strip EXIF, GPS, and metadata from images locally in your browser. Protect your privacy online.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.SECURITY_CRYPTO,
     tags: ['Metadata', 'EXIF', 'Privacy', 'Image'],
     icon: 'Shield',
     color: 'bg-gradient-to-br from-emerald-500 to-teal-600'
@@ -321,7 +323,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Meme-Bolt',
     slug: 'meme-bolt',
     description: 'Create and generate custom memes from templates or your own images 100% locally in your browser.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Meme', 'Generator', 'Creative', 'Editor'],
     icon: 'Smile',
     color: 'bg-gradient-to-br from-fuchsia-500 to-purple-600'
@@ -331,7 +333,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'WordFlow',
     slug: 'wordflow',
     description: 'An advanced word counter, character counter, readability analyzer, and text cleaning assistant 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.TEXT_UTILITIES,
     tags: ['Text', 'Analyzer', 'SEO', 'Writing'],
     icon: 'FileText',
     color: 'bg-gradient-to-br from-teal-500 to-cyan-600'
@@ -341,7 +343,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Markdown-Live',
     slug: 'markdown-live',
     description: 'A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.TEXT_UTILITIES,
     tags: ['Markdown', 'Editor', 'Writer', 'HTML'],
     icon: 'FileText',
     color: 'bg-gradient-to-br from-violet-500 to-indigo-600'
@@ -351,7 +353,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Hash-Bolt',
     slug: 'hash-bolt',
     description: 'Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally with checksum verification.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.SECURITY_CRYPTO,
     tags: ['Cryptography', 'Hash', 'Developer', 'Security'],
     icon: 'Lock',
     color: 'bg-gradient-to-br from-sky-500 to-cyan-600'
@@ -361,7 +363,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Zip-Flow',
     slug: 'zip-flow',
     description: 'Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.PRODUCTIVITY,
     tags: ['ZIP', 'Compress', 'Extract', 'Archive'],
     icon: 'FolderArchive',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600'
@@ -371,7 +373,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Regex-Flow',
     slug: 'regex-flow',
     description: 'An interactive regular expression builder, tester, and visualizer with real-time match highlighting and syntax breakdown 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Regex', 'Tester', 'Developer', 'Tool'],
     icon: 'Search',
     color: 'bg-gradient-to-br from-fuchsia-500 to-violet-600'
@@ -381,7 +383,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Lottie-Viewer',
     slug: 'lottie-viewer',
     description: 'Render, inspect, and edit layer colors of Lottie JSON animations 100% locally in your browser with real-time playback controls.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Lottie', 'Animation', 'JSON', 'Design'],
     icon: 'Play',
     color: 'bg-gradient-to-br from-indigo-500 to-cyan-500'
@@ -391,7 +393,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'SVG-Optimizer',
     slug: 'svg-optimizer',
     description: 'Optimize, clean and compress SVG files 100% locally in your browser with real-time side-by-side previews and code formatting.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['SVG', 'Optimizer', 'Developer', 'Design'],
     icon: 'Maximize2',
     color: 'bg-gradient-to-br from-cyan-500 to-emerald-500'
@@ -401,7 +403,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Graph-Flow',
     slug: 'graph-flow',
     description: 'Create beautiful charts from CSV data or manual input. Export as PNG, SVG, or PDF 100% locally in your browser.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Charts', 'Graphs', 'CSV', 'Data'],
     icon: 'BarChart3',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600'
@@ -411,7 +413,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Url-Bolt',
     slug: 'url-bolt',
     description: 'Encode, decode, and parse URLs with query string breakdown and smart formatting 100% locally in your browser.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['URL', 'Encoder', 'Decoder', 'Developer'],
     icon: 'Link',
     color: 'bg-gradient-to-br from-emerald-500 to-teal-600'
@@ -421,7 +423,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Base64-Bolt',
     slug: 'base64-bolt',
     description: 'Encode and decode Base64 strings and convert images to DataURL 100% locally in your browser.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Base64', 'Encoder', 'Image', 'DataURL'],
     icon: 'Binary',
     color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
@@ -431,7 +433,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'UUID-Generator',
     slug: 'uuid-generator',
     description: 'Generate random UUIDs (v4) and named UUIDs (v5) in bulk up to 500 at once 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['UUID', 'GUID', 'Random', 'Generator'],
     icon: 'Fingerprint',
     color: 'bg-gradient-to-br from-violet-500 to-purple-600'
@@ -441,7 +443,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'List-Mixer',
     slug: 'list-mixer',
     description: 'Sort, reverse, shuffle, deduplicate, trim and clean lists of text 100% locally in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.TEXT_UTILITIES,
     tags: ['List', 'Sorter', 'Shuffler', 'Dedupe'],
     icon: 'ListOrdered',
     color: 'bg-gradient-to-br from-orange-500 to-red-600'
@@ -451,7 +453,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'HTML-Sanitizer',
     slug: 'html-sanitizer',
     description: 'Clean and sanitize HTML code by removing scripts, styles, iframes and unwanted tags 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['HTML', 'Sanitizer', 'Cleaner', 'Security'],
     icon: 'ShieldCheck',
     color: 'bg-gradient-to-br from-cyan-500 to-teal-600'
@@ -461,7 +463,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'ColorSnap',
     slug: 'colorsnap',
     description: 'Extract dominant colors and palettes from any image 100% locally in your browser.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Color', 'Palette', 'Design', 'Extractor'],
     icon: 'Palette',
     color: 'bg-gradient-to-br from-rose-500 to-pink-600'
@@ -471,7 +473,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Hex-to-RGB',
     slug: 'hex-to-rgb',
     description: 'Convert between HEX, RGB, HSL and CMYK color formats with opacity and contrast tools 100% locally.',
-    category: ProjectCategory.CREATIVE,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Color', 'HEX', 'RGB', 'HSL'],
     icon: 'Palette',
     color: 'bg-gradient-to-br from-teal-500 to-cyan-600'
@@ -481,7 +483,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Aspect-Ratio',
     slug: 'aspect-ratio',
     description: 'Calculate aspect ratios and proportional resolutions for video, images and screens 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Ratio', 'Calculator', 'Resolution', 'Video'],
     icon: 'Ratio',
     color: 'bg-gradient-to-br from-lime-500 to-green-600'
@@ -491,7 +493,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'UnitFlow',
     slug: 'unitflow',
     description: 'Convert units of measurement: length, weight, temperature, speed, volume and more 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.DATA_CONVERSION,
     tags: ['Unit', 'Converter', 'Measurement', 'Calculator'],
     icon: 'Ruler',
     color: 'bg-gradient-to-br from-blue-500 to-cyan-600'
@@ -501,7 +503,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'SQL-Flow',
     slug: 'sql-flow',
     description: 'Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['SQL', 'Formatter', 'Validator', 'Database'],
     icon: 'Database',
     color: 'bg-gradient-to-br from-amber-500 to-yellow-600'
@@ -511,7 +513,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Cron-Flow',
     slug: 'cron-flow',
     description: 'Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Cron', 'Scheduler', 'DevOps', 'Translator'],
     icon: 'Clock',
     color: 'bg-gradient-to-br from-violet-500 to-fuchsia-600'
@@ -521,7 +523,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'XML-JSON',
     slug: 'xml-json',
     description: 'Convert XML to JSON and JSON to XML instantly 100% locally in your browser.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['XML', 'JSON', 'Converter', 'Parser'],
     icon: 'FileCode',
     color: 'bg-gradient-to-br from-teal-500 to-emerald-600'
@@ -531,7 +533,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Binary-Flow',
     slug: 'binary-flow',
     description: 'Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Binary', 'Hex', 'Decimal', 'Octal'],
     icon: 'Binary',
     color: 'bg-gradient-to-br from-blue-500 to-indigo-600'
@@ -541,7 +543,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Morse-Flow',
     slug: 'morse-flow',
     description: 'Encode and decode Morse code with audio playback 100% locally in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.TEXT_UTILITIES,
     tags: ['Morse', 'Audio', 'Encoder', 'Decoder'],
     icon: 'Radio',
     color: 'bg-gradient-to-br from-amber-500 to-orange-600'
@@ -551,7 +553,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Epoch-Flow',
     slug: 'epoch-flow',
     description: 'Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Epoch', 'Timestamp', 'Unix', 'Converter'],
     icon: 'Clock',
     color: 'bg-gradient-to-br from-sky-500 to-cyan-600'
@@ -561,7 +563,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Time-Bolt',
     slug: 'time-bolt',
     description: 'Convert time between world timezones with an interactive meeting planner 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.PRODUCTIVITY,
     tags: ['Timezone', 'Converter', 'Meeting', 'World Clock'],
     icon: 'Globe',
     color: 'bg-gradient-to-br from-teal-500 to-emerald-600'
@@ -571,7 +573,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Device-Test',
     slug: 'device-test',
     description: 'Test your webcam, microphone, speakers and system info 100% locally in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.NETWORK_SYSTEM,
     tags: ['Webcam', 'Microphone', 'Test', 'Device'],
     icon: 'Camera',
     color: 'bg-gradient-to-br from-rose-500 to-red-600'
@@ -581,7 +583,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Lorem-Flow',
     slug: 'lorem-flow',
     description: 'Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.TEXT_UTILITIES,
     tags: ['Lorem', 'Generator', 'Placeholder', 'Text'],
     icon: 'AlignLeft',
     color: 'bg-gradient-to-br from-violet-500 to-purple-600'
@@ -591,7 +593,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Key-Doctor',
     slug: 'key-doctor',
     description: 'Detect and display JavaScript keyboard event properties key, code and keyCode 100% locally.',
-    category: ProjectCategory.DEV,
+    category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['Keyboard', 'Events', 'Developer', 'Inspector'],
     icon: 'Keyboard',
     color: 'bg-gradient-to-br from-amber-500 to-yellow-600'
@@ -601,7 +603,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Whiteboard-Flow',
     slug: 'whiteboard-flow',
     description: 'Organize notes in a virtual Kanban board with drag and drop 100% locally in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.PRODUCTIVITY,
     tags: ['Kanban', 'Notes', 'Drag', 'Productivity'],
     icon: 'StickyNote',
     color: 'bg-gradient-to-br from-cyan-500 to-sky-600'
@@ -611,7 +613,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Subtitles-Bolt',
     slug: 'subtitles-bolt',
     description: 'Convert subtitles between SRT, VTT and SBV formats 100% locally in your browser.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.VIDEO_AUDIO,
     tags: ['Subtitles', 'SRT', 'VTT', 'Converter'],
     icon: 'Captions',
     color: 'bg-gradient-to-br from-blue-500 to-purple-600'
@@ -621,7 +623,7 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'PassBolt',
     slug: 'passbolt',
     description: 'Generate secure passwords and test their strength with entropy analysis 100% locally.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.SECURITY_CRYPTO,
     tags: ['Password', 'Generator', 'Security', 'Entropy'],
     icon: 'KeyRound',
     color: 'bg-gradient-to-br from-emerald-500 to-green-600'
@@ -631,9 +633,49 @@ export const MOCK_PROJECTS: Project[] = [
     name: 'Whois-Bolt',
     slug: 'whois-bolt',
     description: 'Query DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) using DNS over HTTPS.',
-    category: ProjectCategory.UTILITY,
+    category: ProjectCategory.NETWORK_SYSTEM,
     tags: ['DNS', 'Lookup', 'Records', 'Domain'],
     icon: 'Search',
     color: 'bg-gradient-to-br from-indigo-500 to-blue-600'
+  },
+  {
+    id: '56',
+    name: 'FrameSnap',
+    slug: 'framesnap',
+    description: 'Step through any video frame by frame, scrub at different speeds and export the exact frame as a high-quality image 100% locally.',
+    category: ProjectCategory.VIDEO_AUDIO,
+    tags: ['Video', 'Frame', 'Extract', 'Image'],
+    icon: 'Film',
+    color: 'bg-gradient-to-br from-orange-500 to-amber-600'
+  },
+  {
+    id: '57',
+    name: 'CleanSnap',
+    slug: 'cleansnap',
+    description: 'Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle — content-aware fill 100% locally.',
+    category: ProjectCategory.IMAGE_DESIGN,
+    tags: ['Watermark', 'Remove', 'Inpaint', 'Cleanup'],
+    icon: 'Eraser',
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+  },
+  {
+    id: '58',
+    name: 'Klipy',
+    slug: 'klipy',
+    description: 'Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments.',
+    category: ProjectCategory.VIDEO_AUDIO,
+    tags: ['Kick', 'Clips', 'Live', 'Discover'],
+    icon: 'Film',
+    color: 'bg-gradient-to-br from-green-400 to-emerald-600'
+  },
+  {
+    id: '59',
+    name: 'ClipFlow',
+    slug: 'clip-flow',
+    description: 'Cut multiple clips of any length from Twitch VODs and live streams and export them as MP4 — no 60-second limit, 100% in your browser.',
+    category: ProjectCategory.SOCIAL_DOWNLOADS,
+    tags: ['Twitch', 'VOD', 'Clip', 'Editor'],
+    icon: 'Scissors',
+    color: 'bg-gradient-to-br from-violet-500 to-purple-600'
   }
 ];

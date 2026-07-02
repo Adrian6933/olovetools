@@ -8,7 +8,7 @@ import { Modal } from './Modal';
 
 type ModalType = 'privacy' | 'terms' | 'cookies' | null;
 
-export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ lang, children }) => {
+export const Layout: React.FC<{ lang: string, children: React.ReactNode, hideHeader?: boolean }> = ({ lang, children, hideHeader = false }) => {
   const currentLang = (LANGUAGES.some(l => l.code === lang) ? lang : 'en') as LanguageCode;
 
   // Simple translations for the layout
@@ -316,7 +316,8 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
   return (
     <div className="min-h-screen bg-[#020203] text-slate-200 font-sans flex flex-col overflow-x-hidden">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-40 bg-[#121216] border-b border-white/[0.08] shadow-2xl">
+      {!hideHeader && (
+        <nav className="fixed top-0 left-0 right-0 z-40 bg-[#121216] border-b border-white/[0.08] shadow-2xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
             <a href={`/${currentLang}`} className="flex items-center gap-3 group">
@@ -375,8 +376,9 @@ export const Layout: React.FC<{ lang: string, children: React.ReactNode }> = ({ 
           </div>
         </div>
       </nav>
+      )}
 
-      <div className="flex-1 pt-20 relative z-10">
+      <div className={`flex-1 ${hideHeader ? '' : 'pt-20'} relative z-10`}>
         {children}
       </div>
 

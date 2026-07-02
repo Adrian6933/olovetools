@@ -11,11 +11,17 @@ export default {
   "tryAdjusting": "请尝试调整搜索词或分类过滤器。",
   "openTool": "打开工具",
   "categories": {
-    "All": "全部",
-    "Utility": "实用工具",
-    "Creative": "创意设计",
-    "Development": "开发工具",
-    "Social": "社交互动"
+    "All": "所有工具",
+    "video_audio": "视频与音频",
+    "image_design": "图片与设计",
+    "document_pdf": "文档与PDF",
+    "developer_tools": "开发者工具",
+    "text_utilities": "文本与内容",
+    "data_conversion": "数据与转换",
+    "security_crypto": "安全与隐私",
+    "network_system": "网络与系统",
+    "productivity": "生产力",
+    "social_downloads": "社交与下载"
   },
   "projects": {
     "1": {

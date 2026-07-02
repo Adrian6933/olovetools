@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
@@ -48,25 +49,25 @@ interface ToneMetrics {
 const SENTIMENT_SEEDS = {
   positive: [
     'happy', 'good', 'great', 'love', 'excellent', 'win', 'wonderful', 'beautiful', 'positive', 'success', 'best', 'amazing', 'joy', 'smile', 'glad', 'pleased', 'progress', 'clean', 'easy', 'simple',
-    'feliz', 'bueno', 'genial', 'amor', 'excelente', 'ganar', 'maravilloso', 'hermoso', 'positivo', 'exito', 'mejor', 'increible', 'alegría', 'sonrisa', 'alegre', 'progreso', 'limpio', 'facil', 'simple',
+    'feliz', 'bueno', 'genial', 'amor', 'excelente', 'ganar', 'maravilloso', 'hermoso', 'positivo', 'exito', 'mejor', 'increible', 'alegrÃ­a', 'sonrisa', 'alegre', 'progreso', 'limpio', 'facil', 'simple',
     'heureux', 'bon', 'excellent', 'aimer', 'magnifique', 'positif', 'succes', 'joie', 'progres', 'facile',
-    'glücklich', 'gut', 'liebe', 'ausgezeichnet', 'wunderbar', 'schön', 'positiv', 'erfolg', 'freude', 'einfach',
-    'feliz', 'bom', 'ótimo', 'maravilhoso', 'lindo', 'sucesso', 'alegria', 'fácil',
-    'счастливый', 'хороший', 'отличный', 'любовь', 'прекрасный', 'успех', 'радость', 'легко',
-    'खुश', 'अच्छा', 'महान', 'प्यार', 'सफलता', 'सुंदर', 'प्रगति', 'आसान',
-    '嬉しい', '良い', '素晴らしい', '愛', '成功', '美しい', '喜び', '簡単',
-    '快乐', '好', '棒', '爱', '成功', '美丽', '喜悦', '简单', '容易'
+    'glÃ¼cklich', 'gut', 'liebe', 'ausgezeichnet', 'wunderbar', 'schÃ¶n', 'positiv', 'erfolg', 'freude', 'einfach',
+    'feliz', 'bom', 'Ã³timo', 'maravilhoso', 'lindo', 'sucesso', 'alegria', 'fÃ¡cil',
+    'ÑÑ‡Ð°ÑÑ‚Ð»Ð¸Ð²Ñ‹Ð¹', 'Ñ…Ð¾Ñ€Ð¾ÑˆÐ¸Ð¹', 'Ð¾Ñ‚Ð»Ð¸Ñ‡Ð½Ñ‹Ð¹', 'Ð»ÑŽÐ±Ð¾Ð²ÑŒ', 'Ð¿Ñ€ÐµÐºÑ€Ð°ÑÐ½Ñ‹Ð¹', 'ÑƒÑÐ¿ÐµÑ…', 'Ñ€Ð°Ð´Ð¾ÑÑ‚ÑŒ', 'Ð»ÐµÐ³ÐºÐ¾',
+    'à¤–à¥à¤¶', 'à¤…à¤šà¥à¤›à¤¾', 'à¤®à¤¹à¤¾à¤¨', 'à¤ªà¥à¤¯à¤¾à¤°', 'à¤¸à¤«à¤²à¤¤à¤¾', 'à¤¸à¥à¤‚à¤¦à¤°', 'à¤ªà¥à¤°à¤—à¤¤à¤¿', 'à¤†à¤¸à¤¾à¤¨',
+    'å¬‰ã—ã„', 'è‰¯ã„', 'ç´ æ™´ã‚‰ã—ã„', 'æ„›', 'æˆåŠŸ', 'ç¾Žã—ã„', 'å–œã³', 'ç°¡å˜',
+    'å¿«ä¹', 'å¥½', 'æ£’', 'çˆ±', 'æˆåŠŸ', 'ç¾Žä¸½', 'å–œæ‚¦', 'ç®€å•', 'å®¹æ˜“'
   ],
   negative: [
     'sad', 'bad', 'hate', 'terrible', 'fail', 'lose', 'poor', 'negative', 'worst', 'danger', 'angry', 'worry', 'pain', 'fault', 'broke', 'error', 'fear', 'doubt', 'stress', 'difficult', 'slow',
     'triste', 'malo', 'odio', 'terrible', 'fallar', 'perder', 'pobre', 'negativo', 'peor', 'peligro', 'enojado', 'preocupado', 'dolor', 'culpa', 'roto', 'error', 'miedo', 'duda', 'estres', 'dificil', 'lento',
-    'triste', 'mauvais', 'détester', 'terrible', 'échouer', 'perdre', 'pauvre', 'négatif', 'danger', 'colère',
+    'triste', 'mauvais', 'dÃ©tester', 'terrible', 'Ã©chouer', 'perdre', 'pauvre', 'nÃ©gatif', 'danger', 'colÃ¨re',
     'traurig', 'schlecht', 'hassen', 'schrecklich', 'fehler', 'verlieren', 'schlecht', 'negativ', 'gefahr',
-    'triste', 'ruim', 'odiar', 'terrível', 'falhar', 'perder', 'negativo', 'pior', 'perigo',
-    'грустный', 'плохой', 'ужасный', 'ошибка', 'потерять', 'негативный', 'опасность',
-    'दुखी', 'खराब', 'नफरत', 'दर्द', 'गलती', 'खतरा', 'तनाव', 'मुश्किल',
-    '悲しい', '悪い', '嫌い', '失敗', '失う', '怒り', '困難', '遅い',
-    '悲伤', '坏', '讨厌', '失败', '失去', '糟糕', '危险', '生气', '困难', '慢'
+    'triste', 'ruim', 'odiar', 'terrÃ­vel', 'falhar', 'perder', 'negativo', 'pior', 'perigo',
+    'Ð³Ñ€ÑƒÑÑ‚Ð½Ñ‹Ð¹', 'Ð¿Ð»Ð¾Ñ…Ð¾Ð¹', 'ÑƒÐ¶Ð°ÑÐ½Ñ‹Ð¹', 'Ð¾ÑˆÐ¸Ð±ÐºÐ°', 'Ð¿Ð¾Ñ‚ÐµÑ€ÑÑ‚ÑŒ', 'Ð½ÐµÐ³Ð°Ñ‚Ð¸Ð²Ð½Ñ‹Ð¹', 'Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚ÑŒ',
+    'à¤¦à¥à¤–à¥€', 'à¤–à¤°à¤¾à¤¬', 'à¤¨à¤«à¤°à¤¤', 'à¤¦à¤°à¥à¤¦', 'à¤—à¤²à¤¤à¥€', 'à¤–à¤¤à¤°à¤¾', 'à¤¤à¤¨à¤¾à¤µ', 'à¤®à¥à¤¶à¥à¤•à¤¿à¤²',
+    'æ‚²ã—ã„', 'æ‚ªã„', 'å«Œã„', 'å¤±æ•—', 'å¤±ã†', 'æ€’ã‚Š', 'å›°é›£', 'é…ã„',
+    'æ‚²ä¼¤', 'å', 'è®¨åŽŒ', 'å¤±è´¥', 'å¤±åŽ»', 'ç³Ÿç³•', 'å±é™©', 'ç”Ÿæ°”', 'å›°éš¾', 'æ…¢'
   ]
 };
 
@@ -74,33 +75,33 @@ const SENTIMENT_SEEDS = {
 const TONE_SEEDS = {
   formal: [
     'however', 'therefore', 'furthermore', 'consequently', 'respectively', 'initial', 'establish', 'execute', 'framework', 'implementation', 'structure', 'regards', 'sincerely',
-    'sin embargo', 'por lo tanto', 'además', 'consecuentemente', 'respectivamente', 'inicial', 'establecer', 'ejecutar', 'marco', 'implementacion', 'estructura', 'saludos', 'atentamente',
-    'cependant', 'par conséquent', 'établir', 'sincèrement', 'somit', 'daher', 'bezüglich', 'etablieren', 'portanto', 'estabelecer', 'sinceramente', 'однако', 'следовательно', 'установить',
-    'तथापि', 'इसलिए', 'स्थापित', 'しかしながら', 'したがって', '設立', '然而', '因此', '此外'
+    'sin embargo', 'por lo tanto', 'ademÃ¡s', 'consecuentemente', 'respectivamente', 'inicial', 'establecer', 'ejecutar', 'marco', 'implementacion', 'estructura', 'saludos', 'atentamente',
+    'cependant', 'par consÃ©quent', 'Ã©tablir', 'sincÃ¨rement', 'somit', 'daher', 'bezÃ¼glich', 'etablieren', 'portanto', 'estabelecer', 'sinceramente', 'Ð¾Ð´Ð½Ð°ÐºÐ¾', 'ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾', 'ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ',
+    'à¤¤à¤¥à¤¾à¤ªà¤¿', 'à¤‡à¤¸à¤²à¤¿à¤', 'à¤¸à¥à¤¥à¤¾à¤ªà¤¿à¤¤', 'ã—ã‹ã—ãªãŒã‚‰', 'ã—ãŸãŒã£ã¦', 'è¨­ç«‹', 'ç„¶è€Œ', 'å› æ­¤', 'æ­¤å¤–'
   ],
   casual: [
     'hey', 'cool', 'stuff', 'vibe', 'anyway', 'wow', 'kid', 'guess', 'guy', 'bit', 'totally', 'super', 'awesome', 'literally', 'lol', 'haha',
     'hola', 'genial', 'cosas', 'vibra', 'de todos modos', 'wow', 'chico', 'adivinar', 'tipo', 'un poco', 'totalmente', 'super', 'increible', 'literalmente',
-    'salut', 'truc', 'mec', 'marrant', 'hallo', 'zeug', 'kumpel', 'cool', 'olá', 'cara', 'coisas', 'legal', 'привет', 'круто', 'штука', 'парень',
-    'अरे', 'कूल', 'चीजें', 'यार', 'ねえ', 'すごい', 'やつ', 'とにかく', '嘿', '酷', '玩意', '伙计', '哈哈'
+    'salut', 'truc', 'mec', 'marrant', 'hallo', 'zeug', 'kumpel', 'cool', 'olÃ¡', 'cara', 'coisas', 'legal', 'Ð¿Ñ€Ð¸Ð²ÐµÑ‚', 'ÐºÑ€ÑƒÑ‚Ð¾', 'ÑˆÑ‚ÑƒÐºÐ°', 'Ð¿Ð°Ñ€ÐµÐ½ÑŒ',
+    'à¤…à¤°à¥‡', 'à¤•à¥‚à¤²', 'à¤šà¥€à¤œà¥‡à¤‚', 'à¤¯à¤¾à¤°', 'ã­ãˆ', 'ã™ã”ã„', 'ã‚„ã¤', 'ã¨ã«ã‹ã', 'å˜¿', 'é…·', 'çŽ©æ„', 'ä¼™è®¡', 'å“ˆå“ˆ'
   ],
   academic: [
     'analysis', 'data', 'research', 'result', 'methodology', 'hypothesis', 'conclude', 'evidence', 'context', 'theory', 'examine', 'experiment', 'significant',
     'analisis', 'datos', 'investigacion', 'resultado', 'metodologia', 'hipotesis', 'concluir', 'evidencia', 'contexto', 'teoria', 'examinar', 'experimento', 'significativo',
-    'recherche', 'hypothèse', 'données', 'forschung', 'daten', 'hypothese', 'pesquisa', 'dados', 'hipótese', 'анализ', 'данные', 'исследование', 'методология',
-    'विश्लेषण', 'आंकड़े', 'अनुसंधान', 'निष्कर्ष', '解析', 'データ', '研究', '仮説', '分析', '数据', '研究', '假设', '结论'
+    'recherche', 'hypothÃ¨se', 'donnÃ©es', 'forschung', 'daten', 'hypothese', 'pesquisa', 'dados', 'hipÃ³tese', 'Ð°Ð½Ð°Ð»Ð¸Ð·', 'Ð´Ð°Ð½Ð½Ñ‹Ðµ', 'Ð¸ÑÑÐ»ÐµÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ', 'Ð¼ÐµÑ‚Ð¾Ð´Ð¾Ð»Ð¾Ð³Ð¸Ñ',
+    'à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£', 'à¤†à¤‚à¤•à¤¡à¤¼à¥‡', 'à¤…à¤¨à¥à¤¸à¤‚à¤§à¤¾à¤¨', 'à¤¨à¤¿à¤·à¥à¤•à¤°à¥à¤·', 'è§£æž', 'ãƒ‡ãƒ¼ã‚¿', 'ç ”ç©¶', 'ä»®èª¬', 'åˆ†æž', 'æ•°æ®', 'ç ”ç©¶', 'å‡è®¾', 'ç»“è®º'
   ],
   confident: [
     'will', 'must', 'definitely', 'clear', 'absolute', 'essential', 'crucial', 'guarantee', 'resolve', 'primary', 'standard', 'assure', 'strongly',
     'sera', 'debe', 'definitivamente', 'claro', 'absoluto', 'esencial', 'crucial', 'garantizar', 'resolver', 'primario', 'estandar', 'asegurar', 'fuertemente',
-    'dois', 'absolument', 'crucial', 'muss', 'sicher', 'garantieren', 'certamente', 'garantir', 'обязан', 'ясно', 'абсолютно',
-    'अवश्य', 'निश्चित', 'स्पष्ट', 'गारंटी', '絶対に', '確信', '明確', '必须', '绝对', '关键', '保证'
+    'dois', 'absolument', 'crucial', 'muss', 'sicher', 'garantieren', 'certamente', 'garantir', 'Ð¾Ð±ÑÐ·Ð°Ð½', 'ÑÑÐ½Ð¾', 'Ð°Ð±ÑÐ¾Ð»ÑŽÑ‚Ð½Ð¾',
+    'à¤…à¤µà¤¶à¥à¤¯', 'à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤', 'à¤¸à¥à¤ªà¤·à¥à¤Ÿ', 'à¤—à¤¾à¤°à¤‚à¤Ÿà¥€', 'çµ¶å¯¾ã«', 'ç¢ºä¿¡', 'æ˜Žç¢º', 'å¿…é¡»', 'ç»å¯¹', 'å…³é”®', 'ä¿è¯'
   ],
   creative: [
     'feel', 'see', 'imagine', 'bright', 'dark', 'sound', 'flow', 'visual', 'paint', 'magic', 'story', 'dream', 'wild', 'breath', 'poetic', 'canvas',
-    'sentir', 'ver', 'imaginar', 'brillante', 'oscuro', 'sonido', 'fluir', 'visual', 'pintar', 'magia', 'historia', 'sueño', 'salvaje', 'aliento', 'poetico', 'lienzo',
-    'imaginer', 'sombre', 'magique', 'rêve', 'fühlen', 'traum', 'magisch', 'sentir', 'imaginar', 'sonho', 'чувствовать', 'мечта', 'магия',
-    'महसूस', 'कल्पना', 'जादू', 'सपना', '感じる', '想像', '夢', '魔法', '感觉', '想象', '梦境', '魔法'
+    'sentir', 'ver', 'imaginar', 'brillante', 'oscuro', 'sonido', 'fluir', 'visual', 'pintar', 'magia', 'historia', 'sueÃ±o', 'salvaje', 'aliento', 'poetico', 'lienzo',
+    'imaginer', 'sombre', 'magique', 'rÃªve', 'fÃ¼hlen', 'traum', 'magisch', 'sentir', 'imaginar', 'sonho', 'Ñ‡ÑƒÐ²ÑÑ‚Ð²Ð¾Ð²Ð°Ñ‚ÑŒ', 'Ð¼ÐµÑ‡Ñ‚Ð°', 'Ð¼Ð°Ð³Ð¸Ñ',
+    'à¤®à¤¹à¤¸à¥‚à¤¸', 'à¤•à¤²à¥à¤ªà¤¨à¤¾', 'à¤œà¤¾à¤¦à¥‚', 'à¤¸à¤ªà¤¨à¤¾', 'æ„Ÿã˜ã‚‹', 'æƒ³åƒ', 'å¤¢', 'é­”æ³•', 'æ„Ÿè§‰', 'æƒ³è±¡', 'æ¢¦å¢ƒ', 'é­”æ³•'
   ]
 };
 
@@ -108,13 +109,13 @@ const TONE_SEEDS = {
 const COMMON_STOP_WORDS = new Set([
   'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'of', 'for', 'with', 'by', 'as', 'at', 'from', 'into', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'my', 'your', 'his', 'her', 'its', 'our', 'their', 'this', 'that', 'these', 'those', 'which', 'who', 'whom', 'whose', 'what', 'how', 'why', 'where', 'when',
   'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'y', 'o', 'pero', 'en', 'sobre', 'en', 'a', 'de', 'para', 'con', 'por', 'como', 'desde', 'hacia', 'es', 'son', 'era', 'eran', 'ser', 'sido', 'estar', 'tengo', 'tiene', 'mi', 'tu', 'su', 'este', 'ese', 'aquel', 'que', 'quien', 'cual', 'como', 'cuando', 'donde', 'porque',
-  'le', 'la', 'les', 'un', 'une', 'des', 'et', 'ou', 'mais', 'dans', 'sur', 'à', 'de', 'pour', 'avec', 'par', 'comme',
-  'der', 'die', 'das', 'ein', 'eine', 'und', 'oder', 'aber', 'in', 'auf', 'zu', 'von', 'für', 'mit', 'von', 'wie',
+  'le', 'la', 'les', 'un', 'une', 'des', 'et', 'ou', 'mais', 'dans', 'sur', 'Ã ', 'de', 'pour', 'avec', 'par', 'comme',
+  'der', 'die', 'das', 'ein', 'eine', 'und', 'oder', 'aber', 'in', 'auf', 'zu', 'von', 'fÃ¼r', 'mit', 'von', 'wie',
   'o', 'a', 'os', 'as', 'um', 'uma', 'e', 'ou', 'mas', 'em', 'no', 'na', 'para', 'com', 'por', 'como', 'de',
-  'и', 'в', 'во', 'на', 'с', 'со', 'у', 'о', 'об', 'обо', 'к', 'ко', 'из', 'от', 'до', 'для', 'за', 'под', 'над', 'перед', 'при', 'а', 'но', 'или', 'да', 'что', 'как', 'это', 'то', 'он', 'она', 'оно', 'они',
-  'और', 'या', 'लेकिन', 'में', 'पर', 'तक', 'को', 'के', 'लिए', 'से', 'द्वारा', 'है', 'हैं', 'था', 'थे',
-  'の', 'に', 'は', 'を', 'た', 'が', 'で', 'て', 'と', 'し', 'れ', 'さ', 'ある', 'する', 'も',
-  '的', '了', '和', '是', '在', '我', '你', '他', '她', '它', '们', '这', '那', '都', '就', '也', '而', '及'
+  'Ð¸', 'Ð²', 'Ð²Ð¾', 'Ð½Ð°', 'Ñ', 'ÑÐ¾', 'Ñƒ', 'Ð¾', 'Ð¾Ð±', 'Ð¾Ð±Ð¾', 'Ðº', 'ÐºÐ¾', 'Ð¸Ð·', 'Ð¾Ñ‚', 'Ð´Ð¾', 'Ð´Ð»Ñ', 'Ð·Ð°', 'Ð¿Ð¾Ð´', 'Ð½Ð°Ð´', 'Ð¿ÐµÑ€ÐµÐ´', 'Ð¿Ñ€Ð¸', 'Ð°', 'Ð½Ð¾', 'Ð¸Ð»Ð¸', 'Ð´Ð°', 'Ñ‡Ñ‚Ð¾', 'ÐºÐ°Ðº', 'ÑÑ‚Ð¾', 'Ñ‚Ð¾', 'Ð¾Ð½', 'Ð¾Ð½Ð°', 'Ð¾Ð½Ð¾', 'Ð¾Ð½Ð¸',
+  'à¤”à¤°', 'à¤¯à¤¾', 'à¤²à¥‡à¤•à¤¿à¤¨', 'à¤®à¥‡à¤‚', 'à¤ªà¤°', 'à¤¤à¤•', 'à¤•à¥‹', 'à¤•à¥‡', 'à¤²à¤¿à¤', 'à¤¸à¥‡', 'à¤¦à¥à¤µà¤¾à¤°à¤¾', 'à¤¹à¥ˆ', 'à¤¹à¥ˆà¤‚', 'à¤¥à¤¾', 'à¤¥à¥‡',
+  'ã®', 'ã«', 'ã¯', 'ã‚’', 'ãŸ', 'ãŒ', 'ã§', 'ã¦', 'ã¨', 'ã—', 'ã‚Œ', 'ã•', 'ã‚ã‚‹', 'ã™ã‚‹', 'ã‚‚',
+  'çš„', 'äº†', 'å’Œ', 'æ˜¯', 'åœ¨', 'æˆ‘', 'ä½ ', 'ä»–', 'å¥¹', 'å®ƒ', 'ä»¬', 'è¿™', 'é‚£', 'éƒ½', 'å°±', 'ä¹Ÿ', 'è€Œ', 'åŠ'
 ]);
 
 export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
@@ -291,7 +292,7 @@ export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
     // Punctuation heuristics
     const exclamations = (text.match(/!/g) || []).length;
     const questions = (text.match(/\?/g) || []).length;
-    const quotes = (text.match(/["'“”]/g) || []).length;
+    const quotes = (text.match(/["'â€œâ€]/g) || []).length;
 
     counts.casual += exclamations * 2;
     counts.creative += quotes;
@@ -476,10 +477,12 @@ export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
       />
 
       {/* Dynamic Background Glow */}
-      <div className="absolute top-0 left-0 right-0 h-[450px] bg-gradient-to-b from-teal-950/20 via-slate-950/10 to-transparent blur-[120px] pointer-events-none z-0" />
+      
 
       {/* Main Container */}
       <main className="flex-1 w-full max-w-5xl mx-auto px-6 pt-32 pb-24 flex flex-col space-y-10 relative z-10">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-wordflow-top" />
         
         {/* Title / Description */}
         <section className="text-center space-y-3 max-w-2xl mx-auto">
@@ -842,6 +845,8 @@ export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
           </div>
         </section>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-wordflow-bottom" />
       </main>
 
       {/* Footer Accordion */}

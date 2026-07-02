@@ -1,16 +1,22 @@
 {
-  "name": "oLoveTools Collection",
+  "name": "oLoveTools — 55+ Free Online Tools",
   "short_name": "oLoveTools",
-  "description": "A centralized hub to explore and navigate all your web projects with ease.",
+  "description": "A free suite of 55+ privacy-first web tools that run 100% in your browser: image, PDF, audio, developer and productivity utilities. No signup, no uploads.",
+  "lang": "en",
+  "dir": "ltr",
   "start_url": "/en/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#060609",
   "theme_color": "#060609",
+  "categories": ["utilities", "productivity", "photo", "developer", "tools"],
   "icons": [
     {
       "src": "/icon.svg",
       "type": "image/svg+xml",
-      "sizes": "192x192 512x512 any"
+      "sizes": "192x192 512x512 any",
+      "purpose": "any maskable"
     }
   ]
 }

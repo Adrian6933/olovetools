@@ -21,6 +21,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { ImageItem } from './types';
 
@@ -234,14 +235,13 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
   return (
     <div className="min-h-screen flex flex-col bg-[#07050a] text-slate-100 selection:bg-pink-500/30 overflow-x-hidden font-sans">
       {/* Background Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-fuchsia-900/10 blur-[180px] rounded-full animate-soft-pulse"></div>
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-pink-900/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3s' }}></div>
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-backgroundremover-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -357,7 +357,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                           <h4 className="text-sm font-bold text-white truncate max-w-[280px]">{activeItem.name}</h4>
                           <p className="text-xs text-slate-500 font-semibold mt-1">
                             {t.originalSize}: {formatBytes(activeItem.originalSize)}
-                            {activeItem.processedSize && ` • ${t.processedSize}: ${formatBytes(activeItem.processedSize)}`}
+                            {activeItem.processedSize && ` â€¢ ${t.processedSize}: ${formatBytes(activeItem.processedSize)}`}
                           </p>
                         </div>
 
@@ -535,7 +535,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
               </div>
 
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-fuchsia-500/20 to-pink-500/20 blur-[100px] rounded-full group-hover:opacity-100 opacity-60 transition-opacity"></div>
+                
                 <div className="relative glass-card rounded-[4rem] p-12 py-20 min-h-[420px] w-full flex flex-col items-center justify-center space-y-8 text-center overflow-hidden">
                   <div className="text-[7.5rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">🖼️</div>
                   <div className="space-y-4 max-w-sm px-4">
@@ -608,6 +608,8 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-backgroundremover-bottom" />
       </main>
 
       {/* Visual Image Comparison Slider Drawer */}
@@ -655,7 +657,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                 style={{ left: `${sliderPos}%` }}
               >
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-fuchsia-500 border-2 border-white text-black flex items-center justify-center shadow-2xl font-bold">
-                  ↔
+                  â†”
                 </div>
               </div>
 

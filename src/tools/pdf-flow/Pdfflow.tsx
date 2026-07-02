@@ -28,6 +28,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { PdfItem, ToolMode } from './types';
 
 interface PdfflowProps {
@@ -477,14 +478,13 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   return (
     <div className="min-h-screen flex flex-col bg-[#0c0506] text-slate-100 selection:bg-red-500/30 overflow-x-hidden font-sans">
       {/* Background Glow Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-red-950/10 blur-[180px] rounded-full animate-soft-pulse"></div>
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-rose-950/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3s' }}></div>
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-pdf-flow-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -728,19 +728,19 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             onClick={() => rotateAllPages(90)}
                             className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
                           >
-                            +90° CW
+                            +90Â° CW
                           </button>
                           <button
                             onClick={() => rotateAllPages(180)}
                             className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
                           >
-                            180°
+                            180Â°
                           </button>
                           <button
                             onClick={() => rotateAllPages(270)}
                             className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
                           >
-                            +90° CCW
+                            +90Â° CCW
                           </button>
                           <button
                             onClick={() => setPageRotations({})}
@@ -783,7 +783,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
 
                               {rotation > 0 && (
                                 <span className="absolute top-3 right-3 text-[10px] font-black bg-red-950 text-red-400 px-1.5 py-0.5 rounded-full border border-red-900/30">
-                                  {rotation}°
+                                  {rotation}Â°
                                 </span>
                               )}
                             </div>
@@ -1103,6 +1103,8 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-pdf-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

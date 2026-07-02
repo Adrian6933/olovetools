@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Pen, Paintbrush, Eraser, Minus, Square, Circle, Undo2, Redo2, Trash2, Download, ToggleLeft, ToggleRight, Sparkles, HelpCircle, Grid } from 'lucide-react';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
@@ -422,6 +423,8 @@ export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
       />
 
       <main className="flex-1 w-full mx-auto pt-36 pb-24 relative z-10 flex flex-col justify-start items-center">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-drawsnap-top" />
         {/* Full-width Title Container */}
         <div className="text-center mb-8 px-4 animate-in fade-in slide-in-from-top-4 duration-500 max-w-4xl">
           <h1 className="text-4xl md:text-5xl font-black font-outfit tracking-tight text-white mb-3 flex items-center justify-center gap-3">
@@ -725,6 +728,8 @@ export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
           </div>
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-drawsnap-bottom" />
       </main>
 
       <Footer

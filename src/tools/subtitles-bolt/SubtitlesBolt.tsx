@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { Captions, Copy, Check, Download, RotateCcw, ArrowRight, FileText, AlertCircle } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
@@ -255,8 +256,8 @@ export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) 
 
   return (
     <div className="min-h-screen flex flex-col bg-[#020610] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-blue-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -266,6 +267,8 @@ export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) 
       />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-subtitles-bolt-top" />
 
         <div className="space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
@@ -314,7 +317,7 @@ export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) 
               {stats && (
                 <span className="text-[10px] text-slate-400 font-mono flex items-center gap-3">
                   <span className="text-blue-400 font-bold">{stats.count} {t.unit_cues || 'cues'}</span>
-                  <span>{msToReadable(stats.firstStart)} → {msToReadable(stats.lastEnd)}</span>
+                  <span>{msToReadable(stats.firstStart)} â†’ {msToReadable(stats.lastEnd)}</span>
                 </span>
               )}
             </div>
@@ -387,6 +390,8 @@ export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) 
           </button>
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-subtitles-bolt-bottom" />
       </main>
 
       <Footer

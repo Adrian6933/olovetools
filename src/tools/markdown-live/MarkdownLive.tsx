@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { 
   Bold, 
@@ -580,8 +581,8 @@ greet('World');
       <style dangerouslySetInnerHTML={{ __html: themeStyles }} />
       
       {/* Dynamic glow decoration */}
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-indigo-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       {/* Header */}
       <Header 
@@ -593,6 +594,8 @@ greet('World');
 
       {/* Main workspace */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-markdown-live-top" />
         
         {/* Banner Title */}
         <div className="text-center md:text-left space-y-2">
@@ -850,6 +853,8 @@ greet('World');
           </div>
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-markdown-live-bottom" />
       </main>
 
       {/* Footer */}

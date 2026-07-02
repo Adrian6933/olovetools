@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import {
   Link, Copy, Check, RotateCcw, ArrowRight, ArrowLeft,
@@ -209,8 +210,8 @@ export default function UrlBolt({ lang, dictionary }: UrlBoltProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#020a08] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-emerald-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-teal-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -220,6 +221,8 @@ export default function UrlBolt({ lang, dictionary }: UrlBoltProps) {
       />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-url-bolt-top" />
 
         <div className="space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
@@ -484,13 +487,15 @@ export default function UrlBolt({ lang, dictionary }: UrlBoltProps) {
                   <Globe className="w-8 h-8 text-emerald-500/50" />
                 </div>
                 <p className="text-slate-500 text-sm max-w-md">
-                  {t.placeholder_parse_empty || 'Paste a URL above to see its full anatomy breakdown — protocol, host, path segments, and query parameters with decoded values.'}
+                  {t.placeholder_parse_empty || 'Paste a URL above to see its full anatomy breakdown â€” protocol, host, path segments, and query parameters with decoded values.'}
                 </p>
               </div>
             )}
           </>
         )}
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-url-bolt-bottom" />
       </main>
 
       <Footer

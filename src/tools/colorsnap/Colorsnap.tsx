@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { legalTranslations } from '../../locales/legal';
 import { Palette, Upload, Copy, Check, RotateCcw, Image as ImageIcon, Pipette, Download } from 'lucide-react';
@@ -225,7 +226,7 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
     const lines = colors
       .map((c, i) => `${i + 1}. ${rgbToHex(c.r, c.g, c.b)}  rgb(${c.r}, ${c.g}, ${c.b})`)
       .join('\n');
-    const content = `Image Color Lab — Palette\nSource: ${imageName}\n\n${lines}\n\n:root {\n${colors
+    const content = `Image Color Lab â€” Palette\nSource: ${imageName}\n\n${lines}\n\n:root {\n${colors
       .map((c, i) => `  --color-${i + 1}: ${rgbToHex(c.r, c.g, c.b)};`)
       .join('\n')}\n}`;
     const blob = new Blob([content], { type: 'text/plain' });
@@ -255,8 +256,8 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0204] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-rose-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-rose-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -266,6 +267,8 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
       />
 
       <main className="flex-grow max-w-6xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-10">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-colorsnap-top" />
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <Palette className="w-8 h-8 text-rose-400" />
@@ -308,7 +311,7 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
                     {t.dropzonePrompt || 'Drop an image here or click to upload'}
                   </h3>
                   <p className="text-slate-500 text-sm font-medium">
-                    {t.dropzoneSubtitle || 'PNG, JPG, WebP, GIF — processed locally in your browser'}
+                    {t.dropzoneSubtitle || 'PNG, JPG, WebP, GIF â€” processed locally in your browser'}
                   </p>
                 </div>
               </div>
@@ -356,7 +359,7 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm space-y-3">
                       <div className="w-10 h-10 border-2 border-rose-400/30 border-t-rose-400 rounded-full animate-spin" />
                       <p className="text-xs font-bold text-rose-300 uppercase tracking-widest">
-                        {t.extracting || 'Extracting colors…'}
+                        {t.extracting || 'Extracting colorsâ€¦'}
                       </p>
                     </div>
                   )}
@@ -511,6 +514,8 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
             </div>
           </div>
         )}
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-colorsnap-bottom" />
       </main>
 
       <Footer

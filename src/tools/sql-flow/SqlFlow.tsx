@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { Database, Copy, Check, RotateCcw, Code, AlertCircle, Wand2 } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
@@ -284,8 +285,8 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0c0802] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-amber-600/10 blur-[150px] pointer-events-none z-0" />
-      <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-amber-600/10 blur-[120px] pointer-events-none z-0" />
+      
+      
 
       <Header
         currentLang={lang}
@@ -295,6 +296,8 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
       />
 
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-sql-flow-top" />
 
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
@@ -397,7 +400,7 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
               </div>
               {input && (
                 <span className="text-xs text-slate-500">
-                  {stats.inputLines} {linesText} · {stats.inputChars} {charsText}
+                  {stats.inputLines} {linesText} Â· {stats.inputChars} {charsText}
                 </span>
               )}
             </div>
@@ -421,7 +424,7 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
               <div className="flex items-center gap-3">
                 {formatted && (
                   <span className="text-xs text-slate-500">
-                    {stats.outputLines} {linesText} · {stats.outputChars} {charsText}
+                    {stats.outputLines} {linesText} Â· {stats.outputChars} {charsText}
                   </span>
                 )}
                 <button
@@ -508,13 +511,13 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
                     <ul className="space-y-1">
                       {validation.errors.map((err, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-xs text-red-200/90 font-mono">
-                          <span className="text-red-400 mt-0.5">✕</span>
+                          <span className="text-red-400 mt-0.5">âœ•</span>
                           <span>{err}</span>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <span className="text-xs text-slate-500 font-mono">—</span>
+                    <span className="text-xs text-slate-500 font-mono">â€”</span>
                   )}
                 </div>
 
@@ -532,7 +535,7 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
                       ))}
                     </ul>
                   ) : (
-                    <span className="text-xs text-slate-500 font-mono">—</span>
+                    <span className="text-xs text-slate-500 font-mono">â€”</span>
                   )}
                 </div>
               </div>
@@ -540,6 +543,8 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
           </div>
         </div>
 
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-sql-flow-bottom" />
       </main>
 
       <Footer

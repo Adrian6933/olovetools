@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive } from 'lucide-react';
+import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors } from 'lucide-react';
 import { Project, LanguageCode as Language } from '../types';
 import { useTranslation } from '../locales/dictionary';
 
@@ -8,6 +8,9 @@ interface ProjectCardProps {
   categoryLabel: string;
   buttonLabel: string;
   lang: string;
+  onOpen?: () => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: () => void;
 }
 
 const IconMap: Record<string, React.ElementType> = {
@@ -32,16 +35,19 @@ const IconMap: Record<string, React.ElementType> = {
   'Tag': Tag,
   'Shield': Shield,
   'Smile': Smile,
-  'FolderArchive': FolderArchive
+  'FolderArchive': FolderArchive,
+  'Eraser': Eraser,
+  'Scissors': Scissors
 };
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang, onOpen, isFavorite, onToggleFavorite }) => {
   const { t } = useTranslation(lang as Language, 'hub');
   const IconComponent = IconMap[project.icon] || Box;
 
   return (
     <a 
       href={`/${lang}/${project.slug}`}
+      onClick={onOpen}
       className="group relative bg-[#0c0c10] backdrop-blur-xl rounded-3xl p-8 border border-white/[0.08] hover:border-indigo-500/40 transition-all duration-500 flex flex-col h-full hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-2 overflow-hidden cursor-pointer shadow-lg"
     >
       <div className={`absolute top-0 right-0 w-32 h-32 ${project.color} opacity-10 blur-[50px] group-hover:opacity-20 transition-opacity duration-500 rounded-full`} />
@@ -80,9 +86,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel
           })}
         </div>
         
-        <div className="flex items-center text-indigo-400 text-sm font-bold uppercase tracking-wide group-hover:translate-x-2 transition-transform duration-300">
-          {buttonLabel}
-          <ArrowRight className="w-4 h-4 ml-2" />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center text-indigo-400 text-sm font-bold uppercase tracking-wide group-hover:translate-x-2 transition-transform duration-300">
+            {buttonLabel}
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </div>
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite?.(); }}
+            aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            title={isFavorite ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+            className="shrink-0 p-2 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 transition-all hover:scale-110 active:scale-90 cursor-pointer"
+          >
+            <Star className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-slate-400'}`} />
+          </button>
         </div>
       </div>
     </a>

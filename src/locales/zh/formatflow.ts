@@ -1,7 +1,7 @@
 export default {
   "languageName": "中文",
   "header": {
-    "subtitle": "SMART IMAGE CONVERTER"
+    "subtitle": "智能图像转换器"
   },
   "dropzone": {
     "drop": "将图像拖放到此处！",

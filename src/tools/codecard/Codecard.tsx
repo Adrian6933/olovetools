@@ -18,6 +18,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { CodeTheme, WindowStyle, FontFamily, ShadowStyle, GradientTheme } from './types';
 
 // Embedded premium theme CSS for Prism highlights
@@ -154,7 +155,7 @@ export const Codecard: React.FC<CodecardProps> = ({ lang, dictionary }) => {
 function calculateLoveScore(person1, person2) {
   const baseScore = Math.floor(Math.random() * 50) + 50;
   console.log("Analyzing compatibility...");
-  return \`\${person1} ❤️ \${person2}: \${baseScore}%\`;
+  return \`\${person1} â¤ï¸ \${person2}: \${baseScore}%\`;
 }`
   );
   const [language, setLanguage] = useState<string>('javascript');
@@ -281,7 +282,7 @@ function calculateLoveScore(person1, person2) {
 function calculateLoveScore(person1, person2) {
   const baseScore = Math.floor(Math.random() * 50) + 50;
   console.log("Analyzing compatibility...");
-  return \`\${person1} ❤️ \${person2}: \${baseScore}%\`;
+  return \`\${person1} â¤ï¸ \${person2}: \${baseScore}%\`;
 }`
     );
     setLanguage('javascript');
@@ -324,14 +325,13 @@ function calculateLoveScore(person1, person2) {
       <style dangerouslySetInnerHTML={{ __html: PRISM_THEME_CSS[theme] }} />
 
       {/* Glow Orbs background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-indigo-950/10 blur-[180px] rounded-full animate-soft-pulse" />
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-violet-950/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3.5s' }} />
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={(newLang) => window.location.href = `/${newLang.toLowerCase()}/codecard`} onReset={handleReset} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-codecard-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -383,7 +383,7 @@ function calculateLoveScore(person1, person2) {
 
               {/* Tab options Box */}
               <div className="glass-card rounded-3xl p-6 text-left space-y-5 min-h-[420px] relative overflow-hidden">
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/5 blur-[80px] rounded-full pointer-events-none" />
+                
 
                 {/* TAB 1: CODE EDITOR */}
                 {activeTab === 'code' && (
@@ -869,7 +869,7 @@ function calculateLoveScore(person1, person2) {
                           <span>{faqItem.question}</span>
                         </span>
                         <span className="text-indigo-400 font-bold text-sm shrink-0">
-                          {isAct ? '−' : '+'}
+                          {isAct ? 'âˆ’' : '+'}
                         </span>
                       </h4>
                       <AnimatePresence>
@@ -946,6 +946,8 @@ function calculateLoveScore(person1, person2) {
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-codecard-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

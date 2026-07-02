@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "貼り付け",
+  "selectImage": "画像を選択",
+  "dropPrompt": "ドラッグ＆ドロップ、貼り付け、または画像を選択",
+  "copyBtn": "コピー",
+  "copiedBtn": "コピーしました！",
   "title": "PasteSnap",
   "description": "クリップボードから画像を保存する最も速い方法。",
   "pastePrompt": "Ctrl + V を押して貼り付け",

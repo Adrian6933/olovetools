@@ -559,6 +559,42 @@ import pt_whoisbolt from './pt/whois-bolt';
 import ru_whoisbolt from './ru/whois-bolt';
 import ja_whoisbolt from './ja/whois-bolt';
 import zh_whoisbolt from './zh/whois-bolt';
+import en_framesnap from './en/framesnap';
+import es_framesnap from './es/framesnap';
+import fr_framesnap from './fr/framesnap';
+import de_framesnap from './de/framesnap';
+import pt_framesnap from './pt/framesnap';
+import ru_framesnap from './ru/framesnap';
+import hi_framesnap from './hi/framesnap';
+import ja_framesnap from './ja/framesnap';
+import zh_framesnap from './zh/framesnap';
+import en_cleansnap from './en/cleansnap';
+import es_cleansnap from './es/cleansnap';
+import fr_cleansnap from './fr/cleansnap';
+import de_cleansnap from './de/cleansnap';
+import pt_cleansnap from './pt/cleansnap';
+import ru_cleansnap from './ru/cleansnap';
+import hi_cleansnap from './hi/cleansnap';
+import ja_cleansnap from './ja/cleansnap';
+import zh_cleansnap from './zh/cleansnap';
+import en_klipy from './en/klipy';
+import es_klipy from './es/klipy';
+import fr_klipy from './fr/klipy';
+import de_klipy from './de/klipy';
+import pt_klipy from './pt/klipy';
+import ru_klipy from './ru/klipy';
+import hi_klipy from './hi/klipy';
+import ja_klipy from './ja/klipy';
+import zh_klipy from './zh/klipy';
+import en_clipFlow from './en/clip-flow';
+import es_clipFlow from './es/clip-flow';
+import fr_clipFlow from './fr/clip-flow';
+import de_clipFlow from './de/clip-flow';
+import pt_clipFlow from './pt/clip-flow';
+import ru_clipFlow from './ru/clip-flow';
+import hi_clipFlow from './hi/clip-flow';
+import ja_clipFlow from './ja/clip-flow';
+import zh_clipFlow from './zh/clip-flow';
 
 export const hubDictionary: Record<string, any> = {
   en: en_hub,
@@ -1232,7 +1268,55 @@ export const whoisBoltDictionary: Record<string, any> = {
   zh: zh_whoisbolt,
 };
 
-export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'passbolt' | 'whois-bolt') => {
+export const framesnapDictionary: Record<string, any> = {
+  en: en_framesnap,
+  es: es_framesnap,
+  fr: fr_framesnap,
+  de: de_framesnap,
+  pt: pt_framesnap,
+  ru: ru_framesnap,
+  hi: hi_framesnap,
+  ja: ja_framesnap,
+  zh: zh_framesnap,
+};
+
+export const cleansnapDictionary: Record<string, any> = {
+  en: en_cleansnap,
+  es: es_cleansnap,
+  fr: fr_cleansnap,
+  de: de_cleansnap,
+  pt: pt_cleansnap,
+  ru: ru_cleansnap,
+  hi: hi_cleansnap,
+  ja: ja_cleansnap,
+  zh: zh_cleansnap,
+};
+
+export const klipyDictionary: Record<string, any> = {
+  en: en_klipy,
+  es: es_klipy,
+  fr: fr_klipy,
+  de: de_klipy,
+  pt: pt_klipy,
+  ru: ru_klipy,
+  hi: hi_klipy,
+  ja: ja_klipy,
+  zh: zh_klipy,
+};
+
+export const clipFlowDictionary: Record<string, any> = {
+  en: en_clipFlow,
+  es: es_clipFlow,
+  fr: fr_clipFlow,
+  de: de_clipFlow,
+  pt: pt_clipFlow,
+  ru: ru_clipFlow,
+  hi: hi_clipFlow,
+  ja: ja_clipFlow,
+  zh: zh_clipFlow,
+};
+
+export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'passbolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow') => {
   const dictionaryObj = 
     tool === 'clipy' ? clipyDictionary : 
     tool === 'twitchbolt' ? twitchboltDictionary : 
@@ -1289,6 +1373,10 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     tool === 'passbolt' ? passboltDictionary :
     tool === 'whois-bolt' ? whoisBoltDictionary :
     tool === 'base64-bolt' ? base64boltDictionary :
+    tool === 'framesnap' ? framesnapDictionary :
+    tool === 'cleansnap' ? cleansnapDictionary :
+    tool === 'klipy' ? klipyDictionary :
+    tool === 'clip-flow' ? clipFlowDictionary :
     hubDictionary;
     
   const currentDict = dictionaryObj[lang] || dictionaryObj['en'];

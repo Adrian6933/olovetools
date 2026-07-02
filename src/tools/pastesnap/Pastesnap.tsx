@@ -1,7 +1,20 @@
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ClipboardPaste,
+  Upload,
+  Download,
+  Copy,
+  Check,
+  Trash2,
+  Maximize2,
+  X,
+  ArrowRight,
+  Package,
+  Loader2,
+  ArrowUp,
+} from 'lucide-react';
 import { Header } from './components/Header';
 import { CookieConsent } from './components/CookieConsent';
 import { LegalModal } from './components/LegalModal';
@@ -14,105 +27,143 @@ interface PastesnapProps {
   dictionary?: any;
 }
 
+// ---------------------------------------------------------------------------
+// AdSense horizontal slot.
+// NOTE: tools are hydrated React components, so literal `<!-- -->` HTML comments
+// do not survive render. We follow the project convention used in Home.tsx:
+// a labelled `#adsense-*` container that AdSense Auto-Ads can target.
+// ---------------------------------------------------------------------------
+const AdBanner: React.FC<{ id: string }> = ({ id }) => (
+  /* Bloque AdSense Horizontal */
+  <div className="w-full max-w-5xl mx-auto my-4" id={id} role="complementary" aria-label="Advertisement">
+    <div className="w-full min-h-[90px] flex flex-col items-center justify-center bg-white/[0.015] border border-dashed border-white/10 rounded-2xl px-4 py-3 text-center">
+      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] opacity-50">
+        Advertisement
+      </span>
+      <div className="w-full max-w-[728px] h-[90px] mt-2 flex items-center justify-center">
+        {/* AdSense ins tag / Auto-Ads injects here */}
+      </div>
+    </div>
+  </div>
+);
+
 const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
   const { dictionary: t } = useTranslation((lang || 'en') as Language, 'pastesnap');
   const [images, setImages] = useState<PastedImage[]>([]);
   const [expandedImage, setExpandedImage] = useState<PastedImage | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isFocused, setIsFocused] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isZipping, setIsZipping] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const lastClipboardId = useRef<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fallback micro-labels (use dictionary when available, English default otherwise)
+  const L = {
+    select: t.selectImage || 'Select image',
+    drop: t.dropPrompt || 'Drag & drop, paste or select an image',
+    copy: t.copyBtn || 'Copy',
+    copied: t.copiedBtn || 'Copied!',
+    paste: t.pasteBtn || 'Paste',
+  };
 
   const handleLanguageChange = (newLang: string) => {
     window.location.href = `/${newLang.toLowerCase()}/pastesnap`;
   };
 
+  const processFile = useCallback((file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(file);
+    const ext = (file.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+    const newImg: PastedImage = {
+      id: Math.random().toString(36).substring(2, 11),
+      url,
+      blob: file,
+      name: `pastesnap-${Date.now()}.${ext}`,
+      timestamp: new Date(),
+    };
+    setImages((prev) => {
+      if (prev.length === 0 && typeof window !== 'undefined') {
+        window.history.pushState({ view: 'gallery' }, '');
+      }
+      return [...prev, newImg];
+    });
+  }, []);
+
+  const addFiles = useCallback(
+    (files: FileList | File[]) => {
+      Array.from(files).forEach((file) => {
+        if (file.type.startsWith('image/')) processFile(file);
+      });
+    },
+    [processFile]
+  );
+
+  // Click-to-read from clipboard (Clipboard API)
   const handlePasteClick = async () => {
     try {
       if (!navigator.clipboard || !navigator.clipboard.read) return;
-      
       const items = await navigator.clipboard.read();
       for (const item of items) {
-        const imageTypes = item.types.filter(type => type.startsWith('image/'));
+        const imageTypes = item.types.filter((type) => type.startsWith('image/'));
         if (imageTypes.length > 0) {
           const blob = await item.getType(imageTypes[0]);
-          const file = new File([blob], "clipboard-image.png", { type: blob.type });
-          processFile(file);
-          return; // Paste the first image found
+          processFile(new File([blob], 'clipboard-image.png', { type: blob.type }));
+          return;
         }
       }
-    } catch (err) {
-      console.debug("Paste from click failed or no image:", err);
+    } catch {
+      /* no readable image in clipboard or permission denied */
     }
   };
-
-  const processFile = useCallback((file: File) => {
-    const url = URL.createObjectURL(file);
-    const newImg: PastedImage = {
-      id: Math.random().toString(36).substr(2, 9),
-      url,
-      blob: file,
-      name: `pastesnap-${Date.now()}.png`,
-      timestamp: new Date()
-    };
-    if (images.length === 0 && typeof window !== 'undefined') {
-      window.history.pushState({ view: 'gallery' }, '');
-    }
-    setImages(prev => [...prev, newImg]);
-  }, [images]);
 
   const tryAutoPaste = useCallback(async () => {
     try {
       if (!navigator.clipboard || !navigator.clipboard.read) return;
-      
       const items = await navigator.clipboard.read();
       for (const item of items) {
-        const imageTypes = item.types.filter(type => type.startsWith('image/'));
+        const imageTypes = item.types.filter((type) => type.startsWith('image/'));
         if (imageTypes.length > 0) {
           const blob = await item.getType(imageTypes[0]);
-          const file = new File([blob], "clipboard-image.png", { type: blob.type });
-          
-          const clipboardId = `${file.size}-${file.type}`;
+          const clipboardId = `${blob.size}-${blob.type}`;
           if (lastClipboardId.current === clipboardId) continue;
-          
           lastClipboardId.current = clipboardId;
-          processFile(file);
+          processFile(new File([blob], 'clipboard-image.png', { type: blob.type }));
         }
       }
-    } catch (err) {
-      console.debug("Auto-paste suppressed:", err);
+    } catch {
+      /* auto-paste suppressed when permission is not granted */
     }
   }, [processFile]);
 
-  const handlePaste = useCallback((e: ClipboardEvent) => {
-    const items = e.clipboardData?.items;
-    if (items) {
+  const handlePaste = useCallback(
+    (e: ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
       for (const item of items) {
         if (item.type.indexOf('image') !== -1) {
           const blob = item.getAsFile();
           if (blob) processFile(blob);
         }
       }
-    }
-  }, [processFile]);
+    },
+    [processFile]
+  );
 
   useEffect(() => {
     window.addEventListener('paste', handlePaste);
-    
     const onFocus = () => {
       setIsFocused(true);
       tryAutoPaste();
     };
     const onBlur = () => setIsFocused(false);
-    
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
-    
     window.addEventListener('focus', onFocus);
     window.addEventListener('blur', onBlur);
     window.addEventListener('scroll', handleScroll);
-    
     tryAutoPaste();
-    
     return () => {
       window.removeEventListener('paste', handlePaste);
       window.removeEventListener('focus', onFocus);
@@ -121,28 +172,42 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
     };
   }, [handlePaste, tryAutoPaste]);
 
+  // Browser back button: close expanded view first, then clear gallery
   useEffect(() => {
-    const handlePopState = (event: PopStateEvent) => {
-      // Prioridad 1: Si hay una imagen expandida, la cerramos
+    const handlePopState = () => {
       if (expandedImage) {
         setExpandedImage(null);
         return;
       }
-      // Prioridad 2: Si hay imágenes en la galería, volvemos al inicio vacío
-      if (images.length > 0) {
-        resetApp();
-      }
+      if (images.length > 0) resetApp();
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [images, expandedImage]);
 
-  // Reset scroll to top when entering gallery
   useEffect(() => {
-    if (images.length > 0) {
-      window.scrollTo(0, 0);
-    }
+    if (images.length > 0) window.scrollTo(0, 0);
   }, [images.length > 0]);
+
+  // Drag & drop handlers
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
+  };
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!isDragging) setIsDragging(true);
+  };
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) addFiles(e.target.files);
+    e.target.value = '';
+  };
 
   const downloadImage = (img: PastedImage) => {
     const link = document.createElement('a');
@@ -153,460 +218,545 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
     document.body.removeChild(link);
   };
 
-  const downloadAllImages = async () => {
-    const zip = new JSZip();
-    
-    for (let i = 0; i < images.length; i++) {
-      const img = images[i];
+  // Proactive improvement: copy an image back to the clipboard
+  const copyImage = async (img: PastedImage) => {
+    try {
       const response = await fetch(img.url);
       const blob = await response.blob();
-      zip.file(`${i + 1}_${img.name}`, blob);
+      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+      setCopiedId(img.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      /* clipboard write not supported for this image type */
     }
-    
-    const content = await zip.generateAsync({ type: 'blob' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = 'images.zip';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
+  };
+
+  const downloadAllImages = async () => {
+    if (isZipping) return;
+    setIsZipping(true);
+    try {
+      const zip = new JSZip();
+      for (let i = 0; i < images.length; i++) {
+        const response = await fetch(images[i].url);
+        const blob = await response.blob();
+        zip.file(`${i + 1}_${images[i].name}`, blob);
+      }
+      const content = await zip.generateAsync({ type: 'blob' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(content);
+      link.download = 'pastesnap-images.zip';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } finally {
+      setIsZipping(false);
+    }
+  };
+
+  const convertInFormatFlow = async () => {
+    try {
+      const dataToTransfer = await Promise.all(
+        images.map(async (img) => {
+          const response = await fetch(img.url);
+          const blob = await response.blob();
+          return new Promise<{ name: string; type: string; data: string }>((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () =>
+              resolve({ name: img.name, type: blob.type, data: reader.result as string });
+            reader.readAsDataURL(blob);
+          });
+        })
+      );
+      localStorage.setItem('pastesnap_transfer', JSON.stringify(dataToTransfer));
+    } catch {
+      /* transfer skipped */
+    } finally {
+      window.location.href = `/${lang.toLowerCase()}/formatflow`;
+    }
   };
 
   const removeImage = (id: string) => {
-    setImages(prev => {
-      const target = prev.find(img => img.id === id);
+    setImages((prev) => {
+      const target = prev.find((img) => img.id === id);
       if (target) URL.revokeObjectURL(target.url);
-      return prev.filter(img => img.id !== id);
+      return prev.filter((img) => img.id !== id);
     });
   };
 
   const resetApp = () => {
-    images.forEach(img => URL.revokeObjectURL(img.url));
+    images.forEach((img) => URL.revokeObjectURL(img.url));
     setImages([]);
     setExpandedImage(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
     <div className="min-h-screen flex flex-col bg-[#04050a] text-gray-100 selection:bg-indigo-500/30 overflow-x-hidden">
+      {/* Ambient background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-indigo-600/10 blur-[150px] rounded-full animate-fast-pulse"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-pink-600/10 blur-[150px] rounded-full animate-fast-pulse" style={{ animationDelay: '4s' }}></div>
-        <div className="absolute top-[40%] left-[30%] w-[40%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full animate-fast-pulse" style={{ animationDelay: '2s' }}></div>
+        <div
+          className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-pink-600/10 blur-[150px] rounded-full animate-fast-pulse"
+          style={{ animationDelay: '4s' }}
+        ></div>
       </div>
 
       <Header currentLang={lang || 'en'} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
-      <main className="flex-1 flex flex-col items-center pt-40 pb-32 px-4 md:px-12 relative z-10 w-full">
-        <div className="max-w-6xl w-full text-center space-y-20 md:space-y-32">
-          
-          <div className="flex flex-col items-center space-y-6 animate-in fade-in slide-in-from-top duration-1000">
-            <div className="flex flex-col items-center gap-4">
-              <div className="inline-flex items-center space-x-3 px-6 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] md:text-xs font-black tracking-[0.25em] uppercase animate-in slide-in-from-bottom stagger-1 shadow-[0_0_30px_rgba(79,70,229,0.15)]">
-                <span className="relative flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-indigo-500"></span>
-                </span>
-                <span>{t.onlineClipboardUtility}</span>
-              </div>
-              
-              <div className="flex items-center space-x-2 text-[9px] font-bold text-gray-500 uppercase tracking-widest opacity-60 animate-in fade-in stagger-2">
-                <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${isFocused ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-red-500'}`}></span>
-                <span>{isFocused ? t.autoPasteActive : t.windowInactive}</span>
-              </div>
-            </div>
-            
-            <div className="space-y-6">
-              <h1 
-                onClick={resetApp}
-                className="text-6xl md:text-[8rem] font-black text-white tracking-tighter leading-[0.9] bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-white/10 cursor-pointer hover:to-indigo-400 transition-all hover:scale-[1.01] active:scale-95 group inline-block py-2"
+      <main className="flex-1 flex flex-col items-center pt-32 md:pt-36 pb-24 px-4 md:px-8 relative z-10 w-full">
+        <div className="max-w-5xl w-full space-y-12 md:space-y-16">
+          {/* ---------- Uniform clean header: badge + H1 (SEO keyword) + 2-line description ---------- */}
+          <header className="flex flex-col items-center text-center space-y-5 pt-4">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold tracking-[0.2em] uppercase">
+              <span className="relative flex h-2 w-2">
+                <span
+                  className={`absolute inline-flex h-full w-full rounded-full ${
+                    isFocused ? 'bg-indigo-400 animate-ping' : ''
+                  } opacity-75`}
+                ></span>
+                <span
+                  className={`relative inline-flex rounded-full h-2 w-2 ${
+                    isFocused ? 'bg-indigo-500' : 'bg-gray-600'
+                  }`}
+                ></span>
+              </span>
+              {isFocused ? t.autoPasteActive : t.windowInactive}
+            </span>
+
+            <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-[1.05]">
+              {t.title}
+              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-pink-400">
+                {t.onlineClipboardUtility}
+              </span>
+            </h1>
+
+            <p className="text-gray-400 text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+              {t.description}
+            </p>
+          </header>
+
+          {/* Bloque AdSense Horizontal — debajo del header */}
+          <AdBanner id="adsense-pastesnap-top" />
+
+          {/* ---------- Workspace ---------- */}
+          <section id="workspace" aria-label={t.title}>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleFileInput}
+              className="hidden"
+            />
+
+            {images.length === 0 ? (
+              /* Empty state: minimal modern drop zone */
+              <div
+                onDrop={handleDrop}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onClick={() => fileInputRef.current?.click()}
+                className={`group relative rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer px-8 py-20 md:py-28 flex flex-col items-center justify-center text-center
+                  ${
+                    isDragging
+                      ? 'border-indigo-400 bg-indigo-500/10 scale-[1.01]'
+                      : 'border-white/10 bg-white/[0.015] hover:border-indigo-500/40 hover:bg-white/[0.03]'
+                  }`}
               >
-                <span className="group-hover:text-glow transition-all duration-700">{t.title}</span>
-              </h1>
-              <p className="text-gray-400 text-lg md:text-2xl max-w-2xl mx-auto font-medium leading-relaxed break-words px-4 animate-in fade-in stagger-2 opacity-80">
-                {t.description}
-              </p>
-            </div>
-          </div>
-
-          <div 
-            onClick={handlePasteClick}
-            className={`relative group transition-all duration-1000 rounded-2xl md:rounded-[2.5rem] overflow-hidden border border-white/5 mx-auto w-full animate-in zoom-in stagger-2 cursor-pointer hover:shadow-[0_0_50px_rgba(79,70,229,0.15)]
-              ${images.length > 0 ? 'bg-white/[0.03] shadow-[0_100px_150px_rgba(0,0,0,0.8)] ring-1 ring-white/10' : 'bg-white/[0.01] hover:bg-white/[0.03] border-dashed border-white/10'}
-              ${isFocused && images.length === 0 ? 'ring-2 ring-indigo-500/20' : ''}`}
-          >
-            {images.length > 0 ? (
-              <div className="p-8 md:p-16 space-y-16 animate-in fade-in duration-700">
-                <div className="flex flex-col items-center space-y-4">
-                  <h2 className="text-3xl font-black text-white">{t.imagesInCollection} ({images.length})</h2>
-                  <p className="text-indigo-400 font-bold">{t.pasteMore}</p>
+                <div
+                  className={`w-20 h-20 md:w-24 md:h-24 rounded-3xl flex items-center justify-center mb-8 transition-all duration-300 ${
+                    isDragging ? 'bg-indigo-500/20 text-indigo-300 scale-110' : 'bg-white/5 text-indigo-400'
+                  }`}
+                >
+                  <ClipboardPaste className="w-9 h-9 md:w-11 md:h-11" strokeWidth={1.5} />
                 </div>
-                <div className={`grid gap-12 ${images.length === 1 ? 'grid-cols-1' : 'grid-cols-1 lg:grid-cols-2'}`}>
-                   {images.map((img, idx) => (
-                     <motion.div 
-                        key={img.id} 
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                        transition={{ duration: 0.4, delay: idx * 0.1 }}
-                        className="relative group/card glass-card rounded-2xl md:rounded-3xl p-8 md:p-10 flex flex-col space-y-8"
-                      >
-                        <div className="relative aspect-video flex items-center justify-center overflow-hidden rounded-3xl bg-black/60 ring-1 ring-white/5">
-                          <img 
-                            src={img.url} 
-                            alt={`${t.title} - ${t.pastedAt} ${img.timestamp.toLocaleTimeString()}`} 
-                            className="max-h-full max-w-full object-contain transition-transform duration-1000 group-hover/card:scale-105"
-                          />
 
-                          <div className="absolute top-3 right-3 md:top-6 md:right-6 flex space-x-2 md:space-x-3 opacity-100 lg:opacity-0 lg:group-hover/card:opacity-100 transition-all duration-300 translate-y-0 lg:translate-y-2 lg:group-hover/card:translate-y-0 z-30">
-                             <button 
-                              onClick={(e) => { 
-                                e.stopPropagation(); 
-                                setExpandedImage(img); 
-                                if (typeof window !== 'undefined') {
+                <p className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">
+                  {t.pastePrompt}
+                </p>
+                <p className="text-gray-500 text-sm md:text-base font-medium mb-8">{L.drop}</p>
+
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePasteClick();
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm transition-all active:scale-95 shadow-lg shadow-indigo-600/30 cursor-pointer"
+                  >
+                    <ClipboardPaste className="w-4 h-4" /> {L.paste}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" /> {L.select}
+                  </button>
+                </div>
+
+                <p className="mt-6 text-[11px] text-gray-600 font-bold uppercase tracking-[0.3em]">
+                  {t.waitingForImage}
+                </p>
+              </div>
+            ) : (
+              /* Gallery */
+              <div className="space-y-10">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <h2 className="text-2xl md:text-3xl font-black text-white">
+                    {t.imagesInCollection} <span className="text-indigo-400">({images.length})</span>
+                  </h2>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" /> {t.pasteMore}
+                  </button>
+                </div>
+
+                <div className={`grid gap-6 ${images.length === 1 ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}>
+                  <AnimatePresence>
+                    {images.map((img) => (
+                      <motion.div
+                        key={img.id}
+                        initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3 }}
+                        className="group glass-card rounded-3xl p-5 flex flex-col gap-5"
+                      >
+                        <div className="relative aspect-video flex items-center justify-center overflow-hidden rounded-2xl bg-black/50 ring-1 ring-white/5">
+                          <img
+                            src={img.url}
+                            alt={`${t.title} — ${img.timestamp.toLocaleTimeString()}`}
+                            loading="lazy"
+                            className="max-h-full max-w-full object-contain"
+                          />
+                          <div className="absolute top-3 right-3 flex gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => {
+                                setExpandedImage(img);
+                                if (typeof window !== 'undefined')
                                   window.history.pushState({ view: 'expanded' }, '');
-                                }
                               }}
-                              className="p-2.5 md:p-4 bg-white/10 hover:bg-white text-white hover:text-black rounded-xl md:rounded-2xl shadow-2xl backdrop-blur-3xl border border-white/20 transition-all hover:scale-110 active:scale-90 cursor-pointer"
+                              aria-label="Expand"
+                              className="p-2.5 bg-white/10 hover:bg-white hover:text-black text-white rounded-xl backdrop-blur-xl border border-white/20 transition-all active:scale-90 cursor-pointer"
                             >
-                              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5" /></svg>
+                              <Maximize2 className="w-4 h-4" />
                             </button>
-                            <button 
-                              onClick={(e) => { e.stopPropagation(); removeImage(img.id); }}
-                              className="p-2.5 md:p-4 bg-red-500/20 hover:bg-red-500 text-white rounded-xl md:rounded-2xl shadow-2xl backdrop-blur-3xl border border-red-500/40 transition-all hover:scale-110 active:scale-90 cursor-pointer"
+                            <button
+                              onClick={() => removeImage(img.id)}
+                              aria-label="Remove"
+                              className="p-2.5 bg-red-500/20 hover:bg-red-500 text-white rounded-xl backdrop-blur-xl border border-red-500/40 transition-all active:scale-90 cursor-pointer"
                             >
-                              <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </div>
-                        
-                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6 px-2">
-                           <div className="text-left w-full sm:w-auto">
-                              <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2">{t.pastedAt}</p>
-                              <p className="text-white font-black text-2xl tracking-tight">{img.timestamp.toLocaleTimeString()}</p>
-                           </div>
-                           <button 
-                             onClick={() => downloadImage(img)}
-                             className="w-full sm:w-auto px-6 py-3 bg-white text-black font-black text-lg rounded-xl hover:bg-indigo-500 hover:text-white transition-all flex items-center justify-center space-x-2 shadow-[0_10px_20px_-5px_rgba(255,255,255,0.1)] active:scale-95 shrink-0 cursor-pointer"
-                           >
-                             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                             <span>{t.downloadBtn}</span>
-                           </button>
+
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="text-left">
+                            <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.25em] mb-1">
+                              {t.pastedAt}
+                            </p>
+                            <p className="text-white font-bold text-lg">{img.timestamp.toLocaleTimeString()}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => copyImage(img)}
+                              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                            >
+                              {copiedId === img.id ? (
+                                <>
+                                  <Check className="w-4 h-4 text-green-400" /> {L.copied}
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="w-4 h-4" /> {L.copy}
+                                </>
+                              )}
+                            </button>
+                            <button
+                              onClick={() => downloadImage(img)}
+                              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-black hover:bg-indigo-500 hover:text-white font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                            >
+                              <Download className="w-4 h-4" /> {t.downloadBtn}
+                            </button>
+                          </div>
                         </div>
-                     </motion.div>
-                   ))}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
                 </div>
 
-                <div className="flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8 border-t border-white/5 pt-16">
-                   <button 
-                      onClick={resetApp}
-                      className="w-full sm:w-auto px-14 py-6 bg-red-500/5 hover:bg-red-500/20 text-red-500 border border-red-500/20 rounded-3xl font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 cursor-pointer"
+                {/* Gallery actions */}
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 border-t border-white/5 pt-10">
+                  <button
+                    onClick={resetApp}
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-red-500/5 hover:bg-red-500/20 text-red-400 border border-red-500/20 font-bold uppercase tracking-wider text-sm transition-all active:scale-95 cursor-pointer"
+                  >
+                    {t.clearBtn}
+                  </button>
+
+                  {images.length > 1 && (
+                    <button
+                      onClick={downloadAllImages}
+                      disabled={isZipping}
+                      className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white border border-green-500/20 font-bold uppercase tracking-wider text-sm transition-all active:scale-95 inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-wait"
                     >
-                      {t.clearBtn}
+                      {isZipping ? <Loader2 className="w-5 h-5 animate-spin" /> : <Package className="w-5 h-5" />}
+                      {t.downloadAllBtn}
                     </button>
-                    
-                    {images.length > 1 && (
-                      <button 
-                        onClick={downloadAllImages}
-                        className="w-full sm:w-auto px-14 py-6 bg-green-500/10 hover:bg-green-500 text-green-400 hover:text-white border border-green-500/20 rounded-3xl font-black text-xl tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link cursor-pointer"
-                      >
-                        <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                        <span>{t.downloadAllBtn}</span>
-                      </button>
-                    )}
-                    
-                    <button 
-                      onClick={async () => {
-                        try {
-                          const dataToTransfer = await Promise.all(images.map(async (img) => {
-                            const response = await fetch(img.url);
-                            const blob = await response.blob();
-                            return new Promise<{name: string, type: string, data: string}>((resolve) => {
-                              const reader = new FileReader();
-                              reader.onloadend = () => resolve({
-                                name: img.name,
-                                type: blob.type,
-                                data: reader.result as string
-                              });
-                              reader.readAsDataURL(blob);
-                            });
-                          }));
-                          localStorage.setItem('pastesnap_transfer', JSON.stringify(dataToTransfer));
-                          window.location.href = `/${lang.toLowerCase()}/formatflow`;
-                        } catch (e) {
-                          window.location.href = `/${lang.toLowerCase()}/formatflow`;
-                        }
-                      }}
-                      className="w-full lg:w-auto px-10 py-5 bg-indigo-600/10 hover:bg-indigo-500 text-indigo-400 hover:text-white border border-indigo-500/20 rounded-3xl font-black text-lg tracking-widest uppercase transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center justify-center space-x-4 group/link cursor-pointer"
-                    >
-                      <svg className="w-7 h-7 group-hover/link:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
-                      <span>{t.convertBtn}</span>
-                    </button>
-                </div>
-              </div>
-            ) : (
-              <div className="py-32 md:py-48 px-8 md:px-12 flex flex-col items-center space-y-12 animate-in fade-in duration-1000">
-                <div className="relative">
-                  <div className={`absolute inset-0 bg-indigo-500/20 blur-[80px] rounded-full transition-all duration-1000 ${isFocused ? 'scale-125 opacity-40' : 'scale-100 opacity-20'}`}></div>
-                  <div className={`w-36 md:w-52 h-36 md:h-52 glass-card rounded-[4rem] md:rounded-[5rem] flex items-center justify-center transition-all duration-1000 relative z-10 overflow-hidden ${isFocused ? 'border-indigo-500/40 shadow-[0_0_50px_rgba(99,102,241,0.2)]' : 'border-white/5'}`}>
-                    <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                    <svg className={`w-20 md:w-24 h-20 md:h-24 transition-colors duration-1000 animate-float ${isFocused ? 'text-indigo-400' : 'text-gray-700'}`} fill="none" stroke="currentColor" strokeWidth="1.2" viewBox="0 0 24 24">
-                      <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                  </div>
-                </div>
-                <div className="space-y-8">
-                  <p className="text-4xl md:text-7xl font-black text-white tracking-tighter leading-tight px-4 max-w-4xl mx-auto">{t.pastePrompt}</p>
-                  <p className="text-indigo-400/60 text-xs font-bold uppercase tracking-[0.4em] animate-pulse">{t.waitingForImage}</p>
+                  )}
+
+                  <button
+                    onClick={convertInFormatFlow}
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-indigo-600/10 hover:bg-indigo-500 text-indigo-400 hover:text-white border border-indigo-500/20 font-bold uppercase tracking-wider text-sm transition-all active:scale-95 inline-flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    {t.convertBtn} <ArrowRight className="w-5 h-5" />
+                  </button>
                 </div>
               </div>
             )}
-          </div>
+          </section>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-16 pt-16">
+          {/* ---------- Features ---------- */}
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-4">
             {t.features.map((feature, idx) => (
-              <motion.div 
-                key={idx} 
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.2 }}
-                className="p-8 md:p-12 glass-card rounded-3xl text-left group hover:-translate-y-4 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-300"
+              <div
+                key={idx}
+                className="p-7 glass-card rounded-3xl text-left transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-indigo-500/10"
               >
-                <div className="text-6xl mb-8 group-hover:scale-110 transition-transform duration-700 origin-left inline-block">
-                  {['⚡', '🛡️', '✨'][idx]}
-                </div>
-                <h3 className="text-white text-2xl md:text-3xl font-black mb-5 tracking-tight group-hover:text-indigo-400 transition-colors">{feature.title}</h3>
-                <p className="text-gray-500 text-lg md:text-xl leading-relaxed font-medium">{feature.text}</p>
-              </motion.div>
+                <div className="text-3xl mb-4">{['⚡', '🛡️', '✨'][idx]}</div>
+                <h3 className="text-white text-lg font-bold mb-2 tracking-tight">{feature.title}</h3>
+                <p className="text-gray-500 text-sm leading-relaxed">{feature.text}</p>
+              </div>
             ))}
-          </div>
+          </section>
 
-          <div className="pt-24 md:pt-40 space-y-32 md:space-y-40 text-left">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
-              <div className="space-y-12 animate-in slide-in-from-bottom">
-                <div className="inline-block px-4 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.3em] border border-indigo-500/20">
+          {/* ---------- SEO content ---------- */}
+          <section className="pt-8 space-y-16 text-left">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+              <div className="space-y-5">
+                <span className="inline-block px-3 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 text-[10px] font-black uppercase tracking-[0.25em] border border-indigo-500/20">
                   {t.seoKeywords[0]}
-                </div>
-                <h2 className="text-4xl md:text-7xl font-black text-white leading-[1.05] tracking-tighter">
+                </span>
+                <h2 className="text-3xl md:text-4xl font-black text-white leading-tight tracking-tight">
                   {t.seoHeroTitle}
                 </h2>
-                <p className="text-gray-400 text-lg md:text-2xl leading-relaxed font-medium">
-                  {t.seoHeroText}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-4">
+                <p className="text-gray-400 text-base md:text-lg leading-relaxed">{t.seoHeroText}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   {t.seoHeroList.map((item, i) => (
-                    <div key={i} className="flex items-center space-x-4 p-5 rounded-3xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
-                      <div className="w-10 h-10 shrink-0 bg-indigo-500/20 text-indigo-400 rounded-2xl flex items-center justify-center text-lg group-hover:rotate-12 transition-transform">✓</div>
-                      <span className="text-gray-300 font-bold text-lg">{item}</span>
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-4 rounded-2xl bg-white/5 border border-white/5"
+                    >
+                      <span className="w-7 h-7 shrink-0 bg-indigo-500/20 text-indigo-400 rounded-xl flex items-center justify-center text-sm">
+                        ✓
+                      </span>
+                      <span className="text-gray-300 font-semibold text-sm">{item}</span>
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="relative group animate-in slide-in-from-right stagger-2">
-                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/20 to-pink-500/20 blur-[100px] rounded-full group-hover:opacity-100 opacity-60 transition-opacity"></div>
-                 <div className="relative glass-card rounded-[4rem] p-12 md:p-24 pb-24 md:pb-40 min-h-[500px] w-full flex flex-col items-center justify-center space-y-12 text-center overflow-hidden">
-                    <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-colors"></div>
-                    <div className="text-9xl md:text-[10rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">🚀</div>
-                    <div className="space-y-8 max-w-sm px-4">
-                      <h3 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight">{t.seoBrowserSpeedTitle}</h3>
-                      <p className="text-gray-400 font-medium text-lg md:text-xl leading-relaxed">{t.seoBrowserSpeedText}</p>
-                    </div>
-                 </div>
+              <div className="glass-card rounded-3xl p-12 min-h-[320px] flex flex-col items-center justify-center text-center gap-6">
+                <div className="text-7xl animate-float">🚀</div>
+                <div className="space-y-3 max-w-sm">
+                  <h3 className="text-2xl font-black text-white tracking-tight">{t.seoBrowserSpeedTitle}</h3>
+                  <p className="text-gray-400 text-base leading-relaxed">{t.seoBrowserSpeedText}</p>
+                </div>
               </div>
             </div>
 
-            <div className="p-8 md:p-24 rounded-3xl md:rounded-[2.5rem] bg-[#0c0e1a] border border-white/5 space-y-16 animate-in slide-in-from-bottom">
-               <div className="max-w-4xl space-y-6">
-                 <h3 className="text-3xl md:text-6xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h3>
-                 <div className="h-2 w-24 bg-indigo-500 rounded-full"></div>
-               </div>
-               
-               <div className="space-y-20">
-                  <div className="space-y-8">
-                    <div className="text-white text-lg md:text-xl font-black uppercase tracking-[0.4em] opacity-30 flex items-center gap-3">
-                      <span className="w-8 h-px bg-white/20"></span>
-                      {t.seoKeywordsTitle}
-                    </div>
-                    <div className="flex flex-wrap gap-3">
-                      {t.seoKeywords.map(k => (
-                        <span key={k} className="px-5 py-3 glass-card rounded-2xl text-gray-400 text-sm font-bold hover:text-white transition-colors cursor-default whitespace-nowrap">{k}</span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20">
-                    <div className="space-y-8">
-                      <div className="text-white text-lg md:text-xl font-black uppercase tracking-[0.4em] opacity-30 flex items-center gap-3">
-                        <span className="w-8 h-px bg-white/20"></span>
-                        {t.seoUseCaseTitle}
-                      </div>
-                      <p className="text-gray-400 text-lg md:text-xl leading-relaxed font-medium">{t.seoUseCaseText}</p>
-                    </div>
-                    <div className="space-y-8">
-                      <div className="text-white text-lg md:text-xl font-black uppercase tracking-[0.4em] opacity-30 flex items-center gap-3">
-                        <span className="w-8 h-px bg-white/20"></span>
-                        {t.seoPrivacyTitle}
-                      </div>
-                      <p className="text-gray-400 text-lg md:text-xl leading-relaxed font-medium">{t.seoPrivacyText}</p>
-                    </div>
-                  </div>
-               </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 p-8 md:p-12 rounded-3xl bg-[#0a0c16] border border-white/5">
+              <div className="space-y-3">
+                <h3 className="text-white text-sm font-black uppercase tracking-[0.3em] opacity-40">
+                  {t.seoUseCaseTitle}
+                </h3>
+                <p className="text-gray-400 text-base leading-relaxed">{t.seoUseCaseText}</p>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-white text-sm font-black uppercase tracking-[0.3em] opacity-40">
+                  {t.seoPrivacyTitle}
+                </h3>
+                <p className="text-gray-400 text-base leading-relaxed">{t.seoPrivacyText}</p>
+              </div>
             </div>
 
-            {/* FAQ Section */}
-            <section className="max-w-4xl mx-auto w-full space-y-16 py-20">
-              <div className="text-center space-y-4">
-                <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight">{t.faqTitle}</h2>
-                <div className="h-1.5 w-24 bg-indigo-500 mx-auto rounded-full"></div>
-              </div>
-              <div className="grid gap-6">
+            {/* FAQ */}
+            <div className="max-w-3xl mx-auto w-full space-y-8">
+              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight text-center">
+                {t.faqTitle}
+              </h2>
+              <div className="grid gap-4">
                 {t.faq.map((item, idx) => (
-                  <motion.div 
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="glass-card rounded-3xl p-8 text-left space-y-4 hover:border-indigo-500/30 transition-colors group"
-                  >
-                    <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition-colors flex items-center gap-3">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-sm">Q</span>
+                  <div key={idx} className="glass-card rounded-2xl p-6 space-y-2">
+                    <h3 className="text-base font-bold text-white flex items-center gap-3">
+                      <span className="shrink-0 w-7 h-7 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-xs">
+                        Q
+                      </span>
                       {item.question}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed pl-11">
-                      {item.answer}
-                    </p>
-                  </motion.div>
+                    <p className="text-gray-400 text-sm leading-relaxed pl-10">{item.answer}</p>
+                  </div>
                 ))}
               </div>
-            </section>
+            </div>
 
-            {/* Keywords Section for SEO */}
-            <section className="max-w-4xl mx-auto w-full space-y-8 py-10 opacity-60">
-              <h2 className="text-sm font-black uppercase tracking-[0.2em] text-gray-500 text-center">{t.seoKeywordsTitle}</h2>
-              <div className="flex flex-wrap justify-center gap-3">
+            {/* Keyword cloud */}
+            <div className="max-w-3xl mx-auto w-full space-y-5 opacity-70">
+              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-gray-500 text-center">
+                {t.seoKeywordsTitle}
+              </h2>
+              <div className="flex flex-wrap justify-center gap-2">
                 {t.seoKeywords.map((keyword, idx) => (
-                  <span key={idx} className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400 hover:bg-indigo-500/10 hover:border-indigo-500/20 hover:text-indigo-400 transition-all cursor-default">
+                  <span
+                    key={idx}
+                    className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-gray-400"
+                  >
                     {keyword}
                   </span>
                 ))}
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
+
+          {/* Bloque AdSense Horizontal — al final, antes del footer */}
+          <AdBanner id="adsense-pastesnap-bottom" />
         </div>
       </main>
 
-      {expandedImage && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-10 bg-black/98 backdrop-blur-3xl animate-in fade-in duration-300">
-          <div className="relative w-full h-full flex items-center justify-center animate-in zoom-in duration-500">
-            <img 
-              src={expandedImage.url} 
-              alt="Expanded view" 
-              className="max-w-full max-h-full object-contain shadow-[0_50px_200px_rgba(0,0,0,1)] rounded-2xl ring-1 ring-white/10"
-            />
-            <button 
-              onClick={() => setExpandedImage(null)}
-              className="absolute top-4 right-4 md:top-10 md:right-10 p-6 text-white/50 hover:text-white transition-all scale-125 md:scale-150 group"
-            >
-              <svg className="w-10 h-10 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full px-8 flex justify-center">
-               <button 
-                onClick={() => downloadImage(expandedImage)}
-                className="w-full max-w-sm px-14 py-6 bg-white text-black font-black text-2xl rounded-3xl hover:bg-indigo-500 hover:text-white hover:scale-105 active:scale-95 transition-all flex items-center justify-center space-x-5 shadow-[0_40px_80px_rgba(0,0,0,0.5)]"
+      {/* Expanded image lightbox */}
+      <AnimatePresence>
+        {expandedImage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-10 bg-black/95 backdrop-blur-2xl"
+          >
+            <div className="relative w-full h-full flex items-center justify-center">
+              <img
+                src={expandedImage.url}
+                alt="Expanded view"
+                className="max-w-full max-h-full object-contain rounded-2xl ring-1 ring-white/10"
+              />
+              <button
+                onClick={() => setExpandedImage(null)}
+                aria-label="Close"
+                className="absolute top-4 right-4 md:top-8 md:right-8 p-4 text-white/60 hover:text-white transition-all cursor-pointer"
               >
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                <span>{t.downloadBtn}</span>
+                <X className="w-8 h-8" />
               </button>
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+                <button
+                  onClick={() => copyImage(expandedImage)}
+                  className="px-6 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl inline-flex items-center gap-2 backdrop-blur-xl border border-white/20 transition-all active:scale-95 cursor-pointer"
+                >
+                  {copiedId === expandedImage.id ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
+                  {copiedId === expandedImage.id ? L.copied : L.copy}
+                </button>
+                <button
+                  onClick={() => downloadImage(expandedImage)}
+                  className="px-8 py-4 bg-white text-black font-black rounded-2xl hover:bg-indigo-500 hover:text-white inline-flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+                >
+                  <Download className="w-5 h-5" /> {t.downloadBtn}
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {showScrollTop && (
-        <button 
-          onClick={scrollToTop}
-          className="fixed bottom-10 right-10 z-[200] w-16 h-16 bg-white text-black rounded-3xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 hover:-translate-y-3 cursor-pointer group animate-in slide-in-from-bottom stagger-1"
-        >
-          <svg className="w-8 h-8 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" /></svg>
-        </button>
-      )}
+      {/* Scroll to top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            onClick={scrollToTop}
+            aria-label="Scroll to top"
+            className="fixed bottom-8 right-8 z-[200] w-14 h-14 bg-white text-black rounded-2xl shadow-2xl flex items-center justify-center hover:scale-110 active:scale-90 transition-all cursor-pointer"
+          >
+            <ArrowUp className="w-6 h-6" />
+          </motion.button>
+        )}
+      </AnimatePresence>
 
       <CookieConsent t={t} />
 
-      <LegalModal 
-        isOpen={!!activeModal} 
-        onClose={() => setActiveModal(null)} 
-        title={activeModal === 'privacy' ? t.privacyPolicy : activeModal === 'terms' ? t.termsOfService : t.cookiePolicy}
-        content={
-          (activeModal === 'privacy' ? t.privacyContent : activeModal === 'terms' ? t.termsContent : t.cookiesContent)
-            .split('\n')
-            .map((paragraph, index) => <p key={index}>{paragraph}</p>)
+      <LegalModal
+        isOpen={!!activeModal}
+        onClose={() => setActiveModal(null)}
+        title={
+          activeModal === 'privacy'
+            ? t.privacyPolicy
+            : activeModal === 'terms'
+            ? t.termsOfService
+            : t.cookiePolicy
         }
+        content={(activeModal === 'privacy'
+          ? t.privacyContent
+          : activeModal === 'terms'
+          ? t.termsContent
+          : t.cookiesContent
+        )
+          .split('\n')
+          .map((paragraph, index) => <p key={index}>{paragraph}</p>)}
         t={t}
       />
 
-      <footer className="py-24 md:py-48 border-t border-white/5 flex flex-col items-center space-y-16 relative z-10 bg-[#020308] w-full">
-        <div className="flex flex-col items-center space-y-16 max-w-5xl px-8 text-center">
-          <div className="text-gray-600 text-xs font-black tracking-[0.6em] uppercase opacity-40">
+      {/* Footer */}
+      <footer className="py-20 md:py-28 border-t border-white/5 flex flex-col items-center space-y-12 relative z-10 bg-[#020308] w-full">
+        <div className="flex flex-col items-center space-y-10 max-w-5xl px-8 text-center">
+          <div className="text-gray-600 text-xs font-black tracking-[0.5em] uppercase opacity-40">
             {t.footerCredit}
           </div>
-          
-          <a 
+
+          <a
             href={`/${lang.toLowerCase()}/`}
-            className="flex items-center space-x-6 group scale-[1.1] md:scale-[1.6] outline-none shrink-0"
+            className="flex items-center space-x-4 group scale-110 outline-none shrink-0"
           >
             <div className="w-12 h-12 bg-indigo-600 rounded-[1.2rem] flex items-center justify-center group-hover:rotate-12 transition-transform shadow-[0_15px_30px_-5px_rgba(79,70,229,0.5)]">
-              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+              <svg className="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
             </div>
-            <div className="flex items-center space-x-1 font-black text-4xl tracking-tighter">
+            <div className="flex items-center space-x-1 font-black text-3xl tracking-tighter">
               <span className="text-white transition-all group-hover:text-indigo-400">oLove</span>
-              <span className="text-pink-500 group-hover:translate-x-1 group-hover:text-white transition-all">Tools</span>
+              <span className="text-pink-500 group-hover:translate-x-1 group-hover:text-white transition-all">
+                Tools
+              </span>
             </div>
           </a>
-          
-          <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl">
+
+          <p className="text-gray-500 text-base md:text-lg font-medium leading-relaxed max-w-2xl">
             {t.footerTagline}
           </p>
 
-          <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-gray-800 font-black text-[11px] md:text-xs tracking-widest pt-12 uppercase border-t border-white/5 w-full">
-            <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
-            
-            <a 
-              href={`/${lang.toLowerCase()}/privacy`} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
-            >
+          <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-4 gap-x-4 md:gap-x-8 text-gray-700 font-black text-[11px] md:text-xs tracking-widest pt-10 uppercase border-t border-white/5 w-full">
+            <span className="w-full md:w-auto mb-2 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
+            <a href={`/${lang.toLowerCase()}/privacy`} className="hover:text-indigo-400 transition-all">
               {legalTranslations[lang]?.nav.privacy || 'Privacy Policy'}
             </a>
-            
-            <a 
-              href={`/${lang.toLowerCase()}/terms`} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
-            >
+            <a href={`/${lang.toLowerCase()}/terms`} className="hover:text-indigo-400 transition-all">
               {legalTranslations[lang]?.nav.terms || 'Terms of Service'}
             </a>
-            
-            <a 
-              href={`/${lang.toLowerCase()}/cookies`} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
-            >
+            <a href={`/${lang.toLowerCase()}/cookies`} className="hover:text-indigo-400 transition-all">
               {legalTranslations[lang]?.nav.cookies || 'Cookie Policy'}
             </a>
-
-            <a 
-              href={`/${lang.toLowerCase()}/about`} 
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
-            >
+            <a href={`/${lang.toLowerCase()}/about`} className="hover:text-indigo-400 transition-all">
               {legalTranslations[lang]?.nav.about || 'About'}
             </a>
-            
-            <button 
+            <button
               onClick={() => {
                 navigator.clipboard.writeText(t.emailAddress);
                 const button = document.getElementById('copy-email-btn');
@@ -619,7 +769,7 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                 }
               }}
               id="copy-email-btn"
-              className="w-full md:w-auto py-3 md:py-0 hover:text-indigo-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer rounded-xl"
+              className="hover:text-indigo-400 transition-all cursor-pointer"
             >
               {t.emailAddress}
             </button>

@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
 import { PRESET_DATA } from './utils/presetData';
 import { parseCSV, type DataSet } from './utils/dataParser';
@@ -224,6 +225,8 @@ const GraphFlow: React.FC<GraphFlowProps> = ({ lang, dictionary }) => {
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={handleReset} t={t} />
 
       <main className="flex-1 pt-28 md:pt-32 pb-8 px-4 md:px-8">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-graph-flow-top" />
         <div className="max-w-7xl mx-auto space-y-6">
 
           {/* Hero */}
@@ -522,6 +525,8 @@ const GraphFlow: React.FC<GraphFlowProps> = ({ lang, dictionary }) => {
             <p className="text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">{t.seoHeroText}</p>
           </div>
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-graph-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(modal) => setActiveModal(modal)} />

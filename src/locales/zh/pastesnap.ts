@@ -1,4 +1,9 @@
 export default {
+  "pasteBtn": "粘贴",
+  "selectImage": "选择图片",
+  "dropPrompt": "拖放、粘贴或选择图片",
+  "copyBtn": "复制",
+  "copiedBtn": "已复制！",
   "title": "PasteSnap",
   "description": "从剪贴板保存图像的最快方法。",
   "pastePrompt": "按 Ctrl + V 粘贴图像",

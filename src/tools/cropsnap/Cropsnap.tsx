@@ -24,6 +24,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { AspectRatioPreset, OutputFormat } from './types';
 
 interface CropsnapProps {
@@ -372,14 +373,13 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
   return (
     <div className="min-h-screen flex flex-col bg-[#07050a] text-slate-100 selection:bg-rose-500/30 overflow-x-hidden font-sans">
       {/* Background Orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-[-25%] left-[-15%] w-[80%] h-[80%] bg-rose-950/10 blur-[180px] rounded-full animate-soft-pulse" />
-        <div className="absolute bottom-[-25%] right-[-15%] w-[70%] h-[70%] bg-red-950/10 blur-[180px] rounded-full animate-soft-pulse" style={{ animationDelay: '3s' }} />
-      </div>
+      
 
       <Header currentLang={lang} onLanguageChange={(newLang) => window.location.href = `/${newLang.toLowerCase()}/cropsnap`} onReset={handleReset} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-cropsnap-top" />
         <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
@@ -473,7 +473,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
 
                   <div className="flex items-center justify-between text-xs text-slate-500 font-semibold border-t border-white/5 pt-4">
                     <span>File weight: {originalImage ? formatBytes(originalImage.size) : '0 B'}</span>
-                    <span>Selection ratio: {imageSize.width} × {imageSize.height} px</span>
+                    <span>Selection ratio: {imageSize.width} Ãƒâ€” {imageSize.height} px</span>
                   </div>
                 </div>
               )}
@@ -510,7 +510,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
 
               {/* Sidebar Content Panel */}
               <div className="glass-card rounded-3xl p-6 text-left space-y-5 min-h-[380px] relative overflow-hidden flex flex-col justify-between">
-                <div className="absolute -top-24 -right-24 w-48 h-48 bg-rose-500/5 blur-[80px] rounded-full pointer-events-none" />
+                
 
                 {imageUrl === '' ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-500 space-y-2 py-12">
@@ -586,14 +586,14 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
                               onClick={() => handleFlip('horiz')}
                               className="py-3 px-4 bg-[#060408] border border-white/5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer outline-none"
                             >
-                              <span className="text-rose-400 font-bold">↔</span>
+                              <span className="text-rose-400 font-bold">Ã¢â€ â€</span>
                               <span>{t.btnFlipHoriz}</span>
                             </button>
                             <button
                               onClick={() => handleFlip('vert')}
                               className="py-3 px-4 bg-[#060408] border border-white/5 hover:bg-white/5 rounded-xl text-slate-300 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer outline-none"
                             >
-                              <span className="text-rose-400 font-bold">↕</span>
+                              <span className="text-rose-400 font-bold">Ã¢â€ â€¢</span>
                               <span>{t.btnFlipVert}</span>
                             </button>
                           </div>
@@ -784,9 +784,9 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
               </div>
 
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-rose-500/20 to-pink-500/20 blur-[100px] rounded-full group-hover:opacity-100 opacity-60 transition-opacity"></div>
+                
                 <div className="relative glass-card rounded-[4rem] p-12 py-20 min-h-[420px] w-full flex flex-col items-center justify-center space-y-8 text-center overflow-hidden">
-                  <div className="text-[7.5rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">✂️</div>
+                  <div className="text-[7.5rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">Ã¢Å“â€šÃ¯Â¸Â</div>
                   <div className="space-y-4 max-w-sm px-4">
                     <h3 className="text-2xl font-black text-white tracking-tight leading-tight">{t.seoBrowserSpeedTitle}</h3>
                     <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
@@ -873,6 +873,8 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
           </div>
 
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-cropsnap-bottom" />
       </main>
 
       {/* Floating Scroll Top button */}

@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { useTranslation, Language } from '../../locales/dictionary';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { Copy, Check, RotateCcw, Sliders, Palette, Layout, Settings, Sparkles, Plus, Trash, Layers, Code } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -292,12 +293,14 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={handleReset} t={t} />
 
       <main className="max-w-7xl mx-auto px-4 md:px-12 pt-36 pb-20 w-full flex-1">
+        {/* Bloque AdSense Horizontal */}
+        <AdBanner id="adsense-css-designer-top" />
         <div className="flex flex-col space-y-12">
           
           {/* Hero Header */}
           <div className="text-center md:text-left max-w-3xl">
             <span className="px-4 py-1.5 bg-violet-500/10 text-violet-400 text-xs font-black uppercase tracking-wider rounded-full border border-violet-500/20">
-              {t.title} ⚡ Playground
+              {t.title} âš¡ Playground
             </span>
             <h1 className="text-4xl md:text-6xl font-black text-white mt-4 font-outfit tracking-tight leading-tight">
               {t.seoHeroTitle}
@@ -468,7 +471,7 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
                       </div>
                     </div>
 
-                    {gradType === 'linear' && renderSlider(t.gradient_angle, gradAngle, 0, 360, 1, setGradAngle, "°")}
+                    {gradType === 'linear' && renderSlider(t.gradient_angle, gradAngle, 0, 360, 1, setGradAngle, "Â°")}
 
                     {/* Color Stops Manager */}
                     <div className="space-y-4">
@@ -571,12 +574,12 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.fancy_radius}</label>
                         <div className="grid grid-cols-2 gap-2">
                           {[
-                            { label: 'Oval Orgánico', val: '30% 70% 70% 30% / 30% 30% 70% 70%' },
+                            { label: 'Oval OrgÃ¡nico', val: '30% 70% 70% 30% / 30% 30% 70% 70%' },
                             { label: 'Hoja Curva', val: '60% 40% 30% 70% / 60% 30% 70% 40%' },
                             { label: 'Gota de Agua', val: '50% 50% 50% 50% / 10% 90% 10% 90%' },
                             { label: 'Piedra Suave', val: '69% 31% 66% 34% / 21% 30% 70% 79%' },
                             { label: 'Huevo / Oval', val: '50% 50% 50% 50% / 30% 30% 70% 70%' },
-                            { label: 'Cápsula', val: '100px 100px 100px 100px' }
+                            { label: 'CÃ¡psula', val: '100px 100px 100px 100px' }
                           ].map((preset) => (
                             <button
                               key={preset.val}
@@ -654,8 +657,8 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
                   {/* Mesh Gradient blobs behind cards */}
                   {bgStyle === 'mesh' && (
                     <>
-                      <div className="absolute top-1/4 left-1/4 w-48 h-48 rounded-full bg-violet-600/30 filter blur-[40px] animate-pulse" />
-                      <div className="absolute bottom-1/4 right-1/4 w-52 h-52 rounded-full bg-pink-600/20 filter blur-[45px] animate-pulse" />
+                      
+                      
                     </>
                   )}
 
@@ -686,7 +689,7 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
                 <div className="flex justify-between items-center">
                   <span className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
                     <Code className="w-4 h-4 text-violet-400" />
-                    Generador de Código
+                    Generador de CÃ³digo
                   </span>
                   
                   {/* Format selector */}
@@ -744,6 +747,8 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
 
           </div>
         </div>
+      {/* Bloque AdSense Horizontal */}
+      <AdBanner id="adsense-css-designer-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(m) => setActiveModal(m)} />
@@ -753,9 +758,9 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
         isOpen={activeModal !== null} 
         onClose={() => setActiveModal(null)} 
         title={
-          activeModal === 'privacy' ? t.privacyPolicy || 'Política de Privacidad' :
-          activeModal === 'terms' ? t.termsOfService || 'Términos de Servicio' :
-          t.cookiePolicy || 'Política de Cookies'
+          activeModal === 'privacy' ? t.privacyPolicy || 'PolÃ­tica de Privacidad' :
+          activeModal === 'terms' ? t.termsOfService || 'TÃ©rminos de Servicio' :
+          t.cookiePolicy || 'PolÃ­tica de Cookies'
         }
         content={
           activeModal === 'privacy' ? t.privacyContent :
