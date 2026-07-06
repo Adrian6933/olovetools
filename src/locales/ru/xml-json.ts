@@ -1,11 +1,11 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | Конвертируйте XML в JSON и JSON в XML мгновенно 100% локально в вашем браузере.",
+  "title": "XML to JSON",
+  "seo_title": "XML to JSON | Конвертируйте XML в JSON и JSON в XML мгновенно 100% локально в вашем браузере.",
   "seo_description": "Конвертируйте XML в JSON и JSON в XML мгновенно 100% локально в вашем браузере.",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "Конвертируйте XML в JSON и JSON в XML мгновенно 100% локально в вашем браузере.",
-  "label_xml_to_json": "XML \u2192 JSON",
-  "label_json_to_xml": "JSON \u2192 XML",
+  "label_xml_to_json": "XML → JSON",
+  "label_json_to_xml": "JSON → XML",
   "tooltip_swap": "Поменять направление",
   "button_swap": "Поменять",
   "label_input": "Ввод",
@@ -23,7 +23,13 @@ export default {
   "seoUseCaseText": "Всё работает локально в вашем браузере. Ваши данные никогда не покидают ваше устройство.",
   "seoPrivacyTitle": "100% приватно и безопасно",
   "seoPrivacyText": "Никаких баз данных, отслеживания или сетевых загрузок. Ваши данные хранятся строго в локальной памяти и исчезают при закрытии вкладки.",
-  "seoKeywords": ["xml json", "онлайн инструмент", "бесплатно", "локально", "браузер"],
+  "seoKeywords": [
+    "xml json",
+    "онлайн инструмент",
+    "бесплатно",
+    "локально",
+    "браузер"
+  ],
   "faqTitle": "Часто задаваемые вопросы",
   "faq": [
     {
@@ -40,7 +46,7 @@ export default {
     }
   ],
   "footerTagline": "Конвертируйте XML в JSON и JSON в XML мгновенно 100% локально в вашем браузере.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Часть набора инструментов oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Скопировано!",
   "contactForIdeas": "Контакт для идей и комментариев:"

@@ -1,6 +1,6 @@
 export default {
   "title": "Subtitle Converter",
-  "seo_title": "Subtitles-Bolt | Convierte subtítulos entre formatos SRT, VTT y SBV 100% localmente en tu navegador.",
+  "seo_title": "SubtitlesBolt | Convierte subtítulos entre formatos SRT, VTT y SBV 100% localmente en tu navegador.",
   "seo_description": "Convierte subtítulos entre formatos SRT, VTT y SBV con detección automática 100% localmente en tu navegador.",
   "seoHeroTitle": "Conversor de subtítulos",
   "seoHeroText": "Convierte subtítulos entre formatos SRT, VTT y SBV con detección automática 100% localmente en tu navegador.",
@@ -22,7 +22,13 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
-  "seoKeywords": ["subtitles bolt", "herramienta online", "gratis", "local", "navegador"],
+  "seoKeywords": [
+    "subtitles bolt",
+    "herramienta online",
+    "gratis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -30,16 +36,16 @@ export default {
       "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
     },
     {
-      "question": "¿Qué formatos de subtítulos admite Subtitles-Bolt?",
-      "answer": "Subtitles-Bolt admite los formatos SRT, VTT y SBV. Puede detectar automáticamente el formato de entrada, o puedes seleccionarlo manualmente antes de convertirlo a cualquiera de los tres formatos de salida."
+      "question": "¿Qué formatos de subtítulos admite SubtitlesBolt?",
+      "answer": "SubtitlesBolt admite los formatos SRT, VTT y SBV. Puede detectar automáticamente el formato de entrada, o puedes seleccionarlo manualmente antes de convertirlo a cualquiera de los tres formatos de salida."
     },
     {
-      "question": "¿Subtitles-Bolt conserva los tiempos y el texto exactos?",
+      "question": "¿SubtitlesBolt conserva los tiempos y el texto exactos?",
       "answer": "Sí. Los tiempos se analizan con precisión de milisegundo y se reemiten en el formato de destino, mientras el texto se conserva literal para que nada se altere durante la conversión."
     }
   ],
   "footerTagline": "Convierte subtítulos entre formatos SRT, VTT y SBV con detección automática 100% localmente en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

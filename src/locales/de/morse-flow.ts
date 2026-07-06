@@ -1,8 +1,8 @@
 export default {
-  "title": "Morse-Flow",
-  "seo_title": "Morse-Flow | Kodieren und dekodieren Sie Morsecode mit Audio-Wiedergabe 100% lokal in Ihrem Browser.",
+  "title": "MorseFlow",
+  "seo_title": "MorseFlow | Kodieren und dekodieren Sie Morsecode mit Audio-Wiedergabe 100% lokal in Ihrem Browser.",
   "seo_description": "Kodieren und dekodieren Sie Morsecode mit Audio-Wiedergabe 100% lokal in Ihrem Browser.",
-  "seoHeroTitle": "Morse-Flow",
+  "seoHeroTitle": "MorseFlow",
   "seoHeroText": "Kodieren und dekodieren Sie Morsecode mit Audio-Wiedergabe 100% lokal in Ihrem Browser.",
   "label_text": "Text",
   "label_morse": "Morse",
@@ -21,7 +21,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["morse flow", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "morse flow",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -33,12 +39,12 @@ export default {
       "answer": "Der Audio wird lokal über die Web AudioContext-API erzeugt. Ein Sinuswellen-Oszillator erzeugt den Ton, und das Timing folgt der Standard-PARIS-Wörter-pro-Minute-Regel (WPM)."
     },
     {
-      "question": "Welche Zeichen unterstützt Morse-Flow?",
-      "answer": "Morse-Flow unterstützt die Buchstaben A bis Z und die Ziffern 0 bis 9 gemäß dem internationalen Morsecode-Standard. Leerzeichen zwischen Wörtern werden durch einen Schrägstrich-Separator codiert."
+      "question": "Welche Zeichen unterstützt MorseFlow?",
+      "answer": "MorseFlow unterstützt die Buchstaben A bis Z und die Ziffern 0 bis 9 gemäß dem internationalen Morsecode-Standard. Leerzeichen zwischen Wörtern werden durch einen Schrägstrich-Separator codiert."
     }
   ],
   "footerTagline": "Kodieren und dekodieren Sie Morsecode mit Audio-Wiedergabe 100% lokal in Ihrem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

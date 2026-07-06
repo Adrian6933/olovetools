@@ -1,12 +1,12 @@
 export default {
-  "title": "Zip-Flow",
+  "title": "ZipFlow",
   "description": "在浏览器中 100% 本地将文件压缩为 ZIP 存档，并从 ZIP 存档中提取文件，支持实时文件树形图可视化展示。",
   "tab_compress": "压缩文件",
   "tab_extract": "提取解压",
   "compress_drop_active": "拖放文件至此以添加...",
   "compress_drop_inactive": "拖放文件到此处，或点击浏览文件",
   "compress_output_filename": "ZIP 文件名称",
-  "compress_output_filename_placeholder": "archive.zip",
+  "compress_output_filename_placeholder": "压缩包.zip",
   "compress_level": "压缩级别",
   "compress_level_store": "仅存储 (无压缩 - 速度最快)",
   "compress_level_deflate": "Deflate (标准压缩)",
@@ -45,7 +45,7 @@ export default {
   "faq": [
     {
       "question": "在压缩或解压文件时，我的文件会被上传吗？",
-      "answer": "绝对不会。Zip-Flow 基于 JSZip 库在您浏览器内存（客户端）中完全离线运行。您的文件绝不会上传到任何服务器。"
+      "answer": "绝对不会。ZipFlow 基于 JSZip 库在您浏览器内存（客户端）中完全离线运行。您的文件绝不会上传到任何服务器。"
     },
     {
       "question": "我能解压带密码保护的 ZIP 文件吗？",
@@ -57,5 +57,7 @@ export default {
     }
   ],
   "footerTagline": "私密、本地的浏览器端 ZIP 压缩和提取工具。",
-  "footerCredit": "oLoveTools 套件的一部分"
+  "footerCredit": "oLoveTools 套件的一部分",
+  "seo_title": "ZipFlow | 免费在线ZIP文件压缩与解压工具",
+  "seo_description": "在浏览器中 100% 本地将文件压缩为 ZIP 存档，并从 ZIP 存档中提取文件，支持实时文件树形图可视化展示。"
 };

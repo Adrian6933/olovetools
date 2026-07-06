@@ -174,7 +174,7 @@ export default {
     "Watermark": "水印",
     "Batch": "批量",
     "Branding": "品牌",
-    "Favicon": "Favicon",
+    "Favicon": "网站图标",
     "Generator": "生成器",
     "Icon": "图标",
     "Metadata": "元数据",

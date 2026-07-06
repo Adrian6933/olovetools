@@ -1,5 +1,5 @@
 export default {
-  "title": "JSON-Flow",
+  "title": "JSONFlow",
   "description": "Utilitaire développeur interactif pour formater, valider, explorer et convertir des données JSON en CSV/XML localement.",
   "beautify": "Mettre en forme",
   "minify": "Minifier",
@@ -32,10 +32,10 @@ export default {
   "mock_user_profile": "Profil Utilisateur",
   "mock_product_catalog": "Catalogue Produits",
   "mock_weather_data": "Prévisions Météo",
-  "seo_title": "JSON-Flow | Formateur, Validateur et Convertisseur JSON en ligne",
+  "seo_title": "JSONFlow | Formateur, Validateur et Convertisseur JSON en ligne",
   "seo_description": "Validez, formatez et visualisez votre JSON en arbre interactif. Convertissez du JSON en CSV, Excel ou XML, et du CSV en JSON de manière 100% locale.",
   "seoHeroTitle": "Formatez, explorez et convertissez le JSON en toute sécurité.",
-  "seoHeroText": "Ne divulguez jamais de clés d'API sensibles ou de données clients à des serveurs externes. JSON-Flow s'exécute localement dans votre navigateur.",
+  "seoHeroText": "Ne divulguez jamais de clés d'API sensibles ou de données clients à des serveurs externes. JSONFlow s'exécute localement dans votre navigateur.",
   "seoHeroList": [
     "Traitement 100% local",
     "Convertissez en CSV, Excel et XML instantanément",
@@ -51,7 +51,13 @@ export default {
     "JSON en CSV",
     "JSON en XML",
     "CSV en JSON",
-    "Beautifier JSON"
+    "Beautifier JSON",
+    "Formateur JSON",
+    "Outil JSON Local",
+    "Utilitaire Développeur",
+    "JSON Respectueux de la Vie Privée",
+    "Analyseur JSON",
+    "Grille CSV"
   ],
   "seoUseCaseTitle": "Cas d'utilisation",
   "seoUseCaseText": "Idéal pour nettoyer les payloads d'API et préparer des feuilles de calcul pour l'import.",
@@ -66,6 +72,14 @@ export default {
     {
       "question": "Quelle est la taille maximale ?",
       "answer": "Dépend de votre machine, gère facilement jusqu'à 50 Mo."
+    },
+    {
+      "question": "Comment fonctionne l'aplatissement de JSON vers CSV ?",
+      "answer": "Nous aplatissons récursivement les clés JSON imbriquées (par ex. user.address.city devient 'user_address_city') afin qu'elles correspondent correctement à une grille de tableur structurée."
+    },
+    {
+      "question": "Puis-je reconvertir du CSV en JSON ?",
+      "answer": "Oui. Passez à l'onglet CSV, collez votre texte CSV structuré ou glissez un fichier .csv, et cliquez sur 'Convertir' pour générer la représentation JSON correspondante."
     }
   ],
   "footerTagline": "Des utilitaires simples et premium pour vous aider à coder et concevoir.",

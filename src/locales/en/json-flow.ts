@@ -1,5 +1,5 @@
 export default {
-  "title": "JSON-Flow",
+  "title": "JSONFlow",
   "description": "Interactive developer utility to format, validate, browse, and convert JSON data to CSV/XML entirely locally.",
   
   // Actions
@@ -48,10 +48,10 @@ export default {
   "mock_weather_data": "Weather Forecast",
   
   // SEO & Texts
-  "seo_title": "JSON-Flow | JSON Formatter, Validator and Converter Online",
+  "seo_title": "JSONFlow | JSON Formatter, Validator and Converter Online",
   "seo_description": "Validate, format, and visualize JSON in a responsive tree view. Convert JSON to CSV, Excel or XML, and CSV back to JSON 100% locally.",
   "seoHeroTitle": "Format, explore and convert JSON safely.",
-  "seoHeroText": "Never leak sensitive API keys or client payloads to external servers. JSON-Flow runs entirely client-side in your browser, guaranteeing total security.",
+  "seoHeroText": "Never leak sensitive API keys or client payloads to external servers. JSONFlow runs entirely client-side in your browser, guaranteeing total security.",
   "seoHeroList": [
     "100% local processing (zero server uploads)",
     "Convert to CSV, Excel, XML instantly",
@@ -84,7 +84,7 @@ export default {
   "faq": [
     {
       "question": "Are my JSON payloads sent to any server?",
-      "answer": "No. Unlike other online formatters, JSON-Flow processes 100% of your data inside your local browser tab. No network requests are made with your dataset."
+      "answer": "No. Unlike other online formatters, JSONFlow processes 100% of your data inside your local browser tab. No network requests are made with your dataset."
     },
     {
       "question": "What is the maximum JSON size supported?",

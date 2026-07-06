@@ -1,6 +1,6 @@
 export default {
-  "title": "List-Mixer",
-  "seo_title": "List-Mixer | Trieur, mélangeur et déduplicateur de listes gratuit en ligne",
+  "title": "List Mixer",
+  "seo_title": "List Mixer | Trieur, mélangeur et déduplicateur de listes gratuit en ligne",
   "seo_description": "Triez, inversez, mélangez, déduplez, supprimez les espaces et nettoyez des listes de texte en ligne 100% localement dans votre navigateur. Outil gratuit de manipulation de listes en ligne.",
   "seoHeroTitle": "Trieur, mélangeur et nettoyeur de listes",
   "seoHeroText": "Collez n'importe quelle liste de texte et triez-la instantanément par ordre alphabétique, inversez l'ordre, mélangez aléatoirement, supprimez les doublons, nettoyez les lignes vides, supprimez les espaces ou changez la casse. Toutes les opérations s'enchaînent et s'exécutent 100% localement dans votre navigateur.",
@@ -29,7 +29,15 @@ export default {
   "seoUseCaseText": "Chaque action sur laquelle vous cliquez s'applique à la sortie actuelle, vous permettant d'enchaîner plusieurs opérations. Trier, puis supprimer les doublons, puis supprimer les espaces — le tout en séquence sans re-coller.",
   "seoPrivacyTitle": "100% privé et sécurisé",
   "seoPrivacyText": "Aucune base de données, aucun suivi ni téléversement réseau. Les données de votre liste résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["trieur de listes", "mélangeur de listes", "supprimer doublons", "trier lignes", "liste aléatoire", "nettoyer liste", "dédupliquer"],
+  "seoKeywords": [
+    "trieur de listes",
+    "mélangeur de listes",
+    "supprimer doublons",
+    "trier lignes",
+    "liste aléatoire",
+    "nettoyer liste",
+    "dédupliquer"
+  ],
   "faqTitle": "Questions fréquentes",
   "faq": [
     {
@@ -46,8 +54,9 @@ export default {
     }
   ],
   "footerTagline": "Trieur, mélangeur et déduplicateur de listes rapide et privé avec opérations enchaînées — 100% local dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "copyLabel": "Copier"
 };

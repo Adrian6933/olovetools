@@ -1,8 +1,8 @@
 export default {
-  "title": "Morse-Flow",
-  "seo_title": "Morse-Flow | Encode and decode Morse code with audio playback 100% locally in your browser.",
+  "title": "MorseFlow",
+  "seo_title": "MorseFlow | Encode and decode Morse code with audio playback 100% locally in your browser.",
   "seo_description": "Encode and decode Morse code with audio playback 100% locally in your browser.",
-  "seoHeroTitle": "Morse-Flow",
+  "seoHeroTitle": "MorseFlow",
   "seoHeroText": "Encode and decode Morse code with audio playback 100% locally in your browser.",
   "label_text": "Text",
   "label_morse": "Morse",
@@ -33,8 +33,8 @@ export default {
       "answer": "Audio is generated locally using the Web AudioContext API. A sine wave oscillator produces the tone, and timing follows the standard PARIS word-per-minute (WPM) rule."
     },
     {
-      "question": "Which characters are supported by Morse-Flow?",
-      "answer": "Morse-Flow supports the letters A through Z and digits 0 through 9, following the international Morse code standard. Spaces between words are encoded with a slash separator."
+      "question": "Which characters are supported by MorseFlow?",
+      "answer": "MorseFlow supports the letters A through Z and digits 0 through 9, following the international Morse code standard. Spaces between words are encoded with a slash separator."
     }
   ],
   "footerTagline": "Encode and decode Morse code with audio playback 100% locally in your browser.",

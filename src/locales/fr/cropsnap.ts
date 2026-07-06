@@ -43,7 +43,6 @@ export default {
       "text": "Spécifiez la largeur et la hauteur exactes en pixels lors de la sortie. Idéal pour respecter les contraintes de taille de fichiers."
     }
   ],
-  "featuresCredit": "Fait partie de la suite oLoveTools",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "seoHeroTitle": "Recadrez et redimensionnez vos photos en toute sécurité",
   "seoHeroText": "CropSnap est une application web respectueuse de la vie privée qui vous permet de découper, tourner et redimensionner vos images. En s'exécutant localement dans votre navigateur, il n'y a aucune limite de taille de fichiers, ni de risques de fuites de données.",

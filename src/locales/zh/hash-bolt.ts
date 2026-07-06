@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "在您的浏览器中 100% 本地计算文本和文件的加密哈希（MD5、SHA-1、SHA-256、SHA-512）。",
   "input_text_tab": "文本输入",
   "input_file_tab": "文件哈希",
@@ -43,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "安全、本地的文本及文件加密校验和生成器。",
-  "footerCredit": "oLoveTools 套件的一部分"
+  "footerCredit": "oLoveTools 套件的一部分",
+  "seo_title": "HashBolt | 免费在线MD5、SHA-1、SHA-256哈希生成器",
+  "seo_description": "在您的浏览器中 100% 本地计算文本和文件的加密哈希（MD5、SHA-1、SHA-256、SHA-512）。"
 };

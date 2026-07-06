@@ -1,5 +1,5 @@
 export default {
-  "title": "JSON-Flow",
+  "title": "JSONFlow",
   "description": "交互式在线开发工具，用于在本地对 JSON 数据进行格式化、校验、树形查看及与 CSV/XML 格式的相互转换。",
   "beautify": "美化格式",
   "minify": "压缩单行",
@@ -32,10 +32,10 @@ export default {
   "mock_user_profile": "用户档案",
   "mock_product_catalog": "商品目录",
   "mock_weather_data": "天气预报",
-  "seo_title": "JSON-Flow | 在线 JSON 格式化、校验与 CSV 相互转换",
+  "seo_title": "JSONFlow | 在线 JSON 格式化、校验与 CSV 相互转换",
   "seo_description": "验证、格式化并以树形图交互式展示 JSON 数据。支持 JSON 转 CSV、Excel、XML 及 CSV 转 JSON，100% 本地运行。",
   "seoHeroTitle": "安全地格式化、阅读和转换 JSON 数据。",
-  "seoHeroText": "坚决不将含有敏感 API 密钥或用户的数据上传到外部服务器。JSON-Flow 100% 运行于浏览器本地，保障绝对的安全隐私。",
+  "seoHeroText": "坚决不将含有敏感 API 密钥或用户的数据上传到外部服务器。JSONFlow 100% 运行于浏览器本地，保障绝对的安全隐私。",
   "seoHeroList": [
     "100% 浏览器本地处理（不上传服务器）",
     "一键转换为 CSV、Excel 和 XML",
@@ -51,7 +51,13 @@ export default {
     "JSON转CSV",
     "JSON转XML",
     "CSV转JSON",
-    "JSON树形图"
+    "JSON树形图",
+    "JSON格式化工具",
+    "本地JSON工具",
+    "开发者工具",
+    "注重隐私的JSON",
+    "JSON解析器",
+    "CSV表格"
   ],
   "seoUseCaseTitle": "应用场景",
   "seoUseCaseText": "适用于清理API返回的繁杂报文，提取为表格形式导出，或检查配置文件正确性。",
@@ -66,6 +72,14 @@ export default {
     {
       "question": "最大支持处理多大的文件？",
       "answer": "受本地内存限制，在大部分电脑上处理 50MB 以内的文件均极为流畅。"
+    },
+    {
+      "question": "JSON转CSV的扁平化是如何工作的?",
+      "answer": "我们递归地扁平化嵌套的JSON键（例如user.address.city会变成'user_address_city'），以便正确映射到结构化的表格网格。"
+    },
+    {
+      "question": "我可以将CSV转换回JSON吗?",
+      "answer": "可以。切换到CSV标签页，粘贴结构化的CSV文本或拖入.csv文件，点击“转换”即可生成对应的JSON表示。"
     }
   ],
   "footerTagline": "通过简单实用的优质工具，帮您更高效地进行设计、开发与优化。",

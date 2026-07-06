@@ -57,7 +57,11 @@ export default {
     "Captura de Tela Instantânea",
     "Utilitário de Imagem Grátis",
     "Área de Transferência Privada",
-    "Ferramenta de Imagem no Navegador"
+    "Ferramenta de Imagem no Navegador",
+    "Baixar imagem colada",
+    "Salvar imagem da área de transferência",
+    "Salvador de imagem da área de transferência",
+    "Download instantâneo de PNG"
   ],
   "seoUseCaseTitle": "Casos de Uso",
   "seoUseCaseText": "Baixe capturas do Slack ou Teams diretamente como PNG.",

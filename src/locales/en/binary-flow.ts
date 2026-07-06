@@ -1,8 +1,8 @@
 export default {
-  "title": "Binary-Flow",
-  "seo_title": "Binary-Flow | Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.",
+  "title": "BinaryFlow",
+  "seo_title": "BinaryFlow | Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.",
   "seo_description": "Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.",
-  "seoHeroTitle": "Binary-Flow",
+  "seoHeroTitle": "BinaryFlow",
   "seoHeroText": "Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.",
   "label_number_mode": "Number",
   "label_text_mode": "Text to Binary",
@@ -32,8 +32,8 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Which number bases does Binary-Flow support?",
-      "answer": "Binary-Flow supports binary (BIN, base 2), octal (OCT, base 8), decimal (DEC, base 10) and hexadecimal (HEX, base 16) conversions, plus ASCII text encoding."
+      "question": "Which number bases does BinaryFlow support?",
+      "answer": "BinaryFlow supports binary (BIN, base 2), octal (OCT, base 8), decimal (DEC, base 10) and hexadecimal (HEX, base 16) conversions, plus ASCII text encoding."
     },
     {
       "question": "Can I convert text strings to binary?",

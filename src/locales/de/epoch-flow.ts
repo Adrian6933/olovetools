@@ -1,10 +1,10 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | Unix-Epoch-Zeitstempel in lesbare Datumswerte umwandeln und umgekehrt 100% lokal.",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | Unix-Epoch-Zeitstempel in lesbare Datumswerte umwandeln und umgekehrt 100% lokal.",
   "seo_description": "Unix-Epoch-Zeitstempel in lesbare Datumswerte umwandeln und umgekehrt 100% lokal.",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "Unix-Epoch-Zeitstempel in lesbare Datumswerte umwandeln und umgekehrt 100% lokal.",
-  "label_live_epoch": "Live Unix Epoch",
+  "label_live_epoch": "Live-Unix-Zeitstempel",
   "button_now": "Jetzt",
   "label_epoch_input": "Unix-Epoch-Zeitstempel",
   "unit_seconds": "Sekunden",
@@ -43,7 +43,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["epoch flow", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "epoch flow",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
@@ -51,8 +57,8 @@ export default {
       "answer": "Nein. Alle Vorgänge erfolgen vollständig in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät."
     },
     {
-      "question": "Unterstützt Epoch-Flow sowohl Sekunden als auch Millisekunden?",
-      "answer": "Ja. Epoch-Flow erkennt automatisch anhand der Größenordnung, ob der eingegebene Zeitstempel in Sekunden oder Millisekunden vorliegt, sodass Sie entweder einfügen können."
+      "question": "Unterstützt EpochFlow sowohl Sekunden als auch Millisekunden?",
+      "answer": "Ja. EpochFlow erkennt automatisch anhand der Größenordnung, ob der eingegebene Zeitstempel in Sekunden oder Millisekunden vorliegt, sodass Sie entweder einfügen können."
     },
     {
       "question": "Kann ich ein Datum zurück in einen Unix-Epoch-Zeitstempel umwandeln?",
@@ -60,7 +66,7 @@ export default {
     }
   ],
   "footerTagline": "Unix-Epoch-Zeitstempel in lesbare Datumswerte umwandeln und umgekehrt 100% lokal.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

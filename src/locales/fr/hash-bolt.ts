@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "Calculez des empreintes cryptographiques (MD5, SHA-1, SHA-256, SHA-512) pour du texte et des fichiers 100% localement dans votre navigateur.",
   "input_text_tab": "Saisie de Texte",
   "input_file_tab": "Hachage de Fichier",
@@ -43,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "Générateur sécurisé et local de checksums et d'empreintes cryptographiques.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "seo_title": "HashBolt | Générateur de Hash MD5, SHA-1, SHA-256 Gratuit en Ligne",
+  "seo_description": "Calculez des empreintes cryptographiques (MD5, SHA-1, SHA-256, SHA-512) pour du texte et des fichiers 100% localement dans votre navigateur."
 };

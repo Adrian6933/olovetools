@@ -1,5 +1,5 @@
 export default {
-  "title": "JSON-Flow",
+  "title": "JSONFlow",
   "description": "JSONデータの整形、バリデーション、ツリー探索、CSV/XMLへの相互変換を100%ローカルで安全に行える開発者用インタラクティブツール。",
   "beautify": "整形する",
   "minify": "圧縮（ミニファイ）",
@@ -32,10 +32,10 @@ export default {
   "mock_user_profile": "ユーザープロファイル",
   "mock_product_catalog": "商品カタログ",
   "mock_weather_data": "天気予報",
-  "seo_title": "JSON-Flow | JSON整形、バリデーション、コンバーター",
+  "seo_title": "JSONFlow | JSON整形、バリデーション、コンバーター",
   "seo_description": "JSONをバリデーション、整形し、ツリービューで直感的に視覚化。JSONからCSV、Excel、XMLへの変換を100%ローカルで実行。",
   "seoHeroTitle": "JSONの整形、探索、変換を、安全にローカルで。",
-  "seoHeroText": "機密性の高いAPIキーやデータを外部のサーバーに送信する必要はありません。JSON-Flowはブラウザ上で完全に動作します。",
+  "seoHeroText": "機密性の高いAPIキーやデータを外部のサーバーに送信する必要はありません。JSONFlowはブラウザ上で完全に動作します。",
   "seoHeroList": [
     "100%ローカル処理（サーバー送信なし）",
     "CSV、Excel、XMLへ一瞬で相互変換",
@@ -51,7 +51,13 @@ export default {
     "JSONからCSV",
     "JSONからXML",
     "CSVからJSON",
-    "JSONビジュアライザ"
+    "JSONビジュアライザ",
+    "JSONフォーマッター",
+    "ローカルJSONツール",
+    "開発者向けユーティリティ",
+    "プライバシー配慮のJSON",
+    "JSONパーサー",
+    "CSVグリッド"
   ],
   "seoUseCaseTitle": "主なユースケース",
   "seoUseCaseText": "APIレスポンスの整理、スプレッドシート用データの準備、設定ファイルの検証に最適。",
@@ -66,6 +72,14 @@ export default {
     {
       "question": "どのくらいのサイズまで処理できますか？",
       "answer": "デバイスのメモリによりますが、50MB程度まで快適に処理可能です。"
+    },
+    {
+      "question": "JSONからCSVへのフラット化はどのように機能しますか?",
+      "answer": "ネストされたJSONキーを再帰的にフラット化します（例:user.address.cityは'user_address_city'になります）。これにより構造化されたスプレッドシートのグリッドに正しく対応します。"
+    },
+    {
+      "question": "CSVをJSONに戻すことはできますか?",
+      "answer": "はい。CSVタブに切り替えて構造化されたCSVテキストを貼り付けるか.csvファイルをドラッグし、「変換」をクリックすると対応するJSON表現が生成されます。"
     }
   ],
   "footerTagline": "シンプルで高品質なツール群により、開発とデザインを支援します。",

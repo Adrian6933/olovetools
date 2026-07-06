@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "Calculadora de Proporção de Tela | Simplifique Proporções e Redimensione Proporcionalmente 100% Localmente",
   "seo_description": "Calcule proporções de tela simplificadas, redimensione imagens proporcionalmente e explore predefinições comuns como 16:9, 4:3 e 9:16. 100% local e privado.",
   "seoHeroTitle": "Calculadora de Proporção Pro",
@@ -36,7 +36,16 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Suas entradas de dimensões nunca saem do seu dispositivo e nada é carregado.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Suas entradas residem estritamente na memória local e desaparecem quando você fecha a aba.",
-  "seoKeywords": ["calculadora de proporção de tela", "redimensionar imagem proporcionalmente", "proporção 16:9", "simplificar proporção", "dimensões de imagem", "resolução de vídeo", "ferramenta online", "grátis"],
+  "seoKeywords": [
+    "calculadora de proporção de tela",
+    "redimensionar imagem proporcionalmente",
+    "proporção 16:9",
+    "simplificar proporção",
+    "dimensões de imagem",
+    "resolução de vídeo",
+    "ferramenta online",
+    "grátis"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -53,7 +62,7 @@ export default {
     }
   ],
   "footerTagline": "Calcule proporções de tela e resoluções proporcionais para vídeo, imagens e telas 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

@@ -1,5 +1,5 @@
 export default {
-  "title": "Regex-Flow",
+  "title": "RegexFlow",
   "description": "Construtor e testador interativo de expressões regulares 100% local no navegador com realce em tempo real, explicações sintáticas e substituições.",
   "regex_placeholder": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   "text_placeholder": "Insira seu texto de teste aqui. Por exemplo: hello@olovetools.com ou support@example.org.",
@@ -31,12 +31,12 @@ export default {
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
-      "question": "É seguro testar padrões confidenciais com o Regex-Flow?",
-      "answer": "Sim. O Regex-Flow roda inteiramente no cliente. Nenhum dado é enviado a servidores. Seus dados estão protegidos."
+      "question": "É seguro testar padrões confidenciais com o RegexFlow?",
+      "answer": "Sim. O RegexFlow roda inteiramente no cliente. Nenhum dado é enviado a servidores. Seus dados estão protegidos."
     },
     {
       "question": "Qual motor de expressões regulares é utilizado?",
-      "answer": "O Regex-Flow utiliza o motor JavaScript RegExp nativo do seu navegador. Recursos específicos dependem da versão do navegador."
+      "answer": "O RegexFlow utiliza o motor JavaScript RegExp nativo do seu navegador. Recursos específicos dependem da versão do navegador."
     },
     {
       "question": "Quais flags são suportadas?",
@@ -44,5 +44,7 @@ export default {
     }
   ],
   "footerTagline": "Ferramenta local e privada de criação e teste de expressões regulares no navegador.",
-  "footerCredit": "Parte da suíte oLoveTools"
+  "footerCredit": "Parte da suíte oLoveTools",
+  "seo_title": "RegexFlow | Testador e Construtor de Expressões Regulares Grátis",
+  "seo_description": "Construtor e testador interativo de expressões regulares 100% local no navegador com realce em tempo real, explicações sintáticas e substituições."
 };

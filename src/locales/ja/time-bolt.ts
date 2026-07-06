@@ -1,8 +1,8 @@
 export default {
-  "title": "Time-Bolt",
-  "seo_title": "Time-Bolt | インタラクティブなミーティングプランナーで世界のタイムゾーン間の時刻を変換 100% ローカルで。",
+  "title": "TimeBolt",
+  "seo_title": "TimeBolt | インタラクティブなミーティングプランナーで世界のタイムゾーン間の時刻を変換 100% ローカルで。",
   "seo_description": "インタラクティブなミーティングプランナーで世界のタイムゾーン間の時刻を変換 100% ローカルで。",
-  "seoHeroTitle": "Time-Bolt",
+  "seoHeroTitle": "TimeBolt",
   "seoHeroText": "インタラクティブなミーティングプランナーで世界のタイムゾーン間の時刻を変換 100% ローカルで。",
   "section_world_clocks": "世界時計",
   "button_close": "閉じる",
@@ -32,7 +32,13 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["time bolt", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "time bolt",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -44,12 +50,12 @@ export default {
       "answer": "世界中の80以上の都市の検索可能なリストから必要なだけタイムゾーンを追加でき、ミーティングプランナーがそれぞれの対応する現地時刻を表示します。"
     },
     {
-      "question": "Time-Bolt はサマータイムを考慮しますか？",
-      "answer": "はい。Time-Bolt はブラウザのネイティブ Intl API を使用し、各タイムゾーンのサマータイムと過去のオフセット変更を自動的に処理します。"
+      "question": "TimeBolt はサマータイムを考慮しますか？",
+      "answer": "はい。TimeBolt はブラウザのネイティブ Intl API を使用し、各タイムゾーンのサマータイムと過去のオフセット変更を自動的に処理します。"
     }
   ],
   "footerTagline": "インタラクティブなミーティングプランナーで世界のタイムゾーン間の時刻を変換 100% ローカルで。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ先:"

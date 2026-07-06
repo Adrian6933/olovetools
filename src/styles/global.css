@@ -301,3 +301,19 @@ cropper-crosshair {
 cropper-grid {
   border-color: rgba(244, 63, 94, 0.25);
 }
+
+/* ── Global reduced-motion support ──
+   Framer Motion components already respect prefers-reduced-motion via
+   src/components/shared/motion.ts. This rule covers the many plain CSS
+   transitions/animations used across the 60 tools (hover states, etc.)
+   without needing to touch each tool's individual file. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

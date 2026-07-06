@@ -13,8 +13,8 @@ export default {
   "categories": {
     "All": "Tous les outils",
     "video_audio": "Vidéo & Audio",
-    "image_design": "Image & Design",
-    "document_pdf": "Document & PDF",
+    "image_design": "Image et Design",
+    "document_pdf": "Document et PDF",
     "developer_tools": "Outils de Développement",
     "text_utilities": "Texte & Contenu",
     "data_conversion": "Données & Convertisseurs",

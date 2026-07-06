@@ -56,7 +56,7 @@ export default {
   "seoBrowserSpeedTitle": "Fluxos de Mídia no Navegador",
   "seoBrowserSpeedText": "Ao capturar fluxos de mídia nativamente em HTML5 e codificar contêineres WebM em tempo real, o RecordSnap tem latência de servidor zero e salva gravações instantaneamente ao clicar em Parar.",
   "seoSecondaryTitle": "Um gravador de tela completo no seu dispositivo",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "Palavras-chave",
   "seoKeywords": [
     "Gravar tela online",
     "Gravar webcam gratis",

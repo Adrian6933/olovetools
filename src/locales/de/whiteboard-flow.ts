@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | Notizen per Drag-and-Drop auf einem Kanban-Board organisieren, lokal gespeichert.",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | Notizen per Drag-and-Drop auf einem Kanban-Board organisieren, lokal gespeichert.",
   "seo_description": "Notizen per Drag-and-Drop auf einem Kanban-Board organisieren, lokal in Ihrem Browser gespeichert 100% clientseitig.",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "Notizen per Drag-and-Drop auf einem Kanban-Board organisieren, lokal in Ihrem Browser gespeichert 100% clientseitig.",
   "reset": "Zurücksetzen",
   "addNote": "Notiz hinzufügen",
@@ -19,7 +19,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["whiteboard flow", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "whiteboard flow",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
@@ -36,7 +42,7 @@ export default {
     }
   ],
   "footerTagline": "Notizen per Drag-and-Drop auf einem Kanban-Board organisieren, lokal in Ihrem Browser gespeichert 100% clientseitig.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

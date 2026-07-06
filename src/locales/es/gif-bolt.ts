@@ -1,5 +1,5 @@
 export default {
-  "title": "GIF-Bolt",
+  "title": "GIFBolt",
   "description": "Convierte vídeos y secuencias de imágenes en GIFs animados optimizados 100% local en tu navegador.",
   "tab_video": "Vídeo a GIF",
   "tab_images": "Imágenes a GIF",
@@ -25,10 +25,10 @@ export default {
   "quality_low": "Baja calidad (Rápido)",
   "drop_zone_video": "Arrastra el vídeo aquí o haz clic para buscar (MP4, WebM)",
   "drop_zone_images": "Arrastra las imágenes aquí o haz clic para buscar (PNG, JPG, WebP)",
-  "seo_title": "GIF-Bolt | Conversor Gratis de Vídeo a GIF e Imágenes a GIF Online",
+  "seo_title": "GIFBolt | Conversor Gratis de Vídeo a GIF e Imágenes a GIF Online",
   "seo_description": "Convierte vídeos y secuencias de imágenes en GIFs animados de alta calidad directamente en tu navegador. Opciones de corte, FPS, tamaño y compresión configurables.",
   "seoHeroTitle": "Convierte Vídeos e Imágenes a GIFs Animados en Local",
-  "seoHeroText": "Crea GIFs optimizados totalmente en tu navegador. GIF-Bolt procesa todo offline para garantizar la máxima privacidad.",
+  "seoHeroText": "Crea GIFs optimizados totalmente en tu navegador. GIFBolt procesa todo offline para garantizar la máxima privacidad.",
   "seoHeroList": [
     "Sin límites de tamaño ni subidas de archivos",
     "Selecciona tiempos de inicio/fin y ajusta los FPS",
@@ -47,7 +47,7 @@ export default {
       "answer": "No. Como los archivos se procesan directamente en la RAM de tu navegador, no hay límites estrictos. Sin embargo, procesar vídeos muy largos o de resoluciones muy altas (como 4K) puede ralentizar el navegador."
     },
     {
-      "question": "¿GIF-Bolt sube mis archivos?",
+      "question": "¿GIFBolt sube mis archivos?",
       "answer": "No. Todo funciona en el lado del cliente con JavaScript. Tus archivos se procesan localmente en la pestaña del navegador."
     },
     {

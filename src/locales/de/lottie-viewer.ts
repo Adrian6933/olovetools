@@ -1,5 +1,5 @@
 export default {
-  "title": "Lottie-Viewer",
+  "title": "Lottie Viewer",
   "description": "Interaktiver Lottie-Animationsplayer, Customizer und Inspektor zum Bearbeiten von Vektorfarben und Kontrollieren des Playbacks 100% lokal im Browser.",
   "drop_active": "Lottie JSON zum Laden ablegen...",
   "drop_inactive": "Ziehen Sie eine Lottie JSON-Datei hierher oder klicken Sie zum Durchsuchen",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "question": "Werden meine Lottie-Dateien online hochgeladen?",
-      "answer": "Nein. Lottie-Viewer läuft vollständig clientseitig im Browserspeicher. Ihre Dateien verlassen zu keinem Zeitpunkt Ihr Gerät."
+      "answer": "Nein. Lottie Viewer läuft vollständig clientseitig im Browserspeicher. Ihre Dateien verlassen zu keinem Zeitpunkt Ihr Gerät."
     },
     {
       "question": "Wie funktioniert die Farbanpassung?",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Privates und lokales Tool zum Anzeigen, Anpassen und Inspizieren von Lottie-Animationen im Browser.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "seo_title": "Lottie Viewer | Kostenloser Online Lottie-Animations-Player & Editor",
+  "seo_description": "Interaktiver Lottie-Animationsplayer, Customizer und Inspektor zum Bearbeiten von Vektorfarben und Kontrollieren des Playbacks 100% lokal im Browser."
 };

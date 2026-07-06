@@ -1,5 +1,5 @@
 export default {
-  "title": "GIF-Bolt",
+  "title": "GIFBolt",
   "description": "Convertissez des vidéos et des séquences d'images en GIFs animés optimisés 100% localement dans votre navigateur.",
   "tab_video": "Vidéo en GIF",
   "tab_images": "Images en GIF",
@@ -25,10 +25,10 @@ export default {
   "quality_low": "Basse qualité (Rapide)",
   "drop_zone_video": "Glissez-déposez la vidéo ici ou cliquez pour parcourir (MP4, WebM)",
   "drop_zone_images": "Glissez-déposez les images ici ou cliquez pour parcourir (PNG, JPG, WebP)",
-  "seo_title": "GIF-Bolt | Convertisseur Gratuit de Vidéo en GIF et Images en GIF en Ligne",
+  "seo_title": "GIFBolt | Convertisseur Gratuit de Vidéo en GIF et Images en GIF en Ligne",
   "seo_description": "Convertissez des vidéos et des images en GIFs animés de haute qualité directement dans votre navigateur. Découpe, FPS, dimensions et options de compression personnalisables.",
   "seoHeroTitle": "Convertissez des Vidéos et des Images en GIFs Animés Localement",
-  "seoHeroText": "Créez des GIFs optimisés directement dans votre navigateur. GIF-Bolt traite tout hors ligne pour garantir une confidentialité absolue.",
+  "seoHeroText": "Créez des GIFs optimisés directement dans votre navigateur. GIFBolt traite tout hors ligne pour garantir une confidentialité absolue.",
   "seoHeroList": [
     "Pas de limite de taille ni de chargement de fichier",
     "Sélectionnez le début/fin et ajustez le taux de trame",
@@ -47,7 +47,7 @@ export default {
       "answer": "Non. Les fichiers étant traités dans la RAM de votre navigateur, il n'y a pas de limites strictes. Cependant, le traitement de vidéos très longues ou de très haute résolution (comme la 4K) peut ralentir votre navigateur."
     },
     {
-      "question": "GIF-Bolt télécharge-t-il mes fichiers ?",
+      "question": "GIFBolt télécharge-t-il mes fichiers ?",
       "answer": "Non. Tout s'exécute côté client en JavaScript. Vos fichiers sont traités localement dans l'onglet de votre navigateur."
     },
     {

@@ -1,6 +1,6 @@
 export default {
-  "title": "HTML-Sanitizer",
-  "seo_title": "HTML-Sanitizer | Limpiador y desinfectante de HTML gratuito en línea",
+  "title": "HTML Sanitizer",
+  "seo_title": "HTML Sanitizer | Limpiador y desinfectante de HTML gratuito en línea",
   "seo_description": "Limpia y desinfecta código HTML eliminando scripts, estilos, iframes, controladores de eventos y etiquetas no deseadas 100% localmente en tu navegador. Desinfectante de HTML gratuito en línea.",
   "seoHeroTitle": "Limpiador y desinfectante de HTML",
   "seoHeroText": "Pega cualquier código HTML y elimina al instante scripts, estilos, iframes, controladores de eventos, comentarios y etiquetas no deseadas. Activa opciones específicas de limpieza y ve una vista previa en vivo en un iframe aislado. Todo se ejecuta localmente en tu navegador.",
@@ -34,7 +34,15 @@ export default {
   "seoUseCaseText": "Ve el HTML limpio renderizado en tiempo real dentro de un iframe aislado que bloquea la ejecución de scripts. Perfecto para verificar que tu HTML desinfectado se ve exactamente como quieres antes de usarlo.",
   "seoPrivacyTitle": "100% privado y seguro",
   "seoPrivacyText": "Sin bases de datos, seguimiento ni cargas a la red. Tu código HTML reside estrictamente en la memoria local y es procesado por las APIs DOM nativas del navegador. Todo desaparece al cerrar la pestaña.",
-  "seoKeywords": ["desinfectante html", "limpiador html", "eliminar scripts", "limpiar html", "desinfectar html", "quitar etiquetas", "purificador html"],
+  "seoKeywords": [
+    "desinfectante html",
+    "limpiador html",
+    "eliminar scripts",
+    "limpiar html",
+    "desinfectar html",
+    "quitar etiquetas",
+    "purificador html"
+  ],
   "faqTitle": "Preguntas frecuentes",
   "faq": [
     {
@@ -51,8 +59,9 @@ export default {
     }
   ],
   "footerTagline": "Desinfectante de HTML rápido y seguro con vista previa en vivo y opciones de limpieza configurables — 100% local en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
-  "contactForIdeas": "Contacto para ideas y comentarios:"
+  "contactForIdeas": "Contacto para ideas y comentarios:",
+  "button_copy": "Copiar HTML"
 };

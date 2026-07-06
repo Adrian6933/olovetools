@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.",
   "seo_description": "Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.",
   "input": "Input SQL",
   "output": "Formatted Output",
@@ -35,8 +35,8 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Does SQL-Flow support different SQL dialects?",
-      "answer": "SQL-Flow recognizes standard SQL keywords common to most dialects including PostgreSQL, MySQL, SQLite and SQL Server. Formatting rules are dialect-agnostic."
+      "question": "Does SQLFlow support different SQL dialects?",
+      "answer": "SQLFlow recognizes standard SQL keywords common to most dialects including PostgreSQL, MySQL, SQLite and SQL Server. Formatting rules are dialect-agnostic."
     },
     {
       "question": "Can I customize the indentation and keyword case?",

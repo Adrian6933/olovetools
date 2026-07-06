@@ -1,5 +1,5 @@
 export default {
-  "title": "Lottie-Viewer",
+  "title": "Lottie Viewer",
   "description": "Lottieアニメーションの再生速度の変更、ループ制御、ベクターレイヤー色の書き換えなどをブラウザ上で100%ローカルに処理できるLottieプレイヤー兼エディター。",
   "drop_active": "Lottie JSONをドロップしてロード...",
   "drop_inactive": "Lottie JSONファイルをここにドラッグ＆ドロップ、またはクリックして参照",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "question": "読み込んだLottie JSONアニメーションはネットに送信されますか？",
-      "answer": "いいえ。Lottie-Viewerはブラウザのメモリ内で完全に動作します。ファイルデータがサーバーへアップロードされることはありません。"
+      "answer": "いいえ。Lottie Viewerはブラウザのメモリ内で完全に動作します。ファイルデータがサーバーへアップロードされることはありません。"
     },
     {
       "question": "レイヤーカラーのカスタマイズはどのように機能しますか？",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "ブラウザで動くプライベートなローカルLottieアニメーションビューアー・カスタマイザー。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "Lottie Viewer | 無料オンラインLottieアニメーションプレーヤー＆エディター",
+  "seo_description": "Lottieアニメーションの再生速度の変更、ループ制御、ベクターレイヤー色の書き換えなどをブラウザ上で100%ローカルに処理できるLottieプレイヤー兼エディター。"
 };

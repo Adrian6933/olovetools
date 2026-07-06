@@ -17,7 +17,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["key doctor", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "key doctor",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -34,7 +40,7 @@ export default {
     }
   ],
   "footerTagline": "Inspectez les événements clavier en direct : voir event.key, event.code et event.keyCode avec détection des modificateurs 100% localement.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

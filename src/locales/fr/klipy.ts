@@ -1,23 +1,43 @@
 export default {
   "title": "Klipy",
-  "seo_title": "Klipy | Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "seo_description": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
+  "seo_title": "Klipy | Découvrez et regardez les meilleurs clips et chaînes en direct de Kick par catégorie. Parcourez, enregistrez et exportez vos moments Kick favoris, gratuit et rapide.",
+  "seo_description": "Découvrez et regardez les meilleurs clips et chaînes en direct de Kick par catégorie. Parcourez, enregistrez et exportez vos moments Kick favoris, gratuit et rapide.",
   "seoHeroTitle": "Klipy",
-  "seoHeroText": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "seoBrowserSpeedTitle": "Instant Local Processing",
-  "seoBrowserSpeedText": "All processing is executed inside your browser using native JavaScript APIs. No data is ever sent to a server.",
-  "seoUseCaseTitle": "100% Client-Side",
-  "seoUseCaseText": "Everything runs locally in your browser. Your data never leaves your device.",
-  "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
-  "seoKeywords": ["klipy", "online tool", "free", "local", "browser"],
-  "faqTitle": "Frequently Asked Questions",
-  "faq": [
-    { "question": "Is my data sent to any server?", "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device." }
+  "seoHeroText": "Découvrez et regardez les meilleurs clips et chaînes en direct de Kick par catégorie. Parcourez, enregistrez et exportez vos moments Kick favoris, gratuit et rapide.",
+  "seoBrowserSpeedTitle": "Traitement Local Instantané",
+  "seoBrowserSpeedText": "Tout le traitement s'exécute dans votre navigateur grâce aux API JavaScript natives. Aucune donnée n'est jamais envoyée à un serveur.",
+  "seoUseCaseTitle": "100% Côté Client",
+  "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
+  "seoPrivacyTitle": "100% Privé et Sécurisé",
+  "seoPrivacyText": "Aucune base de données, aucun suivi, aucun envoi réseau. Vos données restent strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
+  "seoKeywords": [
+    "klipy",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
   ],
-  "footerTagline": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "faqTitle": "Questions fréquentes",
+  "faq": [
+    {
+      "question": "Mes données sont-elles envoyées à un serveur ?",
+      "answer": "Non. Toutes les opérations se déroulent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
+    }
+  ],
+  "footerTagline": "Découvrez et regardez les meilleurs clips et chaînes en direct de Kick par catégorie. Parcourez, enregistrez et exportez vos moments Kick favoris, gratuit et rapide.",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
-  "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "emailCopied": "Copié !",
+  "contactForIdeas": "Contactez-nous pour vos idées et commentaires :",
+  "ui_search": "Recherchez une catégorie ou un jeu…",
+  "ui_popular": "Catégories populaires",
+  "ui_back": "Catégories",
+  "ui_live": "En direct",
+  "ui_clips": "Meilleurs clips",
+  "ui_empty": "Aucun résultat. Essayez une autre catégorie.",
+  "ui_saved": "Enregistrés",
+  "ui_export_txt": "Exporter .txt",
+  "ui_send_kickbolt": "Télécharger dans KickBolt",
+  "ui_watch": "Regarder sur Kick",
+  "ui_viewers": "spectateurs"
 };

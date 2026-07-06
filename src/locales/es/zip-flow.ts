@@ -1,5 +1,5 @@
 export default {
-  "title": "Zip-Flow",
+  "title": "ZipFlow",
   "description": "Comprime archivos en formato ZIP y extrae archivos de paquetes ZIP 100% en local en tu navegador con visor de árbol de archivos en tiempo real.",
   "tab_compress": "Comprimir Archivos",
   "tab_extract": "Extraer Archivo",
@@ -45,7 +45,7 @@ export default {
   "faq": [
     {
       "question": "¿Se suben mis archivos a internet al comprimir o extraer?",
-      "answer": "No. Zip-Flow se ejecuta por completo en la memoria de tu navegador utilizando la biblioteca JSZip. Tus archivos nunca se envían a servidores externos."
+      "answer": "No. ZipFlow se ejecuta por completo en la memoria de tu navegador utilizando la biblioteca JSZip. Tus archivos nunca se envían a servidores externos."
     },
     {
       "question": "¿Puedo extraer archivos ZIP protegidos con contraseña?",
@@ -57,5 +57,7 @@ export default {
     }
   ],
   "footerTagline": "Herramienta local y privada de compresión y extracción de archivos ZIP en el navegador.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "seo_title": "ZipFlow | Compresor y Extractor de Archivos ZIP Gratis Online",
+  "seo_description": "Comprime archivos en formato ZIP y extrae archivos de paquetes ZIP 100% en local en tu navegador con visor de árbol de archivos en tiempo real."
 };

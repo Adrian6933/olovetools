@@ -34,7 +34,7 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                       <div className="w-12 h-12 bg-kick rounded-2xl flex items-center justify-center shadow-2xl">
                           <Zap className="w-7 h-7 text-white fill-current" />
                       </div>
-                      <span className="text-3xl font-[900] italic uppercase text-white tracking-tight">Kickbolt</span>
+                      <span className="text-3xl font-[900] italic uppercase text-white tracking-tight">KickBolt</span>
                   </div>
                   <p className="text-gray-500 text-sm leading-relaxed font-medium">{t.footerDesc}</p>
               </div>

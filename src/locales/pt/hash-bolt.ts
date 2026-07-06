@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "Calcule hashes criptográficos (MD5, SHA-1, SHA-256, SHA-512) para textos e arquivos 100% localmente no seu navegador.",
   "input_text_tab": "Entrada de Texto",
   "input_file_tab": "Hash de Arquivo",
@@ -43,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "Gerador seguro e local de assinaturas e checksums criptográficos para arquivos e texto.",
-  "footerCredit": "Parte da suíte oLoveTools"
+  "footerCredit": "Parte da suíte oLoveTools",
+  "seo_title": "HashBolt | Gerador de Hash MD5, SHA-1, SHA-256 Grátis Online",
+  "seo_description": "Calcule hashes criptográficos (MD5, SHA-1, SHA-256, SHA-512) para textos e arquivos 100% localmente no seu navegador."
 };

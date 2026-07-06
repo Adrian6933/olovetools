@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "Aspect Ratio Calculator | Simplify Ratios & Resize Proportionally 100% Locally",
   "seo_description": "Calculate simplified aspect ratios, resize images proportionally, and explore common presets like 16:9, 4:3 and 9:16. 100% local and private.",
   "seoHeroTitle": "Ratio Calculator Pro",

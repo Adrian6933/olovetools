@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | Busca registros DNS (A, AAAA, MX, TXT, NS, CNAME, SOA) de cualquier dominio sobre HTTPS.",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | Busca registros DNS (A, AAAA, MX, TXT, NS, CNAME, SOA) de cualquier dominio sobre HTTPS.",
   "seo_description": "Busca registros DNS (A, AAAA, MX, TXT, NS, CNAME, SOA) de cualquier dominio sobre HTTPS, directamente en tu navegador.",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "Busca registros DNS (A, AAAA, MX, TXT, NS, CNAME, SOA) de cualquier dominio sobre HTTPS, directamente en tu navegador.",
   "unit_seconds": "s",
   "unit_minutes": "min",
@@ -34,7 +34,13 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
-  "seoKeywords": ["whois bolt", "herramienta online", "gratis", "local", "navegador"],
+  "seoKeywords": [
+    "whois bolt",
+    "herramienta online",
+    "gratis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -42,8 +48,8 @@ export default {
       "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
     },
     {
-      "question": "¿Qué tipos de registros DNS resuelve Whois-Bolt?",
-      "answer": "Whois-Bolt resuelve registros A, AAAA, CNAME, MX, NS, TXT y SOA para cualquier dominio, presentándolos en un resumen claro con direcciones IP, servidores de nombres, servidores de correo y más."
+      "question": "¿Qué tipos de registros DNS resuelve WhoisBolt?",
+      "answer": "WhoisBolt resuelve registros A, AAAA, CNAME, MX, NS, TXT y SOA para cualquier dominio, presentándolos en un resumen claro con direcciones IP, servidores de nombres, servidores de correo y más."
     },
     {
       "question": "¿Cómo se realizan las consultas DNS?",
@@ -51,7 +57,7 @@ export default {
     }
   ],
   "footerTagline": "Busca registros DNS (A, AAAA, MX, TXT, NS, CNAME, SOA) de cualquier dominio sobre HTTPS, directamente en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

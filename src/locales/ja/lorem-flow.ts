@@ -1,8 +1,8 @@
 export default {
-  "title": "Lorem-Flow",
-  "seo_title": "Lorem-Flow | 段落、文、単語ごとに Lorem Ipsum プレースホルダーテキストを生成 100% ローカルで。",
+  "title": "LoremFlow",
+  "seo_title": "LoremFlow | 段落、文、単語ごとに Lorem Ipsum プレースホルダーテキストを生成 100% ローカルで。",
   "seo_description": "段落、文、単語ごとに Lorem Ipsum プレースホルダーテキストを生成 100% ローカルでブラウザ内に。",
-  "seoHeroTitle": "Lorem-Flow",
+  "seoHeroTitle": "LoremFlow",
   "seoHeroText": "段落、文、単語ごとに Lorem Ipsum プレースホルダーテキストを生成 100% ローカルでブラウザ内に。",
   "label_unit_type": "単位の種類",
   "label_count": "数量",
@@ -22,7 +22,13 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["lorem flow", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "lorem flow",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -30,7 +36,7 @@ export default {
       "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
     },
     {
-      "question": "Lorem-Flow が生成するテキストの量を選べますか？",
+      "question": "LoremFlow が生成するテキストの量を選べますか？",
       "answer": "はい。1～100単位を生成でき、各単位が段落、文、単語のいずれかを選択でき、オプションで定番の Lorem ipsum の冒頭で始めることができます。"
     },
     {
@@ -39,7 +45,7 @@ export default {
     }
   ],
   "footerTagline": "段落、文、単語ごとに Lorem Ipsum プレースホルダーテキストを生成 100% ローカルでブラウザ内に。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ先:"

@@ -1,23 +1,43 @@
 export default {
   "title": "Klipy",
-  "seo_title": "Klipy | Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "seo_description": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
+  "seo_title": "Klipy | カテゴリー別に最高のKickクリップとライブチャンネルを発見・視聴。お気に入りのKickの瞬間を閲覧、保存、エクスポート、無料で高速。",
+  "seo_description": "カテゴリー別に最高のKickクリップとライブチャンネルを発見・視聴。お気に入りのKickの瞬間を閲覧、保存、エクスポート、無料で高速。",
   "seoHeroTitle": "Klipy",
-  "seoHeroText": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "seoBrowserSpeedTitle": "Instant Local Processing",
-  "seoBrowserSpeedText": "All processing is executed inside your browser using native JavaScript APIs. No data is ever sent to a server.",
-  "seoUseCaseTitle": "100% Client-Side",
-  "seoUseCaseText": "Everything runs locally in your browser. Your data never leaves your device.",
-  "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
-  "seoKeywords": ["klipy", "online tool", "free", "local", "browser"],
-  "faqTitle": "Frequently Asked Questions",
-  "faq": [
-    { "question": "Is my data sent to any server?", "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device." }
+  "seoHeroText": "カテゴリー別に最高のKickクリップとライブチャンネルを発見・視聴。お気に入りのKickの瞬間を閲覧、保存、エクスポート、無料で高速。",
+  "seoBrowserSpeedTitle": "瞬時のローカル処理",
+  "seoBrowserSpeedText": "すべての処理はネイティブJavaScript APIを使用してブラウザ内で実行されます。データがサーバーに送信されることはありません。",
+  "seoUseCaseTitle": "100% クライアントサイド",
+  "seoUseCaseText": "すべてがブラウザ内でローカルに実行されます。データがデバイスから出ることはありません。",
+  "seoPrivacyTitle": "100% プライベート & セキュア",
+  "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードは一切ありません。データはローカルメモリのみに保持され、タブを閉じると消えます。",
+  "seoKeywords": [
+    "klipy",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
   ],
-  "footerTagline": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "faqTitle": "よくある質問",
+  "faq": [
+    {
+      "question": "データはサーバーに送信されますか?",
+      "answer": "いいえ。すべての処理はブラウザ内で完結します。データがデバイスから出ることはありません。"
+    }
+  ],
+  "footerTagline": "カテゴリー別に最高のKickクリップとライブチャンネルを発見・視聴。お気に入りのKickの瞬間を閲覧、保存、エクスポート、無料で高速。",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
-  "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご感想はこちらへ:",
+  "ui_search": "カテゴリーまたはゲームを検索…",
+  "ui_popular": "人気のカテゴリー",
+  "ui_back": "カテゴリー",
+  "ui_live": "現在ライブ中",
+  "ui_clips": "トップクリップ",
+  "ui_empty": "見つかりませんでした。別のカテゴリーをお試しください。",
+  "ui_saved": "保存済み",
+  "ui_export_txt": ".txtでエクスポート",
+  "ui_send_kickbolt": "KickBoltでダウンロード",
+  "ui_watch": "Kickで視聴",
+  "ui_viewers": "視聴者"
 };

@@ -1,5 +1,5 @@
 export default {
-  "title": "EXIF-Clear",
+  "title": "EXIF Cleaner",
   "description": "Inspect and strip EXIF, GPS, and metadata from images locally in your browser. Protect your privacy online.",
   "btn_download_cleaned": "Download Cleaned Images",
   "btn_download_zip": "Download Cleaned (.ZIP)",
@@ -22,10 +22,10 @@ export default {
   "no_files_loaded": "No images loaded yet",
   "preview_title": "Metadata Inspector",
   "progress_clearing": "Stripping metadata from image {current} of {total}...",
-  "seo_title": "EXIF-Clear | Free Online Image EXIF & GPS Metadata Stripper",
+  "seo_title": "EXIF Cleaner | Free Online Image EXIF & GPS Metadata Stripper",
   "seo_description": "Remove EXIF, GPS, and metadata tags from JPEG/PNG images locally online. Clear location and camera data for complete privacy.",
   "seoHeroTitle": "Strip GPS and Camera EXIF Metadata Offline",
-  "seoHeroText": "Protect your privacy before sharing photographs. EXIF-Clear parses and removes metadata headers locally in your browser RAM.",
+  "seoHeroText": "Protect your privacy before sharing photographs. EXIF Cleaner parses and removes metadata headers locally in your browser RAM.",
   "seoHeroList": [
     "Identify GPS coords, camera makes, and exposure metadata tags",
     "Clears all meta segments including EXIF, XMP, and Photoshop IPTC blocks",
@@ -49,7 +49,7 @@ export default {
     },
     {
       "question": "Which image formats are supported?",
-      "answer": "EXIF-Clear strips metadata from standard JPEG/JPG, PNG, and WebP files entirely offline."
+      "answer": "EXIF Cleaner strips metadata from standard JPEG/JPG, PNG, and WebP files entirely offline."
     },
     {
       "question": "How are GPS coordinates parsed?",

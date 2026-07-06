@@ -1,6 +1,6 @@
 export default {
-  "title": "HTML-Sanitizer",
-  "seo_title": "HTML-Sanitizer | Free Online HTML Cleaner & Sanitizer",
+  "title": "HTML Sanitizer",
+  "seo_title": "HTML Sanitizer | Free Online HTML Cleaner & Sanitizer",
   "seo_description": "Clean and sanitize HTML code by removing scripts, styles, iframes, event handlers and unwanted tags 100% locally in your browser. Free online HTML sanitizer.",
   "seoHeroTitle": "HTML Cleaner & Sanitizer",
   "seoHeroText": "Paste any HTML code and instantly remove scripts, styles, iframes, event handlers, comments, and unwanted tags. Toggle specific cleaning options and see a live preview in a sandboxed iframe. Everything runs locally in your browser.",
@@ -34,7 +34,15 @@ export default {
   "seoUseCaseText": "See the cleaned HTML rendered in real-time inside a sandboxed iframe that blocks script execution. Perfect for verifying that your sanitized HTML looks exactly as intended before using it.",
   "seoPrivacyTitle": "100% Private & Secure",
   "seoPrivacyText": "No databases, tracking, or network uploads. Your HTML code resides strictly in local memory and is processed by the browser's native DOM APIs. Everything disappears when you close the tab.",
-  "seoKeywords": ["html sanitizer", "html cleaner", "remove scripts", "clean html", "sanitize html", "strip tags", "html purifier"],
+  "seoKeywords": [
+    "html sanitizer",
+    "html cleaner",
+    "remove scripts",
+    "clean html",
+    "sanitize html",
+    "strip tags",
+    "html purifier"
+  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
@@ -54,5 +62,6 @@ export default {
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "contactForIdeas": "Contact for ideas and comments:",
+  "button_copy": "Copy HTML"
 };

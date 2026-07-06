@@ -1,5 +1,5 @@
 export default {
-  "title": "CSS-Designer",
+  "title": "CSS Designer",
   "description": "交互式在线工具，用于可视化生成玻璃拟态（Glassmorphism）、复杂阴影、渐变色及自定义边框圆角（Border Radius）等现代CSS效果。",
   "tab_glassmorphism": "玻璃拟态",
   "tab_box_shadow": "盒子阴影",
@@ -45,10 +45,10 @@ export default {
   "theme_vibrant": "炫彩渐变",
   "preview_text": "CSS 游乐场",
   "preview_subtext": "调节左侧的滑块，右侧可实时预览变化。",
-  "seo_title": "CSS-Designer | 玻璃拟态、阴影与渐变生成器",
+  "seo_title": "CSS Designer | 玻璃拟态、阴影与渐变生成器",
   "seo_description": "使用我们的可视化工具创建现代CSS效果。一键生成玻璃拟态、多层阴影、彩色渐变及自定义圆角形状的CSS和Tailwind代码。",
   "seoHeroTitle": "快速、直观地生成令人惊叹的CSS效果。",
-  "seoHeroText": "设计现代网页样式不应成为负担。CSS-Designer 帮您在几秒钟内生成纯净的CSS或Tailwind代码。",
+  "seoHeroText": "设计现代网页样式不应成为负担。CSS Designer 帮您在几秒钟内生成纯净的CSS或Tailwind代码。",
   "seoHeroList": [
     "无需注册或下载",
     "生成清爽的CSS与Tailwind代码",
@@ -64,7 +64,13 @@ export default {
     "阴影生成器",
     "CSS渐变",
     "圆角半径",
-    "Tailwind CSS"
+    "Tailwind CSS",
+    "网页设计工具",
+    "UI UX工具",
+    "免费CSS工具",
+    "拟物化生成器",
+    "花式圆角边框",
+    "在线CSS编辑器"
   ],
   "seoUseCaseTitle": "应用场景",
   "seoUseCaseText": "快速样式化卡片、按钮、页面背景及浮动面板。适用于Figma到代码转换和现代仪表盘设计。",
@@ -72,13 +78,26 @@ export default {
   "faq": [
     {
       "question": "这款工具是免费的吗？",
-      "answer": "是的，CSS-Designer 完全免费，无任何水印或高级限制。"
+      "answer": "是的，CSS Designer 完全免费，无任何水印或高级限制。"
     },
     {
       "question": "支持 Tailwind 吗？",
       "answer": "支持。我们同时提供基于 Tailwind 任意值语法的实用类组合，方便直接粘贴使用。"
+    },
+    {
+      "question": "什么是Glassmorphism（玻璃拟态）?",
+      "answer": "Glassmorphism是一种模仿磨砂玻璃效果的UI趋势。它使用backdrop-filter模糊和半透明背景，将元素优雅地叠加在彩色背景上。"
+    },
+    {
+      "question": "它在移动设备上可以使用吗?",
+      "answer": "当然可以。布局已针对智能手机、平板电脑和台式机进行了优化，让您随时随地编写代码。"
     }
   ],
   "footerTagline": "通过简单实用的优质工具，帮您更高效地进行设计、开发与优化。",
-  "footerCredit": "oLoveTools 工具箱成员"
+  "footerCredit": "oLoveTools 工具箱成员",
+  "seoPrivacyTitle": "隐私与安全",
+  "seoPrivacyText": "您的CSS方案保持私密。一切都在您的本地设备上进行；我们不会存储、跟踪或上传您的设计。",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "cookiePolicy": "Cookie 政策"
 };

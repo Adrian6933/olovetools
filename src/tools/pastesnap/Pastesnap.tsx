@@ -16,36 +16,16 @@ import {
   ArrowUp,
 } from 'lucide-react';
 import { Header } from './components/Header';
-import { CookieConsent } from './components/CookieConsent';
 import { LegalModal } from './components/LegalModal';
 import { PastedImage } from './types';
 import { useTranslation, Language } from '../../locales/dictionary';
 import { legalTranslations } from '../../locales/legal';
+import { AdBanner } from '../../components/shared/AdBanner';
 
 interface PastesnapProps {
   lang: Language;
   dictionary?: any;
 }
-
-// ---------------------------------------------------------------------------
-// AdSense horizontal slot.
-// NOTE: tools are hydrated React components, so literal `<!-- -->` HTML comments
-// do not survive render. We follow the project convention used in Home.tsx:
-// a labelled `#adsense-*` container that AdSense Auto-Ads can target.
-// ---------------------------------------------------------------------------
-const AdBanner: React.FC<{ id: string }> = ({ id }) => (
-  /* Bloque AdSense Horizontal */
-  <div className="w-full max-w-5xl mx-auto my-4" id={id} role="complementary" aria-label="Advertisement">
-    <div className="w-full min-h-[90px] flex flex-col items-center justify-center bg-white/[0.015] border border-dashed border-white/10 rounded-2xl px-4 py-3 text-center">
-      <span className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] opacity-50">
-        Advertisement
-      </span>
-      <div className="w-full max-w-[728px] h-[90px] mt-2 flex items-center justify-center">
-        {/* AdSense ins tag / Auto-Ads injects here */}
-      </div>
-    </div>
-  </div>
-);
 
 const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
   const { dictionary: t } = useTranslation((lang || 'en') as Language, 'pastesnap');
@@ -690,8 +670,6 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
           </motion.button>
         )}
       </AnimatePresence>
-
-      <CookieConsent t={t} />
 
       <LegalModal
         isOpen={!!activeModal}

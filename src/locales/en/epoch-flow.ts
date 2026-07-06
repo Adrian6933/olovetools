@@ -1,8 +1,8 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.",
   "seo_description": "Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.",
   "label_live_epoch": "Live Unix Epoch",
   "button_now": "Now",
@@ -51,8 +51,8 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Does Epoch-Flow support both seconds and milliseconds?",
-      "answer": "Yes. Epoch-Flow automatically detects whether the entered timestamp is in seconds or milliseconds based on its magnitude, so you can paste either format."
+      "question": "Does EpochFlow support both seconds and milliseconds?",
+      "answer": "Yes. EpochFlow automatically detects whether the entered timestamp is in seconds or milliseconds based on its magnitude, so you can paste either format."
     },
     {
       "question": "Can I convert a date back into a Unix epoch timestamp?",

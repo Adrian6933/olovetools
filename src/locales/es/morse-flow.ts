@@ -1,8 +1,8 @@
 export default {
-  "title": "Morse-Flow",
-  "seo_title": "Morse-Flow | Codifica y decodifica código Morse con reproducción de audio 100% local en tu navegador.",
+  "title": "MorseFlow",
+  "seo_title": "MorseFlow | Codifica y decodifica código Morse con reproducción de audio 100% local en tu navegador.",
   "seo_description": "Codifica y decodifica código Morse con reproducción de audio 100% local en tu navegador.",
-  "seoHeroTitle": "Morse-Flow",
+  "seoHeroTitle": "MorseFlow",
   "seoHeroText": "Codifica y decodifica código Morse con reproducción de audio 100% local en tu navegador.",
   "label_text": "Texto",
   "label_morse": "Morse",
@@ -21,7 +21,13 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
-  "seoKeywords": ["morse flow", "herramienta online", "gratis", "local", "navegador"],
+  "seoKeywords": [
+    "morse flow",
+    "herramienta online",
+    "gratis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -33,12 +39,12 @@ export default {
       "answer": "El audio se genera localmente usando la API Web AudioContext. Un oscilador de onda senoidal produce el tono, y el tiempo sigue la regla estándar PARIS de palabras por minuto (WPM)."
     },
     {
-      "question": "¿Qué caracteres soporta Morse-Flow?",
-      "answer": "Morse-Flow soporta las letras de la A a la Z y los dígitos del 0 al 9, siguiendo el estándar internacional de código Morse. Los espacios entre palabras se codifican con un separador de barra."
+      "question": "¿Qué caracteres soporta MorseFlow?",
+      "answer": "MorseFlow soporta las letras de la A a la Z y los dígitos del 0 al 9, siguiendo el estándar internacional de código Morse. Los espacios entre palabras se codifican con un separador de barra."
     }
   ],
   "footerTagline": "Codifica y decodifica código Morse con reproducción de audio 100% local en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

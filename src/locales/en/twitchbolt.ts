@@ -1,6 +1,6 @@
 export default {
   "heroTitle": "DOWNLOAD TWITCH CLIPS",
-  "seo_title": "ClipBolt | Download Twitch Clips",
+  "seo_title": "TwitchBolt | Download Twitch Clips",
   "heroDesc": "The ultimate tool to save Twitch moments. Fast, reliable and zero registration. Download entire lists of clips at once.",
   "seo_description": "The ultimate tool to save Twitch moments. Fast, reliable and zero registration. Download entire lists of clips at once.",
   "uploadTxt": "UPLOAD .TXT LIST",
@@ -18,7 +18,7 @@ export default {
   "tips2": "Mobile Ready: Our files are vertical-ready. Perfect for TikTok, Reels, and YouTube Shorts.",
   "tips3": "Bulk Mode: Use the .txt upload to save lists of up to 50 clips and download them all in seconds.",
   "footerDesc": "Professional Twitch clip downloader. Optimized engine to get high-definition MP4 videos instantly.",
-  "footerSeoPara": "ClipBolt uses advanced technology to parse Twitch metadata and fetch direct MP4 streams. Our infrastructure is designed for speed, allowing users to convert clips to high-definition video files in seconds without any quality loss.",
+  "footerSeoPara": "TwitchBolt uses advanced technology to parse Twitch metadata and fetch direct MP4 streams. Our infrastructure is designed for speed, allowing users to convert clips to high-definition video files in seconds without any quality loss.",
   "proTipsTitle": "PRO TIPS FOR EDITORS",
   "tip1Title": "PERFORMANCE",
   "tip2Title": "FORMAT",
@@ -51,8 +51,8 @@ export default {
     "cookies": "Cookies",
     "contactEmail": "CONTACT BY EMAIL",
     "gotIt": "I UNDERSTAND",
-    "privacyText": "At ClipBolt, privacy is paramount. We do not collect, store, or share any personally identifiable data. When using our tool, links are processed in real-time and no log of downloaded clips is kept on our servers. We do not use databases to track user activity. For any questions regarding your data, you can reach us at adrian.contact.me.69@gmail.com.",
-    "termsText": "ClipBolt is a technical tool for accessing public Twitch content. The user is solely responsible for their use of downloaded materials and must respect copyrights and licenses of content creators. ClipBolt is not affiliated with Twitch Interactive Inc. The service is provided 'as is' without warranties of any kind.",
-    "cookiesText": "Our website uses only strictly necessary LocalStorage for the technical operation of the site, such as remembering your language preferences. We do not use third-party tracking cookies or advertising pixels. By browsing ClipBolt, you accept this essential technical usage to ensure the best possible experience."
+    "privacyText": "At TwitchBolt, privacy is paramount. We do not collect, store, or share any personally identifiable data. When using our tool, links are processed in real-time and no log of downloaded clips is kept on our servers. We do not use databases to track user activity. For any questions regarding your data, you can reach us at adrian.contact.me.69@gmail.com.",
+    "termsText": "TwitchBolt is a technical tool for accessing public Twitch content. The user is solely responsible for their use of downloaded materials and must respect copyrights and licenses of content creators. TwitchBolt is not affiliated with Twitch Interactive Inc. The service is provided 'as is' without warranties of any kind.",
+    "cookiesText": "Our website uses only strictly necessary LocalStorage for the technical operation of the site, such as remembering your language preferences. We do not use third-party tracking cookies or advertising pixels. By browsing TwitchBolt, you accept this essential technical usage to ensure the best possible experience."
   }
 };

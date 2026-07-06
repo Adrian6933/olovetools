@@ -1,5 +1,5 @@
 export default {
-  "title": "Hex-to-RGB",
+  "title": "Hex to RGB",
   "seo_title": "HEX zu RGB Konverter | HEX, RGB, HSL, CMYK mit Deckkraft & Kontrast-Prüfer",
   "seo_description": "Konvertiere zwischen HEX, RGB, HSL und CMYK Farbformaten mit einstellbarer Deckkraft und einem WCAG-Kontrastprüfer. 100% lokal und privat.",
   "seoHeroTitle": "Farbkonverter-Studio",
@@ -21,7 +21,16 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in deinem Browser. Deine Farbeingaben verlassen nie dein Gerät und es wird nichts hochgeladen.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Deine Eingaben verbleiben streng im lokalen Speicher und verschwinden, wenn du den Tab schließt.",
-  "seoKeywords": ["hex zu rgb", "farbkonverter", "hex zu hsl", "cmyk konverter", "wcag kontrastprüfer", "rgba deckkraft", "online-tool", "kostenlos"],
+  "seoKeywords": [
+    "hex zu rgb",
+    "farbkonverter",
+    "hex zu hsl",
+    "cmyk konverter",
+    "wcag kontrastprüfer",
+    "rgba deckkraft",
+    "online-tool",
+    "kostenlos"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -38,7 +47,7 @@ export default {
     }
   ],
   "footerTagline": "Konvertiere zwischen HEX, RGB, HSL und CMYK Farbformaten mit Deckkraft- und Kontrast-Tools 100% lokal.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

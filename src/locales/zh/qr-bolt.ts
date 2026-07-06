@@ -1,7 +1,7 @@
 export default {
-  "title": "QR-Bolt",
+  "title": "QRBolt",
   "description": "完全在浏览器本地和私密地生成带有渐变、形状和中心徽标的自定义二维码。",
-  "seo_title": "QR-Bolt | 免费在线自定义二维码生成器（支持添加Logo）",
+  "seo_title": "QRBolt | 免费在线自定义二维码生成器（支持添加Logo）",
   "seo_description": "创建带有自定义Logo、颜色渐变和独特圆点形状的二维码。100%客户端处理，免费且安全。一键下载高品质PNG或SVG格式。",
   "tabContent": "输入内容",
   "tabDesign": "设计设置",
@@ -65,14 +65,14 @@ export default {
   ],
   "footerCredit": "oLoveTools 套件的一部分",
   "seoHeroTitle": "轻松设计契合品牌形象的精美二维码",
-  "seoHeroText": "普通的黑白二维码极易被忽视。QR-Bolt 允许您根据品牌视觉、标识和色彩自定义二维码。由于全部计算都在本地设备上进行，您的WiFi密码或私人链接绝不会泄露。",
+  "seoHeroText": "普通的黑白二维码极易被忽视。QRBolt 允许您根据品牌视觉、标识和色彩自定义二维码。由于全部计算都在本地设备上进行，您的WiFi密码或私人链接绝不会泄露。",
   "seoHeroList": [
     "免注册，无使用限制",
     "生成离线可用的静态二维码",
     "完全免费，无水印"
   ],
   "seoBrowserSpeedTitle": "极速本地渲染",
-  "seoBrowserSpeedText": "借助浏览器高性能图形渲染引擎，QR-Bolt 能够实时呈现设计。生成完毕后即刻导出，无需排队等待服务器编译。",
+  "seoBrowserSpeedText": "借助浏览器高性能图形渲染引擎，QRBolt 能够实时呈现设计。生成完毕后即刻导出，无需排队等待服务器编译。",
   "seoSecondaryTitle": "免费自定义二维码生成器本地版",
   "seoKeywordsTitle": "关键词",
   "seoKeywords": [
@@ -82,17 +82,18 @@ export default {
     "在线生成二维码",
     "矢量二维码SVG下载",
     "邮箱二维码",
-    "渐变二维码生成"
+    "渐变二维码生成",
+    "渐变二维码生成器"
   ],
   "seoUseCaseTitle": "广泛适用于菜单、宣传单页与产品包装",
   "seoUseCaseText": "将您的精美二维码放置在包装箱、餐厅台卡、个人名片或活动海报上。富有个性的视觉外观能够大幅提升扫码率。",
   "seoPrivacyTitle": "严格保障您的数据安全",
-  "seoPrivacyText": "许多在线生成器会追踪您的扫码行为并搜集隐私。QR-Bolt 完全运行在本地，生成的二维码直接包含静态数据，Logo嵌合也完全在浏览器中处理，安全无忧。",
+  "seoPrivacyText": "许多在线生成器会追踪您的扫码行为并搜集隐私。QRBolt 完全运行在本地，生成的二维码直接包含静态数据，Logo嵌合也完全在浏览器中处理，安全无忧。",
   "faqTitle": "常见问题解答",
   "faq": [
     {
       "question": "生成的二维码是静态的还是动态的？",
-      "answer": "QR-Bolt 生成的所有二维码都是静态的。数据直接嵌在二维码图形中，永不过期，不需要任何订购费用，也不会经由广告服务器重定向。"
+      "answer": "QRBolt 生成的所有二维码都是静态的。数据直接嵌在二维码图形中，永不过期，不需要任何订购费用，也不会经由广告服务器重定向。"
     },
     {
       "question": "可以添加任意格式的Logo吗？",
@@ -115,7 +116,7 @@ export default {
   "emailCopied": "邮箱地址已复制到剪贴板！",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "我们非常重视您的隐私。\n\n所有生成过程均在您的浏览器本地进行。网络名称、密码、链接、邮箱和Logo图片绝对不会发送到我们的服务器。我们不追踪任何扫码数据。\n\n生成的二维码完全归您所有。",
-  "termsContent": "使用 QR-Bolt 即表示您同意以下条款：\n\n1. 本工具按“原样”提供，不包含任何形式的保证。\n2. 我们对扫码失败、数据错误或因此造成的业务损失不承担任何责任。\n3. 您需自行对所编码内容的合法性负责。\n4. 我们保留随时修改这些条款的权利。",
+  "termsContent": "使用 QRBolt 即表示您同意以下条款：\n\n1. 本工具按“原样”提供，不包含任何形式的保证。\n2. 我们对扫码失败、数据错误或因此造成的业务损失不承担任何责任。\n3. 您需自行对所编码内容的合法性负责。\n4. 我们保留随时修改这些条款的权利。",
   "cookiesContent": "我们使用 Cookie 来提升使用体验。\n\n1. 维持技术运行所必需的必要 Cookie。\n2. 用于保存您的语言和偏好的偏好 Cookie。\n\n您可以在浏览器设置中进行管理。",
   "contact": "联系我们"
 };

@@ -1,5 +1,5 @@
 export default {
-  "title": "TTS-Bolt",
+  "title": "TTSBolt",
   "description": "Convert text to natural speech and download it as an MP3 file 100% locally in your browser.",
   "textarea_placeholder": "Type or paste your text here to read aloud...",
   "label_voice": "Voice Selection",
@@ -15,10 +15,10 @@ export default {
   "history_title": "Recent Audio History",
   "no_history": "No audio history yet.",
   "clear_history": "Clear History",
-  "seo_title": "TTS-Bolt | Free Text-to-Speech Converter with MP3 Download",
+  "seo_title": "TTSBolt | Free Text-to-Speech Converter with MP3 Download",
   "seo_description": "Listen to any text with natural voices and download it as an MP3 file. Speed and pitch customization, 100% locally in your browser.",
   "seoHeroTitle": "Convert Text to Speech and Save as MP3",
-  "seoHeroText": "Enjoy natural speech synthesis completely in your browser tab. TTS-Bolt processes everything locally, ensuring total privacy for your documents and texts.",
+  "seoHeroText": "Enjoy natural speech synthesis completely in your browser tab. TTSBolt processes everything locally, ensuring total privacy for your documents and texts.",
   "seoHeroList": [
     "Native browser voices with adjusters",
     "Instant chunk-joined MP3 downloads",

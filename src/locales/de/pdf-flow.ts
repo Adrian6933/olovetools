@@ -1,7 +1,7 @@
 export default {
-  "title": "PDF-Flow",
+  "title": "PDFFlow",
   "description": "Fügen Sie Dokumente oder Bilder lokal in Ihrem Browser zusammen, teilen Sie sie, drehen Sie sie oder konvertieren Sie sie in PDF.",
-  "seo_title": "PDF-Flow | Lokaler PDF-Editor & Kostenloses Toolkit",
+  "seo_title": "PDFFlow | Lokaler PDF-Editor & Kostenloses Toolkit",
   "seo_description": "Fügen Sie PDF-Dateien zusammen, teilen Sie sie, drehen Sie sie und konvertieren Sie JPG/PNG lokal in Ihrem Browser. Keine Anmeldung, kein Server-Upload. Sicher und kostenlos.",
   "dropzonePrompt": "Dateien hierher ziehen oder klicken, um sie auszuwählen",
   "dropzoneSubtitle": "Unterstützt PDF-Dateien und JPG/PNG-Bilder. Alle Vorgänge werden 100 % lokal verarbeitet.",
@@ -52,16 +52,16 @@ export default {
   ],
   "footerCredit": "Teil der oLoveTools-Suite",
   "seoHeroTitle": "100 % lokale, private & sichere PDF-Bearbeitung",
-  "seoHeroText": "Standard-Online-PDF-Tools zwingen Sie dazu, sensible Dokumente – wie Verträge, Steuerformulare und Scans – auf fremde Server hochzuladen. PDF-Flow verarbeitet alle Operationen direkt im Arbeitsspeicher. Ihre privaten Dokumente verlassen nie Ihren Computer.",
+  "seoHeroText": "Standard-Online-PDF-Tools zwingen Sie dazu, sensible Dokumente – wie Verträge, Steuerformulare und Scans – auf fremde Server hochzuladen. PDFFlow verarbeitet alle Operationen direkt im Arbeitsspeicher. Ihre privaten Dokumente verlassen nie Ihren Computer.",
   "seoHeroList": [
     "Sichere Offline-Verarbeitung",
     "Keine Dokumenten-Uploads, null Datenschutzrisiko",
     "Völlig kostenlos und ohne Einschränkungen"
   ],
   "seoBrowserSpeedTitle": "Sofortige Browser-Kompilierung",
-  "seoBrowserSpeedText": "Durch die lokale Kompilierung von PDF-Dateien mithilfe von JS-WebAssembly-APIs vermeidet PDF-Flow Netzwerkverzögerungen und Server-Warteschlangen. Fügen Sie große Dateien zusammen oder extrahieren Sie Seiten sofort.",
+  "seoBrowserSpeedText": "Durch die lokale Kompilierung von PDF-Dateien mithilfe von JS-WebAssembly-APIs vermeidet PDFFlow Netzwerkverzögerungen und Server-Warteschlangen. Fügen Sie große Dateien zusammen oder extrahieren Sie Seiten sofort.",
   "seoSecondaryTitle": "Vielseitige clientseitige PDF-Dienstprogramme",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "Schlüsselwörter",
   "seoKeywords": [
     "PDF zusammenfügen online",
     "PDF Seiten teilen",
@@ -74,9 +74,9 @@ export default {
     "PDF Konverter ohne Upload"
   ],
   "seoUseCaseTitle": "Ideal für den professionellen und persönlichen Gebrauch",
-  "seoUseCaseText": "Egal, ob Sie unterzeichnete Verträge kombinieren, gescannte Quittungen organisieren, Studienführer aufteilen oder Bildergalerien zusammenstellen möchten – PDF-Flow erledigt dies lokal mit Geschwindigkeit und Datenschutz.",
+  "seoUseCaseText": "Egal, ob Sie unterzeichnete Verträge kombinieren, gescannte Quittungen organisieren, Studienführer aufteilen oder Bildergalerien zusammenstellen möchten – PDFFlow erledigt dies lokal mit Geschwindigkeit und Datenschutz.",
   "seoPrivacyTitle": "Unkompromittierte Datensicherheit",
-  "seoPrivacyText": "Wir glauben, dass Ihre Dateien Ihnen gehören. PDF-Flow verwendet pdf-lib, um PDF-Manipulationen im Speicher innerhalb der Browser-Sandbox auszuführen. Keine Telemetrie, keine Protokolle und keine Uploads.",
+  "seoPrivacyText": "Wir glauben, dass Ihre Dateien Ihnen gehören. PDFFlow verwendet pdf-lib, um PDF-Manipulationen im Speicher innerhalb der Browser-Sandbox auszuführen. Keine Telemetrie, keine Protokolle und keine Uploads.",
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -104,7 +104,7 @@ export default {
   "emailCopied": "E-Mail in die Zwischenablage kopiert!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "Ihr Datenschutz ist uns wichtig.\n\nWir erfassen nur die Informationen, die zur Bereitstellung unseres Dienstes erforderlich sind. Dazu gehören technische Daten Ihres Browsers und Geräts, um sicherzustellen, dass das Tool ordnungsgemäß funktioniert.\n\nWir speichern, verfolgen oder analysieren Ihre Dateien niemals. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser, um sicherzustellen, dass Ihre Daten Ihr Gerät niemals verlassen.",
-  "termsContent": "Durch die Nutzung von PDF-Flow stimmen Sie diesen Bedingungen zu.\n\n1. Dieses Tool wird \"wie besehen\" ohne jegliche Gewährleistung bereitgestellt.\n2. Wir sind nicht verantwortlich für Datenverluste oder Probleme, die durch die Nutzung dieses Tools entstehen.\n3. Sie sind für die Inhalte verantwortlich, die Sie mit diesem Tool verarbeiten.\n4. Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern.",
+  "termsContent": "Durch die Nutzung von PDFFlow stimmen Sie diesen Bedingungen zu.\n\n1. Dieses Tool wird \"wie besehen\" ohne jegliche Gewährleistung bereitgestellt.\n2. Wir sind nicht verantwortlich für Datenverluste oder Probleme, die durch die Nutzung dieses Tools entstehen.\n3. Sie sind für die Inhalte verantwortlich, die Sie mit diesem Tool verarbeiten.\n4. Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern.",
   "cookiesContent": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.\n\n1. Essenzielle Cookies: Erforderlich für die grundlegende Funktionalität der Website.\n2. Präferenz-Cookies: Werden verwendet, um sich an Ihre Spracheinstellungen und Cookie-Einwilligung zu erinnern.\n\nSie können Cookies jederzeit über Ihre Browsereinstellungen verwalten oder deaktivieren.",
   "contact": "Kontakt"
 };

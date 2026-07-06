@@ -1,7 +1,7 @@
 export default {
-  "title": "QR-Bolt",
+  "title": "QRBolt",
   "description": "Erstellen Sie maßgeschneiderte QR-Codes mit Farbverläufen, Formen und Logos zu 100% lokal und privat im Browser.",
-  "seo_title": "QR-Bolt | Kostenloser Online-QR-Code-Generator mit Logo",
+  "seo_title": "QRBolt | Kostenloser Online-QR-Code-Generator mit Logo",
   "seo_description": "Erstellen Sie eigene QR-Codes mit Logo, Farbverläufen und einzigartigen Formen. 100% lokal, kostenlos und sicher. Download in hoher Qualität als PNG oder SVG.",
   "tabContent": "Inhalt",
   "tabDesign": "Design",
@@ -65,14 +65,14 @@ export default {
   ],
   "footerCredit": "Teil der oLoveTools-Suite",
   "seoHeroTitle": "Erstellen Sie wunderschöne, markengerechte QR-Codes",
-  "seoHeroText": "Gewöhnliche schwarz-weiße QR-Codes werden oft ignoriert. Mit QR-Bolt können Sie das Design an Ihr Logo und Ihre Markenfarben anpassen. Da alle Berechnungen lokal erfolgen, bleiben Ihre WLAN-Zugangsdaten oder privaten Links absolut sicher.",
+  "seoHeroText": "Gewöhnliche schwarz-weiße QR-Codes werden oft ignoriert. Mit QRBolt können Sie das Design an Ihr Logo und Ihre Markenfarben anpassen. Da alle Berechnungen lokal erfolgen, bleiben Ihre WLAN-Zugangsdaten oder privaten Links absolut sicher.",
   "seoHeroList": [
     "Ohne Registrierung und ohne Limits",
     "Generiert offline-kompatible QR-Codes",
     "Völlig kostenlos und ohne Wasserzeichen"
   ],
   "seoBrowserSpeedTitle": "Schnelle Generierung im Browser",
-  "seoBrowserSpeedText": "QR-Bolt rendert Ihre Designs sofort auf einem virtuellen Canvas im Browser. Downloads stehen ohne Wartezeit bereit.",
+  "seoBrowserSpeedText": "QRBolt rendert Ihre Designs sofort auf einem virtuellen Canvas im Browser. Downloads stehen ohne Wartezeit bereit.",
   "seoSecondaryTitle": "Kostenloser maßgeschneiderter QR-Code-Ersteller lokal",
   "seoKeywordsTitle": "Suchbegriffe",
   "seoKeywords": [
@@ -81,17 +81,19 @@ export default {
     "QR-Code anpassen kostenlos",
     "Vektor QR-Code SVG",
     "E-Mail QR-Code erstellen",
-    "Farbverlauf QR-Code"
+    "Farbverlauf QR-Code",
+    "E-Mail QR-Code",
+    "QR-Code-Generator mit Farbverlauf"
   ],
   "seoUseCaseTitle": "Perfekt für Speisekarten, Flyer und Verpackungen",
   "seoUseCaseText": "Platzieren Sie Ihre personalisierten QR-Codes auf Verpackungen, Menükarten oder Postern. Stilvolle Codes erhöhen die Scanrate erheblich.",
   "seoPrivacyTitle": "Kompromisslose Datensicherheit",
-  "seoPrivacyText": "Viele Generatoren tracken Scans und sammeln private Daten. QR-Bolt läuft komplett clientseitig. Der Code enthält nur die statischen Daten und das Logo wird lokal eingebettet.",
+  "seoPrivacyText": "Viele Generatoren tracken Scans und sammeln private Daten. QRBolt läuft komplett clientseitig. Der Code enthält nur die statischen Daten und das Logo wird lokal eingebettet.",
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
       "question": "Sind diese QR-Codes statisch oder dynamisch?",
-      "answer": "Alle mit QR-Bolt generierten QR-Codes sind statisch. Die Daten sind direkt kodiert. Sie laufen nie ab, erfordern keine Abonnements und leiten nicht über Werbeserver um."
+      "answer": "Alle mit QRBolt generierten QR-Codes sind statisch. Die Daten sind direkt kodiert. Sie laufen nie ab, erfordern keine Abonnements und leiten nicht über Werbeserver um."
     },
     {
       "question": "Kann ich jedes beliebige Logo verwenden?",
@@ -114,7 +116,7 @@ export default {
   "emailCopied": "E-Mail in die Zwischenablage kopiert!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "Ihre Privatsphäre ist uns wichtig.\n\nAlle Funktionen laufen lokal. Es werden keine Daten oder Logos auf unsere Server übertragen. Wir tracken keine Scans.\n\nIhre QR-Codes gehören Ihnen.",
-  "termsContent": "Mit der Nutzung von QR-Bolt stimmen Sie Folgendem zu:\n\n1. Dieses Tool wird ohne Gewährleistung bereitgestellt.\n2. Wir haften nicht für Scan-Fehler oder fehlerhafte Daten.\n3. Sie sind für die Rechtmäßigkeit der kodierten Daten verantwortlich.\n4. Wir behalten uns vor, diese Bedingungen jederzeit anzupassen.",
+  "termsContent": "Mit der Nutzung von QRBolt stimmen Sie Folgendem zu:\n\n1. Dieses Tool wird ohne Gewährleistung bereitgestellt.\n2. Wir haften nicht für Scan-Fehler oder fehlerhafte Daten.\n3. Sie sind für die Rechtmäßigkeit der kodierten Daten verantwortlich.\n4. Wir behalten uns vor, diese Bedingungen jederzeit anzupassen.",
   "cookiesContent": "Wir verwenden Cookies für die Benutzerfreundlichkeit.\n\n1. Notwendige Cookies für technische Grundfunktionen.\n2. Präferenz-Cookies zur Speicherung Ihrer Sprache.\n\nSie können Cookies in Ihrem Browser verwalten.",
   "contact": "Kontakt"
 };

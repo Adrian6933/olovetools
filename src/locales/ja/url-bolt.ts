@@ -1,6 +1,6 @@
 export default {
-  "title": "URL-Bolt",
-  "seo_title": "URL-Bolt | 無料のオンラインURLエンコーダー、デコーダー＆パーサー",
+  "title": "URLBolt",
+  "seo_title": "URLBolt | 無料のオンラインURLエンコーダー、デコーダー＆パーサー",
   "seo_description": "クエリ文字列の分解とスマートフォーマット機能付きで、URLをエンコード、デコード、解析。すべてブラウザ内で100%ローカルに実行。無料のオンラインURLツール。",
   "seoHeroTitle": "URLエンコーダー、デコーダー＆パーサー",
   "seoHeroText": "テキストをURLセーフ形式に瞬時にエンコード、エンコードされたURLをデコード、または任意のURLを構成要素に分解 — プロトコル、ホスト、パス、クエリパラメータ、フラグメント — をデコード値付きで。すべてブラウザ内でローカルに動作。",
@@ -42,7 +42,16 @@ export default {
   "seoUseCaseText": "解析モードは任意のURLを構成要素に分解します：プロトコル、ホスト名、ポート、パスセグメント、個別クエリパラメータと生の値およびデコード値 — リダイレクトリンクやアフィリエイトURLのデバッグに最適。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードなし。URLとテキスト入力は厳密にローカルメモリに存在し、タブを閉じると消去されます。何もログ記録または保存されません。",
-  "seoKeywords": ["url エンコーダー", "url デコーダー", "url パーサー", "クエリ パーサー", "uri エンコード", "uri デコード", "url 分解", "url コンポーネント"],
+  "seoKeywords": [
+    "url エンコーダー",
+    "url デコーダー",
+    "url パーサー",
+    "クエリ パーサー",
+    "uri エンコード",
+    "uri デコード",
+    "url 分解",
+    "url コンポーネント"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -50,7 +59,7 @@ export default {
       "answer": "encodeURIは完全なURLをエンコードしますが、URL構文の一部である:, /, ?, &, =などの文字を保持します。encodeURIComponentはこれらの特殊文字を含むすべてをエンコードするため、個別のクエリパラメータ値をエンコードするのに最適です。"
     },
     {
-      "question": "URL-Boltはエンコードされたクエリパラメータを含むURLを解析できますか？",
+      "question": "URLBoltはエンコードされたクエリパラメータを含むURLを解析できますか？",
       "answer": "はい。解析モードはすべてのクエリパラメータ値とパスセグメントを自動的にデコードし、生のエンコード形式と読みやすいデコード版を並べて表示します。"
     },
     {
@@ -59,7 +68,7 @@ export default {
     }
   ],
   "footerTagline": "完全な構造分解付きの高速でプライベートなURLエンコーダー、デコーダー、パーサー — 100%ブラウザ内でローカル実行。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

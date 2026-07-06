@@ -28,7 +28,16 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Suas imagens nunca saem do seu dispositivo e nada é carregado.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Sua imagem reside estritamente na memória local e desaparece quando você fecha a aba.",
-  "seoKeywords": ["colorsnap", "seletor de cor de imagem", "extrair paleta de imagem", "cores dominantes", "extrator de cor hex", "gerador de paleta css", "ferramenta online", "grátis"],
+  "seoKeywords": [
+    "colorsnap",
+    "seletor de cor de imagem",
+    "extrair paleta de imagem",
+    "cores dominantes",
+    "extrator de cor hex",
+    "gerador de paleta css",
+    "ferramenta online",
+    "grátis"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -45,7 +54,7 @@ export default {
     }
   ],
   "footerTagline": "Extraia cores dominantes e paletas de qualquer imagem 100% localmente no seu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

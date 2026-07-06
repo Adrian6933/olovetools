@@ -1,5 +1,5 @@
 export default {
-  "title": "Meme-Bolt",
+  "title": "MemeBolt",
   "description": "基于经典模板或自选背景图片，在浏览器中 100% 本地生成个性化趣味表情包 / 梗图。",
   "btn_download": "保存梗图 (Meme)",
   "label_upload_box": "拖放自定义背景图至此，或点击浏览文件",
@@ -20,7 +20,7 @@ export default {
   "status_clean": "干净",
   "no_files_loaded": "暂无背景图片",
   "preview_title": "梗图编辑室实时预览",
-  "seo_title": "Meme-Bolt | 免费离线梗图表情包生成及编辑器",
+  "seo_title": "MemeBolt | 免费离线梗图表情包生成及编辑器",
   "seo_description": "在本地一键添加趣味文字和像素贴纸生成 Meme 梗图。选择经典模板或上传私密照片，离线保护隐私安全。",
   "seoHeroTitle": "完全离线的可视化互动梗图表情包生成器",
   "seoHeroText": "无需网络上传，即刻制作刷屏表情包。直接在画板上对文字和饰品进行拖动、缩放和旋转调节。",

@@ -52,7 +52,7 @@ export default {
   "footer_feature2_title": "Smart Collections",
   "footer_feature2_desc": "Save your favorite highlights in local session without registration.",
   "footer_feature3_title": "Batch Export",
-  "footer_feature3_desc": "Export your entire list to .txt or send it to ClipBolt for ZIP extraction.",
+  "footer_feature3_desc": "Export your entire list to .txt or send it to TwitchBolt for ZIP extraction.",
   "footer_seo_paragraph1": "Clipy is the ultimate tool for Twitch fans and content creators. Our platform allows you to navigate through the vast universe of Twitch highlights with unprecedented ease.",
   "footer_seo_paragraph2": "Whether you are looking for the latest viral moments or classic highlights from your favorite streamers, Clipy provides the fastest and most efficient interface to find and organize content.",
   "footer_seo_desc_large": "The professional choice for Twitch content curation. Fast, private, and powerful.",

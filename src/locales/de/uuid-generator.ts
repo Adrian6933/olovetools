@@ -1,6 +1,6 @@
 export default {
-  "title": "UUID-Generator",
-  "seo_title": "UUID-Generator | Kostenloser Online-UUID v4 & v5 Generator",
+  "title": "UUID Generator",
+  "seo_title": "UUID Generator | Kostenloser Online-UUID v4 & v5 Generator",
   "seo_description": "Generiere zufällige UUIDs (v4) und benannte UUIDs (v5) als Massengenerierung bis zu 500 gleichzeitig 100% lokal in deinem Browser mit der Web Crypto API. Kostenloser Online-UUID-Generator.",
   "seoHeroTitle": "UUID v4 & v5 Massengenerator",
   "seoHeroText": "Generiere sofort bis zu 500 zufällige UUIDs (Version 4) oder benannte UUIDs (Version 5 mit Namespace) mit der nativen Web Crypto API des Browsers. Die gesamte Generierung erfolgt lokal — keine Serveraufrufe, kein Tracking.",
@@ -25,7 +25,15 @@ export default {
   "seoUseCaseText": "Generiere bis zu 500 UUIDs mit einem einzigen Klick. Perfekt für Datenbank-Seeding, Testdatengenerierung, eindeutige Session-IDs oder jedes Szenario, das mehrere eindeutige Identifikatoren gleichzeitig erfordert.",
   "seoPrivacyTitle": "100% privat & sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Die gesamte UUID-Generierung erfolgt im Krypto-Subsystem deines Browsers. Deine Daten verlassen niemals dein Gerät.",
-  "seoKeywords": ["uuid generator", "uuid v4", "uuid v5", "guid generator", "zufällige uuid", "massen-uuid", "eindeutiger identifikator"],
+  "seoKeywords": [
+    "uuid generator",
+    "uuid v4",
+    "uuid v5",
+    "guid generator",
+    "zufällige uuid",
+    "massen-uuid",
+    "eindeutiger identifikator"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -42,8 +50,9 @@ export default {
     }
   ],
   "footerTagline": "Schneller, sicherer UUID v4 und v5 Massengenerator, unterstützt durch die Web Crypto API — 100% lokal in deinem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
-  "contactForIdeas": "Kontakt für Ideen und Kommentare:"
+  "contactForIdeas": "Kontakt für Ideen und Kommentare:",
+  "button_copy_all": "Alles kopieren"
 };

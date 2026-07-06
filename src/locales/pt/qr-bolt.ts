@@ -1,7 +1,7 @@
 export default {
-  "title": "QR-Bolt",
+  "title": "QRBolt",
   "description": "Gere códigos QR personalizados com degradês, formas e logotipos no centro 100% localmente e com privacidade.",
-  "seo_title": "QR-Bolt | Gerador de Código QR Personalizado Grátis com Logo",
+  "seo_title": "QRBolt | Gerador de Código QR Personalizado Grátis com Logo",
   "seo_description": "Crie códigos QR personalizados com logotipos, degradês de cores e formas exclusivas. 100% no cliente, gratuito e seguro. Baixe em PNG ou SVG de alta qualidade.",
   "tabContent": "Conteúdo",
   "tabDesign": "Design",
@@ -65,14 +65,14 @@ export default {
   ],
   "footerCredit": "Parte da suíte oLoveTools",
   "seoHeroTitle": "Crie Códigos QR Lindos Alinhados à Sua Marca",
-  "seoHeroText": "Códigos QR genéricos em preto e branco são facilmente ignorados. O QR-Bolt permite que você combine seus designs de QR com seu logotipo e cores de marca. Como todo o processo é local, suas senhas de rede WiFi ou links privados permanecem totalmente protegidos.",
+  "seoHeroText": "Códigos QR genéricos em preto e branco são facilmente ignorados. O QRBolt permite que você combine seus designs de QR com seu logotipo e cores de marca. Como todo o processo é local, suas senhas de rede WiFi ou links privados permanecem totalmente protegidos.",
   "seoHeroList": [
     "Sem registro e sem limites",
     "Gera códigos QR compatíveis offline",
     "Totalmente grátis e sem marcas d'água"
   ],
   "seoBrowserSpeedTitle": "Geração Local Veloz",
-  "seoBrowserSpeedText": "Usando mecanismos de renderização do próprio navegador, o QR-Bolt gera códigos instantaneamente em uma tela virtual. Os downloads ficam disponíveis sem tempo de espera.",
+  "seoBrowserSpeedText": "Usando mecanismos de renderização do próprio navegador, o QRBolt gera códigos instantaneamente em uma tela virtual. Os downloads ficam disponíveis sem tempo de espera.",
   "seoSecondaryTitle": "Criador de códigos QR personalizados grátis local",
   "seoKeywordsTitle": "Palavras-chave",
   "seoKeywords": [
@@ -82,17 +82,18 @@ export default {
     "criar código QR online",
     "código QR vetor SVG",
     "criar QR de email",
-    "código QR com degradê"
+    "código QR com degradê",
+    "Gerador de QR code com gradiente"
   ],
   "seoUseCaseTitle": "Ideal para Cardápios, Panfletos e Embalagens",
   "seoUseCaseText": "Coloque seus códigos QR personalizados em embalagens físicas, menus de restaurantes ou cartazes de eventos. Estilos personalizados aumentam drasticamente as taxas de leitura.",
   "seoPrivacyTitle": "Segurança de Dados Sem Compromisso",
-  "seoPrivacyText": "Muitos geradores rastreiam suas leituras e coletam dados privados. O QR-Bolt funciona inteiramente no seu navegador. O código contém os dados de forma estática e o logo é incorporado localmente.",
+  "seoPrivacyText": "Muitos geradores rastreiam suas leituras e coletam dados privados. O QRBolt funciona inteiramente no seu navegador. O código contém os dados de forma estática e o logo é incorporado localmente.",
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
       "question": "Estes códigos QR são estáticos ou dinâmicos?",
-      "answer": "Todos os códigos QR gerados pelo QR-Bolt são estáticos. Eles contêm os dados diretamente integrados, o que significa que nunca expiram, não exigem assinaturas e não passam por servidores de redirecionamento."
+      "answer": "Todos os códigos QR gerados pelo QRBolt são estáticos. Eles contêm os dados diretamente integrados, o que significa que nunca expiram, não exigem assinaturas e não passam por servidores de redirecionamento."
     },
     {
       "question": "Posso adicionar qualquer logotipo?",
@@ -115,7 +116,7 @@ export default {
   "emailCopied": "Email copiado para a área de transferência!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "Sua privacidade é essencial.\n\nTodo o processamento ocorre localmente no seu navegador. Nenhuma senha, email ou logotipo é enviado aos nossos servidores. Não monitoramos leituras.\n\nSeus códigos QR pertencem exclusivamente a você.",
-  "termsContent": "Ao usar o QR-Bolt, você concorda com as condições seguintes:\n\n1. Esta ferramenta é fornecida \"como está\", sem garantias.\n2. Não nos responsabilizamos por falhas de leitura ou erros de dados.\n3. Você é responsável pela legalidade dos dados inseridos.\n4. Reservamo-nos o direito de alterar estes termos a qualquer momento.",
+  "termsContent": "Ao usar o QRBolt, você concorda com as condições seguintes:\n\n1. Esta ferramenta é fornecida \"como está\", sem garantias.\n2. Não nos responsabilizamos por falhas de leitura ou erros de dados.\n3. Você é responsável pela legalidade dos dados inseridos.\n4. Reservamo-nos o direito de alterar estes termos a qualquer momento.",
   "cookiesContent": "Usamos cookies para melhorar sua experiência.\n\n1. Cookies essenciais necessários para o funcionamento técnico.\n2. Cookies de preferência para salvar suas configurações de idioma.\n\nVocê pode desativá-los nas configurações do navegador.",
   "contact": "Contato"
 };

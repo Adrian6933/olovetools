@@ -1,5 +1,5 @@
 export default {
-  "title": "Lottie-Viewer",
+  "title": "Lottie Viewer",
   "description": "Visualizador, personalizador e inspector interactivo de animaciones Lottie 100% local para editar colores de capas y controlar la reproducción.",
   "drop_active": "Suelta el archivo Lottie JSON para cargarlo...",
   "drop_inactive": "Arrastra y suelta un archivo Lottie JSON aquí, o haz clic para buscarlo",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "question": "¿Se suben mis archivos Lottie JSON a internet?",
-      "answer": "No. Lottie-Viewer se ejecuta por completo en el lado del cliente. Tus archivos se procesan en la memoria de tu navegador y nunca salen de tu dispositivo."
+      "answer": "No. Lottie Viewer se ejecuta por completo en el lado del cliente. Tus archivos se procesan en la memoria de tu navegador y nunca salen de tu dispositivo."
     },
     {
       "question": "¿Cómo funciona el cambiador de paletas de color?",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Reproductor, personalizador e inspector de Lottie privado y local en el navegador.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "seo_title": "Lottie Viewer | Reproductor y Editor de Animaciones Lottie Gratis",
+  "seo_description": "Visualizador, personalizador e inspector interactivo de animaciones Lottie 100% local para editar colores de capas y controlar la reproducción."
 };

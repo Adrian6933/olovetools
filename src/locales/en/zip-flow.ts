@@ -1,5 +1,5 @@
 export default {
-  "title": "Zip-Flow",
+  "title": "ZipFlow",
   "description": "Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization.",
   "tab_compress": "Compress Files",
   "tab_extract": "Extract Archive",
@@ -45,7 +45,7 @@ export default {
   "faq": [
     {
       "question": "Are my files uploaded online during ZIP compression/extraction?",
-      "answer": "No. Zip-Flow runs entirely in your browser memory (client-side) using the JSZip library. Your files are never uploaded to any server or processed remotely."
+      "answer": "No. ZipFlow runs entirely in your browser memory (client-side) using the JSZip library. Your files are never uploaded to any server or processed remotely."
     },
     {
       "question": "Can I extract password-protected ZIP archives?",
@@ -57,5 +57,7 @@ export default {
     }
   ],
   "footerTagline": "Private and local browser-based ZIP compression and extraction tool.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "ZipFlow | Free Online ZIP File Compressor & Extractor",
+  "seo_description": "Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization."
 };

@@ -1,5 +1,5 @@
 export default {
-  "title": "GIF-Bolt",
+  "title": "GIFBolt",
   "description": "在浏览器本地 100% 免费将视频和图像序列转换为经过优化的 GIF 动图。",
   "tab_video": "视频转 GIF",
   "tab_images": "多图合成 GIF",
@@ -25,10 +25,10 @@ export default {
   "quality_low": "低画质 (生成极快)",
   "drop_zone_video": "拖拽视频到此处或点击浏览选择 (支持 MP4, WebM)",
   "drop_zone_images": "拖拽图片到此处或点击浏览选择 (支持 PNG, JPG, WebP)",
-  "seo_title": "GIF-Bolt | 免费在线视频转 GIF 与多图合成 GIF 工具",
+  "seo_title": "GIFBolt | 免费在线视频转 GIF 与多图合成 GIF 工具",
   "seo_description": "在浏览器本地直接将视频和图片序列转换为高画质 animated GIF。支持自定义裁剪时间、帧率、尺寸和压缩率，安全私密。",
   "seoHeroTitle": "本地极速将视频和图片转换为 GIF 动图",
-  "seoHeroText": "完全在浏览器中创建优化后的 GIF 动图。GIF-Bolt 采用离线处理模式，保护您的文件隐私与数据安全。",
+  "seoHeroText": "完全在浏览器中创建优化后的 GIF 动图。GIFBolt 采用离线处理模式，保护您的文件隐私与数据安全。",
   "seoHeroList": [
     "无任何文件大小或上传次数限制",
     "支持精确选择开始/结束时间并调节帧率",
@@ -47,7 +47,7 @@ export default {
       "answer": "没有。因为所有的转码计算直接在您的浏览器内存中完成，所以没有硬性限制。但是，处理超长或超高分辨率（如 4K）的视频可能会导致您的浏览器运行缓慢。"
     },
     {
-      "question": "GIF-Bolt 会上传我的文件吗？",
+      "question": "GIFBolt 会上传我的文件吗？",
       "answer": "绝对不会。一切逻辑由 JavaScript 在本地客户端运行，您的素材只在浏览器选项卡本地内存中处理。"
     },
     {

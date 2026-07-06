@@ -1,15 +1,15 @@
 export default {
-  "title": "Binary-Flow",
-  "seo_title": "Binary-Flow | Converta números e texto entre sistemas binário, hexadecimal, decimal e octal 100% local.",
+  "title": "BinaryFlow",
+  "seo_title": "BinaryFlow | Converta números e texto entre sistemas binário, hexadecimal, decimal e octal 100% local.",
   "seo_description": "Converta números e texto entre sistemas binário, hexadecimal, decimal e octal 100% local.",
-  "seoHeroTitle": "Binary-Flow",
+  "seoHeroTitle": "BinaryFlow",
   "seoHeroText": "Converta números e texto entre sistemas binário, hexadecimal, decimal e octal 100% local.",
   "label_number_mode": "Número",
   "label_text_mode": "Texto para Binary",
   "label_input_value": "Valor de entrada",
   "label_input_text": "Texto de entrada",
   "error_invalid_value": "Inválido",
-  "label_binary": "Binary",
+  "label_binary": "Binário",
   "label_octal": "Octal",
   "label_decimal": "Decimal",
   "label_hexadecimal": "Hexadecimal",
@@ -24,7 +24,13 @@ export default {
   "seoUseCaseText": "Tudo roda localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["binary flow", "ferramenta online", "grátis", "local", "navegador"],
+  "seoKeywords": [
+    "binary flow",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -32,8 +38,8 @@ export default {
       "answer": "Não. Todas as operações acontecem inteiramente no seu navegador. Seus dados nunca saem do seu dispositivo."
     },
     {
-      "question": "Quais bases numéricas o Binary-Flow suporta?",
-      "answer": "O Binary-Flow suporta conversões binário (BIN, base 2), octal (OCT, base 8), decimal (DEC, base 10) e hexadecimal (HEX, base 16), além de codificação de texto ASCII."
+      "question": "Quais bases numéricas o BinaryFlow suporta?",
+      "answer": "O BinaryFlow suporta conversões binário (BIN, base 2), octal (OCT, base 8), decimal (DEC, base 10) e hexadecimal (HEX, base 16), além de codificação de texto ASCII."
     },
     {
       "question": "Posso converter cadeias de texto em binário?",
@@ -41,7 +47,7 @@ export default {
     }
   ],
   "footerTagline": "Converta números e texto entre sistemas binário, hexadecimal, decimal e octal 100% local.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

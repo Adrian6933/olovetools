@@ -1,6 +1,6 @@
 export default {
-  "title": "List-Mixer",
-  "seo_title": "List-Mixer | Kostenloser Online-Listensortierer, Mischer & Deduplizierer",
+  "title": "List Mixer",
+  "seo_title": "List Mixer | Kostenloser Online-Listensortierer, Mischer & Deduplizierer",
   "seo_description": "Sortiere, kehre um, mische, dedupliziere, trimme und bereinige Textlisten online 100% lokal in deinem Browser. Kostenloses Online-Werkzeug zur Listenbearbeitung.",
   "seoHeroTitle": "Listensortierer, Mischer & Bereiniger",
   "seoHeroText": "Füge beliebige Textlisten ein und sortiere sie sofort alphabetisch, kehre die Reihenfolge um, mische zufällig, entferne Duplikate, bereinige leere Zeilen, entferne Leerzeichen oder ändere die Groß-/Kleinschreibung. Alle Operationen lassen sich verketten und laufen 100% lokal in deinem Browser.",
@@ -29,7 +29,15 @@ export default {
   "seoUseCaseText": "Jede Aktion, auf die du klickst, wird auf die aktuelle Ausgabe angewendet, sodass du mehrere Operationen verketten kannst. Sortieren, dann Duplikate entfernen, dann trimmen — alles nacheinander ohne erneut einzufügen.",
   "seoPrivacyTitle": "100% privat & sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Deine Listendaten befinden sich streng lokal im Arbeitsspeicher und verschwinden, wenn du den Tab schließt.",
-  "seoKeywords": ["listensortierer", "listenmischer", "duplikate entfernen", "zeilen sortieren", "liste zufällig", "liste bereinigen", "deduplizieren"],
+  "seoKeywords": [
+    "listensortierer",
+    "listenmischer",
+    "duplikate entfernen",
+    "zeilen sortieren",
+    "liste zufällig",
+    "liste bereinigen",
+    "deduplizieren"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -46,8 +54,9 @@ export default {
     }
   ],
   "footerTagline": "Schneller, privater Listensortierer, -mischer und -deduplizierer mit verketteten Operationen — 100% lokal in deinem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
-  "contactForIdeas": "Kontakt für Ideen und Kommentare:"
+  "contactForIdeas": "Kontakt für Ideen und Kommentare:",
+  "copyLabel": "Kopieren"
 };

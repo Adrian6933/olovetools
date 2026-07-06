@@ -161,11 +161,19 @@ export const fetchMasterPlaylist = async (videoId: string, token: { signature: s
   for (const makeUrl of DOWNLOAD_PROXIES) {
     try {
       const res = await fetch(makeUrl(usherUrl));
-      if (res.ok) {
-        const text = await res.text();
-        if (text.includes('#EXT-X-STREAM-INF')) { playlistText = text; break; }
+      const text = await res.text();
+      if (res.ok && text.includes('#EXT-X-STREAM-INF')) { playlistText = text; break; }
+      // Twitch responds with a JSON error body (not proxy-specific) when the VOD
+      // itself is inaccessible — e.g. subscriber-only VODs return every quality
+      // marked in chansub.restricted_bitrates, so usher rejects the manifest
+      // outright. Detect this once and stop retrying proxies for a lost cause.
+      if (text.includes('vod_manifest_restricted')) {
+        throw new VodError('errorVodRestricted', 'This VOD is subscriber-only or otherwise restricted and cannot be played without being logged in on Twitch.');
       }
-    } catch (e) { /* try next proxy */ }
+    } catch (e) {
+      if (e instanceof VodError) throw e;
+      /* try next proxy */
+    }
   }
   if (!playlistText) throw new VodError('errorPlaylist', 'Could not load the video stream.');
 

@@ -5,7 +5,7 @@ export default {
   "seo_description": "Entfernen Sie den Hintergrund Ihrer Bilder sofort. 100% lokaler, browserbasierter KI-Hintergrundentferner. Hohe Auflösung, privat, schnell und kostenlos.",
   "dropzonePrompt": "Ziehen Sie Ihr Bild hierher oder klicken Sie, um eine Datei auszuwählen",
   "dropzoneSubtitle": "Unterstützt JPG, PNG und WebP. Das KI-Modell wird vollständig in Ihrem Browser ausgeführt.",
-  "downloadBtn": "Download PNG",
+  "downloadBtn": "PNG herunterladen",
   "resetBtn": "Neu starten",
   "originalSize": "Originalgröße",
   "processedSize": "Bearbeitete Größe",

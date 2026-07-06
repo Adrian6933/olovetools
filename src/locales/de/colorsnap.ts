@@ -28,7 +28,16 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in deinem Browser. Deine Bilder verlassen niemals dein Gerät und es wird nichts hochgeladen.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Dein Bild verbleibt streng im lokalen Speicher und verschwindet, wenn du den Tab schließt.",
-  "seoKeywords": ["colorsnap", "bild-farbwähler", "palette aus bild extrahieren", "dominante farben", "hex farb-extraktor", "css palette generator", "online-tool", "kostenlos"],
+  "seoKeywords": [
+    "colorsnap",
+    "bild-farbwähler",
+    "palette aus bild extrahieren",
+    "dominante farben",
+    "hex farb-extraktor",
+    "css paletten generator",
+    "online-tool",
+    "kostenlos"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -45,7 +54,7 @@ export default {
     }
   ],
   "footerTagline": "Extrahiere dominante Farben und Paletten aus jedem Bild 100% lokal in deinem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

@@ -1,5 +1,5 @@
 export default {
-  "title": "Hex-to-RGB",
+  "title": "Hex to RGB",
   "seo_title": "Conversor de HEX para RGB | HEX, RGB, HSL, CMYK com Opacidade e Verificador de Contraste",
   "seo_description": "Converta entre formatos de cor HEX, RGB, HSL e CMYK com opacidade ajustável e um verificador de contraste WCAG. 100% local e privado.",
   "seoHeroTitle": "Estúdio Conversor de Cor",
@@ -21,7 +21,16 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Suas entradas de cor nunca saem do seu dispositivo e nada é carregado.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Suas entradas residem estritamente na memória local e desaparecem quando você fecha a aba.",
-  "seoKeywords": ["hex para rgb", "conversor de cor", "hex para hsl", "conversor cmyk", "verificador de contraste wcag", "opacidade rgba", "ferramenta online", "grátis"],
+  "seoKeywords": [
+    "hex para rgb",
+    "conversor de cor",
+    "hex para hsl",
+    "conversor cmyk",
+    "verificador de contraste wcag",
+    "opacidade rgba",
+    "ferramenta online",
+    "grátis"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -38,7 +47,7 @@ export default {
     }
   ],
   "footerTagline": "Converta entre formatos de cor HEX, RGB, HSL e CMYK com ferramentas de opacidade e contraste 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

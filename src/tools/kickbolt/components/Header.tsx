@@ -52,7 +52,7 @@ const Header: React.FC<HeaderProps> = ({ onReset, currentLang, onLangChange }) =
                 <div className="w-11 h-11 md:w-12 md:h-12 bg-kick rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(83,252,24,0.25)] group-hover:scale-105 transition-all duration-300">
                     <Zap className="w-5 h-5 md:w-6 md:h-6 text-white fill-current" />
                 </div>
-                <span className="text-xl md:text-2xl font-black uppercase tracking-tighter text-white">Kickbolt</span>
+                <span className="text-xl md:text-2xl font-black uppercase tracking-tighter text-white">KickBolt</span>
             </div>
         </div>
 

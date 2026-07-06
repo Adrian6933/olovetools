@@ -1,5 +1,5 @@
 export default {
-  "title": "SVG-Optimizer",
+  "title": "SVG Optimizer",
   "description": "100% 在线本地优化、清理并压缩 SVG 矢量图文件，有效减小文件体积并提升网页加载性能。",
   "label_svg_file": "SVG 矢量文件",
   "drop_active": "拖放 SVG 文件至此以优化...",
@@ -44,7 +44,7 @@ export default {
   "faq": [
     {
       "question": "使用本工具会上传我的 SVG 代码到服务器吗？",
-      "answer": "绝对不会。SVG-Optimizer 100% 离线在客户端运行。您的文件都在本地浏览器内存中即时处理，不会泄漏任何数据。"
+      "answer": "绝对不会。SVG Optimizer 100% 离线在客户端运行。您的文件都在本地浏览器内存中即时处理，不会泄漏任何数据。"
     },
     {
       "question": "坐标小数位四舍五入是如何减小体积的？",
@@ -56,5 +56,7 @@ export default {
     }
   ],
   "footerTagline": "安全、本地的浏览器端 SVG 压缩与代码净化工具。",
-  "footerCredit": "oLoveTools 套件的一部分"
+  "footerCredit": "oLoveTools 套件的一部分",
+  "seo_title": "SVG Optimizer | 免费在线SVG压缩与精简工具",
+  "seo_description": "100% 在线本地优化、清理并压缩 SVG 矢量图文件，有效减小文件体积并提升网页加载性能。"
 };

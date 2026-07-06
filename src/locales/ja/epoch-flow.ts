@@ -1,8 +1,8 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | Unix epoch タイムスタンプを人間が読める日付に変換、およびその逆を 100% ローカルで行います。",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | Unix epoch タイムスタンプを人間が読める日付に変換、およびその逆を 100% ローカルで行います。",
   "seo_description": "Unix epoch タイムスタンプを人間が読める日付に変換、およびその逆を 100% ローカルで行います。",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "Unix epoch タイムスタンプを人間が読める日付に変換、およびその逆を 100% ローカルで行います。",
   "label_live_epoch": "ライブ Unix Epoch",
   "button_now": "現在",
@@ -43,7 +43,13 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["epoch flow", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "epoch flow",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -51,8 +57,8 @@ export default {
       "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
     },
     {
-      "question": "Epoch-Flow は秒とミリ秒の両方に対応していますか？",
-      "answer": "はい。Epoch-Flow は入力されたタイムスタンプの大きさに基づいて、秒かミリ秒かを自動的に検出するため、どちらの形式でも貼り付けできます。"
+      "question": "EpochFlow は秒とミリ秒の両方に対応していますか？",
+      "answer": "はい。EpochFlow は入力されたタイムスタンプの大きさに基づいて、秒かミリ秒かを自動的に検出するため、どちらの形式でも貼り付けできます。"
     },
     {
       "question": "日付を Unix epoch タイムスタンプに戻すことはできますか？",
@@ -60,7 +66,7 @@ export default {
     }
   ],
   "footerTagline": "Unix epoch タイムスタンプを人間が読める日付に変換、およびその逆を 100% ローカルで行います。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ先:"

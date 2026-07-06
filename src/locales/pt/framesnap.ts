@@ -10,14 +10,38 @@ export default {
   "seoUseCaseText": "Capture miniaturas, encontre o frame mais nítido para um pôster, extraia frames de referência para design, capture provas ou tire o congelamento perfeito para um meme. Avance frame a frame para uma seleção precisa.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Seu vídeo permanece no seu dispositivo. Sem uploads, sem bancos de dados e sem rastreamento — o arquivo vive apenas na memória local e desaparece ao fechar a aba.",
-  "seoKeywords": ["extrair frame de vídeo", "vídeo para imagem", "frame a frame", "capturar frame", "salvar frame de vídeo", "extrator de frames", "exportar frame png"],
+  "seoKeywords": [
+    "extrair frame de vídeo",
+    "vídeo para imagem",
+    "frame a frame",
+    "capturar frame",
+    "salvar frame de vídeo",
+    "extrator de frames",
+    "exportar frame png",
+    "exportar frame png"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
-    { "question": "Meu vídeo é enviado para algum lugar?", "answer": "Não. O FrameSnap processa tudo dentro do seu navegador usando as APIs nativas de vídeo e canvas. Seu arquivo nunca sai do seu dispositivo." },
-    { "question": "Como avanço frame a frame?", "answer": "Use os botões de frame anterior/seguinte ou as setas ← / →. O passo usa o valor de FPS que você definir; ajuste-o para a taxa real de quadros do seu vídeo (por exemplo 24, 25, 30 ou 60) para passos precisos." },
-    { "question": "Em que qualidade o frame é exportado?", "answer": "Os frames são capturados na resolução nativa do vídeo. Você pode exportar em PNG sem perdas, ou em JPG/WebP com um controle de qualidade ajustável." },
-    { "question": "Quais formatos de vídeo são suportados?", "answer": "Qualquer formato que seu navegador consiga reproduzir, geralmente MP4 (H.264), WebM, MOV e outros. Se um vídeo não reproduzir, seu navegador pode não ter o codec." },
-    { "question": "Posso capturar vários frames?", "answer": "Sim. Cada captura é adicionada a uma galeria; baixe-as individualmente ou todas de uma vez em ZIP." }
+    {
+      "question": "Meu vídeo é enviado para algum lugar?",
+      "answer": "Não. O FrameSnap processa tudo dentro do seu navegador usando as APIs nativas de vídeo e canvas. Seu arquivo nunca sai do seu dispositivo."
+    },
+    {
+      "question": "Como avanço frame a frame?",
+      "answer": "Use os botões de frame anterior/seguinte ou as setas ← / →. O passo usa o valor de FPS que você definir; ajuste-o para a taxa real de quadros do seu vídeo (por exemplo 24, 25, 30 ou 60) para passos precisos."
+    },
+    {
+      "question": "Em que qualidade o frame é exportado?",
+      "answer": "Os frames são capturados na resolução nativa do vídeo. Você pode exportar em PNG sem perdas, ou em JPG/WebP com um controle de qualidade ajustável."
+    },
+    {
+      "question": "Quais formatos de vídeo são suportados?",
+      "answer": "Qualquer formato que seu navegador consiga reproduzir, geralmente MP4 (H.264), WebM, MOV e outros. Se um vídeo não reproduzir, seu navegador pode não ter o codec."
+    },
+    {
+      "question": "Posso capturar vários frames?",
+      "answer": "Sim. Cada captura é adicionada a uma galeria; baixe-as individualmente ou todas de uma vez em ZIP."
+    }
   ],
   "footerTagline": "Percorra qualquer vídeo frame a frame e exporte o frame exato como imagem de alta qualidade — 100% local no seu navegador.",
   "footerCredit": "Parte da suíte oLoveTools",

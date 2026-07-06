@@ -1,5 +1,5 @@
 export default {
-  "title": "EXIF-Clear",
+  "title": "EXIF Cleaner",
   "description": "Inspectez et supprimez les métadonnées EXIF, GPS et autres de vos images localement. Protégez votre vie privée.",
   "btn_download_cleaned": "Télécharger les Images Nettoyées",
   "btn_download_zip": "Télécharger Nettoyées (.ZIP)",
@@ -22,10 +22,10 @@ export default {
   "no_files_loaded": "Aucune image chargée",
   "preview_title": "Inspecteur de Métadonnées",
   "progress_clearing": "Suppression des métadonnées de l'image {current} sur {total}...",
-  "seo_title": "EXIF-Clear | Supprimer Métadonnées EXIF & GPS de Photos en Ligne",
+  "seo_title": "EXIF Cleaner | Supprimer Métadonnées EXIF & GPS de Photos en Ligne",
   "seo_description": "Supprimez les balises EXIF, GPS et autres métadonnées de vos images JPEG/PNG localement. Effacez la position et l'appareil pour votre vie privée.",
   "seoHeroTitle": "Supprimez les Données EXIF et GPS Hors Ligne",
-  "seoHeroText": "Sécurisez vos clichés avant de les publier. EXIF-Clear analyse et nettoie les en-têtes de fichiers directement dans la mémoire de votre navigateur.",
+  "seoHeroText": "Sécurisez vos clichés avant de les publier. EXIF Cleaner analyse et nettoie les en-têtes de fichiers directement dans la mémoire de votre navigateur.",
   "seoHeroList": [
     "Identifiez les coordonnées géographiques, les boîtiers et les paramètres de prise de vue",
     "Efface tous les segments incluant EXIF, XMP et blocs IPTC Photoshop",
@@ -49,7 +49,7 @@ export default {
     },
     {
       "question": "Quels formats de fichiers sont acceptés ?",
-      "answer": "EXIF-Clear supprime les données des formats JPEG/JPG, PNG et WebP de façon entièrement déconnectée."
+      "answer": "EXIF Cleaner supprime les données des formats JPEG/JPG, PNG et WebP de façon entièrement déconnectée."
     },
     {
       "question": "Comment les coordonnées GPS sont-elles lues ?",

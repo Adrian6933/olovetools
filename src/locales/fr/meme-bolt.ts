@@ -1,5 +1,5 @@
 export default {
-  "title": "Meme-Bolt",
+  "title": "MemeBolt",
   "description": "Créez et générez des mèmes personnalisés à partir de modèles ou de vos propres images 100% localement dans votre navigateur.",
   "btn_download": "Télécharger le Mème",
   "label_upload_box": "Glissez-déposez votre propre image de fond ici ou cliquez pour parcourir",
@@ -20,7 +20,7 @@ export default {
   "status_clean": "Propre",
   "no_files_loaded": "Aucune image chargée",
   "preview_title": "Aperçu en Direct du Meme Studio",
-  "seo_title": "Meme-Bolt | Générateur et Éditeur de Mèmes Gratuit Hors Ligne",
+  "seo_title": "MemeBolt | Générateur et Éditeur de Mèmes Gratuit Hors Ligne",
   "seo_description": "Générez des mèmes amusants localement avec du texte et des autocollants personnalisés. Sélectionnez des modèles populaires ou importez vos photos.",
   "seoHeroTitle": "Studio Interactif de Génération de Mèmes Hors Ligne",
   "seoHeroText": "Créez des mèmes viraux instantanément en toute confidentialité. Déplacez, redimensionnez et personnalisez textes et autocollants directement sur le canevas.",

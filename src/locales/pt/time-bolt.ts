@@ -1,8 +1,8 @@
 export default {
-  "title": "Time-Bolt",
-  "seo_title": "Time-Bolt | Converte a hora entre fusos horários mundiais com um planejador de reuniões interativo 100% localmente.",
+  "title": "TimeBolt",
+  "seo_title": "TimeBolt | Converte a hora entre fusos horários mundiais com um planejador de reuniões interativo 100% localmente.",
   "seo_description": "Converte a hora entre fusos horários mundiais com um planejador de reuniões interativo 100% localmente.",
-  "seoHeroTitle": "Time-Bolt",
+  "seoHeroTitle": "TimeBolt",
   "seoHeroText": "Converte a hora entre fusos horários mundiais com um planejador de reuniões interativo 100% localmente.",
   "section_world_clocks": "Relógios Mundiais",
   "button_close": "Fechar",
@@ -32,7 +32,13 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["time bolt", "ferramenta online", "grátis", "local", "navegador"],
+  "seoKeywords": [
+    "time bolt",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -44,12 +50,12 @@ export default {
       "answer": "Você pode adicionar quantos fusos horários precisar da lista pesquisável de mais de 80 cidades no mundo, e o Planejador de Reuniões mostrará a hora local correspondente para cada um."
     },
     {
-      "question": "O Time-Bolt leva o horário de verão em conta?",
-      "answer": "Sim. O Time-Bolt usa a API Intl nativa do seu navegador, que gerencia automaticamente o horário de verão e mudanças históricas de offset para cada fuso horário."
+      "question": "O TimeBolt leva o horário de verão em conta?",
+      "answer": "Sim. O TimeBolt usa a API Intl nativa do seu navegador, que gerencia automaticamente o horário de verão e mudanças históricas de offset para cada fuso horário."
     }
   ],
   "footerTagline": "Converte a hora entre fusos horários mundiais com um planejador de reuniões interativo 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

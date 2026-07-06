@@ -1,5 +1,5 @@
 export default {
-  "title": "Lottie-Viewer",
+  "title": "Lottie Viewer",
   "description": "Interactive client-side Lottie animation player, customizer, and inspector to edit vector colors and control playback properties 100% locally.",
   "drop_active": "Drop Lottie JSON to load...",
   "drop_inactive": "Drag & drop a Lottie JSON file here, or click to browse",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "question": "Are my Lottie JSON animations uploaded online?",
-      "answer": "No. Lottie-Viewer runs completely client-side in browser memory. Your files are processed inside your browser and never leave your machine."
+      "answer": "No. Lottie Viewer runs completely client-side in browser memory. Your files are processed inside your browser and never leave your machine."
     },
     {
       "question": "How does the color palette changer work?",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Private and local browser-based Lottie player, customizer, and inspector.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "Lottie Viewer | Free Online Lottie Animation Player & Editor",
+  "seo_description": "Interactive client-side Lottie animation player, customizer, and inspector to edit vector colors and control playback properties 100% locally."
 };

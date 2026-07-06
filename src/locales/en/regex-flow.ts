@@ -1,5 +1,5 @@
 export default {
-  "title": "Regex-Flow",
+  "title": "RegexFlow",
   "description": "Interactive client-side regular expression builder and tester with real-time highlighting, syntax explanations, and replacements 100% locally.",
   "regex_placeholder": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   "text_placeholder": "Enter your test text here. For example: hello@olovetools.com or support@example.org.",
@@ -31,12 +31,12 @@ export default {
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
-      "question": "Is it safe to test sensitive patterns or texts with Regex-Flow?",
-      "answer": "Yes. Regex-Flow runs entirely client-side. No data is sent to any server. Your regular expressions and test strings are safe and private."
+      "question": "Is it safe to test sensitive patterns or texts with RegexFlow?",
+      "answer": "Yes. RegexFlow runs entirely client-side. No data is sent to any server. Your regular expressions and test strings are safe and private."
     },
     {
       "question": "Which regular expression engine is used?",
-      "answer": "Regex-Flow uses your browser's native JavaScript RegExp engine. Keep in mind that features like lookbehind assertions (?<=...) or specific flags might depend on your browser version."
+      "answer": "RegexFlow uses your browser's native JavaScript RegExp engine. Keep in mind that features like lookbehind assertions (?<=...) or specific flags might depend on your browser version."
     },
     {
       "question": "How do flag combinations work?",
@@ -44,5 +44,7 @@ export default {
     }
   ],
   "footerTagline": "Private and local browser-based regular expression builder and tester.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "RegexFlow | Free Online Regular Expression Tester & Builder",
+  "seo_description": "Interactive client-side regular expression builder and tester with real-time highlighting, syntax explanations, and replacements 100% locally."
 };

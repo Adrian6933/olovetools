@@ -1,8 +1,8 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | Convertit les horodatages Unix epoch en dates lisibles par l'homme et inversement 100% localement.",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | Convertit les horodatages Unix epoch en dates lisibles par l'homme et inversement 100% localement.",
   "seo_description": "Convertit les horodatages Unix epoch en dates lisibles par l'homme et inversement 100% localement.",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "Convertit les horodatages Unix epoch en dates lisibles par l'homme et inversement 100% localement.",
   "label_live_epoch": "Unix Epoch en direct",
   "button_now": "Maintenant",
@@ -43,7 +43,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["epoch flow", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "epoch flow",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -51,8 +57,8 @@ export default {
       "answer": "Non. Toutes les opérations se déroulent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
     },
     {
-      "question": "Epoch-Flow prend-il en charge les secondes et les millisecondes ?",
-      "answer": "Oui. Epoch-Flow détecte automatiquement si l'horodatage saisi est en secondes ou en millisecondes selon son ampleur, vous pouvez donc coller l'un ou l'autre format."
+      "question": "EpochFlow prend-il en charge les secondes et les millisecondes ?",
+      "answer": "Oui. EpochFlow détecte automatiquement si l'horodatage saisi est en secondes ou en millisecondes selon son ampleur, vous pouvez donc coller l'un ou l'autre format."
     },
     {
       "question": "Puis-je convertir une date en horodatage Unix epoch ?",
@@ -60,7 +66,7 @@ export default {
     }
   ],
   "footerTagline": "Convertit les horodatages Unix epoch en dates lisibles par l'homme et inversement 100% localement.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

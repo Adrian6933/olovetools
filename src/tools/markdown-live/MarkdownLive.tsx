@@ -38,7 +38,7 @@ export default function MarkdownLive({ lang, dictionary }: MarkdownLiveProps) {
   const t = dictionary || {};
   
   // Initial markdown content
-  const initialMarkdown = t.placeholder || `# Welcome to Markdown-Live!
+  const initialMarkdown = t.placeholder || `# Welcome to MarkdownLive!
 
 Type some markdown here on the left to see it rendered instantly on the right.
 

@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | 在浏览器中100%本地格式化、美化和验证SQL查询，带语法高亮。",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | 在浏览器中100%本地格式化、美化和验证SQL查询，带语法高亮。",
   "seo_description": "在浏览器中100%本地格式化、美化和验证SQL查询，带语法高亮。",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "在浏览器中100%本地格式化、美化和验证SQL查询，带语法高亮。",
   "input": "输入 SQL",
   "output": "格式化输出",
@@ -27,7 +27,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100%私密与安全",
   "seoPrivacyText": "没有数据库、跟踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["sql flow", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "sql flow",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -35,8 +41,8 @@ export default {
       "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
     },
     {
-      "question": "SQL-Flow支持不同的SQL方言吗？",
-      "answer": "SQL-Flow识别大多数方言共有的标准SQL关键字，包括PostgreSQL、MySQL、SQLite和SQL Server。格式化规则与方言无关。"
+      "question": "SQLFlow支持不同的SQL方言吗？",
+      "answer": "SQLFlow识别大多数方言共有的标准SQL关键字，包括PostgreSQL、MySQL、SQLite和SQL Server。格式化规则与方言无关。"
     },
     {
       "question": "我可以自定义缩进和关键字大小写吗？",
@@ -44,7 +50,7 @@ export default {
     }
   ],
   "footerTagline": "在浏览器中100%本地格式化、美化和验证SQL查询，带语法高亮。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以提供想法和意见:"

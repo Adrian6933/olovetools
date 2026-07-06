@@ -794,7 +794,7 @@ export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
             {t.seoHeroTitle || 'Strip GPS and Camera EXIF Metadata Offline'}
           </h1>
           <p className="text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed font-medium">
-            {t.seoHeroText || 'Protect your privacy before sharing photographs. EXIF-Clear parses and removes metadata headers locally.'}
+            {t.seoHeroText || 'Protect your privacy before sharing photographs. EXIF Cleaner parses and removes metadata headers locally.'}
           </p>
         </div>
 

@@ -17,7 +17,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["key doctor", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "key doctor",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
@@ -34,7 +40,7 @@ export default {
     }
   ],
   "footerTagline": "Tastaturereignisse live prüfen: event.key, event.code und event.keyCode mit Modifikatorerkennung 100% lokal.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

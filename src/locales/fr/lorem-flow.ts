@@ -1,8 +1,8 @@
 export default {
-  "title": "Lorem-Flow",
-  "seo_title": "Lorem-Flow | Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement.",
+  "title": "LoremFlow",
+  "seo_title": "LoremFlow | Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement.",
   "seo_description": "Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement dans votre navigateur.",
-  "seoHeroTitle": "Lorem-Flow",
+  "seoHeroTitle": "LoremFlow",
   "seoHeroText": "Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement dans votre navigateur.",
   "label_unit_type": "Type d'unité",
   "label_count": "Quantité",
@@ -22,7 +22,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["lorem flow", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "lorem flow",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -30,7 +36,7 @@ export default {
       "answer": "Non. Toutes les opérations se déroulent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
     },
     {
-      "question": "Puis-je choisir la quantité de texte générée par Lorem-Flow ?",
+      "question": "Puis-je choisir la quantité de texte générée par LoremFlow ?",
       "answer": "Oui. Vous pouvez générer entre 1 et 100 unités, en choisissant si chaque unité est un paragraphe, une phrase ou un seul mot, et éventuellement commencer par l'ouverture classique Lorem ipsum."
     },
     {
@@ -39,7 +45,7 @@ export default {
     }
   ],
   "footerTagline": "Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

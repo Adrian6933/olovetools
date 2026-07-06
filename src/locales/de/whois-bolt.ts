@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | DNS-Einträge (A, AAAA, MX, TXT, NS, CNAME, SOA) beliebiger Domains über HTTPS abfragen.",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | DNS-Einträge (A, AAAA, MX, TXT, NS, CNAME, SOA) beliebiger Domains über HTTPS abfragen.",
   "seo_description": "DNS-Einträge (A, AAAA, MX, TXT, NS, CNAME, SOA) beliebiger Domains über HTTPS abfragen, direkt in Ihrem Browser.",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "DNS-Einträge (A, AAAA, MX, TXT, NS, CNAME, SOA) beliebiger Domains über HTTPS abfragen, direkt in Ihrem Browser.",
   "unit_seconds": "s",
   "unit_minutes": "min",
@@ -34,7 +34,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["whois bolt", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "whois bolt",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
@@ -42,8 +48,8 @@ export default {
       "answer": "Nein. Alle Vorgänge erfolgen vollständig in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät."
     },
     {
-      "question": "Welche DNS-Eintragstypen löst Whois-Bolt auf?",
-      "answer": "Whois-Bolt löst A-, AAAA-, CNAME-, MX-, NS-, TXT- und SOA-Einträge beliebiger Domains auf und stellt sie in einer übersichtlichen Zusammenfassung mit IP-Adressen, Nameservern, Mailservern und mehr dar."
+      "question": "Welche DNS-Eintragstypen löst WhoisBolt auf?",
+      "answer": "WhoisBolt löst A-, AAAA-, CNAME-, MX-, NS-, TXT- und SOA-Einträge beliebiger Domains auf und stellt sie in einer übersichtlichen Zusammenfassung mit IP-Adressen, Nameservern, Mailservern und mehr dar."
     },
     {
       "question": "Wie werden die DNS-Abfragen durchgeführt?",
@@ -51,7 +57,7 @@ export default {
     }
   ],
   "footerTagline": "DNS-Einträge (A, AAAA, MX, TXT, NS, CNAME, SOA) beliebiger Domains über HTTPS abfragen, direkt in Ihrem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

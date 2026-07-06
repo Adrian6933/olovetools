@@ -60,9 +60,14 @@ import Klipy from '../../../tools/klipy/Klipy';
 import ClipFlow from '../../../tools/clip-flow/ClipFlow';
 import { CookieBanner } from '../../../components/CookieBanner';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
+import { AdRail } from '../../../components/shared/AdRail';
+import { AdSlot } from '../../../components/shared/AdSlot';
+import { RELATED_TOOLS } from '../../../config/related-tools';
+import { TOOL_CTAS, CTA_HEADING } from '../../../config/tool-ctas';
 import { useTranslation, Language } from '../../../locales/dictionary';
 import { ClientRouter } from 'astro:transitions';
 import { TOOL_FAVICONS, TOOL_THEME_COLORS } from '../../../constants';
+import Analytics from '../../../components/Analytics.astro';
 import '../../../styles/global.css';
 
 export function getStaticPaths() {
@@ -89,71 +94,84 @@ const currentThemeColor = TOOL_THEME_COLORS[tool] || TOOL_THEME_COLORS.default;
 // Standardize title: ToolName | Short Description
 const toolNames: Record<string, string> = {
   clipy: 'Clipy',
-  twitchbolt: 'ClipBolt',
-  kickbolt: 'Kickbolt',
+  klipy: 'Klipy',
+  twitchbolt: 'TwitchBolt',
+  kickbolt: 'KickBolt',
+  'clip-flow': 'ClipFlow',
   formatflow: 'FormatFlow',
   pastesnap: 'PasteSnap',
   compresssnap: 'CompressSnap',
   backgroundremover: 'Background Remover',
-  'pdf-flow': 'PDF-Flow',
   recordsnap: 'RecordSnap',
-  'qr-bolt': 'QR-Bolt',
   codecard: 'CodeCard',
   cropsnap: 'CropSnap',
-  'css-designer': 'CSS-Designer',
-  'json-flow': 'JSON-Flow',
-  'socialbolt': 'SocialBolt',
-  'tts-bolt': 'TTS-Bolt',
-  'gif-bolt': 'GIF-Bolt',
-  'audiosnap': 'AudioSnap'
-  , 'drawsnap': 'DrawSnap'
-  , 'diffsnap': 'DiffSnap'
-  , 'watermark-snap': 'Watermark-Snap'
-  , 'favicon-bolt': 'Favicon-Bolt'
-  , 'exif-clear': 'EXIF-Clear'
-  , 'meme-bolt': 'Meme-Bolt'
-  , 'wordflow': 'WordFlow'
-  , 'markdown-live': 'Markdown-Live'
-  , 'hash-bolt': 'Hash-Bolt'
-  , 'zip-flow': 'Zip-Flow'
-  , 'regex-flow': 'Regex-Flow'
-  , 'lottie-viewer': 'Lottie-Viewer'
-  , 'svg-optimizer': 'SVG-Optimizer'
-  , 'graph-flow': 'Graph-Flow'
-  , 'url-bolt': 'URL-Bolt'
-  , 'base64-bolt': 'Base64-Bolt'
-  , 'uuid-generator': 'UUID-Generator'
-  , 'list-mixer': 'List-Mixer'
-  , 'html-sanitizer': 'HTML-Sanitizer'
-  , 'colorsnap': 'ColorSnap'
-  , 'hex-to-rgb': 'Hex-to-RGB'
-  , 'aspect-ratio': 'Aspect-Ratio'
-  , 'unitflow': 'UnitFlow'
-  , 'sql-flow': 'SQL-Flow'
-  , 'cron-flow': 'Cron-Flow'
-  , 'xml-json': 'XML-JSON'
-  , 'binary-flow': 'Binary-Flow'
-  , 'morse-flow': 'Morse-Flow'
-  , 'epoch-flow': 'Epoch-Flow'
-  , 'time-bolt': 'Time-Bolt'
-  , 'device-test': 'Device-Test'
-  , 'lorem-flow': 'Lorem-Flow'
-  , 'key-doctor': 'Key-Doctor'
-  , 'whiteboard-flow': 'Whiteboard-Flow'
-  , 'subtitles-bolt': 'Subtitles-Bolt'
-  , 'passbolt': 'PassBolt'
-  , 'whois-bolt': 'Whois-Bolt'  , 'framesnap': 'FrameSnap'  , 'cleansnap': 'CleanSnap'  , 'klipy': 'Klipy'  , 'clip-flow': 'ClipFlow'
-
-
-
-
-  };
+  socialbolt: 'SocialBolt',
+  audiosnap: 'AudioSnap',
+  drawsnap: 'DrawSnap',
+  diffsnap: 'DiffSnap',
+  wordflow: 'WordFlow',
+  colorsnap: 'ColorSnap',
+  unitflow: 'UnitFlow',
+  passbolt: 'PassBolt',
+  framesnap: 'FrameSnap',
+  cleansnap: 'CleanSnap',
+  'pdf-flow': 'PDFFlow',
+  'qr-bolt': 'QRBolt',
+  'css-designer': 'CSS Designer',
+  'json-flow': 'JSONFlow',
+  'tts-bolt': 'TTSBolt',
+  'gif-bolt': 'GIFBolt',
+  'watermark-snap': 'WatermarkSnap',
+  'favicon-bolt': 'FaviconBolt',
+  'exif-clear': 'EXIF Cleaner',
+  'meme-bolt': 'MemeBolt',
+  'markdown-live': 'MarkdownLive',
+  'hash-bolt': 'HashBolt',
+  'zip-flow': 'ZipFlow',
+  'regex-flow': 'RegexFlow',
+  'lottie-viewer': 'Lottie Viewer',
+  'svg-optimizer': 'SVG Optimizer',
+  'graph-flow': 'GraphFlow',
+  'url-bolt': 'URLBolt',
+  'base64-bolt': 'Base64Bolt',
+  'uuid-generator': 'UUID Generator',
+  'list-mixer': 'List Mixer',
+  'html-sanitizer': 'HTML Sanitizer',
+  'hex-to-rgb': 'Hex to RGB',
+  'aspect-ratio': 'Aspect Ratio',
+  'sql-flow': 'SQLFlow',
+  'cron-flow': 'CronFlow',
+  'xml-json': 'XML to JSON',
+  'binary-flow': 'BinaryFlow',
+  'morse-flow': 'MorseFlow',
+  'epoch-flow': 'EpochFlow',
+  'time-bolt': 'TimeBolt',
+  'device-test': 'Device Test',
+  'lorem-flow': 'LoremFlow',
+  'key-doctor': 'Key Doctor',
+  'whiteboard-flow': 'WhiteboardFlow',
+  'subtitles-bolt': 'SubtitlesBolt',
+  'whois-bolt': 'WhoisBolt',
+};
 const name = toolNames[tool as string] || ((tool as string).charAt(0).toUpperCase() + (tool as string).slice(1));
 let seoTitle = t('seo_title');
 seoTitle = seoTitle.replace(/^oLoveTools\s*[|\-]\s*/gi, '');
-const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase()) 
-  ? seoTitle 
+const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
+  ? seoTitle
   : `${name} | ${seoTitle}`;
+
+// ---- Herramientas relacionadas (enlazado interno SSR, fuera de la isla React) ----
+const RELATED_HEADING: Record<string, string> = {
+  en: 'Related tools', es: 'Herramientas relacionadas', fr: 'Outils similaires',
+  de: 'Ähnliche Tools', pt: 'Ferramentas relacionadas', ru: 'Похожие инструменты',
+  hi: 'संबंधित उपकरण', ja: '関連ツール', zh: '相关工具',
+};
+const relatedSlugs = (RELATED_TOOLS[tool as string] || []).slice(0, 6);
+const relatedHeading = RELATED_HEADING[castLang] || RELATED_HEADING.en;
+
+// ---- CTAs cruzados: botones "siguiente paso" hacia herramientas que continúan el flujo ----
+const toolCtas = TOOL_CTAS[tool as string] || [];
+const ctaHeading = CTA_HEADING[castLang] || CTA_HEADING.en;
 
 // ---- SEO: structured data + rich meta sources ----
 const faqItems: Array<{ question: string; answer: string }> = Array.isArray((dictionary as any)?.faq) ? (dictionary as any).faq : [];
@@ -1969,6 +1987,7 @@ const appSchema = {
         .glow-violet { box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.35); }
       </style>
     )}
+    <Analytics />
   </head>
   <body>
     <div id="root">
@@ -2038,25 +2057,72 @@ const appSchema = {
         )}
     </div>
 
-    <!-- SSR SEO Content for AdSense Approval -->
-    <div class="hidden-seo-content" style="display: none;" aria-hidden="true">
-      <h1>{finalTitle}</h1>
-      <p>{t('seo_description')}</p>
-      
-      {/* Usar llaves que realmente existen en el diccionario para Clipy y otros */}
-      {t('footer_seo_title') && <h2>{t('footer_seo_title')}</h2>}
-      {t('footer_seo_paragraph1') && <p>{t('footer_seo_paragraph1')}</p>}
-      {t('footer_seo_paragraph2') && <p>{t('footer_seo_paragraph2')}</p>}
-      {t('footer_seo_desc_large') && <p>{t('footer_seo_desc_large')}</p>}
+    <AdRail slug={tool!} client:idle />
+
+    {toolCtas.length > 0 && (
+      <section aria-label={ctaHeading} class="tool-ctas max-w-5xl mx-auto px-4 pt-10 pb-2">
+        <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">{ctaHeading}</p>
+        <div class="flex flex-wrap gap-3">
+          {toolCtas.map((cta) => (
+            <a
+              href={`/${castLang}/${cta.target}`}
+              class="group inline-flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600/80 to-violet-600/80 border border-indigo-400/20 shadow-lg shadow-indigo-950/40 hover:from-indigo-500 hover:to-violet-500 transition-all"
+            >
+              <span>{cta.labels[castLang] || cta.labels.en}</span>
+              <span class="text-indigo-200/80 text-xs font-black">{toolNames[cta.target] || cta.target}</span>
+              <svg class="w-4 h-4 opacity-70 group-hover:translate-x-0.5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {relatedSlugs.length > 0 && (
+      <nav aria-label={relatedHeading} class="related-tools max-w-5xl mx-auto px-4 py-10 border-t border-white/5">
+        <h2 class="text-lg font-black text-white mb-4 tracking-tight">{relatedHeading}</h2>
+        <ul class="flex flex-wrap gap-3 list-none p-0 m-0">
+          {relatedSlugs.map((slug) => (
+            <li>
+              <a
+                href={`/${castLang}/${slug}`}
+                class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold text-slate-300 bg-white/[0.03] border border-white/10 hover:border-indigo-500/40 hover:text-white transition-colors"
+              >
+                {toolNames[slug] || slug}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    )}
+
+    {/* Unidad in-content responsive central: cubre las 60 herramientas (incl. las que
+        no tienen AdBanner propio) sin editar cada una. Oculta en prod sin slot configurado. */}
+    <div class="max-w-3xl mx-auto px-4 pb-4">
+      <AdSlot position="content" size="leaderboard" client:idle />
+    </div>
+
+    <!-- SSR SEO content: visible (not display:none) to avoid cloaking. Some tools already
+         show similar content in their own footer; this is intentionally supplementary,
+         not hidden duplicate text, so it carries no cloaking/penalty risk. -->
+    <section class="ssr-seo-content max-w-3xl mx-auto px-4 py-12 text-slate-300">
+      <h1 class="text-2xl md:text-3xl font-black text-white mb-4">{finalTitle}</h1>
+      <p class="text-sm leading-relaxed text-slate-400 mb-8">{t('seo_description')}</p>
+
+      {/* dictionary.xxx (no t()) porque t() devuelve el nombre de la clave si falta,
+          lo que rompería este chequeo de existencia (siempre truthy) */}
+      {(dictionary as any)?.footer_seo_title && <h2 class="text-xl font-bold text-white mt-8 mb-2">{(dictionary as any).footer_seo_title}</h2>}
+      {(dictionary as any)?.footer_seo_paragraph1 && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_paragraph1}</p>}
+      {(dictionary as any)?.footer_seo_paragraph2 && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_paragraph2}</p>}
+      {(dictionary as any)?.footer_seo_desc_large && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_desc_large}</p>}
 
       {/* Solo intentar mapear si t.faq es realmente un array */}
       {Array.isArray(t.faq) && (
         <>
-          <h2>{t('faqTitle') || 'FAQ'}</h2>
+          <h2 class="text-xl font-bold text-white mt-8 mb-3">{(dictionary as any)?.faqTitle || 'FAQ'}</h2>
           {t.faq.map((item: any) => (
-            <div>
-              <h3>{item.question}</h3>
-              <p>{item.answer}</p>
+            <div class="mb-4">
+              <h3 class="text-base font-bold text-white mb-1">{item.question}</h3>
+              <p class="text-sm leading-relaxed text-slate-400">{item.answer}</p>
             </div>
           ))}
         </>
@@ -2065,11 +2131,11 @@ const appSchema = {
       {/* Solo intentar unir si t.seoKeywords es realmente un array */}
       {Array.isArray(t.seoKeywords) && (
         <>
-          <h2>{t('seoKeywordsTitle') || 'Keywords'}</h2>
-          <p>{t.seoKeywords.join(', ')}</p>
+          <h2 class="text-xl font-bold text-white mt-8 mb-2">{(dictionary as any)?.seoKeywordsTitle || 'Keywords'}</h2>
+          <p class="text-xs text-slate-500">{t.seoKeywords.join(', ')}</p>
         </>
       )}
-    </div>
+    </section>
     <CookieBanner lang={castLang} client:load />
   </body>
 </html>

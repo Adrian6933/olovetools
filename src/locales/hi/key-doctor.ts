@@ -17,7 +17,13 @@ export default {
   "seoUseCaseText": "सब कुछ आपके ब्राउज़र में स्थानीय रूप से चलता है। आपका डेटा कभी आपका डिवाइस नहीं छोड़ता।",
   "seoPrivacyTitle": "100% निजी और सुरक्षित",
   "seoPrivacyText": "कोई डेटाबेस, ट्रैकिंग या नेटवर्क अपलोड नहीं। आपका डेटा कड़ाई से स्थानीय मेमोरी में रहता है और टैब बंद करने पर गायब हो जाता है।",
-  "seoKeywords": ["key doctor", "ऑनलाइन उपकरण", "मुफ़्त", "स्थानीय", "ब्राउज़र"],
+  "seoKeywords": [
+    "key doctor",
+    "ऑनलाइन उपकरण",
+    "मुफ़्त",
+    "स्थानीय",
+    "ब्राउज़र"
+  ],
   "faqTitle": "अक्सर पूछे जाने वाले प्रश्न",
   "faq": [
     {
@@ -34,7 +40,7 @@ export default {
     }
   ],
   "footerTagline": "कीबोर्ड इवेंट लाइव निरीक्षण करें: event.key, event.code और event.keyCode को मॉडिफ़ायर पहचान के साथ 100% स्थानीय रूप से देखें।",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools सुइट का हिस्सा",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "कॉपी हो गया!",
   "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:"

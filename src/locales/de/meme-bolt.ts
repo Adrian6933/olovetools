@@ -1,5 +1,5 @@
 export default {
-  "title": "Meme-Bolt",
+  "title": "MemeBolt",
   "description": "Erstellen und generieren Sie benutzerdefinierte Memes aus Vorlagen oder eigenen Bildern 100 % lokal in Ihrem Browser.",
   "btn_download": "Meme herunterladen",
   "label_upload_box": "Eigenes Hintergrundbild hierher ziehen oder klicken zum Auswählen",
@@ -20,7 +20,7 @@ export default {
   "status_clean": "Sauber",
   "no_files_loaded": "Keine Bilder geladen",
   "preview_title": "Meme Studio Live-Vorschau",
-  "seo_title": "Meme-Bolt | Kostenloser Offline-Meme-Generator und Editor",
+  "seo_title": "MemeBolt | Kostenloser Offline-Meme-Generator und Editor",
   "seo_description": "Erstellen Sie lustige Memes lokal mit benutzerdefiniertem Text und Stickern. Wählen Sie beliebte Vorlagen oder laden Sie eigene Fotos offline im Browser hoch.",
   "seoHeroTitle": "Interaktives Offline-Meme-Generator-Studio",
   "seoHeroText": "Erstellen Sie virale Memes sofort mit 100 % Datenschutz. Verschieben, skalieren und passen Sie Text und Sticker direkt auf der Arbeitsfläche an.",

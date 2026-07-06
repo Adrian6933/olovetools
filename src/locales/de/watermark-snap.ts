@@ -1,5 +1,5 @@
 export default {
-  "title": "Watermark-Snap",
+  "title": "WatermarkSnap",
   "description": "Fügen Sie Text- oder Logo-Wasserzeichen zu mehreren Bildern gleichzeitig hinzu. Alles wird lokal im Browser verarbeitet.",
   "btn_download_zip": "Wasserzeichen-Bilder herunterladen (.ZIP)",
   "label_mode_text": "Text-Wasserzeichen",
@@ -20,10 +20,10 @@ export default {
   "btn_add_files": "Bilder hinzufügen",
   "btn_clear": "Alle leeren",
   "progress_generating": "Verarbeite Bild {current} von {total}...",
-  "seo_title": "Watermark-Snap | Kostenloses Online-Wasserzeichen-Tool für Stapelverarbeitung",
+  "seo_title": "WatermarkSnap | Kostenloses Online-Wasserzeichen-Tool für Stapelverarbeitung",
   "seo_description": "Fügen Sie Wasserzeichen zu mehreren Bildern gleichzeitig online hinzu. Text- oder Logo-Overlays lokal einfügen, Deckkraft und Position frei anpassen.",
   "seoHeroTitle": "Bilder im Batch sicher und lokal mit Wasserzeichen schützen",
-  "seoHeroText": "Schützen Sie Ihre Fotografien, Produktbilder und Designs vor Diebstahl. Watermark-Snap arbeitet komplett im RAM Ihres Browsers ohne Server-Uploads.",
+  "seoHeroText": "Schützen Sie Ihre Fotografien, Produktbilder und Designs vor Diebstahl. WatermarkSnap arbeitet komplett im RAM Ihres Browsers ohne Server-Uploads.",
   "seoHeroList": [
     "Kachel-Modus zur vollständigen Abdeckung der Bildfläche mit Wasserzeichen",
     "Eigene Logos hochladen oder formatierte Text-Wasserzeichen erstellen",

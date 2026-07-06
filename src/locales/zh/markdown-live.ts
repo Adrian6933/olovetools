@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "实时可视化 Markdown 编辑器与 HTML 预览室，支持丰富样式模板及 PDF/HTML 导出，100% 浏览器本地计算。",
-  "placeholder": "# 欢迎使用 Markdown-Live!\n\n在左侧输入 Markdown 源码，即可在右侧实时看到渲染后的视觉效果。\n\n## 基础样式排版\n\n您可以轻松设置文字为 **粗体** 或 *斜体*，还可以嵌入 `行内代码` 或添加链接 : [oLoveTools](https://olovetools.com)。\n\n### 代码高亮示例\n\n```javascript\nfunction greet(name) {\n  console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n\n### 引用与列表分栏\n\n> Markdown 是一种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档。\n\n- 极速 Markdown 编辑体验\n- 100% 客户端本地离线分词解析\n- 响应式双栏分屏同步滚动预览\n",
+  "placeholder": "# 欢迎使用 MarkdownLive!\n\n在左侧输入 Markdown 源码，即可在右侧实时看到渲染后的视觉效果。\n\n## 基础样式排版\n\n您可以轻松设置文字为 **粗体** 或 *斜体*，还可以嵌入 `行内代码` 或添加链接 : [oLoveTools](https://olovetools.com)。\n\n### 代码高亮示例\n\n```javascript\nfunction greet(name) {\n  console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n\n### 引用与列表分栏\n\n> Markdown 是一种轻量级标记语言，它允许人们使用易读易写的纯文本格式编写文档。\n\n- 极速 Markdown 编辑体验\n- 100% 客户端本地离线分词解析\n- 响应式双栏分屏同步滚动预览\n",
   "tooltip_bold": "加粗",
   "tooltip_italic": "斜体",
   "tooltip_heading": "标题级",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "免费、安全、且完全运行在客户端本地的分屏 Markdown 编辑器。",
-  "footerCredit": "oLoveTools 实用工具集成员"
+  "footerCredit": "oLoveTools 实用工具集成员",
+  "seo_title": "MarkdownLive | 免费在线Markdown编辑器与实时预览",
+  "seo_description": "实时可视化 Markdown 编辑器与 HTML 预览室，支持丰富样式模板及 PDF/HTML 导出，100% 浏览器本地计算。"
 };

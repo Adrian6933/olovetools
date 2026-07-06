@@ -6,6 +6,9 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCard } from './ProjectCard';
+import { ADS_ENABLED } from '../config/ads';
+import { AdSlot } from './shared/AdSlot';
+import { useReducedMotion } from './shared/motion';
 import { Layout } from './Layout';
 import { ProjectCategory } from '../types';
 import { MOCK_PROJECTS, LANGUAGES } from '../constants';
@@ -27,6 +30,7 @@ const categoryIconMap: Record<string, React.ComponentType<any>> = {
 
 export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en', dictionary }) => {
   const { t } = useTranslation(lang as Language, 'hub');
+  const prefersReduced = useReducedMotion();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'All' | 'Favorites'>('All');
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -449,10 +453,10 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
           {/* Hero Header Area */}
           <div className="relative pt-20 pb-12 selection:bg-indigo-500/30 selection:text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-              <motion.h1 
-                initial={{ y: 20 }}
+              <motion.h1
+                initial={{ y: prefersReduced ? 0 : 20 }}
                 animate={{ y: 0 }}
-                transition={{ duration: 0.5, delay: 0.05, ease: "easeOut" }}
+                transition={{ duration: prefersReduced ? 0 : 0.5, delay: prefersReduced ? 0 : 0.05, ease: "easeOut" }}
                 className="text-5xl md:text-7xl font-black text-white mb-6 tracking-[-0.04em] leading-[1.15] font-outfit"
               >
                 {t('heroTitle')}{' '}
@@ -460,19 +464,19 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   {t('heroHighlight')}
                 </span>
               </motion.h1>
-              <motion.p 
-                initial={{ opacity: 0, y: 15 }}
+              <motion.p
+                initial={{ opacity: 0, y: prefersReduced ? 0 : 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.15, ease: "easeOut" }}
+                transition={{ duration: prefersReduced ? 0 : 0.5, delay: prefersReduced ? 0 : 0.15, ease: "easeOut" }}
                 className="text-lg md:text-xl text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed font-light font-sans"
               >
                 {t('heroSubtitle')}
               </motion.p>
-              
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
+
+              <motion.div
+                initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.25, ease: "easeOut" }}
+                transition={{ duration: prefersReduced ? 0 : 0.7, delay: prefersReduced ? 0 : 0.25, ease: "easeOut" }}
                 className="relative group max-w-2xl mx-auto z-10"
               >
                 <input
@@ -491,16 +495,12 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
 
           {/* Main Grid Area */}
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-40 relative z-10 w-full flex-grow font-sans">
-            {/* Top Leaderboard Ad Slot (Facilitates Google AdSense Auto/Manual ads) */}
-            <div className="w-full mb-8" id="adsense-top-banner">
-              <div className="w-full min-h-[90px] md:min-h-[100px] flex flex-col items-center justify-center bg-white/[0.01] border border-white/[0.04] rounded-2xl p-4 text-[10px] text-slate-500 font-mono tracking-widest text-center">
-                <span className="opacity-40 uppercase">Publicidad / Advertisement</span>
-                {/* Insert the AdSense ins tag here or leave empty for Auto-Ads wrapper */}
-                <div className="w-full max-w-[728px] h-[90px] mt-2 flex items-center justify-center bg-black/10 border border-white/[0.02] rounded-lg">
-                  <span className="text-[10px] text-slate-600 font-sans">Bloque de anuncio adaptable (Leaderboard)</span>
-                </div>
+            {/* Top Leaderboard Ad Slot — hidden in production until ads.ts is configured */}
+            {(ADS_ENABLED || import.meta.env.DEV) && (
+              <div className="w-full mb-8" id="adsense-top-banner">
+                <AdSlot position="top" size="leaderboard" lazyLoad={false} />
               </div>
-            </div>
+            )}
 
             <div className="flex flex-col lg:flex-row gap-10">
               
@@ -541,14 +541,14 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <AnimatePresence mode="popLayout">
                       {filteredProjects.map((project, index) => (
-                        <React.Fragment key={project.id}>
+                        <div key={project.id} className="contents">
                           <motion.div
                             key={project.id}
                             layout
-                            initial={{ opacity: 0, scale: 0.95 }}
+                            initial={{ opacity: 0, scale: prefersReduced ? 1 : 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            transition={{ duration: 0.3 }}
+                            exit={{ opacity: 0, scale: prefersReduced ? 1 : 0.95 }}
+                            transition={{ duration: prefersReduced ? 0 : 0.3 }}
                           >
                             <ProjectCard 
                               project={{
@@ -566,23 +566,19 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                             />
                           </motion.div>
 
-                          {/* In-feed Ad Slot card inside the tools grid flow */}
-                          {index === 2 && (
+                          {/* In-feed Ad Slot card inside the tools grid flow — hidden in production until ads.ts is configured */}
+                          {index === 2 && (ADS_ENABLED || import.meta.env.DEV) && (
                             <motion.div
                               layout
-                              initial={{ opacity: 0, scale: 0.95 }}
+                              initial={{ opacity: 0, scale: prefersReduced ? 1 : 0.95 }}
                               animate={{ opacity: 1, scale: 1 }}
-                              className="bg-white/[0.01] border border-white/[0.04] border-dashed rounded-3xl p-8 flex flex-col justify-center items-center text-center min-h-[350px]"
+                              className="bg-white/[0.01] border border-white/[0.04] border-dashed rounded-3xl p-4 flex flex-col justify-center items-center text-center min-h-[350px]"
                               id="adsense-infeed-card"
                             >
-                              <span className="text-[10px] text-slate-500 font-mono tracking-widest uppercase opacity-40 mb-3">Publicidad / Advertisement</span>
-                              <div className="w-full flex-grow flex flex-col items-center justify-center border border-white/[0.03] rounded-2xl bg-black/15 p-4 min-h-[220px]">
-                                <span className="text-[10px] text-slate-600 font-mono tracking-wider uppercase opacity-35 mb-2">Google AdSense Card</span>
-                                <span className="text-slate-500 text-xs font-semibold">Anuncio Adaptable / In-feed Slot</span>
-                              </div>
+                              <AdSlot position="infeed" size="rectangle" />
                             </motion.div>
                           )}
-                        </React.Fragment>
+                        </div>
                       ))}
                     </AnimatePresence>
                   </div>
@@ -606,15 +602,12 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               </div>
             </div>
 
-            {/* Bottom Leaderboard Ad Slot (Facilitates Google AdSense Auto/Manual ads) */}
-            <div className="w-full mt-16" id="adsense-bottom-banner">
-              <div className="w-full min-h-[90px] md:min-h-[100px] flex flex-col items-center justify-center bg-white/[0.01] border border-white/[0.04] rounded-2xl p-4 text-[10px] text-slate-500 font-mono tracking-widest text-center">
-                <span className="opacity-40 uppercase">Publicidad / Advertisement</span>
-                <div className="w-full max-w-[728px] h-[90px] mt-2 flex items-center justify-center bg-black/10 border border-white/[0.02] rounded-lg">
-                  <span className="text-[10px] text-slate-600 font-sans">Bloque de anuncio adaptable (Leaderboard)</span>
-                </div>
+            {/* Bottom Leaderboard Ad Slot — hidden in production until ads.ts is configured */}
+            {(ADS_ENABLED || import.meta.env.DEV) && (
+              <div className="w-full mt-16" id="adsense-bottom-banner">
+                <AdSlot position="late" size="leaderboard" />
               </div>
-            </div>
+            )}
           </main>
         </div>
 
@@ -622,10 +615,10 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         <AnimatePresence>
           {showScrollTop && (
             <motion.button
-              initial={{ opacity: 0, scale: 0.8, y: 20 }}
+              initial={{ opacity: 0, scale: prefersReduced ? 1 : 0.8, y: prefersReduced ? 0 : 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 20 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              exit={{ opacity: 0, scale: prefersReduced ? 1 : 0.8, y: prefersReduced ? 0 : 20 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: prefersReduced ? 'auto' : 'smooth' })}
               className="fixed bottom-24 lg:bottom-10 right-5 lg:right-10 z-[200] w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center hover:scale-110 hover:-translate-y-1 active:scale-90 transition-all cursor-pointer group"
               aria-label="Scroll to top"
             >
@@ -649,10 +642,10 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               />
               {/* Drawer */}
               <motion.div
-                initial={{ x: '-100%' }}
+                initial={{ x: prefersReduced ? 0 : '-100%' }}
                 animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                exit={{ x: prefersReduced ? 0 : '-100%' }}
+                transition={prefersReduced ? { duration: 0.1 } : { type: 'spring', damping: 25, stiffness: 200 }}
                 className="fixed top-0 bottom-0 left-0 w-80 bg-[#1e1f20] border-r border-white/5 z-[101] p-6 shadow-2xl flex flex-col font-sans"
               >
                 <div className="flex items-center justify-between mb-8">

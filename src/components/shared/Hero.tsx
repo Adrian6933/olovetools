@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { ToolTheme } from '../../lib/themes';
+import { useReducedMotion } from './motion';
 
 export type HeroVariant = 'centered' | 'split' | 'studio' | 'terminal';
 
@@ -37,6 +38,7 @@ export const Hero: React.FC<HeroProps> = ({
   decoration,
   cardMode = true,
 }) => {
+  const prefersReduced = useReducedMotion();
   const CtaButton: React.FC<{ cta: NonNullable<typeof primaryCta>; variant: 'primary' | 'secondary' }> = ({
     cta,
     variant: v,
@@ -162,8 +164,8 @@ export const Hero: React.FC<HeroProps> = ({
             }}
             className="mt-2 inline-flex flex-col items-center gap-1 transition-all"
             style={{ color: theme.textMuted }}
-            animate={{ y: [0, 4, 0] }}
-            transition={{ duration: 1.8, repeat: Infinity }}
+            animate={prefersReduced ? {} : { y: [0, 4, 0] }}
+            transition={prefersReduced ? undefined : { duration: 1.8, repeat: Infinity }}
             aria-label="Scroll to tool"
           >
             <span className="text-[10px] font-black uppercase tracking-widest">Try it now</span>

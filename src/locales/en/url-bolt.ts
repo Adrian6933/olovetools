@@ -1,6 +1,6 @@
 export default {
-  "title": "URL-Bolt",
-  "seo_title": "URL-Bolt | Free Online URL Encoder, Decoder & Parser",
+  "title": "URLBolt",
+  "seo_title": "URLBolt | Free Online URL Encoder, Decoder & Parser",
   "seo_description": "Encode, decode, and parse URLs with query string breakdown and smart formatting 100% locally in your browser. Free online URL tool.",
   "seoHeroTitle": "URL Encoder, Decoder & Parser",
   "seoHeroText": "Instantly encode text to URL-safe format, decode encoded URLs, or dissect any URL into its components — protocol, host, path, query parameters, and fragments — with decoded values. Everything runs locally in your browser.",
@@ -50,7 +50,7 @@ export default {
       "answer": "encodeURI encodes a full URL but preserves characters that are part of URL syntax like :, /, ?, &, and =. encodeURIComponent encodes everything including those special characters, making it ideal for encoding individual query parameter values."
     },
     {
-      "question": "Can URL-Bolt parse URLs with encoded query parameters?",
+      "question": "Can URLBolt parse URLs with encoded query parameters?",
       "answer": "Yes. The Parse mode automatically decodes all query parameter values and path segments, showing you both the raw encoded form and the human-readable decoded version side by side."
     },
     {

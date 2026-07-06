@@ -1,8 +1,8 @@
 export default {
-  "title": "Time-Bolt",
-  "seo_title": "Time-Bolt | Convert time between world timezones with an interactive meeting planner 100% locally.",
+  "title": "TimeBolt",
+  "seo_title": "TimeBolt | Convert time between world timezones with an interactive meeting planner 100% locally.",
   "seo_description": "Convert time between world timezones with an interactive meeting planner 100% locally.",
-  "seoHeroTitle": "Time-Bolt",
+  "seoHeroTitle": "TimeBolt",
   "seoHeroText": "Convert time between world timezones with an interactive meeting planner 100% locally.",
   "section_world_clocks": "World Clocks",
   "button_close": "Close",
@@ -44,8 +44,8 @@ export default {
       "answer": "You can add as many timezones as you need from the searchable list of over 80 cities worldwide, and the Meeting Planner will show the corresponding local time for each."
     },
     {
-      "question": "Does Time-Bolt account for daylight saving time?",
-      "answer": "Yes. Time-Bolt uses your browser's native Intl API, which automatically handles daylight saving time and historical offset changes for every timezone."
+      "question": "Does TimeBolt account for daylight saving time?",
+      "answer": "Yes. TimeBolt uses your browser's native Intl API, which automatically handles daylight saving time and historical offset changes for every timezone."
     }
   ],
   "footerTagline": "Convert time between world timezones with an interactive meeting planner 100% locally.",

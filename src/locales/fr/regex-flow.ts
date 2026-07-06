@@ -1,5 +1,5 @@
 export default {
-  "title": "Regex-Flow",
+  "title": "RegexFlow",
   "description": "Générateur et testeur interactif d'expressions régulières 100% local avec surbrillance en temps réel, explications de syntaxe et remplacements.",
   "regex_placeholder": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   "text_placeholder": "Saisissez votre texte de test ici. Par exemple : hello@olovetools.com ou support@example.org.",
@@ -31,12 +31,12 @@ export default {
   "faqTitle": "Foire Aux Questions",
   "faq": [
     {
-      "question": "Est-il sûr de tester des données sensibles avec Regex-Flow ?",
-      "answer": "Oui. Regex-Flow s'exécute entièrement côté client. Aucune donnée n'est envoyée à un serveur. Vos expressions et textes restent privés."
+      "question": "Est-il sûr de tester des données sensibles avec RegexFlow ?",
+      "answer": "Oui. RegexFlow s'exécute entièrement côté client. Aucune donnée n'est envoyée à un serveur. Vos expressions et textes restent privés."
     },
     {
       "question": "Quel moteur d'expression régulière est utilisé ?",
-      "answer": "Regex-Flow utilise le moteur JavaScript RegExp natif de votre navigateur. Le support de certaines fonctionnalités dépend de la version de votre navigateur."
+      "answer": "RegexFlow utilise le moteur JavaScript RegExp natif de votre navigateur. Le support de certaines fonctionnalités dépend de la version de votre navigateur."
     },
     {
       "question": "Comment fonctionnent les combinaisons de drapeaux ?",
@@ -44,5 +44,7 @@ export default {
     }
   ],
   "footerTagline": "Outil privé et local de création et test d'expressions régulières dans le navigateur.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "seo_title": "RegexFlow | Testeur et Constructeur d'Expressions Régulières Gratuit",
+  "seo_description": "Générateur et testeur interactif d'expressions régulières 100% local avec surbrillance en temps réel, explications de syntaxe et remplacements."
 };

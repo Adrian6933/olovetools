@@ -1,5 +1,5 @@
 export default {
-  "title": "CSS-Designer",
+  "title": "CSS Designer",
   "description": "グラスモーフィズム、ボックスシャドウ、グラデーション、角丸（ボーダー半径）などのモダンなCSSエフェクトを直感的に生成できるインタラクティブツール。",
   "tab_glassmorphism": "グラスモーフィズム",
   "tab_box_shadow": "ボックスシャドウ",
@@ -45,10 +45,10 @@ export default {
   "theme_vibrant": "鮮やかなグラデ",
   "preview_text": "CSS プレイグラウンド",
   "preview_subtext": "左側のコントロールを変更すると、リアルタイムでスタイルが反映されます。",
-  "seo_title": "CSS-Designer | グラスモーフィズム、シャドウ、グラデーション作成",
+  "seo_title": "CSS Designer | グラスモーフィズム、シャドウ、グラデーション作成",
   "seo_description": "ビジュアルエディタでモダンなCSS効果を作成。グラスモーフィズム、高度な影、グラデーションのCSS/Tailwindコードを瞬時に生成。",
   "seoHeroTitle": "魅力的なCSS効果を、視覚的かつ高速に生成。",
-  "seoHeroText": "モダンなスタイルデザインをシンプルに。CSS-Designerを使えば、クリーンなCSSまたはTailwindコードを数秒で出力できます。",
+  "seoHeroText": "モダンなスタイルデザインをシンプルに。CSS Designerを使えば、クリーンなCSSまたはTailwindコードを数秒で出力できます。",
   "seoHeroList": [
     "会員登録・ダウンロード不要",
     "美しいCSS・Tailwindコードを生成",
@@ -64,7 +64,13 @@ export default {
     "シャドウ作成",
     "CSSグラデーション",
     "角丸ジェネレーター",
-    "Tailwind CSS"
+    "Tailwind CSS",
+    "Webデザインユーティリティ",
+    "UI UXツール",
+    "無料CSSツール",
+    "ニューモーフィズムジェネレーター",
+    "おしゃれなボーダー半径",
+    "オンラインCSSエディター"
   ],
   "seoUseCaseTitle": "主なユースケース",
   "seoUseCaseText": "カード、ボタン、背景、オーバーレイパネルを素早くデザイン。UIモックアップやプロトタイプ開発に最適です。",
@@ -72,13 +78,26 @@ export default {
   "faq": [
     {
       "question": "料金はかかりますか？",
-      "answer": "いいえ、CSS-Designerは完全に無料でご利用いただけます。"
+      "answer": "いいえ、CSS Designerは完全に無料でご利用いただけます。"
     },
     {
       "question": "Tailwindに対応していますか？",
       "answer": "はい。カスタム値を適用したTailwindのクラス名も同時に生成されます。"
+    },
+    {
+      "question": "Glassmorphismとは何ですか?",
+      "answer": "Glassmorphismはすりガラスを模したUIトレンドです。backdrop-filterのぼかしと半透明の背景を使い、カラフルな背景の上に要素をエレガントに重ねます。"
+    },
+    {
+      "question": "モバイルでも動作しますか?",
+      "answer": "もちろんです。レイアウトはスマートフォン、タブレット、デスクトップに最適化されており、外出先でもコーディングできます。"
     }
   ],
   "footerTagline": "シンプルで高品質なツール群により、開発とデザインを支援します。",
-  "footerCredit": "oLoveTools スイートの一部"
+  "footerCredit": "oLoveTools スイートの一部",
+  "seoPrivacyTitle": "プライバシーとセキュリティ",
+  "seoPrivacyText": "あなたのCSSレシピはプライベートに保たれます。すべてローカルマシン上で行われ、デザインを保存・追跡・アップロードすることはありません。",
+  "privacyPolicy": "プライバシーポリシー",
+  "termsOfService": "利用規約",
+  "cookiePolicy": "クッキーポリシー"
 };

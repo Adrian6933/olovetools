@@ -8,7 +8,6 @@ import FilterBar from './components/FilterBar';
 import ClipGrid from './components/ClipGrid';
 import CategoryGrid from './components/CategoryGrid';
 import FloatingPlayer from './components/FloatingPlayer';
-import CookieBanner from './components/CookieBanner';
 import LegalModal from './components/LegalModal';
 import { Clapperboard, Archive, ChevronRight, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info } from 'lucide-react';
 
@@ -836,7 +835,6 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
       </footer>
 
       {/* Global Legal Components */}
-      <CookieBanner t={t} />
       {legalModal && <LegalModal type={legalModal} onClose={() => setLegalModal(null)} onShowToast={(msg) => showToast(msg)} t={t} />}
     </div>
   );

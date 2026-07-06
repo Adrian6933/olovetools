@@ -1,6 +1,6 @@
 export default {
-  "title": "URL-Bolt",
-  "seo_title": "URL-Bolt | Encodeur, Décodeur et Analyseur d'URL Gratuit",
+  "title": "URLBolt",
+  "seo_title": "URLBolt | Encodeur, Décodeur et Analyseur d'URL Gratuit",
   "seo_description": "Encodez, décodez et analysez des URL avec décomposition des paramètres de requête et formatage intelligent 100% localement dans votre navigateur. Outil URL gratuit en ligne.",
   "seoHeroTitle": "Encodeur, Décodeur et Analyseur d'URL",
   "seoHeroText": "Encodez instantanément du texte au format URL-safe, décodez des URL encodées, ou disséquez n'importe quelle URL en ses composants — protocole, hôte, chemin, paramètres de requête et fragments — avec valeurs décodées. Tout fonctionne localement dans votre navigateur.",
@@ -42,7 +42,16 @@ export default {
   "seoUseCaseText": "Le mode Analyser décompose n'importe quelle URL en ses parties constitutives: protocole, nom d'hôte, port, segments de chemin et paramètres de requête individuels avec valeurs brutes et décodées — parfait pour déboguer des liens de redirection ou des URL d'affiliation.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ou téléchargement réseau. Vos URL et entrées de texte résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet. Rien n'est enregistré ni stocké.",
-  "seoKeywords": ["encodeur url", "décodeur url", "analyseur url", "parser requête", "encoder uri", "décoder uri", "décomposition url", "composants url"],
+  "seoKeywords": [
+    "encodeur url",
+    "décodeur url",
+    "analyseur url",
+    "parser requête",
+    "encoder uri",
+    "décoder uri",
+    "décomposition url",
+    "composants url"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -50,7 +59,7 @@ export default {
       "answer": "encodeURI encode une URL complète mais préserve les caractères qui font partie de la syntaxe d'URL comme :, /, ?, & et =. encodeURIComponent encode tout y compris ces caractères spéciaux, ce qui le rend idéal pour encoder des valeurs de paramètres de requête individuels."
     },
     {
-      "question": "URL-Bolt peut-il analyser des URL avec des paramètres de requête encodés?",
+      "question": "URLBolt peut-il analyser des URL avec des paramètres de requête encodés?",
       "answer": "Oui. Le mode Analyser décode automatiquement toutes les valeurs de paramètres de requête et segments de chemin, vous montrant à la fois la forme encodée brute et la version décodée lisible côte à côte."
     },
     {
@@ -59,7 +68,7 @@ export default {
     }
   ],
   "footerTagline": "Encodeur, décodeur et analyseur d'URL rapide et privé avec décomposition complète — 100% local dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié!",
   "contactForIdeas": "Contact pour idées et commentaires:"

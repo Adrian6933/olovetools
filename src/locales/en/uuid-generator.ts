@@ -1,6 +1,6 @@
 export default {
-  "title": "UUID-Generator",
-  "seo_title": "UUID-Generator | Free Online UUID v4 & v5 Generator",
+  "title": "UUID Generator",
+  "seo_title": "UUID Generator | Free Online UUID v4 & v5 Generator",
   "seo_description": "Generate random UUIDs (v4) and named UUIDs (v5) in bulk up to 500 at once 100% locally in your browser using Web Crypto API. Free online UUID generator.",
   "seoHeroTitle": "UUID v4 & v5 Bulk Generator",
   "seoHeroText": "Instantly generate up to 500 random UUIDs (version 4) or named UUIDs (version 5 with namespace) using the browser's native Web Crypto API. All generation happens locally — no server calls, no tracking.",
@@ -25,7 +25,15 @@ export default {
   "seoUseCaseText": "Generate up to 500 UUIDs in a single click. Perfect for database seeding, test data generation, unique session IDs, or any scenario requiring multiple unique identifiers at once.",
   "seoPrivacyTitle": "100% Private & Secure",
   "seoPrivacyText": "No databases, tracking, or network uploads. All UUID generation happens entirely in your browser's crypto subsystem. Your data never leaves your device.",
-  "seoKeywords": ["uuid generator", "uuid v4", "uuid v5", "guid generator", "random uuid", "bulk uuid", "unique identifier"],
+  "seoKeywords": [
+    "uuid generator",
+    "uuid v4",
+    "uuid v5",
+    "guid generator",
+    "random uuid",
+    "bulk uuid",
+    "unique identifier"
+  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
@@ -45,5 +53,6 @@ export default {
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "contactForIdeas": "Contact for ideas and comments:",
+  "button_copy_all": "Copy All"
 };

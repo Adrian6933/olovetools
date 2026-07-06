@@ -57,7 +57,11 @@ export default {
     "即时截图",
     "免费图像工具",
     "私人剪贴板",
-    "浏览器图像工具"
+    "浏览器图像工具",
+    "下载粘贴的图像",
+    "从剪贴板保存图像",
+    "剪贴板图像保存工具",
+    "即时PNG下载"
   ],
   "seoUseCaseTitle": "使用场景",
   "seoUseCaseText": "直接下载 Slack 或 Teams 的截图为 PNG 文件。",

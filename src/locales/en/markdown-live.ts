@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally.",
-  "placeholder": "# Welcome to Markdown-Live!\n\nType some markdown here on the left to see it rendered instantly on the right.\n\n## Basic Styling\n\nYou can make text **bold** or *italic* easily, or embed `inline code` or custom links like [oLoveTools](https://olovetools.com).\n\n### Code Block Example\n\n```javascript\nfunction greet(name) {\n  console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n\n### Blockquotes & Lists\n\n> Markdown is a lightweight markup language with plain-text-formatting syntax.\n\n- Quick markdown editor\n- 100% offline client-side parsing\n- Responsive split-screen preview\n\n### Tables Support\n\n| Item | Count | Status |\n| :--- | :---: | :---: |\n| Editor | 1 | Done |\n| Previewer | 1 | Live |\n",
+  "placeholder": "# Welcome to MarkdownLive!\n\nType some markdown here on the left to see it rendered instantly on the right.\n\n## Basic Styling\n\nYou can make text **bold** or *italic* easily, or embed `inline code` or custom links like [oLoveTools](https://olovetools.com).\n\n### Code Block Example\n\n```javascript\nfunction greet(name) {\n  console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n\n### Blockquotes & Lists\n\n> Markdown is a lightweight markup language with plain-text-formatting syntax.\n\n- Quick markdown editor\n- 100% offline client-side parsing\n- Responsive split-screen preview\n\n### Tables Support\n\n| Item | Count | Status |\n| :--- | :---: | :---: |\n| Editor | 1 | Done |\n| Previewer | 1 | Live |\n",
   "tooltip_bold": "Bold",
   "tooltip_italic": "Italic",
   "tooltip_heading": "Heading",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Free, private, and local interactive Markdown split-screen editor.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "MarkdownLive | Free Online Markdown Editor & Live Previewer",
+  "seo_description": "A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally."
 };

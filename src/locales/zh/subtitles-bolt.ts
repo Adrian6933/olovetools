@@ -1,6 +1,6 @@
 export default {
   "title": "Subtitle Converter",
-  "seo_title": "Subtitles-Bolt | 在 SRT、VTT 和 SBV 格式之间转换字幕，100% 本地完成。",
+  "seo_title": "SubtitlesBolt | 在 SRT、VTT 和 SBV 格式之间转换字幕，100% 本地完成。",
   "seo_description": "在 SRT、VTT 和 SBV 格式之间转换字幕，自动检测，100% 在浏览器中本地完成。",
   "seoHeroTitle": "字幕转换器",
   "seoHeroText": "在 SRT、VTT 和 SBV 格式之间转换字幕，自动检测，100% 在浏览器中本地完成。",
@@ -22,7 +22,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "无数据库、追踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["subtitles bolt", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "subtitles bolt",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -30,16 +36,16 @@ export default {
       "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
     },
     {
-      "question": "Subtitles-Bolt 支持哪些字幕格式？",
-      "answer": "Subtitles-Bolt 支持 SRT、VTT 和 SBV 格式。它可以自动检测输入格式，或者您可以在转换为三种输出格式之一前手动选择。"
+      "question": "SubtitlesBolt 支持哪些字幕格式？",
+      "answer": "SubtitlesBolt 支持 SRT、VTT 和 SBV 格式。它可以自动检测输入格式，或者您可以在转换为三种输出格式之一前手动选择。"
     },
     {
-      "question": "Subtitles-Bolt 是否精确保留时间和文本？",
+      "question": "SubtitlesBolt 是否精确保留时间和文本？",
       "answer": "是的。时间以毫秒精度解析并以目标格式重新输出，文本逐字保留，转换过程中不会改变任何内容。"
     }
   ],
   "footerTagline": "在 SRT、VTT 和 SBV 格式之间转换字幕，自动检测，100% 在浏览器中本地完成。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系提交想法和评论:"

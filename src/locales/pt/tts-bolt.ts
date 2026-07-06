@@ -1,5 +1,5 @@
 export default {
-  "title": "TTS-Bolt",
+  "title": "TTSBolt",
   "description": "Converta texto em voz natural e baixe o áudio em MP3 100% localmente em seu navegador.",
   "textarea_placeholder": "Digite ou cole seu texto aqui para ler em voz alta...",
   "label_voice": "Escolha da Voz",
@@ -15,10 +15,10 @@ export default {
   "history_title": "Histórico Recente de Áudio",
   "no_history": "Nenhum histórico de áudio ainda.",
   "clear_history": "Limpar Histórico",
-  "seo_title": "TTS-Bolt | Conversor de Texto em Voz Grátis com Download MP3",
+  "seo_title": "TTSBolt | Conversor de Texto em Voz Grátis com Download MP3",
   "seo_description": "Ouça qualquer texto com vozes naturais e faça o download em MP3. Ajuste de velocidade e tom 100% local no seu navegador.",
   "seoHeroTitle": "Converta texto em voz e salve em MP3",
-  "seoHeroText": "Desfrute de síntese de voz natural de forma local no navegador. O TTS-Bolt processa seus arquivos localmente, garantindo total privacidade.",
+  "seoHeroText": "Desfrute de síntese de voz natural de forma local no navegador. O TTSBolt processa seus arquivos localmente, garantindo total privacidade.",
   "seoHeroList": [
     "Vozes locais do sistema com controle de velocidade",
     "Downloads de áudio MP3 unificados em memória",

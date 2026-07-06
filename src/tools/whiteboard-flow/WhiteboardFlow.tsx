@@ -198,7 +198,7 @@ export default function WhiteboardFlow({ lang, dictionary }: WhiteboardFlowProps
           <div className="space-y-3">
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center gap-3">
               <StickyNote className="w-8 h-8 text-cyan-400" />
-              <span>{t.seoHeroTitle || 'Whiteboard-Flow'}</span>
+              <span>{t.seoHeroTitle || 'WhiteboardFlow'}</span>
             </h2>
             <p className="text-slate-400 text-sm md:text-base max-w-2xl leading-relaxed">
               {t.seoHeroText}

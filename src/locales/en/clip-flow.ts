@@ -45,6 +45,7 @@ export default {
   "errorChannelNotFound": "Channel not found. Check the spelling and try again.",
   "errorVodsDisabled": "This channel has no VODs available — past broadcasts may be disabled.",
   "errorPlaylist": "Could not load the video stream. Please try again.",
+  "errorVodRestricted": "This VOD is subscriber-only or otherwise restricted on Twitch and can't be played without logging in there — not something any downloader tool can bypass.",
 
   "liveBadge": "LIVE — recording still growing",
   "qualityLabel": "Quality",

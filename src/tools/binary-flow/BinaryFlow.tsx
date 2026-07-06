@@ -215,7 +215,7 @@ export default function BinaryFlow({ lang, dictionary }: BinaryFlowProps) {
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <Binary className="w-8 h-8 text-blue-400" />
-            <span>{t.seoHeroTitle || 'Binary-Flow'}</span>
+            <span>{t.seoHeroTitle || 'BinaryFlow'}</span>
           </h2>
           <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
             {t.seoHeroText}

@@ -56,7 +56,7 @@ export default {
   "seoBrowserSpeedTitle": "基于浏览器的原生媒体流",
   "seoBrowserSpeedText": "通过原生 HTML5 捕获媒体流并实时编码输出 WebM 容器文件，RecordSnap 避免了任何服务器网络延迟，在点击“停止”时即可瞬间生成并保存录像文件。",
   "seoSecondaryTitle": "您设备上的完整版录屏与录像软件",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "关键词",
   "seoKeywords": [
     "在线录屏",
     "免费录制摄像头",

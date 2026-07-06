@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "テキストやファイルの暗号化ハッシュ（MD5、SHA-1, SHA-256, SHA-512）をブラウザ上で100%ローカルに計算します。",
   "input_text_tab": "テキスト入力",
   "input_file_tab": "ファイルハッシュ",
@@ -43,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "ファイルとテキストのための安全でローカルな暗号化チェックサム生成ツール。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "HashBolt | 無料オンラインMD5, SHA-1, SHA-256ハッシュ生成ツール",
+  "seo_description": "テキストやファイルの暗号化ハッシュ（MD5、SHA-1, SHA-256, SHA-512）をブラウザ上で100%ローカルに計算します。"
 };

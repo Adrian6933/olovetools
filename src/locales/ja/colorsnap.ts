@@ -28,7 +28,16 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。画像はデバイスから離れることはなく、何もアップロードされません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。画像は厳密にローカルメモリに留まり、タブを閉じると消去されます。",
-  "seoKeywords": ["colorsnap", "画像カラーピッカー", "画像からパレットを抽出", "主要カラー", "hexカラープレット抽出", "cssパレットジェネレーター", "オンラインツール", "無料"],
+  "seoKeywords": [
+    "colorsnap",
+    "画像カラーピッカー",
+    "画像からパレットを抽出",
+    "主要カラー",
+    "hexカラープレット抽出",
+    "cssパレットジェネレーター",
+    "オンラインツール",
+    "無料"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -45,7 +54,7 @@ export default {
     }
   ],
   "footerTagline": "あらゆる画像から主要カラーとパレットをブラウザ内で100%ローカルに抽出します。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

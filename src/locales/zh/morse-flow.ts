@@ -1,11 +1,11 @@
 export default {
-  "title": "Morse-Flow",
-  "seo_title": "Morse-Flow | 在浏览器中100%本地带音频播放编码和解码Morse代码。",
+  "title": "MorseFlow",
+  "seo_title": "MorseFlow | 在浏览器中100%本地带音频播放编码和解码Morse代码。",
   "seo_description": "在浏览器中100%本地带音频播放编码和解码Morse代码。",
-  "seoHeroTitle": "Morse-Flow",
+  "seoHeroTitle": "MorseFlow",
   "seoHeroText": "在浏览器中100%本地带音频播放编码和解码Morse代码。",
   "label_text": "文本",
-  "label_morse": "Morse",
+  "label_morse": "摩尔斯电码",
   "label_speed": "速度",
   "label_wpm": "WPM",
   "label_reference": "Morse参考表",
@@ -21,7 +21,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100%私密与安全",
   "seoPrivacyText": "没有数据库、跟踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["morse flow", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "morse flow",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -33,12 +39,12 @@ export default {
       "answer": "音频通过Web AudioContext API在本地生成。正弦波振荡器产生音调，时序遵循标准PARIS每分钟字数（WPM）规则。"
     },
     {
-      "question": "Morse-Flow支持哪些字符？",
-      "answer": "Morse-Flow支持字母A到Z和数字0到9，遵循国际Morse代码标准。单词之间的空格用斜杠分隔符编码。"
+      "question": "MorseFlow支持哪些字符？",
+      "answer": "MorseFlow支持字母A到Z和数字0到9，遵循国际Morse代码标准。单词之间的空格用斜杠分隔符编码。"
     }
   ],
   "footerTagline": "在浏览器中100%本地带音频播放编码和解码Morse代码。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以提供想法和意见:"

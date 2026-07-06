@@ -1,8 +1,8 @@
 export default {
-  "title": "Cron-Flow",
-  "seo_title": "Cron-Flow | Générez, traduisez et visualisez des expressions cron avec descriptions lisibles 100% localement.",
+  "title": "CronFlow",
+  "seo_title": "CronFlow | Générez, traduisez et visualisez des expressions cron avec descriptions lisibles 100% localement.",
   "seo_description": "Générez, traduisez et visualisez des expressions cron avec descriptions lisibles 100% localement.",
-  "seoHeroTitle": "Cron-Flow",
+  "seoHeroTitle": "CronFlow",
   "seoHeroText": "Générez, traduisez et visualisez des expressions cron avec descriptions lisibles 100% localement.",
   "seoBrowserSpeedTitle": "Traitement Local Instantané",
   "seoBrowserSpeedText": "Tout le traitement est exécuté dans votre navigateur via les API JavaScript natives. Aucune donnée n'est jamais envoyée à un serveur.",
@@ -10,7 +10,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ou envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["cron flow", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "cron flow",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -18,8 +24,8 @@ export default {
       "answer": "Non. Toutes les opérations s'exécutent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
     },
     {
-      "question": "Quelle syntaxe cron Cron-Flow prend-il en charge ?",
-      "answer": "Cron-Flow prend en charge les expressions cron standard à 5 champs (minute, heure, jour du mois, mois, jour de la semaine) dont les plages, pas, listes et alias comme JAN ou SUN."
+      "question": "Quelle syntaxe cron CronFlow prend-il en charge ?",
+      "answer": "CronFlow prend en charge les expressions cron standard à 5 champs (minute, heure, jour du mois, mois, jour de la semaine) dont les plages, pas, listes et alias comme JAN ou SUN."
     },
     {
       "question": "Comment les prochaines exécutions sont-elles calculées ?",
@@ -27,7 +33,7 @@ export default {
     }
   ],
   "footerTagline": "Générez, traduisez et visualisez des expressions cron avec descriptions lisibles 100% localement.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

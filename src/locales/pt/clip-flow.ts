@@ -10,22 +10,47 @@ export default {
   "seoUseCaseText": "Perfeito para criar compilações de melhores momentos a partir de VODs longos: marque cada bom momento ao longo de uma transmissão de várias horas e exporte-os como um único MP4 contínuo, ou baixe cada momento separadamente.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Os dados de vídeo são transmitidos diretamente dos servidores da Twitch para o seu navegador. Todo o corte, recorte e junção acontece localmente no seu dispositivo — nada é enviado a lugar nenhum.",
-  "seoKeywords": ["editor de clipes da twitch", "cortar vod da twitch", "clipe da twitch com mais de 60 segundos", "vod para mp4", "criar highlights da twitch", "recortar vod da twitch", "editor de vídeo da twitch online"],
+  "seoKeywords": [
+    "editor de clipes da twitch",
+    "cortar vod da twitch",
+    "clipe da twitch com mais de 60 segundos",
+    "vod para mp4",
+    "criar highlights da twitch",
+    "recortar vod da twitch",
+    "editor de vídeo da twitch online"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
-    { "question": "Posso criar clipes mais longos que o limite de 60 segundos da Twitch?", "answer": "Sim. O ClipFlow não tem limite de duração — marque cortes de qualquer duração, de alguns segundos a uma hora inteira." },
-    { "question": "Meus dados são enviados a algum servidor?", "answer": "Não. Os dados de vídeo vão diretamente da Twitch para o seu navegador, e todo o corte e exportação acontece localmente no seu dispositivo." },
-    { "question": "Por que os cortes não são perfeitos quadro a quadro?", "answer": "Para manter as exportações rápidas e sem perda de qualidade, o ClipFlow ajusta ao keyframe mais próximo (cerca de 2 segundos de precisão) em vez de recodificar o vídeo inteiro." },
-    { "question": "Isso funciona com transmissões ao vivo?", "answer": "Sim. Cole o link de um canal ao vivo e o ClipFlow carregará a transmissão que está sendo gravada no momento, que continua crescendo enquanto o streamer estiver ao vivo." },
-    { "question": "Por que minha exportação falhou?", "answer": "Geralmente é uma falha temporária de rede ao baixar os dados de vídeo, ou o motor de vídeo não conseguiu carregar. Tente novamente ou use o download alternativo em formato .ts." },
-    { "question": "Posso baixar vários cortes de uma vez?", "answer": "Sim. Baixe cada corte individualmente, ou use 'Baixar tudo junto' para obter todos os cortes combinados em um único MP4, na ordem em que você os organizou." }
+    {
+      "question": "Posso criar clipes mais longos que o limite de 60 segundos da Twitch?",
+      "answer": "Sim. O ClipFlow não tem limite de duração — marque cortes de qualquer duração, de alguns segundos a uma hora inteira."
+    },
+    {
+      "question": "Meus dados são enviados a algum servidor?",
+      "answer": "Não. Os dados de vídeo vão diretamente da Twitch para o seu navegador, e todo o corte e exportação acontece localmente no seu dispositivo."
+    },
+    {
+      "question": "Por que os cortes não são perfeitos quadro a quadro?",
+      "answer": "Para manter as exportações rápidas e sem perda de qualidade, o ClipFlow ajusta ao keyframe mais próximo (cerca de 2 segundos de precisão) em vez de recodificar o vídeo inteiro."
+    },
+    {
+      "question": "Isso funciona com transmissões ao vivo?",
+      "answer": "Sim. Cole o link de um canal ao vivo e o ClipFlow carregará a transmissão que está sendo gravada no momento, que continua crescendo enquanto o streamer estiver ao vivo."
+    },
+    {
+      "question": "Por que minha exportação falhou?",
+      "answer": "Geralmente é uma falha temporária de rede ao baixar os dados de vídeo, ou o motor de vídeo não conseguiu carregar. Tente novamente ou use o download alternativo em formato .ts."
+    },
+    {
+      "question": "Posso baixar vários cortes de uma vez?",
+      "answer": "Sim. Baixe cada corte individualmente, ou use 'Baixar tudo junto' para obter todos os cortes combinados em um único MP4, na ordem em que você os organizou."
+    }
   ],
   "footerTagline": "Corte vários clipes de qualquer duração a partir de VODs e lives da Twitch e exporte-os como MP4, 100% no seu navegador.",
   "footerCredit": "Parte da suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:",
-
   "inputTitle": "Cole um VOD ou canal da Twitch",
   "inputPlaceholder": "twitch.tv/videos/123456789 ou nome do canal",
   "inputButton": "Carregar vídeo",
@@ -36,22 +61,18 @@ export default {
   "featureCutText": "Marque quantos trechos quiser, de qualquer duração.",
   "featureExportTitle": "3. Exporte",
   "featureExportText": "Baixe separadamente ou juntos em um único MP4.",
-
   "loadingVod": "Obtendo informações do VOD…",
   "loadingPlaylist": "Carregando os streams de vídeo…",
-
   "errorInvalidUrl": "Esse link não parece ser um VOD ou canal da Twitch válido.",
   "errorVodNotFound": "Este VOD não foi encontrado. Pode ter sido excluído.",
   "errorChannelNotFound": "Canal não encontrado. Verifique a ortografia e tente novamente.",
   "errorVodsDisabled": "Este canal não tem VODs disponíveis — as transmissões anteriores podem estar desativadas.",
   "errorPlaylist": "Não foi possível carregar o stream de vídeo. Tente novamente.",
-
+  "errorVodRestricted": "Este VOD é exclusivo para assinantes ou está restrito na Twitch e não pode ser reproduzido sem login lá — nenhuma ferramenta de download consegue contornar isso.",
   "liveBadge": "AO VIVO — a gravação ainda está crescendo",
   "qualityLabel": "Qualidade",
-
   "timelineTitle": "Linha do tempo",
   "addCut": "Adicionar corte na posição atual",
-
   "cutLabel": "Corte",
   "cutsLabel": "cortes",
   "startLabel": "Início",
@@ -63,12 +84,10 @@ export default {
   "moveUp": "Mover para cima",
   "moveDown": "Mover para baixo",
   "noCutsYet": "Ainda não há cortes — pressione \"Adicionar corte\" para marcar seu primeiro trecho.",
-
   "downloadCut": "Baixar MP4",
   "downloadAllJoined": "Baixar tudo junto (MP4)",
   "totalLabel": "total",
   "estimatedSize": "tamanho est.",
-
   "loadingEngine": "Carregando motor de vídeo ({pct}%) — apenas na primeira vez…",
   "downloadingSegments": "Baixando vídeo ({pct}%)…",
   "processingCut": "Convertendo para MP4…",

@@ -1,14 +1,10 @@
 export default {
-  "title": "CSS-Designer",
+  "title": "CSS Designer",
   "description": "Interactive playground to generate modern CSS effects like Glassmorphism, Box Shadows, Gradients, and Border Radius.",
-  
-  // Tabs
   "tab_glassmorphism": "Glassmorphism",
   "tab_box_shadow": "Box Shadow",
   "tab_gradients": "Gradients",
   "tab_border_radius": "Border Radius",
-  
-  // Controls & Labels
   "backdrop_blur": "Backdrop Blur",
   "bg_opacity": "Background Opacity",
   "saturation": "Saturation",
@@ -37,8 +33,6 @@ export default {
   "top_right": "Top-Right",
   "bottom_right": "Bottom-Right",
   "bottom_left": "Bottom-Left",
-  
-  // UI Buttons & Text
   "copy_css": "Copy CSS",
   "copy_tailwind": "Copy Tailwind",
   "copy_variables": "Copy CSS Variables",
@@ -51,12 +45,10 @@ export default {
   "theme_vibrant": "Vibrant Gradient",
   "preview_text": "CSS Playground",
   "preview_subtext": "Change controls on the left to see modifications in real-time.",
-  
-  // SEO & Info
-  "seo_title": "CSS-Designer | Glassmorphism, Shadow and Gradient Generator",
+  "seo_title": "CSS Designer | Glassmorphism, Shadow and Gradient Generator",
   "seo_description": "Create modern CSS effects with our visual playground. Generate CSS and Tailwind code for glassmorphism, advanced box shadows, gradients, and custom border radius.",
   "seoHeroTitle": "Generate stunning CSS effects visual and fast.",
-  "seoHeroText": "Designing modern styles doesn't have to be a headache. CSS-Designer helps you visualize and generate pure CSS or Tailwind code in seconds.",
+  "seoHeroText": "Designing modern styles doesn't have to be a headache. CSS Designer helps you visualize and generate pure CSS or Tailwind code in seconds.",
   "seoHeroList": [
     "No registration or payment required",
     "Generates clean CSS & Tailwind code",
@@ -84,12 +76,11 @@ export default {
   "seoUseCaseText": "Quickly style cards, buttons, backgrounds, and overlay panels. Ideal for Figma-to-code translations, prototyping layouts, and styling modern dashboards.",
   "seoPrivacyTitle": "Privacy & Security",
   "seoPrivacyText": "Your CSS recipes remain private. Everything occurs on your local machine; we do not store, track, or upload your designs.",
-  
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
       "question": "Is this tool completely free?",
-      "answer": "Yes, CSS-Designer is 100% free with no registration, premium limits, or watermarks."
+      "answer": "Yes, CSS Designer is 100% free with no registration, premium limits, or watermarks."
     },
     {
       "question": "Can I use the generated code directly in Tailwind CSS?",
@@ -105,5 +96,8 @@ export default {
     }
   ],
   "footerTagline": "Helping you design, build, and optimize with simple and premium utilities.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "cookiePolicy": "Cookie Policy"
 };

@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "アスペクト比計算機 | 比率を簡略化し比例リサイズ 100%ローカル",
   "seo_description": "簡略化されたアスペクト比を計算し、画像を比例的にリサイズし、16:9、4:3、9:16などの一般的なプリセットを探索します。100%ローカルでプライベート。",
   "seoHeroTitle": "比率計算機プロ",
@@ -36,7 +36,16 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。寸法入力はデバイスから離れることはなく、何もアップロードされません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。入力は厳密にローカルメモリに留まり、タブを閉じると消去されます。",
-  "seoKeywords": ["アスペクト比計算機", "画像を比例リサイズ", "16:9 比率", "比率を簡略化", "画像寸法", "動画解像度", "オンラインツール", "無料"],
+  "seoKeywords": [
+    "アスペクト比計算機",
+    "画像を比例リサイズ",
+    "16:9 比率",
+    "比率を簡略化",
+    "画像寸法",
+    "動画解像度",
+    "オンラインツール",
+    "無料"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -53,7 +62,7 @@ export default {
     }
   ],
   "footerTagline": "動画、画像、画面のアスペクト比と比例解像度を100%ローカルで計算します。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

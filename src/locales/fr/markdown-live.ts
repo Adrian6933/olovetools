@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "Éditeur Markdown visuel en temps réel et prévisualiseur HTML avec modèles de style et exportations PDF/HTML 100% locaux.",
-  "placeholder": "# Bienvenue sur Markdown-Live !\n\nTapez du markdown ici à gauche pour voir le rendu en temps réel à droite.\n\n## Formats de base\n\nVous pouvez mettre en **gras** ou en *italique* facilement, ou insérer du `code en ligne` et des liens : [oLoveTools](https://olovetools.com).\n\n### Exemple de bloc de code\n\n```javascript\nfunction saluer(nom) {\n  console.log('Bonjour, ' + nom + '!');\n}\nsaluer('Monde');\n```\n\n### Citations et listes\n\n> Markdown est un langage de balisage léger qui facilite le formatage de texte brut.\n\n- Éditeur markdown rapide\n- Traitement 100% local\n- Aperçu sur double écran\n",
+  "placeholder": "# Bienvenue sur MarkdownLive !\n\nTapez du markdown ici à gauche pour voir le rendu en temps réel à droite.\n\n## Formats de base\n\nVous pouvez mettre en **gras** ou en *italique* facilement, ou insérer du `code en ligne` et des liens : [oLoveTools](https://olovetools.com).\n\n### Exemple de bloc de code\n\n```javascript\nfunction saluer(nom) {\n  console.log('Bonjour, ' + nom + '!');\n}\nsaluer('Monde');\n```\n\n### Citations et listes\n\n> Markdown est un langage de balisage léger qui facilite le formatage de texte brut.\n\n- Éditeur markdown rapide\n- Traitement 100% local\n- Aperçu sur double écran\n",
   "tooltip_bold": "Gras",
   "tooltip_italic": "Italique",
   "tooltip_heading": "En-tête",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Éditeur Markdown double écran gratuit, confidentiel et local.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "seo_title": "MarkdownLive | Éditeur Markdown avec Aperçu en Direct Gratuit",
+  "seo_description": "Éditeur Markdown visuel en temps réel et prévisualiseur HTML avec modèles de style et exportations PDF/HTML 100% locaux."
 };

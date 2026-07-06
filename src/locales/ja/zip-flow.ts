@@ -1,12 +1,12 @@
 export default {
-  "title": "Zip-Flow",
+  "title": "ZipFlow",
   "description": "ファイルをZIPアーカイブに圧縮し、ZIPパッケージからファイルを抽出するツール。ブラウザ上で100%ローカルに動作し、リアルタイムでディレクトリツリーを表示します。",
   "tab_compress": "ファイルを圧縮",
   "tab_extract": "アーカイブを展開",
   "compress_drop_active": "追加するファイルをドロップ...",
   "compress_drop_inactive": "ファイルをここにドラッグ＆ドロップ、またはクリックして参照",
   "compress_output_filename": "ZIPファイル名",
-  "compress_output_filename_placeholder": "archive.zip",
+  "compress_output_filename_placeholder": "アーカイブ.zip",
   "compress_level": "圧縮レベル",
   "compress_level_store": "ストア（無圧縮 - 高速）",
   "compress_level_deflate": "デフレート（標準圧縮）",
@@ -45,7 +45,7 @@ export default {
   "faq": [
     {
       "question": "ファイルの圧縮や展開時に、データはネット上にアップロードされますか？",
-      "answer": "いいえ。Zip-FlowはJSZipライブラリを使用し、すべてブラウザのメモリ内で完結して実行されます。ファイルがサーバーに送信されることはありません。"
+      "answer": "いいえ。ZipFlowはJSZipライブラリを使用し、すべてブラウザのメモリ内で完結して実行されます。ファイルがサーバーに送信されることはありません。"
     },
     {
       "question": "パスワード保護されたZIPアーカイブを展開できますか？",
@@ -57,5 +57,7 @@ export default {
     }
   ],
   "footerTagline": "ブラウザで動くプライベートなローカルZIP圧縮・抽出ツール。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "ZipFlow | 無料オンラインZIP圧縮・解凍ツール",
+  "seo_description": "ファイルをZIPアーカイブに圧縮し、ZIPパッケージからファイルを抽出するツール。ブラウザ上で100%ローカルに動作し、リアルタイムでディレクトリツリーを表示します。"
 };

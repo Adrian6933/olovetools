@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | Formate, embeleze e valide consultas SQL com destaque de sintaxe 100% local no seu navegador.",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | Formate, embeleze e valide consultas SQL com destaque de sintaxe 100% local no seu navegador.",
   "seo_description": "Formate, embeleze e valide consultas SQL com destaque de sintaxe 100% local no seu navegador.",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "Formate, embeleze e valide consultas SQL com destaque de sintaxe 100% local no seu navegador.",
   "input": "SQL de entrada",
   "output": "Saída formatada",
@@ -27,7 +27,13 @@ export default {
   "seoUseCaseText": "Tudo roda localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["sql flow", "ferramenta online", "grátis", "local", "navegador"],
+  "seoKeywords": [
+    "sql flow",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -35,8 +41,8 @@ export default {
       "answer": "Não. Todas as operações acontecem inteiramente no seu navegador. Seus dados nunca saem do seu dispositivo."
     },
     {
-      "question": "O SQL-Flow suporta diferentes dialetos SQL?",
-      "answer": "O SQL-Flow reconhece palavras-chave SQL padrão comuns à maioria dos dialetos, incluindo PostgreSQL, MySQL, SQLite e SQL Server. As regras de formatação são independentes de dialeto."
+      "question": "O SQLFlow suporta diferentes dialetos SQL?",
+      "answer": "O SQLFlow reconhece palavras-chave SQL padrão comuns à maioria dos dialetos, incluindo PostgreSQL, MySQL, SQLite e SQL Server. As regras de formatação são independentes de dialeto."
     },
     {
       "question": "Posso personalizar a indentação e a caixa das palavras-chave?",
@@ -44,7 +50,7 @@ export default {
     }
   ],
   "footerTagline": "Formate, embeleze e valide consultas SQL com destaque de sintaxe 100% local no seu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

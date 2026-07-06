@@ -42,8 +42,40 @@ export default {
   "views": "Vues",
   "ready": "PRÊT",
   "preparing": "PRÉPARATION...",
-  "quickLinks": ["Kick en MP4", "Télécharger clips", "Téléchargement groupé", "Sauvegarder clips", "Télécharger 1080p", "Outils Streamer", "Kick vers TikTok", "Téléchargeur Mobile", "Convertisseur Rapide", "Voir Kick Hors Ligne"],
-  "seoTags": ["TÉLÉCHARGEUR KICK", "MP4 HD", "TÉLÉCHARGEMENT MASSIF", "SANS CONNEXION", "OUTIL GRATUIT", "1080P", "CLIPS KICK", "KIT ÉDITEUR", "CONVERTISSEUR TIKTOK", "VIDÉO GAMING", "CRÉATEUR REELS", "KIT STREAMING", "HAUTE DÉFINITION", "TÉLÉCHARGEMENT DIRECT", "TÉLÉCHARGEMENT RAPIDE", "COMPATIBLE MOBILE", "SAUVEGARDE KICK", "CONVERTISSEUR CLIPS", "SANS FILIGRANE", "MEILLEUR OUTIL KICK"],
+  "quickLinks": [
+    "Kick en MP4",
+    "Télécharger clips",
+    "Téléchargement groupé",
+    "Sauvegarder clips",
+    "Télécharger 1080p",
+    "Outils Streamer",
+    "Kick vers TikTok",
+    "Téléchargeur Mobile",
+    "Convertisseur Rapide",
+    "Voir Kick Hors Ligne"
+  ],
+  "seoTags": [
+    "TÉLÉCHARGEUR KICK",
+    "MP4 HD",
+    "TÉLÉCHARGEMENT MASSIF",
+    "SANS CONNEXION",
+    "OUTIL GRATUIT",
+    "1080P",
+    "CLIPS KICK",
+    "KIT ÉDITEUR",
+    "CONVERTISSEUR TIKTOK",
+    "VIDÉO GAMING",
+    "CRÉATEUR REELS",
+    "KIT STREAMING",
+    "HAUTE DÉFINITION",
+    "TÉLÉCHARGEMENT DIRECT",
+    "TÉLÉCHARGEMENT RAPIDE",
+    "COMPATIBLE MOBILE",
+    "SAUVEGARDE KICK",
+    "CONVERTISSEUR CLIPS",
+    "SANS FILIGRANE",
+    "MEILLEUR OUTIL KICK"
+  ],
   "legal": {
     "privacy": "Confidentialité",
     "terms": "Conditions",
@@ -53,5 +85,6 @@ export default {
     "privacyText": "Chez Kickclip, la confidentialité est primordiale. Nous ne collectons, ne stockons ni ne partageons aucune donnée personnelle identifiable. Les liens sont traités en temps réel et aucun journal des clips téléchargés n'est conservé sur nos serveurs. Pour toute question, contactez-nous à adrian.contact.me.69@gmail.com.",
     "termsText": "Kickclip est un outil technique permettant d'accéder au contenu public de Kick. L'utilisateur est seul responsable de son utilisation des contenus téléchargés. Kickclip n'est pas affilié à Kick.",
     "cookiesText": "Notre site Web utilise uniquement le LocalStorage strictement nécessaire au fonctionnement technique du site."
-  }
+  },
+  "loadingClips": "CHARGEMENT DES CLIPS..."
 };

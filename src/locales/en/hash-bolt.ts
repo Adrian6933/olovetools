@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally inside your browser.",
   "input_text_tab": "Text Input",
   "input_file_tab": "File Hashing",
@@ -7,7 +7,6 @@ export default {
   "label_algorithm": "Hash Function",
   "label_expected_hash": "Compare with Checksum (Optional)",
   "match_success": "Verified: Hashes match successfully!",
-  "match_fail: ": "Error: Hashes do not match!",
   "match_fail": "Error: Hashes do not match!",
   "match_placeholder": "Paste expected hash to verify integrity...",
   "file_drag_active": "Drop the file here...",
@@ -44,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "Secure and local cryptographic checksum generator for files and text.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "HashBolt | Free Online MD5, SHA-1, SHA-256 Hash Generator",
+  "seo_description": "Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally inside your browser."
 };

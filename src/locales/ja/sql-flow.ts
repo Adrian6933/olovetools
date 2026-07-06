@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | ブラウザ内で100%ローカルにシンタックスハイライト付きでSQLクエリをフォーマット・整形・検証。",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | ブラウザ内で100%ローカルにシンタックスハイライト付きでSQLクエリをフォーマット・整形・検証。",
   "seo_description": "ブラウザ内で100%ローカルにシンタックスハイライト付きでSQLクエリをフォーマット・整形・検証。",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "ブラウザ内で100%ローカルにシンタックスハイライト付きでSQLクエリをフォーマット・整形・検証。",
   "input": "入力 SQL",
   "output": "フォーマット済み出力",
@@ -27,7 +27,13 @@ export default {
   "seoUseCaseText": "すべてがブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードなし。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["sql flow", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "sql flow",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -35,8 +41,8 @@ export default {
       "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
     },
     {
-      "question": "SQL-Flowは異なるSQLダイアレクトをサポートしていますか？",
-      "answer": "SQL-FlowはPostgreSQL、MySQL、SQLite、SQL Serverなど、ほとんどのダイアレクトに共通する標準SQLキーワードを認識します。フォーマットルールはダイアレクト非依存です。"
+      "question": "SQLFlowは異なるSQLダイアレクトをサポートしていますか？",
+      "answer": "SQLFlowはPostgreSQL、MySQL、SQLite、SQL Serverなど、ほとんどのダイアレクトに共通する標準SQLキーワードを認識します。フォーマットルールはダイアレクト非依存です。"
     },
     {
       "question": "インデントとキーワードの大文字小文字をカスタマイズできますか？",
@@ -44,7 +50,7 @@ export default {
     }
   ],
   "footerTagline": "ブラウザ内で100%ローカルにシンタックスハイライト付きでSQLクエリをフォーマット・整形・検証。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

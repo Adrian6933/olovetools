@@ -183,7 +183,7 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <ShieldCheck className="w-8 h-8 text-cyan-400" />
-            <span>{t.seoHeroTitle || 'HTML-Sanitizer'}</span>
+            <span>{t.seoHeroTitle || 'HTML Sanitizer'}</span>
           </h2>
           <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
             {t.seoHeroText || 'Clean and sanitize HTML code by removing unwanted tags, scripts and styles 100% locally in your browser.'}

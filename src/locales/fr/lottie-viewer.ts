@@ -1,5 +1,5 @@
 export default {
-  "title": "Lottie-Viewer",
+  "title": "Lottie Viewer",
   "description": "Lecteur, personnalisateur et inspecteur interactif d'animations Lottie 100% local pour éditer les couleurs de calques et contrôler la lecture.",
   "drop_active": "Déposez le fichier Lottie JSON pour charger...",
   "drop_inactive": "Glissez-déposez un fichier Lottie JSON ici, ou cliquez pour parcourir",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "question": "Mes animations Lottie JSON sont-elles chargées en ligne ?",
-      "answer": "Non. Lottie-Viewer s'exécute entièrement côté client. Vos fichiers sont traités dans votre navigateur et ne quittent jamais votre machine."
+      "answer": "Non. Lottie Viewer s'exécute entièrement côté client. Vos fichiers sont traités dans votre navigateur et ne quittent jamais votre machine."
     },
     {
       "question": "Comment fonctionne la personnalisation des couleurs ?",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Lecteur, personnalisateur et inspecteur d'animations Lottie privé et local dans le navigateur.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "seo_title": "Lottie Viewer | Lecteur et Éditeur d'Animations Lottie Gratuit",
+  "seo_description": "Lecteur, personnalisateur et inspecteur interactif d'animations Lottie 100% local pour éditer les couleurs de calques et contrôler la lecture."
 };

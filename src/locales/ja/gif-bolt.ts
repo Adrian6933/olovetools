@@ -1,5 +1,5 @@
 export default {
-  "title": "GIF-Bolt",
+  "title": "GIFBolt",
   "description": "動画や連番画像を、ブラウザ上で100%ローカルに最適化されたアニメーションGIFに変換します。",
   "tab_video": "動画からGIF",
   "tab_images": "画像からGIF",
@@ -25,10 +25,10 @@ export default {
   "quality_low": "低画質 (高速)",
   "drop_zone_video": "動画をここにドラッグ＆ドロップ、またはクリックして選択 (MP4, WebM)",
   "drop_zone_images": "画像をここにドラッグ＆ドロップ、またはクリックして選択 (PNG, JPG, WebP)",
-  "seo_title": "GIF-Bolt | 無料オンライン動画・画像GIF変換ツール",
+  "seo_title": "GIFBolt | 無料オンライン動画・画像GIF変換ツール",
   "seo_description": "動画や連番画像を高品質なアニメーションGIFにブラウザ上で直接変換。トリミング、FPS、サイズ、圧縮率を自由にカスタマイズ可能。",
   "seoHeroTitle": "動画と画像をローカルでアニメーションGIFに変換",
-  "seoHeroText": "ブラウザ内だけで最適化されたGIFを作成。GIF-Boltはすべての処理をオフラインで行うため、プライバシーが完全に保護されます。",
+  "seoHeroText": "ブラウザ内だけで最適化されたGIFを作成。GIFBoltはすべての処理をオフラインで行うため、プライバシーが完全に保護されます。",
   "seoHeroList": [
     "ファイルサイズ制限やアップロード制限なし",
     "開始・終了時間の設定とフレームレートの調整に対応",

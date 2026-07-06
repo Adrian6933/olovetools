@@ -1,6 +1,6 @@
 export default {
-  "title": "List-Mixer",
-  "seo_title": "List-Mixer | Ordenador, embaralhador e deduplicador de listas gratuito online",
+  "title": "List Mixer",
+  "seo_title": "List Mixer | Ordenador, embaralhador e deduplicador de listas gratuito online",
   "seo_description": "Ordene, inverta, embaralhe, deduplique, apar e limpe listas de texto online 100% localmente no seu navegador. Ferramenta gratuita de manipulação de listas online.",
   "seoHeroTitle": "Ordenador, embaralhador e limpador de listas",
   "seoHeroText": "Cole qualquer lista de texto e ordene-a instantaneamente em ordem alfabética, inverta a ordem, embaralhe aleatoriamente, remova duplicatas, limpe linhas vazias, apare espaços em branco ou altere maiúsculas e minúsculas. Todas as operações se encadeiam e rodam 100% localmente no seu navegador.",
@@ -29,7 +29,15 @@ export default {
   "seoUseCaseText": "Cada ação na qual você clica é aplicada à saída atual, permitindo encadear múltiplas operações. Ordene, depois remova duplicatas, depois apare — tudo em sequência sem colar novamente.",
   "seoPrivacyTitle": "100% privado e seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Os dados da sua lista residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["ordenador de listas", "embaralhador de listas", "remover duplicatas", "ordenar linhas", "lista aleatória", "limpar lista", "deduplicar"],
+  "seoKeywords": [
+    "ordenador de listas",
+    "embaralhador de listas",
+    "remover duplicatas",
+    "ordenar linhas",
+    "lista aleatória",
+    "limpar lista",
+    "deduplicar"
+  ],
   "faqTitle": "Perguntas frequentes",
   "faq": [
     {
@@ -46,8 +54,9 @@ export default {
     }
   ],
   "footerTagline": "Ordenador, embaralhador e deduplicador de listas rápido e privado com operações encadeadas — 100% local no seu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
-  "contactForIdeas": "Contato para ideias e comentários:"
+  "contactForIdeas": "Contato para ideias e comentários:",
+  "copyLabel": "Copiar"
 };

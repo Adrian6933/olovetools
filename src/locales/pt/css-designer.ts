@@ -1,5 +1,5 @@
 export default {
-  "title": "CSS-Designer",
+  "title": "CSS Designer",
   "description": "Gerador interativo para criar efeitos CSS modernos como Glassmorphism, Sombras Complexas, Degradês e Bordas Personalizadas.",
   "tab_glassmorphism": "Glassmorphism",
   "tab_box_shadow": "Sombra de Caixa",
@@ -45,10 +45,10 @@ export default {
   "theme_vibrant": "Degradê Vibrante",
   "preview_text": "Espaço CSS",
   "preview_subtext": "Modifique os controles da esquerda para ver as alterações em tempo real.",
-  "seo_title": "CSS-Designer | Gerador de Glassmorphism, Sombras e Degradês",
+  "seo_title": "CSS Designer | Gerador de Glassmorphism, Sombras e Degradês",
   "seo_description": "Crie efeitos CSS modernos com o nosso playground visual. Gere código CSS e Tailwind para glassmorphism, sombras avançadas, degradês e bordas orgânicas.",
   "seoHeroTitle": "Gere efeitos CSS de forma visual e muito rápida.",
-  "seoHeroText": "Desenhar estilos modernos não precisa ser difícil. CSS-Designer ajuda você a visualizar e gerar código CSS ou Tailwind limpo em segundos.",
+  "seoHeroText": "Desenhar estilos modernos não precisa ser difícil. CSS Designer ajuda você a visualizar e gerar código CSS ou Tailwind limpo em segundos.",
   "seoHeroList": [
     "Sem registro necessário",
     "Código CSS & Tailwind limpo",
@@ -64,7 +64,13 @@ export default {
     "Gerador de Sombras",
     "Degradê CSS",
     "Bordas Orgânicas",
-    "Tailwind CSS"
+    "Tailwind CSS",
+    "Utilitário de Design Web",
+    "Ferramenta UI UX",
+    "Ferramenta CSS Gratuita",
+    "Gerador Neumorphism",
+    "Border Radius Estiloso",
+    "Editor CSS Online"
   ],
   "seoUseCaseTitle": "Casos de Uso",
   "seoUseCaseText": "Ideal para estilizar botões, cartões, fundos de página e modais no seu site.",
@@ -74,13 +80,24 @@ export default {
   "faq": [
     {
       "question": "É gratuito?",
-      "answer": "Sim, o CSS-Designer é 100% grátis."
+      "answer": "Sim, o CSS Designer é 100% grátis."
     },
     {
       "question": "Funciona no telemóvel/celular?",
       "answer": "Sim, a interface é totalmente responsiva."
+    },
+    {
+      "question": "O que é Glassmorphism?",
+      "answer": "Glassmorphism é uma tendência de UI que imita vidro fosco. Usa desfoque backdrop-filter e fundos semitransparentes para sobrepor elementos elegantemente em fundos coloridos."
+    },
+    {
+      "question": "Funciona em dispositivos móveis?",
+      "answer": "Com certeza. O layout é otimizado para funcionar em smartphones, tablets e desktops, para você programar em qualquer lugar."
     }
   ],
   "footerTagline": "Ajudando você a programar e criar com ferramentas premium e fáceis.",
-  "footerCredit": "Parte da suíte oLoveTools"
+  "footerCredit": "Parte da suíte oLoveTools",
+  "privacyPolicy": "Política de Privacidade",
+  "termsOfService": "Termos de Serviço",
+  "cookiePolicy": "Política de Cookies"
 };

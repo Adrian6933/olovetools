@@ -1,87 +1,29 @@
 export default {
-  privacy: {
-    title: "Politique de Confidentialité",
-    description: "Politique de confidentialité complète pour oLoveTools.",
-    content: `
-      <h2>1. Introduction</h2>
-      <p>Votre vie privée est importante pour nous. La politique d'oLoveTools est de respecter votre vie privée concernant toute information que nous pouvons collecter auprès de vous sur notre site Web, olovetools.com, et d'autres sites que nous possédons et exploitons.</p>
-      <br/>
-      <h2>2. Les informations que nous collectons</h2>
-      <p>Nous ne demandons des informations personnelles que lorsque nous en avons vraiment besoin pour vous fournir un service. Nous les collectons par des moyens justes et légaux, avec votre connaissance et votre consentement. Nous vous informons également de la raison pour laquelle nous les collectons et de la manière dont elles seront utilisées.</p>
-      <p>Pour la plupart de nos outils (tels que Clipy, ClipBolt, FormatFlow et PasteSnap), le traitement s'effectue entièrement dans votre navigateur. Nous ne stockons pas vos clips, images ou codes formatés sur nos serveurs.</p>
-      <br/>
-      <h2>3. Services tiers et publicités</h2>
-      <p>Notre site Web utilise Google AdSense pour diffuser des annonces. Google utilise des cookies pour diffuser des annonces en fonction des visites antérieures d'un utilisateur sur notre site Web ou sur d'autres sites Web. L'utilisation de cookies publicitaires par Google lui permet, ainsi qu'à ses partenaires, de diffuser des annonces auprès de nos utilisateurs en fonction de leur visite sur nos sites et/ou d'autres sites sur Internet.</p>
-      <br/>
-      <h2>4. Conservation des données</h2>
-      <p>Nous ne conservons les informations collectées que le temps nécessaire pour vous fournir le service demandé. Les données que nous stockons seront protégées par des moyens commercialement acceptables pour éviter la perte et le vol, ainsi que l'accès, la divulgation, la copie, l'utilisation ou la modification non autorisés.</p>
-      <br/>
-      <h2>5. Droits des utilisateurs</h2>
-      <p>Vous êtes libre de refuser notre demande d'informations personnelles, étant entendu que nous pourrions ne pas être en mesure de vous fournir certains des services souhaités.</p>
-    `
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "description": "Politique de confidentialité complète pour oLoveTools.",
+    "content": "\n      <h2>1. Introduction</h2>\n      <p>Votre vie privée est importante pour nous. La politique d'oLoveTools est de respecter votre vie privée concernant toute information que nous pouvons collecter auprès de vous sur notre site Web, olovetools.com, et d'autres sites que nous possédons et exploitons.</p>\n      <br/>\n      <h2>2. Les informations que nous collectons</h2>\n      <p>Nous ne demandons des informations personnelles que lorsque nous en avons vraiment besoin pour vous fournir un service. Nous les collectons par des moyens justes et légaux, avec votre connaissance et votre consentement. Nous vous informons également de la raison pour laquelle nous les collectons et de la manière dont elles seront utilisées.</p>\n      <p>Pour la plupart de nos outils (tels que Clipy, TwitchBolt, FormatFlow et PasteSnap), le traitement s'effectue entièrement dans votre navigateur. Nous ne stockons pas vos clips, images ou codes formatés sur nos serveurs.</p>\n      <br/>\n      <h2>3. Services tiers et publicités</h2>\n      <p>Notre site Web utilise Google AdSense pour diffuser des annonces. Google utilise des cookies pour diffuser des annonces en fonction des visites antérieures d'un utilisateur sur notre site Web ou sur d'autres sites Web. L'utilisation de cookies publicitaires par Google lui permet, ainsi qu'à ses partenaires, de diffuser des annonces auprès de nos utilisateurs en fonction de leur visite sur nos sites et/ou d'autres sites sur Internet.</p>\n      <br/>\n      <h2>4. Conservation des données</h2>\n      <p>Nous ne conservons les informations collectées que le temps nécessaire pour vous fournir le service demandé. Les données que nous stockons seront protégées par des moyens commercialement acceptables pour éviter la perte et le vol, ainsi que l'accès, la divulgation, la copie, l'utilisation ou la modification non autorisés.</p>\n      <br/>\n      <h2>5. Droits des utilisateurs</h2>\n      <p>Vous êtes libre de refuser notre demande d'informations personnelles, étant entendu que nous pourrions ne pas être en mesure de vous fournir certains des services souhaités.</p>\n    "
   },
-  terms: {
-    title: "Conditions d'Utilisation",
-    description: "Conditions générales d'utilisation d'oLoveTools.",
-    content: `
-      <h2>1. Conditions</h2>
-      <p>En accédant au site Web d'oLoveTools, vous acceptez d'être lié par ces conditions d'utilisation, toutes les lois et réglementations applicables, et convenez que vous êtes responsable du respect des lois locales applicables. Si vous n'êtes pas d'accord avec l'une de ces conditions, il vous est interdit d'utiliser ou d'accéder à ce site.</p>
-      <br/>
-      <h2>2. Licence d'utilisation</h2>
-      <p>L'autorisation est accordée de télécharger temporairement une copie du matériel (informations ou logiciels) sur le site Web d'oLoveTools pour une visualisation transitoire personnelle et non commerciale uniquement. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre.</p>
-      <br/>
-      <h2>3. Avis de non-responsabilité</h2>
-      <p>Le matériel sur le site Web d'oLoveTools est fourni « tel quel ». oLoveTools ne donne aucune garantie, expresse ou implicite, et rejette et nie par la présente toutes les autres garanties, y compris, sans limitation, les garanties implicites ou les conditions de qualité marchande, d'adéquation à un usage particulier ou de non-violation de la propriété intellectuelle ou autre violation des droits.</p>
-      <br/>
-      <h2>4. Limites</h2>
-      <p>En aucun cas, oLoveTools ou ses fournisseurs ne pourront être tenus responsables de tout dommage (y compris, sans limitation, les dommages pour perte de données ou de profit, ou en raison d'une interruption d'activité) découlant de l'utilisation ou de l'incapacité d'utiliser le matériel sur le site Web d'oLoveTools.</p>
-      <br/>
-      <h2>5. Contenu tiers</h2>
-      <p>Certains de nos outils (ex: Clipy, ClipBolt) interagissent avec des API tierces (comme Twitch). En utilisant ces outils, vous devez également vous conformer aux Conditions d'Utilisation respectives de ces plateformes tierces. Nous n'hébergeons ni ne possédons le contenu multimédia récupéré via ces API.</p>
-    `
+  "terms": {
+    "title": "Conditions d'Utilisation",
+    "description": "Conditions générales d'utilisation d'oLoveTools.",
+    "content": "\n      <h2>1. Conditions</h2>\n      <p>En accédant au site Web d'oLoveTools, vous acceptez d'être lié par ces conditions d'utilisation, toutes les lois et réglementations applicables, et convenez que vous êtes responsable du respect des lois locales applicables. Si vous n'êtes pas d'accord avec l'une de ces conditions, il vous est interdit d'utiliser ou d'accéder à ce site.</p>\n      <br/>\n      <h2>2. Licence d'utilisation</h2>\n      <p>L'autorisation est accordée de télécharger temporairement une copie du matériel (informations ou logiciels) sur le site Web d'oLoveTools pour une visualisation transitoire personnelle et non commerciale uniquement. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre.</p>\n      <br/>\n      <h2>3. Avis de non-responsabilité</h2>\n      <p>Le matériel sur le site Web d'oLoveTools est fourni « tel quel ». oLoveTools ne donne aucune garantie, expresse ou implicite, et rejette et nie par la présente toutes les autres garanties, y compris, sans limitation, les garanties implicites ou les conditions de qualité marchande, d'adéquation à un usage particulier ou de non-violation de la propriété intellectuelle ou autre violation des droits.</p>\n      <br/>\n      <h2>4. Limites</h2>\n      <p>En aucun cas, oLoveTools ou ses fournisseurs ne pourront être tenus responsables de tout dommage (y compris, sans limitation, les dommages pour perte de données ou de profit, ou en raison d'une interruption d'activité) découlant de l'utilisation ou de l'incapacité d'utiliser le matériel sur le site Web d'oLoveTools.</p>\n      <br/>\n      <h2>5. Contenu tiers</h2>\n      <p>Certains de nos outils (ex: Clipy, TwitchBolt) interagissent avec des API tierces (comme Twitch). En utilisant ces outils, vous devez également vous conformer aux Conditions d'Utilisation respectives de ces plateformes tierces. Nous n'hébergeons ni ne possédons le contenu multimédia récupéré via ces API.</p>\n    "
   },
-  cookies: {
-    title: "Politique relative aux Cookies",
-    description: "Informations sur notre utilisation des cookies et des technologies de suivi.",
-    content: `
-      <h2>1. Que sont les cookies ?</h2>
-      <p>Les cookies sont de petits fichiers texte qui sont stockés sur votre ordinateur ou appareil mobile lorsque vous visitez un site Web. Ils sont largement utilisés pour faire fonctionner les sites Web, ou pour les faire fonctionner plus efficacement, ainsi que pour fournir des informations aux propriétaires du site.</p>
-      <br/>
-      <h2>2. Comment nous utilisons les cookies</h2>
-      <p>Nous utilisons des cookies pour améliorer votre expérience de navigation, diffuser des annonces ou des contenus personnalisés et analyser notre trafic. Nous utilisons des cookies essentiels pour mémoriser votre préférence linguistique et d'autres paramètres.</p>
-      <br/>
-      <h2>3. Cookies Google AdSense</h2>
-      <p>Nous utilisons Google AdSense pour diffuser des annonces sur notre site. L'utilisation du cookie DART par Google lui permet de diffuser des annonces à nos utilisateurs en fonction de leur visite sur notre site et d'autres sites sur Internet. Les utilisateurs peuvent refuser l'utilisation du cookie DART en visitant la politique de confidentialité du réseau de contenu et d'annonces Google.</p>
-      <br/>
-      <h2>4. Gestion des cookies</h2>
-      <p>Vous pouvez configurer votre navigateur pour refuser tout ou partie des cookies du navigateur, ou pour vous alerter lorsque des sites Web définissent ou accèdent à des cookies. Si vous désactivez ou refusez les cookies, veuillez noter que certaines parties de ce site Web peuvent devenir inaccessibles ou ne pas fonctionner correctement.</p>
-    `
+  "cookies": {
+    "title": "Politique relative aux Cookies",
+    "description": "Informations sur notre utilisation des cookies et des technologies de suivi.",
+    "content": "\n      <h2>1. Que sont les cookies ?</h2>\n      <p>Les cookies sont de petits fichiers texte qui sont stockés sur votre ordinateur ou appareil mobile lorsque vous visitez un site Web. Ils sont largement utilisés pour faire fonctionner les sites Web, ou pour les faire fonctionner plus efficacement, ainsi que pour fournir des informations aux propriétaires du site.</p>\n      <br/>\n      <h2>2. Comment nous utilisons les cookies</h2>\n      <p>Nous utilisons des cookies pour améliorer votre expérience de navigation, diffuser des annonces ou des contenus personnalisés et analyser notre trafic. Nous utilisons des cookies essentiels pour mémoriser votre préférence linguistique et d'autres paramètres.</p>\n      <br/>\n      <h2>3. Cookies Google AdSense</h2>\n      <p>Nous utilisons Google AdSense pour diffuser des annonces sur notre site. L'utilisation du cookie DART par Google lui permet de diffuser des annonces à nos utilisateurs en fonction de leur visite sur notre site et d'autres sites sur Internet. Les utilisateurs peuvent refuser l'utilisation du cookie DART en visitant la politique de confidentialité du réseau de contenu et d'annonces Google.</p>\n      <br/>\n      <h2>4. Gestion des cookies</h2>\n      <p>Vous pouvez configurer votre navigateur pour refuser tout ou partie des cookies du navigateur, ou pour vous alerter lorsque des sites Web définissent ou accèdent à des cookies. Si vous désactivez ou refusez les cookies, veuillez noter que certaines parties de ce site Web peuvent devenir inaccessibles ou ne pas fonctionner correctement.</p>\n    "
   },
-  about: {
-    title: "À propos d'oLoveTools",
-    description: "En savoir plus sur notre mission et les outils que nous proposons.",
-    content: `
-      <h2>Notre Mission</h2>
-      <p>oLoveTools est une suite complète d'utilitaires en ligne gratuits et de haute qualité conçus pour simplifier les tâches quotidiennes des développeurs, concepteurs, créateurs de contenu et utilisateurs. Notre mission est de fournir des outils puissants, rapides, sécurisés et accessibles directement depuis votre navigateur sans nécessiter d'installation ni d'inscription.</p>
-      <br/>
-      <h2>Notre Philosophie</h2>
-      <p>Nous croyons en la confidentialité et l'efficacité. Chaque fois que possible, nos outils sont conçus pour traiter les données localement sur votre appareil. Cela signifie que vos fichiers, images et extraits de code ne quittent jamais votre ordinateur, garantissant une confidentialité maximale et des performances ultra-rapides.</p>
-      <br/>
-      <h2>Les Outils</h2>
-      <ul>
-        <li><strong>Clipy & ClipBolt:</strong> Découvrez, organisez et téléchargez facilement vos clips Twitch préférés.</li>
-        <li><strong>FormatFlow:</strong> Un outil polyvalent pour formater et convertir divers types de données et de codes.</li>
-        <li><strong>PasteSnap:</strong> Capturez et gérez instantanément les images de votre presse-papiers avec une haute qualité.</li>
-      </ul>
-      <br/>
-      <p>Nous évoluons constamment et ajoutons de nouvelles fonctionnalités à notre plateforme. Merci d'avoir choisi oLoveTools !</p>
-    `
+  "about": {
+    "title": "À propos d'oLoveTools",
+    "description": "En savoir plus sur notre mission et les outils que nous proposons.",
+    "content": "\n      <h2>Notre Mission</h2>\n      <p>oLoveTools est une suite complète d'utilitaires en ligne gratuits et de haute qualité conçus pour simplifier les tâches quotidiennes des développeurs, concepteurs, créateurs de contenu et utilisateurs. Notre mission est de fournir des outils puissants, rapides, sécurisés et accessibles directement depuis votre navigateur sans nécessiter d'installation ni d'inscription.</p>\n      <br/>\n      <h2>Notre Philosophie</h2>\n      <p>Nous croyons en la confidentialité et l'efficacité. Chaque fois que possible, nos outils sont conçus pour traiter les données localement sur votre appareil. Cela signifie que vos fichiers, images et extraits de code ne quittent jamais votre ordinateur, garantissant une confidentialité maximale et des performances ultra-rapides.</p>\n      <br/>\n      <h2>Les Outils</h2>\n      <ul>\n        <li><strong>Clipy & TwitchBolt:</strong> Découvrez, organisez et téléchargez facilement vos clips Twitch préférés.</li>\n        <li><strong>FormatFlow:</strong> Un outil polyvalent pour formater et convertir divers types de données et de codes.</li>\n        <li><strong>PasteSnap:</strong> Capturez et gérez instantanément les images de votre presse-papiers avec une haute qualité.</li>\n      </ul>\n      <br/>\n      <p>Nous évoluons constamment et ajoutons de nouvelles fonctionnalités à notre plateforme. Merci d'avoir choisi oLoveTools !</p>\n    "
   },
-  nav: {
-    home: "Accueil",
-    privacy: "Confidentialité",
-    terms: "Conditions",
-    cookies: "Cookies",
-    about: "À propos"
+  "nav": {
+    "home": "Accueil",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "cookies": "Cookies",
+    "about": "À propos"
   }
 };

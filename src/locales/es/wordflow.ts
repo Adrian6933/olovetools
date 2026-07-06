@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "Espacio interactivo gratuito, privado y local para el análisis de textos.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "seo_title": "WordFlow | Contador de Palabras y Analizador de Legibilidad Gratis",
+  "seo_description": "Contador de palabras, caracteres, análisis de legibilidad y asistente de limpieza de textos 100% local."
 };

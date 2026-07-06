@@ -1,11 +1,11 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | XML को JSON और JSON को XML में तुरंत रूपांतरित करें 100% स्थानीय रूप से अपने ब्राउज़र में।",
+  "title": "XML to JSON",
+  "seo_title": "XML to JSON | XML को JSON और JSON को XML में तुरंत रूपांतरित करें 100% स्थानीय रूप से अपने ब्राउज़र में।",
   "seo_description": "XML को JSON और JSON को XML में तुरंत रूपांतरित करें 100% स्थानीय रूप से अपने ब्राउज़र में।",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "XML को JSON और JSON को XML में तुरंत रूपांतरित करें 100% स्थानीय रूप से अपने ब्राउज़र में।",
-  "label_xml_to_json": "XML \u2192 JSON",
-  "label_json_to_xml": "JSON \u2192 XML",
+  "label_xml_to_json": "XML → JSON",
+  "label_json_to_xml": "JSON → XML",
   "tooltip_swap": "दिशा बदलें",
   "button_swap": "बदलें",
   "label_input": "इनपुट",
@@ -23,7 +23,13 @@ export default {
   "seoUseCaseText": "सब कुछ आपके ब्राउज़र में स्थानीय रूप से चलता है। आपका डेटा कभी आपका डिवाइस नहीं छोड़ता।",
   "seoPrivacyTitle": "100% निजी और सुरक्षित",
   "seoPrivacyText": "कोई डेटाबेस, ट्रैकिंग या नेटवर्क अपलोड नहीं। आपका डेटा सख्ती से स्थानीय मेमोरी में रहता है और टैब बंद करने पर गायब हो जाता है।",
-  "seoKeywords": ["xml json", "ऑनलाइन टूल", "मुफ़्त", "स्थानीय", "ब्राउज़र"],
+  "seoKeywords": [
+    "xml json",
+    "ऑनलाइन टूल",
+    "मुफ़्त",
+    "स्थानीय",
+    "ब्राउज़र"
+  ],
   "faqTitle": "अक्सर पूछे जाने वाले प्रश्न",
   "faq": [
     {
@@ -40,7 +46,7 @@ export default {
     }
   ],
   "footerTagline": "XML को JSON और JSON को XML में तुरंत रूपांतरित करें 100% स्थानीय रूप से अपने ब्राउज़र में।",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools सुइट का हिस्सा",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "कॉपी हो गया!",
   "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:"

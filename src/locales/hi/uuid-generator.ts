@@ -1,6 +1,6 @@
 export default {
-  "title": "UUID-Generator",
-  "seo_title": "UUID-Generator | मुफ्त ऑनलाइन UUID v4 और v5 जनरेटर",
+  "title": "UUID Generator",
+  "seo_title": "UUID Generator | मुफ्त ऑनलाइन UUID v4 और v5 जनरेटर",
   "seo_description": "अपने ब्राउज़र में Web Crypto API का उपयोग करके 100% स्थानीय रूप से एक बार में 500 तक यादृच्छिक UUID (v4) और नामित UUID (v5) थोक में जनरेट करें। मुफ्त ऑनलाइन UUID जनरेटर।",
   "seoHeroTitle": "UUID v4 और v5 थोक जनरेटर",
   "seoHeroText": "ब्राउज़र की नेटिव Web Crypto API का उपयोग करके 500 तक यादृच्छिक UUID (संस्करण 4) या नामित UUID (नामस्थान के साथ संस्करण 5) तुरंत जनरेट करें। सभी जनरेशन स्थानीय रूप से होते हैं — कोई सर्वर कॉल नहीं, कोई ट्रैकिंग नहीं।",
@@ -25,7 +25,15 @@ export default {
   "seoUseCaseText": "एक क्लिक में 500 तक UUID जनरेट करें। डेटाबेस सीडिंग, टेस्ट डेटा जनरेशन, अद्वितीय सत्र ID, या किसी भी परिदृश्य के लिए एक साथ कई अद्वितीय पहचानकर्ताओं की आवश्यकता के लिए एकदम सही।",
   "seoPrivacyTitle": "100% निजी और सुरक्षित",
   "seoPrivacyText": "कोई डेटाबेस, ट्रैकिंग, या नेटवर्क अपलोड नहीं। सभी UUID जनरेशन पूरी तरह से आपके ब्राउज़र के क्रिप्टो सबसिस्टम में होता है। आपका डेटा कभी आपके डिवाइस से बाहर नहीं जाता।",
-  "seoKeywords": ["uuid जनरेटर", "uuid v4", "uuid v5", "guid जनरेटर", "यादृच्छिक uuid", "थोक uuid", "अद्वितीय पहचानकर्ता"],
+  "seoKeywords": [
+    "uuid जनरेटर",
+    "uuid v4",
+    "uuid v5",
+    "guid जनरेटर",
+    "यादृच्छिक uuid",
+    "थोक uuid",
+    "अद्वितीय पहचानकर्ता"
+  ],
   "faqTitle": "अक्सर पूछे जाने वाले प्रश्न",
   "faq": [
     {
@@ -42,8 +50,9 @@ export default {
     }
   ],
   "footerTagline": "Web Crypto API द्वारा संचालित तेज़, सुरक्षित UUID v4 और v5 थोक जनरेटर — 100% आपके ब्राउज़र में स्थानीय।",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools सुइट का हिस्सा",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "कॉपी हो गया!",
-  "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:"
+  "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:",
+  "button_copy_all": "सभी कॉपी करें"
 };

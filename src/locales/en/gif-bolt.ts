@@ -1,5 +1,5 @@
 export default {
-  "title": "GIF-Bolt",
+  "title": "GIFBolt",
   "description": "Convert videos and image sequences into optimized animated GIFs 100% locally in your browser.",
   "tab_video": "Video to GIF",
   "tab_images": "Images to GIF",
@@ -25,10 +25,10 @@ export default {
   "quality_low": "Low Quality (Fast)",
   "drop_zone_video": "Drag & drop video here or click to browse (MP4, WebM)",
   "drop_zone_images": "Drag & drop images here or click to browse (PNG, JPG, WebP)",
-  "seo_title": "GIF-Bolt | Free Online Video to GIF and Image to GIF Converter",
+  "seo_title": "GIFBolt | Free Online Video to GIF and Image to GIF Converter",
   "seo_description": "Convert videos and image sequences to high-quality animated GIFs directly in your browser. Fully customizable trim, fps, dimensions, and compression options.",
   "seoHeroTitle": "Convert Videos and Images to Animated GIFs Locally",
-  "seoHeroText": "Create optimized GIFs entirely in your browser. GIF-Bolt handles all processing offline, ensuring 100% data privacy.",
+  "seoHeroText": "Create optimized GIFs entirely in your browser. GIFBolt handles all processing offline, ensuring 100% data privacy.",
   "seoHeroList": [
     "No file size or upload limits",
     "Select start/end times and adjust frame rates",
@@ -47,7 +47,7 @@ export default {
       "answer": "No. Since files are processed directly in your browser's RAM, there are no hard limits. However, processing very long or extremely high-resolution videos (like 4K) may slow down your browser."
     },
     {
-      "question": "Does GIF-Bolt upload my files?",
+      "question": "Does GIFBolt upload my files?",
       "answer": "No. Everything runs client-side using JavaScript. Your files are processed locally in your browser tab."
     },
     {

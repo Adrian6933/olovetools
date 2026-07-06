@@ -190,6 +190,6 @@ export default {
     "privacyPolicy": "गोपनीयता नीति",
     "accept": "स्वीकार करें और जारी रखें"
   },
-  "seo_title": "oLoveTools | FormatFlow",
+  "seo_title": "FormatFlow | छवि परिवर्तक",
   "seo_description": "FormatFlow किसी भी प्रारूप (JPG, PNG, WEBP) को HEIC, SVG, ICO, PDF, TIFF, EPS, RAW में बदलने, फ़ोटो का आकार बदलने और आपके ब्राउज़र में सुरक्षित रूप से प्रारूप बदलने का अंतिम उपकरण है।"
 };

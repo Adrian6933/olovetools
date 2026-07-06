@@ -34,7 +34,7 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
                       <div className="w-12 h-12 bg-twitch rounded-2xl flex items-center justify-center shadow-2xl">
                           <Zap className="w-7 h-7 text-white fill-current" />
                       </div>
-                      <span className="text-3xl font-[900] italic uppercase text-white tracking-tight">ClipBolt</span>
+                      <span className="text-3xl font-[900] italic uppercase text-white tracking-tight">TwitchBolt</span>
                   </div>
                   <p className="text-gray-500 text-sm leading-relaxed font-medium">{t.footerDesc}</p>
               </div>
@@ -88,7 +88,7 @@ const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
               <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="flex flex-col items-center md:items-start gap-4">
                       <p className="text-[10px] font-black text-gray-600 uppercase tracking-[0.25em]">
-                          © {new Date().getFullYear()} ClipBolt • Twitch Downloader
+                          © {new Date().getFullYear()} TwitchBolt • Twitch Downloader
                       </p>
                       
                       {/* Click to Copy Email */}

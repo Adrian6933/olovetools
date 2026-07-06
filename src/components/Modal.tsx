@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useReducedMotion } from './shared/motion';
 
 interface ModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface ModalProps {
 }
 
 export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
+  const prefersReduced = useReducedMotion();
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -34,10 +36,10 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
             className="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: prefersReduced ? 1 : 0.95, y: prefersReduced ? 0 : 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ type: "spring", duration: 0.5 }}
+            exit={{ opacity: 0, scale: prefersReduced ? 1 : 0.95, y: prefersReduced ? 0 : 20 }}
+            transition={prefersReduced ? { duration: 0.15 } : { type: "spring", duration: 0.5 }}
             className="relative w-full max-w-2xl bg-[#121216] border border-white/[0.12] rounded-[2rem] shadow-[0_30px_100px_-20px_rgba(0,0,0,0.9)] overflow-hidden flex flex-col max-h-[85vh] z-10"
           >
             {/* Top accent line */}

@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | ドラッグ＆ドロップで Kanban ボードに付箋を整理、ローカルに保存。",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | ドラッグ＆ドロップで Kanban ボードに付箋を整理、ローカルに保存。",
   "seo_description": "ドラッグ＆ドロップで Kanban ボードに付箋を整理、ブラウザ内にローカル保存 100% クライアント側で。",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "ドラッグ＆ドロップで Kanban ボードに付箋を整理、ブラウザ内にローカル保存 100% クライアント側で。",
   "reset": "リセット",
   "addNote": "ノートを追加",
@@ -19,7 +19,13 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["whiteboard flow", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "whiteboard flow",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -36,7 +42,7 @@ export default {
     }
   ],
   "footerTagline": "ドラッグ＆ドロップで Kanban ボードに付箋を整理、ブラウザ内にローカル保存 100% クライアント側で。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ先:"

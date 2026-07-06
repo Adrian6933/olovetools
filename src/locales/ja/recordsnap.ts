@@ -56,7 +56,7 @@ export default {
   "seoBrowserSpeedTitle": "ブラウザベースのメディアストリーム処理",
   "seoBrowserSpeedText": "HTML5のメディアストリームキャプチャとWebMコンテナのリアルタイムエンコード技術により、RecordSnapはネットワークの遅延なく動作し、停止をクリックすると即座に録画が保存されます。",
   "seoSecondaryTitle": "インストール不要で使える高機能画面レコーダー",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "キーワード",
   "seoKeywords": [
     "画面録画 オンライン",
     "ウェブカメラ 録画 無料",

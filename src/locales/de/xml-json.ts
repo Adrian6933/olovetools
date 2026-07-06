@@ -1,11 +1,11 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | Konvertieren Sie XML in JSON und JSON in XML sofort 100% lokal in Ihrem Browser.",
+  "title": "XML to JSON",
+  "seo_title": "XML to JSON | Konvertieren Sie XML in JSON und JSON in XML sofort 100% lokal in Ihrem Browser.",
   "seo_description": "Konvertieren Sie XML in JSON und JSON in XML sofort 100% lokal in Ihrem Browser.",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "Konvertieren Sie XML in JSON und JSON in XML sofort 100% lokal in Ihrem Browser.",
-  "label_xml_to_json": "XML \u2192 JSON",
-  "label_json_to_xml": "JSON \u2192 XML",
+  "label_xml_to_json": "XML → JSON",
+  "label_json_to_xml": "JSON → XML",
   "tooltip_swap": "Richtung wechseln",
   "button_swap": "Wechseln",
   "label_input": "Eingabe",
@@ -23,7 +23,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["xml json", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "xml json",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -40,7 +46,7 @@ export default {
     }
   ],
   "footerTagline": "Konvertieren Sie XML in JSON und JSON in XML sofort 100% lokal in Ihrem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

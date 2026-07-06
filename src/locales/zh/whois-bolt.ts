@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | 通过 HTTPS 查询任何域名的 DNS 记录（A, AAAA, MX, TXT, NS, CNAME, SOA）。",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | 通过 HTTPS 查询任何域名的 DNS 记录（A, AAAA, MX, TXT, NS, CNAME, SOA）。",
   "seo_description": "通过 HTTPS 查询任何域名的 DNS 记录（A, AAAA, MX, TXT, NS, CNAME, SOA），直接在您的浏览器中。",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "通过 HTTPS 查询任何域名的 DNS 记录（A, AAAA, MX, TXT, NS, CNAME, SOA），直接在您的浏览器中。",
   "unit_seconds": "秒",
   "unit_minutes": "分",
@@ -34,7 +34,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "无数据库、追踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["whois bolt", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "whois bolt",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -42,8 +48,8 @@ export default {
       "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
     },
     {
-      "question": "Whois-Bolt 解析哪些 DNS 记录类型？",
-      "answer": "Whois-Bolt 解析任何域名的 A、AAAA、CNAME、MX、NS、TXT 和 SOA 记录，以清晰的摘要呈现，包括 IP 地址、域名服务器、邮件服务器等。"
+      "question": "WhoisBolt 解析哪些 DNS 记录类型？",
+      "answer": "WhoisBolt 解析任何域名的 A、AAAA、CNAME、MX、NS、TXT 和 SOA 记录，以清晰的摘要呈现，包括 IP 地址、域名服务器、邮件服务器等。"
     },
     {
       "question": "DNS 查询是如何执行的？",
@@ -51,7 +57,7 @@ export default {
     }
   ],
   "footerTagline": "通过 HTTPS 查询任何域名的 DNS 记录（A, AAAA, MX, TXT, NS, CNAME, SOA），直接在您的浏览器中。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系提交想法和评论:"

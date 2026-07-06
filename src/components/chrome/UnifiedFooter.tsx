@@ -1,6 +1,8 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { ToolTheme } from '../../lib/themes';
 import { legalTranslations } from '../../locales/legal';
+import { fadeInUp, staggerContainer, useReducedMotion } from '../shared/motion';
 
 export interface UnifiedFooterContent {
   footerCredit?: string;
@@ -34,6 +36,7 @@ export const UnifiedFooter: React.FC<UnifiedFooterProps> = ({
 }) => {
   const year = new Date().getFullYear();
   const legal = legalTranslations[currentLang] || legalTranslations.en;
+  const prefersReduced = useReducedMotion();
 
   const handleEmailCopy = (e: React.MouseEvent<HTMLButtonElement>) => {
     const email = content.emailAddress || 'adrian.contact.me.69@gmail.com';
@@ -121,17 +124,24 @@ export const UnifiedFooter: React.FC<UnifiedFooterProps> = ({
                 {content.faqTitle}
               </h2>
             )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div
+              className="grid grid-cols-1 md:grid-cols-2 gap-8"
+              variants={prefersReduced ? undefined : staggerContainer}
+              initial={prefersReduced ? undefined : 'hidden'}
+              whileInView={prefersReduced ? undefined : 'visible'}
+              viewport={{ once: true, margin: '-80px' }}
+            >
               {content.faq.map((item, i) => (
-                <div
+                <motion.div
                   key={i}
+                  variants={prefersReduced ? undefined : fadeInUp}
                   className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl hover:border-indigo-500/20 transition-colors"
                 >
                   <h4 className="text-white font-bold text-base mb-2">{item.question}</h4>
                   <p className="text-gray-400 text-sm leading-relaxed">{item.answer}</p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
         )}
 

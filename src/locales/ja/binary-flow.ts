@@ -1,15 +1,15 @@
 export default {
-  "title": "Binary-Flow",
-  "seo_title": "Binary-Flow | 数値とテキストを2進数・16進数・10進数・8進数システム間で変換 100%ローカル。",
+  "title": "BinaryFlow",
+  "seo_title": "BinaryFlow | 数値とテキストを2進数・16進数・10進数・8進数システム間で変換 100%ローカル。",
   "seo_description": "数値とテキストを2進数・16進数・10進数・8進数システム間で変換 100%ローカル。",
-  "seoHeroTitle": "Binary-Flow",
+  "seoHeroTitle": "BinaryFlow",
   "seoHeroText": "数値とテキストを2進数・16進数・10進数・8進数システム間で変換 100%ローカル。",
   "label_number_mode": "数値",
   "label_text_mode": "テキストからBinaryへ",
   "label_input_value": "入力値",
   "label_input_text": "入力テキスト",
   "error_invalid_value": "無効",
-  "label_binary": "Binary",
+  "label_binary": "2進数",
   "label_octal": "8進数",
   "label_decimal": "10進数",
   "label_hexadecimal": "16進数",
@@ -24,7 +24,13 @@ export default {
   "seoUseCaseText": "すべてがブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードなし。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["binary flow", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "binary flow",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -32,8 +38,8 @@ export default {
       "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
     },
     {
-      "question": "Binary-Flowはどの進数をサポートしていますか？",
-      "answer": "Binary-Flowは2進数（BIN、基数2）、8進数（OCT、基数8）、10進数（DEC、基数10）、16進数（HEX、基数16）の変換とASCIIテキストエンコーディングをサポートします。"
+      "question": "BinaryFlowはどの進数をサポートしていますか？",
+      "answer": "BinaryFlowは2進数（BIN、基数2）、8進数（OCT、基数8）、10進数（DEC、基数10）、16進数（HEX、基数16）の変換とASCIIテキストエンコーディングをサポートします。"
     },
     {
       "question": "テキスト文字列を2進数に変換できますか？",
@@ -41,7 +47,7 @@ export default {
     }
   ],
   "footerTagline": "数値とテキストを2進数・16進数・10進数・8進数システム間で変換 100%ローカル。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

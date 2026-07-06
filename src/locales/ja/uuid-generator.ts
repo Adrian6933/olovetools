@@ -1,6 +1,6 @@
 export default {
-  "title": "UUID-Generator",
-  "seo_title": "UUID-Generator | 無料のオンライン UUID v4 & v5 ジェネレーター",
+  "title": "UUID Generator",
+  "seo_title": "UUID Generator | 無料のオンライン UUID v4 & v5 ジェネレーター",
   "seo_description": "Web Crypto API を使用してブラウザ内で 100% ローカルに、一度に最大 500 個のランダム UUID（v4）および名前付き UUID（v5）を一括生成します。無料のオンライン UUID ジェネレーター。",
   "seoHeroTitle": "UUID v4 & v5 一括ジェネレーター",
   "seoHeroText": "ブラウザのネイティブ Web Crypto API を使用し、最大 500 個のランダム UUID（バージョン 4）または名前付き UUID（ネームスペース付きバージョン 5）を即座に生成します。すべての生成はローカルで行われ、サーバー呼び出しやトラッキングはありません。",
@@ -25,7 +25,15 @@ export default {
   "seoUseCaseText": "1 回のクリックで最大 500 個の UUID を生成します。データベースのシード、テストデータ生成、一意のセッション ID、複数の一意識別子が一度に必要なあらゆるシナリオに最適です。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードは一切ありません。すべての UUID 生成はブラウザの暗号サブシステム内で完全に行われます。データがデバイスから外に出ることはありません。",
-  "seoKeywords": ["uuid ジェネレーター", "uuid v4", "uuid v5", "guid ジェネレーター", "ランダム uuid", "一括 uuid", "一意識別子"],
+  "seoKeywords": [
+    "uuid ジェネレーター",
+    "uuid v4",
+    "uuid v5",
+    "guid ジェネレーター",
+    "ランダム uuid",
+    "一括 uuid",
+    "一意識別子"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -42,8 +50,9 @@ export default {
     }
   ],
   "footerTagline": "Web Crypto API 搭載の高速で安全な UUID v4 および v5 一括ジェネレーター — 100% ブラウザ内でローカルに動作。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
-  "contactForIdeas": "アイデアやコメントのお問い合わせ先:"
+  "contactForIdeas": "アイデアやコメントのお問い合わせ先:",
+  "button_copy_all": "すべてコピー"
 };

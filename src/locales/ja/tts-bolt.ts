@@ -1,5 +1,5 @@
 export default {
-  "title": "TTS-Bolt",
+  "title": "TTSBolt",
   "description": "テキストを自然な音声に変換し、ブラウザ上で100%ローカルにMP3ファイルとしてダウンロードします。",
   "textarea_placeholder": "音読するテキストをここに入力するか、貼り付けてください...",
   "label_voice": "音声の選択",
@@ -15,10 +15,10 @@ export default {
   "history_title": "最近の音声履歴",
   "no_history": "音声履歴はまだありません。",
   "clear_history": "履歴をクリア",
-  "seo_title": "TTS-Bolt | 無料のテキスト読み上げ（音声合成）とMP3ダウンロード",
+  "seo_title": "TTSBolt | 無料のテキスト読み上げ（音声合成）とMP3ダウンロード",
   "seo_description": "自然な音声でテキストを読み上げ、MP3としてダウンロード。速度・ピッチ調整対応、ブラウザで100%ローカル実行。",
   "seoHeroTitle": "テキストを音声に変換し、MP3で保存",
-  "seoHeroText": "ブラウザのタブ内で完全に動作する自然な音声合成をお楽しみください。TTS-Boltはテキストをローカルで処理するため、安全性が保障されます。",
+  "seoHeroText": "ブラウザのタブ内で完全に動作する自然な音声合成をお楽しみください。TTSBoltはテキストをローカルで処理するため、安全性が保障されます。",
   "seoHeroList": [
     "速度調節が可能なデバイスの内蔵音声",
     "ブラウザ上で結合されるMP3ダウンロード",

@@ -1,7 +1,7 @@
 export default {
-  "title": "PDF-Flow",
+  "title": "PDFFlow",
   "description": "Fusionnez, divisez, faites pivoter et convertissez des documents ou des images en PDF localement dans votre navigateur.",
-  "seo_title": "PDF-Flow | Éditeur PDF local et boîte à outils gratuite",
+  "seo_title": "PDFFlow | Éditeur PDF local et boîte à outils gratuite",
   "seo_description": "Fusionnez, divisez, faites pivoter et convertissez JPG/PNG en PDF 100% localement. Pas d'inscription, pas d'envoi sur serveur. Sécurisé, rapide et gratuit.",
   "dropzonePrompt": "Glissez-déposez vos fichiers ici ou cliquez pour les sélectionner",
   "dropzoneSubtitle": "Prend en charge les fichiers PDF et les images JPG/PNG. Traitement 100% local.",
@@ -52,14 +52,14 @@ export default {
   ],
   "footerCredit": "Fait partie de la suite oLoveTools",
   "seoHeroTitle": "Édition PDF 100% locale, privée et sécurisée",
-  "seoHeroText": "Les outils PDF en ligne habituels vous obligent à télécharger des documents sensibles (contrats, formulaires fiscaux, scans) sur des serveurs distants. PDF-Flow traite tout en mémoire locale. Vos documents privés ne quittent jamais votre ordinateur.",
+  "seoHeroText": "Les outils PDF en ligne habituels vous obligent à télécharger des documents sensibles (contrats, formulaires fiscaux, scans) sur des serveurs distants. PDFFlow traite tout en mémoire locale. Vos documents privés ne quittent jamais votre ordinateur.",
   "seoHeroList": [
     "Traitement hors ligne sécurisé",
     "Pas de téléchargement de documents, risque zéro pour la confidentialité",
     "Totalement gratuit et sans limites"
   ],
   "seoBrowserSpeedTitle": "Compilation instantanée dans le navigateur",
-  "seoBrowserSpeedText": "En compilant les fichiers PDF localement à l'aide des API JavaScript WebAssembly, PDF-Flow évite les ralentissements réseau et les files d'attente des serveurs. Fusionnez des fichiers volumineux ou extrayez des pages instantanément.",
+  "seoBrowserSpeedText": "En compilant les fichiers PDF localement à l'aide des API JavaScript WebAssembly, PDFFlow évite les ralentissements réseau et les files d'attente des serveurs. Fusionnez des fichiers volumineux ou extrayez des pages instantanément.",
   "seoSecondaryTitle": "Outils PDF côté client polyvalents",
   "seoKeywordsTitle": "Mots-clés",
   "seoKeywords": [
@@ -74,9 +74,9 @@ export default {
     "Convertisseur PDF sans envoi"
   ],
   "seoUseCaseTitle": "Idéal pour un usage professionnel et personnel",
-  "seoUseCaseText": "Qu'il s'agisse d'assembler des contrats signés, d'organiser des reçus scannés, de diviser des guides d'étude ou de compiler des galeries d'images, PDF-Flow gère tout cela localement avec rapidité et confidentialité.",
+  "seoUseCaseText": "Qu'il s'agisse d'assembler des contrats signés, d'organiser des reçus scannés, de diviser des guides d'étude ou de compiler des galeries d'images, PDFFlow gère tout cela localement avec rapidité et confidentialité.",
   "seoPrivacyTitle": "Sécurité des données absolue",
-  "seoPrivacyText": "Nous pensons que vos fichiers vous appartiennent. PDF-Flow utilise pdf-lib pour exécuter la manipulation de PDF en mémoire dans le bac à sable du navigateur. Pas de télémétrie, pas de journaux, aucun téléchargement.",
+  "seoPrivacyText": "Nous pensons que vos fichiers vous appartiennent. PDFFlow utilise pdf-lib pour exécuter la manipulation de PDF en mémoire dans le bac à sable du navigateur. Pas de télémétrie, pas de journaux, aucun téléchargement.",
   "faqTitle": "Foire Aux Questions",
   "faq": [
     {
@@ -104,7 +104,7 @@ export default {
   "emailCopied": "E-mail copié dans le presse-papiers !",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "Votre vie privée est importante pour nous.\n\nNous ne collectons que les informations nécessaires pour fournir notre service. Cela comprend des données techniques sur votre navigateur pour s'assurer du bon fonctionnement.\n\nNous ne stockons, ne suivons et n'analysons jamais vos fichiers. Tout le traitement se fait localement dans votre navigateur, assurant que vos données ne quittent jamais votre appareil.",
-  "termsContent": "En utilisant PDF-Flow, vous acceptez ces conditions.\n\n1. Cet outil est fourni \"en l'état\", sans aucune garantie.\n2. Nous ne sommes pas responsables des pertes de données ou des problèmes découlant de l'utilisation de cet outil.\n3. Vous êtes responsable du contenu que vous traitez.\n4. Nous nous réservons le droit de modifier ces conditions à tout moment.",
+  "termsContent": "En utilisant PDFFlow, vous acceptez ces conditions.\n\n1. Cet outil est fourni \"en l'état\", sans aucune garantie.\n2. Nous ne sommes pas responsables des pertes de données ou des problèmes découlant de l'utilisation de cet outil.\n3. Vous êtes responsable du contenu que vous traitez.\n4. Nous nous réservons le droit de modifier ces conditions à tout moment.",
   "cookiesContent": "Nous utilisons des cookies pour améliorer votre expérience.\n\n1. Cookies essentiels : Requis pour les fonctionnalités de base du site.\n2. Cookies de préférence : Utilisés pour mémoriser votre langue et vos choix de cookies.\n\nVous pouvez gérer ou désactiver les cookies via les paramètres de votre navigateur à tout moment.",
   "contact": "Contact"
 };

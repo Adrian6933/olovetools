@@ -1,5 +1,5 @@
 export default {
-  "title": "Graph-Flow",
+  "title": "GraphFlow",
   "description": "Créez de superbes graphiques et visualisations de données à partir de fichiers CSV ou de saisie manuelle. Exportez en PNG, SVG ou PDF 100% localement.",
   "label_data_source": "Source de Données",
   "drop_active": "Déposez votre fichier CSV ici...",
@@ -18,7 +18,7 @@ export default {
   "label_chart_title": "Titre du Graphique",
   "label_chart_title_placeholder": "Entrez un titre pour votre graphique...",
   "label_colors": "Palette de Couleurs",
-  "palette_vibrant": "Vibrant",
+  "palette_vibrant": "Vif",
   "palette_pastel": "Pastel",
   "palette_monochrome": "Monochrome",
   "palette_ocean": "Océan",
@@ -64,14 +64,39 @@ export default {
   "seoUseCaseText": "Chargez un CSV, choisissez un type de graphique, personnalisez les couleurs et exportez des images PNG haute résolution ou des SVG vectoriels.",
   "seoPrivacyTitle": "100% Confidentialité des Données",
   "seoPrivacyText": "Vos fichiers de données ne sont jamais envoyés à un serveur. Tout le traitement se fait dans la mémoire de votre navigateur.",
-  "seoKeywords": ["générateur de graphiques", "CSV vers graphique", "créateur de diagrammes", "camembert en ligne", "visualisation de données", "outil graphique local"],
+  "seoKeywords": [
+    "générateur de graphiques",
+    "CSV vers graphique",
+    "créateur de diagrammes",
+    "camembert en ligne",
+    "visualisation de données",
+    "outil graphique local",
+    "outil graphique en ligne",
+    "exporter graphique PNG",
+    "outil graphique local",
+    "graphiques sans upload"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
-    { "question": "Mes données CSV sont-elles envoyées à un serveur ?", "answer": "Non. Graph-Flow fonctionne entièrement côté client dans la mémoire de votre navigateur. Vos données ne quittent jamais votre appareil." },
-    { "question": "Quel format CSV est attendu ?", "answer": "Un CSV standard avec la première ligne comme en-têtes et les lignes suivantes comme données. Les valeurs peuvent être séparées par des virgules ou des points-virgules." },
-    { "question": "Puis-je exporter en SVG vectoriel ?", "answer": "Oui. Vous pouvez exporter votre graphique en image PNG haute qualité ou en SVG vectoriel parfait pour l'impression." },
-    { "question": "Quels types de graphiques sont disponibles ?", "answer": "Graph-Flow prend en charge les diagrammes en barres, lignes, aires, camemberts, radar, nuages de points et barres horizontales." }
+    {
+      "question": "Mes données CSV sont-elles envoyées à un serveur ?",
+      "answer": "Non. GraphFlow fonctionne entièrement côté client dans la mémoire de votre navigateur. Vos données ne quittent jamais votre appareil."
+    },
+    {
+      "question": "Quel format CSV est attendu ?",
+      "answer": "Un CSV standard avec la première ligne comme en-têtes et les lignes suivantes comme données. Les valeurs peuvent être séparées par des virgules ou des points-virgules."
+    },
+    {
+      "question": "Puis-je exporter en SVG vectoriel ?",
+      "answer": "Oui. Vous pouvez exporter votre graphique en image PNG haute qualité ou en SVG vectoriel parfait pour l'impression."
+    },
+    {
+      "question": "Quels types de graphiques sont disponibles ?",
+      "answer": "GraphFlow prend en charge les diagrammes en barres, lignes, aires, camemberts, radar, nuages de points et barres horizontales."
+    }
   ],
   "footerTagline": "Transformez vos données en graphiques magnifiques — 100% localement dans votre navigateur.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "seo_title": "GraphFlow | Créateur de Graphiques et Visualisation de Données Gratuit",
+  "seo_description": "Créez de superbes graphiques et visualisations de données à partir de fichiers CSV ou de saisie manuelle. Exportez en PNG, SVG ou PDF 100% localement."
 };

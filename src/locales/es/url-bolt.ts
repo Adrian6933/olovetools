@@ -1,6 +1,6 @@
 export default {
-  "title": "URL-Bolt",
-  "seo_title": "URL-Bolt | Codificador, Decodificador y Analizador de URL Gratis",
+  "title": "URLBolt",
+  "seo_title": "URLBolt | Codificador, Decodificador y Analizador de URL Gratis",
   "seo_description": "Codifica, decodifica y analiza URLs con desglose de parámetros de consulta y formato inteligente 100% local en tu navegador. Herramienta URL online gratis.",
   "seoHeroTitle": "Codificador, Decodificador y Analizador de URL",
   "seoHeroText": "Codifica texto al formato seguro para URL, decodifica URLs codificadas, o disecciona cualquier URL en sus componentes — protocolo, host, ruta, parámetros de consulta y fragmentos — con valores decodificados. Todo funciona localmente en tu navegador.",
@@ -42,7 +42,16 @@ export default {
   "seoUseCaseText": "El modo Analizar descompone cualquier URL en sus partes constituyentes: protocolo, nombre de host, puerto, segmentos de ruta y parámetros de consulta individuales con valores tanto crudos como decodificados — perfecto para depurar enlaces de redirección o URLs de afiliados.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, rastreo ni cargas a la red. Tus URLs y entradas de texto residen estrictamente en memoria local y desaparecen al cerrar la pestaña. Nada se registra ni almacena.",
-  "seoKeywords": ["codificador url", "decodificador url", "analizador url", "parser consulta", "codificar uri", "decodificar uri", "desglose url", "componentes url"],
+  "seoKeywords": [
+    "codificador url",
+    "decodificador url",
+    "analizador url",
+    "parser consulta",
+    "codificar uri",
+    "decodificar uri",
+    "desglose url",
+    "componentes url"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -50,7 +59,7 @@ export default {
       "answer": "encodeURI codifica una URL completa pero preserva caracteres que son parte de la sintaxis de URL como :, /, ?, & y =. encodeURIComponent codifica todo incluyendo esos caracteres especiales, lo que lo hace ideal para codificar valores de parámetros de consulta individuales."
     },
     {
-      "question": "¿Puede URL-Bolt analizar URLs con parámetros de consulta codificados?",
+      "question": "¿Puede URLBolt analizar URLs con parámetros de consulta codificados?",
       "answer": "Sí. El modo Analizar decodifica automáticamente todos los valores de parámetros de consulta y segmentos de ruta, mostrándote tanto la forma codificada cruda como la versión decodificada legible una al lado de la otra."
     },
     {
@@ -59,7 +68,7 @@ export default {
     }
   ],
   "footerTagline": "Codificador, decodificador y analizador de URL rápido y privado con desglose completo de anatomía — 100% local en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

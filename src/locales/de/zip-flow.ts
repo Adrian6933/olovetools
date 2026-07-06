@@ -1,5 +1,5 @@
 export default {
-  "title": "Zip-Flow",
+  "title": "ZipFlow",
   "description": "Komprimieren Sie Dateien im ZIP-Format und entpacken Sie ZIP-Archive 100% lokal im Browser mit einer Dateibaum-Vorschau in Echtzeit.",
   "tab_compress": "Dateien komprimieren",
   "tab_extract": "Archiv entpacken",
@@ -45,7 +45,7 @@ export default {
   "faq": [
     {
       "question": "Werden meine Dateien beim Komprimieren oder Entpacken hochgeladen?",
-      "answer": "Nein. Zip-Flow läuft vollständig in Ihrem Browserspeicher über die JSZip-Bibliothek. Ihre Dateien verlassen niemals Ihren Computer."
+      "answer": "Nein. ZipFlow läuft vollständig in Ihrem Browserspeicher über die JSZip-Bibliothek. Ihre Dateien verlassen niemals Ihren Computer."
     },
     {
       "question": "Kann ich passwortgeschützte ZIP-Archive entpacken?",
@@ -57,5 +57,7 @@ export default {
     }
   ],
   "footerTagline": "Privates und lokales ZIP-Komprimierungs- und Entpackungstool im Browser.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "seo_title": "ZipFlow | Kostenloser Online ZIP-Kompressor & Extraktor",
+  "seo_description": "Komprimieren Sie Dateien im ZIP-Format und entpacken Sie ZIP-Archive 100% lokal im Browser mit einer Dateibaum-Vorschau in Echtzeit."
 };

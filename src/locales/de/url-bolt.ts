@@ -1,6 +1,6 @@
 export default {
-  "title": "URL-Bolt",
-  "seo_title": "URL-Bolt | Kostenloser URL-Encoder, Decoder & Parser",
+  "title": "URLBolt",
+  "seo_title": "URLBolt | Kostenloser URL-Encoder, Decoder & Parser",
   "seo_description": "Kodieren, dekodieren und analysieren Sie URLs mit Aufschlüsselung von Abfrageparametern und intelligenter Formatierung 100% lokal in Ihrem Browser. Kostenlos Online-URL-Tool.",
   "seoHeroTitle": "URL-Encoder, Decoder & Parser",
   "seoHeroText": "Kodieren Sie sofort Text in URL-sicheres Format, dekodieren Sie kodierte URLs, oder zerlegen Sie jede URL in ihre Bestandteile — Protokoll, Host, Pfad, Abfrageparameter und Fragmente — mit dekodierten Werten. Alles läuft lokal in Ihrem Browser.",
@@ -42,7 +42,16 @@ export default {
   "seoUseCaseText": "Der Analysieren-Modus zerlegt jede URL in ihre Bestandteile: Protokoll, Hostname, Port, Pfadsegmente und einzelne Abfrageparameter mit rohen und dekodierten Werten — perfekt zum Debuggen von Weiterleitungslinks oder Affiliate-URLs.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre URLs und Texteingaben verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs. Nichts wird protokolliert oder gespeichert.",
-  "seoKeywords": ["url encoder", "url decoder", "url parser", "abfrage parser", "uri kodieren", "uri dekodieren", "url aufschlüsselung", "url komponenten"],
+  "seoKeywords": [
+    "url encoder",
+    "url decoder",
+    "url parser",
+    "abfrage parser",
+    "uri kodieren",
+    "uri dekodieren",
+    "url aufschlüsselung",
+    "url komponenten"
+  ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
@@ -50,7 +59,7 @@ export default {
       "answer": "encodeURI kodiert eine vollständige URL, bewahrt aber Zeichen, die Teil der URL-Syntax sind wie :, /, ?, & und =. encodeURIComponent kodiert alles einschließlich dieser Sonderzeichen, was es ideal zum Kodieren einzelner Abfrageparameter-Werte macht."
     },
     {
-      "question": "Kann URL-Bolt URLs mit kodierten Abfrageparametern analysieren?",
+      "question": "Kann URLBolt URLs mit kodierten Abfrageparametern analysieren?",
       "answer": "Ja. Der Analysieren-Modus dekodiert automatisch alle Abfrageparameter-Werte und Pfadsegmente und zeigt Ihnen sowohl die rohe kodierte Form als auch die lesbare dekodierte Version nebeneinander."
     },
     {
@@ -59,7 +68,7 @@ export default {
     }
   ],
   "footerTagline": "Schneller, privater URL-Encoder, Decoder und Parser mit vollständiger Anatomie-Aufschlüsselung — 100% lokal in Ihrem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

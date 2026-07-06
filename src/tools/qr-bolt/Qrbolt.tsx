@@ -227,7 +227,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
   const handleDownload = (ext: 'png' | 'svg' | 'jpeg') => {
     if (qrCodeStylingRef.current) {
       qrCodeStylingRef.current.download({
-        name: `QR-Bolt-Code-${mode}`,
+        name: `QRBolt-Code-${mode}`,
         extension: ext
       });
     }

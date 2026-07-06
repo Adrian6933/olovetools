@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "Echtzeit-Markdown-Editor und HTML-Vorschau mit Designvorlagen und PDF/HTML-Exporten 100 % lokal.",
-  "placeholder": "# Willkommen bei Markdown-Live!\n\nTippen Sie links Markdown-Code ein, um rechts sofort die gerenderte Vorschau zu sehen.\n\n## Einfache Formatierungen\n\nErstellen Sie **fette** oder *kursive* Texte ganz einfach, betten Sie `Inline-Code` ein oder fügen Sie Links wie [oLoveTools](https://olovetools.com) hinzu.\n\n### Codeblock-Beispiel\n\n```javascript\nfunction hallo(name) {\n  console.log('Hallo, ' + name + '!');\n}\nhallo('Welt');\n```\n\n### Zitate & Listen\n\n> Markdown ist eine vereinfachte Auszeichnungssprache für reinen Text.\n\n- Schneller Markdown-Editor\n- 100 % Offline-Client-Parsing\n- Geteilte Bildschirmansicht\n",
+  "placeholder": "# Willkommen bei MarkdownLive!\n\nTippen Sie links Markdown-Code ein, um rechts sofort die gerenderte Vorschau zu sehen.\n\n## Einfache Formatierungen\n\nErstellen Sie **fette** oder *kursive* Texte ganz einfach, betten Sie `Inline-Code` ein oder fügen Sie Links wie [oLoveTools](https://olovetools.com) hinzu.\n\n### Codeblock-Beispiel\n\n```javascript\nfunction hallo(name) {\n  console.log('Hallo, ' + name + '!');\n}\nhallo('Welt');\n```\n\n### Zitate & Listen\n\n> Markdown ist eine vereinfachte Auszeichnungssprache für reinen Text.\n\n- Schneller Markdown-Editor\n- 100 % Offline-Client-Parsing\n- Geteilte Bildschirmansicht\n",
   "tooltip_bold": "Fett",
   "tooltip_italic": "Kursiv",
   "tooltip_heading": "Überschrift",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Kostenloser, privater und lokaler interaktiver Markdown-Splitscreen-Editor.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "seo_title": "MarkdownLive | Kostenloser Online Markdown-Editor mit Live-Vorschau",
+  "seo_description": "Echtzeit-Markdown-Editor und HTML-Vorschau mit Designvorlagen und PDF/HTML-Exporten 100 % lokal."
 };

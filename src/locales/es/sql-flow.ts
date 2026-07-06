@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | Formatea, embellece y valida consultas SQL con resaltado de sintaxis 100% local en tu navegador.",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | Formatea, embellece y valida consultas SQL con resaltado de sintaxis 100% local en tu navegador.",
   "seo_description": "Formatea, embellece y valida consultas SQL con resaltado de sintaxis 100% local en tu navegador.",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "Formatea, embellece y valida consultas SQL con resaltado de sintaxis 100% local en tu navegador.",
   "input": "SQL de entrada",
   "output": "Salida formateada",
@@ -27,7 +27,13 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
-  "seoKeywords": ["sql flow", "herramienta online", "gratis", "local", "navegador"],
+  "seoKeywords": [
+    "sql flow",
+    "herramienta online",
+    "gratis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -35,8 +41,8 @@ export default {
       "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
     },
     {
-      "question": "¿SQL-Flow soporta diferentes dialectos SQL?",
-      "answer": "SQL-Flow reconoce palabras clave SQL estándar comunes a la mayoría de dialectos incluyendo PostgreSQL, MySQL, SQLite y SQL Server. Las reglas de formato son independientes del dialecto."
+      "question": "¿SQLFlow soporta diferentes dialectos SQL?",
+      "answer": "SQLFlow reconoce palabras clave SQL estándar comunes a la mayoría de dialectos incluyendo PostgreSQL, MySQL, SQLite y SQL Server. Las reglas de formato son independientes del dialecto."
     },
     {
       "question": "¿Puedo personalizar la indentación y el caso de las palabras clave?",
@@ -44,7 +50,7 @@ export default {
     }
   ],
   "footerTagline": "Formatea, embellece y valida consultas SQL con resaltado de sintaxis 100% local en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

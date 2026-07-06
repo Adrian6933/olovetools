@@ -1,5 +1,5 @@
 export default {
-  "title": "CSS-Designer",
+  "title": "CSS Designer",
   "description": "Générateur interactif pour créer des effets CSS modernes comme le Glassmorphisme, les ombres, les dégradés et les bordures personnalisées.",
   "tab_glassmorphism": "Glassmorphisme",
   "tab_box_shadow": "Ombre de boîte",
@@ -45,10 +45,10 @@ export default {
   "theme_vibrant": "Dégradé vibrant",
   "preview_text": "Espace CSS",
   "preview_subtext": "Modifiez les contrôles à gauche pour voir les changements en temps réel.",
-  "seo_title": "CSS-Designer | Générateur de Glassmorphisme, Ombres et Dégradés",
+  "seo_title": "CSS Designer | Générateur de Glassmorphisme, Ombres et Dégradés",
   "seo_description": "Créez des effets CSS modernes avec notre éditeur visuel. Générez du code CSS et Tailwind pour le glassmorphisme, des ombres avancées, des dégradés et des rayons de bordure.",
   "seoHeroTitle": "Générez des effets CSS magnifiques visuellement et rapidement.",
-  "seoHeroText": "Concevoir des styles modernes ne doit pas être un casse-tête. CSS-Designer vous aide à générer du code CSS ou Tailwind en quelques secondes.",
+  "seoHeroText": "Concevoir des styles modernes ne doit pas être un casse-tête. CSS Designer vous aide à générer du code CSS ou Tailwind en quelques secondes.",
   "seoHeroList": [
     "Pas d'inscription requise",
     "Code CSS et Tailwind propre",
@@ -64,7 +64,13 @@ export default {
     "Ombre portée CSS",
     "Dégradé CSS",
     "Forme CSS",
-    "Générateur Tailwind"
+    "Générateur Tailwind",
+    "Outil de Design Web",
+    "Outil UI UX",
+    "Outil CSS Gratuit",
+    "Générateur Neumorphism",
+    "Bordures Arrondies Élégantes",
+    "Éditeur CSS en Ligne"
   ],
   "seoUseCaseTitle": "Cas d'utilisation",
   "seoUseCaseText": "Idéal pour concevoir des cartes, des boutons, des arrière-plans et des panneaux interactifs.",
@@ -74,13 +80,24 @@ export default {
   "faq": [
     {
       "question": "Est-ce gratuit ?",
-      "answer": "Oui, CSS-Designer est 100% gratuit."
+      "answer": "Oui, CSS Designer est 100% gratuit."
     },
     {
       "question": "Puis-je l'utiliser avec Tailwind ?",
       "answer": "Oui, nous fournissons les classes Tailwind correspondantes."
+    },
+    {
+      "question": "Qu'est-ce que le Glassmorphism ?",
+      "answer": "Le Glassmorphism est une tendance UI qui imite le verre dépoli. Il utilise le flou backdrop-filter et des fonds semi-transparents pour superposer élégamment des éléments sur des arrière-plans colorés."
+    },
+    {
+      "question": "Fonctionne-t-il sur mobile ?",
+      "answer": "Absolument. La mise en page est optimisée pour smartphones, tablettes et ordinateurs afin de coder en déplacement."
     }
   ],
   "footerTagline": "Des utilitaires simples et premium pour vous aider à concevoir et coder.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "privacyPolicy": "Politique de Confidentialité",
+  "termsOfService": "Conditions d'Utilisation",
+  "cookiePolicy": "Politique de Cookies"
 };

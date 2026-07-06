@@ -1,5 +1,5 @@
 export default {
-  "title": "SVG-Optimizer",
+  "title": "SVG Optimizer",
   "description": "SVGベクトルファイルをブラウザ上で100%ローカルに最適化、クリーンアップ、圧縮し、ファイルサイズを削減して読み込みパフォーマンスを向上させます。",
   "label_svg_file": "SVGベクトルファイル",
   "drop_active": "最適化するSVGをここにドロップ...",
@@ -44,7 +44,7 @@ export default {
   "faq": [
     {
       "question": "読み込んだSVGコードは外部のサーバーへ送信されますか？",
-      "answer": "いいえ。SVG-Optimizerはブラウザのメモリ内で完全に動作します。ファイルデータがサーバーへアップロードされることはありません。"
+      "answer": "いいえ。SVG Optimizerはブラウザのメモリ内で完全に動作します。ファイルデータがサーバーへアップロードされることはありません。"
     },
     {
       "question": "座標値の小数の丸め処理はどのように機能しますか？",
@@ -56,5 +56,7 @@ export default {
     }
   ],
   "footerTagline": "ブラウザで動くプライベートなローカルSVG最適化・コードクリーナー。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "SVG Optimizer | 無料オンラインSVG圧縮・最小化ツール",
+  "seo_description": "SVGベクトルファイルをブラウザ上で100%ローカルに最適化、クリーンアップ、圧縮し、ファイルサイズを削減して読み込みパフォーマンスを向上させます。"
 };

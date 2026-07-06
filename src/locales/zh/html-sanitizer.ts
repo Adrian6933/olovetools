@@ -1,6 +1,6 @@
 export default {
-  "title": "HTML-Sanitizer",
-  "seo_title": "HTML-Sanitizer | 免费在线 HTML 清理器和净化器",
+  "title": "HTML Sanitizer",
+  "seo_title": "HTML Sanitizer | 免费在线 HTML 清理器和净化器",
   "seo_description": "通过删除脚本、样式、iframe、事件处理程序和不需要的标签，在浏览器中 100% 本地清理和净化 HTML 代码。免费在线 HTML 净化器。",
   "seoHeroTitle": "HTML 清理器和净化器",
   "seoHeroText": "粘贴任意 HTML 代码，即时删除脚本、样式、iframe、事件处理程序、注释和不需要的标签。切换特定清理选项，并在沙盒化的 iframe 中查看实时预览。一切均在您的浏览器中本地运行。",
@@ -34,7 +34,15 @@ export default {
   "seoUseCaseText": "在阻止脚本执行的沙盒化 iframe 内实时查看清理后的 HTML 渲染。非常适合在使用前验证您的净化 HTML 是否完全符合预期。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "无数据库、追踪或网络上传。您的 HTML 代码严格驻留在本地内存中，由浏览器原生 DOM API 处理。关闭标签页后一切均消失。",
-  "seoKeywords": ["html 净化器", "html 清理器", "删除脚本", "清理 html", "净化 html", "剥离标签", "html 净化"],
+  "seoKeywords": [
+    "html 净化器",
+    "html 清理器",
+    "删除脚本",
+    "清理 html",
+    "净化 html",
+    "剥离标签",
+    "html 净化"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -51,8 +59,9 @@ export default {
     }
   ],
   "footerTagline": "快速、安全的 HTML 净化器，具有实时预览和可配置的清理选项 — 100% 在您的浏览器中本地运行。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
-  "contactForIdeas": "联系以提交想法和评论："
+  "contactForIdeas": "联系以提交想法和评论：",
+  "button_copy": "复制HTML"
 };

@@ -1,8 +1,8 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | Convert XML to JSON and JSON to XML instantly 100% locally in your browser.",
+  "title": "XML to JSON",
+  "seo_title": "Convert XML to JSON and JSON to XML instantly 100% locally in your browser.",
   "seo_description": "Convert XML to JSON and JSON to XML instantly 100% locally in your browser.",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "Convert XML to JSON and JSON to XML instantly 100% locally in your browser.",
   "label_xml_to_json": "XML \u2192 JSON",
   "label_json_to_xml": "JSON \u2192 XML",

@@ -1,8 +1,8 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | 将 Unix epoch 时间戳转换为人类可读的日期，反之亦然，100% 本地完成。",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | 将 Unix epoch 时间戳转换为人类可读的日期，反之亦然，100% 本地完成。",
   "seo_description": "将 Unix epoch 时间戳转换为人类可读的日期，反之亦然，100% 本地完成。",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "将 Unix epoch 时间戳转换为人类可读的日期，反之亦然，100% 本地完成。",
   "label_live_epoch": "实时 Unix Epoch",
   "button_now": "现在",
@@ -43,7 +43,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "无数据库、追踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["epoch flow", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "epoch flow",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -51,8 +57,8 @@ export default {
       "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
     },
     {
-      "question": "Epoch-Flow 是否同时支持秒和毫秒？",
-      "answer": "是的。Epoch-Flow 会根据数值大小自动检测输入的时间戳是秒还是毫秒，因此您可以粘贴任一格式。"
+      "question": "EpochFlow 是否同时支持秒和毫秒？",
+      "answer": "是的。EpochFlow 会根据数值大小自动检测输入的时间戳是秒还是毫秒，因此您可以粘贴任一格式。"
     },
     {
       "question": "我可以将日期转换回 Unix epoch 时间戳吗？",
@@ -60,7 +66,7 @@ export default {
     }
   ],
   "footerTagline": "将 Unix epoch 时间戳转换为人类可读的日期，反之亦然，100% 本地完成。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系提交想法和评论:"

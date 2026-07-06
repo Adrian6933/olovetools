@@ -45,6 +45,7 @@ export default {
   "errorChannelNotFound": "チャンネルが見つかりません。スペルを確認してもう一度お試しください。",
   "errorVodsDisabled": "このチャンネルには利用可能なVODがありません — 過去の配信が無効になっている可能性があります。",
   "errorPlaylist": "動画ストリームを読み込めませんでした。もう一度お試しください。",
+  "errorVodRestricted": "このVODはサブスクライバー限定、またはTwitch側で制限されており、ログインなしでは再生できません。どのダウンロードツールでも回避できません。",
 
   "liveBadge": "ライブ中 — 録画はまだ増え続けています",
   "qualityLabel": "画質",

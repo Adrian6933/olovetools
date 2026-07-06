@@ -1,5 +1,5 @@
 export default {
-  "title": "Graph-Flow",
+  "title": "GraphFlow",
   "description": "Erstellen Sie beeindruckende Diagramme und Datenvisualisierungen aus CSV-Dateien oder manueller Eingabe. Export als PNG, SVG oder PDF — 100% lokal im Browser.",
   "label_data_source": "Datenquelle",
   "drop_active": "CSV-Datei hier ablegen...",
@@ -64,14 +64,39 @@ export default {
   "seoUseCaseText": "Laden Sie ein CSV hoch, wählen Sie einen Diagrammtyp, passen Sie Farben an und exportieren Sie hochauflösende PNG- oder Vektor-SVG-Bilder.",
   "seoPrivacyTitle": "100% Datenvertraulichkeit",
   "seoPrivacyText": "Ihre Datendateien werden niemals auf einen Server hochgeladen. Die gesamte Verarbeitung erfolgt im Speicher Ihres Browsers.",
-  "seoKeywords": ["Diagramm-Generator", "CSV zu Diagramm", "Balkendiagramm-Ersteller", "Kreisdiagramm online", "Datenvisualisierung", "Grafik-Tool lokal"],
+  "seoKeywords": [
+    "Diagramm-Generator",
+    "CSV zu Diagramm",
+    "Balkendiagramm-Ersteller",
+    "Kreisdiagramm online",
+    "Datenvisualisierung",
+    "Grafik-Tool lokal",
+    "diagramm werkzeug",
+    "diagramm als PNG exportieren",
+    "lokales diagramm tool",
+    "diagramme ohne upload"
+  ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
-    { "question": "Werden meine CSV-Daten auf einen Server hochgeladen?", "answer": "Nein. Graph-Flow läuft vollständig clientseitig im Speicher Ihres Browsers. Ihre Daten verlassen niemals Ihr Gerät." },
-    { "question": "Welches CSV-Format wird erwartet?", "answer": "Ein Standard-CSV mit der ersten Zeile als Überschriften und den folgenden Zeilen als Daten. Werte können durch Kommas oder Semikolons getrennt sein." },
-    { "question": "Kann ich Diagramme als Vektor-SVG exportieren?", "answer": "Ja. Sie können Ihr Diagramm als hochwertige PNG-Datei oder als Vektor-SVG exportieren, das perfekt für Druck und Präsentationen skaliert." },
-    { "question": "Welche Diagrammtypen sind verfügbar?", "answer": "Graph-Flow unterstützt Balken-, Linien-, Flächen-, Kreis-/Donut-, Radar-, Streudiagramme und horizontale Balkendiagramme." }
+    {
+      "question": "Werden meine CSV-Daten auf einen Server hochgeladen?",
+      "answer": "Nein. GraphFlow läuft vollständig clientseitig im Speicher Ihres Browsers. Ihre Daten verlassen niemals Ihr Gerät."
+    },
+    {
+      "question": "Welches CSV-Format wird erwartet?",
+      "answer": "Ein Standard-CSV mit der ersten Zeile als Überschriften und den folgenden Zeilen als Daten. Werte können durch Kommas oder Semikolons getrennt sein."
+    },
+    {
+      "question": "Kann ich Diagramme als Vektor-SVG exportieren?",
+      "answer": "Ja. Sie können Ihr Diagramm als hochwertige PNG-Datei oder als Vektor-SVG exportieren, das perfekt für Druck und Präsentationen skaliert."
+    },
+    {
+      "question": "Welche Diagrammtypen sind verfügbar?",
+      "answer": "GraphFlow unterstützt Balken-, Linien-, Flächen-, Kreis-/Donut-, Radar-, Streudiagramme und horizontale Balkendiagramme."
+    }
   ],
   "footerTagline": "Verwandeln Sie Ihre Daten in beeindruckende Diagramme — 100% lokal in Ihrem Browser.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "seo_title": "GraphFlow | Kostenloser Online-Diagramm- und Datenvisualisierungs-Ersteller",
+  "seo_description": "Erstellen Sie beeindruckende Diagramme und Datenvisualisierungen aus CSV-Dateien oder manueller Eingabe. Export als PNG, SVG oder PDF — 100% lokal im Browser."
 };

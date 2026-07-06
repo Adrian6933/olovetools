@@ -1,6 +1,6 @@
 export default {
   "title": "Subtitle Converter",
-  "seo_title": "Subtitles-Bolt | Convert subtitles between SRT, VTT and SBV formats 100% locally in your browser.",
+  "seo_title": "SubtitlesBolt | Convert subtitles between SRT, VTT and SBV formats 100% locally in your browser.",
   "seo_description": "Convert subtitles between SRT, VTT and SBV formats with automatic detection 100% locally in your browser.",
   "seoHeroTitle": "Subtitle Converter",
   "seoHeroText": "Convert subtitles between SRT, VTT and SBV formats with automatic detection 100% locally in your browser.",
@@ -30,11 +30,11 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Which subtitle formats does Subtitles-Bolt support?",
-      "answer": "Subtitles-Bolt supports SRT, VTT and SBV formats. It can automatically detect the input format, or you can manually select it before converting to any of the three output formats."
+      "question": "Which subtitle formats does SubtitlesBolt support?",
+      "answer": "SubtitlesBolt supports SRT, VTT and SBV formats. It can automatically detect the input format, or you can manually select it before converting to any of the three output formats."
     },
     {
-      "question": "Does Subtitles-Bolt preserve timing and cue text exactly?",
+      "question": "Does SubtitlesBolt preserve timing and cue text exactly?",
       "answer": "Yes. Cue timings are parsed to millisecond precision and re-emitted in the target format, while cue text is preserved verbatim so nothing is altered during conversion."
     }
   ],

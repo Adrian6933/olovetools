@@ -57,7 +57,11 @@ export default {
     "Capture d'écran instantanée",
     "Utilitaire d'image gratuit",
     "Presse-papiers privé",
-    "Outil d'image de navigateur"
+    "Outil d'image de navigateur",
+    "Télécharger image collée",
+    "Enregistrer image du presse-papiers",
+    "Sauvegarde image presse-papiers",
+    "Téléchargement PNG instantané"
   ],
   "seoUseCaseTitle": "Cas d'utilisation",
   "seoUseCaseText": "Enregistrez vos captures Slack ou Teams en PNG.",

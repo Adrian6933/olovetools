@@ -1,0 +1,44 @@
+---
+import { GA_MEASUREMENT_ID, ANALYTICS_ENABLED } from '../config/analytics';
+---
+{ANALYTICS_ENABLED && (
+  <>
+    <script is:inline define:vars={{ GA_MEASUREMENT_ID }}>
+      // Consent Mode v2: deny everything by default until the user accepts via CookieBanner.
+      // CookieBanner.tsx reads localStorage('cookieConsent') on mount and calls
+      // window.updateAnalyticsConsent('granted' | 'denied') on Accept/Decline.
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('consent', 'default', {
+        analytics_storage: 'denied',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      });
+
+      const storedConsent = localStorage.getItem('cookieConsent');
+      if (storedConsent === 'true') {
+        gtag('consent', 'update', {
+          analytics_storage: 'granted',
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted',
+        });
+      }
+
+      window.updateAnalyticsConsent = function (state) {
+        gtag('consent', 'update', {
+          analytics_storage: state,
+          ad_storage: state,
+          ad_user_data: state,
+          ad_personalization: state,
+        });
+      };
+
+      gtag('js', new Date());
+      gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
+    </script>
+    <script async src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}></script>
+  </>
+)}

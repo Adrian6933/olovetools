@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | Организуйте стикеры на Kanban-доске перетаскиванием, сохраняя локально.",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | Организуйте стикеры на Kanban-доске перетаскиванием, сохраняя локально.",
   "seo_description": "Организуйте стикеры на Kanban-доске перетаскиванием, сохраняя локально в вашем браузере 100% на стороне клиента.",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "Организуйте стикеры на Kanban-доске перетаскиванием, сохраняя локально в вашем браузере 100% на стороне клиента.",
   "reset": "Сбросить",
   "addNote": "Добавить заметку",
@@ -19,7 +19,13 @@ export default {
   "seoUseCaseText": "Всё выполняется локально в вашем браузере. Ваши данные никогда не покидают ваше устройство.",
   "seoPrivacyTitle": "100% приватно и безопасно",
   "seoPrivacyText": "Никаких баз данных, отслеживания или сетевых загрузок. Ваши данные хранятся строго в локальной памяти и исчезают при закрытии вкладки.",
-  "seoKeywords": ["whiteboard flow", "онлайн-инструмент", "бесплатно", "локально", "браузер"],
+  "seoKeywords": [
+    "whiteboard flow",
+    "онлайн-инструмент",
+    "бесплатно",
+    "локально",
+    "браузер"
+  ],
   "faqTitle": "Часто задаваемые вопросы",
   "faq": [
     {
@@ -36,7 +42,7 @@ export default {
     }
   ],
   "footerTagline": "Организуйте стикеры на Kanban-доске перетаскиванием, сохраняя локально в вашем браузере 100% на стороне клиента.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Часть набора инструментов oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Скопировано!",
   "contactForIdeas": "Контакт для идей и комментариев:"

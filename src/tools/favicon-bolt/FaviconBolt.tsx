@@ -323,8 +323,8 @@ export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) =>
 
       // 4. Generate site.webmanifest JSON metadata
       const manifest = {
-        name: t.title || 'Favicon-Bolt',
-        short_name: t.title || 'Favicon-Bolt',
+        name: t.title || 'FaviconBolt',
+        short_name: t.title || 'FaviconBolt',
         icons: [
           {
             src: '/android-chrome-192x192.png',
@@ -412,7 +412,7 @@ export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) =>
               <div className="flex items-center justify-between border-b border-white/5 pb-4">
                 <h3 className="text-sm font-black uppercase tracking-wider text-blue-500 flex items-center gap-2">
                   <Palette className="w-4 h-4" />
-                  {t.title || 'Favicon-Bolt'}
+                  {t.title || 'FaviconBolt'}
                 </h3>
               </div>
 
@@ -737,7 +737,7 @@ export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) =>
                       </div>
                     </div>
                     <span className="text-blue-400 font-semibold text-sm leading-tight hover:underline cursor-pointer">
-                      Favicon-Bolt | {t.seo_title || 'Favicon Generator'}
+                      FaviconBolt | {t.seo_title || 'Favicon Generator'}
                     </span>
                   </div>
                 </div>

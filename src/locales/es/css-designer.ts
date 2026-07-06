@@ -1,14 +1,10 @@
 export default {
-  "title": "CSS-Designer",
+  "title": "CSS Designer",
   "description": "Generador interactivo para crear efectos CSS modernos como Glassmorphism, Sombras Complejas, Degradados y Bordes Personalizados.",
-  
-  // Tabs
   "tab_glassmorphism": "Glassmorphism",
   "tab_box_shadow": "Sombra de Caja",
   "tab_gradients": "Degradados",
   "tab_border_radius": "Bordes (Radius)",
-  
-  // Controls & Labels
   "backdrop_blur": "Desenfoque de Fondo",
   "bg_opacity": "Opacidad de Fondo",
   "saturation": "Saturación",
@@ -37,8 +33,6 @@ export default {
   "top_right": "Arriba-Derecha",
   "bottom_right": "Abajo-Derecha",
   "bottom_left": "Abajo-Izquierda",
-  
-  // UI Buttons & Text
   "copy_css": "Copiar CSS",
   "copy_tailwind": "Copiar Tailwind",
   "copy_variables": "Copiar Variables CSS",
@@ -51,12 +45,10 @@ export default {
   "theme_vibrant": "Degradado Vibrante",
   "preview_text": "Lienzo CSS",
   "preview_subtext": "Modifica los controles de la izquierda para ver los cambios en tiempo real.",
-  
-  // SEO & Info
-  "seo_title": "CSS-Designer | Generador de Glassmorphism, Sombras y Degradados",
+  "seo_title": "CSS Designer | Generador de Glassmorphism, Sombras y Degradados",
   "seo_description": "Crea efectos CSS modernos con nuestro playground visual. Genera código CSS y Tailwind para glassmorphism, sombras avanzadas, degradados y bordes orgánicos.",
   "seoHeroTitle": "Genera efectos CSS de forma visual y rápida.",
-  "seoHeroText": "Diseñar estilos modernos no tiene por qué ser un dolor de cabeza. CSS-Designer te ayuda a visualizar y generar código CSS o Tailwind limpio en segundos.",
+  "seoHeroText": "Diseñar estilos modernos no tiene por qué ser un dolor de cabeza. CSS Designer te ayuda a visualizar y generar código CSS o Tailwind limpio en segundos.",
   "seoHeroList": [
     "Sin registro ni descargas necesarias",
     "Genera código CSS y Tailwind limpio",
@@ -84,12 +76,11 @@ export default {
   "seoUseCaseText": "Diseña rápidamente tarjetas, botones, fondos y paneles superpuestos. Ideal para traducciones de Figma a código, prototipado de interfaces y estilización de dashboards modernos.",
   "seoPrivacyTitle": "Privacidad y Seguridad",
   "seoPrivacyText": "Tus creaciones de CSS son privadas. Todo sucede en tu máquina local; no guardamos, rastreamos ni subimos tus diseños.",
-  
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
       "question": "¿Es esta herramienta completamente gratuita?",
-      "answer": "Sí, CSS-Designer es 100% gratuito, sin necesidad de registro, límites premium ni marcas de agua."
+      "answer": "Sí, CSS Designer es 100% gratuito, sin necesidad de registro, límites premium ni marcas de agua."
     },
     {
       "question": "¿Puedo usar el código generado directamente en Tailwind CSS?",
@@ -105,5 +96,8 @@ export default {
     }
   ],
   "footerTagline": "Ayudándote a diseñar, construir y optimizar con herramientas sencillas y premium.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "privacyPolicy": "Política de Privacidad",
+  "termsOfService": "Términos de Servicio",
+  "cookiePolicy": "Política de Cookies"
 };

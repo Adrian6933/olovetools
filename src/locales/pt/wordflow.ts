@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "Área de trabalho de análise de texto interativa, gratuita e 100% local.",
-  "footerCredit": "Parte da suite oLoveTools"
+  "footerCredit": "Parte da suite oLoveTools",
+  "seo_title": "WordFlow | Contador de Palavras e Analisador de Legibilidade Grátis",
+  "seo_description": "Contador avançado de palavras, caracteres, legibilidade e assistente de limpeza de texto 100% local."
 };

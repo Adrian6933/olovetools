@@ -1,8 +1,8 @@
 export default {
-  "title": "Cron-Flow",
-  "seo_title": "Cron-Flow | Gere, traduza e visualize expressões cron com descrições legíveis 100% local.",
+  "title": "CronFlow",
+  "seo_title": "CronFlow | Gere, traduza e visualize expressões cron com descrições legíveis 100% local.",
   "seo_description": "Gere, traduza e visualize expressões cron com descrições legíveis 100% local.",
-  "seoHeroTitle": "Cron-Flow",
+  "seoHeroTitle": "CronFlow",
   "seoHeroText": "Gere, traduza e visualize expressões cron com descrições legíveis 100% local.",
   "seoBrowserSpeedTitle": "Processamento Local Instantâneo",
   "seoBrowserSpeedText": "Todo o processamento é executado dentro do seu navegador usando APIs JavaScript nativas. Nenhum dado é enviado a um servidor.",
@@ -10,7 +10,13 @@ export default {
   "seoUseCaseText": "Tudo roda localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["cron flow", "ferramenta online", "grátis", "local", "navegador"],
+  "seoKeywords": [
+    "cron flow",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -18,8 +24,8 @@ export default {
       "answer": "Não. Todas as operações acontecem inteiramente no seu navegador. Seus dados nunca saem do seu dispositivo."
     },
     {
-      "question": "Qual sintaxe cron o Cron-Flow suporta?",
-      "answer": "O Cron-Flow suporta expressões cron padrão de 5 campos (minuto, hora, dia do mês, mês, dia da semana) incluindo intervalos, passos, listas e aliases como JAN ou SUN."
+      "question": "Qual sintaxe cron o CronFlow suporta?",
+      "answer": "O CronFlow suporta expressões cron padrão de 5 campos (minuto, hora, dia do mês, mês, dia da semana) incluindo intervalos, passos, listas e aliases como JAN ou SUN."
     },
     {
       "question": "Como são calculados os próximos horários de execução?",
@@ -27,7 +33,7 @@ export default {
     }
   ],
   "footerTagline": "Gere, traduza e visualize expressões cron com descrições legíveis 100% local.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

@@ -1,7 +1,6 @@
 export default {
   "title": "AudioSnap",
   "description": "マイク音声をブラウザ上で録音し、WAVまたは標準の圧縮形式で切り出してダウンロードします。",
-  "tab_video": "オーディオ録音",
   "btn_record": "録音",
   "btn_pause_record": "一時停止",
   "btn_stop_record": "停止",

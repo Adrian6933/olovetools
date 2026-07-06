@@ -554,7 +554,7 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
               <div className="flex items-center justify-between border-b border-white/5 pb-4">
                 <h3 className="text-sm font-black uppercase tracking-wider text-amber-500 flex items-center gap-2">
                   <Settings className="w-4 h-4" />
-                  {t.title || 'Watermark-Snap'}
+                  {t.title || 'WatermarkSnap'}
                 </h3>
                 <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
                   {mode === 'text' ? (t.label_mode_text || 'Text') : (t.label_mode_logo || 'Logo')}

@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "マークダウンをリアルタイムに視覚的編集＆HTMLプレビュー。デザインテーマの切り替えやPDF/HTML保存に100%ローカルで対応。",
-  "placeholder": "# Markdown-Live へようこそ！\n\n左側にマークダウンを入力すると、右側にリアルタイムでプレビューがレンダリングされます。\n\n## 基本的な装飾\n\nテキストを **太字** や *斜体* にしたり、`インラインコード`を埋め込んだり、[oLoveTools](https://olovetools.com) のようなリンクを貼ることができます。\n\n### コードブロックの例\n\n```javascript\nfunction greet(name) {\n  console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n\n### 引用とリスト\n\n> マークダウンは、プレーンテキスト形式の軽量マークアップ言語です。\n\n- 高速マークダウンエディタ\n- 100%クライアントサイドのローカル解析\n- 便利な分割画面プレビュー\n",
+  "placeholder": "# MarkdownLive へようこそ！\n\n左側にマークダウンを入力すると、右側にリアルタイムでプレビューがレンダリングされます。\n\n## 基本的な装飾\n\nテキストを **太字** や *斜体* にしたり、`インラインコード`を埋め込んだり、[oLoveTools](https://olovetools.com) のようなリンクを貼ることができます。\n\n### コードブロックの例\n\n```javascript\nfunction greet(name) {\n  console.log('Hello, ' + name + '!');\n}\ngreet('World');\n```\n\n### 引用とリスト\n\n> マークダウンは、プレーンテキスト形式の軽量マークアップ言語です。\n\n- 高速マークダウンエディタ\n- 100%クライアントサイドのローカル解析\n- 便利な分割画面プレビュー\n",
   "tooltip_bold": "太字",
   "tooltip_italic": "斜体",
   "tooltip_heading": "見出し",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "無料、安全、ローカルで完結する分割画面マークダウンエディタツール。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "MarkdownLive | ライブプレビュー付き無料オンラインMarkdownエディター",
+  "seo_description": "マークダウンをリアルタイムに視覚的編集＆HTMLプレビュー。デザインテーマの切り替えやPDF/HTML保存に100%ローカルで対応。"
 };

@@ -1,6 +1,6 @@
 export default {
   "title": "Subtitle Converter",
-  "seo_title": "Subtitles-Bolt | SRT、VTT、SBV 形式間で字幕を変換 100% ローカルで。",
+  "seo_title": "SubtitlesBolt | SRT、VTT、SBV 形式間で字幕を変換 100% ローカルで。",
   "seo_description": "SRT、VTT、SBV 形式間で字幕を自動検出付きで変換 100% ローカルでブラウザ内に。",
   "seoHeroTitle": "字幕コンバーター",
   "seoHeroText": "SRT、VTT、SBV 形式間で字幕を自動検出付きで変換 100% ローカルでブラウザ内に。",
@@ -22,7 +22,13 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["subtitles bolt", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "subtitles bolt",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -30,16 +36,16 @@ export default {
       "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
     },
     {
-      "question": "Subtitles-Bolt はどの字幕形式に対応していますか？",
-      "answer": "Subtitles-Bolt は SRT、VTT、SBV 形式に対応しています。入力形式を自動検出できるほか、3つの出力形式のいずれかに変換する前に手動で選択することもできます。"
+      "question": "SubtitlesBolt はどの字幕形式に対応していますか？",
+      "answer": "SubtitlesBolt は SRT、VTT、SBV 形式に対応しています。入力形式を自動検出できるほか、3つの出力形式のいずれかに変換する前に手動で選択することもできます。"
     },
     {
-      "question": "Subtitles-Bolt はタイミングとテキストを正確に保持しますか？",
+      "question": "SubtitlesBolt はタイミングとテキストを正確に保持しますか？",
       "answer": "はい。タイミングはミリ秒精度で解析され対象形式で再出力され、テキストは逐語的に保持されるため、変換中に何も変更されません。"
     }
   ],
   "footerTagline": "SRT、VTT、SBV 形式間で字幕を自動検出付きで変換 100% ローカルでブラウザ内に。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ先:"

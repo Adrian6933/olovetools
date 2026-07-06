@@ -1,11 +1,11 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | XMLをJSONへ、JSONをXMLへ瞬時に変換 100%ブラウザ内でローカルに。",
+  "title": "XML to JSON",
+  "seo_title": "XML to JSON | XMLをJSONへ、JSONをXMLへ瞬時に変換 100%ブラウザ内でローカルに。",
   "seo_description": "XMLをJSONへ、JSONをXMLへ瞬時に変換 100%ブラウザ内でローカルに。",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "XMLをJSONへ、JSONをXMLへ瞬時に変換 100%ブラウザ内でローカルに。",
-  "label_xml_to_json": "XML \u2192 JSON",
-  "label_json_to_xml": "JSON \u2192 XML",
+  "label_xml_to_json": "XML → JSON",
+  "label_json_to_xml": "JSON → XML",
   "tooltip_swap": "方向を切り替え",
   "button_swap": "切り替え",
   "label_input": "入力",
@@ -23,7 +23,13 @@ export default {
   "seoUseCaseText": "すべてがブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードなし。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["xml json", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "xml json",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -40,7 +46,7 @@ export default {
     }
   ],
   "footerTagline": "XMLをJSONへ、JSONをXMLへ瞬時に変換 100%ブラウザ内でローカルに。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

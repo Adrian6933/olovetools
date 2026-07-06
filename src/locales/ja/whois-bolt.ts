@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | あらゆるドメインの DNS レコード（A, AAAA, MX, TXT, NS, CNAME, SOA）を HTTPS で検索。",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | あらゆるドメインの DNS レコード（A, AAAA, MX, TXT, NS, CNAME, SOA）を HTTPS で検索。",
   "seo_description": "あらゆるドメインの DNS レコード（A, AAAA, MX, TXT, NS, CNAME, SOA）を HTTPS で、ブラウザ内で直接検索。",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "あらゆるドメインの DNS レコード（A, AAAA, MX, TXT, NS, CNAME, SOA）を HTTPS で、ブラウザ内で直接検索。",
   "unit_seconds": "秒",
   "unit_minutes": "分",
@@ -34,7 +34,13 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100% プライベート & セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["whois bolt", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "whois bolt",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -42,8 +48,8 @@ export default {
       "answer": "いいえ。すべての操作はブラウザ内で完全に行われます。データがデバイスから離れることはありません。"
     },
     {
-      "question": "Whois-Bolt はどの DNS レコードタイプを解決しますか？",
-      "answer": "Whois-Bolt は任意のドメインの A、AAAA、CNAME、MX、NS、TXT、SOA レコードを解決し、IP アドレス、ネームサーバー、メールサーバーなどを含む見やすいサマリーで提示します。"
+      "question": "WhoisBolt はどの DNS レコードタイプを解決しますか？",
+      "answer": "WhoisBolt は任意のドメインの A、AAAA、CNAME、MX、NS、TXT、SOA レコードを解決し、IP アドレス、ネームサーバー、メールサーバーなどを含む見やすいサマリーで提示します。"
     },
     {
       "question": "DNS クエリはどのように実行されますか？",
@@ -51,7 +57,7 @@ export default {
     }
   ],
   "footerTagline": "あらゆるドメインの DNS レコード（A, AAAA, MX, TXT, NS, CNAME, SOA）を HTTPS で、ブラウザ内で直接検索。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ先:"

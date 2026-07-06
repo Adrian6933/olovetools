@@ -52,7 +52,7 @@ export default {
   "footer_feature2_title": "Coleções Privadas",
   "footer_feature2_desc": "Sem login, tudo local.",
   "footer_feature3_title": "Exportação",
-  "footer_feature3_desc": "Baixe via ClipBolt.",
+  "footer_feature3_desc": "Baixe via TwitchBolt.",
   "footer_seo_paragraph1": "Clipy é a ferramenta definitiva para o Twitch.",
   "footer_seo_paragraph2": "Acesso rápido a virais.",
   "footer_seo_desc_large": "Escolha profissional para Twitch.",

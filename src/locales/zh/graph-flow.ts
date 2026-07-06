@@ -1,5 +1,5 @@
 export default {
-  "title": "Graph-Flow",
+  "title": "GraphFlow",
   "description": "从CSV文件或手动输入创建精美图表和数据可视化。导出为PNG、SVG或PDF — 100%在浏览器中本地处理。",
   "label_data_source": "数据源",
   "drop_active": "将CSV文件拖放到这里...",
@@ -64,14 +64,39 @@ export default {
   "seoUseCaseText": "上传CSV，选择图表类型，自定义颜色，导出高分辨率PNG或矢量SVG图像。",
   "seoPrivacyTitle": "100%数据保密",
   "seoPrivacyText": "您的数据文件永远不会上传到任何服务器。所有处理都在浏览器内存中进行。",
-  "seoKeywords": ["图表生成器", "CSV转图表", "柱状图制作", "饼图在线", "数据可视化", "本地图表工具"],
+  "seoKeywords": [
+    "图表生成器",
+    "CSV转图表",
+    "柱状图制作",
+    "饼图在线",
+    "数据可视化",
+    "本地图表工具",
+    "图表工具",
+    "导出图表为PNG",
+    "本地图表工具",
+    "无需上传的图表"
+  ],
   "faqTitle": "常见问题",
   "faq": [
-    { "question": "我的CSV数据会上传到服务器吗？", "answer": "不会。Graph-Flow完全在浏览器内存中客户端运行。您的数据永远不会离开您的设备。" },
-    { "question": "需要什么CSV格式？", "answer": "标准CSV，第一行为标题，后续行为数据。值可以用逗号或分号分隔。" },
-    { "question": "可以导出为SVG吗？", "answer": "可以。您可以将图表导出为高质量PNG或完美缩放的矢量SVG。" },
-    { "question": "有哪些图表类型？", "answer": "Graph-Flow支持柱状图、折线图、面积图、饼图/环形图、雷达图、散点图和水平柱状图。" }
+    {
+      "question": "我的CSV数据会上传到服务器吗？",
+      "answer": "不会。GraphFlow完全在浏览器内存中客户端运行。您的数据永远不会离开您的设备。"
+    },
+    {
+      "question": "需要什么CSV格式？",
+      "answer": "标准CSV，第一行为标题，后续行为数据。值可以用逗号或分号分隔。"
+    },
+    {
+      "question": "可以导出为SVG吗？",
+      "answer": "可以。您可以将图表导出为高质量PNG或完美缩放的矢量SVG。"
+    },
+    {
+      "question": "有哪些图表类型？",
+      "answer": "GraphFlow支持柱状图、折线图、面积图、饼图/环形图、雷达图、散点图和水平柱状图。"
+    }
   ],
   "footerTagline": "将数据转化为精美图表 — 100%在浏览器中本地处理。",
-  "footerCredit": "oLoveTools套件的一部分"
+  "footerCredit": "oLoveTools套件的一部分",
+  "seo_title": "GraphFlow | 免费在线图表与数据可视化制作工具",
+  "seo_description": "从CSV文件或手动输入创建精美图表和数据可视化。导出为PNG、SVG或PDF — 100%在浏览器中本地处理。"
 };

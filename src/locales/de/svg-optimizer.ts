@@ -1,5 +1,5 @@
 export default {
-  "title": "SVG-Optimizer",
+  "title": "SVG Optimizer",
   "description": "Optimieren, bereinigen und minimieren Sie SVG-Vektordateien zu 100% lokal in Ihrem Browser, um die Dateigröße zu reduzieren und die Ladeleistung zu verbessern.",
   "label_svg_file": "SVG-Vektordatei",
   "drop_active": "SVG hier ablegen zum Optimieren...",
@@ -44,7 +44,7 @@ export default {
   "faq": [
     {
       "question": "Wird mein SVG-Code auf externe Server hochgeladen?",
-      "answer": "Nein. SVG-Optimizer läuft vollständig clientseitig im Speicher Ihres Browsers. Ihre Dateien werden lokal verarbeitet und verlassen niemals Ihr Gerät."
+      "answer": "Nein. SVG Optimizer läuft vollständig clientseitig im Speicher Ihres Browsers. Ihre Dateien werden lokal verarbeitet und verlassen niemals Ihr Gerät."
     },
     {
       "question": "Wie funktioniert das Runden von Dezimal-Koordinaten?",
@@ -56,5 +56,7 @@ export default {
     }
   ],
   "footerTagline": "Privater und lokaler browserbasierter SVG-Minimierer und -Bereiniger.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "seo_title": "SVG Optimizer | Kostenloser Online SVG-Kompressor & Minifizierer",
+  "seo_description": "Optimieren, bereinigen und minimieren Sie SVG-Vektordateien zu 100% lokal in Ihrem Browser, um die Dateigröße zu reduzieren und die Ladeleistung zu verbessern."
 };

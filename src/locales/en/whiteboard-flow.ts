@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | Organize sticky notes on a Kanban board with drag-and-drop, saved locally in your browser.",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | Organize sticky notes on a Kanban board with drag-and-drop, saved locally in your browser.",
   "seo_description": "Organize sticky notes on a Kanban board with drag-and-drop, saved locally in your browser 100% client-side.",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "Organize sticky notes on a Kanban board with drag-and-drop, saved locally in your browser 100% client-side.",
   "reset": "Reset",
   "addNote": "Add Note",

@@ -1,5 +1,5 @@
 export default {
-  "title": "Graph-Flow",
+  "title": "GraphFlow",
   "description": "Crea gráficos y visualizaciones de datos impresionantes a partir de archivos CSV o entrada manual. Exporta como PNG, SVG o PDF 100% local en tu navegador.",
   "label_data_source": "Fuente de Datos",
   "drop_active": "Suelta tu archivo CSV aquí...",
@@ -64,12 +64,23 @@ export default {
   "seoUseCaseText": "Sube un CSV, elige un tipo de gráfico, personaliza colores y etiquetas, y exporta imágenes PNG de alta resolución o SVG vectorial para diapositivas e informes.",
   "seoPrivacyTitle": "100% Confidencialidad de Datos",
   "seoPrivacyText": "Tus archivos de datos nunca se suben a ningún servidor. Todo el procesamiento ocurre en la memoria de tu navegador y se descarta al cerrar la pestaña.",
-  "seoKeywords": ["generador de gráficos", "CSV a gráfico", "creador de gráficos de barras", "gráfico circular online", "visualización de datos", "creador de gráficos", "herramienta de gráficos de líneas", "exportar gráfico PNG", "herramienta de gráficos local", "gráficos sin subida"],
+  "seoKeywords": [
+    "generador de gráficos",
+    "CSV a gráfico",
+    "creador de gráficos de barras",
+    "gráfico circular online",
+    "visualización de datos",
+    "creador de gráficos",
+    "herramienta de gráficos de líneas",
+    "exportar gráfico PNG",
+    "herramienta de gráficos local",
+    "gráficos sin subida"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
       "question": "¿Se sube mi archivo CSV a algún servidor?",
-      "answer": "No. Graph-Flow se ejecuta completamente en el navegador. Tus datos se procesan localmente y nunca salen de tu dispositivo."
+      "answer": "No. GraphFlow se ejecuta completamente en el navegador. Tus datos se procesan localmente y nunca salen de tu dispositivo."
     },
     {
       "question": "¿Qué formato de CSV se espera?",
@@ -81,9 +92,11 @@ export default {
     },
     {
       "question": "¿Qué tipos de gráficos están disponibles?",
-      "answer": "Graph-Flow soporta gráficos de barras, líneas, áreas, circulares/donut, radar, dispersión y barras horizontales con opciones de personalización completas."
+      "answer": "GraphFlow soporta gráficos de barras, líneas, áreas, circulares/donut, radar, dispersión y barras horizontales con opciones de personalización completas."
     }
   ],
   "footerTagline": "Convierte tus datos en gráficos espectaculares — 100% local en tu navegador.",
-  "footerCredit": "Parte del ecosistema oLoveTools"
+  "footerCredit": "Parte del ecosistema oLoveTools",
+  "seo_title": "GraphFlow | Creador de Gráficos y Visualización de Datos Gratis",
+  "seo_description": "Crea gráficos y visualizaciones de datos impresionantes a partir de archivos CSV o entrada manual. Exporta como PNG, SVG o PDF 100% local en tu navegador."
 };

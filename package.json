@@ -7,6 +7,8 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "build:zip": "astro build && powershell Compress-Archive -Path dist/* -DestinationPath olovetools-dist.zip -Force",
+    "zip": "powershell Compress-Archive -Path dist/* -DestinationPath olovetools-dist.zip -Force",
     "preview": "astro preview",
     "proxy": "node server/clipflow-proxy.mjs"
   },

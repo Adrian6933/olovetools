@@ -1,5 +1,5 @@
 export default {
-  "title": "Regex-Flow",
+  "title": "RegexFlow",
   "description": "リアルタイムハイライト、構文説明、テキスト置換機能を搭載した、ブラウザ上で100%ローカルに動作するインタラクティブな正規表現チェッカー＆ビルダー。",
   "regex_placeholder": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   "text_placeholder": "ここにテストするテキストを入力します。例：hello@olovetools.com や support@example.org",
@@ -31,8 +31,8 @@ export default {
   "faqTitle": "よくある質問",
   "faq": [
     {
-      "question": "Regex-Flowで機密性のあるテキストや正規表現をテストしても安全ですか？",
-      "answer": "はい。Regex-Flowは完全にクライアント側で実行されるため、データがサーバーに送信されることはありません。安心してご利用ください。"
+      "question": "RegexFlowで機密性のあるテキストや正規表現をテストしても安全ですか？",
+      "answer": "はい。RegexFlowは完全にクライアント側で実行されるため、データがサーバーに送信されることはありません。安心してご利用ください。"
     },
     {
       "question": "どの正規表現エンジンが使用されていますか？",
@@ -44,5 +44,7 @@ export default {
     }
   ],
   "footerTagline": "ブラウザで動くプライベートなローカル正規表現作成・テストツール。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "RegexFlow | 無料オンライン正規表現テスター＆ビルダー",
+  "seo_description": "リアルタイムハイライト、構文説明、テキスト置換機能を搭載した、ブラウザ上で100%ローカルに動作するインタラクティブな正規表現チェッカー＆ビルダー。"
 };

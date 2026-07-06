@@ -1,6 +1,6 @@
 export default {
-  "title": "UUID-Generator",
-  "seo_title": "UUID-Generator | Générateur gratuit en ligne de UUID v4 et v5",
+  "title": "UUID Generator",
+  "seo_title": "UUID Generator | Générateur gratuit en ligne de UUID v4 et v5",
   "seo_description": "Générez des UUID aléatoires (v4) et des UUID nommés (v5) en lot jusqu'à 500 à la fois 100% localement dans votre navigateur via la Web Crypto API. Générateur UUID gratuit en ligne.",
   "seoHeroTitle": "Générateur en lot de UUID v4 et v5",
   "seoHeroText": "Générez instantanément jusqu'à 500 UUID aléatoires (version 4) ou UUID nommés (version 5 avec namespace) via la Web Crypto API native du navigateur. Toute la génération se fait localement — aucun appel serveur, aucun suivi.",
@@ -25,7 +25,15 @@ export default {
   "seoUseCaseText": "Générez jusqu'à 500 UUID en un seul clic. Parfait pour l'initialisation de bases de données, la génération de données de test, des IDs de session uniques ou tout scénario nécessitant plusieurs identifiants uniques à la fois.",
   "seoPrivacyTitle": "100% privé et sécurisé",
   "seoPrivacyText": "Aucune base de données, aucun suivi ni téléversement réseau. Toute la génération d'UUID se fait entièrement dans le sous-système cryptographique de votre navigateur. Vos données ne quittent jamais votre appareil.",
-  "seoKeywords": ["générateur uuid", "uuid v4", "uuid v5", "générateur guid", "uuid aléatoire", "uuid en lot", "identifiant unique"],
+  "seoKeywords": [
+    "générateur uuid",
+    "uuid v4",
+    "uuid v5",
+    "générateur guid",
+    "uuid aléatoire",
+    "uuid en lot",
+    "identifiant unique"
+  ],
   "faqTitle": "Questions fréquentes",
   "faq": [
     {
@@ -42,8 +50,9 @@ export default {
     }
   ],
   "footerTagline": "Générateur en lot d'UUID v4 et v5 rapide et sécurisé propulsé par la Web Crypto API — 100% local dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "button_copy_all": "Tout Copier"
 };

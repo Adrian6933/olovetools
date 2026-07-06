@@ -24,7 +24,7 @@ export default {
   "tip2Title": "FORMAT",
   "tip3Title": "WORKFLOW",
   "linkInputLabel": "Link-Eingabe",
-  "twitchClipsLabel": "Kick Clips",
+  "twitchClipsLabel": "Kick-Clips",
   "preparingZip": "ZIP WIRD VORBEREITET...",
   "downloadZip": "ZIP herunterladen",
   "failedToLoad": "Fehler beim Laden des Clips:",
@@ -42,8 +42,40 @@ export default {
   "views": "Aufrufe",
   "ready": "BEREIT",
   "preparing": "VORBEREITUNG...",
-  "quickLinks": ["Kick zu MP4", "Clips downloaden", "Bulk-Downloader", "Clips speichern", "1080p Download", "Streamer-Tools", "Kick zu TikTok", "Mobile-Downloader", "Schneller Konverter", "Kick Offline Sehen"],
-  "seoTags": ["KICK DOWNLOADER", "MP4 HD", "BULK DOWNLOAD", "KEIN LOGIN", "GRATIS TOOL", "1080P", "KICK CLIPS", "EDITOR KIT", "TIKTOK KONVERTER", "GAMING VIDEO", "REELS MAKER", "STREAMING KIT", "HOHE AUFLÖSUNG", "DIREKT DOWNLOAD", "SCHNELLER DOWNLOAD", "MOBILE BEREIT", "KICK SAVER", "CLIP KONVERTER", "OHNE WASSERZEICHEN", "BESTES KICK TOOL"],
+  "quickLinks": [
+    "Kick zu MP4",
+    "Clips downloaden",
+    "Bulk-Downloader",
+    "Clips speichern",
+    "1080p-Download",
+    "Streamer-Tools",
+    "Kick zu TikTok",
+    "Mobile-Downloader",
+    "Schneller Konverter",
+    "Kick Offline Sehen"
+  ],
+  "seoTags": [
+    "KICK DOWNLOADER",
+    "MP4 HD",
+    "MASSEN-DOWNLOAD",
+    "KEIN LOGIN",
+    "GRATIS TOOL",
+    "1080P",
+    "KICK CLIPS",
+    "EDITOR-KIT",
+    "TIKTOK KONVERTER",
+    "GAMING-VIDEO",
+    "REELS MAKER",
+    "STREAMING-KIT",
+    "HOHE AUFLÖSUNG",
+    "DIREKT DOWNLOAD",
+    "SCHNELLER DOWNLOAD",
+    "MOBILE BEREIT",
+    "KICK SAVER",
+    "CLIP KONVERTER",
+    "OHNE WASSERZEICHEN",
+    "BESTES KICK TOOL"
+  ],
   "legal": {
     "privacy": "Datenschutz",
     "terms": "Bedingungen",
@@ -53,5 +85,6 @@ export default {
     "privacyText": "Bei Kickclip hat Privatsphäre Priorität. Wir sammeln, speichern oder teilen keine personenbezogenen Daten. Links werden in Echtzeit verarbeitet und es werden keine Protokolle der heruntergeladenen Clips auf unseren Servern gespeichert. Bei Fragen wenden Sie sich bitte an adrian.contact.me.69@gmail.com.",
     "termsText": "Kickclip ist ein technisches Tool für den Zugriff auf öffentliche Kick-Inhalte. Der Nutzer ist allein für die Verwendung der heruntergeladenen Materialien verantwortlich. Kickclip ist nicht mit Kick verbunden.",
     "cookiesText": "Unsere Website verwendet nur unbedingt erforderlichen LocalStorage für den technischen Betrieb der Website."
-  }
+  },
+  "loadingClips": "CLIPS WERDEN GELADEN..."
 };

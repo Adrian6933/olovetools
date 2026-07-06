@@ -181,7 +181,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'pdf-flow': {
     slug: 'pdf-flow',
-    name: 'PDF-Flow',
+    name: 'PDFFlow',
     world: 'Document',
     emoji: '📄',
     primary: 'red-500',
@@ -215,7 +215,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'qr-bolt': {
     slug: 'qr-bolt',
-    name: 'QR-Bolt',
+    name: 'QRBolt',
     world: 'Scan',
     emoji: '⬛',
     primary: 'emerald-400',
@@ -266,7 +266,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'css-designer': {
     slug: 'css-designer',
-    name: 'CSS-Designer',
+    name: 'CSS Designer',
     world: 'Atelier',
     emoji: '🎨',
     primary: 'violet-400',
@@ -283,7 +283,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'json-flow': {
     slug: 'json-flow',
-    name: 'JSON-Flow',
+    name: 'JSONFlow',
     world: 'Blueprint',
     emoji: '🗂️',
     primary: 'emerald-400',
@@ -317,7 +317,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'tts-bolt': {
     slug: 'tts-bolt',
-    name: 'TTS-Bolt',
+    name: 'TTSBolt',
     world: 'Voice',
     emoji: '🔊',
     primary: 'amber-400',
@@ -334,7 +334,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'gif-bolt': {
     slug: 'gif-bolt',
-    name: 'GIF-Bolt',
+    name: 'GIFBolt',
     world: 'Animation',
     emoji: '🎞️',
     primary: 'fuchsia-400',
@@ -402,7 +402,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'watermark-snap': {
     slug: 'watermark-snap',
-    name: 'Watermark-Snap',
+    name: 'WatermarkSnap',
     world: 'Stamp',
     emoji: '🖋️',
     primary: 'amber-500',
@@ -419,7 +419,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'favicon-bolt': {
     slug: 'favicon-bolt',
-    name: 'Favicon-Bolt',
+    name: 'FaviconBolt',
     world: 'Pixel',
     emoji: '🔲',
     primary: 'blue-500',
@@ -436,7 +436,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'exif-clear': {
     slug: 'exif-clear',
-    name: 'EXIF-Clear',
+    name: 'EXIF Cleaner',
     world: 'Privacy',
     emoji: '🛡️',
     primary: 'emerald-500',
@@ -453,7 +453,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'meme-bolt': {
     slug: 'meme-bolt',
-    name: 'Meme-Bolt',
+    name: 'MemeBolt',
     world: 'Fun',
     emoji: '😂',
     primary: 'fuchsia-500',
@@ -487,7 +487,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'markdown-live': {
     slug: 'markdown-live',
-    name: 'Markdown-Live',
+    name: 'MarkdownLive',
     world: 'Markdown',
     emoji: '📑',
     primary: 'violet-500',
@@ -504,7 +504,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'hash-bolt': {
     slug: 'hash-bolt',
-    name: 'Hash-Bolt',
+    name: 'HashBolt',
     world: 'Hash',
     emoji: '#️⃣',
     primary: 'sky-400',
@@ -521,7 +521,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'zip-flow': {
     slug: 'zip-flow',
-    name: 'Zip-Flow',
+    name: 'ZipFlow',
     world: 'Archive',
     emoji: '🗜️',
     primary: 'amber-500',
@@ -538,7 +538,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'regex-flow': {
     slug: 'regex-flow',
-    name: 'Regex-Flow',
+    name: 'RegexFlow',
     world: 'Pattern',
     emoji: '🔣',
     primary: 'fuchsia-500',
@@ -555,7 +555,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'lottie-viewer': {
     slug: 'lottie-viewer',
-    name: 'Lottie-Viewer',
+    name: 'Lottie Viewer',
     world: 'Lottie',
     emoji: '🎭',
     primary: 'indigo-500',
@@ -572,7 +572,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'svg-optimizer': {
     slug: 'svg-optimizer',
-    name: 'SVG-Optimizer',
+    name: 'SVG Optimizer',
     world: 'SVG',
     emoji: '🎯',
     primary: 'cyan-500',
@@ -589,7 +589,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'graph-flow': {
     slug: 'graph-flow',
-    name: 'Graph-Flow',
+    name: 'GraphFlow',
     world: 'Graph',
     emoji: '📊',
     primary: 'amber-500',
@@ -606,7 +606,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'url-bolt': {
     slug: 'url-bolt',
-    name: 'URL-Bolt',
+    name: 'URLBolt',
     world: 'URL',
     emoji: '🔗',
     primary: 'emerald-500',
@@ -623,7 +623,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'base64-bolt': {
     slug: 'base64-bolt',
-    name: 'Base64-Bolt',
+    name: 'Base64Bolt',
     world: 'Encode',
     emoji: '🔐',
     primary: 'blue-500',
@@ -640,7 +640,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'uuid-generator': {
     slug: 'uuid-generator',
-    name: 'UUID-Generator',
+    name: 'UUID Generator',
     world: 'ID',
     emoji: '🆔',
     primary: 'blue-400',
@@ -657,7 +657,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'list-mixer': {
     slug: 'list-mixer',
-    name: 'List-Mixer',
+    name: 'List Mixer',
     world: 'List',
     emoji: '🧮',
     primary: 'blue-500',
@@ -674,7 +674,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'html-sanitizer': {
     slug: 'html-sanitizer',
-    name: 'HTML-Sanitizer',
+    name: 'HTML Sanitizer',
     world: 'Sanitize',
     emoji: '🧼',
     primary: 'emerald-500',
@@ -708,7 +708,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'hex-to-rgb': {
     slug: 'hex-to-rgb',
-    name: 'Hex-to-RGB',
+    name: 'Hex to RGB',
     world: 'Color',
     emoji: '🌈',
     primary: 'pink-500',
@@ -725,7 +725,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'aspect-ratio': {
     slug: 'aspect-ratio',
-    name: 'Aspect-Ratio',
+    name: 'Aspect Ratio',
     world: 'Ratio',
     emoji: '🟦',
     primary: 'lime-400',
@@ -759,7 +759,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'sql-flow': {
     slug: 'sql-flow',
-    name: 'SQL-Flow',
+    name: 'SQLFlow',
     world: 'SQL',
     emoji: '🗃️',
     primary: 'emerald-500',
@@ -776,7 +776,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'cron-flow': {
     slug: 'cron-flow',
-    name: 'Cron-Flow',
+    name: 'CronFlow',
     world: 'Cron',
     emoji: '⏰',
     primary: 'sky-500',
@@ -793,7 +793,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'xml-json': {
     slug: 'xml-json',
-    name: 'XML-JSON',
+    name: 'XML to JSON',
     world: 'Data',
     emoji: '🔄',
     primary: 'amber-500',
@@ -810,7 +810,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'binary-flow': {
     slug: 'binary-flow',
-    name: 'Binary-Flow',
+    name: 'BinaryFlow',
     world: 'Binary',
     emoji: '💾',
     primary: 'amber-500',
@@ -827,7 +827,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'morse-flow': {
     slug: 'morse-flow',
-    name: 'Morse-Flow',
+    name: 'MorseFlow',
     world: 'Morse',
     emoji: '📡',
     primary: 'fuchsia-500',
@@ -844,7 +844,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'epoch-flow': {
     slug: 'epoch-flow',
-    name: 'Epoch-Flow',
+    name: 'EpochFlow',
     world: 'Time',
     emoji: '⏳',
     primary: 'indigo-500',
@@ -861,7 +861,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'time-bolt': {
     slug: 'time-bolt',
-    name: 'Time-Bolt',
+    name: 'TimeBolt',
     world: 'Time',
     emoji: '⏱️',
     primary: 'sky-500',
@@ -878,7 +878,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'device-test': {
     slug: 'device-test',
-    name: 'Device-Test',
+    name: 'Device Test',
     world: 'Device',
     emoji: '📱',
     primary: 'blue-500',
@@ -895,7 +895,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'lorem-flow': {
     slug: 'lorem-flow',
-    name: 'Lorem-Flow',
+    name: 'LoremFlow',
     world: 'Text',
     emoji: '📜',
     primary: 'amber-500',
@@ -912,7 +912,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'key-doctor': {
     slug: 'key-doctor',
-    name: 'Key-Doctor',
+    name: 'Key Doctor',
     world: 'Key',
     emoji: '🔑',
     primary: 'amber-500',
@@ -929,7 +929,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'whiteboard-flow': {
     slug: 'whiteboard-flow',
-    name: 'Whiteboard-Flow',
+    name: 'WhiteboardFlow',
     world: 'Board',
     emoji: '📋',
     primary: 'cyan-500',
@@ -946,7 +946,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'subtitles-bolt': {
     slug: 'subtitles-bolt',
-    name: 'Subtitles-Bolt',
+    name: 'SubtitlesBolt',
     world: 'Subtitles',
     emoji: '💬',
     primary: 'blue-500',
@@ -980,7 +980,7 @@ export const themes: Record<string, ToolTheme> = {
   },
   'whois-bolt': {
     slug: 'whois-bolt',
-    name: 'Whois-Bolt',
+    name: 'WhoisBolt',
     world: 'Whois',
     emoji: '🌍',
     primary: 'indigo-500',

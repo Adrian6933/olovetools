@@ -1,5 +1,5 @@
 export default {
-  "title": "Favicon-Bolt",
+  "title": "FaviconBolt",
   "description": "画像ファイルや絵文字（絵文字）から、Webサイトに必要な標準ファビコンパッケージを一括生成。すべてブラウザ上でローカル処理されます。",
   "btn_download_zip": "ファビコンパックをダウンロード (.ZIP)",
   "label_mode_image": "画像ファイル",
@@ -22,10 +22,10 @@ export default {
   "preview_search": "Google 検索結果",
   "preview_mobile": "スマホのホーム画面",
   "progress_generating": "ファビコンファイルをビルด中...",
-  "seo_title": "Favicon-Bolt | 無料オンラインファビコンジェネレーター・ICO一括変換",
+  "seo_title": "FaviconBolt | 無料オンラインファビコンジェネレーター・ICO一括変換",
   "seo_description": "画像や絵文字をマルチ解像度ICO、Appleタッチアイコン、Androidウェブマニフェストにローカルで変換。完全オフラインで安全。",
   "seoHeroTitle": "完璧なファビコンとWebアプリ用アイコンを即座に作成",
-  "seoHeroText": "モダンブラウザやモバイル画面に必要な全サイズのアイコンファイルを一括準備。Favicon-BoltはICOバイナリをローカルメモリ内で直接コンパイルします。",
+  "seoHeroText": "モダンブラウザやモバイル画面に必要な全サイズのアイコンファイルを一括準備。FaviconBoltはICOバイナリをローカルメモリ内で直接コンパイルします。",
   "seoHeroList": [
     "1つのファイルに16x16, 32x32, 48x48の各サイズを同梱するマルチ解像度ICOに対応",
     "背景色、角丸、余白のカスタマイズや、好みの絵文字からファビコンを作成可能",

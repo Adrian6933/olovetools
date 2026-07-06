@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "Editor Markdown visual en tiempo real y visor HTML con plantillas de estilo y exportadores a PDF/HTML 100% local.",
-  "placeholder": "# ¡Bienvenido a Markdown-Live!\n\nEscribe código markdown aquí a la izquierda para ver el renderizado inmediato en el panel de la derecha.\n\n## Formato Básico\n\nPuedes poner texto en **negrita** o *cursiva* fácilmente, o incluir `código inline` y enlaces como [oLoveTools](https://olovetools.com).\n\n### Ejemplo de Bloque de Código\n\n```javascript\nfunction saludar(nombre) {\n  console.log('Hola, ' + nombre + '!');\n}\nsaludar('Mundo');\n```\n\n### Citas y Listas\n\n> Markdown es un lenguaje de marcado ligero que facilita el formato de texto plano.\n\n- Editor markdown rápido\n- Procesamiento 100% local en cliente\n- Previsualización en pantalla dividida\n\n### Tablas de Datos\n\n| Item | Cantidad | Estado |\n| :--- | :---: | :---: |\n| Editor | 1 | Listo |\n| Visor | 1 | Activo |\n",
+  "placeholder": "# ¡Bienvenido a MarkdownLive!\n\nEscribe código markdown aquí a la izquierda para ver el renderizado inmediato en el panel de la derecha.\n\n## Formato Básico\n\nPuedes poner texto en **negrita** o *cursiva* fácilmente, o incluir `código inline` y enlaces como [oLoveTools](https://olovetools.com).\n\n### Ejemplo de Bloque de Código\n\n```javascript\nfunction saludar(nombre) {\n  console.log('Hola, ' + nombre + '!');\n}\nsaludar('Mundo');\n```\n\n### Citas y Listas\n\n> Markdown es un lenguaje de marcado ligero que facilita el formato de texto plano.\n\n- Editor markdown rápido\n- Procesamiento 100% local en cliente\n- Previsualización en pantalla dividida\n\n### Tablas de Datos\n\n| Item | Cantidad | Estado |\n| :--- | :---: | :---: |\n| Editor | 1 | Listo |\n| Visor | 1 | Activo |\n",
   "tooltip_bold": "Negrita",
   "tooltip_italic": "Cursiva",
   "tooltip_heading": "Encabezado",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Editor de Markdown interactivo, gratuito, privado y en local con doble pantalla.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "seo_title": "MarkdownLive | Editor de Markdown con Vista Previa en Vivo Gratis",
+  "seo_description": "Editor Markdown visual en tiempo real y visor HTML con plantillas de estilo y exportadores a PDF/HTML 100% local."
 };

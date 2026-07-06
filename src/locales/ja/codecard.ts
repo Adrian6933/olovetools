@@ -44,7 +44,7 @@ export default {
   "gradientMidnight": "ミッドナイトネビュラ",
   "gradientEmerald": "エメラルドジャングル",
   "gradientGlass": "ミニマルダーク",
-  "watermarkLabel": "Made with oLoveTools.com",
+  "watermarkLabel": "oLoveTools.com で作成",
   "features": [
     {
       "title": "高DPI出力スケーリング",

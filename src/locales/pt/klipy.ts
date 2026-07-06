@@ -1,23 +1,43 @@
 export default {
   "title": "Klipy",
-  "seo_title": "Klipy | Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "seo_description": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
+  "seo_title": "Klipy | Descubra e assista aos melhores clipes e canais ao vivo da Kick por categoria. Explore, salve e exporte seus momentos favoritos da Kick, grátis e rápido.",
+  "seo_description": "Descubra e assista aos melhores clipes e canais ao vivo da Kick por categoria. Explore, salve e exporte seus momentos favoritos da Kick, grátis e rápido.",
   "seoHeroTitle": "Klipy",
-  "seoHeroText": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "seoBrowserSpeedTitle": "Instant Local Processing",
-  "seoBrowserSpeedText": "All processing is executed inside your browser using native JavaScript APIs. No data is ever sent to a server.",
-  "seoUseCaseTitle": "100% Client-Side",
-  "seoUseCaseText": "Everything runs locally in your browser. Your data never leaves your device.",
-  "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
-  "seoKeywords": ["klipy", "online tool", "free", "local", "browser"],
-  "faqTitle": "Frequently Asked Questions",
-  "faq": [
-    { "question": "Is my data sent to any server?", "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device." }
+  "seoHeroText": "Descubra e assista aos melhores clipes e canais ao vivo da Kick por categoria. Explore, salve e exporte seus momentos favoritos da Kick, grátis e rápido.",
+  "seoBrowserSpeedTitle": "Processamento Local Instantâneo",
+  "seoBrowserSpeedText": "Todo o processamento é executado dentro do seu navegador usando APIs nativas de JavaScript. Nenhum dado é enviado a um servidor.",
+  "seoUseCaseTitle": "100% do Lado do Cliente",
+  "seoUseCaseText": "Tudo é executado localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
+  "seoPrivacyTitle": "100% Privado e Seguro",
+  "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios pela rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
+  "seoKeywords": [
+    "klipy",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
   ],
-  "footerTagline": "Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "faqTitle": "Perguntas frequentes",
+  "faq": [
+    {
+      "question": "Meus dados são enviados a algum servidor?",
+      "answer": "Não. Todas as operações acontecem inteiramente dentro do seu navegador. Seus dados nunca saem do seu dispositivo."
+    }
+  ],
+  "footerTagline": "Descubra e assista aos melhores clipes e canais ao vivo da Kick por categoria. Explore, salve e exporte seus momentos favoritos da Kick, grátis e rápido.",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
-  "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
+  "ui_search": "Buscar uma categoria ou jogo…",
+  "ui_popular": "Categorias populares",
+  "ui_back": "Categorias",
+  "ui_live": "Ao vivo agora",
+  "ui_clips": "Melhores clipes",
+  "ui_empty": "Nada encontrado. Tente outra categoria.",
+  "ui_saved": "Salvos",
+  "ui_export_txt": "Exportar .txt",
+  "ui_send_kickbolt": "Baixar no KickBolt",
+  "ui_watch": "Assistir no Kick",
+  "ui_viewers": "espectadores"
 };

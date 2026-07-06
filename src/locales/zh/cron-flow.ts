@@ -1,8 +1,8 @@
 export default {
-  "title": "Cron-Flow",
-  "seo_title": "Cron-Flow | 100%本地生成、翻译和可视化cron表达式，带人类可读描述。",
+  "title": "CronFlow",
+  "seo_title": "CronFlow | 100%本地生成、翻译和可视化cron表达式，带人类可读描述。",
   "seo_description": "100%本地生成、翻译和可视化cron表达式，带人类可读描述。",
-  "seoHeroTitle": "Cron-Flow",
+  "seoHeroTitle": "CronFlow",
   "seoHeroText": "100%本地生成、翻译和可视化cron表达式，带人类可读描述。",
   "seoBrowserSpeedTitle": "即时本地处理",
   "seoBrowserSpeedText": "所有处理都在您的浏览器内使用原生JavaScript API执行。数据永远不会发送到服务器。",
@@ -10,7 +10,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100%私密与安全",
   "seoPrivacyText": "没有数据库、跟踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["cron flow", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "cron flow",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -18,8 +24,8 @@ export default {
       "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
     },
     {
-      "question": "Cron-Flow支持哪种cron语法？",
-      "answer": "Cron-Flow支持标准的5字段cron表达式（分钟、小时、日期、月份、星期），包括范围、步长、列表以及JAN或SUN等别名。"
+      "question": "CronFlow支持哪种cron语法？",
+      "answer": "CronFlow支持标准的5字段cron表达式（分钟、小时、日期、月份、星期），包括范围、步长、列表以及JAN或SUN等别名。"
     },
     {
       "question": "下一次执行时间是如何计算的？",
@@ -27,7 +33,7 @@ export default {
     }
   ],
   "footerTagline": "100%本地生成、翻译和可视化cron表达式，带人类可读描述。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以提供想法和意见:"

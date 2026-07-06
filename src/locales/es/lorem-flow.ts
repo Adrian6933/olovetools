@@ -1,8 +1,8 @@
 export default {
-  "title": "Lorem-Flow",
-  "seo_title": "Lorem-Flow | Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente.",
+  "title": "LoremFlow",
+  "seo_title": "LoremFlow | Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente.",
   "seo_description": "Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente en tu navegador.",
-  "seoHeroTitle": "Lorem-Flow",
+  "seoHeroTitle": "LoremFlow",
   "seoHeroText": "Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente en tu navegador.",
   "label_unit_type": "Tipo de unidad",
   "label_count": "Cantidad",
@@ -22,7 +22,13 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
-  "seoKeywords": ["lorem flow", "herramienta online", "gratis", "local", "navegador"],
+  "seoKeywords": [
+    "lorem flow",
+    "herramienta online",
+    "gratis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -30,7 +36,7 @@ export default {
       "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
     },
     {
-      "question": "¿Puedo elegir cuánto texto genera Lorem-Flow?",
+      "question": "¿Puedo elegir cuánto texto genera LoremFlow?",
       "answer": "Sí. Puedes generar entre 1 y 100 unidades, eligiendo si cada unidad es un párrafo, una frase o una sola palabra, y opcionalmente empezar con la apertura clásica Lorem ipsum."
     },
     {
@@ -39,7 +45,7 @@ export default {
     }
   ],
   "footerTagline": "Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente en tu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

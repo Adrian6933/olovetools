@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Header from './components/Header';
 import DropZone from './components/DropZone';
 import ControlPanel from './components/ControlPanel';
-import CookieBanner from './components/CookieBanner';
 import LegalModal from './components/LegalModal';
 import { ImageFormat, ConversionSettings, BatchImageItem, ConversionResult } from './types';
 import { useTranslation, Language } from '../../locales/dictionary';
@@ -813,9 +812,8 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
           </div>
         </div>
       </footer>
-      <CookieBanner language={language} />
-      
-      <LegalModal 
+
+      <LegalModal
         isOpen={activeModal === 'privacy'} 
         onClose={() => setActiveModal(null)} 
         title={t.privacyPolicy}

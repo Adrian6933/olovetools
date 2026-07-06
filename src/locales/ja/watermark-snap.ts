@@ -1,5 +1,5 @@
 export default {
-  "title": "Watermark-Snap",
+  "title": "WatermarkSnap",
   "description": "複数の画像にテキストまたはロゴの透かし（ウォーターマーク）を一括で追加します。すべてブラウザ上でローカル処理されます。",
   "btn_download_zip": "透かし入り画像をダウンロード (.ZIP)",
   "label_mode_text": "テキスト透かし",
@@ -20,10 +20,10 @@ export default {
   "btn_add_files": "画像を追加",
   "btn_clear": "すべてクリア",
   "progress_generating": "画像を処理中... {current} / {total}",
-  "seo_title": "Watermark-Snap | 無料オンライン画像一括透かし追加・ウォーターマーク作成",
+  "seo_title": "WatermarkSnap | 無料オンライン画像一括透かし追加・ウォーターマーク作成",
   "seo_description": "複数の画像に透かし（ウォーターマーク）を一括追加。テキストやロゴ画像の重ね合わせ、不透明度・サイズの調整、ドラッグ配置に対応。100%ローカル実行。",
   "seoHeroTitle": "安全かつローカルで画像に透かしを一括追加",
-  "seoHeroText": "大切な写真、商品画像、ブランドアセットをコピーから保護。Watermark-Snapは外部への画像送信なしにブラウザのメモリ内だけで動作します。",
+  "seoHeroText": "大切な写真、商品画像、ブランドアセットをコピーから保護。WatermarkSnapは外部への画像送信なしにブラウザのメモリ内だけで動作します。",
   "seoHeroList": [
     "画像全体を隙間なくカバーする繰り返し（タイル）透かし機能",
     "オリジナルロゴ画像のアップロード、または詳細なテキスト透かし作成",

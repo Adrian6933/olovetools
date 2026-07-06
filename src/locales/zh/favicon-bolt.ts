@@ -1,5 +1,5 @@
 export default {
-  "title": "Favicon-Bolt",
+  "title": "FaviconBolt",
   "description": "通过图片文件或 Emoji 表情一键生成一整套符合现代标准的网站 Favicon 图标。全部在浏览器本地安全编译。",
   "btn_download_zip": "打包下载 Favicon 图标包 (.ZIP)",
   "label_mode_image": "图片文件",
@@ -22,10 +22,10 @@ export default {
   "preview_search": "Google 搜索结果展示",
   "preview_mobile": "手机主屏幕图标",
   "progress_generating": "正在本地生成并打包 Favicon 图标...",
-  "seo_title": "Favicon-Bolt | 免费在线网站 Favicon 生成器与多尺寸 ICO 编译器",
+  "seo_title": "FaviconBolt | 免费在线网站 Favicon 生成器与多尺寸 ICO 编译器",
   "seo_description": "本地一键转换图片或表情符号为多分辨率 ICO、Apple 触摸图标和 Android Web Manifest。安全，零上传，支持离线运行。",
   "seoHeroTitle": "瞬间生成高标准的 Favicon 和移动端 Web App 图标",
-  "seoHeroText": "一次性准备好适用于现代浏览器、视网膜屏幕与智能手机主屏所需的所有图标规格。Favicon-Bolt 在浏览器内存中直接编译二进制 ICO 文件。",
+  "seoHeroText": "一次性准备好适用于现代浏览器、视网膜屏幕与智能手机主屏所需的所有图标规格。FaviconBolt 在浏览器内存中直接编译二进制 ICO 文件。",
   "seoHeroList": [
     "支持将 16x16, 32x32, 48x48 帧合并打包为单个多分辨率 .ico 二进制文件",
     "支持自定义图标背景颜色、平滑倒角半径、内边距，或使用系统表情",

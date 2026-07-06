@@ -1,5 +1,5 @@
 export default {
-  "title": "Favicon-Bolt",
+  "title": "FaviconBolt",
   "description": "Generate a complete package of standard website favicons from an image or emoji. Process all files locally inside your browser.",
   "btn_download_zip": "Download Favicon Pack (.ZIP)",
   "label_mode_image": "Image File",
@@ -22,10 +22,10 @@ export default {
   "preview_search": "Google Search Result",
   "preview_mobile": "Mobile Home Screen",
   "progress_generating": "Compiling favicon files...",
-  "seo_title": "Favicon-Bolt | Free Online Favicon Generator & ICO Compiler",
+  "seo_title": "FaviconBolt | Free Online Favicon Generator & ICO Compiler",
   "seo_description": "Convert images or emojis to multi-resolution ICO, Apple touch icons, and web manifests locally. Fast, secure, and offline.",
   "seoHeroTitle": "Create Perfect Favicons and Web App Icons Instantly",
-  "seoHeroText": "Prepare files in all required sizes for modern browsers and mobile screens. Favicon-Bolt compiles ICO binaries locally in your browser memory.",
+  "seoHeroText": "Prepare files in all required sizes for modern browsers and mobile screens. FaviconBolt compiles ICO binaries locally in your browser memory.",
   "seoHeroList": [
     "Supports multi-resolution ICO including 16x16, 32x32, and 48x48 inside one file",
     "Customize background colors, squircle padding, or select active emojis",

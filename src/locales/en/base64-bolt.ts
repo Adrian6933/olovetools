@@ -1,6 +1,6 @@
 export default {
-  "title": "Base64-Bolt",
-  "seo_title": "Base64-Bolt | Free Online Base64 Encoder & Decoder",
+  "title": "Base64Bolt",
+  "seo_title": "Base64Bolt | Free Online Base64 Encoder & Decoder",
   "seo_description": "Encode text to Base64, decode Base64 strings, and convert images to DataURL or back 100% locally in your browser. Free online Base64 tool.",
   "seoHeroTitle": "Base64 Encoder, Decoder & Image Converter",
   "seoHeroText": "Instantly encode text to Base64 format, decode Base64 strings back to readable text, or convert images to DataURL and vice versa. Everything runs locally in your browser with zero server processing.",

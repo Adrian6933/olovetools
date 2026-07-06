@@ -1,6 +1,6 @@
 export default {
-  "title": "List-Mixer",
-  "seo_title": "List-Mixer | Free Online List Sorter, Shuffler & Deduplicator",
+  "title": "List Mixer",
+  "seo_title": "List Mixer | Free Online List Sorter, Shuffler & Deduplicator",
   "seo_description": "Sort, reverse, shuffle, deduplicate, trim and clean lists of text online 100% locally in your browser. Free online list manipulation tool.",
   "seoHeroTitle": "List Sorter, Shuffler & Cleaner",
   "seoHeroText": "Paste any list of text and instantly sort it alphabetically, reverse the order, shuffle randomly, remove duplicates, clean empty lines, trim whitespace, or change case. All operations chain together and run 100% locally in your browser.",
@@ -29,7 +29,15 @@ export default {
   "seoUseCaseText": "Each action you click is applied to the current output, allowing you to chain multiple operations together. Sort, then remove duplicates, then trim — all in sequence without re-pasting.",
   "seoPrivacyTitle": "100% Private & Secure",
   "seoPrivacyText": "No databases, tracking, or network uploads. Your list data resides strictly in local memory and disappears when you close the tab.",
-  "seoKeywords": ["list sorter", "list shuffler", "remove duplicates", "sort lines", "randomize list", "clean list", "deduplicate"],
+  "seoKeywords": [
+    "list sorter",
+    "list shuffler",
+    "remove duplicates",
+    "sort lines",
+    "randomize list",
+    "clean list",
+    "deduplicate"
+  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
@@ -49,5 +57,6 @@ export default {
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "contactForIdeas": "Contact for ideas and comments:",
+  "copyLabel": "Copy"
 };

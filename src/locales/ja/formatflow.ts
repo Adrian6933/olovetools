@@ -190,6 +190,6 @@ export default {
     "privacyPolicy": "プライバシーポリシー",
     "accept": "同意して続ける"
   },
-  "seo_title": "oLoveTools | FormatFlow",
+  "seo_title": "FormatFlow | 画像コンバーター",
   "seo_description": "FormatFlowは、あらゆるフォーマット（JPG、PNG、WEBP）をHEIC、SVG、ICO、PDF、TIFF、EPS、RAWに変換し、写真のサイズを変更し、ブラウザ内で安全にフォーマットを変更するための究極のツールです。"
 };

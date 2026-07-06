@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | Запрашивает DNS-записи (A, AAAA, MX, TXT, NS, CNAME, SOA) любого домена по HTTPS.",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | Запрашивает DNS-записи (A, AAAA, MX, TXT, NS, CNAME, SOA) любого домена по HTTPS.",
   "seo_description": "Запрашивает DNS-записи (A, AAAA, MX, TXT, NS, CNAME, SOA) любого домена по HTTPS прямо в вашем браузере.",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "Запрашивает DNS-записи (A, AAAA, MX, TXT, NS, CNAME, SOA) любого домена по HTTPS прямо в вашем браузере.",
   "unit_seconds": "с",
   "unit_minutes": "мин",
@@ -34,7 +34,13 @@ export default {
   "seoUseCaseText": "Всё выполняется локально в вашем браузере. Ваши данные никогда не покидают ваше устройство.",
   "seoPrivacyTitle": "100% приватно и безопасно",
   "seoPrivacyText": "Никаких баз данных, отслеживания или сетевых загрузок. Ваши данные хранятся строго в локальной памяти и исчезают при закрытии вкладки.",
-  "seoKeywords": ["whois bolt", "онлайн-инструмент", "бесплатно", "локально", "браузер"],
+  "seoKeywords": [
+    "whois bolt",
+    "онлайн-инструмент",
+    "бесплатно",
+    "локально",
+    "браузер"
+  ],
   "faqTitle": "Часто задаваемые вопросы",
   "faq": [
     {
@@ -42,8 +48,8 @@ export default {
       "answer": "Нет. Все операции выполняются полностью внутри вашего браузера. Ваши данные никогда не покидают ваше устройство."
     },
     {
-      "question": "Какие типы DNS-записей разрешает Whois-Bolt?",
-      "answer": "Whois-Bolt разрешает записи A, AAAA, CNAME, MX, NS, TXT и SOA для любого домена, представляя их в наглядной сводке с IP-адресами, серверами имён, почтовыми серверами и другими данными."
+      "question": "Какие типы DNS-записей разрешает WhoisBolt?",
+      "answer": "WhoisBolt разрешает записи A, AAAA, CNAME, MX, NS, TXT и SOA для любого домена, представляя их в наглядной сводке с IP-адресами, серверами имён, почтовыми серверами и другими данными."
     },
     {
       "question": "Как выполняются DNS-запросы?",
@@ -51,7 +57,7 @@ export default {
     }
   ],
   "footerTagline": "Запрашивает DNS-записи (A, AAAA, MX, TXT, NS, CNAME, SOA) любого домена по HTTPS прямо в вашем браузере.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Часть набора инструментов oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Скопировано!",
   "contactForIdeas": "Контакт для идей и комментариев:"

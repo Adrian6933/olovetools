@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ToolTheme } from '../../lib/themes';
+import { useReducedMotion } from './motion';
 
 interface LanguagePillProps {
   theme: ToolTheme;
@@ -30,6 +31,7 @@ export const LanguagePill: React.FC<LanguagePillProps> = ({
 }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const prefersReduced = useReducedMotion();
 
   const current = LANGUAGES.find((l) => l.code === currentLang) ?? LANGUAGES[0];
 
@@ -74,10 +76,10 @@ export const LanguagePill: React.FC<LanguagePillProps> = ({
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -6, scale: 0.95 }}
+            initial={{ opacity: 0, y: prefersReduced ? 0 : -6, scale: prefersReduced ? 1 : 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
+            exit={{ opacity: 0, y: prefersReduced ? 0 : -6, scale: prefersReduced ? 1 : 0.95 }}
+            transition={{ duration: prefersReduced ? 0.05 : 0.15 }}
             className={`absolute right-0 mt-2 w-44 rounded-xl overflow-hidden shadow-2xl backdrop-blur-xl z-50 ${
               variant === 'topnav' ? 'mt-1' : ''
             }`}

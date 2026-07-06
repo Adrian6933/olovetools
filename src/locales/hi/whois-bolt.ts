@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | किसी भी डोमेन के DNS रिकॉर्ड (A, AAAA, MX, TXT, NS, CNAME, SOA) HTTPS पर खोजें।",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | किसी भी डोमेन के DNS रिकॉर्ड (A, AAAA, MX, TXT, NS, CNAME, SOA) HTTPS पर खोजें।",
   "seo_description": "किसी भी डोमेन के DNS रिकॉर्ड (A, AAAA, MX, TXT, NS, CNAME, SOA) HTTPS पर खोजें, सीधे अपने ब्राउज़र में।",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "किसी भी डोमेन के DNS रिकॉर्ड (A, AAAA, MX, TXT, NS, CNAME, SOA) HTTPS पर खोजें, सीधे अपने ब्राउज़र में।",
   "unit_seconds": "से",
   "unit_minutes": "मि",
@@ -34,7 +34,13 @@ export default {
   "seoUseCaseText": "सब कुछ आपके ब्राउज़र में स्थानीय रूप से चलता है। आपका डेटा कभी आपका डिवाइस नहीं छोड़ता।",
   "seoPrivacyTitle": "100% निजी और सुरक्षित",
   "seoPrivacyText": "कोई डेटाबेस, ट्रैकिंग या नेटवर्क अपलोड नहीं। आपका डेटा कड़ाई से स्थानीय मेमोरी में रहता है और टैब बंद करने पर गायब हो जाता है।",
-  "seoKeywords": ["whois bolt", "ऑनलाइन उपकरण", "मुफ़्त", "स्थानीय", "ब्राउज़र"],
+  "seoKeywords": [
+    "whois bolt",
+    "ऑनलाइन उपकरण",
+    "मुफ़्त",
+    "स्थानीय",
+    "ब्राउज़र"
+  ],
   "faqTitle": "अक्सर पूछे जाने वाले प्रश्न",
   "faq": [
     {
@@ -42,8 +48,8 @@ export default {
       "answer": "नहीं। सभी ऑपरेशन पूरी तरह से आपके ब्राउज़र के अंदर होते हैं। आपका डेटा कभी आपका डिवाइस नहीं छोड़ता।"
     },
     {
-      "question": "Whois-Bolt कौन-से DNS रिकॉर्ड प्रकार हल करता है?",
-      "answer": "Whois-Bolt किसी भी डोमेन के A, AAAA, CNAME, MX, NS, TXT और SOA रिकॉर्ड हल करता है, उन्हें IP पते, नेमसर्वर, मेल सर्वर और अधिक के साथ एक स्पष्ट सारांश में प्रस्तुत करता है।"
+      "question": "WhoisBolt कौन-से DNS रिकॉर्ड प्रकार हल करता है?",
+      "answer": "WhoisBolt किसी भी डोमेन के A, AAAA, CNAME, MX, NS, TXT और SOA रिकॉर्ड हल करता है, उन्हें IP पते, नेमसर्वर, मेल सर्वर और अधिक के साथ एक स्पष्ट सारांश में प्रस्तुत करता है।"
     },
     {
       "question": "DNS क्वेरी कैसे की जाती हैं?",
@@ -51,7 +57,7 @@ export default {
     }
   ],
   "footerTagline": "किसी भी डोमेन के DNS रिकॉर्ड (A, AAAA, MX, TXT, NS, CNAME, SOA) HTTPS पर खोजें, सीधे अपने ब्राउज़र में।",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools सुइट का हिस्सा",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "कॉपी हो गया!",
   "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:"

@@ -57,7 +57,11 @@ export default {
     "Sofortiger Screenshot",
     "Kostenloses Bild-Tool",
     "Private Zwischenablage",
-    "Browser-Bild-Werkzeug"
+    "Browser-Bild-Werkzeug",
+    "Eingefügtes Bild herunterladen",
+    "Bild aus Zwischenablage speichern",
+    "Zwischenablage-Bild-Speicher",
+    "Sofortiger PNG-Download"
   ],
   "seoUseCaseTitle": "Anwendungsfall",
   "seoUseCaseText": "Screenshots von Slack oder Teams direkt als PNG speichern.",

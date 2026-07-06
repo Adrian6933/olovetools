@@ -1,5 +1,5 @@
 export default {
-  "title": "Lottie-Viewer",
+  "title": "Lottie Viewer",
   "description": "交互式浏览器端 Lottie 动画播放器、自定义编辑器与属性检测器，100% 本地化运行，支持矢量色彩提取与实时播放属性调整。",
   "drop_active": "拖放 Lottie JSON 文件至此以加载...",
   "drop_inactive": "拖放 Lottie JSON 文件到此处，或点击浏览文件",
@@ -40,7 +40,7 @@ export default {
   "faq": [
     {
       "question": "使用本工具会上传我的 Lottie JSON 动画文件吗？",
-      "answer": "绝对不会。Lottie-Viewer 100% 离线运行在客户端浏览器内存中。您的任何动画文件和配色修改均保存在您的本地。"
+      "answer": "绝对不会。Lottie Viewer 100% 离线运行在客户端浏览器内存中。您的任何动画文件和配色修改均保存在您的本地。"
     },
     {
       "question": "图层调色盘是如何提取并修改颜色的？",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "私密、本地的浏览器端 Lottie 动画播放、颜色自定义和属性检测工具。",
-  "footerCredit": "oLoveTools 套件的一部分"
+  "footerCredit": "oLoveTools 套件的一部分",
+  "seo_title": "Lottie Viewer | 免费在线Lottie动画播放器与编辑器",
+  "seo_description": "交互式浏览器端 Lottie 动画播放器、自定义编辑器与属性检测器，100% 本地化运行，支持矢量色彩提取与实时播放属性调整。"
 };

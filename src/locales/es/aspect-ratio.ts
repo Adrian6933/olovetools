@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "Calculadora de Relación de Aspecto | Simplifica Relaciones y Redimensiona Proporcionalmente 100% Localmente",
   "seo_description": "Calcula relaciones de aspecto simplificadas, redimensiona imágenes proporcionalmente y explora presets comunes como 16:9, 4:3 y 9:16. 100% local y privado.",
   "seoHeroTitle": "Calculadora de Relación Pro",
@@ -36,7 +36,16 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus entradas de dimensiones nunca salen de tu dispositivo y nada se sube.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, rastreo ni cargas a la red. Tus entradas residen estrictamente en memoria local y desaparecen cuando cierras la pestaña.",
-  "seoKeywords": ["calculadora de relación de aspecto", "redimensionar imagen proporcionalmente", "relación 16:9", "simplificar relación", "dimensiones de imagen", "resolución de vídeo", "herramienta en línea", "gratis"],
+  "seoKeywords": [
+    "calculadora de relación de aspecto",
+    "redimensionar imagen proporcionalmente",
+    "relación 16:9",
+    "simplificar relación",
+    "dimensiones de imagen",
+    "resolución de vídeo",
+    "herramienta en línea",
+    "gratis"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -53,7 +62,7 @@ export default {
     }
   ],
   "footerTagline": "Calcula relaciones de aspecto y resoluciones proporcionales para vídeo, imágenes y pantallas 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

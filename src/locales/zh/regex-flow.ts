@@ -1,5 +1,5 @@
 export default {
-  "title": "Regex-Flow",
+  "title": "RegexFlow",
   "description": "交互式浏览器端正则表达式构建与测试工具，100% 本地化运行，提供实时匹配高亮、语法解析 breakdown 和文本替换预览。",
   "regex_placeholder": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
   "text_placeholder": "在此输入您的测试文本。例如：hello@olovetools.com 或者 support@example.org。",
@@ -31,8 +31,8 @@ export default {
   "faqTitle": "常见问题解答",
   "faq": [
     {
-      "question": "使用 Regex-Flow 测试敏感数据是否安全？",
-      "answer": "非常安全。Regex-Flow 100% 运行于客户端浏览器，数据不会发送给任何服务器。您的正则表达式和文本是完全私密的。"
+      "question": "使用 RegexFlow 测试敏感数据是否安全？",
+      "answer": "非常安全。RegexFlow 100% 运行于客户端浏览器，数据不会发送给任何服务器。您的正则表达式和文本是完全私密的。"
     },
     {
       "question": "本工具使用的是哪种正则表达式引擎？",
@@ -44,5 +44,7 @@ export default {
     }
   ],
   "footerTagline": "私密、本地的浏览器端正则表达式构建和测试工具。",
-  "footerCredit": "oLoveTools 套件的一部分"
+  "footerCredit": "oLoveTools 套件的一部分",
+  "seo_title": "RegexFlow | 免费在线正则表达式测试与构建工具",
+  "seo_description": "交互式浏览器端正则表达式构建与测试工具，100% 本地化运行，提供实时匹配高亮、语法解析 breakdown 和文本替换预览。"
 };

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
+declare global {
+  interface Window {
+    updateAnalyticsConsent?: (state: 'granted' | 'denied') => void;
+  }
+}
+
 interface CookieBannerProps {
   lang: string;
 }
@@ -60,17 +66,20 @@ export const CookieBanner: React.FC<CookieBannerProps> = ({ lang }) => {
     const consent = localStorage.getItem('cookieConsent');
     if (!consent) {
       setIsVisible(true);
+    } else {
+      window.updateAnalyticsConsent?.(consent === 'true' ? 'granted' : 'denied');
     }
   }, []);
 
   const handleAccept = () => {
     localStorage.setItem('cookieConsent', 'true');
-    // Here you could optionally push to dataLayer or re-init Google AdSense if required
+    window.updateAnalyticsConsent?.('granted');
     setIsVisible(false);
   };
 
   const handleDecline = () => {
     localStorage.setItem('cookieConsent', 'false');
+    window.updateAnalyticsConsent?.('denied');
     setIsVisible(false);
   };
 

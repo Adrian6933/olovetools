@@ -339,7 +339,7 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
             <Globe className="w-8 h-8 text-teal-400" />
-            <span>{t.seoHeroTitle || 'Time-Bolt'}</span>
+            <span>{t.seoHeroTitle || 'TimeBolt'}</span>
           </h2>
           <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
             {t.seoHeroText}

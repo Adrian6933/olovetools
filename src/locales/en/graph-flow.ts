@@ -1,5 +1,5 @@
 export default {
-  "title": "Graph-Flow",
+  "title": "GraphFlow",
   "description": "Create beautiful charts and data visualizations from CSV files or manual input. Export as PNG, SVG, or PDF 100% locally in your browser.",
   "label_data_source": "Data Source",
   "drop_active": "Drop your CSV file here...",
@@ -64,12 +64,23 @@ export default {
   "seoUseCaseText": "Upload a CSV, pick a chart type, customize colors and labels, and export high-resolution PNG or vector SVG images ready for slides, reports, and web pages.",
   "seoPrivacyTitle": "100% Data Confidentiality",
   "seoPrivacyText": "Your data files and spreadsheets are never uploaded to any server. All processing happens inside your browser's memory and is discarded when you close the tab.",
-  "seoKeywords": ["chart generator", "CSV to chart", "bar chart maker", "pie chart online", "data visualization", "graph creator", "line chart tool", "export chart PNG", "local chart tool", "no upload charts"],
+  "seoKeywords": [
+    "chart generator",
+    "CSV to chart",
+    "bar chart maker",
+    "pie chart online",
+    "data visualization",
+    "graph creator",
+    "line chart tool",
+    "export chart PNG",
+    "local chart tool",
+    "no upload charts"
+  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
       "question": "Is my CSV data uploaded to any server?",
-      "answer": "No. Graph-Flow runs entirely client-side in your browser's memory. Your data files are processed locally and never leave your device."
+      "answer": "No. GraphFlow runs entirely client-side in your browser's memory. Your data files are processed locally and never leave your device."
     },
     {
       "question": "What CSV format is expected?",
@@ -81,9 +92,11 @@ export default {
     },
     {
       "question": "What chart types are available?",
-      "answer": "Graph-Flow supports bar charts, line charts, area charts, pie/doughnut charts, radar charts, scatter plots, and horizontal bar charts with full customization options."
+      "answer": "GraphFlow supports bar charts, line charts, area charts, pie/doughnut charts, radar charts, scatter plots, and horizontal bar charts with full customization options."
     }
   ],
   "footerTagline": "Turn your data into stunning charts — 100% locally in your browser.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "GraphFlow | Free Online Chart & Data Visualization Maker",
+  "seo_description": "Create beautiful charts and data visualizations from CSV files or manual input. Export as PNG, SVG, or PDF 100% locally in your browser."
 };

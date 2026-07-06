@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "Calculateur de Ratio d'Aspect | Simplifiez les Ratios et Redimensionnez Proportionnellement 100% Localement",
   "seo_description": "Calculez des ratios d'aspect simplifiés, redimensionnez des images proportionnellement et explorez des préréglages courants comme 16:9, 4:3 et 9:16. 100% local et privé.",
   "seoHeroTitle": "Calculateur de Ratio Pro",
@@ -36,7 +36,16 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos entrées de dimensions ne quittent jamais votre appareil et rien n'est téléchargé.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ou téléchargement réseau. Vos entrées résident strictement en mémoire locale et disparaissent lorsque vous fermez l'onglet.",
-  "seoKeywords": ["calculateur de ratio d'aspect", "redimensionner image proportionnellement", "ratio 16:9", "simplifier ratio", "dimensions d'image", "résolution vidéo", "outil en ligne", "gratuit"],
+  "seoKeywords": [
+    "calculateur de ratio d'aspect",
+    "redimensionner image proportionnellement",
+    "ratio 16:9",
+    "simplifier ratio",
+    "dimensions d'image",
+    "résolution vidéo",
+    "outil en ligne",
+    "gratuit"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -53,7 +62,7 @@ export default {
     }
   ],
   "footerTagline": "Calculez des ratios d'aspect et des résolutions proportionnelles pour la vidéo, les images et les écrans 100% localement.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

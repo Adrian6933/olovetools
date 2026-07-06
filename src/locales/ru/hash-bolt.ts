@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "Вычисляйте криптографические хеши (MD5, SHA-1, SHA-256, SHA-512) для текста и файлов на 100% локально прямо в браузере.",
   "input_text_tab": "Ввод текста",
   "input_file_tab": "Хеширование файлов",
@@ -43,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "Безопасный локальный генератор контрольных сумм и криптографических хешей для текста и файлов.",
-  "footerCredit": "Часть пакета oLoveTools"
+  "footerCredit": "Часть пакета oLoveTools",
+  "seo_title": "HashBolt | Бесплатный онлайн-генератор хешей MD5, SHA-1, SHA-256",
+  "seo_description": "Вычисляйте криптографические хеши (MD5, SHA-1, SHA-256, SHA-512) для текста и файлов на 100% локально прямо в браузере."
 };

@@ -10,14 +10,38 @@ export default {
   "seoUseCaseText": "Récupérez des miniatures, trouvez l'image la plus nette pour une affiche, extrayez des images de référence pour le design, capturez des preuves ou sortez l'arrêt sur image parfait pour un meme. Avancez image par image pour une sélection précise.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Votre vidéo reste sur votre appareil. Aucun téléversement, aucune base de données, aucun suivi — le fichier ne vit que dans la mémoire locale et disparaît à la fermeture de l'onglet.",
-  "seoKeywords": ["extraire image vidéo", "vidéo en image", "image par image", "capturer image vidéo", "enregistrer image vidéo", "extracteur d'images", "exporter frame png"],
+  "seoKeywords": [
+    "extraire image vidéo",
+    "vidéo en image",
+    "image par image",
+    "capturer image vidéo",
+    "enregistrer image vidéo",
+    "extracteur d'images",
+    "exporter frame png",
+    "exporter frame png"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
-    { "question": "Ma vidéo est-elle téléversée quelque part ?", "answer": "Non. FrameSnap traite tout dans votre navigateur via les API natives vidéo et canvas. Votre fichier ne quitte jamais votre appareil." },
-    { "question": "Comment avancer image par image ?", "answer": "Utilisez les boutons image précédente/suivante ou les flèches ← / →. Le pas utilise la valeur IPS que vous définissez ; réglez-la sur la fréquence réelle de votre vidéo (24, 25, 30 ou 60) pour des pas précis." },
-    { "question": "Dans quelle qualité l'image est-elle exportée ?", "answer": "Les images sont capturées à la résolution native de la vidéo. Vous pouvez exporter en PNG sans perte, ou en JPG/WebP avec un curseur de qualité réglable." },
-    { "question": "Quels formats vidéo sont pris en charge ?", "answer": "Tout format lisible par votre navigateur, généralement MP4 (H.264), WebM, MOV et d'autres. Si une vidéo ne se lit pas, votre navigateur peut manquer du codec." },
-    { "question": "Puis-je capturer plusieurs images ?", "answer": "Oui. Chaque capture est ajoutée à une galerie ; téléchargez-les une par une ou toutes en ZIP." }
+    {
+      "question": "Ma vidéo est-elle téléversée quelque part ?",
+      "answer": "Non. FrameSnap traite tout dans votre navigateur via les API natives vidéo et canvas. Votre fichier ne quitte jamais votre appareil."
+    },
+    {
+      "question": "Comment avancer image par image ?",
+      "answer": "Utilisez les boutons image précédente/suivante ou les flèches ← / →. Le pas utilise la valeur IPS que vous définissez ; réglez-la sur la fréquence réelle de votre vidéo (24, 25, 30 ou 60) pour des pas précis."
+    },
+    {
+      "question": "Dans quelle qualité l'image est-elle exportée ?",
+      "answer": "Les images sont capturées à la résolution native de la vidéo. Vous pouvez exporter en PNG sans perte, ou en JPG/WebP avec un curseur de qualité réglable."
+    },
+    {
+      "question": "Quels formats vidéo sont pris en charge ?",
+      "answer": "Tout format lisible par votre navigateur, généralement MP4 (H.264), WebM, MOV et d'autres. Si une vidéo ne se lit pas, votre navigateur peut manquer du codec."
+    },
+    {
+      "question": "Puis-je capturer plusieurs images ?",
+      "answer": "Oui. Chaque capture est ajoutée à une galerie ; téléchargez-les une par une ou toutes en ZIP."
+    }
   ],
   "footerTagline": "Parcourez n'importe quelle vidéo image par image et exportez l'image exacte en haute qualité — 100% local dans votre navigateur.",
   "footerCredit": "Fait partie de la suite oLoveTools",

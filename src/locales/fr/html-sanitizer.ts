@@ -1,6 +1,6 @@
 export default {
-  "title": "HTML-Sanitizer",
-  "seo_title": "HTML-Sanitizer | Nettoyeur et désinfectant HTML gratuit en ligne",
+  "title": "HTML Sanitizer",
+  "seo_title": "HTML Sanitizer | Nettoyeur et désinfectant HTML gratuit en ligne",
   "seo_description": "Nettoyez et désinfectez du code HTML en supprimant les scripts, styles, iframes, gestionnaires d'événements et balises indésirables 100% localement dans votre navigateur. Désinfectant HTML gratuit en ligne.",
   "seoHeroTitle": "Nettoyeur et désinfectant HTML",
   "seoHeroText": "Collez n'importe quel code HTML et supprimez instantanément les scripts, styles, iframes, gestionnaires d'événements, commentaires et balises indésirables. Activez des options de nettoyage spécifiques et voyez un aperçu en direct dans un iframe isolé. Tout s'exécute localement dans votre navigateur.",
@@ -34,7 +34,15 @@ export default {
   "seoUseCaseText": "Visualisez le HTML nettoyé rendu en temps réel dans un iframe isolé qui bloque l'exécution des scripts. Parfait pour vérifier que votre HTML désinfecté s'affiche exactement comme prévu avant de l'utiliser.",
   "seoPrivacyTitle": "100% privé et sécurisé",
   "seoPrivacyText": "Aucune base de données, aucun suivi ni téléversement réseau. Votre code HTML réside strictement en mémoire locale et est traité par les APIs DOM natives du navigateur. Tout disparaît à la fermeture de l'onglet.",
-  "seoKeywords": ["désinfectant html", "nettoyeur html", "supprimer scripts", "nettoyer html", "désinfecter html", "supprimer balises", "purificateur html"],
+  "seoKeywords": [
+    "désinfectant html",
+    "nettoyeur html",
+    "supprimer scripts",
+    "nettoyer html",
+    "désinfecter html",
+    "supprimer balises",
+    "purificateur html"
+  ],
   "faqTitle": "Questions fréquentes",
   "faq": [
     {
@@ -51,8 +59,9 @@ export default {
     }
   ],
   "footerTagline": "Désinfectant HTML rapide et sécurisé avec aperçu en direct et options de nettoyage configurables — 100% local dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "button_copy": "Copier le HTML"
 };

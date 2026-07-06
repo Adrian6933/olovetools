@@ -1,7 +1,7 @@
 export default {
-  "title": "PDF-Flow",
+  "title": "PDFFlow",
   "description": "Merge, split, rotate, and convert documents or images to PDF locally in your browser.",
-  "seo_title": "PDF-Flow | Client-Side PDF Editor & Toolkit",
+  "seo_title": "PDFFlow | Client-Side PDF Editor & Toolkit",
   "seo_description": "Merge, split, rotate, and convert JPG/PNG to PDF 100% locally. No registration or server uploads required. Secure, fast, and completely free.",
   "dropzonePrompt": "Drag & drop your files here or click to select",
   "dropzoneSubtitle": "Supports PDF files and JPG/PNG images. All processing is 100% local.",
@@ -52,14 +52,14 @@ export default {
   ],
   "footerCredit": "Part of oLoveTools suite",
   "seoHeroTitle": "100% Local, Private & Secure PDF Editing",
-  "seoHeroText": "Standard online PDF tools force you to upload sensitive documents—like contracts, tax forms, and scans—to foreign servers. PDF-Flow processes all operations directly in memory. Your private documents never leave your computer.",
+  "seoHeroText": "Standard online PDF tools force you to upload sensitive documents—like contracts, tax forms, and scans—to foreign servers. PDFFlow processes all operations directly in memory. Your private documents never leave your computer.",
   "seoHeroList": [
     "Secure offline processing",
     "No document uploads, zero privacy risk",
     "Completely free with no limits"
   ],
   "seoBrowserSpeedTitle": "Instant Browser Compilation",
-  "seoBrowserSpeedText": "By compiling PDF files locally using JS WebAssembly APIs, PDF-Flow avoids network lag and server queues. Merge large files or extract pages instantly.",
+  "seoBrowserSpeedText": "By compiling PDF files locally using JS WebAssembly APIs, PDFFlow avoids network lag and server queues. Merge large files or extract pages instantly.",
   "seoSecondaryTitle": "Versatile client-side PDF utilities",
   "seoKeywordsTitle": "Keywords",
   "seoKeywords": [
@@ -74,9 +74,9 @@ export default {
     "No upload PDF converter"
   ],
   "seoUseCaseTitle": "Ideal for Professional & Personal Use",
-  "seoUseCaseText": "Whether combining signed contracts, organizing scanned receipts, splitting study guides, or compiling image galleries, PDF-Flow handles it locally with speed and privacy.",
+  "seoUseCaseText": "Whether combining signed contracts, organizing scanned receipts, splitting study guides, or compiling image galleries, PDFFlow handles it locally with speed and privacy.",
   "seoPrivacyTitle": "Uncompromised Data Security",
-  "seoPrivacyText": "We believe your files belong to you. PDF-Flow uses pdf-lib to run in-memory PDF manipulation in the browser sandbox. No telemetry, no logs, and no uploads.",
+  "seoPrivacyText": "We believe your files belong to you. PDFFlow uses pdf-lib to run in-memory PDF manipulation in the browser sandbox. No telemetry, no logs, and no uploads.",
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
@@ -104,7 +104,7 @@ export default {
   "emailCopied": "Email copied to clipboard!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "Your privacy is important to us.\n\nWe only collect information necessary to provide our service. This includes technical data about your browser and device to ensure the tool works correctly.\n\nWe never store, track, or analyze your files. All processing happens locally in your browser, ensuring your data never leaves your device.",
-  "termsContent": "By using PDF-Flow, you agree to these terms.\n\n1. This tool is provided \"as-is\" without any warranties.\n2. We are not responsible for any data loss or issues arising from the use of this tool.\n3. You are responsible for the content you process using this tool.\n4. We reserve the right to modify these terms at any time.",
+  "termsContent": "By using PDFFlow, you agree to these terms.\n\n1. This tool is provided \"as-is\" without any warranties.\n2. We are not responsible for any data loss or issues arising from the use of this tool.\n3. You are responsible for the content you process using this tool.\n4. We reserve the right to modify these terms at any time.",
   "cookiesContent": "We use cookies to improve your experience.\n\n1. Essential Cookies: Required for the basic functionality of the site.\n2. Preference Cookies: Used to remember your language and cookie consent settings.\n\nYou can manage or disable cookies through your browser settings at any time.",
   "contact": "Contact"
 };

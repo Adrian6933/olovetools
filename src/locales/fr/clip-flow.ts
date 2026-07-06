@@ -10,22 +10,47 @@ export default {
   "seoUseCaseText": "Idéal pour créer des compilations à partir de longs VODs : marquez chaque bon moment sur une émission de plusieurs heures et exportez-les en un seul MP4 continu, ou récupérez chaque moment séparément.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Les données vidéo sont diffusées directement depuis les serveurs de Twitch vers votre navigateur. Tout le découpage et la fusion se font localement sur votre appareil — rien n'est jamais envoyé où que ce soit.",
-  "seoKeywords": ["éditeur de clips twitch", "découper vod twitch", "clip twitch plus de 60 secondes", "vod vers mp4", "créer des highlights twitch", "recadrer vod twitch", "éditeur vidéo twitch en ligne"],
+  "seoKeywords": [
+    "éditeur de clips twitch",
+    "découper vod twitch",
+    "clip twitch plus de 60 secondes",
+    "vod vers mp4",
+    "créer des highlights twitch",
+    "recadrer vod twitch",
+    "éditeur vidéo twitch en ligne"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
-    { "question": "Puis-je créer des clips plus longs que la limite de 60 secondes de Twitch ?", "answer": "Oui. ClipFlow n'a aucune limite de durée — marquez des découpes de la durée souhaitée, de quelques secondes à une heure entière." },
-    { "question": "Mes données sont-elles envoyées à un serveur ?", "answer": "Non. Les données vidéo vont directement de Twitch à votre navigateur, et tout le découpage et l'export se font localement sur votre appareil." },
-    { "question": "Pourquoi les découpes ne sont-elles pas parfaites à l'image près ?", "answer": "Pour garder des exports rapides et sans perte de qualité, ClipFlow s'aligne sur le keyframe le plus proche (environ 2 secondes de précision) au lieu de réencoder toute la vidéo." },
-    { "question": "Cela fonctionne-t-il avec les directs en cours ?", "answer": "Oui. Collez le lien d'une chaîne en direct et ClipFlow chargera son enregistrement en cours, qui continue de grandir tant que le streamer est en direct." },
-    { "question": "Pourquoi mon export a-t-il échoué ?", "answer": "C'est généralement un problème réseau temporaire lors du téléchargement des données vidéo, ou le moteur vidéo qui n'a pas réussi à se charger. Réessayez, ou utilisez le téléchargement de secours au format .ts." },
-    { "question": "Puis-je télécharger plusieurs découpes à la fois ?", "answer": "Oui. Téléchargez chaque découpe individuellement, ou utilisez « Tout télécharger réuni » pour obtenir toutes les découpes combinées en un seul MP4, dans l'ordre où vous les avez organisées." }
+    {
+      "question": "Puis-je créer des clips plus longs que la limite de 60 secondes de Twitch ?",
+      "answer": "Oui. ClipFlow n'a aucune limite de durée — marquez des découpes de la durée souhaitée, de quelques secondes à une heure entière."
+    },
+    {
+      "question": "Mes données sont-elles envoyées à un serveur ?",
+      "answer": "Non. Les données vidéo vont directement de Twitch à votre navigateur, et tout le découpage et l'export se font localement sur votre appareil."
+    },
+    {
+      "question": "Pourquoi les découpes ne sont-elles pas parfaites à l'image près ?",
+      "answer": "Pour garder des exports rapides et sans perte de qualité, ClipFlow s'aligne sur le keyframe le plus proche (environ 2 secondes de précision) au lieu de réencoder toute la vidéo."
+    },
+    {
+      "question": "Cela fonctionne-t-il avec les directs en cours ?",
+      "answer": "Oui. Collez le lien d'une chaîne en direct et ClipFlow chargera son enregistrement en cours, qui continue de grandir tant que le streamer est en direct."
+    },
+    {
+      "question": "Pourquoi mon export a-t-il échoué ?",
+      "answer": "C'est généralement un problème réseau temporaire lors du téléchargement des données vidéo, ou le moteur vidéo qui n'a pas réussi à se charger. Réessayez, ou utilisez le téléchargement de secours au format .ts."
+    },
+    {
+      "question": "Puis-je télécharger plusieurs découpes à la fois ?",
+      "answer": "Oui. Téléchargez chaque découpe individuellement, ou utilisez « Tout télécharger réuni » pour obtenir toutes les découpes combinées en un seul MP4, dans l'ordre où vous les avez organisées."
+    }
   ],
   "footerTagline": "Découpez plusieurs clips de n'importe quelle durée depuis des VODs et directs Twitch et exportez-les en MP4, 100% dans votre navigateur.",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :",
-
   "inputTitle": "Collez un VOD ou une chaîne Twitch",
   "inputPlaceholder": "twitch.tv/videos/123456789 ou nom de la chaîne",
   "inputButton": "Charger la vidéo",
@@ -36,22 +61,18 @@ export default {
   "featureCutText": "Marquez autant de segments que vous voulez, de n'importe quelle durée.",
   "featureExportTitle": "3. Exportez",
   "featureExportText": "Téléchargez séparément ou réunis en un seul MP4.",
-
   "loadingVod": "Récupération des infos du VOD…",
   "loadingPlaylist": "Chargement des flux vidéo…",
-
   "errorInvalidUrl": "Ce lien ne semble pas être un VOD ou une chaîne Twitch valide.",
   "errorVodNotFound": "Ce VOD est introuvable. Il a peut-être été supprimé.",
   "errorChannelNotFound": "Chaîne introuvable. Vérifiez l'orthographe et réessayez.",
   "errorVodsDisabled": "Cette chaîne n'a aucun VOD disponible — les émissions précédentes sont peut-être désactivées.",
   "errorPlaylist": "Impossible de charger le flux vidéo. Veuillez réessayer.",
-
+  "errorVodRestricted": "Ce VOD est réservé aux abonnés ou restreint sur Twitch et ne peut pas être lu sans y être connecté — aucun outil de téléchargement ne peut contourner cela.",
   "liveBadge": "EN DIRECT — l'enregistrement continue de grandir",
   "qualityLabel": "Qualité",
-
-  "timelineTitle": "Timeline",
+  "timelineTitle": "Chronologie",
   "addCut": "Ajouter une découpe à la position actuelle",
-
   "cutLabel": "Découpe",
   "cutsLabel": "découpes",
   "startLabel": "Début",
@@ -63,12 +84,10 @@ export default {
   "moveUp": "Monter",
   "moveDown": "Descendre",
   "noCutsYet": "Aucune découpe pour l'instant — appuyez sur « Ajouter une découpe » pour marquer votre premier segment.",
-
   "downloadCut": "Télécharger en MP4",
   "downloadAllJoined": "Télécharger tout réuni (MP4)",
   "totalLabel": "total",
   "estimatedSize": "taille est.",
-
   "loadingEngine": "Chargement du moteur vidéo ({pct}%) — uniquement la première fois…",
   "downloadingSegments": "Téléchargement de la vidéo ({pct}%)…",
   "processingCut": "Conversion en MP4…",

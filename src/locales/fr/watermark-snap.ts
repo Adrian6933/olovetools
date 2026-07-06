@@ -1,5 +1,5 @@
 export default {
-  "title": "Watermark-Snap",
+  "title": "WatermarkSnap",
   "description": "Ajoutez des filigranes de texte ou de logo à plusieurs images simultanément. Tout est traité localement dans votre navigateur.",
   "btn_download_zip": "Télécharger les Images (.ZIP)",
   "label_mode_text": "Filigrane Texte",
@@ -20,10 +20,10 @@ export default {
   "btn_add_files": "Ajouter des Images",
   "btn_clear": "Effacer Tout",
   "progress_generating": "Traitement de l'image {current} sur {total}...",
-  "seo_title": "Watermark-Snap | Ajouter un Filigrane sur des Images en Lot en Ligne",
+  "seo_title": "WatermarkSnap | Ajouter un Filigrane sur des Images en Lot en Ligne",
   "seo_description": "Protégez vos photos en masse avec des filigranes personnalisés. Ajoutez du texte ou un logo localement, réglez l'opacité et glissez pour placer le filigrane.",
   "seoHeroTitle": "Ajoutez des Filigranes à vos Images en Masse et Localement",
-  "seoHeroText": "Protégez vos photographies et fiches produits. Watermark-Snap fonctionne entièrement dans la mémoire de votre navigateur sans aucun téléversement.",
+  "seoHeroText": "Protégez vos photographies et fiches produits. WatermarkSnap fonctionne entièrement dans la mémoire de votre navigateur sans aucun téléversement.",
   "seoHeroList": [
     "Option de filigrane en mosaïque répété pour couvrir toute l'image",
     "Importez vos logos personnalisés ou saisissez du texte stylisé",

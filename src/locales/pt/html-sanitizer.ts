@@ -1,6 +1,6 @@
 export default {
-  "title": "HTML-Sanitizer",
-  "seo_title": "HTML-Sanitizer | Limpador e desinfetante de HTML gratuito online",
+  "title": "HTML Sanitizer",
+  "seo_title": "HTML Sanitizer | Limpador e desinfetante de HTML gratuito online",
   "seo_description": "Limpe e desinfete código HTML removendo scripts, estilos, iframes, manipuladores de eventos e tags indesejadas 100% localmente no seu navegador. Desinfetante de HTML gratuito online.",
   "seoHeroTitle": "Limpador e desinfetante de HTML",
   "seoHeroText": "Cole qualquer código HTML e remova instantaneamente scripts, estilos, iframes, manipuladores de eventos, comentários e tags indesejadas. Ative opções específicas de limpeza e veja uma pré-visualização ao vivo em um iframe isolado. Tudo roda localmente no seu navegador.",
@@ -34,7 +34,15 @@ export default {
   "seoUseCaseText": "Veja o HTML limpo renderizado em tempo real dentro de um iframe isolado que bloqueia a execução de scripts. Perfeito para verificar que seu HTML desinfetado aparece exatamente como pretendido antes de usá-lo.",
   "seoPrivacyTitle": "100% privado e seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Seu código HTML reside estritamente na memória local e é processado pelas APIs DOM nativas do navegador. Tudo desaparece ao fechar a aba.",
-  "seoKeywords": ["desinfetante html", "limpador html", "remover scripts", "limpar html", "desinfetar html", "remover tags", "purificador html"],
+  "seoKeywords": [
+    "desinfetante html",
+    "limpador html",
+    "remover scripts",
+    "limpar html",
+    "desinfetar html",
+    "remover tags",
+    "purificador html"
+  ],
   "faqTitle": "Perguntas frequentes",
   "faq": [
     {
@@ -51,8 +59,9 @@ export default {
     }
   ],
   "footerTagline": "Desinfetante de HTML rápido e seguro com pré-visualização ao vivo e opções de limpeza configuráveis — 100% local no seu navegador.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
-  "contactForIdeas": "Contato para ideias e comentários:"
+  "contactForIdeas": "Contato para ideias e comentários:",
+  "button_copy": "Copiar HTML"
 };

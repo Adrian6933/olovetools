@@ -40,7 +40,7 @@ export default {
   "fontGeist": "Geist Mono",
   "gradientSunset": "Sonnenuntergang Orange",
   "gradientCosmic": "Kosmisches Violett",
-  "gradientAurora": "Neon Aurora",
+  "gradientAurora": "Neon-Aurora",
   "gradientMidnight": "Mitternachtsnebel",
   "gradientEmerald": "Smaragd-Dschungel",
   "gradientGlass": "Minimalistisch Dunkel",

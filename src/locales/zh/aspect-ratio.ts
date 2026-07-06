@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "宽高比计算器 | 简化比率并按比例调整大小 100%本地",
   "seo_description": "计算简化的宽高比，按比例调整图像大小，并探索16:9、4:3和9:16等常见预设。100%本地且私密。",
   "seoHeroTitle": "比率计算器专业版",
@@ -36,7 +36,16 @@ export default {
   "seoUseCaseText": "一切都在浏览器中本地运行。您的尺寸输入永远不会离开您的设备，也不会上传任何内容。",
   "seoPrivacyTitle": "100%私密安全",
   "seoPrivacyText": "没有数据库、跟踪或网络上传。您的输入严格驻留在本地内存中，关闭标签页时即消失。",
-  "seoKeywords": ["宽高比计算器", "按比例调整图像大小", "16:9 比率", "简化比率", "图像尺寸", "视频分辨率", "在线工具", "免费"],
+  "seoKeywords": [
+    "宽高比计算器",
+    "按比例调整图像大小",
+    "16:9 比率",
+    "简化比率",
+    "图像尺寸",
+    "视频分辨率",
+    "在线工具",
+    "免费"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -53,7 +62,7 @@ export default {
     }
   ],
   "footerTagline": "100%本地计算视频、图像和屏幕的宽高比和比例分辨率。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以获取想法和评论:"

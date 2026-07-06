@@ -1,5 +1,5 @@
 export default {
-  "title": "JSON-Flow",
+  "title": "JSONFlow",
   "description": "Utilitário interativo para desenvolvedores formatarem, validarem, explorarem e converterem dados JSON para CSV/XML 100% localmente.",
   "beautify": "Formatar",
   "minify": "Minificar",
@@ -32,10 +32,10 @@ export default {
   "mock_user_profile": "Perfil de Usuário",
   "mock_product_catalog": "Catálogo de Produtos",
   "mock_weather_data": "Previsão do Tempo",
-  "seo_title": "JSON-Flow | Formatador, Validador e Conversor de JSON",
+  "seo_title": "JSONFlow | Formatador, Validador e Conversor de JSON",
   "seo_description": "Valide, formate e visualize JSON em uma árvore interativa. Converta JSON para CSV, Excel ou XML, e CSV para JSON 100% localmente.",
   "seoHeroTitle": "Formate, explore e converta JSON de forma segura.",
-  "seoHeroText": "Nunca exponha chaves de API confidenciais ou payloads de clientes em servidores externos. O JSON-Flow roda 100% no seu navegador.",
+  "seoHeroText": "Nunca exponha chaves de API confidenciais ou payloads de clientes em servidores externos. O JSONFlow roda 100% no seu navegador.",
   "seoHeroList": [
     "Processamento 100% local",
     "Converta para CSV, Excel e XML instantaneamente",
@@ -51,7 +51,13 @@ export default {
     "JSON para CSV",
     "JSON para XML",
     "CSV para JSON",
-    "Visualizador JSON"
+    "Visualizador JSON",
+    "Formatador JSON",
+    "Ferramenta JSON Local",
+    "Utilitário para Desenvolvedores",
+    "JSON com Privacidade",
+    "Analisador JSON",
+    "Grade CSV"
   ],
   "seoUseCaseTitle": "Casos de Uso",
   "seoUseCaseText": "Ideal para limpar respostas de APIs, aplanar objetos para planilhas e validar sintaxes.",
@@ -66,6 +72,14 @@ export default {
     {
       "question": "Qual o limite de tamanho?",
       "answer": "Depende do seu dispositivo, lidando facilmente com arquivos de até 50MB."
+    },
+    {
+      "question": "Como funciona o achatamento de JSON para CSV?",
+      "answer": "Achatamos recursivamente as chaves JSON aninhadas (ex.: user.address.city vira 'user_address_city') para que correspondam corretamente a uma grade de planilha estruturada."
+    },
+    {
+      "question": "Posso converter CSV de volta para JSON?",
+      "answer": "Sim. Mude para a aba CSV, cole seu texto CSV estruturado ou arraste um arquivo .csv, e clique em 'Converter' para gerar a representação JSON correspondente."
     }
   ],
   "footerTagline": "Ajudando você a programar e criar com ferramentas premium e fáceis.",

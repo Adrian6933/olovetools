@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | Formatieren, verschönern und validieren Sie SQL-Abfragen mit Syntaxhervorhebung 100% lokal in Ihrem Browser.",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | Formatieren, verschönern und validieren Sie SQL-Abfragen mit Syntaxhervorhebung 100% lokal in Ihrem Browser.",
   "seo_description": "Formatieren, verschönern und validieren Sie SQL-Abfragen mit Syntaxhervorhebung 100% lokal in Ihrem Browser.",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "Formatieren, verschönern und validieren Sie SQL-Abfragen mit Syntaxhervorhebung 100% lokal in Ihrem Browser.",
   "input": "SQL-Eingabe",
   "output": "Formatierte Ausgabe",
@@ -27,7 +27,13 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
-  "seoKeywords": ["sql flow", "online-tool", "kostenlos", "lokal", "browser"],
+  "seoKeywords": [
+    "sql flow",
+    "online-tool",
+    "kostenlos",
+    "lokal",
+    "Browser"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -35,8 +41,8 @@ export default {
       "answer": "Nein. Alle Operationen erfolgen vollständig in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät."
     },
     {
-      "question": "Unterstützt SQL-Flow verschiedene SQL-Dialekte?",
-      "answer": "SQL-Flow erkennt Standard-SQL-Schlüsselwörter, die den meisten Dialekten gemeinsam sind, einschließlich PostgreSQL, MySQL, SQLite und SQL Server. Die Formatierungsregeln sind dialektunabhängig."
+      "question": "Unterstützt SQLFlow verschiedene SQL-Dialekte?",
+      "answer": "SQLFlow erkennt Standard-SQL-Schlüsselwörter, die den meisten Dialekten gemeinsam sind, einschließlich PostgreSQL, MySQL, SQLite und SQL Server. Die Formatierungsregeln sind dialektunabhängig."
     },
     {
       "question": "Kann ich Einrückung und Groß-/Kleinschreibung der Schlüsselwörter anpassen?",
@@ -44,7 +50,7 @@ export default {
     }
   ],
   "footerTagline": "Formatieren, verschönern und validieren Sie SQL-Abfragen mit Syntaxhervorhebung 100% lokal in Ihrem Browser.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

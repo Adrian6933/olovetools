@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | Organisez des notes adhésives sur un tableau Kanban par glisser-déposer, enregistré localement.",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | Organisez des notes adhésives sur un tableau Kanban par glisser-déposer, enregistré localement.",
   "seo_description": "Organisez des notes adhésives sur un tableau Kanban par glisser-déposer, enregistré localement dans votre navigateur 100% côté client.",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "Organisez des notes adhésives sur un tableau Kanban par glisser-déposer, enregistré localement dans votre navigateur 100% côté client.",
   "reset": "Réinitialiser",
   "addNote": "Ajouter une note",
@@ -19,7 +19,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["whiteboard flow", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "whiteboard flow",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -36,7 +42,7 @@ export default {
     }
   ],
   "footerTagline": "Organisez des notes adhésives sur un tableau Kanban par glisser-déposer, enregistré localement dans votre navigateur 100% côté client.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

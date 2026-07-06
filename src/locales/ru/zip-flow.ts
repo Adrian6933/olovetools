@@ -1,12 +1,12 @@
 export default {
-  "title": "Zip-Flow",
+  "title": "ZipFlow",
   "description": "Сжимайте файлы в ZIP-архивы и извлекайте файлы из ZIP-пакетов на 100% локально в браузере с отображением структуры папок в реальном времени.",
   "tab_compress": "Сжатие файлов",
   "tab_extract": "Извлечение архива",
   "compress_drop_active": "Перетащите файлы для добавления...",
   "compress_drop_inactive": "Перетащите файлы сюда или нажмите для обзора",
   "compress_output_filename": "Имя файла ZIP",
-  "compress_output_filename_placeholder": "archive.zip",
+  "compress_output_filename_placeholder": "архив.zip",
   "compress_level": "Уровень сжатия",
   "compress_level_store": "Без сжатия (Быстро)",
   "compress_level_deflate": "Deflate (Стандартное сжатие)",
@@ -45,7 +45,7 @@ export default {
   "faq": [
     {
       "question": "Загружаются ли мои файлы в интернет для архивации/распаковки?",
-      "answer": "Нет. Zip-Flow работает полностью локально с использованием библиотеки JSZip. Ваши данные никогда не покидают ваш компьютер."
+      "answer": "Нет. ZipFlow работает полностью локально с использованием библиотеки JSZip. Ваши данные никогда не покидают ваш компьютер."
     },
     {
       "question": "Можно ли распаковать ZIP-архивы, защищенные паролем?",
@@ -57,5 +57,7 @@ export default {
     }
   ],
   "footerTagline": "Приватный локальный инструмент сжатия и извлечения ZIP в браузере.",
-  "footerCredit": "Часть пакета oLoveTools"
+  "footerCredit": "Часть пакета oLoveTools",
+  "seo_title": "ZipFlow | Бесплатный онлайн-архиватор и распаковщик ZIP",
+  "seo_description": "Сжимайте файлы в ZIP-архивы и извлекайте файлы из ZIP-пакетов на 100% локально в браузере с отображением структуры папок в реальном времени."
 };

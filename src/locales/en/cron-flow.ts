@@ -1,8 +1,8 @@
 export default {
-  "title": "Cron-Flow",
-  "seo_title": "Cron-Flow | Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.",
+  "title": "CronFlow",
+  "seo_title": "CronFlow | Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.",
   "seo_description": "Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.",
-  "seoHeroTitle": "Cron-Flow",
+  "seoHeroTitle": "CronFlow",
   "seoHeroText": "Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.",
   "seoBrowserSpeedTitle": "Instant Local Processing",
   "seoBrowserSpeedText": "All processing is executed inside your browser using native JavaScript APIs. No data is ever sent to a server.",
@@ -18,8 +18,8 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Which cron syntax does Cron-Flow support?",
-      "answer": "Cron-Flow supports standard 5-field cron expressions (minute, hour, day of month, month, weekday) including ranges, steps, lists, and aliases like JAN or SUN."
+      "question": "Which cron syntax does CronFlow support?",
+      "answer": "CronFlow supports standard 5-field cron expressions (minute, hour, day of month, month, weekday) including ranges, steps, lists, and aliases like JAN or SUN."
     },
     {
       "question": "How are the next execution times calculated?",

@@ -1,5 +1,5 @@
 export default {
-  "title": "Hex-to-RGB",
+  "title": "Hex to RGB",
   "seo_title": "HEX から RGB コンバーター | HEX、RGB、HSL、CMYKに不透明度とコントラストチェッカー",
   "seo_description": "調整可能な不透明度とWCAGコントラストチェッカーで、HEX、RGB、HSL、CMYKのカラー形式間を変換します。100%ローカルでプライベート。",
   "seoHeroTitle": "カラーコンバータースタジオ",
@@ -21,7 +21,16 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。カラー入力はデバイスから離れることはなく、何もアップロードされません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。入力は厳密にローカルメモリに留まり、タブを閉じると消去されます。",
-  "seoKeywords": ["hex から rgb", "カラーコンバーター", "hex から hsl", "cmyk コンバーター", "wcag コントラストチェッカー", "rgba 不透明度", "オンラインツール", "無料"],
+  "seoKeywords": [
+    "hex から rgb",
+    "カラーコンバーター",
+    "hex から hsl",
+    "cmyk コンバーター",
+    "wcag コントラストチェッカー",
+    "rgba 不透明度",
+    "オンラインツール",
+    "無料"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -38,7 +47,7 @@ export default {
     }
   ],
   "footerTagline": "不透明度とコントラストツールでHEX、RGB、HSL、CMYKのカラー形式間を100%ローカルで変換します。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

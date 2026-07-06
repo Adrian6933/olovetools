@@ -1,8 +1,8 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | Converte carimbos de tempo Unix epoch em datas legíveis por humanos e vice-versa 100% localmente.",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | Converte carimbos de tempo Unix epoch em datas legíveis por humanos e vice-versa 100% localmente.",
   "seo_description": "Converte carimbos de tempo Unix epoch em datas legíveis por humanos e vice-versa 100% localmente.",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "Converte carimbos de tempo Unix epoch em datas legíveis por humanos e vice-versa 100% localmente.",
   "label_live_epoch": "Unix Epoch ao vivo",
   "button_now": "Agora",
@@ -43,7 +43,13 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["epoch flow", "ferramenta online", "grátis", "local", "navegador"],
+  "seoKeywords": [
+    "epoch flow",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -51,8 +57,8 @@ export default {
       "answer": "Não. Todas as operações acontecem inteiramente dentro do seu navegador. Seus dados nunca saem do seu dispositivo."
     },
     {
-      "question": "O Epoch-Flow suporta tanto segundos quanto milissegundos?",
-      "answer": "Sim. O Epoch-Flow detecta automaticamente se o carimbo de tempo inserido está em segundos ou milissegundos com base em sua magnitude, então você pode colar qualquer formato."
+      "question": "O EpochFlow suporta tanto segundos quanto milissegundos?",
+      "answer": "Sim. O EpochFlow detecta automaticamente se o carimbo de tempo inserido está em segundos ou milissegundos com base em sua magnitude, então você pode colar qualquer formato."
     },
     {
       "question": "Posso converter uma data de volta em um carimbo de tempo Unix epoch?",
@@ -60,7 +66,7 @@ export default {
     }
   ],
   "footerTagline": "Converte carimbos de tempo Unix epoch em datas legíveis por humanos e vice-versa 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

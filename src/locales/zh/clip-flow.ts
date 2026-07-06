@@ -45,6 +45,7 @@ export default {
   "errorChannelNotFound": "找不到该频道，请检查拼写后重试。",
   "errorVodsDisabled": "该频道没有可用的VOD——过往直播回放可能已被禁用。",
   "errorPlaylist": "无法加载视频流，请重试。",
+  "errorVodRestricted": "此 VOD 仅限订阅者观看或已在 Twitch 上被限制，未登录 Twitch 无法播放——任何下载工具都无法绕过此限制。",
 
   "liveBadge": "直播中 — 录制仍在增长",
   "qualityLabel": "画质",

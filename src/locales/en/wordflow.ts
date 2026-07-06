@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "Free, private, and local interactive text analysis workspace.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "seo_title": "WordFlow | Free Online Word Counter & Readability Analyzer",
+  "seo_description": "An advanced word counter, character counter, readability analyzer, and text cleaning assistant 100% locally."
 };

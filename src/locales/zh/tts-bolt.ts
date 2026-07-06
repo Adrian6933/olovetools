@@ -1,5 +1,5 @@
 export default {
-  "title": "TTS-Bolt",
+  "title": "TTSBolt",
   "description": "将文本转换为自然语音，并在浏览器本地 100% 免费下载 MP3 音频文件。",
   "textarea_placeholder": "在此输入或粘贴要朗读的文本...",
   "label_voice": "选择声音",
@@ -15,10 +15,10 @@ export default {
   "history_title": "最近的音频历史",
   "no_history": "暂无音频历史。",
   "clear_history": "清除历史",
-  "seo_title": "TTS-Bolt | 免费在线文本转语音配音工具与 MP3 下载",
+  "seo_title": "TTSBolt | 免费在线文本转语音配音工具与 MP3 下载",
   "seo_description": "使用高品质自然人声在线将文字转为语音，并支持保存为 MP3 格式。可调节语速与音调，完全在浏览器本地运行。",
   "seoHeroTitle": "在线文本转语音并下载为 MP3",
-  "seoHeroText": "在浏览器沙盒中享受即时的高音质自然语音合成。TTS-Bolt 完全在本地运行，保护您文案与文件的绝对隐私。",
+  "seoHeroText": "在浏览器沙盒中享受即时的高音质自然语音合成。TTSBolt 完全在本地运行，保护您文案与文件的绝对隐私。",
   "seoHeroList": [
     "支持调节速度与音调的系统原生人声",
     "在本地内存中直接拼接的高清 MP3 下载",

@@ -3,6 +3,7 @@ import { Heart, Mail, Check, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ToolTheme } from '../../lib/themes';
 import { legalTranslations } from '../../locales/legal';
+import { useReducedMotion } from './motion';
 
 export interface RichFooterContent {
   footerCredit?: string;
@@ -37,6 +38,7 @@ export const BottomFooter: React.FC<BottomFooterProps> = ({
   const legal = legalTranslations[currentLang] || legalTranslations.en;
   const [emailCopied, setEmailCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const prefersReduced = useReducedMotion();
 
   const handleEmailCopy = () => {
     if (!content?.emailAddress) return;
@@ -226,7 +228,7 @@ export const BottomFooter: React.FC<BottomFooterProps> = ({
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.2 }}
+                          transition={{ duration: prefersReduced ? 0 : 0.2 }}
                           className="overflow-hidden"
                         >
                           <p className="text-sm leading-relaxed pt-3" style={{ color: theme.textMuted }}>

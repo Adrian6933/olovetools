@@ -1,5 +1,5 @@
 export default {
-  "title": "Hex-to-RGB",
+  "title": "Hex to RGB",
   "seo_title": "HEX से RGB कनवर्टर | HEX, RGB, HSL, CMYK अपारदर्शिता और कंट्रास्ट चेकर के साथ",
   "seo_description": "HEX, RGB, HSL और CMYK रंग प्रारूपों के बीच समायोज्य अपारदर्शिता और WCAG कंट्रास्ट चेकर के साथ कनवर्ट करें। 100% स्थानीय और निजी।",
   "seoHeroTitle": "कलर कनवर्टर स्टूडियो",
@@ -21,7 +21,16 @@ export default {
   "seoUseCaseText": "सब कुछ आपके ब्राउज़र में स्थानीय रूप से चलता है। आपके रंग इनपुट कभी आपके डिवाइस से बाहर नहीं जाते और कुछ भी अपलोड नहीं होता।",
   "seoPrivacyTitle": "100% निजी और सुरक्षित",
   "seoPrivacyText": "कोई डेटाबेस, ट्रैकिंग या नेटवर्क अपलोड नहीं। आपके इनपुट कड़ाई से स्थानीय मेमोरी में रहते हैं और टैब बंद करने पर गायब हो जाते हैं।",
-  "seoKeywords": ["hex से rgb", "रंग कनवर्टर", "hex से hsl", "cmyk कनवर्टर", "wcag कंट्रास्ट चेकर", "rgba अपारदर्शिता", "ऑनलाइन उपकरण", "मुफ़्त"],
+  "seoKeywords": [
+    "hex से rgb",
+    "रंग कनवर्टर",
+    "hex से hsl",
+    "cmyk कनवर्टर",
+    "wcag कंट्रास्ट चेकर",
+    "rgba अपारदर्शिता",
+    "ऑनलाइन उपकरण",
+    "मुफ़्त"
+  ],
   "faqTitle": "अक्सर पूछे जाने वाले प्रश्न",
   "faq": [
     {
@@ -38,7 +47,7 @@ export default {
     }
   ],
   "footerTagline": "HEX, RGB, HSL और CMYK रंग प्रारूपों के बीच अपारदर्शिता और कंट्रास्ट टूल के साथ 100% स्थानीय रूप से कनवर्ट करें।",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools सुइट का हिस्सा",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "कॉपी हुआ!",
   "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:"

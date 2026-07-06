@@ -1,8 +1,8 @@
 export default {
-  "title": "Whois-Bolt",
-  "seo_title": "Whois-Bolt | Look up DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) for any domain over HTTPS.",
+  "title": "WhoisBolt",
+  "seo_title": "WhoisBolt | Look up DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) for any domain over HTTPS.",
   "seo_description": "Look up DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) for any domain over HTTPS, right in your browser.",
-  "seoHeroTitle": "Whois-Bolt",
+  "seoHeroTitle": "WhoisBolt",
   "seoHeroText": "Look up DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) for any domain over HTTPS, right in your browser. Note: this tool makes network requests to Google's public DNS API (DNS over HTTPS) — your domain query is sent directly to Google, not through any intermediary server.",
   "unit_seconds": "s",
   "unit_minutes": "min",
@@ -42,8 +42,8 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Which DNS record types does Whois-Bolt resolve?",
-      "answer": "Whois-Bolt resolves A, AAAA, CNAME, MX, NS, TXT and SOA records for any domain, presenting them in a clean summary with IP addresses, nameservers, mail servers and more."
+      "question": "Which DNS record types does WhoisBolt resolve?",
+      "answer": "WhoisBolt resolves A, AAAA, CNAME, MX, NS, TXT and SOA records for any domain, presenting them in a clean summary with IP addresses, nameservers, mail servers and more."
     },
     {
       "question": "How are the DNS queries performed?",

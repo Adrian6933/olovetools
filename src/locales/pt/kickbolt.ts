@@ -42,8 +42,40 @@ export default {
   "views": "Visualizações",
   "ready": "PRONTO",
   "preparing": "PREPARANDO...",
-  "quickLinks": ["Kick para MP4", "Baixar Clipes", "Download em Massa", "Salvar Clipes", "Baixar 1080p", "Ferramentas de Streamer", "Kick para TikTok", "Downloader Mobile", "Conversor Rápido", "Assistir Kick Offline"],
-  "seoTags": ["DOWNLOADER KICK", "MP4 HD", "DOWNLOAD EM MASSA", "SEM LOGIN", "FERRAMENTA GRÁTIS", "1080P", "CLIPES KICK", "KIT DE EDITOR", "CONVERSOR TIKTOK", "VÍDEO GAMING", "CRIADOR DE REELS", "KIT DE STREAMING", "ALTA DEFINIÇÃO", "DOWNLOAD DIRETO", "DOWNLOAD RÁPIDO", "PRONTO PARA MOBILE", "SALVAR KICK", "CONVERSOR DE CLIPES", "SEM MARCA D'ÁGUA", "MELHOR FERRAMENTA KICK"],
+  "quickLinks": [
+    "Kick para MP4",
+    "Baixar Clipes",
+    "Download em Massa",
+    "Salvar Clipes",
+    "Baixar 1080p",
+    "Ferramentas de Streamer",
+    "Kick para TikTok",
+    "Downloader Mobile",
+    "Conversor Rápido",
+    "Assistir Kick Offline"
+  ],
+  "seoTags": [
+    "DOWNLOADER KICK",
+    "MP4 HD",
+    "DOWNLOAD EM MASSA",
+    "SEM LOGIN",
+    "FERRAMENTA GRÁTIS",
+    "1080P",
+    "CLIPES KICK",
+    "KIT DE EDITOR",
+    "CONVERSOR TIKTOK",
+    "VÍDEO GAMING",
+    "CRIADOR DE REELS",
+    "KIT DE STREAMING",
+    "ALTA DEFINIÇÃO",
+    "DOWNLOAD DIRETO",
+    "DOWNLOAD RÁPIDO",
+    "PRONTO PARA MOBILE",
+    "SALVAR KICK",
+    "CONVERSOR DE CLIPES",
+    "SEM MARCA D'ÁGUA",
+    "MELHOR FERRAMENTA KICK"
+  ],
   "legal": {
     "privacy": "Privacidade",
     "terms": "Termos",
@@ -53,5 +85,6 @@ export default {
     "privacyText": "Na Kickclip, a privacidade é fundamental. Não coletamos, armazenamos ou compartilhamos dados pessoais identificáveis. Os links são processados em tempo real e nenhum registro de clipes baixados é mantido em nossos servidores. Para qualquer dúvida, entre em contato em adrian.contact.me.69@gmail.com.",
     "termsText": "Kickclip é uma ferramenta técnica para acessar conteúdo público da Kick. O usuário é o único responsável pelo uso dos materiais baixados. A Kickclip não é afiliada à Kick.",
     "cookiesText": "Nosso site usa apenas o LocalStorage estritamente necessário para a operação técnica do site."
-  }
+  },
+  "loadingClips": "CARREGANDO CLIPES..."
 };

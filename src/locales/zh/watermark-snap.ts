@@ -1,5 +1,5 @@
 export default {
-  "title": "Watermark-Snap",
+  "title": "WatermarkSnap",
   "description": "一键为多张图片批量添加文字或 Logo 水印。所有图片均由浏览器本地处理，确保绝对安全。",
   "btn_download_zip": "打包下载水印图片 (.ZIP)",
   "label_mode_text": "文字水印",
@@ -20,10 +20,10 @@ export default {
   "btn_add_files": "添加图片",
   "btn_clear": "清空列表",
   "progress_generating": "正在处理第 {current} / {total} 张图片...",
-  "seo_title": "Watermark-Snap | 免费在线图片批量加水印工具",
-  "seo_description": "使用 Watermark-Snap 批量为图片加水印。支持添加自定义文字或 Logo 暗纹，实时调整尺寸、旋转度和透明度。100% 本地运算，安全无虞。",
+  "seo_title": "WatermarkSnap | 免费在线图片批量加水印工具",
+  "seo_description": "使用 WatermarkSnap 批量为图片加水印。支持添加自定义文字或 Logo 暗纹，实时调整尺寸、旋转度和透明度。100% 本地运算，安全无虞。",
   "seoHeroTitle": "安全、离线地为您的图片进行批量水印防护",
-  "seoHeroText": "保护您的摄影作品、电商产品图与原创设计。Watermark-Snap 完全在浏览器内存中处理，图片无需上传云端服务器。",
+  "seoHeroText": "保护您的摄影作品、电商产品图与原创设计。WatermarkSnap 完全在浏览器内存中处理，图片无需上传云端服务器。",
   "seoHeroList": [
     "提供全图平铺（Tiles）功能，防止裁剪盗图，全方位保护图片",
     "支持上传自定义 Logo，或设计具有渐变底色的文字水印",

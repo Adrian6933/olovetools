@@ -52,7 +52,7 @@ export default {
   "footer_feature2_title": "Colecciones Inteligentes",
   "footer_feature2_desc": "Guarda tus momentos favoritos de forma privada sin registro.",
   "footer_feature3_title": "Exportación Masiva",
-  "footer_feature3_desc": "Exporta tu lista a .txt o envíala a ClipBolt para extracción directa a ZIP.",
+  "footer_feature3_desc": "Exporta tu lista a .txt o envíala a TwitchBolt para extracción directa a ZIP.",
   "footer_seo_paragraph1": "Clipy es la herramienta indispensable para fans de Twitch y creadores de contenido. Nuestra plataforma te permite navegar por el universo de Twitch con facilidad.",
   "footer_seo_paragraph2": "Ya busques lo más viral o clásicos de tus streamers preferidos, Clipy ofrece la interfaz más eficiente.",
   "footer_seo_desc_large": "La opción profesional para curación de contenido de Twitch. Rápido, privado y potente.",

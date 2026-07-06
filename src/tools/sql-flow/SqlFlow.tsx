@@ -263,7 +263,7 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
     return { inputLines, outputLines, inputChars: input.length, outputChars: formatted.length };
   }, [input, formatted]);
 
-  const titleText = t.seoHeroTitle || 'SQL-Flow';
+  const titleText = t.seoHeroTitle || 'SQLFlow';
   const descText = t.seoHeroText || 'Format and validate SQL queries with style.';
   const inputLabel = t.input || 'Input SQL';
   const outputLabel = t.output || 'Formatted Output';

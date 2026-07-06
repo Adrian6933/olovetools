@@ -1,5 +1,5 @@
 export default {
-  "title": "Hex-to-RGB",
+  "title": "Hex to RGB",
   "seo_title": "HEX to RGB Converter | HEX, RGB, HSL, CMYK with Opacity & Contrast Checker",
   "seo_description": "Convert between HEX, RGB, HSL and CMYK color formats with adjustable opacity and a WCAG contrast checker. 100% local and private.",
   "seoHeroTitle": "Color Converter Studio",

@@ -1,6 +1,6 @@
 export default {
-  "title": "List-Mixer",
-  "seo_title": "List-Mixer | 免费在线列表排序、打乱和去重工具",
+  "title": "List Mixer",
+  "seo_title": "List Mixer | 免费在线列表排序、打乱和去重工具",
   "seo_description": "在浏览器中 100% 本地在线对文本列表进行排序、反转、打乱、去重、修剪和清理。免费在线列表处理工具。",
   "seoHeroTitle": "列表排序、打乱和清理工具",
   "seoHeroText": "粘贴任意文本列表，即时按字母顺序排序、反转顺序、随机打乱、删除重复项、清理空行、修剪空白或更改大小写。所有操作可链式组合，100% 在您的浏览器中本地运行。",
@@ -29,7 +29,15 @@ export default {
   "seoUseCaseText": "您点击的每个操作都会应用于当前输出，允许您将多个操作链接在一起。排序，然后删除重复项，然后修剪 — 一气呵成，无需重新粘贴。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "无数据库、追踪或网络上传。您的列表数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["列表排序", "列表打乱", "删除重复项", "行排序", "随机列表", "清理列表", "去重"],
+  "seoKeywords": [
+    "列表排序",
+    "列表打乱",
+    "删除重复项",
+    "行排序",
+    "随机列表",
+    "清理列表",
+    "去重"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -46,8 +54,9 @@ export default {
     }
   ],
   "footerTagline": "快速、私密的列表排序、打乱和去重工具，支持链式操作 — 100% 在您的浏览器中本地运行。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
-  "contactForIdeas": "联系以提交想法和评论："
+  "contactForIdeas": "联系以提交想法和评论：",
+  "copyLabel": "复制"
 };

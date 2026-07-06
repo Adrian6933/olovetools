@@ -10,14 +10,38 @@ export default {
   "seoUseCaseText": "Hol dir Thumbnails, finde das sauberste Standbild für ein Poster, extrahiere Referenzbilder fürs Design, erfasse Beweise oder hol das perfekte Standbild für ein Meme. Geh Bild für Bild für eine präzise Auswahl.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Dein Video bleibt auf deinem Gerät. Keine Uploads, keine Datenbanken, kein Tracking — die Datei lebt nur im lokalen Speicher und verschwindet beim Schließen des Tabs.",
-  "seoKeywords": ["video frame extrahieren", "video zu bild", "bild für bild", "frame aus video", "videobild speichern", "frame extraktor", "frame als png"],
+  "seoKeywords": [
+    "video frame extrahieren",
+    "video zu bild",
+    "bild für bild",
+    "frame aus video",
+    "videobild speichern",
+    "frame extraktor",
+    "frame als png",
+    "frame png exportieren"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
-    { "question": "Wird mein Video irgendwohin hochgeladen?", "answer": "Nein. FrameSnap verarbeitet alles in deinem Browser über die nativen Video- und Canvas-APIs. Deine Datei verlässt nie dein Gerät." },
-    { "question": "Wie gehe ich Bild für Bild vor?", "answer": "Nutze die Tasten für vorheriges/nächstes Bild oder die Pfeiltasten ← / →. Der Schritt nutzt den von dir eingestellten FPS-Wert; stelle ihn auf die echte Bildrate deines Videos (z. B. 24, 25, 30 oder 60) für präzise Schritte." },
-    { "question": "In welcher Qualität wird das Bild exportiert?", "answer": "Bilder werden in der nativen Auflösung des Videos erfasst. Du kannst verlustfrei als PNG oder als JPG/WebP mit einstellbarem Qualitätsregler exportieren." },
-    { "question": "Welche Videoformate werden unterstützt?", "answer": "Jedes Format, das dein Browser abspielen kann, typischerweise MP4 (H.264), WebM, MOV und andere. Wenn ein Video nicht abspielt, fehlt deinem Browser eventuell der Codec." },
-    { "question": "Kann ich mehrere Bilder erfassen?", "answer": "Ja. Jede Erfassung wird einer Galerie hinzugefügt; lade sie einzeln oder alle zusammen als ZIP herunter." }
+    {
+      "question": "Wird mein Video irgendwohin hochgeladen?",
+      "answer": "Nein. FrameSnap verarbeitet alles in deinem Browser über die nativen Video- und Canvas-APIs. Deine Datei verlässt nie dein Gerät."
+    },
+    {
+      "question": "Wie gehe ich Bild für Bild vor?",
+      "answer": "Nutze die Tasten für vorheriges/nächstes Bild oder die Pfeiltasten ← / →. Der Schritt nutzt den von dir eingestellten FPS-Wert; stelle ihn auf die echte Bildrate deines Videos (z. B. 24, 25, 30 oder 60) für präzise Schritte."
+    },
+    {
+      "question": "In welcher Qualität wird das Bild exportiert?",
+      "answer": "Bilder werden in der nativen Auflösung des Videos erfasst. Du kannst verlustfrei als PNG oder als JPG/WebP mit einstellbarem Qualitätsregler exportieren."
+    },
+    {
+      "question": "Welche Videoformate werden unterstützt?",
+      "answer": "Jedes Format, das dein Browser abspielen kann, typischerweise MP4 (H.264), WebM, MOV und andere. Wenn ein Video nicht abspielt, fehlt deinem Browser eventuell der Codec."
+    },
+    {
+      "question": "Kann ich mehrere Bilder erfassen?",
+      "answer": "Ja. Jede Erfassung wird einer Galerie hinzugefügt; lade sie einzeln oder alle zusammen als ZIP herunter."
+    }
   ],
   "footerTagline": "Gehe jedes Video Bild für Bild durch und exportiere das exakte Bild in hoher Qualität — 100% lokal in deinem Browser.",
   "footerCredit": "Teil der oLoveTools-Suite",

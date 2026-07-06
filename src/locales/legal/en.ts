@@ -8,7 +8,7 @@ export default {
       <br/>
       <h2>2. Information we collect</h2>
       <p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.</p>
-      <p>For most of our tools (such as Clipy, ClipBolt, FormatFlow, and PasteSnap), processing happens entirely in your browser. We do not store your clips, images, or formatted code on our servers.</p>
+      <p>For most of our tools (such as Clipy, TwitchBolt, FormatFlow, and PasteSnap), processing happens entirely in your browser. We do not store your clips, images, or formatted code on our servers.</p>
       <br/>
       <h2>3. Third-Party Services and Ads</h2>
       <p>Our website uses Google AdSense to serve ads. Google uses cookies to serve ads based on a user's prior visits to our website or other websites. Google's use of advertising cookies enables it and its partners to serve ads to our users based on their visit to our sites and/or other sites on the Internet.</p>
@@ -37,7 +37,7 @@ export default {
       <p>In no event shall oLoveTools or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on oLoveTools' website.</p>
       <br/>
       <h2>5. Third-Party Content</h2>
-      <p>Some of our tools (e.g., Clipy, ClipBolt) interact with third-party APIs (like Twitch). By using these tools, you must also comply with the respective Terms of Service of those third-party platforms. We do not host or own the media content retrieved through these APIs.</p>
+      <p>Some of our tools (e.g., Clipy, TwitchBolt) interact with third-party APIs (like Twitch). By using these tools, you must also comply with the respective Terms of Service of those third-party platforms. We do not host or own the media content retrieved through these APIs.</p>
     `
   },
   cookies: {
@@ -69,7 +69,7 @@ export default {
       <br/>
       <h2>The Tools</h2>
       <ul>
-        <li><strong>Clipy & ClipBolt:</strong> Discover, organize, and download your favorite Twitch clips easily.</li>
+        <li><strong>Clipy & TwitchBolt:</strong> Discover, organize, and download your favorite Twitch clips easily.</li>
         <li><strong>FormatFlow:</strong> A versatile tool for formatting and converting various types of code and data.</li>
         <li><strong>PasteSnap:</strong> Instantly capture and manage your clipboard images with high quality.</li>
       </ul>

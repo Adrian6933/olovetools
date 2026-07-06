@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "免费、安全、且完全运行在客户端本地的梗图排版与文案分析工具。",
-  "footerCredit": "oLoveTools 实用工具集成员"
+  "footerCredit": "oLoveTools 实用工具集成员",
+  "seo_title": "WordFlow | 免费在线字数统计与可读性分析工具",
+  "seo_description": "高级字数统计、字符计算、易读性评估及文本格式清理助手，100% 浏览器本地运算。"
 };

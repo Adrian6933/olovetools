@@ -1,5 +1,5 @@
 export default {
-  "title": "EXIF-Clear",
+  "title": "EXIF Cleaner",
   "description": "Inspecione e remova metadados EXIF, GPS e outros de suas fotos localmente no seu navegador. Proteja sua privacidade online.",
   "btn_download_cleaned": "Baixar Imagens Limpas",
   "btn_download_zip": "Baixar Limpas (.ZIP)",
@@ -22,10 +22,10 @@ export default {
   "no_files_loaded": "Nenhuma imagem carregada",
   "preview_title": "Inspetor de Metadados",
   "progress_clearing": "Removendo metadados da imagem {current} de {total}...",
-  "seo_title": "EXIF-Clear | Remover Metadados EXIF e GPS de Fotos Grátis Online",
+  "seo_title": "EXIF Cleaner | Remover Metadados EXIF e GPS de Fotos Grátis Online",
   "seo_description": "Remova tags EXIF, GPS e metadados de imagens JPEG/PNG de forma local online. Apague dados de geolocalização e câmera por segurança.",
   "seoHeroTitle": "Limpe Dados EXIF e GPS de Suas Imagens Offline",
-  "seoHeroText": "Proteja seus dados de privacidade antes de postar fotos. O EXIF-Clear analisa e limpa os cabeçalhos de metadados na memória do navegador.",
+  "seoHeroText": "Proteja seus dados de privacidade antes de postar fotos. O EXIF Cleaner analisa e limpa os cabeçalhos de metadados na memória do navegador.",
   "seoHeroList": [
     "Identifique coordenadas GPS, modelos de dispositivos e dados de exposição",
     "Remove blocos de dados completos como EXIF, XMP e blocos IPTC do Photoshop",
@@ -49,7 +49,7 @@ export default {
     },
     {
       "question": "Quais formatos de imagem são suportados?",
-      "answer": "O EXIF-Clear suporta e limpa metadados de arquivos JPEG/JPG, PNG e WebP de maneira offline."
+      "answer": "O EXIF Cleaner suporta e limpa metadados de arquivos JPEG/JPG, PNG e WebP de maneira offline."
     },
     {
       "question": "Como as coordenadas GPS são lidas?",

@@ -1,5 +1,5 @@
 export default {
-  "title": "Aspect-Ratio",
+  "title": "Aspect Ratio",
   "seo_title": "Seitenverhältnis-Rechner | Verhältnisse Vereinfachen & Proportional Skalieren 100% Lokal",
   "seo_description": "Berechne vereinfachte Seitenverhältnisse, skaliere Bilder proportional und erkunde gängige Voreinstellungen wie 16:9, 4:3 und 9:16. 100% lokal und privat.",
   "seoHeroTitle": "Verhältnis-Rechner Pro",
@@ -36,7 +36,16 @@ export default {
   "seoUseCaseText": "Alles läuft lokal in deinem Browser. Deine Abmessungseingaben verlassen nie dein Gerät und es wird nichts hochgeladen.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Deine Eingaben verbleiben streng im lokalen Speicher und verschwinden, wenn du den Tab schließt.",
-  "seoKeywords": ["seitenverhältnis-rechner", "bild proportional skalieren", "16:9 verhältnis", "verhältnis vereinfachen", "bildabmessungen", "videoauflösung", "online-tool", "kostenlos"],
+  "seoKeywords": [
+    "seitenverhältnis-rechner",
+    "bild proportional skalieren",
+    "16:9 verhältnis",
+    "verhältnis vereinfachen",
+    "bildabmessungen",
+    "videoauflösung",
+    "online-tool",
+    "kostenlos"
+  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
@@ -53,7 +62,7 @@ export default {
     }
   ],
   "footerTagline": "Berechne Seitenverhältnisse und proportionale Auflösungen für Video, Bilder und Bildschirme 100% lokal.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Kommentare:"

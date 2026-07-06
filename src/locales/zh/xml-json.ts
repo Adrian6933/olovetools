@@ -1,11 +1,11 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | 在浏览器中100%本地即时转换XML为JSON和JSON为XML。",
+  "title": "XML to JSON",
+  "seo_title": "XML to JSON | 在浏览器中100%本地即时转换XML为JSON和JSON为XML。",
   "seo_description": "在浏览器中100%本地即时转换XML为JSON和JSON为XML。",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "在浏览器中100%本地即时转换XML为JSON和JSON为XML。",
-  "label_xml_to_json": "XML \u2192 JSON",
-  "label_json_to_xml": "JSON \u2192 XML",
+  "label_xml_to_json": "XML → JSON",
+  "label_json_to_xml": "JSON → XML",
   "tooltip_swap": "切换方向",
   "button_swap": "切换",
   "label_input": "输入",
@@ -23,7 +23,13 @@ export default {
   "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
   "seoPrivacyTitle": "100%私密与安全",
   "seoPrivacyText": "没有数据库、跟踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": ["xml json", "在线工具", "免费", "本地", "浏览器"],
+  "seoKeywords": [
+    "xml json",
+    "在线工具",
+    "免费",
+    "本地",
+    "浏览器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -40,7 +46,7 @@ export default {
     }
   ],
   "footerTagline": "在浏览器中100%本地即时转换XML为JSON和JSON为XML。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以提供想法和意见:"

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ToolTheme } from '../../lib/themes';
+import { useReducedMotion } from './motion';
 
 export type FAQVariant = 'accordion-default' | 'accordion-first-open';
 
@@ -29,6 +30,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
 }) => {
   const initialOpen = variant === 'accordion-first-open' ? 0 : null;
   const [open, setOpen] = useState<number | null>(initialOpen);
+  const prefersReduced = useReducedMotion();
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -116,7 +118,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: prefersReduced ? 0 : 0.2 }}
                     className="overflow-hidden"
                     itemScope
                     itemProp="acceptedAnswer"

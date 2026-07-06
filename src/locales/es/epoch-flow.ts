@@ -1,8 +1,8 @@
 export default {
-  "title": "Epoch-Flow",
-  "seo_title": "Epoch-Flow | Convierte marcas de tiempo Unix epoch a fechas legibles por humanos y viceversa 100% localmente.",
+  "title": "EpochFlow",
+  "seo_title": "EpochFlow | Convierte marcas de tiempo Unix epoch a fechas legibles por humanos y viceversa 100% localmente.",
   "seo_description": "Convierte marcas de tiempo Unix epoch a fechas legibles por humanos y viceversa 100% localmente.",
-  "seoHeroTitle": "Epoch-Flow",
+  "seoHeroTitle": "EpochFlow",
   "seoHeroText": "Convierte marcas de tiempo Unix epoch a fechas legibles por humanos y viceversa 100% localmente.",
   "label_live_epoch": "Unix Epoch en vivo",
   "button_now": "Ahora",
@@ -43,7 +43,13 @@ export default {
   "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
-  "seoKeywords": ["epoch flow", "herramienta online", "gratis", "local", "navegador"],
+  "seoKeywords": [
+    "epoch flow",
+    "herramienta online",
+    "gratis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
@@ -51,8 +57,8 @@ export default {
       "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
     },
     {
-      "question": "¿Epoch-Flow admite tanto segundos como milisegundos?",
-      "answer": "Sí. Epoch-Flow detecta automáticamente si la marca de tiempo introducida está en segundos o milisegundos según su magnitud, así que puedes pegar cualquiera de los dos formatos."
+      "question": "¿EpochFlow admite tanto segundos como milisegundos?",
+      "answer": "Sí. EpochFlow detecta automáticamente si la marca de tiempo introducida está en segundos o milisegundos según su magnitud, así que puedes pegar cualquiera de los dos formatos."
     },
     {
       "question": "¿Puedo convertir una fecha de vuelta a una marca de tiempo Unix epoch?",
@@ -60,7 +66,7 @@ export default {
     }
   ],
   "footerTagline": "Convierte marcas de tiempo Unix epoch a fechas legibles por humanos y viceversa 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
   "contactForIdeas": "Contacto para ideas y comentarios:"

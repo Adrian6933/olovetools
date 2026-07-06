@@ -56,7 +56,7 @@ export default {
   "seoBrowserSpeedTitle": "Browserbasierte Medienstreams",
   "seoBrowserSpeedText": "Durch das native Erfassen von Medienströmen in HTML5 und das Codieren von WebM-Containern in Echtzeit hat RecordSnap keinerlei Serverlatenz und speichert Ihre Aufnahmen sofort beim Klicken auf Stopp.",
   "seoSecondaryTitle": "Ein vollwertiger Bildschirmrecorder auf Ihrem Gerät",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "Schlüsselwörter",
   "seoKeywords": [
     "Bildschirm online aufnehmen",
     "Webcam aufnehmen kostenlos",

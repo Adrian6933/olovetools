@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "無料、安全、ローカルで完結するインタラクティブなテキスト解析ワークスペース。",
-  "footerCredit": "oLoveToolsスイートの一部"
+  "footerCredit": "oLoveToolsスイートの一部",
+  "seo_title": "WordFlow | 無料オンライン文字数カウンター＆読みやすさ分析ツール",
+  "seo_description": "文字数・単語数カウンター、読解難易度スコア、テキスト整形ツールをブラウザ上で100%ローカルに完結。"
 };

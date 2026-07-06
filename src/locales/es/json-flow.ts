@@ -1,5 +1,5 @@
 export default {
-  "title": "JSON-Flow",
+  "title": "JSONFlow",
   "description": "Utilidad interactiva para desarrolladores para formatear, validar, explorar y convertir datos JSON a CSV/XML de forma 100% local.",
   
   // Actions
@@ -48,10 +48,10 @@ export default {
   "mock_weather_data": "Pronóstico del Tiempo",
   
   // SEO & Texts
-  "seo_title": "JSON-Flow | Formateador, Validador y Conversor de JSON",
+  "seo_title": "JSONFlow | Formateador, Validador y Conversor de JSON",
   "seo_description": "Valida, formatea y visualiza tus JSON en un árbol interactivo. Convierte JSON a CSV, Excel o XML, y CSV de vuelta a JSON de forma 100% local.",
   "seoHeroTitle": "Formatea, explora y convierte JSON de forma segura.",
-  "seoHeroText": "Nunca expongas claves de API sensibles o payloads de tus clientes en servidores externos. JSON-Flow se ejecuta 100% en tu navegador.",
+  "seoHeroText": "Nunca expongas claves de API sensibles o payloads de tus clientes en servidores externos. JSONFlow se ejecuta 100% en tu navegador.",
   "seoHeroList": [
     "Procesamiento 100% local (sin subidas al servidor)",
     "Convierte a CSV, Excel y XML al instante",
@@ -84,7 +84,7 @@ export default {
   "faq": [
     {
       "question": "¿Mis datos JSON se envían a algún servidor?",
-      "answer": "No. A diferencia de otros formateadores en línea, JSON-Flow procesa todo dentro de la pestaña de tu navegador local. Ningún dato se sube a internet."
+      "answer": "No. A diferencia de otros formateadores en línea, JSONFlow procesa todo dentro de la pestaña de tu navegador local. Ningún dato se sube a internet."
     },
     {
       "question": "¿Cuál es el tamaño máximo de JSON admitido?",

@@ -1,7 +1,7 @@
 export default {
-  "title": "PDF-Flow",
+  "title": "PDFFlow",
   "description": "Mescle, divida, rotacione e converta documentos ou imagens para PDF localmente no seu navegador.",
-  "seo_title": "PDF-Flow | Editor e Ferramentas PDF 100% Local",
+  "seo_title": "PDFFlow | Editor e Ferramentas PDF 100% Local",
   "seo_description": "Mescle, divida, rotacione e converta JPG/PNG para PDF 100% localmente no navegador. Sem cadastros, sem uploads de arquivos. Seguro, rápido e gratuito.",
   "dropzonePrompt": "Arraste e solte seus arquivos aqui ou clique para selecionar",
   "dropzoneSubtitle": "Suporta arquivos PDF e imagens JPG/PNG. Todo o processamento é 100% local.",
@@ -52,16 +52,16 @@ export default {
   ],
   "footerCredit": "Parte da suíte oLoveTools",
   "seoHeroTitle": "Edição de PDF 100% Local, Privada e Segura",
-  "seoHeroText": "Ferramentas tradicionais de PDF online forçam você a fazer o upload de documentos confidenciais — como contratos, declarações e digitalizações — para servidores externos. O PDF-Flow processa todas as operações diretamente na memória. Seus documentos privados nunca saem do seu computador.",
+  "seoHeroText": "Ferramentas tradicionais de PDF online forçam você a fazer o upload de documentos confidenciais — como contratos, declarações e digitalizações — para servidores externos. O PDFFlow processa todas as operações diretamente na memória. Seus documentos privados nunca saem do seu computador.",
   "seoHeroList": [
     "Processamento offline seguro",
     "Sem upload de documentos, risco zero de privacidade",
     "Completamente gratuito e sem limites"
   ],
   "seoBrowserSpeedTitle": "Compilação Instantânea no Navegador",
-  "seoBrowserSpeedText": "Ao compilar arquivos PDF localmente usando APIs de WebAssembly de JavaScript, o PDF-Flow evita gargalos de rede e filas de servidores. Mescle arquivos grandes ou extraia páginas instantaneamente.",
+  "seoBrowserSpeedText": "Ao compilar arquivos PDF localmente usando APIs de WebAssembly de JavaScript, o PDFFlow evita gargalos de rede e filas de servidores. Mescle arquivos grandes ou extraia páginas instantaneamente.",
   "seoSecondaryTitle": "Utilitários de PDF versáteis executados no cliente",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "Palavras-chave",
   "seoKeywords": [
     "Mesclar PDF online",
     "Dividir páginas PDF",
@@ -74,9 +74,9 @@ export default {
     "Conversor de PDF sem upload"
   ],
   "seoUseCaseTitle": "Ideal para Uso Profissional e Pessoal",
-  "seoUseCaseText": "Seja combinando contratos assinados, organizando recibos digitalizados, dividindo guias de estudo ou compilando galerias de imagens, o PDF-Flow gerencia tudo localmente com rapidez e total privacidade.",
+  "seoUseCaseText": "Seja combinando contratos assinados, organizando recibos digitalizados, dividindo guias de estudo ou compilando galerias de imagens, o PDFFlow gerencia tudo localmente com rapidez e total privacidade.",
   "seoPrivacyTitle": "Segurança de Dados Inabalável",
-  "seoPrivacyText": "Acreditamos que seus arquivos pertencem a você. O PDF-Flow utiliza pdf-lib para manipular PDFs em memória no ambiente isolado do navegador. Sem telemetria, sem registros e sem uploads.",
+  "seoPrivacyText": "Acreditamos que seus arquivos pertencem a você. O PDFFlow utiliza pdf-lib para manipular PDFs em memória no ambiente isolado do navegador. Sem telemetria, sem registros e sem uploads.",
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -104,7 +104,7 @@ export default {
   "emailCopied": "E-mail copiado para a área de transferência!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "Sua privacidade é muito importante para nós.\n\nApenas coletamos as informações estritamente necessárias para o funcionamento do serviço. Isso inclui dados técnicos sobre o seu navegador para garantir a integridade da ferramenta.\n\nNunca salvamos, rastreamos ou analisamos os seus arquivos. Todo o processamento ocorre localmente no seu navegador, garantindo que os dados nunca saiam do seu dispositivo.",
-  "termsContent": "Ao usar o PDF-Flow, você concorda com estes termos.\n\n1. Esta ferramenta é fornecida \"no estado em que se encontra\", sem garantias.\n2. Não nos responsabilizamos por perdas de dados ou problemas derivados do uso desta ferramenta.\n3. Você é responsável pelo conteúdo que processa.\n4. Reservamo-nos o direito de modificar estes termos a qualquer momento.",
+  "termsContent": "Ao usar o PDFFlow, você concorda com estes termos.\n\n1. Esta ferramenta é fornecida \"no estado em que se encontra\", sem garantias.\n2. Não nos responsabilizamos por perdas de dados ou problemas derivados do uso desta ferramenta.\n3. Você é responsável pelo conteúdo que processa.\n4. Reservamo-nos o direito de modificar estes termos a qualquer momento.",
   "cookiesContent": "Utilizamos cookies para melhorar sua experiência.\n\n1. Cookies Essenciais: Necessários para as funcionalidades básicas do site.\n2. Cookies de Preferência: Usados para lembrar seu idioma e suas definições de consentimento.\n\nVocê pode gerenciar ou desativar os cookies nas configurações do seu navegador a qualquer momento.",
   "contact": "Contato"
 };

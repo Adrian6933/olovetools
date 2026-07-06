@@ -28,7 +28,16 @@ export default {
   "seoUseCaseText": "一切都在浏览器中本地运行。您的图像永远不会离开您的设备，也不会上传任何内容。",
   "seoPrivacyTitle": "100%私密安全",
   "seoPrivacyText": "没有数据库、跟踪或网络上传。您的图像严格驻留在本地内存中，关闭标签页时即消失。",
-  "seoKeywords": ["colorsnap", "图像取色器", "从图像提取调色板", "主色调", "hex颜色提取器", "css调色板生成器", "在线工具", "免费"],
+  "seoKeywords": [
+    "colorsnap",
+    "图像取色器",
+    "从图像提取调色板",
+    "主色调",
+    "hex颜色提取器",
+    "css调色板生成器",
+    "在线工具",
+    "免费"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -45,7 +54,7 @@ export default {
     }
   ],
   "footerTagline": "在浏览器中100%本地提取任何图像的主色调和调色板。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以获取想法和评论:"

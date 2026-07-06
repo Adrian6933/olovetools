@@ -1,5 +1,5 @@
 export default {
-  "title": "Hash-Bolt",
+  "title": "HashBolt",
   "description": "अपने ब्राउज़र के भीतर 100% स्थानीय रूप से पाठ और फ़ाइलों के लिए क्रिप्टोग्राफ़िक हैश (MD5, SHA-1, SHA-256, SHA-512) की गणना करें।",
   "input_text_tab": "टेक्स्ट इनपुट",
   "input_file_tab": "फ़ाइल हैशिंग",
@@ -43,5 +43,7 @@ export default {
     }
   ],
   "footerTagline": "फ़ाइलों और पाठ के लिए सुरक्षित और स्थानीय क्रिप्टोग्राफ़िक चेकसम जनरेटर।",
-  "footerCredit": "oLoveTools सूट का हिस्सा"
+  "footerCredit": "oLoveTools सूट का हिस्सा",
+  "seo_title": "HashBolt | मुफ़्त ऑनलाइन MD5, SHA-1, SHA-256 हैश जनरेटर",
+  "seo_description": "अपने ब्राउज़र के भीतर 100% स्थानीय रूप से पाठ और फ़ाइलों के लिए क्रिप्टोग्राफ़िक हैश (MD5, SHA-1, SHA-256, SHA-512) की गणना करें।"
 };

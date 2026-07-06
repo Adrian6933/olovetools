@@ -1,5 +1,5 @@
 export default {
-  "title": "GIF-Bolt",
+  "title": "GIFBolt",
   "description": "Converta vídeos e sequências de imagens em GIFs animados otimizados 100% localmente no seu navegador.",
   "tab_video": "Vídeo para GIF",
   "tab_images": "Imagens para GIF",
@@ -25,10 +25,10 @@ export default {
   "quality_low": "Qualidade baixa (Rápido)",
   "drop_zone_video": "Arraste o vídeo aqui ou clique para selecionar (MP4, WebM)",
   "drop_zone_images": "Arraste as imagens aqui ou clique para selecionar (PNG, JPG, WebP)",
-  "seo_title": "GIF-Bolt | Conversor Grátis de Vídeo para GIF e Imagens para GIF Online",
+  "seo_title": "GIFBolt | Conversor Grátis de Vídeo para GIF e Imagens para GIF Online",
   "seo_description": "Converta vídeos e sequências de imagens em GIFs animados de alta qualidade diretamente no seu navegador. Opções personalizáveis de corte, FPS, dimensões e compressão.",
   "seoHeroTitle": "Converta Vídeos e Imagens em GIFs Animados Localmente",
-  "seoHeroText": "Crie GIFs otimizados inteiramente no seu navegador. O GIF-Bolt processa tudo offline, garantindo privacidade total.",
+  "seoHeroText": "Crie GIFs otimizados inteiramente no seu navegador. O GIFBolt processa tudo offline, garantindo privacidade total.",
   "seoHeroList": [
     "Sem limites de tamanho de arquivo ou uploads",
     "Selecione tempos de início/fim e ajuste as taxas de quadros",
@@ -47,7 +47,7 @@ export default {
       "answer": "Não. Como os arquivos são processados diretamente na RAM do seu navegador, não existem limites rígidos. No entanto, processar vídeos muito longos ou com resoluções extremamente altas (como 4K) pode desacelerar seu navegador."
     },
     {
-      "question": "O GIF-Bolt envia meus arquivos para algum servidor?",
+      "question": "O GIFBolt envia meus arquivos para algum servidor?",
       "answer": "Não. Tudo roda no lado do cliente usando JavaScript. Seus arquivos são processados localmente na aba do seu navegador."
     },
     {

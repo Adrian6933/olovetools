@@ -17,7 +17,13 @@ export default {
   "seoUseCaseText": "Всё выполняется локально в вашем браузере. Ваши данные никогда не покидают ваше устройство.",
   "seoPrivacyTitle": "100% приватно и безопасно",
   "seoPrivacyText": "Никаких баз данных, отслеживания или сетевых загрузок. Ваши данные хранятся строго в локальной памяти и исчезают при закрытии вкладки.",
-  "seoKeywords": ["key doctor", "онлайн-инструмент", "бесплатно", "локально", "браузер"],
+  "seoKeywords": [
+    "key doctor",
+    "онлайн-инструмент",
+    "бесплатно",
+    "локально",
+    "браузер"
+  ],
   "faqTitle": "Часто задаваемые вопросы",
   "faq": [
     {
@@ -34,7 +40,7 @@ export default {
     }
   ],
   "footerTagline": "Проверяйте события клавиатуры в реальном времени: event.key, event.code и event.keyCode с определением модификаторов 100% локально.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Часть набора инструментов oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Скопировано!",
   "contactForIdeas": "Контакт для идей и комментариев:"

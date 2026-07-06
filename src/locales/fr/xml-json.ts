@@ -1,11 +1,11 @@
 export default {
-  "title": "XML-JSON",
-  "seo_title": "XML-JSON | Convertissez XML en JSON et JSON en XML instantanément 100% localement dans votre navigateur.",
+  "title": "XML to JSON",
+  "seo_title": "XML to JSON | Convertissez XML en JSON et JSON en XML instantanément 100% localement dans votre navigateur.",
   "seo_description": "Convertissez XML en JSON et JSON en XML instantanément 100% localement dans votre navigateur.",
-  "seoHeroTitle": "XML-JSON",
+  "seoHeroTitle": "XML to JSON",
   "seoHeroText": "Convertissez XML en JSON et JSON en XML instantanément 100% localement dans votre navigateur.",
-  "label_xml_to_json": "XML \u2192 JSON",
-  "label_json_to_xml": "JSON \u2192 XML",
+  "label_xml_to_json": "XML → JSON",
+  "label_json_to_xml": "JSON → XML",
   "tooltip_swap": "Inverser la direction",
   "button_swap": "Inverser",
   "label_input": "Entrée",
@@ -23,7 +23,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ou envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["xml json", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "xml json",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -40,7 +46,7 @@ export default {
     }
   ],
   "footerTagline": "Convertissez XML en JSON et JSON en XML instantanément 100% localement dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

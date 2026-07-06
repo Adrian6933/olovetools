@@ -1,8 +1,8 @@
 export default {
-  "title": "SQL-Flow",
-  "seo_title": "SQL-Flow | Formatez, embellissez et validez des requêtes SQL avec coloration syntaxique 100% localement dans votre navigateur.",
+  "title": "SQLFlow",
+  "seo_title": "SQLFlow | Formatez, embellissez et validez des requêtes SQL avec coloration syntaxique 100% localement dans votre navigateur.",
   "seo_description": "Formatez, embellissez et validez des requêtes SQL avec coloration syntaxique 100% localement dans votre navigateur.",
-  "seoHeroTitle": "SQL-Flow",
+  "seoHeroTitle": "SQLFlow",
   "seoHeroText": "Formatez, embellissez et validez des requêtes SQL avec coloration syntaxique 100% localement dans votre navigateur.",
   "input": "SQL en entrée",
   "output": "Sortie formatée",
@@ -27,7 +27,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ou envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["sql flow", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "sql flow",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -35,8 +41,8 @@ export default {
       "answer": "Non. Toutes les opérations s'exécutent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
     },
     {
-      "question": "SQL-Flow prend-il en charge différents dialectes SQL ?",
-      "answer": "SQL-Flow reconnaît les mots-clés SQL standards communs à la plupart des dialectes, dont PostgreSQL, MySQL, SQLite et SQL Server. Les règles de formatage sont indépendantes du dialecte."
+      "question": "SQLFlow prend-il en charge différents dialectes SQL ?",
+      "answer": "SQLFlow reconnaît les mots-clés SQL standards communs à la plupart des dialectes, dont PostgreSQL, MySQL, SQLite et SQL Server. Les règles de formatage sont indépendantes du dialecte."
     },
     {
       "question": "Puis-je personnaliser l'indentation et la casse des mots-clés ?",
@@ -44,7 +50,7 @@ export default {
     }
   ],
   "footerTagline": "Formatez, embellissez et validez des requêtes SQL avec coloration syntaxique 100% localement dans votre navigateur.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

@@ -1,6 +1,6 @@
 export default {
-  "title": "URL-Bolt",
-  "seo_title": "URL-Bolt | 免费在线URL编码器、解码器和解析器",
+  "title": "URLBolt",
+  "seo_title": "URLBolt | 免费在线URL编码器、解码器和解析器",
   "seo_description": "在浏览器中100%本地编码、解码和解析URL，支持查询字符串分解和智能格式化。免费在线URL工具。",
   "seoHeroTitle": "URL编码器、解码器和解析器",
   "seoHeroText": "即时将文本编码为URL安全格式，解码已编码的URL，或将任何URL分解为其组成部分 — 协议、主机、路径、查询参数和片段 — 并显示解码值。一切在浏览器中本地运行。",
@@ -42,7 +42,16 @@ export default {
   "seoUseCaseText": "解析模式将任何URL分解为其组成部分：协议、主机名、端口、路径段和带有原始及解码值的各个查询参数 — 非常适合调试重定向链接或联盟URL。",
   "seoPrivacyTitle": "100%私密安全",
   "seoPrivacyText": "无数据库、跟踪或网络上传。您的URL和文本输入严格保留在本地内存中，关闭标签页后即消失。不会记录或存储任何内容。",
-  "seoKeywords": ["url 编码器", "url 解码器", "url 解析器", "查询 解析器", "编码 uri", "解码 uri", "url 分解", "url 组件"],
+  "seoKeywords": [
+    "url 编码器",
+    "url 解码器",
+    "url 解析器",
+    "查询 解析器",
+    "编码 uri",
+    "解码 uri",
+    "url 分解",
+    "url 组件"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -50,7 +59,7 @@ export default {
       "answer": "encodeURI编码完整的URL，但保留URL语法中的字符如:, /, ?, &和=。encodeURIComponent编码包括这些特殊字符在内的所有内容，使其非常适合编码单个查询参数值。"
     },
     {
-      "question": "URL-Bolt可以解析带有编码查询参数的URL吗？",
+      "question": "URLBolt可以解析带有编码查询参数的URL吗？",
       "answer": "可以。解析模式自动解码所有查询参数值和路径段，同时显示原始编码形式和可读的解码版本。"
     },
     {
@@ -59,7 +68,7 @@ export default {
     }
   ],
   "footerTagline": "快速、私密的URL编码器、解码器和解析器，具有完整的结构分解 — 100%在浏览器中本地运行。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
   "contactForIdeas": "联系以提供想法和评论:"

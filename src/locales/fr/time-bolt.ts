@@ -1,8 +1,8 @@
 export default {
-  "title": "Time-Bolt",
-  "seo_title": "Time-Bolt | Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
+  "title": "TimeBolt",
+  "seo_title": "TimeBolt | Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
   "seo_description": "Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
-  "seoHeroTitle": "Time-Bolt",
+  "seoHeroTitle": "TimeBolt",
   "seoHeroText": "Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
   "section_world_clocks": "Horloges Mondiales",
   "button_close": "Fermer",
@@ -32,7 +32,13 @@ export default {
   "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
-  "seoKeywords": ["time bolt", "outil en ligne", "gratuit", "local", "navigateur"],
+  "seoKeywords": [
+    "time bolt",
+    "outil en ligne",
+    "gratuit",
+    "local",
+    "navigateur"
+  ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
@@ -44,12 +50,12 @@ export default {
       "answer": "Vous pouvez ajouter autant de fuseaux horaires que nécessaire depuis la liste recherchable de plus de 80 villes dans le monde, et le Planificateur de Réunions affichera l'heure locale correspondante pour chacun."
     },
     {
-      "question": "Time-Bolt tient-il compte de l'heure d'été ?",
-      "answer": "Oui. Time-Bolt utilise l'API Intl native de votre navigateur, qui gère automatiquement l'heure d'été et les changements historiques de décalage pour chaque fuseau horaire."
+      "question": "TimeBolt tient-il compte de l'heure d'été ?",
+      "answer": "Oui. TimeBolt utilise l'API Intl native de votre navigateur, qui gère automatiquement l'heure d'été et les changements historiques de décalage pour chaque fuseau horaire."
     }
   ],
   "footerTagline": "Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :"

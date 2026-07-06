@@ -1,5 +1,5 @@
 export default {
-  "title": "EXIF-Clear",
+  "title": "EXIF Cleaner",
   "description": "画像ファイルからEXIF、GPS（位置情報）、およびその他のメタデータをインスペクトし、ブラウザ上でローカル削除します。プライバシーを保護します。",
   "btn_download_cleaned": "クリーンな画像をダウンロード",
   "btn_download_zip": "クリーンな画像をダウンロード (.ZIP)",
@@ -22,10 +22,10 @@ export default {
   "no_files_loaded": "画像が読み込まれていません",
   "preview_title": "メタデータインスペクター",
   "progress_clearing": "画像のメタデータをクリーン中... {current} / {total}",
-  "seo_title": "EXIF-Clear | 無料オンライン画像EXIF・GPS位置情報削除ツール",
+  "seo_title": "EXIF Cleaner | 無料オンライン画像EXIF・GPS位置情報削除ツール",
   "seo_description": "画像（JPEG/PNG）からEXIFタグ、GPS位置情報、およびメタデータをローカルオンラインで削除。個人情報保護のために撮影地やカメラ情報を完全消去。",
   "seoHeroTitle": "GPS位置情報とカメラEXIFメタデータをオフライン消去",
-  "seoHeroText": "写真を公開する前にプライバシーを保護。EXIF-Clearはブラウザのメモリ内だけで安全にメタデータヘッダーを読み取り、削除します。",
+  "seoHeroText": "写真を公開する前にプライバシーを保護。EXIF Cleanerはブラウザのメモリ内だけで安全にメタデータヘッダーを読み取り、削除します。",
   "seoHeroList": [
     "撮影地GPS座標、カメラ機種、露出設定などを自動検出して表示",
     "EXIF、XMP、およびPhotoshopのIPTCメタデータを含む全セグメントを一括クリア",

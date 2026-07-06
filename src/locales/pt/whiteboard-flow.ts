@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | Organize notas adesivas em um quadro Kanban com arrastar e soltar, salvo localmente.",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | Organize notas adesivas em um quadro Kanban com arrastar e soltar, salvo localmente.",
   "seo_description": "Organize notas adesivas em um quadro Kanban com arrastar e soltar, salvo localmente no seu navegador 100% do lado do cliente.",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "Organize notas adesivas em um quadro Kanban com arrastar e soltar, salvo localmente no seu navegador 100% do lado do cliente.",
   "reset": "Redefinir",
   "addNote": "Adicionar nota",
@@ -19,7 +19,13 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Seus dados nunca saem do seu dispositivo.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
-  "seoKeywords": ["whiteboard flow", "ferramenta online", "grátis", "local", "navegador"],
+  "seoKeywords": [
+    "whiteboard flow",
+    "ferramenta online",
+    "grátis",
+    "local",
+    "navegador"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -36,7 +42,7 @@ export default {
     }
   ],
   "footerTagline": "Organize notas adesivas em um quadro Kanban com arrastar e soltar, salvo localmente no seu navegador 100% do lado do cliente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

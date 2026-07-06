@@ -1,6 +1,6 @@
 export default {
-  "title": "UUID-Generator",
-  "seo_title": "UUID-Generator | 免费在线 UUID v4 和 v5 生成器",
+  "title": "UUID Generator",
+  "seo_title": "UUID Generator | 免费在线 UUID v4 和 v5 生成器",
   "seo_description": "使用 Web Crypto API 在浏览器中 100% 本地批量生成随机 UUID（v4）和命名 UUID（v5），一次最多 500 个。免费在线 UUID 生成器。",
   "seoHeroTitle": "UUID v4 和 v5 批量生成器",
   "seoHeroText": "使用浏览器原生 Web Crypto API 即时生成最多 500 个随机 UUID（版本 4）或命名 UUID（带命名空间的版本 5）。所有生成均在本地进行 — 无服务器调用，无追踪。",
@@ -25,7 +25,15 @@ export default {
   "seoUseCaseText": "一键生成最多 500 个 UUID。非常适合数据库播种、测试数据生成、唯一会话 ID 或任何需要多个唯一标识符的场景。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "无数据库、追踪或网络上传。所有 UUID 生成完全在浏览器的加密子系统中进行。您的数据永远不会离开您的设备。",
-  "seoKeywords": ["uuid 生成器", "uuid v4", "uuid v5", "guid 生成器", "随机 uuid", "批量 uuid", "唯一标识符"],
+  "seoKeywords": [
+    "uuid 生成器",
+    "uuid v4",
+    "uuid v5",
+    "guid 生成器",
+    "随机 uuid",
+    "批量 uuid",
+    "唯一标识符"
+  ],
   "faqTitle": "常见问题",
   "faq": [
     {
@@ -42,8 +50,9 @@ export default {
     }
   ],
   "footerTagline": "由 Web Crypto API 驱动的快速、安全的 UUID v4 和 v5 批量生成器 — 100% 在您的浏览器中本地运行。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
-  "contactForIdeas": "联系以提交想法和评论："
+  "contactForIdeas": "联系以提交想法和评论：",
+  "button_copy_all": "复制全部"
 };

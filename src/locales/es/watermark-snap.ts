@@ -1,5 +1,5 @@
 export default {
-  "title": "Watermark-Snap",
+  "title": "WatermarkSnap",
   "description": "Añade marcas de agua de texto o logotipo a varias imágenes simultáneamente. Procesa todos tus archivos en local.",
   "btn_download_zip": "Descargar Imágenes (.ZIP)",
   "label_mode_text": "Marca de Texto",
@@ -20,10 +20,10 @@ export default {
   "btn_add_files": "Añadir Imágenes",
   "btn_clear": "Limpiar Todo",
   "progress_generating": "Procesando imagen {current} de {total}...",
-  "seo_title": "Watermark-Snap | Añadir Marca de Agua a Imágenes en Lote Gratis Online",
-  "seo_description": "Protege tus fotos en masa con marcas de agua personalizadas en Watermark-Snap. Añade texto o logo en local, ajusta opacidad, tamaño y posición arrastrando.",
+  "seo_title": "WatermarkSnap | Añadir Marca de Agua a Imágenes en Lote Gratis Online",
+  "seo_description": "Protege tus fotos en masa con marcas de agua personalizadas en WatermarkSnap. Añade texto o logo en local, ajusta opacidad, tamaño y posición arrastrando.",
   "seoHeroTitle": "Añade Marcas de Agua a tus Fotos en Masa de Forma Local",
-  "seoHeroText": "Protege tus fotografías, productos de tienda online y diseños. Watermark-Snap procesa todo en la memoria de tu navegador de forma 100% segura.",
+  "seoHeroText": "Protege tus fotografías, productos de tienda online y diseños. WatermarkSnap procesa todo en la memoria de tu navegador de forma 100% segura.",
   "seoHeroList": [
     "Opción de marca en mosaico repetido para cubrir toda la superficie",
     "Sube logos personalizados o escribe textos con estilos",

@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "Kostenloser, privater und lokaler interaktiver Arbeitsbereich zur Textanalyse.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "seo_title": "WordFlow | Kostenloser Online Wortzähler & Lesbarkeitsanalyse",
+  "seo_description": "Erweiterter Wortzähler, Zeichenzähler, Lesbarkeitsanalyse und Assistent zur Textbereinigung 100 % lokal."
 };

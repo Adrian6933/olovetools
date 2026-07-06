@@ -758,9 +758,9 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
         isOpen={activeModal !== null} 
         onClose={() => setActiveModal(null)} 
         title={
-          activeModal === 'privacy' ? t.privacyPolicy || 'PolÃ­tica de Privacidad' :
-          activeModal === 'terms' ? t.termsOfService || 'TÃ©rminos de Servicio' :
-          t.cookiePolicy || 'PolÃ­tica de Cookies'
+          activeModal === 'privacy' ? t.privacyPolicy || 'Privacy Policy' :
+          activeModal === 'terms' ? t.termsOfService || 'Terms of Service' :
+          t.cookiePolicy || 'Cookie Policy'
         }
         content={
           activeModal === 'privacy' ? t.privacyContent :

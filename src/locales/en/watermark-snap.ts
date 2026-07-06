@@ -1,5 +1,5 @@
 export default {
-  "title": "Watermark-Snap",
+  "title": "WatermarkSnap",
   "description": "Add text or logo watermarks to multiple images simultaneously. Process all files locally inside your browser.",
   "btn_download_zip": "Download Watermarked Images (.ZIP)",
   "label_mode_text": "Text Watermark",
@@ -20,10 +20,10 @@ export default {
   "btn_add_files": "Add Images",
   "btn_clear": "Clear All",
   "progress_generating": "Processing image {current} of {total}...",
-  "seo_title": "Watermark-Snap | Free Batch Image Watermark Tool Online",
-  "seo_description": "Watermark multiple images in bulk online with Watermark-Snap. Add text or logo overlays locally, customize sizes, opacity, and drag position. 100% secure.",
+  "seo_title": "WatermarkSnap | Free Batch Image Watermark Tool Online",
+  "seo_description": "Watermark multiple images in bulk online with WatermarkSnap. Add text or logo overlays locally, customize sizes, opacity, and drag position. 100% secure.",
   "seoHeroTitle": "Batch Watermark Your Images Safely and Locally",
-  "seoHeroText": "Protect your photography, product listings, and branding designs. Watermark-Snap operates entirely in browser RAM without server uploads.",
+  "seoHeroText": "Protect your photography, product listings, and branding designs. WatermarkSnap operates entirely in browser RAM without server uploads.",
   "seoHeroList": [
     "Tiled repeating watermark option to fully cover image surfaces",
     "Upload custom logos or write styled text watermarks",

@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ToolTheme } from '../../lib/themes';
+import { ADS_ENABLED, AD_CLIENT, AD_SLOTS } from '../../config/ads';
 
-export type AdSlotPosition = 'top' | 'mid' | 'side' | 'late' | 'anchor';
-export type AdSlotSize = 'leaderboard' | 'rectangle' | 'mobile-banner';
+export type AdSlotPosition = 'top' | 'mid' | 'side' | 'late' | 'anchor' | 'content' | 'infeed' | 'railLeft' | 'railRight';
+export type AdSlotSize = 'leaderboard' | 'rectangle' | 'mobile-banner' | 'skyscraper';
 
 interface AdSlotProps {
-  theme: ToolTheme;
+  /** Tema visual del placeholder; si se omite se usa uno neutro (hub / páginas sin tema de tool) */
+  theme?: ToolTheme;
   position: AdSlotPosition;
   size?: AdSlotSize;
   lazyLoad?: boolean;
-  /** When provided, renders the AdSense ins tag. Otherwise renders a labeled placeholder. */
+  /** Override the client/slot resolved from src/config/ads.ts */
   adSenseClient?: string;
   adSenseSlot?: string;
 }
@@ -18,6 +20,7 @@ const SIZE_CLASSES: Record<AdSlotSize, string> = {
   leaderboard: 'h-24 md:h-20 max-w-[728px]',
   rectangle: 'h-[250px] max-w-[300px]',
   'mobile-banner': 'h-16 max-w-[320px]',
+  skyscraper: 'w-[160px] h-[600px]',
 };
 
 const POSITION_LABELS: Record<AdSlotPosition, string> = {
@@ -26,10 +29,28 @@ const POSITION_LABELS: Record<AdSlotPosition, string> = {
   side: 'Sidebar',
   late: 'Bottom',
   anchor: 'Sticky',
+  content: 'In-content',
+  infeed: 'In-feed',
+  railLeft: 'Left Rail',
+  railRight: 'Right Rail',
 };
 
+/** Tema neutro para contextos sin ToolTheme (hub, slot central de index.astro). */
+const NEUTRAL_THEME = {
+  primaryHex: '#64748b',
+  border: 'rgba(255,255,255,0.08)',
+  textMuted: '#64748b',
+  radius: 'md',
+} as unknown as ToolTheme;
+
+declare global {
+  interface Window {
+    adsbygoogle?: unknown[];
+  }
+}
+
 export const AdSlot: React.FC<AdSlotProps> = ({
-  theme,
+  theme = NEUTRAL_THEME,
   position,
   size = 'leaderboard',
   lazyLoad = true,
@@ -38,6 +59,11 @@ export const AdSlot: React.FC<AdSlotProps> = ({
 }) => {
   const [inView, setInView] = useState(!lazyLoad);
   const ref = useRef<HTMLDivElement>(null);
+  const insRef = useRef<HTMLModElement>(null);
+  const pushedRef = useRef(false);
+
+  const client = adSenseClient ?? AD_CLIENT;
+  const slot = adSenseSlot ?? (position in AD_SLOTS ? AD_SLOTS[position as keyof typeof AD_SLOTS] : '');
 
   useEffect(() => {
     if (!lazyLoad || inView) return;
@@ -55,7 +81,22 @@ export const AdSlot: React.FC<AdSlotProps> = ({
     return () => observer.disconnect();
   }, [lazyLoad, inView]);
 
-  const isActive = adSenseClient && adSenseSlot && inView;
+  const isActive = ADS_ENABLED && !!client && !!slot && inView;
+
+  useEffect(() => {
+    if (!isActive || !insRef.current || pushedRef.current) return;
+    // Evita el doble-push que rompe adsbygoogle en soft-navigations de Astro (ClientRouter).
+    if (insRef.current.getAttribute('data-ad-status')) return;
+    try {
+      window.adsbygoogle = window.adsbygoogle || [];
+      window.adsbygoogle.push({});
+      pushedRef.current = true;
+    } catch {
+      // adsbygoogle.js aún no cargado o bloqueado por un ad-blocker; no es un error de la app.
+    }
+  }, [isActive]);
+
+  if (!isActive && !import.meta.env.DEV) return null;
 
   return (
     <div
@@ -74,11 +115,13 @@ export const AdSlot: React.FC<AdSlotProps> = ({
       >
         {isActive ? (
           <ins
+            ref={insRef}
             className="adsbygoogle block w-full h-full"
-            data-ad-client={adSenseClient}
-            data-ad-slot={adSenseSlot}
-            data-ad-format="auto"
-            data-full-width-responsive="true"
+            data-ad-client={client}
+            data-ad-slot={slot}
+            {...(size === 'skyscraper' || size === 'rectangle'
+              ? {}
+              : { 'data-ad-format': 'auto', 'data-full-width-responsive': 'true' })}
           />
         ) : (
           <div className="text-center space-y-1">

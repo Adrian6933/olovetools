@@ -100,7 +100,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '2',
-    name: 'Twitchbolt',
+    name: 'TwitchBolt',
     slug: 'twitchbolt',
     description: 'Fast and easy Twitch clip downloader. Save your favorite moments instantly.',
     category: ProjectCategory.SOCIAL_DOWNLOADS,
@@ -130,7 +130,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '5',
-    name: 'Kickbolt',
+    name: 'KickBolt',
     slug: 'kickbolt',
     description: 'Fast and easy Kick clip downloader. Save your favorite moments instantly.',
     category: ProjectCategory.SOCIAL_DOWNLOADS,
@@ -160,7 +160,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '8',
-    name: 'PDF-Flow',
+    name: 'PDFFlow',
     slug: 'pdf-flow',
     description: 'Merge, split, rotate, and convert documents or images to PDF locally in your browser.',
     category: ProjectCategory.DOCUMENT_PDF,
@@ -180,7 +180,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '10',
-    name: 'QR-Bolt',
+    name: 'QRBolt',
     slug: 'qr-bolt',
     description: 'Generate styled, high-quality QR codes with gradients, custom shapes, and center logos 100% locally.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -210,7 +210,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '13',
-    name: 'CSS-Designer',
+    name: 'CSS Designer',
     slug: 'css-designer',
     description: 'Create and generate custom modern CSS styles like glassmorphism, shadows, gradients and fancy borders 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -220,7 +220,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '14',
-    name: 'JSON-Flow',
+    name: 'JSONFlow',
     slug: 'json-flow',
     description: 'Format, validate, explore and convert JSON data in the browser 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -240,7 +240,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '16',
-    name: 'TTS-Bolt',
+    name: 'TTSBolt',
     slug: 'tts-bolt',
     description: 'Convert text to natural speech and download it as an MP3 file 100% locally.',
     category: ProjectCategory.VIDEO_AUDIO,
@@ -250,7 +250,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '17',
-    name: 'GIF-Bolt',
+    name: 'GIFBolt',
     slug: 'gif-bolt',
     description: 'Convert videos and image sequences into optimized animated GIFs 100% locally.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -290,7 +290,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '21',
-    name: 'Watermark-Snap',
+    name: 'WatermarkSnap',
     slug: 'watermark-snap',
     description: 'Add text or logo watermarks to multiple images simultaneously. Process all files locally inside your browser.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -300,7 +300,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '22',
-    name: 'Favicon-Bolt',
+    name: 'FaviconBolt',
     slug: 'favicon-bolt',
     description: 'Generate a complete package of standard website favicons from an image or emoji. Process all files locally inside your browser.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -310,7 +310,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '23',
-    name: 'EXIF-Clear',
+    name: 'EXIF Cleaner',
     slug: 'exif-clear',
     description: 'Inspect and strip EXIF, GPS, and metadata from images locally in your browser. Protect your privacy online.',
     category: ProjectCategory.SECURITY_CRYPTO,
@@ -320,7 +320,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '24',
-    name: 'Meme-Bolt',
+    name: 'MemeBolt',
     slug: 'meme-bolt',
     description: 'Create and generate custom memes from templates or your own images 100% locally in your browser.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -340,7 +340,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '26',
-    name: 'Markdown-Live',
+    name: 'MarkdownLive',
     slug: 'markdown-live',
     description: 'A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally.',
     category: ProjectCategory.TEXT_UTILITIES,
@@ -350,7 +350,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '27',
-    name: 'Hash-Bolt',
+    name: 'HashBolt',
     slug: 'hash-bolt',
     description: 'Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally with checksum verification.',
     category: ProjectCategory.SECURITY_CRYPTO,
@@ -360,7 +360,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '28',
-    name: 'Zip-Flow',
+    name: 'ZipFlow',
     slug: 'zip-flow',
     description: 'Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization.',
     category: ProjectCategory.PRODUCTIVITY,
@@ -370,7 +370,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '29',
-    name: 'Regex-Flow',
+    name: 'RegexFlow',
     slug: 'regex-flow',
     description: 'An interactive regular expression builder, tester, and visualizer with real-time match highlighting and syntax breakdown 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -380,7 +380,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '30',
-    name: 'Lottie-Viewer',
+    name: 'Lottie Viewer',
     slug: 'lottie-viewer',
     description: 'Render, inspect, and edit layer colors of Lottie JSON animations 100% locally in your browser with real-time playback controls.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -390,7 +390,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '31',
-    name: 'SVG-Optimizer',
+    name: 'SVG Optimizer',
     slug: 'svg-optimizer',
     description: 'Optimize, clean and compress SVG files 100% locally in your browser with real-time side-by-side previews and code formatting.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -400,7 +400,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '32',
-    name: 'Graph-Flow',
+    name: 'GraphFlow',
     slug: 'graph-flow',
     description: 'Create beautiful charts from CSV data or manual input. Export as PNG, SVG, or PDF 100% locally in your browser.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -410,7 +410,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '33',
-    name: 'Url-Bolt',
+    name: 'URLBolt',
     slug: 'url-bolt',
     description: 'Encode, decode, and parse URLs with query string breakdown and smart formatting 100% locally in your browser.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -420,7 +420,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '34',
-    name: 'Base64-Bolt',
+    name: 'Base64Bolt',
     slug: 'base64-bolt',
     description: 'Encode and decode Base64 strings and convert images to DataURL 100% locally in your browser.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -430,7 +430,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '35',
-    name: 'UUID-Generator',
+    name: 'UUID Generator',
     slug: 'uuid-generator',
     description: 'Generate random UUIDs (v4) and named UUIDs (v5) in bulk up to 500 at once 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -440,7 +440,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '36',
-    name: 'List-Mixer',
+    name: 'List Mixer',
     slug: 'list-mixer',
     description: 'Sort, reverse, shuffle, deduplicate, trim and clean lists of text 100% locally in your browser.',
     category: ProjectCategory.TEXT_UTILITIES,
@@ -450,7 +450,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '37',
-    name: 'HTML-Sanitizer',
+    name: 'HTML Sanitizer',
     slug: 'html-sanitizer',
     description: 'Clean and sanitize HTML code by removing scripts, styles, iframes and unwanted tags 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -470,7 +470,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '39',
-    name: 'Hex-to-RGB',
+    name: 'Hex to RGB',
     slug: 'hex-to-rgb',
     description: 'Convert between HEX, RGB, HSL and CMYK color formats with opacity and contrast tools 100% locally.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -480,7 +480,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '40',
-    name: 'Aspect-Ratio',
+    name: 'Aspect Ratio',
     slug: 'aspect-ratio',
     description: 'Calculate aspect ratios and proportional resolutions for video, images and screens 100% locally.',
     category: ProjectCategory.IMAGE_DESIGN,
@@ -500,7 +500,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '42',
-    name: 'SQL-Flow',
+    name: 'SQLFlow',
     slug: 'sql-flow',
     description: 'Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -510,7 +510,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '43',
-    name: 'Cron-Flow',
+    name: 'CronFlow',
     slug: 'cron-flow',
     description: 'Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -520,7 +520,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '44',
-    name: 'XML-JSON',
+    name: 'XML to JSON',
     slug: 'xml-json',
     description: 'Convert XML to JSON and JSON to XML instantly 100% locally in your browser.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -530,7 +530,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '45',
-    name: 'Binary-Flow',
+    name: 'BinaryFlow',
     slug: 'binary-flow',
     description: 'Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -540,7 +540,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '46',
-    name: 'Morse-Flow',
+    name: 'MorseFlow',
     slug: 'morse-flow',
     description: 'Encode and decode Morse code with audio playback 100% locally in your browser.',
     category: ProjectCategory.TEXT_UTILITIES,
@@ -550,7 +550,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '47',
-    name: 'Epoch-Flow',
+    name: 'EpochFlow',
     slug: 'epoch-flow',
     description: 'Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -560,7 +560,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '48',
-    name: 'Time-Bolt',
+    name: 'TimeBolt',
     slug: 'time-bolt',
     description: 'Convert time between world timezones with an interactive meeting planner 100% locally.',
     category: ProjectCategory.PRODUCTIVITY,
@@ -570,7 +570,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '49',
-    name: 'Device-Test',
+    name: 'Device Test',
     slug: 'device-test',
     description: 'Test your webcam, microphone, speakers and system info 100% locally in your browser.',
     category: ProjectCategory.NETWORK_SYSTEM,
@@ -580,7 +580,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '50',
-    name: 'Lorem-Flow',
+    name: 'LoremFlow',
     slug: 'lorem-flow',
     description: 'Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally.',
     category: ProjectCategory.TEXT_UTILITIES,
@@ -590,7 +590,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '51',
-    name: 'Key-Doctor',
+    name: 'Key Doctor',
     slug: 'key-doctor',
     description: 'Detect and display JavaScript keyboard event properties key, code and keyCode 100% locally.',
     category: ProjectCategory.DEVELOPER_TOOLS,
@@ -600,7 +600,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '52',
-    name: 'Whiteboard-Flow',
+    name: 'WhiteboardFlow',
     slug: 'whiteboard-flow',
     description: 'Organize notes in a virtual Kanban board with drag and drop 100% locally in your browser.',
     category: ProjectCategory.PRODUCTIVITY,
@@ -610,7 +610,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '53',
-    name: 'Subtitles-Bolt',
+    name: 'SubtitlesBolt',
     slug: 'subtitles-bolt',
     description: 'Convert subtitles between SRT, VTT and SBV formats 100% locally in your browser.',
     category: ProjectCategory.VIDEO_AUDIO,
@@ -630,7 +630,7 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '55',
-    name: 'Whois-Bolt',
+    name: 'WhoisBolt',
     slug: 'whois-bolt',
     description: 'Query DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) using DNS over HTTPS.',
     category: ProjectCategory.NETWORK_SYSTEM,

@@ -1,11 +1,11 @@
 export default {
-  "title": "Morse-Flow",
-  "seo_title": "Morse-Flow | ブラウザ内で100%ローカルにオーディオ再生付きでMorseコードをエンコード・デコード。",
+  "title": "MorseFlow",
+  "seo_title": "MorseFlow | ブラウザ内で100%ローカルにオーディオ再生付きでMorseコードをエンコード・デコード。",
   "seo_description": "ブラウザ内で100%ローカルにオーディオ再生付きでMorseコードをエンコード・デコード。",
-  "seoHeroTitle": "Morse-Flow",
+  "seoHeroTitle": "MorseFlow",
   "seoHeroText": "ブラウザ内で100%ローカルにオーディオ再生付きでMorseコードをエンコード・デコード。",
   "label_text": "テキスト",
-  "label_morse": "Morse",
+  "label_morse": "モールス",
   "label_speed": "速度",
   "label_wpm": "WPM",
   "label_reference": "Morseリファレンス",
@@ -21,7 +21,13 @@ export default {
   "seoUseCaseText": "すべてがブラウザ内でローカルに実行されます。データがデバイスから離れることはありません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードなし。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
-  "seoKeywords": ["morse flow", "オンラインツール", "無料", "ローカル", "ブラウザ"],
+  "seoKeywords": [
+    "morse flow",
+    "オンラインツール",
+    "無料",
+    "ローカル",
+    "ブラウザ"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -33,12 +39,12 @@ export default {
       "answer": "オーディオはWeb AudioContext APIを使用してローカルに生成されます。サイン波オシレーターがトーンを生成し、タイミングは標準PARISワード毎分（WPM）ルールに従います。"
     },
     {
-      "question": "Morse-Flowはどの文字をサポートしていますか？",
-      "answer": "Morse-Flowは国際Morseコード標準に従い、AからZまでの文字と0から9までの数字をサポートします。単語間のスペースはスラッシュ区切りでエンコードされます。"
+      "question": "MorseFlowはどの文字をサポートしていますか？",
+      "answer": "MorseFlowは国際Morseコード標準に従い、AからZまでの文字と0から9までの数字をサポートします。単語間のスペースはスラッシュ区切りでエンコードされます。"
     }
   ],
   "footerTagline": "ブラウザ内で100%ローカルにオーディオ再生付きでMorseコードをエンコード・デコード。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

@@ -1,0 +1,65 @@
+# oLoveTools
+
+> A free suite of 100% client-side, privacy-first web tools. No uploads, no accounts, no tracking of your files -- everything runs locally in your browser.
+
+## Tools
+
+- [Aspect Ratio](https://olovetools.com/en/aspect-ratio): Calculate simplified aspect ratios, resize images proportionally, and explore common presets like 16:9, 4:3 and 9:16. 100% local and private.
+- [AudioSnap](https://olovetools.com/en/audiosnap): Record your voice, edit/trim sound clips online, and download in lossless WAV or compressed format. 100% local in your browser, no registration.
+- [Background Remover](https://olovetools.com/en/backgroundremover): Remove backgrounds from images instantly. 100% local browser-based AI background removal. High resolution, private, fast and free.
+- [Base64Bolt](https://olovetools.com/en/base64-bolt): Encode text to Base64, decode Base64 strings, and convert images to DataURL or back 100% locally in your browser. Free online Base64 tool.
+- [BinaryFlow](https://olovetools.com/en/binary-flow): Convert numbers and text between binary, hexadecimal, decimal and octal systems 100% locally.
+- [CleanSnap](https://olovetools.com/en/cleansnap): Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle. Content-aware fill plus a smart AI-assisted mode, 100% locally in your browser.
+- [ClipFlow](https://olovetools.com/en/clip-flow): Paste a Twitch VOD or live channel, mark as many cuts as you want on a full timeline, and export each one — or all of them joined — as MP4. No 60-second limit, 100% in your browser.
+- [Clipy](https://olovetools.com/en/clipy): Search and find the best Twitch clips by game, streamer or keyword. Save your favorite moments and download them easily.
+- [CodeCard](https://olovetools.com/en/codecard): Convert programming code to high-quality images with beautiful gradient backgrounds, customized shadow glows, and editor shells. 100% local, safe, and free.
+- [ColorSnap](https://olovetools.com/en/colorsnap): Upload an image and instantly extract its dominant colors as a reusable palette. Copy HEX codes or export a CSS palette. 100% local and private.
+- [CompressSnap](https://olovetools.com/en/compresssnap): Compress JPG, PNG, and WebP images quickly. Batch compress images 100% locally in your browser. Private, fast, and free.
+- [CronFlow](https://olovetools.com/en/cron-flow): Generate, translate and visualize cron expressions with human-readable descriptions 100% locally.
+- [CropSnap](https://olovetools.com/en/cropsnap): Crop, resize, and rotate your photos with custom dimensions or preset social media aspect ratios (1:1, 16:9, 9:16). 100% local, safe, and free.
+- [CSS Designer](https://olovetools.com/en/css-designer): Create modern CSS effects with our visual playground. Generate CSS and Tailwind code for glassmorphism, advanced box shadows, gradients, and custom border radius.
+- [Device Test](https://olovetools.com/en/device-test): Test your webcam, microphone and inspect system info, all locally in your browser.
+- [DiffSnap](https://olovetools.com/en/diffsnap): Compare two text or code files side-by-side or unified with DiffSnap. Check additions and deletions client-side with absolute privacy, no uploads.
+- [DrawSnap](https://olovetools.com/en/drawsnap): Draw, sketch, and design online with DrawSnap. Toggle grid backgrounds, use shapes, pencil curves, undo/redo, and export to PNG or SVG locally in your browser.
+- [EpochFlow](https://olovetools.com/en/epoch-flow): Convert Unix epoch timestamps to human-readable dates and vice versa 100% locally.
+- [EXIF Cleaner](https://olovetools.com/en/exif-clear): Remove EXIF, GPS, and metadata tags from JPEG/PNG images locally online. Clear location and camera data for complete privacy.
+- [FaviconBolt](https://olovetools.com/en/favicon-bolt): Convert images or emojis to multi-resolution ICO, Apple touch icons, and web manifests locally. Fast, secure, and offline.
+- [FormatFlow](https://olovetools.com/en/formatflow): FormatFlow is the ultimate browser-based tool to change any image format (JPG, PNG, WEBP) to HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, resize photos, and compress images securely.
+- [FrameSnap](https://olovetools.com/en/framesnap): Free online video frame extractor. Step through any video frame by frame, scrub at different speeds and export the exact frame as a high-quality PNG, JPG or WebP image. 100% local, no upload.
+- [GIFBolt](https://olovetools.com/en/gif-bolt): Convert videos and image sequences to high-quality animated GIFs directly in your browser. Fully customizable trim, fps, dimensions, and compression options.
+- [GraphFlow](https://olovetools.com/en/graph-flow): Create beautiful charts and data visualizations from CSV files or manual input. Export as PNG, SVG, or PDF 100% locally in your browser.
+- [HashBolt](https://olovetools.com/en/hash-bolt): Calculate cryptographic hashes (MD5, SHA-1, SHA-256, SHA-512) for text and files 100% locally inside your browser.
+- [Hex to RGB](https://olovetools.com/en/hex-to-rgb): Convert between HEX, RGB, HSL and CMYK color formats with adjustable opacity and a WCAG contrast checker. 100% local and private.
+- [HTML Sanitizer](https://olovetools.com/en/html-sanitizer): Clean and sanitize HTML code by removing scripts, styles, iframes, event handlers and unwanted tags 100% locally in your browser. Free online HTML sanitizer.
+- [JSONFlow](https://olovetools.com/en/json-flow): Validate, format, and visualize JSON in a responsive tree view. Convert JSON to CSV, Excel or XML, and CSV back to JSON 100% locally.
+- [Key Doctor](https://olovetools.com/en/key-doctor): Inspect keyboard events live: see event.key, event.code and event.keyCode with modifier detection 100% locally.
+- [KickBolt](https://olovetools.com/en/kickbolt): The ultimate tool to save Kick moments. Fast, reliable and zero registration. Download entire lists of clips at once.
+- [Klipy](https://olovetools.com/en/klipy): Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.
+- [List Mixer](https://olovetools.com/en/list-mixer): Sort, reverse, shuffle, deduplicate, trim and clean lists of text online 100% locally in your browser. Free online list manipulation tool.
+- [LoremFlow](https://olovetools.com/en/lorem-flow): Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally in your browser.
+- [Lottie Viewer](https://olovetools.com/en/lottie-viewer): Interactive client-side Lottie animation player, customizer, and inspector to edit vector colors and control playback properties 100% locally.
+- [MarkdownLive](https://olovetools.com/en/markdown-live): A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally.
+- [MemeBolt](https://olovetools.com/en/meme-bolt): Generate funny memes locally with custom text and stickers. Select popular templates or upload your own images offline in your browser.
+- [MorseFlow](https://olovetools.com/en/morse-flow): Encode and decode Morse code with audio playback 100% locally in your browser.
+- [PassBolt](https://olovetools.com/en/passbolt): Generate strong passwords and test password strength with entropy analysis 100% locally in your browser.
+- [PasteSnap](https://olovetools.com/en/pastesnap): Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.
+- [PDFFlow](https://olovetools.com/en/pdf-flow): Merge, split, rotate, and convert JPG/PNG to PDF 100% locally. No registration or server uploads required. Secure, fast, and completely free.
+- [QRBolt](https://olovetools.com/en/qr-bolt): Create custom QR codes with custom logos, gradient colors, and unique shapes. 100% client-side, free, and secure. Download in high-quality PNG or SVG.
+- [RecordSnap](https://olovetools.com/en/recordsnap): Record screen, window, or webcam directly in your browser. 100% local, safe, no server uploads or registration. Download high-quality recordings instantly.
+- [RegexFlow](https://olovetools.com/en/regex-flow): Interactive client-side regular expression builder and tester with real-time highlighting, syntax explanations, and replacements 100% locally.
+- [SocialBolt](https://olovetools.com/en/socialbolt): Quickly download TikTok videos without watermark, Instagram Reels, and YouTube Shorts 100% locally in your browser. Free, fast and safe.
+- [SQLFlow](https://olovetools.com/en/sql-flow): Format, beautify and validate SQL queries with syntax highlighting 100% locally in your browser.
+- [SubtitlesBolt](https://olovetools.com/en/subtitles-bolt): Convert subtitles between SRT, VTT and SBV formats with automatic detection 100% locally in your browser.
+- [SVG Optimizer](https://olovetools.com/en/svg-optimizer): Optimize, clean, and minify SVG vector files 100% locally in your browser to reduce file size and improve loading performance.
+- [TimeBolt](https://olovetools.com/en/time-bolt): Convert time between world timezones with an interactive meeting planner 100% locally.
+- [TTSBolt](https://olovetools.com/en/tts-bolt): Listen to any text with natural voices and download it as an MP3 file. Speed and pitch customization, 100% locally in your browser.
+- [TwitchBolt](https://olovetools.com/en/twitchbolt): The ultimate tool to save Twitch moments. Fast, reliable and zero registration. Download entire lists of clips at once.
+- [UnitFlow](https://olovetools.com/en/unitflow): Convert units of measurement across length, weight, temperature, speed, volume, area, time and data. Live conversion table. 100% local and private.
+- [URLBolt](https://olovetools.com/en/url-bolt): Encode, decode, and parse URLs with query string breakdown and smart formatting 100% locally in your browser. Free online URL tool.
+- [UUID Generator](https://olovetools.com/en/uuid-generator): Generate random UUIDs (v4) and named UUIDs (v5) in bulk up to 500 at once 100% locally in your browser using Web Crypto API. Free online UUID generator.
+- [WatermarkSnap](https://olovetools.com/en/watermark-snap): Watermark multiple images in bulk online with WatermarkSnap. Add text or logo overlays locally, customize sizes, opacity, and drag position. 100% secure.
+- [WhiteboardFlow](https://olovetools.com/en/whiteboard-flow): Organize sticky notes on a Kanban board with drag-and-drop, saved locally in your browser 100% client-side.
+- [WhoisBolt](https://olovetools.com/en/whois-bolt): Look up DNS records (A, AAAA, MX, TXT, NS, CNAME, SOA) for any domain over HTTPS, right in your browser.
+- [WordFlow](https://olovetools.com/en/wordflow): An advanced word counter, character counter, readability analyzer, and text cleaning assistant 100% locally.
+- [XML to JSON](https://olovetools.com/en/xml-json): Convert XML to JSON and JSON to XML instantly 100% locally in your browser.
+- [ZipFlow](https://olovetools.com/en/zip-flow): Compress files into ZIP archives and extract files from ZIP archives 100% locally in your browser with real-time file tree visualization.

@@ -1,5 +1,5 @@
 export default {
-  "title": "EXIF-Clear",
+  "title": "EXIF Cleaner",
   "description": "在浏览器本地安全检查并擦除图片的 EXIF、GPS 坐标及各类元数据。全方位保护您的隐私安全。",
   "btn_download_cleaned": "下载已清除元数据的图片",
   "btn_download_zip": "打包下载 (.ZIP)",
@@ -22,10 +22,10 @@ export default {
   "no_files_loaded": "暂未加载任何图片",
   "preview_title": "元数据检测分析仪",
   "progress_clearing": "正在清除第 {current} / {total} 张图片的元数据...",
-  "seo_title": "EXIF-Clear | 免费在线图片 EXIF 及 GPS 定位元数据清除工具",
+  "seo_title": "EXIF Cleaner | 免费在线图片 EXIF 及 GPS 定位元数据清除工具",
   "seo_description": "本地安全清除图片中的 EXIF、GPS 地理坐标与拍摄参数。一键清除 JPEG/PNG 敏感信息，全面保护隐私。",
   "seoHeroTitle": "离线一键擦除照片中的 GPS 与 EXIF 敏感信息",
-  "seoHeroText": "在分享或发布照片前，擦除所有潜在隐私风险。EXIF-Clear 完全在浏览器内存中完成二进制头清洗，零上传，更安全。",
+  "seoHeroText": "在分享或发布照片前，擦除所有潜在隐私风险。EXIF Cleaner 完全在浏览器内存中完成二进制头清洗，零上传，更安全。",
   "seoHeroList": [
     "精准识别和显示照片中的 GPS 经纬度、相机型号、曝光和时间数据",
     "支持彻底清洗 EXIF、XMP 和 Photoshop 写入的 IPTC 等所有元数据块",
@@ -49,7 +49,7 @@ export default {
     },
     {
       "question": "支持什么格式的图片？",
-      "answer": "EXIF-Clear 支持以完全离线的方式清洗 JPEG/JPG、PNG 和 WebP 格式图片的元数据。"
+      "answer": "EXIF Cleaner 支持以完全离线的方式清洗 JPEG/JPG、PNG 和 WebP 格式图片的元数据。"
     },
     {
       "question": "GPS 定位信息是如何被提取出来的？",

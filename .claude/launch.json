@@ -5,13 +5,21 @@
       "name": "olovetools-dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
-      "port": 4321
+      "port": 4321,
+      "autoPort": true
     },
     {
       "name": "clipflow-proxy",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "proxy"],
       "port": 8787
+    },
+    {
+      "name": "olovetools-prod-preview",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "preview"],
+      "port": 4321,
+      "autoPort": true
     }
   ]
 }

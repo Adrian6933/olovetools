@@ -25,7 +25,16 @@ export default {
   "seoUseCaseText": "すべてはブラウザ内でローカルに実行されます。入力はデバイスから離れることはなく、何もアップロードされません。",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
   "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードはありません。入力は厳密にローカルメモリに留まり、タブを閉じると消去されます。",
-  "seoKeywords": ["単位コンバーター", "長さコンバーター", "重量コンバーター", "温度コンバーター", "速度コンバーター", "体積コンバーター", "オンラインツール", "無料"],
+  "seoKeywords": [
+    "単位コンバーター",
+    "長さコンバーター",
+    "重量コンバーター",
+    "温度コンバーター",
+    "速度コンバーター",
+    "体積コンバーター",
+    "オンラインツール",
+    "無料"
+  ],
   "faqTitle": "よくある質問",
   "faq": [
     {
@@ -42,7 +51,7 @@ export default {
     }
   ],
   "footerTagline": "測定単位を変換します：長さ、重量、温度、速度、体積など100%ローカルで。",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "アイデアやコメントのお問い合わせ:"

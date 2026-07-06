@@ -25,7 +25,16 @@ export default {
   "seoUseCaseText": "Tudo é executado localmente no seu navegador. Suas entradas nunca saem do seu dispositivo e nada é carregado.",
   "seoPrivacyTitle": "100% Privado e Seguro",
   "seoPrivacyText": "Sem bancos de dados, rastreamento ou uploads de rede. Suas entradas residem estritamente na memória local e desaparecem quando você fecha a aba.",
-  "seoKeywords": ["conversor de unidades", "conversor de comprimento", "conversor de peso", "conversor de temperatura", "conversor de velocidade", "conversor de volume", "ferramenta online", "grátis"],
+  "seoKeywords": [
+    "conversor de unidades",
+    "conversor de comprimento",
+    "conversor de peso",
+    "conversor de temperatura",
+    "conversor de velocidade",
+    "conversor de volume",
+    "ferramenta online",
+    "grátis"
+  ],
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
@@ -42,7 +51,7 @@ export default {
     }
   ],
   "footerTagline": "Converta unidades de medida: comprimento, peso, temperatura, velocidade, volume e mais 100% localmente.",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contato para ideias e comentários:"

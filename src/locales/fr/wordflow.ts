@@ -64,5 +64,7 @@ export default {
     }
   ],
   "footerTagline": "Espace de travail interactif gratuit, confidentiel et local pour vos textes.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "seo_title": "WordFlow | Compteur de Mots et Analyseur de Lisibilité Gratuit",
+  "seo_description": "Compteur de mots, de caractères, analyse de lisibilité et assistant de nettoyage de texte 100% local."
 };

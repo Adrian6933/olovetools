@@ -1,7 +1,7 @@
 export default {
-  "title": "PDF-Flow",
+  "title": "PDFFlow",
   "description": "在浏览器中本地合并、拆分、旋转文档或图像，并将其转换为 PDF。",
-  "seo_title": "PDF-Flow | 本地安全的 PDF 编辑器与免费工具箱",
+  "seo_title": "PDFFlow | 本地安全的 PDF 编辑器与免费工具箱",
   "seo_description": "100% 在本地浏览器中合并、拆分、旋转 PDF，以及将 JPG/PNG 转换为 PDF。无需注册，无需上传服务器。安全、快速且完全免费。",
   "dropzonePrompt": "拖放您的文件到此处或点击进行选择",
   "dropzoneSubtitle": "支持 PDF 文件和 JPG/PNG 图像。所有处理均为 100% 本地运行。",
@@ -52,16 +52,16 @@ export default {
   ],
   "footerCredit": "oLoveTools 实用套件的一部分",
   "seoHeroTitle": "100% 本地、隐私与安全的 PDF 编辑",
-  "seoHeroText": "标准的在线 PDF 工具会强制您将敏感文档（如合同、税务表格和扫描件）上传到远程服务器。PDF-Flow 在浏览器内存中处理所有操作，您的私人文档绝对不会离开您的电脑。",
+  "seoHeroText": "标准的在线 PDF 工具会强制您将敏感文档（如合同、税务表格和扫描件）上传到远程服务器。PDFFlow 在浏览器内存中处理所有操作，您的私人文档绝对不会离开您的电脑。",
   "seoHeroList": [
     "安全的离线处理",
     "不上传任何文档，隐私风险为零",
     "完全免费且没有任何使用限制"
   ],
   "seoBrowserSpeedTitle": "瞬时浏览器端编译",
-  "seoBrowserSpeedText": "通过使用 JavaScript WebAssembly API 在本地生成 PDF，PDF-Flow 避免了网络延迟与服务器排队。无论是合并大文件还是提取页面均可瞬间完成。",
+  "seoBrowserSpeedText": "通过使用 JavaScript WebAssembly API 在本地生成 PDF，PDFFlow 避免了网络延迟与服务器排队。无论是合并大文件还是提取页面均可瞬间完成。",
   "seoSecondaryTitle": "多用途的客户端 PDF 实用工具",
-  "seoKeywordsTitle": "Keywords",
+  "seoKeywordsTitle": "关键词",
   "seoKeywords": [
     "在线合并PDF",
     "拆分PDF页面",
@@ -74,9 +74,9 @@ export default {
     "免上传PDF转换器"
   ],
   "seoUseCaseTitle": "专业及个人用途的理想选择",
-  "seoUseCaseText": "无论是合并签署的合同、整理扫描的收据、拆分学习指南还是整理照片集，PDF-Flow 都能在保障速度与隐私的前提下在本地轻松完成。",
+  "seoUseCaseText": "无论是合并签署的合同、整理扫描的收据、拆分学习指南还是整理照片集，PDFFlow 都能在保障速度与隐私的前提下在本地轻松完成。",
   "seoPrivacyTitle": "坚不可摧的数据安全",
-  "seoPrivacyText": "我们坚信您的文件只属于您。PDF-Flow 使用 pdf-lib 在浏览器沙箱内运行内存中 PDF 处理。无遥测数据，无日志，不上传任何内容。",
+  "seoPrivacyText": "我们坚信您的文件只属于您。PDFFlow 使用 pdf-lib 在浏览器沙箱内运行内存中 PDF 处理。无遥测数据，无日志，不上传任何内容。",
   "faqTitle": "常见问题解答",
   "faq": [
     {
@@ -104,7 +104,7 @@ export default {
   "emailCopied": "电子邮件已复制到剪贴板！",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "privacyContent": "您的隐私对我们至关重要。\n\n我们只收集提供服务所必需的信息。这包括关于您的浏览器和设备的某些技术数据，以确保工具正常运行。\n\n我们绝不会存储、跟踪或分析您的文件。所有处理均在您的浏览器本地进行，确保您的数据永远不会离开您的设备。",
-  "termsContent": "使用 PDF-Flow 即表示您同意以下条款。\n\n1. 本工具按“原样”提供，不提供任何形式的明示或暗示保证。\n2. 我们不对因使用本工具而造成的任何数据丢失或问题承担任何责任。\n3. 您对使用本工具处理的所有内容独立承担全部责任。\n4. 我们保留随时修改这些条款的权利。",
+  "termsContent": "使用 PDFFlow 即表示您同意以下条款。\n\n1. 本工具按“原样”提供，不提供任何形式的明示或暗示保证。\n2. 我们不对因使用本工具而造成的任何数据丢失或问题承担任何责任。\n3. 您对使用本工具处理的所有内容独立承担全部责任。\n4. 我们保留随时修改这些条款的权利。",
   "cookiesContent": "我们使用 Cookie 来提升您的体验。\n\n1. 必需 Cookie：网站基本功能所必需。\n2. 偏好 Cookie：用于记住您的语言和 Cookie 同意设置。\n\n您可随时通过浏览器设置来管理或禁用 Cookie。",
   "contact": "联系我们"
 };

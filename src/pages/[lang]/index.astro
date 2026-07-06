@@ -3,6 +3,7 @@ import { Home } from '../../components/Home';
 import { CookieBanner } from '../../components/CookieBanner';
 import { useTranslation, Language } from '../../locales/dictionary';
 import { ClientRouter } from 'astro:transitions';
+import Analytics from '../../components/Analytics.astro';
 import '../../styles/global.css';
 
 export function getStaticPaths() {
@@ -114,35 +115,10 @@ const organizationSchema = {
         display: none !important;
       }
     </style>
+    <Analytics />
   </head>
   <body class="bg-[#060609]">
     <Home lang={lang || 'en'} dictionary={dictionary} client:load />
-
-    <!-- SSR SEO Content for AdSense Hub Approval -->
-    <div class="hidden-seo-content" style="display: none;" aria-hidden="true">
-      <h1>{t('seo_title')}</h1>
-      <p>{t('seo_description')}</p>
-      <h2>{t('hub_title')}</h2>
-      <p>{t('hub_subtitle')}</p>
-      
-      {/* List tools for better internal linking and content depth */}
-      <article>
-        <h3>Clipy</h3>
-        <p>{t('clipy_desc')}</p>
-      </article>
-      <article>
-        <h3>ClipBolt</h3>
-        <p>{t('clipbolt_desc')}</p>
-      </article>
-      <article>
-        <h3>FormatFlow</h3>
-        <p>{t('formatflow_desc')}</p>
-      </article>
-      <article>
-        <h3>PasteSnap</h3>
-        <p>{t('pastesnap_desc')}</p>
-      </article>
-    </div>
 
     <script is:inline>
       // Force scroll to top on view transitions

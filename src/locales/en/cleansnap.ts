@@ -10,14 +10,46 @@ export default {
   "seoUseCaseText": "Everything runs locally in your browser. Your data never leaves your device.",
   "seoPrivacyTitle": "100% Private & Secure",
   "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
-  "seoKeywords": ["cleansnap", "online tool", "free", "local", "browser"],
+  "seoKeywords": [
+    "cleansnap",
+    "online tool",
+    "free",
+    "local",
+    "browser"
+  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
-    { "question": "Is my data sent to any server?", "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device." }
+    {
+      "question": "Is my data sent to any server?",
+      "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
+    }
   ],
   "footerTagline": "Remove watermarks, logos and unwanted objects from images by painting over them with a brush, rectangle or circle. Content-aware fill plus a smart AI-assisted mode, 100% locally in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "contactForIdeas": "Contact for ideas and comments:",
+  "ui_drop": "Drag & drop an image or click to upload",
+  "ui_formats": "JPG · PNG · WebP — never leaves your device",
+  "ui_select": "Select image",
+  "ui_brush": "Brush",
+  "ui_eraser": "Erase selection",
+  "ui_rect": "Rectangle",
+  "ui_circle": "Circle",
+  "ui_size": "Brush size",
+  "ui_manual": "Manual",
+  "ui_ai": "AI mode",
+  "ui_method": "Fill",
+  "ui_contentAware": "Content-aware",
+  "ui_blur": "Blur",
+  "ui_pixelate": "Pixelate",
+  "ui_remove": "Remove selection",
+  "ui_aiRemove": "Smart remove",
+  "ui_clearSel": "Clear selection",
+  "ui_undo": "Undo",
+  "ui_reset": "Reset",
+  "ui_download": "Download",
+  "ui_aiNote": "Smart content-aware fill — runs locally, nothing is uploaded.",
+  "ui_hint": "Paint over the watermark, then press Remove. Use a tight selection for best results.",
+  "ui_processing": "Processing…"
 };

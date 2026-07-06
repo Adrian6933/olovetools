@@ -1,7 +1,7 @@
 export default {
-  "title": "Markdown-Live",
+  "title": "MarkdownLive",
   "description": "Editor Markdown visual em tempo real e visualizador HTML com modelos de estilo e exportadores para PDF/HTML 100% local.",
-  "placeholder": "# Bem-vindo ao Markdown-Live!\n\nDigite código markdown aqui à esquerda para ver o resultado em tempo real no painel à direita.\n\n## Formatação Básica\n\nVocê pode criar texto em **negrito** ou *itálico* facilmente, ou embutir `código em linha` e links como [oLoveTools](https://olovetools.com).\n\n### Exemplo de Bloco de Código\n\n```javascript\nfunction saudar(nome) {\n  console.log('Olá, ' + name + '!');\n}\nsaudar('Mundo');\n```\n\n### Citações & Listas\n\n> Markdown é uma linguagem de marcação leve com sintaxe de formatação em texto puro.\n\n- Editor rápido de markdown\n- Renderização 100% no cliente\n- Painel de visualização dupla\n",
+  "placeholder": "# Bem-vindo ao MarkdownLive!\n\nDigite código markdown aqui à esquerda para ver o resultado em tempo real no painel à direita.\n\n## Formatação Básica\n\nVocê pode criar texto em **negrito** ou *itálico* facilmente, ou embutir `código em linha` e links como [oLoveTools](https://olovetools.com).\n\n### Exemplo de Bloco de Código\n\n```javascript\nfunction saudar(nome) {\n  console.log('Olá, ' + name + '!');\n}\nsaudar('Mundo');\n```\n\n### Citações & Listas\n\n> Markdown é uma linguagem de marcação leve com sintaxe de formatação em texto puro.\n\n- Editor rápido de markdown\n- Renderização 100% no cliente\n- Painel de visualização dupla\n",
   "tooltip_bold": "Negrito",
   "tooltip_italic": "Itálico",
   "tooltip_heading": "Título",
@@ -52,5 +52,7 @@ export default {
     }
   ],
   "footerTagline": "Editor de Markdown interativo, gratuito, privado e local com tela dividida.",
-  "footerCredit": "Parte da suite oLoveTools"
+  "footerCredit": "Parte da suite oLoveTools",
+  "seo_title": "MarkdownLive | Editor de Markdown com Pré-visualização ao Vivo Grátis",
+  "seo_description": "Editor Markdown visual em tempo real e visualizador HTML com modelos de estilo e exportadores para PDF/HTML 100% local."
 };

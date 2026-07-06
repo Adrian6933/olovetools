@@ -1,8 +1,8 @@
 export default {
-  "title": "Lorem-Flow",
-  "seo_title": "Lorem-Flow | Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally.",
+  "title": "LoremFlow",
+  "seo_title": "LoremFlow | Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally.",
   "seo_description": "Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally in your browser.",
-  "seoHeroTitle": "Lorem-Flow",
+  "seoHeroTitle": "LoremFlow",
   "seoHeroText": "Generate Lorem Ipsum placeholder text by paragraphs, sentences or words 100% locally in your browser.",
   "label_unit_type": "Unit Type",
   "label_count": "Count",
@@ -30,7 +30,7 @@ export default {
       "answer": "No. All operations happen entirely inside your browser. Your data never leaves your device."
     },
     {
-      "question": "Can I choose how much text Lorem-Flow generates?",
+      "question": "Can I choose how much text LoremFlow generates?",
       "answer": "Yes. You can generate between 1 and 100 units, choosing whether each unit is a paragraph, a sentence or a single word, and optionally start with the classic Lorem ipsum opening."
     },
     {

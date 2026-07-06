@@ -1,8 +1,8 @@
 export default {
-  "title": "Whiteboard-Flow",
-  "seo_title": "Whiteboard-Flow | ड्रैग-एंड-ड्रॉप के साथ Kanban बोर्ड पर स्टिकी नोट्स व्यवस्थित करें, स्थानीय रूप से सहेजें।",
+  "title": "WhiteboardFlow",
+  "seo_title": "WhiteboardFlow | ड्रैग-एंड-ड्रॉप के साथ Kanban बोर्ड पर स्टिकी नोट्स व्यवस्थित करें, स्थानीय रूप से सहेजें।",
   "seo_description": "ड्रैग-एंड-ड्रॉप के साथ Kanban बोर्ड पर स्टिकी नोट्स व्यवस्थित करें, स्थानीय रूप से अपने ब्राउज़र में 100% क्लाइंट-साइड सहेजें।",
-  "seoHeroTitle": "Whiteboard-Flow",
+  "seoHeroTitle": "WhiteboardFlow",
   "seoHeroText": "ड्रैग-एंड-ड्रॉप के साथ Kanban बोर्ड पर स्टिकी नोट्स व्यवस्थित करें, स्थानीय रूप से अपने ब्राउज़र में 100% क्लाइंट-साइड सहेजें।",
   "reset": "रीसेट",
   "addNote": "नोट जोड़ें",
@@ -19,7 +19,13 @@ export default {
   "seoUseCaseText": "सब कुछ आपके ब्राउज़र में स्थानीय रूप से चलता है। आपका डेटा कभी आपका डिवाइस नहीं छोड़ता।",
   "seoPrivacyTitle": "100% निजी और सुरक्षित",
   "seoPrivacyText": "कोई डेटाबेस, ट्रैकिंग या नेटवर्क अपलोड नहीं। आपका डेटा कड़ाई से स्थानीय मेमोरी में रहता है और टैब बंद करने पर गायब हो जाता है।",
-  "seoKeywords": ["whiteboard flow", "ऑनलाइन उपकरण", "मुफ़्त", "स्थानीय", "ब्राउज़र"],
+  "seoKeywords": [
+    "whiteboard flow",
+    "ऑनलाइन उपकरण",
+    "मुफ़्त",
+    "स्थानीय",
+    "ब्राउज़र"
+  ],
   "faqTitle": "अक्सर पूछे जाने वाले प्रश्न",
   "faq": [
     {
@@ -36,7 +42,7 @@ export default {
     }
   ],
   "footerTagline": "ड्रैग-एंड-ड्रॉप के साथ Kanban बोर्ड पर स्टिकी नोट्स व्यवस्थित करें, स्थानीय रूप से अपने ब्राउज़र में 100% क्लाइंट-साइड सहेजें।",
-  "footerCredit": "Part of the oLoveTools suite",
+  "footerCredit": "oLoveTools सुइट का हिस्सा",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "कॉपी हो गया!",
   "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क करें:"
