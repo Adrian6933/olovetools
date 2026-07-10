@@ -37,7 +37,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isLangMenuOpen, setIsLangMenuOpen] = useState(false);
-  const [showMobileAnchor, setShowMobileAnchor] = useState(true);
   const langMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -698,27 +697,8 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
           )}
         </AnimatePresence>
 
-        {/* Mobile sticky bottom anchor ad (responsive — phones/tablets) */}
-        {showMobileAnchor && (
-          <div
-            className="lg:hidden fixed bottom-0 left-0 right-0 z-[95] bg-[#1e1f20]/95 backdrop-blur-md border-t border-white/10 px-2 pt-1.5 pb-2"
-            id="adsense-mobile-anchor"
-          >
-            <button
-              onClick={() => setShowMobileAnchor(false)}
-              aria-label="Cerrar anuncio"
-              className="absolute -top-7 right-2 w-7 h-7 rounded-full bg-[#1e1f20] border border-white/10 text-slate-400 hover:text-white flex items-center justify-center shadow-lg"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-            <div className="w-full flex flex-col items-center justify-center text-center">
-              <span className="text-[8px] text-slate-500 font-mono uppercase tracking-widest opacity-50 mb-0.5">Publicidad</span>
-              <div className="w-full max-w-[320px] h-[50px] flex items-center justify-center bg-black/10 border border-white/[0.03] rounded">
-                <span className="text-[9px] text-slate-600 font-sans">Anuncio adaptable móvil (320×50)</span>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Barra fija descartable al pie, misma que en todas las herramientas (AdSlot 'anchor') */}
+        <AdSlot position="anchor" size="mobile-banner" />
       </div>
     </Layout>
   );

@@ -12,20 +12,20 @@ interface CategoryGridProps {
   showRank: boolean;
 }
 
-const CategoryCard: React.FC<{ 
-  category: Category; 
-  rank?: number; 
-  onClick: () => void; 
+const CategoryCard: React.FC<{
+  category: Category;
+  rank?: number;
+  onClick: () => void;
   t: (key: string) => string;
   showRank: boolean;
   index: number;
 }> = ({ category, rank, onClick, t, showRank, index }) => {
   return (
-    <div 
-      onClick={onClick} 
+    <div
+      onClick={onClick}
       className="group cursor-pointer flex flex-col gap-3 md:gap-6"
     >
-      <div 
+      <div
         style={{ isolation: 'isolate', transform: 'translateZ(0)' }}
         className="relative aspect-[3/4] glass rounded-[2.5rem] overflow-hidden border border-white/5 transition-premium transform group-hover:-translate-y-3 group-hover:border-twitch-base/20 group-hover:shadow-[0_40px_80px_-20px_rgba(145,70,255,0.12)]"
       >
@@ -35,7 +35,7 @@ const CategoryCard: React.FC<{
           className="w-full h-full transition-transform duration-1000 group-hover:scale-105 will-change-transform"
           isCategory={true}
         />
-        
+
         {/* Ranking Badge - Only shown on initial load/popular categories */}
         {showRank && rank && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 md:left-6 md:translate-x-0 md:top-6 z-20 whitespace-nowrap">
@@ -82,15 +82,15 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-10 pb-10">
       {categories.map((cat, index) => (
-          <CategoryCard 
-              key={cat.id} 
-              category={cat} 
-              rank={index + 1}
-              onClick={() => onCategoryClick(cat)} 
-              t={t}
-              showRank={showRank}
-              index={index}
-          />
+        <CategoryCard
+            key={cat.id}
+            category={cat}
+            rank={index + 1}
+            onClick={() => onCategoryClick(cat)}
+            t={t}
+            showRank={showRank}
+            index={index}
+        />
       ))}
     </div>
   );

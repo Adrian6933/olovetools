@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { SearchState, TimeFilter, SortType, Category, Clip } from './types';
+import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from './types';
 import { searchTwitchCategories, searchTwitchClips, getClipById, getTwitchUserAvatars } from './services/geminiService';
 import { useTranslation, Language, FLAGS, LANGUAGE_NAMES } from '../../locales/dictionary';
 import { legalTranslations } from '../../locales/legal';
@@ -9,17 +9,19 @@ import ClipGrid from './components/ClipGrid';
 import CategoryGrid from './components/CategoryGrid';
 import FloatingPlayer from './components/FloatingPlayer';
 import LegalModal from './components/LegalModal';
-import { Clapperboard, Archive, ChevronRight, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info } from 'lucide-react';
+import { Clapperboard, Archive, ChevronRight, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download } from 'lucide-react';
 
 const STORAGE_KEY = 'clipy_saved_session';
+const COLLECTIONS_KEY = 'clipy_saved_collections';
+const MAX_COLLECTIONS = 50;
 const POPULAR_TAGS = [
-  "Just Chatting", "League of Legends", "GTA V", "Valorant", "Counter-Strike 2",
-  "Minecraft", "Rust", "Fortnite", "Roblox", "Call of Duty", "Apex Legends",
-  "DOTA 2", "Overwatch 2", "World of Warcraft", "Hearthstone", "Teamfight Tactics",
-  "Dead by Daylight", "Escape from Tarkov", "Lost Ark", "Elden Ring", "Music", "Art",
-  "Retro", "Talk Shows", "Chess", "ASMR", "Genshin Impact", "Rocket League",
-  "The Sims 4", "Dead Island 2", "Street Fighter 6", "Diablo IV", "Resident Evil 4",
-  "Starfield", "Baldur's Gate 3", "Cyberpunk 2077", "Helldivers 2"
+  'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
+  'Minecraft', 'Rust', 'Fortnite', 'Roblox', 'Call of Duty', 'Apex Legends',
+  'DOTA 2', 'Overwatch 2', 'World of Warcraft', 'Hearthstone', 'Teamfight Tactics',
+  'Dead by Daylight', 'Escape from Tarkov', 'Lost Ark', 'Elden Ring', 'Music', 'Art',
+  'Retro', 'Talk Shows', 'Chess', 'ASMR', 'Genshin Impact', 'Rocket League',
+  'The Sims 4', 'Dead Island 2', 'Street Fighter 6', 'Diablo IV', 'Resident Evil 4',
+  'Starfield', "Baldur's Gate 3", 'Cyberpunk 2077', 'Helldivers 2',
 ];
 
 interface ClipyProps {
@@ -39,6 +41,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     paginationCursor: null,
     timeFilter: TimeFilter.DAY,
     sortType: SortType.TRENDING,
+    anchorTime: null,
     isLoading: true,
     error: null
   });
@@ -47,6 +50,10 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
   const [savedClips, setSavedClips] = useState<Clip[]>([]);
   const [sessionActive, setSessionActive] = useState(false);
   const [deletedClipsStack, setDeletedClipsStack] = useState<Clip[]>([]);
+  const [collections, setCollections] = useState<SavedCollection[]>([]);
+  const [showHistoryMenu, setShowHistoryMenu] = useState(false);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
   const [showSavedList, setShowSavedList] = useState(false);
   const [triggerShake, setTriggerShake] = useState(false);
   const savedListRef = useRef<HTMLDivElement>(null);
@@ -83,28 +90,116 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     }
   }, [savedClips, sessionActive]);
 
-  const handleRestoreHistory = () => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
+  // Auto-restaura la lista de trabajo al entrar, para que no parezca que se perdió
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setSavedClips(prev => {
-            const currentIds = new Set(prev.map(c => c.id));
-            const newUnique = parsed.filter(c => !currentIds.has(c.id));
-            return [...prev, ...newUnique];
-          });
+          setSavedClips(parsed);
           setSessionActive(true);
-          showToast(t('history_restored'));
-        } else {
-          showToast(t('no_history'), 'info');
         }
-      } catch (e) {
-        console.error(e);
       }
-    } else {
-      showToast(t('no_history'), 'info');
+      const savedCollections = localStorage.getItem(COLLECTIONS_KEY);
+      if (savedCollections) {
+        const parsed = JSON.parse(savedCollections);
+        if (Array.isArray(parsed)) setCollections(parsed);
+      }
+    } catch (e) {
+      console.error(e);
     }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
+  }, [collections]);
+
+  // Snapshot automático por día: cada día en que se guarden clips queda como una sesión propia en el historial
+  useEffect(() => {
+    if (!sessionActive || savedClips.length === 0) return;
+    const todayKey = new Date().toDateString();
+    setCollections(prev => {
+      const idx = prev.findIndex(c => c.auto && new Date(c.createdAt).toDateString() === todayKey);
+      if (idx >= 0) {
+        if (prev[idx].clips === savedClips) return prev;
+        const updated = [...prev];
+        updated[idx] = { ...updated[idx], clips: savedClips };
+        return updated;
+      }
+      if (prev.length >= MAX_COLLECTIONS) return prev;
+      const newCollection: SavedCollection = {
+        id: crypto.randomUUID(),
+        name: new Date().toLocaleDateString(lang, { day: 'numeric', month: 'long', year: 'numeric' }),
+        createdAt: new Date().toISOString(),
+        clips: savedClips,
+        auto: true,
+      };
+      return [newCollection, ...prev];
+    });
+  }, [savedClips, sessionActive, lang]);
+
+  const handleSaveCollection = () => {
+    if (savedClips.length === 0) return;
+    if (collections.length >= MAX_COLLECTIONS) {
+      showToast(t('collections_limit'), 'info');
+      return;
+    }
+    const newCollection: SavedCollection = {
+      id: crypto.randomUUID(),
+      name: new Date().toLocaleString(lang),
+      createdAt: new Date().toISOString(),
+      clips: savedClips,
+    };
+    setCollections(prev => [newCollection, ...prev]);
+    showToast(t('collection_saved'));
+  };
+
+  const handleLoadCollection = (collectionId: string) => {
+    const collection = collections.find(c => c.id === collectionId);
+    if (!collection) return;
+    setSavedClips(prev => {
+      const currentIds = new Set(prev.map(c => c.id));
+      const newUnique = collection.clips.filter(c => !currentIds.has(c.id));
+      return [...prev, ...newUnique];
+    });
+    setSessionActive(true);
+    showToast(t('collection_loaded'));
+  };
+
+  const handleDeleteCollection = (collectionId: string) => {
+    setCollections(prev => prev.filter(c => c.id !== collectionId));
+    showToast(t('collection_deleted'), 'info');
+  };
+
+  const handleDeleteAllCollections = () => {
+    setCollections([]);
+    showToast(t('collections_deleted_all'), 'info');
+  };
+
+  const handleStartRename = (e: React.MouseEvent, collection: SavedCollection) => {
+    e.stopPropagation();
+    setRenamingId(collection.id);
+    setRenameValue(collection.name);
+  };
+
+  const handleCommitRename = (collectionId: string) => {
+    setCollections(prev => prev.map(c => c.id === collectionId ? { ...c, name: renameValue.trim() || c.name } : c));
+    setRenamingId(null);
+  };
+
+  const handleDownloadCollectionTxt = (e: React.MouseEvent, collection: SavedCollection) => {
+    e.stopPropagation();
+    const content = collection.clips.map(c => c.url).join('\n');
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${collection.name.replace(/[^a-z0-9]+/gi, '_')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handleToggleSave = useCallback((clip: Clip) => {
@@ -181,9 +276,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     }
 
     // Optimizamos enviando por LocalStorage para evitar límites de URL
-    localStorage.setItem('clipbolt_shared_clips', content);
+    localStorage.setItem('twitchbolt_shared_clips', content);
 
-    const targetUrl = new URL(`/${lang}/clipbolt`, window.location.origin);
+    const targetUrl = new URL(`/${lang}/twitchbolt`, window.location.origin);
     // Mantenemos una versión corta en URL para compatibilidad y trigger rápido
     if (content.length < 1500) {
       targetUrl.searchParams.set('clips', content);
@@ -196,6 +291,12 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     const content = savedClips.map(c => c.url).join('\n');
     openExternalDownload(content);
     setShowSavedList(false);
+  };
+
+  const handleSendCollectionExternal = (e: React.MouseEvent, collection: SavedCollection) => {
+    e.stopPropagation();
+    const content = collection.clips.map(c => c.url).join('\n');
+    openExternalDownload(content);
   };
 
   const handleScrollToClip = (clipId: string) => {
@@ -371,7 +472,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     }
 
     try {
-      const { clips, cursor } = await searchTwitchClips(category.id, category.name, time, null);
+      const { clips, cursor } = await searchTwitchClips(category.id, category.name, time, null, state.anchorTime || undefined);
       setState(prev => ({
         ...prev,
         clips,
@@ -381,7 +482,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     } catch (error: any) {
       setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
     }
-  }, [t, handleSearch]);
+  }, [t, handleSearch, state.anchorTime]);
 
   const loadMoreClips = useCallback(async () => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
@@ -391,7 +492,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         state.activeCategory.id,
         state.activeCategory.name,
         state.timeFilter,
-        state.paginationCursor
+        state.paginationCursor,
+        state.anchorTime || undefined
       );
       setState(prev => ({
         ...prev,
@@ -402,7 +504,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter]);
+  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime]);
 
   const loadAllClips = useCallback(async () => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
@@ -418,7 +520,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
           state.activeCategory!.id,
           state.activeCategory!.name,
           state.timeFilter,
-          currentCursor
+          currentCursor,
+          state.anchorTime || undefined
         );
         allLoadedClips = [...allLoadedClips, ...newClips];
         setState(prev => ({ ...prev, clips: allLoadedClips, paginationCursor: nextCursor }));
@@ -435,12 +538,24 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     }
   }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.clips]);
 
-  useEffect(() => { handleSearch("popular"); }, []);
+  useEffect(() => {
+    handleSearch("popular");
+  }, []);
 
   const handleCategoryClick = (category: Category) => { loadClipsForCategory(category, state.timeFilter); };
   const handleFilterChange = (filter: TimeFilter) => {
     setState(prev => ({ ...prev, timeFilter: filter }));
     if (state.activeCategory) loadClipsForCategory(state.activeCategory, filter);
+  };
+  const handleAnchorChange = (value: string | null) => {
+    setState(prev => ({ ...prev, anchorTime: value }));
+    if (state.activeCategory) {
+      setState(prev => ({ ...prev, isLoading: true, clips: [], paginationCursor: null }));
+      searchTwitchClips(state.activeCategory.id, state.activeCategory.name, state.timeFilter, null, value || undefined)
+        .then(({ clips, cursor }) => {
+          setState(prev => ({ ...prev, clips, paginationCursor: cursor, isLoading: false }));
+        });
+    }
   };
   const handleSortChange = (sort: SortType) => {
     setState(prev => ({ ...prev, sortType: sort }));
@@ -585,10 +700,50 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
                       </h3>
                       <div className="flex items-center gap-4 md:gap-2">
                         <button onClick={handleUndoDelete} disabled={deletedClipsStack.length === 0} title={t('undo_delete')} className={`p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer ${deletedClipsStack.length > 0 ? 'text-green-400' : 'text-gray-600'}`}><Undo className="w-4 h-4" /></button>
-                        <button onClick={handleRestoreHistory} title={t('restore_history')} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><History className="w-4 h-4" /></button>
+                        <button onClick={() => setShowHistoryMenu(prev => !prev)} title={t('collections_heading')} className={`p-2 rounded-xl hover:bg-white/5 cursor-pointer ${showHistoryMenu ? 'text-twitch-base bg-white/5' : 'text-gray-400 hover:text-white'}`}><History className="w-4 h-4" /></button>
                         <button onClick={() => setShowSavedList(false)} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><X className="w-4 h-4" /></button>
                       </div>
                     </div>
+                    {showHistoryMenu && (
+                      <div className="border-b border-white/5 bg-[#101014] p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2"><FolderOpen className="w-3.5 h-3.5" /> {t('collections_heading')}</h4>
+                          {collections.length > 0 && (
+                            <button onClick={handleDeleteAllCollections} className="text-[10px] text-red-500/50 font-black hover:text-red-500 transition-colors uppercase tracking-widest cursor-pointer">{t('delete_all_collections')}</button>
+                          )}
+                        </div>
+                        {collections.length === 0 ? (
+                          <div className="text-center py-8 text-gray-500 font-bold text-xs uppercase tracking-widest">{t('collections_empty')}</div>
+                        ) : (
+                          <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
+                            {collections.map(collection => (
+                              <div key={collection.id} onClick={() => handleLoadCollection(collection.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-3 flex items-center gap-3 group transition-all cursor-pointer">
+                                <div className="flex-grow min-w-0">
+                                  {renamingId === collection.id ? (
+                                    <input
+                                      autoFocus
+                                      value={renameValue}
+                                      onClick={(e) => e.stopPropagation()}
+                                      onChange={(e) => setRenameValue(e.target.value)}
+                                      onBlur={() => handleCommitRename(collection.id)}
+                                      onKeyDown={(e) => { if (e.key === 'Enter') handleCommitRename(collection.id); }}
+                                      className="w-full bg-black/40 border border-twitch-base/40 rounded-lg px-2 py-1 text-xs font-bold text-gray-100 outline-none"
+                                    />
+                                  ) : (
+                                    <div className="text-xs font-black text-gray-100 truncate tracking-tight">{collection.name}</div>
+                                  )}
+                                  <div className="text-[10px] font-bold text-gray-500">{collection.clips.length} clips</div>
+                                </div>
+                                <button onClick={(e) => handleStartRename(e, collection)} className="p-1.5 text-gray-500 hover:text-white rounded-lg hover:bg-white/10 cursor-pointer"><Pencil className="w-3.5 h-3.5" /></button>
+                                <button onClick={(e) => handleDownloadCollectionTxt(e, collection)} className="p-1.5 text-gray-500 hover:text-white rounded-lg hover:bg-white/10 cursor-pointer"><Download className="w-3.5 h-3.5" /></button>
+                                <button onClick={(e) => handleSendCollectionExternal(e, collection)} className="p-1.5 text-gray-500 hover:text-twitch-base rounded-lg hover:bg-white/10 cursor-pointer"><CloudDownload className="w-3.5 h-3.5" /></button>
+                                <button onClick={(e) => { e.stopPropagation(); handleDeleteCollection(collection.id); }} className="p-1.5 text-gray-500 hover:text-red-500 rounded-lg hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className="overflow-y-auto custom-scrollbar p-5 space-y-3 flex-grow">
                       {savedClips.length === 0 ? <div className="text-center py-20 text-gray-400 font-black text-sm uppercase tracking-widest">{t('no_saved_clips')}</div> : savedClips.map(clip => (
                         <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
@@ -607,6 +762,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
                           <button onClick={handleDownloadTxt} className="bg-white/5 py-4 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer">{t('download_txt')}</button>
                           <button onClick={handleExternalZip} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
                         </div>
+                        <button onClick={handleSaveCollection} className="flex items-center justify-center gap-2 bg-white/5 py-3 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer text-gray-300"><Save className="w-3.5 h-3.5" /> {t('save_collection')}</button>
                         <button onClick={requestDeleteAll} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
                       </div>
                     )}
@@ -692,7 +848,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         ) : (
           <div className="pb-32">
             {!state.query.includes('clip') && (
-              <FilterBar currentTime={state.timeFilter} currentSort={state.sortType} onTimeChange={handleFilterChange} onSortChange={handleSortChange} onLoadAll={loadAllClips} isLoading={state.isLoading} disabled={state.isLoading && state.clips.length === 0} t={t} />
+              <FilterBar currentTime={state.timeFilter} currentSort={state.sortType} onTimeChange={handleFilterChange} onSortChange={handleSortChange} onLoadAll={loadAllClips} isLoading={state.isLoading} disabled={state.isLoading && state.clips.length === 0} t={t} anchorTime={state.anchorTime} onAnchorChange={handleAnchorChange} />
             )}
             <ClipGrid clips={state.clips} isLoading={state.isLoading} hasMore={!!state.paginationCursor} onLoadMore={loadMoreClips} onLoadAll={loadAllClips} onClipClick={(clip) => {
               setPlayingClip(clip);

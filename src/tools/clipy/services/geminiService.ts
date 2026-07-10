@@ -146,6 +146,7 @@ export const getClipById = async (clipId: string): Promise<Clip | null> => {
             thumbnail_url: getThumbnailUrl(clip.thumbnail_url),
             url: clip.url,
             created_at: new Date(clip.created_at).toLocaleDateString(),
+            created_at_iso: clip.created_at,
             duration: Math.round(clip.duration) + 's'
         };
     } catch (error) {
@@ -154,14 +155,15 @@ export const getClipById = async (clipId: string): Promise<Clip | null> => {
 };
 
 export const searchTwitchClips = async (
-  categoryId: string, 
+  categoryId: string,
   categoryName: string,
   timeFilter: TimeFilter,
-  cursor?: string | null
+  cursor?: string | null,
+  anchorISO?: string
 ): Promise<{ clips: Clip[], cursor: string | null }> => {
     try {
         const headers = await getHeaders();
-        const now = new Date();
+        const now = anchorISO ? new Date(anchorISO) : new Date();
         let startDateStr = '';
         const endDateStr = now.toISOString();
 
@@ -199,6 +201,7 @@ export const searchTwitchClips = async (
             thumbnail_url: getThumbnailUrl(clip.thumbnail_url),
             url: clip.url,
             created_at: new Date(clip.created_at).toLocaleDateString(),
+            created_at_iso: clip.created_at,
             duration: Math.round(clip.duration) + 's'
         }));
 

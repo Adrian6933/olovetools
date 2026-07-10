@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { TimeFilter, SortType } from '../types';
-import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2 } from 'lucide-react';
+import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X } from 'lucide-react';
 
 interface FilterBarProps {
   currentTime: TimeFilter;
@@ -12,7 +12,14 @@ interface FilterBarProps {
   isLoading: boolean;
   disabled: boolean;
   t: (key: string) => string;
+  anchorTime?: string | null;
+  onAnchorChange?: (value: string | null) => void;
 }
+
+const toDatetimeLocalValue = (date: Date) => {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+};
 
 const FilterBar: React.FC<FilterBarProps> = ({
   currentTime,
@@ -22,20 +29,43 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onLoadAll,
   isLoading,
   disabled,
-  t
+  t,
+  anchorTime,
+  onAnchorChange
 }) => {
   const [isSortOpen, setIsSortOpen] = useState(false);
+  const [isAnchorOpen, setIsAnchorOpen] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
+  const anchorInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (sortRef.current && !sortRef.current.contains(event.target as Node)) {
         setIsSortOpen(false);
       }
+      if (anchorRef.current && !anchorRef.current.contains(event.target as Node)) {
+        setIsAnchorOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (!isAnchorOpen) return;
+    // Esperamos a que termine la animación de entrada (duration-100) para que el navegador
+    // calcule bien la posición del input antes de anclar el calendario nativo a él;
+    // si se llama antes, algunos navegadores lo dibujan en la esquina superior izquierda.
+    const timeoutId = setTimeout(() => {
+      try {
+        (anchorInputRef.current as any)?.showPicker?.();
+      } catch {
+        // showPicker requiere gesto directo del usuario en algunos navegadores; el input sigue siendo clicable
+      }
+    }, 150);
+    return () => clearTimeout(timeoutId);
+  }, [isAnchorOpen]);
 
   return (
     <div className="flex flex-col lg:flex-row gap-4 lg:items-center justify-between bg-twitch-surface p-4 rounded-xl border border-twitch-surfaceAlt mb-8 shadow-sm">
@@ -60,6 +90,56 @@ const FilterBar: React.FC<FilterBarProps> = ({
             </button>
           ))}
         </div>
+
+        {onAnchorChange && currentTime !== TimeFilter.ALL && (
+          <div className="relative" ref={anchorRef}>
+            <button
+              onClick={() => !disabled && setIsAnchorOpen(!isAnchorOpen)}
+              disabled={disabled}
+              title={t('anchor_until')}
+              className={`flex items-center gap-1.5 px-2.5 py-1.5 text-xs rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
+                anchorTime
+                  ? 'bg-twitch-base/10 border-twitch-base/40 text-twitch-base'
+                  : 'border-transparent text-gray-500 hover:text-white hover:bg-twitch-surfaceAlt'
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <CalendarClock className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline">{anchorTime ? new Date(anchorTime).toLocaleString() : t('anchor_until')}</span>
+              {anchorTime && (
+                <X
+                  className="w-3.5 h-3.5 hover:text-white flex-shrink-0"
+                  onClick={(e) => { e.stopPropagation(); onAnchorChange(null); setIsAnchorOpen(false); }}
+                />
+              )}
+            </button>
+
+            {isAnchorOpen && (
+              <div className="absolute top-full right-0 sm:left-0 sm:right-auto mt-2 w-64 max-w-[calc(100vw-2rem)] bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-20 p-3 animate-in fade-in zoom-in-95 duration-100">
+                <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('anchor_until')}</label>
+                <input
+                  ref={anchorInputRef}
+                  type="datetime-local"
+                  defaultValue={toDatetimeLocalValue(anchorTime ? new Date(anchorTime) : new Date())}
+                  max={toDatetimeLocalValue(new Date())}
+                  onChange={(e) => {
+                    if (!e.target.value) return;
+                    onAnchorChange(new Date(e.target.value).toISOString());
+                  }}
+                  style={{ colorScheme: 'dark' }}
+                  className="w-full bg-twitch-black text-gray-200 text-sm rounded-lg border border-twitch-surfaceAlt px-2 py-2 focus:border-twitch-base focus:ring-1 focus:ring-twitch-base outline-none cursor-pointer"
+                />
+                {anchorTime && (
+                  <button
+                    onClick={() => { onAnchorChange(null); setIsAnchorOpen(false); }}
+                    className="mt-2 w-full text-xs text-gray-400 hover:text-white text-center py-1 cursor-pointer"
+                  >
+                    {t('anchor_clear')}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="h-px w-full bg-twitch-surfaceAlt opacity-50 lg:hidden"></div>

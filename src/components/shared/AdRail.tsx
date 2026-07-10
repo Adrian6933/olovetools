@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ADS_ENABLED, AD_CLIENT, AD_SLOTS, RAIL_BLOCKLIST } from '../../config/ads';
 
 interface AdRailProps {
@@ -12,12 +12,75 @@ declare global {
   }
 }
 
-const Rail: React.FC<{ side: 'left' | 'right'; slot: string; active: boolean }> = ({ side, slot, active }) => {
+const RAIL_MARGIN = 16;
+
+/**
+ * Mide el hueco real entre el contenido visible y el borde del viewport en
+ * cada lado. `#root` en sí mismo NO sirve como referencia: es un div sin
+ * ancho propio (100% del body en todas las tools). El header y el footer de
+ * cada tool tampoco sirven: su barra de fondo es intencionalmente w-full en
+ * casi todas las herramientas aunque su contenido esté centrado, así que
+ * escanear todo #root siempre da hueco cero. El límite de ancho real que nos
+ * importa es el de `<main>` (el contenedor de contenido reflowable, con el
+ * max-w distinto por tool: algunas max-w-7xl/1280px, Clipy hasta
+ * max-w-[2200px], Formatflow max-w-[1700px]...), así que medimos ese
+ * elemento en vez de adivinar su ancho o escanear todo el árbol.
+ */
+const useRailGaps = () => {
+  const [gaps, setGaps] = useState({ left: 0, right: 0 });
+
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (!root) return;
+
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const measure = () => {
+      const viewportWidth = document.documentElement.clientWidth;
+      const content = root.querySelector('main') || root;
+      const rect = content.getBoundingClientRect();
+
+      if (rect.width === 0 && rect.height === 0) return;
+
+      setGaps({ left: Math.max(0, rect.left), right: Math.max(0, viewportWidth - rect.right) });
+    };
+
+    // setTimeout (no requestAnimationFrame) a propósito: rAF se pausa por
+    // completo en pestañas en segundo plano/no visibles, dejando el hueco
+    // medido congelado en su valor inicial si el usuario cambia de pestaña
+    // antes del primer resize.
+    const scheduleMeasure = () => {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(measure, 50);
+    };
+
+    scheduleMeasure();
+
+    // ResizeObserver en body: cambios de viewport. MutationObserver en #root:
+    // cambios de contenido (ej. Clipy pasando de categorías a clips).
+    const resizeObserver = new ResizeObserver(scheduleMeasure);
+    resizeObserver.observe(document.body);
+    const mutationObserver = new MutationObserver(scheduleMeasure);
+    mutationObserver.observe(root, { childList: true, subtree: true });
+    window.addEventListener('resize', scheduleMeasure);
+
+    return () => {
+      clearTimeout(timeoutId);
+      resizeObserver.disconnect();
+      mutationObserver.disconnect();
+      window.removeEventListener('resize', scheduleMeasure);
+    };
+  }, []);
+
+  return gaps;
+};
+
+const Rail: React.FC<{ side: 'left' | 'right'; slot: string; active: boolean; visible: boolean }> = ({ side, slot, active, visible }) => {
   const insRef = useRef<HTMLModElement>(null);
   const pushedRef = useRef(false);
 
   useEffect(() => {
-    if (!active || !insRef.current || pushedRef.current) return;
+    if (!active || !visible || !insRef.current || pushedRef.current) return;
     if (insRef.current.getAttribute('data-ad-status')) return;
     try {
       window.adsbygoogle = window.adsbygoogle || [];
@@ -26,10 +89,13 @@ const Rail: React.FC<{ side: 'left' | 'right'; slot: string; active: boolean }> 
     } catch {
       // adsbygoogle.js aún no cargado o bloqueado por un ad-blocker; no es un error de la app.
     }
-  }, [active]);
+  }, [active, visible]);
 
-  // Hueco real: contenido max-w-7xl (1280px) + rail + margen.
-  // 1560-1649px: skyscraper 120x600 · >=1650px: skyscraper ancho 160x600.
+  if (!visible) return null;
+
+  // min-[1560px] es solo un primer filtro barato (evita medir en viewports
+  // obviamente estrechos); la visibilidad real ya la decide `visible`
+  // (hueco medido contra #root), pasado desde AdRail.
   return (
     <div
       aria-hidden="true"
@@ -55,13 +121,17 @@ const Rail: React.FC<{ side: 'left' | 'right'; slot: string; active: boolean }> 
 };
 
 /**
- * Fixed skyscraper rails (left + right), visible only when the viewport has
- * real room for them (120x600 desde 1560px, 160x600 desde 1650px; contenido
- * max-w-7xl = 1280px + rail + margen).
- * Renders nothing server-side impact-wise: CLS is 0 because the rails are
- * position:fixed and never affect document flow.
+ * Fixed skyscraper rails (left + right). Visibilidad decidida en runtime
+ * midiendo el hueco real entre #root (el contenedor común a todas las
+ * herramientas) y el borde del viewport, no asumiendo un ancho de contenido
+ * fijo — así se autocorrige para cualquier tool, ancho de ventana, zoom o
+ * escalado de pantalla, sin mantener un registro de anchos por herramienta.
+ * Renders nothing server-side impact-wise: CLS es 0 porque los raíles son
+ * position:fixed y nunca afectan el flujo del documento.
  */
 export const AdRail: React.FC<AdRailProps> = ({ slug }) => {
+  const gaps = useRailGaps();
+
   if (RAIL_BLOCKLIST.includes(slug)) return null;
 
   const activeLeft = ADS_ENABLED && !!AD_SLOTS.railLeft;
@@ -71,10 +141,13 @@ export const AdRail: React.FC<AdRailProps> = ({ slug }) => {
   // el placeholder para verificar el diseño antes de activar AdSense.
   if (!import.meta.env.DEV && !activeLeft && !activeRight) return null;
 
+  const railWidth = typeof window !== 'undefined' && document.documentElement.clientWidth >= 1650 ? 160 : 120;
+  const required = railWidth + RAIL_MARGIN;
+
   return (
     <>
-      <Rail side="left" slot={AD_SLOTS.railLeft} active={activeLeft} />
-      <Rail side="right" slot={AD_SLOTS.railRight} active={activeRight} />
+      <Rail side="left" slot={AD_SLOTS.railLeft} active={activeLeft} visible={gaps.left >= required} />
+      <Rail side="right" slot={AD_SLOTS.railRight} active={activeRight} visible={gaps.right >= required} />
     </>
   );
 };

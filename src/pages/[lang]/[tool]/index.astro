@@ -2058,6 +2058,7 @@ const appSchema = {
     </div>
 
     <AdRail slug={tool!} client:idle />
+    <AdSlot position="anchor" size="mobile-banner" client:idle />
 
     {toolCtas.length > 0 && (
       <section aria-label={ctaHeading} class="tool-ctas max-w-5xl mx-auto px-4 pt-10 pb-2">
@@ -2104,38 +2105,48 @@ const appSchema = {
     <!-- SSR SEO content: visible (not display:none) to avoid cloaking. Some tools already
          show similar content in their own footer; this is intentionally supplementary,
          not hidden duplicate text, so it carries no cloaking/penalty risk. -->
-    <section class="ssr-seo-content max-w-3xl mx-auto px-4 py-12 text-slate-300">
-      <h1 class="text-2xl md:text-3xl font-black text-white mb-4">{finalTitle}</h1>
-      <p class="text-sm leading-relaxed text-slate-400 mb-8">{t('seo_description')}</p>
+    <div class="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+      <section class="ssr-seo-content text-slate-300">
+        <h1 class="text-2xl md:text-3xl font-black text-white mb-4">{finalTitle}</h1>
+        <p class="text-sm leading-relaxed text-slate-400 mb-8">{t('seo_description')}</p>
 
-      {/* dictionary.xxx (no t()) porque t() devuelve el nombre de la clave si falta,
-          lo que rompería este chequeo de existencia (siempre truthy) */}
-      {(dictionary as any)?.footer_seo_title && <h2 class="text-xl font-bold text-white mt-8 mb-2">{(dictionary as any).footer_seo_title}</h2>}
-      {(dictionary as any)?.footer_seo_paragraph1 && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_paragraph1}</p>}
-      {(dictionary as any)?.footer_seo_paragraph2 && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_paragraph2}</p>}
-      {(dictionary as any)?.footer_seo_desc_large && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_desc_large}</p>}
+        {/* dictionary.xxx (no t()) porque t() devuelve el nombre de la clave si falta,
+            lo que rompería este chequeo de existencia (siempre truthy) */}
+        {(dictionary as any)?.footer_seo_title && <h2 class="text-xl font-bold text-white mt-8 mb-2">{(dictionary as any).footer_seo_title}</h2>}
+        {(dictionary as any)?.footer_seo_paragraph1 && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_paragraph1}</p>}
+        {(dictionary as any)?.footer_seo_paragraph2 && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_paragraph2}</p>}
+        {(dictionary as any)?.footer_seo_desc_large && <p class="text-sm leading-relaxed text-slate-400 mb-3">{(dictionary as any).footer_seo_desc_large}</p>}
 
-      {/* Solo intentar mapear si t.faq es realmente un array */}
-      {Array.isArray(t.faq) && (
-        <>
-          <h2 class="text-xl font-bold text-white mt-8 mb-3">{(dictionary as any)?.faqTitle || 'FAQ'}</h2>
-          {t.faq.map((item: any) => (
-            <div class="mb-4">
-              <h3 class="text-base font-bold text-white mb-1">{item.question}</h3>
-              <p class="text-sm leading-relaxed text-slate-400">{item.answer}</p>
-            </div>
-          ))}
-        </>
-      )}
+        {/* Solo intentar mapear si t.faq es realmente un array */}
+        {Array.isArray(t.faq) && (
+          <>
+            <h2 class="text-xl font-bold text-white mt-8 mb-3">{(dictionary as any)?.faqTitle || 'FAQ'}</h2>
+            {t.faq.map((item: any) => (
+              <div class="mb-4">
+                <h3 class="text-base font-bold text-white mb-1">{item.question}</h3>
+                <p class="text-sm leading-relaxed text-slate-400">{item.answer}</p>
+              </div>
+            ))}
+          </>
+        )}
 
-      {/* Solo intentar unir si t.seoKeywords es realmente un array */}
-      {Array.isArray(t.seoKeywords) && (
-        <>
-          <h2 class="text-xl font-bold text-white mt-8 mb-2">{(dictionary as any)?.seoKeywordsTitle || 'Keywords'}</h2>
-          <p class="text-xs text-slate-500">{t.seoKeywords.join(', ')}</p>
-        </>
-      )}
-    </section>
+        {/* Solo intentar unir si t.seoKeywords es realmente un array */}
+        {Array.isArray(t.seoKeywords) && (
+          <>
+            <h2 class="text-xl font-bold text-white mt-8 mb-2">{(dictionary as any)?.seoKeywordsTitle || 'Keywords'}</h2>
+            <p class="text-xs text-slate-500">{t.seoKeywords.join(', ')}</p>
+          </>
+        )}
+      </section>
+
+      <!-- Rail sticky del slot "side": comparte columna con el contenido SEO/FAQ real de
+           arriba (mismo texto en todas las herramientas), así no requiere copy nueva por tool. -->
+      <aside class="hidden lg:block" aria-label="Advertisement">
+        <div class="sticky top-20">
+          <AdSlot position="side" size="rectangle" client:idle />
+        </div>
+      </aside>
+    </div>
     <CookieBanner lang={castLang} client:load />
   </body>
 </html>

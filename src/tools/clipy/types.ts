@@ -28,8 +28,17 @@ export interface Clip {
   thumbnail_url: string;
   url: string;
   created_at: string;
+  created_at_iso?: string;
   duration: string;
   broadcaster_image?: string;
+}
+
+export interface SavedCollection {
+  id: string;
+  name: string;
+  createdAt: string;
+  clips: Clip[];
+  auto?: boolean;
 }
 
 export interface SearchState {
@@ -41,6 +50,7 @@ export interface SearchState {
   paginationCursor: string | null; // Token for the next page of results
   timeFilter: TimeFilter;
   sortType: SortType;
+  anchorTime: string | null;
   isLoading: boolean;
   error: string | null;
 }
