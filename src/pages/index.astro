@@ -1,30 +1,19 @@
 ---
-// Redirige el dominio base al idioma detectado o guardado previamente
----
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Redirecting...</title>
-    <meta charset="utf-8" />
-    <meta name="robots" content="noindex" />
-  </head>
-  <body>
-    <script is:inline>
-      // 1. Intentar obtener el idioma guardado previamente
-      const savedLang = window.localStorage.getItem('olovetools_lang');
-      
-      // 2. Idiomas soportados
-      const supportedLangs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
-      
-      let targetLang;
-      if (savedLang && supportedLangs.includes(savedLang)) {
-        targetLang = savedLang;
-      } else {
-        const browserLang = navigator.language.split('-')[0];
-        targetLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
-      }
+// Server-side language redirect (replaces the old Apache/.htaccess
+// Accept-Language rule from the Hostinger deployment, now that hosting is
+// Vercel). Not prerendered — needs to run per-request to read the header.
+// A server redirect avoids the "avoid client-side redirects" PageSpeed/
+// Lighthouse warning that a pure client-side JS redirect would trigger.
+export const prerender = false;
 
-      window.location.replace(`/${targetLang}/`);
-    </script>
-  </body>
-</html>
+const SUPPORTED_LANGS = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+
+function pickLang(acceptLanguage: string | null): string {
+  if (!acceptLanguage) return 'en';
+  const primary = acceptLanguage.split(',')[0]?.split('-')[0]?.toLowerCase();
+  return primary && SUPPORTED_LANGS.includes(primary) ? primary : 'en';
+}
+
+const targetLang = pickLang(Astro.request.headers.get('accept-language'));
+return Astro.redirect(`/${targetLang}/`, 302);
+---

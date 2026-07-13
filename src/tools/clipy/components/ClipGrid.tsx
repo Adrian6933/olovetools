@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Clip } from '../types';
-import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download } from 'lucide-react';
+import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download, EyeOff } from 'lucide-react';
 import ProgressiveImage from './ProgressiveImage';
 
 interface ClipGridProps {
@@ -13,6 +13,7 @@ interface ClipGridProps {
   savedClipIds: Set<string>;
   onToggleSave: (clip: Clip) => void;
   onDownloadExternal: (url: string) => void;
+  onBlockStreamer: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
 }
 
@@ -22,8 +23,9 @@ const ClipCard: React.FC<{
   isSaved: boolean;
   onToggleSave: (clip: Clip) => void;
   onDownloadExternal: (url: string) => void;
+  onBlockStreamer: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
-}> = ({ clip, onClick, isSaved, onToggleSave, onDownloadExternal, t }) => {
+}> = ({ clip, onClick, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t }) => {
   const [imgError, setImgError] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -68,6 +70,16 @@ const ClipCard: React.FC<{
         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-10"></div>
 
         <div className="absolute top-4 right-4 z-30 flex items-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onBlockStreamer(clip.broadcaster_id, clip.broadcaster_name, clip.broadcaster_image);
+            }}
+            className="flex items-center justify-center w-10 h-10 rounded-2xl bg-black/80 text-white border border-white/10 hover:bg-red-600 hover:border-red-600 transition-all shadow-xl cursor-pointer"
+            title={t('block') || 'Ocultar streamer'}
+          >
+            <EyeOff className="w-4 h-4" />
+          </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDownloadExternal(clip.url); }}
             className="flex items-center justify-center w-10 h-10 rounded-2xl bg-black/80 text-white border border-white/10 hover:bg-white hover:text-black transition-all shadow-xl cursor-pointer"
@@ -131,7 +143,7 @@ const ClipCard: React.FC<{
 };
 
 const ClipGrid: React.FC<ClipGridProps> = ({
-  clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, t
+  clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, onBlockStreamer, t
 }) => {
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -170,7 +182,7 @@ const ClipGrid: React.FC<ClipGridProps> = ({
         {clips.map((clip) => (
           <ClipCard
             key={clip.id} clip={clip} onClick={onClipClick} isSaved={savedClipIds.has(clip.id)}
-            onToggleSave={onToggleSave} onDownloadExternal={onDownloadExternal} t={t}
+            onToggleSave={onToggleSave} onDownloadExternal={onDownloadExternal} onBlockStreamer={onBlockStreamer} t={t}
           />
         ))}
       </div>

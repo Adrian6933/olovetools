@@ -22,7 +22,7 @@ import {
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { QrMode, DotType, CornerType, CornerDotType, ColorType, GradientType, WiFiConfig, EmailConfig, SmsConfig } from './types';
 
@@ -43,7 +43,7 @@ interface QrboltProps {
 }
 
 export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'qr-bolt');
+  const t = dictionary || {};
 
   // Interactive Tabs
   const [activeTab, setActiveTab] = useState<'content' | 'design' | 'logo'>('content');

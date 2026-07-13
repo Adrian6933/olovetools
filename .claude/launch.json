@@ -9,9 +9,9 @@
       "autoPort": true
     },
     {
-      "name": "clipflow-proxy",
+      "name": "api-server",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "proxy"],
+      "runtimeArgs": ["run", "server"],
       "port": 8787
     },
     {

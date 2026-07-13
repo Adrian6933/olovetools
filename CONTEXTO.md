@@ -53,11 +53,14 @@
 
 **Comandos principales:**
 ```bash
-npm run dev      # Servidor de desarrollo en http://localhost:4321
+npm run dev      # Servidor de desarrollo en http://localhost:4321 (incluye el backend /api y /proxy)
 npm run build    # Build de producción estática en /dist
 npm run preview  # Previsualización del build de producción
+npm run server   # Backend Node standalone (server/index.mjs) para producción
 npx astro check  # Verificación de TypeScript en todo el proyecto
 ```
+
+**Backend (Node):** las herramientas Klipy, ClipFlow, Clipy, KickBolt y TwitchBolt usan un pequeño backend Node (`server/app.mjs`): proxy CORS de vídeo (`/proxy`), proxy de la API de Kick (`/api/kick`) y emisión del token de app de Twitch (`/api/twitch/token`). En dev se monta automáticamente dentro del dev server de Astro. En producción: `npm run server` detrás del mismo dominio, o un Cloudflare Worker (`cloudflare-worker/worker.js`) + variable `PUBLIC_API_BASE` en el build. Ver `server/README.md`.
 
 ---
 

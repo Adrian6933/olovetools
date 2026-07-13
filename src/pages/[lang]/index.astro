@@ -6,6 +6,8 @@ import { ClientRouter } from 'astro:transitions';
 import Analytics from '../../components/Analytics.astro';
 import '../../styles/global.css';
 
+export const prerender = true;
+
 export function getStaticPaths() {
   const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
   return languages.map(lang => ({
@@ -23,11 +25,13 @@ const baseUrl = 'https://olovetools.com';
 const ogLocaleMap: Record<string, string> = { en: 'en_US', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', pt: 'pt_BR', ru: 'ru_RU', hi: 'hi_IN', ja: 'ja_JP', zh: 'zh_CN' };
 const currentOgLocale = ogLocaleMap[lang as string] || 'en_US';
 
+const hubUrl = `${baseUrl}/${lang}/`;
+
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "oLoveTools",
-  "url": `${baseUrl}/${lang}`,
+  "url": hubUrl,
   "inLanguage": lang,
   "description": t('seo_description'),
   "publisher": { "@type": "Organization", "name": "oLoveTools", "url": baseUrl }
@@ -53,14 +57,14 @@ const organizationSchema = {
     <meta name="description" content={t('seo_description')} />
     <meta property="og:title" content={t('seo_title')} />
     <meta property="og:description" content={t('seo_description')} />
-    <meta property="og:url" content={`${baseUrl}/${lang}`} />
+    <meta property="og:url" content={hubUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={`${baseUrl}/og-image.png`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t('seo_title')} />
     <meta name="twitter:description" content={t('seo_description')} />
     <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
-    <link rel="canonical" href={`${baseUrl}/${lang}`} />
+    <link rel="canonical" href={hubUrl} />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="oLoveTools" />
     <meta property="og:site_name" content="oLoveTools" />
@@ -85,9 +89,9 @@ const organizationSchema = {
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
     {langs.map(l => (
-      <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}`} />
+      <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/`} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en`} />
+    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en/`} />
 
     <script type="application/ld+json" is:inline set:html={JSON.stringify({
       "@context": "https://schema.org",
@@ -96,7 +100,7 @@ const organizationSchema = {
       "applicationCategory": "BrowserApplication",
       "operatingSystem": "All",
       "description": t('seo_description'),
-      "url": `${baseUrl}/${lang}`
+      "url": hubUrl
     })} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(websiteSchema)} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(organizationSchema)} />

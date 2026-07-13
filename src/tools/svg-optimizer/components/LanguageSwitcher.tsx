@@ -1,5 +1,5 @@
 import React from 'react';
-import { FLAGS, LANGUAGE_NAMES, Language } from '../../../locales/dictionary';
+import { FLAGS, LANGUAGE_NAMES, type Language } from '../../../locales/meta';
 
 interface LanguageSwitcherProps {
   currentLang: string;

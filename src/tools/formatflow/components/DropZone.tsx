@@ -1,17 +1,17 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { UploadCloud, Layers, Sparkles, ClipboardCopy, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useTranslation, Language } from '../../../locales/dictionary';
+import type { Language } from '../../../locales/meta';
 
 interface DropZoneProps {
   onFilesSelect: (files: File[]) => void;
   language: Language;
+  dictionary?: any;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ onFilesSelect, language }) => {
+const DropZone: React.FC<DropZoneProps> = ({ onFilesSelect, language, dictionary }) => {
   const [isDragOver, setIsDragOver] = useState(false);
-  const { dictionary } = useTranslation(language, 'formatflow');
-  const t = dictionary.dropzone;
+  const t = (dictionary || {}).dropzone;
 
   const processFiles = (fileList: FileList | File[]) => {
     const validFiles: File[] = [];

@@ -2,7 +2,7 @@ import React from 'react';
 import { ConversionSettings, ImageFormat, BatchImageItem } from '../types';
 import { Settings2, Download, Loader2, Package, Sliders, Info, ChevronRight, CheckCircle2, FileDown } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useTranslation, Language } from '../../../locales/dictionary';
+import type { Language } from '../../../locales/meta';
 
 interface ControlPanelProps {
   settings: ConversionSettings;
@@ -15,6 +15,7 @@ interface ControlPanelProps {
   activeImage?: BatchImageItem;
   onSpecificSettingsChange: (id: string, settings: ConversionSettings | undefined) => void;
   language: Language;
+  dictionary?: any;
 }
 
 const SettingsControls: React.FC<{
@@ -22,9 +23,9 @@ const SettingsControls: React.FC<{
   onChange: (s: ConversionSettings) => void;
   accentColor?: 'primary' | 'secondary';
   language: Language;
-}> = ({ settings, onChange, accentColor = 'primary', language }) => {
-  const { dictionary } = useTranslation(language, 'formatflow');
-  const t = dictionary.controls;
+  dictionary?: any;
+}> = ({ settings, onChange, accentColor = 'primary', language, dictionary }) => {
+  const t = (dictionary || {}).controls || {};
 
   const handleFormatChange = (format: ImageFormat) => {
     onChange({ ...settings, format });
@@ -139,11 +140,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   progress,
   activeImage,
   onSpecificSettingsChange,
-  language
+  language,
+  dictionary
 }) => {
-  const { dictionary } = useTranslation(language, 'formatflow');
-  const t = dictionary.controls;
-  const appT = dictionary.app;
+  const t = (dictionary || {}).controls || {};
+  const appT = (dictionary || {}).app || {};
   const hasSpecificSettings = activeImage && activeImage.settings !== undefined;
 
   const toggleSpecificSettings = () => {
@@ -173,7 +174,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
             </div>
           )}
 
-          <SettingsControls settings={settings} onChange={onSettingsChange} accentColor="primary" language={language} />
+          <SettingsControls settings={settings} onChange={onSettingsChange} accentColor="primary" language={language} dictionary={dictionary} />
         </div>
 
         {fileCount > 1 && activeImage && (
@@ -212,11 +213,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
               </div>
 
               {hasSpecificSettings ? (
-                <SettingsControls 
-                  settings={activeImage.settings!} 
-                  onChange={(s) => onSpecificSettingsChange(activeImage.id, s)} 
+                <SettingsControls
+                  settings={activeImage.settings!}
+                  onChange={(s) => onSpecificSettingsChange(activeImage.id, s)}
                   accentColor="secondary"
                   language={language}
+                  dictionary={dictionary}
                 />
               ) : (
                  <div className="text-center py-4 space-y-2">

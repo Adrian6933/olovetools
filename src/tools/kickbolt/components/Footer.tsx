@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
-import { useTranslation, Language } from '../../../locales/dictionary';
 import { legalTranslations } from '../../../locales/legal';
 import { Mail, Search, ArrowRight, Tag, Layers, Globe, Zap, Shield } from 'lucide-react';
 
 interface FooterProps {
   lang: string;
+  dictionary?: any;
   onOpenLegal: (type: 'privacy' | 'terms' | 'cookies') => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ lang, onOpenLegal }) => {
+const Footer: React.FC<FooterProps> = ({ lang, dictionary, onOpenLegal }) => {
   const [copied, setCopied] = useState(false);
-  
-  const { dictionary } = useTranslation(lang as Language, 'kickbolt');
-  const t = dictionary;
+
+  const t = dictionary || {};
   const tl = t.legal || {};
 
   const handleCopyEmail = () => {

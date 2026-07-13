@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from './types';
 import { searchTwitchCategories, searchTwitchClips, getClipById, getTwitchUserAvatars } from './services/geminiService';
-import { useTranslation, Language, FLAGS, LANGUAGE_NAMES } from '../../locales/dictionary';
+import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
 import SearchBar from './components/SearchBar';
 import FilterBar from './components/FilterBar';
@@ -9,10 +9,13 @@ import ClipGrid from './components/ClipGrid';
 import CategoryGrid from './components/CategoryGrid';
 import FloatingPlayer from './components/FloatingPlayer';
 import LegalModal from './components/LegalModal';
+import BlocklistManager from './components/BlocklistManager';
 import { Clapperboard, Archive, ChevronRight, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download } from 'lucide-react';
 
 const STORAGE_KEY = 'clipy_saved_session';
 const COLLECTIONS_KEY = 'clipy_saved_collections';
+const ANCHOR_TIME_KEY = 'clipy_anchor_time';
+const BLOCKED_STREAMERS_KEY = 'clipy_blocked_streamers';
 const MAX_COLLECTIONS = 50;
 const POPULAR_TAGS = [
   'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
@@ -29,8 +32,8 @@ interface ClipyProps {
   dictionary?: any;
 }
 
-export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
-  const { t } = useTranslation(lang, 'clipy');
+export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
+  const t = createTranslator(dictionary);
 
   const [state, setState] = useState<SearchState>({
     mode: 'categories',
@@ -48,6 +51,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
   const [playingClip, setPlayingClip] = useState<Clip | null>(null);
   const [savedClips, setSavedClips] = useState<Clip[]>([]);
+  const [blockedStreamers, setBlockedStreamers] = useState<Record<string, { id: string; name: string; image?: string }[]>>({});
+  const [isBlocklistOpen, setIsBlocklistOpen] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
   const [deletedClipsStack, setDeletedClipsStack] = useState<Clip[]>([]);
   const [collections, setCollections] = useState<SavedCollection[]>([]);
@@ -106,10 +111,48 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         const parsed = JSON.parse(savedCollections);
         if (Array.isArray(parsed)) setCollections(parsed);
       }
+      const savedAnchorTime = localStorage.getItem(ANCHOR_TIME_KEY);
+      if (savedAnchorTime) {
+        let hours = 0;
+        let minutes = 0;
+        let isValid = false;
+
+        if (/^\d{2}:\d{2}$/.test(savedAnchorTime)) {
+          const [h, m] = savedAnchorTime.split(':').map(Number);
+          hours = h;
+          minutes = m;
+          isValid = true;
+        } else {
+          // Intentar parsear como fecha completa (por si es heredado/antiguo)
+          const parsedDate = new Date(savedAnchorTime);
+          if (!isNaN(parsedDate.getTime())) {
+            hours = parsedDate.getHours();
+            minutes = parsedDate.getMinutes();
+            isValid = true;
+            // Guardar en el nuevo formato limpio HH:MM
+            const formatted = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+            localStorage.setItem(ANCHOR_TIME_KEY, formatted);
+          }
+        }
+
+        if (isValid) {
+          const now = new Date();
+          now.setHours(hours, minutes, 0, 0);
+          setState(prev => ({ ...prev, anchorTime: now.toISOString() }));
+        }
+      }
+      const savedBlocked = localStorage.getItem(BLOCKED_STREAMERS_KEY);
+      if (savedBlocked) {
+        setBlockedStreamers(JSON.parse(savedBlocked));
+      }
     } catch (e) {
       console.error(e);
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(BLOCKED_STREAMERS_KEY, JSON.stringify(blockedStreamers));
+  }, [blockedStreamers]);
 
   useEffect(() => {
     localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
@@ -473,9 +516,18 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
 
     try {
       const { clips, cursor } = await searchTwitchClips(category.id, category.name, time, null, state.anchorTime || undefined);
+      // Evitar duplicados por id
+      const uniqueClips: Clip[] = [];
+      const seen = new Set<string>();
+      for (const clip of clips) {
+        if (!seen.has(clip.id)) {
+          seen.add(clip.id);
+          uniqueClips.push(clip);
+        }
+      }
       setState(prev => ({
         ...prev,
-        clips,
+        clips: uniqueClips,
         paginationCursor: cursor,
         isLoading: false
       }));
@@ -495,12 +547,23 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         state.paginationCursor,
         state.anchorTime || undefined
       );
-      setState(prev => ({
-        ...prev,
-        clips: [...prev.clips, ...newClips],
-        paginationCursor: nextCursor,
-        isLoading: false
-      }));
+      setState(prev => {
+        const mergedClips = [...prev.clips, ...newClips];
+        const uniqueClips: Clip[] = [];
+        const seen = new Set<string>();
+        for (const clip of mergedClips) {
+          if (!seen.has(clip.id)) {
+            seen.add(clip.id);
+            uniqueClips.push(clip);
+          }
+        }
+        return {
+          ...prev,
+          clips: uniqueClips,
+          paginationCursor: nextCursor,
+          isLoading: false
+        };
+      });
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
@@ -524,6 +587,18 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
           state.anchorTime || undefined
         );
         allLoadedClips = [...allLoadedClips, ...newClips];
+        
+        // Evitar duplicados por id
+        const uniqueClips: Clip[] = [];
+        const seen = new Set<string>();
+        for (const clip of allLoadedClips) {
+          if (!seen.has(clip.id)) {
+            seen.add(clip.id);
+            uniqueClips.push(clip);
+          }
+        }
+        allLoadedClips = uniqueClips;
+
         setState(prev => ({ ...prev, clips: allLoadedClips, paginationCursor: nextCursor }));
         currentCursor = nextCursor;
         pageCount++;
@@ -549,6 +624,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
   };
   const handleAnchorChange = (value: string | null) => {
     setState(prev => ({ ...prev, anchorTime: value }));
+    if (value) {
+      const date = new Date(value);
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      localStorage.setItem(ANCHOR_TIME_KEY, `${hours}:${minutes}`);
+    } else {
+      localStorage.removeItem(ANCHOR_TIME_KEY);
+    }
     if (state.activeCategory) {
       setState(prev => ({ ...prev, isLoading: true, clips: [], paginationCursor: null }));
       searchTwitchClips(state.activeCategory.id, state.activeCategory.name, state.timeFilter, null, value || undefined)
@@ -560,6 +643,46 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
   const handleSortChange = (sort: SortType) => {
     setState(prev => ({ ...prev, sortType: sort }));
     if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter);
+  };
+
+  const handleBlockStreamer = (id: string, name: string, image?: string) => {
+    const categoryId = state.activeCategory?.id || '';
+    if (!categoryId) return;
+
+    setBlockedStreamers(prev => {
+      const currentList = prev[categoryId] || [];
+      if (currentList.some(s => s.id === id)) return prev;
+      const updatedList = [...currentList, { id, name, image }];
+      return { ...prev, [categoryId]: updatedList };
+    });
+
+    if (playingClipRef.current && playingClipRef.current.broadcaster_id === id) {
+      setPlayingClip(null);
+    }
+
+    showToast(`${t('block') || 'Ocultado'}: ${name}`);
+  };
+
+  const handleUnblockStreamer = (id: string) => {
+    const categoryId = state.activeCategory?.id || '';
+    if (!categoryId) return;
+
+    setBlockedStreamers(prev => {
+      const currentList = prev[categoryId] || [];
+      const updatedList = currentList.filter(s => s.id !== id);
+      return { ...prev, [categoryId]: updatedList };
+    });
+  };
+
+  const handleClearBlocklist = () => {
+    const categoryId = state.activeCategory?.id || '';
+    if (!categoryId) return;
+
+    setBlockedStreamers(prev => {
+      return { ...prev, [categoryId]: [] };
+    });
+    
+    showToast(t('collections_deleted_all') || 'Lista de streamers vaciada');
   };
   useEffect(() => {
     handleSearchRef.current = handleSearch;
@@ -616,6 +739,12 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
     if (m > 0) return `${m}m ${s}s`;
     return `${s}s`;
   };
+
+  const categoryId = state.activeCategory?.id || '';
+  const activeBlockedList = blockedStreamers[categoryId] || [];
+  const blockedIds = new Set(activeBlockedList.map(s => s.id));
+  const visibleClips = state.clips.filter(clip => !blockedIds.has(clip.broadcaster_id));
+  const blockedCount = activeBlockedList.length;
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -848,12 +977,51 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en' }) => {
         ) : (
           <div className="pb-32">
             {!state.query.includes('clip') && (
-              <FilterBar currentTime={state.timeFilter} currentSort={state.sortType} onTimeChange={handleFilterChange} onSortChange={handleSortChange} onLoadAll={loadAllClips} isLoading={state.isLoading} disabled={state.isLoading && state.clips.length === 0} t={t} anchorTime={state.anchorTime} onAnchorChange={handleAnchorChange} />
+              <>
+                <FilterBar
+                  currentTime={state.timeFilter}
+                  currentSort={state.sortType}
+                  onTimeChange={handleFilterChange}
+                  onSortChange={handleSortChange}
+                  onLoadAll={loadAllClips}
+                  isLoading={state.isLoading}
+                  disabled={state.isLoading && state.clips.length === 0}
+                  t={t}
+                  anchorTime={state.anchorTime}
+                  onAnchorChange={handleAnchorChange}
+                  isBlocklistOpen={isBlocklistOpen}
+                  onToggleBlocklist={() => setIsBlocklistOpen(!isBlocklistOpen)}
+                  blockedCount={blockedCount}
+                />
+                {isBlocklistOpen && (
+                  <BlocklistManager
+                    categoryId={categoryId}
+                    categoryName={state.activeCategory?.name || ''}
+                    blockedStreamers={blockedStreamers}
+                    onBlockStreamer={handleBlockStreamer}
+                    onUnblockStreamer={handleUnblockStreamer}
+                    onClearBlocklist={handleClearBlocklist}
+                    loadedClips={state.clips}
+                    t={t}
+                  />
+                )}
+              </>
             )}
-            <ClipGrid clips={state.clips} isLoading={state.isLoading} hasMore={!!state.paginationCursor} onLoadMore={loadMoreClips} onLoadAll={loadAllClips} onClipClick={(clip) => {
-              setPlayingClip(clip);
-
-            }} savedClipIds={new Set(savedClips.map(c => c.id))} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />
+            <ClipGrid
+              clips={visibleClips}
+              isLoading={state.isLoading}
+              hasMore={!!state.paginationCursor}
+              onLoadMore={loadMoreClips}
+              onLoadAll={loadAllClips}
+              onClipClick={(clip) => {
+                setPlayingClip(clip);
+              }}
+              savedClipIds={new Set(savedClips.map(c => c.id))}
+              onToggleSave={handleToggleSave}
+              onDownloadExternal={openExternalDownload}
+              onBlockStreamer={handleBlockStreamer}
+              t={t}
+            />
           </div>
         )}
       </main>

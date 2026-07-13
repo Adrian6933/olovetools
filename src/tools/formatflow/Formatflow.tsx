@@ -5,7 +5,7 @@ import DropZone from './components/DropZone';
 import ControlPanel from './components/ControlPanel';
 import LegalModal from './components/LegalModal';
 import { ImageFormat, ConversionSettings, BatchImageItem, ConversionResult } from './types';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
 import { convertImage, formatBytes, readFileAsDataURL, loadImage, createBatchZip, processUploadedFile } from './services/imageService';
 import { X, ArrowRight, ArrowUp, SplitSquareHorizontal, Layers, Ruler, ScanLine, FileImage, ShieldCheck, Zap, Maximize, FileType, Home, Sparkles, Wand2, ArrowRightLeft, Mail } from 'lucide-react';
@@ -18,8 +18,7 @@ interface FormatflowProps {
 }
 
 const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionary }) => {
-  const { dictionary: hookDictionary } = useTranslation((lang || 'en') as Language, 'formatflow');
-  const dictionary = propDictionary || hookDictionary;
+  const dictionary = propDictionary || {};
   const language = (lang || 'en') as Language;
   const t = dictionary.app;
   const tFeatures = dictionary.features;
@@ -291,7 +290,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
         <div className="absolute bottom-[-10%] right-[-10%] w-[25%] h-[25%] bg-secondary/20 blur-[120px] rounded-full mix-blend-screen"></div>
       </div>
 
-      <Header language={language} onLanguageChange={handleLanguageChange} onHomeClick={reset} />
+      <Header language={language} dictionary={dictionary} onLanguageChange={handleLanguageChange} onHomeClick={reset} />
       
       <main className="flex-1 container mx-auto px-4 py-12 flex flex-col gap-12">
         <AnimatePresence mode="wait">
@@ -342,7 +341,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
               transition={{ delay: 0.4, duration: 0.7, ease: "easeOut" }}
               className="w-full max-w-4xl"
             >
-              <DropZone onFilesSelect={handleFilesSelect} language={language} />
+              <DropZone onFilesSelect={handleFilesSelect} language={language} dictionary={dictionary} />
             </motion.div>
 
             <motion.div 
@@ -398,7 +397,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
             >
                <div className="flex items-center gap-4 mb-10">
                   <div className="h-px flex-1 bg-gradient-to-r from-transparent to-slate-800"></div>
-                  <h2 className="text-sm font-black uppercase tracking-[0.4em] text-slate-500">{useTranslation(language, 'formatflow').dictionary.formats?.title || 'Supported Formats'}</h2>
+                  <h2 className="text-sm font-black uppercase tracking-[0.4em] text-slate-500">{dictionary.formats?.title || 'Supported Formats'}</h2>
                   <div className="h-px flex-1 bg-gradient-to-l from-transparent to-slate-800"></div>
                </div>
                
@@ -411,7 +410,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                     { id: 'heic', color: 'text-green-400', bg: 'bg-green-500/10' },
                     { id: 'eps', color: 'text-purple-400', bg: 'bg-purple-500/10' }
                   ].map((fmt, idx) => {
-                    const formatData = useTranslation(language, 'formatflow').dictionary.formats?.[fmt.id];
+                    const formatData = dictionary.formats?.[fmt.id];
                     if (!formatData || typeof formatData === 'string') return null;
                     return (
                       <motion.div 
@@ -749,6 +748,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                 activeImage={activeImage}
                 onSpecificSettingsChange={handleSpecificSettingsChange}
                 language={language}
+                dictionary={dictionary}
               />
             </div>
 
@@ -815,63 +815,66 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
 
       <LegalModal
         isOpen={activeModal === 'privacy'} 
-        onClose={() => setActiveModal(null)} 
+        onClose={() => setActiveModal(null)}
         title={t.privacyPolicy}
         language={language}
+        dictionary={dictionary}
         content={
           <div className="space-y-6">
-            <p>{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.intro}</p>
+            <p>{dictionary.app.privacyPolicyContent.intro}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.section1.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.section1.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.privacyPolicyContent.section1.title}</h3>
+            <p>{dictionary.app.privacyPolicyContent.section1.text}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.section2.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.section2.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.privacyPolicyContent.section2.title}</h3>
+            <p>{dictionary.app.privacyPolicyContent.section2.text}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.section3.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.privacyPolicyContent.section3.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.privacyPolicyContent.section3.title}</h3>
+            <p>{dictionary.app.privacyPolicyContent.section3.text}</p>
           </div>
         }
       />
 
       <LegalModal 
         isOpen={activeModal === 'terms'} 
-        onClose={() => setActiveModal(null)} 
+        onClose={() => setActiveModal(null)}
         title={t.termsOfService}
         language={language}
+        dictionary={dictionary}
         content={
           <div className="space-y-6">
-            <p>{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.intro}</p>
+            <p>{dictionary.app.termsOfServiceContent.intro}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.section1.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.section1.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.termsOfServiceContent.section1.title}</h3>
+            <p>{dictionary.app.termsOfServiceContent.section1.text}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.section2.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.section2.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.termsOfServiceContent.section2.title}</h3>
+            <p>{dictionary.app.termsOfServiceContent.section2.text}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.section3.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.termsOfServiceContent.section3.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.termsOfServiceContent.section3.title}</h3>
+            <p>{dictionary.app.termsOfServiceContent.section3.text}</p>
           </div>
         }
       />
 
       <LegalModal 
         isOpen={activeModal === 'cookies'} 
-        onClose={() => setActiveModal(null)} 
+        onClose={() => setActiveModal(null)}
         title={t.cookiePolicy}
         language={language}
+        dictionary={dictionary}
         content={
           <div className="space-y-6">
-            <p>{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.intro}</p>
+            <p>{dictionary.app.cookiePolicyContent.intro}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.section1.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.section1.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.cookiePolicyContent.section1.title}</h3>
+            <p>{dictionary.app.cookiePolicyContent.section1.text}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.section2.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.section2.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.cookiePolicyContent.section2.title}</h3>
+            <p>{dictionary.app.cookiePolicyContent.section2.text}</p>
             
-            <h3 className="text-lg font-bold text-white mt-8 mb-4">{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.section3.title}</h3>
-            <p>{useTranslation(language, 'formatflow').dictionary.app.cookiePolicyContent.section3.text}</p>
+            <h3 className="text-lg font-bold text-white mt-8 mb-4">{dictionary.app.cookiePolicyContent.section3.title}</h3>
+            <p>{dictionary.app.cookiePolicyContent.section3.text}</p>
           </div>
         }
       />

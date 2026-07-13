@@ -2,10 +2,11 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, ChevronDown } from 'lucide-react';
-import { useTranslation, Language } from '../../../locales/dictionary';
+import type { Language } from '../../../locales/meta';
 
 interface HeaderProps {
   language: Language;
+  dictionary?: any;
   onLanguageChange: (lang: Language) => void;
   onHomeClick: () => void;
 }
@@ -27,7 +28,7 @@ const getParamFromLanguage = (lang: Language): string => {
   return lang.toLowerCase();
 };
 
-const Header: React.FC<HeaderProps> = ({ language, onLanguageChange, onHomeClick }) => {
+const Header: React.FC<HeaderProps> = ({ language, dictionary: propDictionary, onLanguageChange, onHomeClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -44,7 +45,7 @@ const Header: React.FC<HeaderProps> = ({ language, onLanguageChange, onHomeClick
   }, []);
 
   const currentLang = languages.find(l => l.code === language) || languages[0];
-  const { dictionary } = useTranslation(language, 'formatflow');
+  const dictionary = propDictionary || {};
 
   return (
     <header className="w-full h-auto sm:h-24 py-4 sm:py-0 border-b border-slate-800 bg-[#0B0F17] sticky top-0 z-50">

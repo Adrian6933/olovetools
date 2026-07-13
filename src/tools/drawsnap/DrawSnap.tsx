@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Pen, Paintbrush, Eraser, Minus, Square, Circle, Undo2, Redo2, Trash2, Download, ToggleLeft, ToggleRight, Sparkles, HelpCircle, Grid } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -23,7 +23,7 @@ interface DrawingPath {
 }
 
 export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'drawsnap');
+  const t = createTranslator(dictionary);
 
   // Drawing States
   const [activeTool, setActiveTool] = useState<'pencil' | 'marker' | 'eraser' | 'line' | 'rect' | 'circle'>('pencil');

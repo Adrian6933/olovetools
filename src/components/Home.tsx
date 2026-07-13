@@ -12,7 +12,7 @@ import { useReducedMotion } from './shared/motion';
 import { Layout } from './Layout';
 import { ProjectCategory } from '../types';
 import { MOCK_PROJECTS, LANGUAGES } from '../constants';
-import { useTranslation, Language } from '../locales/dictionary';
+import { createTranslator } from '../locales/meta';
 
 const categoryIconMap: Record<string, React.ComponentType<any>> = {
   All: Sparkles,
@@ -29,7 +29,7 @@ const categoryIconMap: Record<string, React.ComponentType<any>> = {
 };
 
 export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en', dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'hub');
+  const t = createTranslator(dictionary);
   const prefersReduced = useReducedMotion();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'All' | 'Favorites'>('All');
@@ -558,6 +558,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                               }} 
                               categoryLabel={t(`categories.${project.category}`)}
                               buttonLabel={t('openTool')}
+                              t={t}
                               lang={lang}
                               onOpen={() => recordVisit(project.slug)}
                               isFavorite={favorites.includes(project.slug)}

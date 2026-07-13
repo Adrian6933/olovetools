@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -86,7 +86,7 @@ const CORS_PROXIES = [
 ];
 
 export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang, 'socialbolt');
+  const t = createTranslator(dictionary);
 
   const [inputUrl, setInputUrl] = useState<string>('');
   const [platform, setPlatform] = useState<Platform>('unknown');

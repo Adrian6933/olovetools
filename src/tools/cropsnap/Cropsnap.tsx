@@ -23,7 +23,7 @@ import {
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { AspectRatioPreset, OutputFormat } from './types';
 
@@ -33,7 +33,7 @@ interface CropsnapProps {
 }
 
 export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'cropsnap');
+  const t = dictionary || {};
 
   // Tabs layout
   const [activeTab, setActiveTab] = useState<'crop' | 'adjust' | 'size' | 'export'>('crop');

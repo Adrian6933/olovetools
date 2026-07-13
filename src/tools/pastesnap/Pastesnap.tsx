@@ -18,7 +18,7 @@ import {
 import { Header } from './components/Header';
 import { LegalModal } from './components/LegalModal';
 import { PastedImage } from './types';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
 import { AdBanner } from '../../components/shared/AdBanner';
 
@@ -28,7 +28,7 @@ interface PastesnapProps {
 }
 
 const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'pastesnap');
+  const t = dictionary || {};
   const [images, setImages] = useState<PastedImage[]>([]);
   const [expandedImage, setExpandedImage] = useState<PastedImage | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);

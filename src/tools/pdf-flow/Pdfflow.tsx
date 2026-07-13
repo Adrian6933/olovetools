@@ -27,7 +27,7 @@ import {
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { PdfItem, ToolMode } from './types';
 
@@ -37,7 +37,7 @@ interface PdfflowProps {
 }
 
 export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'pdf-flow');
+  const t = dictionary || {};
 
   // App States
   const [activeMode, setActiveMode] = useState<ToolMode>('merge');

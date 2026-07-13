@@ -2,13 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from '../types';
 import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2 } from 'lucide-react';
 import { downloadBlob, DOWNLOAD_PROXIES } from '../services/kickService';
-import { useTranslation, Language } from '../../../locales/dictionary';
 
 interface ClipResultProps {
   data: ClipData;
   index: number;
   onReset: () => void;
   lang: string;
+  dictionary?: any;
 }
 
 const STORAGE_KEY = 'kickbolt_volume_prefs';
@@ -42,11 +42,10 @@ const loadHls = (): Promise<any> => {
   });
 };
 
-const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang }) => {
+const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dictionary }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadingRes, setDownloadingRes] = useState<Record<string, { progress: number, completed: boolean, preparing: boolean, loaded: number, total: number, speed: number }>>({});
-  const { dictionary } = useTranslation(lang as Language, 'kickbolt');
-  const t = dictionary;
+  const t = dictionary || {};
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const abortControllers = useRef<Record<string, AbortController>>({});

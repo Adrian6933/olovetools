@@ -13,7 +13,7 @@ import {
   Settings,
   X
 } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -210,7 +210,7 @@ const STICKERS: Record<string, { name: string; svg: string; width: number; heigh
 };
 
 export const MemeBolt: React.FC<MemeBoltProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'meme-bolt');
+  const t = createTranslator(dictionary);
 
   // Studio tabs: 'templates' | 'text' | 'stickers'
   const [activeTab, setActiveTab] = useState<'templates' | 'text' | 'stickers'>('templates');

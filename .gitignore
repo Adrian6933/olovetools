@@ -56,3 +56,5 @@ dist-ssr/
 *.bak
 *.swp
 
+# Vercel (CLI project link / local build output)
+.vercel/

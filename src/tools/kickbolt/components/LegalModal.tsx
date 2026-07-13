@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
 import { ShieldCheck, FileText, Info, X, Copy, Check } from 'lucide-react';
-import { useTranslation, Language } from '../../../locales/dictionary';
 
 interface LegalModalProps {
   type: 'privacy' | 'terms' | 'cookies' | null;
   lang: string;
+  dictionary?: any;
   onClose: () => void;
 }
 
-const LegalModal: React.FC<LegalModalProps> = ({ type, lang, onClose }) => {
+const LegalModal: React.FC<LegalModalProps> = ({ type, lang, dictionary, onClose }) => {
   const [copied, setCopied] = useState(false);
   if (!type) return null;
 
-  const { dictionary } = useTranslation(lang as Language, 'kickbolt');
-  const t = dictionary;
+  const t = dictionary || {};
   const tl = t.legal || {};
   
   const contentMap = {

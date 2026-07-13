@@ -16,7 +16,7 @@ import {
   X,
   FileCheck
 } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -44,7 +44,7 @@ interface FileTreeNode {
 }
 
 export const ZipFlow: React.FC<ZipFlowProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'zip-flow');
+  const t = createTranslator(dictionary);
 
   // Tabs
   const [activeTab, setActiveTab] = useState<'compress' | 'extract'>('compress');

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Mail } from 'lucide-react';
-import { useTranslation, Language } from '../../../locales/dictionary';
+import type { Language } from '../../../locales/meta';
 
 interface LegalModalProps {
   isOpen: boolean;
@@ -8,9 +8,10 @@ interface LegalModalProps {
   title: string;
   content: React.ReactNode;
   language: Language;
+  dictionary?: any;
 }
 
-const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, content, language }) => {
+const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, content, language, dictionary }) => {
   const [copied, setCopied] = useState(false);
 
   if (!isOpen) return null;
@@ -21,8 +22,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, content
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const { dictionary } = useTranslation(language, 'formatflow');
-  const t = dictionary.app;
+  const t = (dictionary || {}).app || {};
 
   return (
     <div 

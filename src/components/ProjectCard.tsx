@@ -1,13 +1,13 @@
 import React from 'react';
 import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors } from 'lucide-react';
-import { Project, LanguageCode as Language } from '../types';
-import { useTranslation } from '../locales/dictionary';
+import { Project } from '../types';
 
 interface ProjectCardProps {
   project: Project;
   categoryLabel: string;
   buttonLabel: string;
   lang: string;
+  t: any;
   onOpen?: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
@@ -40,13 +40,12 @@ const IconMap: Record<string, React.ElementType> = {
   'Scissors': Scissors
 };
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang, onOpen, isFavorite, onToggleFavorite }) => {
-  const { t } = useTranslation(lang as Language, 'hub');
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang, t, onOpen, isFavorite, onToggleFavorite }) => {
   const IconComponent = IconMap[project.icon] || Box;
 
   return (
-    <a 
-      href={`/${lang}/${project.slug}`}
+    <a
+      href={`/${lang}/${project.slug}/`}
       onClick={onOpen}
       className="group relative bg-[#0c0c10] backdrop-blur-xl rounded-3xl p-8 border border-white/[0.08] hover:border-indigo-500/40 transition-all duration-500 flex flex-col h-full hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-2 overflow-hidden cursor-pointer shadow-lg"
     >

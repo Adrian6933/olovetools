@@ -1,28 +1,12 @@
-export type Language = 'en' | 'es' | 'hi' | 'de' | 'fr' | 'pt' | 'ru' | 'ja' | 'zh';
+// NOTE: this module statically imports EVERY translation file (59 tools × 9
+// languages, ~2.3 MB once bundled), so it must only be imported from Astro
+// pages (server-side/SSG). Client components (React islands) must import
+// Language / FLAGS / LANGUAGE_NAMES / createTranslator from './meta' and use
+// the `dictionary` prop that every Astro page already passes down.
+import { createTranslator, type Language } from './meta';
 
-export const FLAGS: Record<Language, string> = {
-  en: "🇺🇸",
-  es: "🇪🇸",
-  hi: "🇮🇳",
-  de: "🇩🇪",
-  fr: "🇫🇷",
-  pt: "🇧🇷",
-  ru: "🇷🇺",
-  ja: "🇯🇵",
-  zh: "🇨🇳"
-};
-
-export const LANGUAGE_NAMES: Record<Language, string> = {
-  en: "English",
-  es: "Español",
-  hi: "हिन्दी",
-  de: "Deutsch",
-  fr: "Français",
-  pt: "Português",
-  ru: "Русский",
-  ja: "日本語",
-  zh: "中文"
-};
+export { FLAGS, LANGUAGE_NAMES, createTranslator } from './meta';
+export type { Language } from './meta';
 
 import en_hub from './en/hub';
 import en_clipy from './en/clipy';
@@ -1380,29 +1364,6 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     hubDictionary;
     
   const currentDict = dictionaryObj[lang] || dictionaryObj['en'];
-  
-  const tFunction = (key: string): string => {
-    const keys = key.split('.');
-    let value: any = currentDict;
-    for (const k of keys) {
-      if (value && typeof value === 'object') {
-        value = value[k];
-      } else {
-        return key;
-      }
-    }
-    return value !== undefined ? String(value) : key;
-  };
 
-  const t = new Proxy(tFunction, {
-    get: (target, prop) => {
-      if (typeof prop === 'symbol') return undefined;
-      if (['call', 'apply', 'bind', 'name', 'length'].includes(prop)) {
-        return (target as any)[prop];
-      }
-      return currentDict[prop as string];
-    }
-  }) as any;
-
-  return { t, lang, dictionary: currentDict };
+  return { t: createTranslator(currentDict), lang, dictionary: currentDict };
 };

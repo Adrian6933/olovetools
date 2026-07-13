@@ -17,7 +17,7 @@ import {
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { CodeTheme, WindowStyle, FontFamily, ShadowStyle, GradientTheme } from './types';
 
@@ -144,7 +144,7 @@ interface CodecardProps {
 }
 
 export const Codecard: React.FC<CodecardProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'codecard');
+  const t = dictionary || {};
 
   // Dashboard state tabs
   const [activeTab, setActiveTab] = useState<'code' | 'style' | 'window' | 'export'>('code');

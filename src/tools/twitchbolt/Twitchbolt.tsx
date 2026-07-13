@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { fetchClipInfo, fetchMovieBlob } from './services/twitchService';
 import { ClipData, ClipItem, LoadingState } from './types';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import JSZip from 'jszip';
 
 const formatBytes = (bytes: number, decimals = 2) => {
@@ -26,7 +26,7 @@ interface TwitchboltProps {
   dictionary?: any;
 }
 
-const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en' }) => {
+const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   const [inputText, setInputText] = useState('');
   const [status, setStatus] = useState<LoadingState>('idle');
   const [clips, setClips] = useState<ClipItem[]>([]);
@@ -40,7 +40,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en' }) => {
   const qualityRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   
-  const { t } = useTranslation(lang, 'twitchbolt');
+  const t = createTranslator(dictionary);
 
   const qualityOptions = [
     { id: 'max', label: 'Max Quality', sub: 'Original Source', icon: <Diamond className="w-4 h-4 text-blue-400" /> },
@@ -542,7 +542,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en' }) => {
                     );
                   }
                   if (c.data) {
-                    return <ClipResult key={c.id} data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} />;
+                    return <ClipResult key={c.id} data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} />;
                   }
                   return null;
                 })}
@@ -551,9 +551,9 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en' }) => {
         )}
       </main>
 
-      <Footer lang={lang} onOpenLegal={setActiveLegal} />
-      
-      <LegalModal type={activeLegal} lang={lang} onClose={() => setActiveLegal(null)} />
+      <Footer lang={lang} dictionary={dictionary} onOpenLegal={setActiveLegal} />
+
+      <LegalModal type={activeLegal} lang={lang} dictionary={dictionary} onClose={() => setActiveLegal(null)} />
 
       <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 hover:-translate-y-2 active:scale-95 z-50 cursor-pointer group`}><ArrowUp className="w-6 h-6 group-hover:scale-110 transition-transform" /></button>
     </div>

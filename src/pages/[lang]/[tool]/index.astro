@@ -70,6 +70,8 @@ import { TOOL_FAVICONS, TOOL_THEME_COLORS } from '../../../constants';
 import Analytics from '../../../components/Analytics.astro';
 import '../../../styles/global.css';
 
+export const prerender = true;
+
 export function getStaticPaths() {
   const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt', 'audiosnap', 'drawsnap', 'diffsnap', 'watermark-snap', 'favicon-bolt', 'exif-clear', 'meme-bolt', 'wordflow', 'markdown-live', 'hash-bolt', 'zip-flow', 'regex-flow', 'lottie-viewer', 'svg-optimizer', 'graph-flow', 'url-bolt', 'base64-bolt', 'uuid-generator', 'list-mixer', 'html-sanitizer', 'colorsnap', 'hex-to-rgb', 'aspect-ratio', 'unitflow', 'sql-flow', 'cron-flow', 'xml-json', 'binary-flow', 'morse-flow', 'epoch-flow', 'time-bolt', 'device-test', 'lorem-flow', 'key-doctor', 'whiteboard-flow', 'subtitles-bolt', 'passbolt', 'whois-bolt', 'framesnap', 'cleansnap', 'klipy', 'clip-flow'];
   const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
@@ -178,13 +180,15 @@ const faqItems: Array<{ question: string; answer: string }> = Array.isArray((dic
 const seoKeywords: string[] = Array.isArray((dictionary as any)?.seoKeywords) ? (dictionary as any).seoKeywords : [];
 const ogLocaleMap: Record<string, string> = { en: 'en_US', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', pt: 'pt_BR', ru: 'ru_RU', hi: 'hi_IN', ja: 'ja_JP', zh: 'zh_CN' };
 const currentOgLocale = ogLocaleMap[lang as string] || 'en_US';
-const toolUrl = `${baseUrl}/${lang}/${tool}`;
+// Trailing slash: Apache sirve /{lang}/{tool}/ (301 desde la versión sin barra),
+// y el sitemap generado usa barra final — canonical/hreflang/og deben coincidir.
+const toolUrl = `${baseUrl}/${lang}/${tool}/`;
 
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": [
-    { "@type": "ListItem", "position": 1, "name": "oLoveTools", "item": `${baseUrl}/${lang}` },
+    { "@type": "ListItem", "position": 1, "name": "oLoveTools", "item": `${baseUrl}/${lang}/` },
     { "@type": "ListItem", "position": 2, "name": name, "item": toolUrl }
   ]
 };
@@ -227,13 +231,13 @@ const appSchema = {
     <ClientRouter />
     <meta name="description" content={t('seo_description')} />
     <meta property="og:description" content={t('seo_description')} />
-    <meta property="og:url" content={`${baseUrl}/${lang}/${tool}`} />
+    <meta property="og:url" content={toolUrl} />
     <meta property="og:type" content="website" />
     <meta property="og:image" content={`${baseUrl}/og-${tool}.png`} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content={t('seo_description')} />
     <meta name="twitter:image" content={`${baseUrl}/og-${tool}.png`} />
-    <link rel="canonical" href={`${baseUrl}/${lang}/${tool}`} />
+    <link rel="canonical" href={toolUrl} />
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
     <meta name="author" content="oLoveTools" />
     {seoKeywords.length > 0 && <meta name="keywords" content={seoKeywords.join(', ')} />}
@@ -268,9 +272,9 @@ const appSchema = {
     )}
 
     {langs.map(l => (
-      <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}`} />
+      <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}/`} />
     ))}
-    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en/${tool}`} />
+    <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en/${tool}/`} />
 
     <script type="application/ld+json" is:inline set:html={JSON.stringify(appSchema)} />
     <script type="application/ld+json" is:inline set:html={JSON.stringify(breadcrumbSchema)} />
@@ -2066,7 +2070,7 @@ const appSchema = {
         <div class="flex flex-wrap gap-3">
           {toolCtas.map((cta) => (
             <a
-              href={`/${castLang}/${cta.target}`}
+              href={`/${castLang}/${cta.target}/`}
               class="group inline-flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold text-white bg-gradient-to-r from-indigo-600/80 to-violet-600/80 border border-indigo-400/20 shadow-lg shadow-indigo-950/40 hover:from-indigo-500 hover:to-violet-500 transition-all"
             >
               <span>{cta.labels[castLang] || cta.labels.en}</span>
@@ -2085,7 +2089,7 @@ const appSchema = {
           {relatedSlugs.map((slug) => (
             <li>
               <a
-                href={`/${castLang}/${slug}`}
+                href={`/${castLang}/${slug}/`}
                 class="inline-flex items-center px-4 py-2 rounded-xl text-sm font-bold text-slate-300 bg-white/[0.03] border border-white/10 hover:border-indigo-500/40 hover:text-white transition-colors"
               >
                 {toolNames[slug] || slug}

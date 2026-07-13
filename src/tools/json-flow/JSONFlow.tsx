@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -234,7 +234,7 @@ function csvToJson(csvText: string): any[] {
 }
 
 export const JSONFlow: React.FC<JSONFlowProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang, 'json-flow');
+  const t = createTranslator(dictionary);
   
   const [jsonInput, setJsonInput] = useState<string>('');
   const [parsedJSON, setParsedJSON] = useState<any>(null);

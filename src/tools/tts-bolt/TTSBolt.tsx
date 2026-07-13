@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Volume2, Play, Pause, Square, Download, Trash2, History, Globe, Settings, Info, Check } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -88,7 +88,7 @@ const getGoogleLangCode = (voiceLang: string, fallbackLang: string): string => {
 };
 
 export const TTSBolt: React.FC<TTSBoltProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'tts-bolt');
+  const t = createTranslator(dictionary);
   
   const [text, setText] = useState('');
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);

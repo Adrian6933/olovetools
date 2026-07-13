@@ -13,7 +13,7 @@ import {
   Image as ImageIcon,
   Cpu
 } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -530,7 +530,7 @@ function stripPngMetadata(arrayBuffer: ArrayBuffer, options: { gpsOnly: boolean;
 }
 
 export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'exif-clear');
+  const t = createTranslator(dictionary);
 
   // App States
   const [loadedFiles, setLoadedFiles] = useState<LoadedFile[]>([]);

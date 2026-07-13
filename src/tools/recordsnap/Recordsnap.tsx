@@ -24,7 +24,7 @@ import {
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { RecordMode, AudioSource, ResolutionMode, FpsMode, RecordingStatus } from './types';
 
@@ -34,7 +34,7 @@ interface RecordsnapProps {
 }
 
 export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'recordsnap');
+  const t = dictionary || {};
 
   // Configuration States
   const [recordMode, setRecordMode] = useState<RecordMode>('screen');

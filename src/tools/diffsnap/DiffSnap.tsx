@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { GitCompare, FileText, Upload, RefreshCw, Sparkles, BookOpen, Layers, ArrowRightLeft, FileCode, CheckCircle, Info } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -25,7 +25,7 @@ interface AlignedRow {
 }
 
 export const DiffSnap: React.FC<DiffSnapProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'diffsnap');
+  const t = createTranslator(dictionary);
 
   // Input text states
   const [textA, setTextA] = useState<string>('');

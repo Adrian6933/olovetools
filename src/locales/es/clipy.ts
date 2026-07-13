@@ -97,5 +97,16 @@ export default {
   "restore": "Restaurar",
   "restore_desc": "Restaurar tamaño y posición original",
   "duration": "Duración",
-  "total_duration": "Duración total"
+  "total_duration": "Duración total",
+  "blocked_in": "Streamers ocultos en",
+  "clear_all": "Vaciar lista",
+  "no_blocked_streamers": "No hay streamers ocultos en esta categoría",
+  "unblock": "Permitir",
+  "search_loaded": "Buscar en cargados",
+  "search_streamer_placeholder": "Escribe para buscar... (ej. ibai)",
+  "type_to_search": "Busca streamers cargados para ocultarlos",
+  "no_streamers_found": "No se encontraron streamers que coincidan",
+  "blocked": "Oculto",
+  "block": "Ocultar",
+  "blocklist": "Ocultados"
 };

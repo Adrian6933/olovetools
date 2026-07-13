@@ -23,7 +23,7 @@ import {
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { CompressSettings, CompressedImageItem } from './types';
@@ -44,7 +44,7 @@ const DEFAULT_SETTINGS: CompressSettings = {
 };
 
 export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) => {
-  const { dictionary: t } = useTranslation((lang || 'en') as Language, 'compresssnap');
+  const t = dictionary || {};
   
   // App state
   const [items, setItems] = useState<CompressedImageItem[]>([]);

@@ -97,5 +97,16 @@ export default {
   "restore": "Restore",
   "restore_desc": "Restore original size and position",
   "duration": "Duration",
-  "total_duration": "Total Duration"
+  "total_duration": "Total Duration",
+  "blocked_in": "Blocked streamers in",
+  "clear_all": "Clear list",
+  "no_blocked_streamers": "No blocked streamers in this category",
+  "unblock": "Allow",
+  "search_loaded": "Search loaded",
+  "search_streamer_placeholder": "Type to search... (e.g. ibai)",
+  "type_to_search": "Search loaded streamers to hide them",
+  "no_streamers_found": "No matching streamers found",
+  "blocked": "Hidden",
+  "block": "Hide",
+  "blocklist": "Blocked"
 };

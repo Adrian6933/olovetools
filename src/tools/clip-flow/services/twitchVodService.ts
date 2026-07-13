@@ -19,10 +19,10 @@ const GQL_PROXIES = [
 
 // usher.ttvnw.net (VOD master playlist) sends CORS headers and works with a direct
 // fetch, but the actual video segment CDN (CloudFront/S3) does not, so segment and
-// media-playlist downloads need a proxy. In dev this points at the local Node proxy
-// (server/clipflow-proxy.mjs, run via `npm run proxy`); production uses clipflow-proxy.php
-// deployed alongside the site on Hostinger. Leave empty to fall back to public proxies.
-const WORKER_PROXY_URL = import.meta.env.DEV ? 'http://localhost:8787' : 'https://olovetools.com/clipflow-proxy.php';
+// media-playlist downloads need a proxy. /proxy (src/pages/proxy.ts) runs at the
+// same origin as a Vercel serverless function. Public CORS proxies below remain
+// as fallback.
+const WORKER_PROXY_URL = '/proxy';
 
 export const DOWNLOAD_PROXIES = [
   ...(WORKER_PROXY_URL ? [(url: string) => `${WORKER_PROXY_URL}?url=${encodeURIComponent(url)}`] : []),

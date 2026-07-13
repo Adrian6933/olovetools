@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Palette, Download, Upload, Info, RefreshCw, Layers, Compass, Smartphone, Globe } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -14,7 +14,7 @@ interface FaviconBoltProps {
 }
 
 export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'favicon-bolt');
+  const t = createTranslator(dictionary);
 
   // Parameters
   const [mode, setMode] = useState<'image' | 'emoji'>('emoji');

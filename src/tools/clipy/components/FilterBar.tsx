@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { TimeFilter, SortType } from '../types';
-import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X } from 'lucide-react';
+import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert } from 'lucide-react';
 
 interface FilterBarProps {
   currentTime: TimeFilter;
@@ -14,6 +14,9 @@ interface FilterBarProps {
   t: (key: string) => string;
   anchorTime?: string | null;
   onAnchorChange?: (value: string | null) => void;
+  isBlocklistOpen?: boolean;
+  onToggleBlocklist?: () => void;
+  blockedCount?: number;
 }
 
 const toDatetimeLocalValue = (date: Date) => {
@@ -31,7 +34,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
   disabled,
   t,
   anchorTime,
-  onAnchorChange
+  onAnchorChange,
+  isBlocklistOpen = false,
+  onToggleBlocklist,
+  blockedCount = 0
 }) => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isAnchorOpen, setIsAnchorOpen] = useState(false);
@@ -205,6 +211,20 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </div>
             )}
         </div>
+
+        {onToggleBlocklist && (
+          <button
+            onClick={onToggleBlocklist}
+            className={`w-full sm:flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg border transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+              isBlocklistOpen
+                ? 'bg-red-600/20 border-red-500 text-red-400 hover:bg-red-600/30'
+                : 'bg-twitch-black border-twitch-surfaceAlt hover:border-red-500/40 text-gray-200 hover:text-red-400'
+            }`}
+          >
+            <ShieldAlert className="w-4 h-4" />
+            <span>{t('blocklist') || 'Ocultados'} {blockedCount > 0 ? `(${blockedCount})` : ''}</span>
+          </button>
+        )}
       </div>
     </div>
   </div>

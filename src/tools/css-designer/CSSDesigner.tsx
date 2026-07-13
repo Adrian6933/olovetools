@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Copy, Check, RotateCcw, Sliders, Palette, Layout, Settings, Sparkles, Plus, Trash, Layers, Code } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,7 +27,7 @@ const hexToRgba = (hex: string, alpha: number): string => {
 };
 
 const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'css-designer');
+  const t = createTranslator(dictionary);
   
   // Modals state
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);

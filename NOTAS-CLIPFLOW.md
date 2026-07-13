@@ -26,6 +26,8 @@ Resumen de las dudas que fueron surgiendo mientras se construía y depuraba Clip
 
 **Pendiente:** decidir si se despliega el proxy Node en Vercel o Hostinger cuando haya más funcionalidad de backend que justifique el cambio. Por ahora sigue en PHP en producción.
 
+> **Actualización (julio 2026):** decisión revertida a petición del propietario — todo el backend PHP se migró a Node. Ahora hay un backend unificado en `server/app.mjs` (proxy CORS + API de Kick + token de Twitch) que en dev se monta dentro del propio dev server de Astro y en producción se ejecuta con `npm run server`, o como Cloudflare Worker (`cloudflare-worker/worker.js`). Los archivos `clipflow-proxy.php` y `public/api/kick.php` fueron eliminados del repo; hay que retirarlos también del `public_html` de Hostinger cuando se despliegue. Ver `server/README.md`.
+
 ### ¿Se puede evitar por completo el proxy?
 
 **Duda:** si había alguna forma de que la web funcionara sin ningún proxy.

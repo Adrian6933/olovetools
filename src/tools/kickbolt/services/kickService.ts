@@ -1,7 +1,12 @@
 import { ClipData, Resolution } from "../types";
 
+// Backend at the same origin (src/pages/api/kick.ts, src/pages/proxy.ts, run
+// as Vercel serverless functions): /api/kick?action=clip fetches clip info
+// with browser-like headers server-side, and /proxy relays the clip CDN with
+// CORS. Public proxies below remain as fallback.
 export const DOWNLOAD_PROXIES = [
-  (url: string) => url, // Try direct first
+  (url: string) => `/proxy?url=${encodeURIComponent(url)}`,
+  (url: string) => url, // Then direct
   (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
   (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
   (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
@@ -37,20 +42,33 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   const apiUrl = `https://kick.com/api/v2/clips/${slug}`;
   let responseData: any = null;
 
-  for (const makeProxyUrl of DOWNLOAD_PROXIES) {
-      try {
-          const res = await fetch(makeProxyUrl(apiUrl), {
-              method: 'GET',
-              headers: { 'Accept': 'application/json' }
-          });
-          if (res.ok) {
-              const json = await res.json();
-              if (json && json.clip) { 
-                  responseData = json.clip; 
-                  break; 
+  // The Node backend fetches kick.com's Cloudflare-protected API server-side.
+  try {
+      const res = await fetch(`/api/kick?action=clip&slug=${encodeURIComponent(slug)}`, {
+          headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+          const json = await res.json();
+          if (json && json.clip) responseData = json.clip;
+      }
+  } catch (e) {}
+
+  if (!responseData) {
+      for (const makeProxyUrl of DOWNLOAD_PROXIES.slice(1)) {
+          try {
+              const res = await fetch(makeProxyUrl(apiUrl), {
+                  method: 'GET',
+                  headers: { 'Accept': 'application/json' }
+              });
+              if (res.ok) {
+                  const json = await res.json();
+                  if (json && json.clip) {
+                      responseData = json.clip;
+                      break;
+                  }
               }
-          }
-      } catch (e) {}
+          } catch (e) {}
+      }
   }
 
   if (!responseData) throw new Error("Clip not found.");

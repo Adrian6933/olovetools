@@ -1,32 +1,26 @@
 import { Category, Clip, TimeFilter, SortType } from "../types";
 
-const CLIENT_ID = 'nur4h255cvyo29c10m6739v88kyl7d';
-const CLIENT_SECRET = 'juqrrcyhnqbzd8op0ve0cutrmjj5v3';
+// The Twitch app token is issued by /api/twitch/token (src/pages/api/twitch/
+// token.ts, same origin — Vercel serverless function) so the client_secret
+// never ships in the browser bundle.
+let cachedAuth: { token: string; clientId: string; expiresAt: number } | null = null;
 
-let cachedAccessToken: string | null = null;
-
-const getAccessToken = async (): Promise<string> => {
-  if (cachedAccessToken) return cachedAccessToken;
+const getAuth = async (): Promise<{ token: string; clientId: string }> => {
+  if (cachedAuth && cachedAuth.expiresAt > Date.now() + 60_000) return cachedAuth;
 
   try {
-    const params = new URLSearchParams();
-    params.append('client_id', CLIENT_ID);
-    params.append('client_secret', CLIENT_SECRET);
-    params.append('grant_type', 'client_credentials');
-
-    const response = await fetch('https://id.twitch.tv/oauth2/token', {
-      method: 'POST',
-      body: params
-    });
-
+    const response = await fetch('/api/twitch/token');
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(`Auth Failed: ${errorData.message || response.statusText}`);
+      throw new Error(`Auth Failed: ${response.statusText}`);
     }
-
     const data = await response.json();
-    cachedAccessToken = data.access_token;
-    return data.access_token;
+    if (!data.access_token) throw new Error('Auth Failed: empty token');
+    cachedAuth = {
+      token: data.access_token,
+      clientId: data.client_id,
+      expiresAt: data.expires_at || Date.now() + 3_000_000
+    };
+    return cachedAuth;
   } catch (error) {
     console.error("Authentication Error:", error);
     throw error;
@@ -34,9 +28,9 @@ const getAccessToken = async (): Promise<string> => {
 };
 
 const getHeaders = async () => {
-    const token = await getAccessToken();
+    const { token, clientId } = await getAuth();
     return {
-        'Client-Id': CLIENT_ID,
+        'Client-Id': clientId,
         'Authorization': `Bearer ${token}`
     };
 };

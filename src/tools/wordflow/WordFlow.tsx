@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -119,7 +119,7 @@ const COMMON_STOP_WORDS = new Set([
 ]);
 
 export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang, 'wordflow');
+  const t = createTranslator(dictionary);
 
   const [text, setText] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);

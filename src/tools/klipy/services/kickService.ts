@@ -1,9 +1,10 @@
-// Klipy data layer — talks to the server-side PHP proxy (public/api/kick.php).
-// The PHP proxy keeps the Kick client_secret server-side and bypasses Cloudflare
-// for the unofficial clips endpoint. Official categories/livestreams are reliable;
-// clips are best-effort (fall back to live channels when blocked).
+// Klipy data layer — talks to the backend at /api/kick (src/pages/api/kick.ts,
+// same origin — runs as a Vercel serverless function). The backend keeps the
+// Kick client_secret server-side and bypasses Cloudflare for the unofficial
+// clips endpoint. Official categories/livestreams are reliable; clips are
+// best-effort (fall back to live channels when blocked).
 
-const API = '/api/kick.php';
+const API = '/api/kick';
 
 export interface KCategory {
   id: string;

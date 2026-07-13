@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mic, Square, Play, Pause, Download, History, Sparkles, Trash2, Music, Scissors, Volume2, RefreshCw } from 'lucide-react';
-import { useTranslation, Language } from '../../locales/dictionary';
+import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -22,7 +22,7 @@ interface AudioHistoryItem {
 }
 
 export const AudioSnap: React.FC<AudioSnapProps> = ({ lang, dictionary }) => {
-  const { t } = useTranslation(lang as Language, 'audiosnap');
+  const t = createTranslator(dictionary);
 
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);

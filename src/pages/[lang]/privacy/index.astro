@@ -2,6 +2,8 @@
 import LegalLayout from '../../../layouts/LegalLayout.astro';
 import { legalTranslations } from '../../../locales/legal/index';
 
+export const prerender = true;
+
 export function getStaticPaths() {
   const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
   return languages.map(lang => ({
