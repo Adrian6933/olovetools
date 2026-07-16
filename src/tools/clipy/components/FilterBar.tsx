@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { TimeFilter, SortType } from '../types';
-import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert } from 'lucide-react';
+import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users } from 'lucide-react';
 
 interface FilterBarProps {
   currentTime: TimeFilter;
@@ -17,6 +17,8 @@ interface FilterBarProps {
   isBlocklistOpen?: boolean;
   onToggleBlocklist?: () => void;
   blockedCount?: number;
+  groupByChannel?: boolean;
+  onGroupByChannelChange?: (val: boolean) => void;
 }
 
 const toDatetimeLocalValue = (date: Date) => {
@@ -37,7 +39,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onAnchorChange,
   isBlocklistOpen = false,
   onToggleBlocklist,
-  blockedCount = 0
+  blockedCount = 0,
+  groupByChannel = false,
+  onGroupByChannelChange
 }) => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isAnchorOpen, setIsAnchorOpen] = useState(false);
@@ -146,6 +150,22 @@ const FilterBar: React.FC<FilterBarProps> = ({
             )}
           </div>
         )}
+
+        {onGroupByChannelChange && (
+          <button
+            onClick={() => onGroupByChannelChange(!groupByChannel)}
+            disabled={disabled}
+            title={t('group_by_channel_desc') || 'Agrupar clips por canal'}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
+              groupByChannel
+                ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <Users className="w-4 h-4 flex-shrink-0" />
+            <span className="hidden sm:inline">{t('group_by_channel') || 'Agrupar canales'}</span>
+          </button>
+        )}
       </div>
 
       <div className="h-px w-full bg-twitch-surfaceAlt opacity-50 lg:hidden"></div>
@@ -215,7 +235,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         {onToggleBlocklist && (
           <button
             onClick={onToggleBlocklist}
-            className={`w-full sm:flex-1 lg:flex-none flex items-center justify-center gap-2 px-3 py-2.5 text-sm rounded-lg border transition-all cursor-pointer hover:scale-105 active:scale-95 ${
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 text-sm rounded-lg border transition-all cursor-pointer hover:scale-105 active:scale-95 whitespace-nowrap ${
               isBlocklistOpen
                 ? 'bg-red-600/20 border-red-500 text-red-400 hover:bg-red-600/30'
                 : 'bg-twitch-black border-twitch-surfaceAlt hover:border-red-500/40 text-gray-200 hover:text-red-400'

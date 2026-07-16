@@ -8,6 +8,8 @@ import {
 } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
 import { searchCategories, getClips, getLivestreams, KCategory, KItem } from './services/kickService';
+import { motion } from 'framer-motion';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface KlipyProps {
   lang: string;
@@ -25,6 +27,7 @@ const formatViews = (n: number) => {
 
 export default function Klipy({ lang, dictionary }: KlipyProps) {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
   const [query, setQuery] = useState('');
@@ -177,6 +180,12 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
 
         {/* CATEGORIES */}
         {mode === 'categories' && (
+          <motion.div
+            initial={prefersReduced ? false : 'hidden'}
+            whileInView={prefersReduced ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.2 }}
+            variants={fadeInUp}
+          >
           <section className="space-y-4">
             <h2 className="text-xs font-black uppercase tracking-widest text-slate-500">
               {query.trim() ? `${categories.length} results` : L.popular}
@@ -208,6 +217,7 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
               </div>
             )}
           </section>
+          </motion.div>
         )}
 
         {/* ITEMS (clips or live) */}

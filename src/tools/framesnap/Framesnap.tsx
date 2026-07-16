@@ -25,6 +25,8 @@ import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
+import { motion } from 'framer-motion';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface FramesnapProps {
   lang: string;
@@ -52,6 +54,7 @@ const formatTimecode = (s: number) => {
 
 export default function Framesnap({ lang, dictionary }: FramesnapProps) {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -520,7 +523,12 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
             </div>
 
             {/* Captured frames */}
-            <div className="glass-card rounded-3xl p-5 space-y-4">
+            <motion.div
+              initial={prefersReduced ? false : 'hidden'}
+              whileInView={prefersReduced ? undefined : 'visible'}
+              viewport={{ once: true, amount: 0.2 }}
+              variants={fadeInUp}
+              className="glass-card rounded-3xl p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold text-white flex items-center gap-2">
                   <Camera className="w-5 h-5 text-orange-400" />
@@ -563,7 +571,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                   ))}
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
         )}
 

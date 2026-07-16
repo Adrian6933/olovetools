@@ -18,6 +18,8 @@ import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
+import { motion } from 'framer-motion';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface CleansnapProps {
   lang: string;
@@ -167,6 +169,7 @@ function pixelateFill(img: ImageData, sel: Uint8Array, W: number, H: number) {
 
 export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -632,7 +635,14 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
         )}
 
         {/* Bloque AdSense Horizontal */}
-        <AdBanner id="adsense-cleansnap-bottom" />
+        <motion.div
+          initial={prefersReduced ? false : 'hidden'}
+          whileInView={prefersReduced ? undefined : 'visible'}
+          viewport={{ once: true, amount: 0.2 }}
+          variants={fadeInUp}
+        >
+          <AdBanner id="adsense-cleansnap-bottom" />
+        </motion.div>
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />

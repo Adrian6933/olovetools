@@ -32,6 +32,7 @@
 - [Hex to RGB](https://olovetools.com/en/hex-to-rgb): Convert between HEX, RGB, HSL and CMYK color formats with adjustable opacity and a WCAG contrast checker. 100% local and private.
 - [HTML Sanitizer](https://olovetools.com/en/html-sanitizer): Clean and sanitize HTML code by removing scripts, styles, iframes, event handlers and unwanted tags 100% locally in your browser. Free online HTML sanitizer.
 - [JSONFlow](https://olovetools.com/en/json-flow): Validate, format, and visualize JSON in a responsive tree view. Convert JSON to CSV, Excel or XML, and CSV back to JSON 100% locally.
+- [JWTBolt](https://olovetools.com/en/jwt-bolt): Decode and inspect JSON Web Tokens (JWT). View header, payload, signature and claims with live expiry validation 100% locally in your browser.
 - [Key Doctor](https://olovetools.com/en/key-doctor): Inspect keyboard events live: see event.key, event.code and event.keyCode with modifier detection 100% locally.
 - [KickBolt](https://olovetools.com/en/kickbolt): The ultimate tool to save Kick moments. Fast, reliable and zero registration. Download entire lists of clips at once.
 - [Klipy](https://olovetools.com/en/klipy): Discover and watch the best Kick clips and live channels by category. Browse, save and export your favorite Kick moments, free and fast.

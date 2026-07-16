@@ -108,5 +108,9 @@ export default {
   "no_streamers_found": "No se encontraron streamers que coincidan",
   "blocked": "Oculto",
   "block": "Ocultar",
-  "blocklist": "Ocultados"
+  "blocklist": "Ocultados",
+  "group_by_channel": "Agrupar canales",
+  "group_by_channel_desc": "Agrupar los clips por su canal de origen",
+  "block_confirm_title": "¿Ocultar este canal?",
+  "block_confirm_desc": "¿Seguro que quieres ocultar los clips de {name}? Podrás volver a mostrarlos desde el panel de ocultados."
 };

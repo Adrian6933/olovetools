@@ -33,6 +33,7 @@ export const TOOL_FAVICONS: Record<string, string> = {
   'graph-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/><line x1='2' y1='20' x2='22' y2='20'/></svg>",
   'url-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>",
   'clip-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='6' cy='6' r='3'/><circle cx='6' cy='18' r='3'/><line x1='20' y1='4' x2='8.12' y2='15.88'/><line x1='14.47' y1='14.48' x2='20' y2='20'/><line x1='8.12' y1='8.12' x2='12' y2='12'/></svg>",
+  'jwt-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='7' cy='15' r='4'/><path d='M10.85 12.15 19 4'/><path d='m18 5 3 3'/><path d='m15 8 3 3'/><path d='M3 21l3-3'/></svg>",
   default: "/icon.svg"
 };
 
@@ -72,6 +73,7 @@ export const TOOL_THEME_COLORS: Record<string, string> = {
   'url-bolt': "#10b981",
   'base64-bolt': "#3b82f6",
   'clip-flow': "#8b5cf6",
+  'jwt-bolt': "#8b5cf6",
   default: "#060609"
 };
 
@@ -677,5 +679,15 @@ export const MOCK_PROJECTS: Project[] = [
     tags: ['Twitch', 'VOD', 'Clip', 'Editor'],
     icon: 'Scissors',
     color: 'bg-gradient-to-br from-violet-500 to-purple-600'
+  },
+  {
+    id: '60',
+    name: 'JWTBolt',
+    slug: 'jwt-bolt',
+    description: 'Decode and inspect JSON Web Tokens (JWT). Visualize header, payload and signature with live expiry validation 100% locally in your browser.',
+    category: ProjectCategory.SECURITY_CRYPTO,
+    tags: ['JWT', 'Token', 'Decoder', 'Security'],
+    icon: 'KeyRound',
+    color: 'bg-gradient-to-br from-violet-500 to-fuchsia-600'
   }
 ];

@@ -97,5 +97,9 @@ export default {
   "restore": "Restaurar",
   "restore_desc": "Restaurar tamanho e posição original",
   "duration": "Duração",
-  "total_duration": "Duração total"
+  "total_duration": "Duração total",
+  "group_by_channel": "Agrupar canais",
+  "group_by_channel_desc": "Agrupar clipes pelo seu canal de transmissão",
+  "block_confirm_title": "Ocultar este canal?",
+  "block_confirm_desc": "Tem certeza de que deseja ocultar os clipes de {name}? Você pode restaurá-los a qualquer momento no painel de ocultados."
 };

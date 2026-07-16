@@ -108,5 +108,9 @@ export default {
   "no_streamers_found": "No matching streamers found",
   "blocked": "Hidden",
   "block": "Hide",
-  "blocklist": "Blocked"
+  "blocklist": "Blocked",
+  "group_by_channel": "Group channels",
+  "group_by_channel_desc": "Group clips by their broadcaster channel",
+  "block_confirm_title": "Hide this channel?",
+  "block_confirm_desc": "Are you sure you want to hide clips from {name}? You can restore them anytime from the blocked list."
 };

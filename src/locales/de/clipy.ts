@@ -97,5 +97,9 @@ export default {
   "restore": "Wiederherstellen",
   "restore_desc": "Originalgröße und -position wiederherstellen",
   "duration": "Dauer",
-  "total_duration": "Gesamtdauer"
+  "total_duration": "Gesamtdauer",
+  "group_by_channel": "Kanäle gruppieren",
+  "group_by_channel_desc": "Clips nach ihren Kanälen gruppieren",
+  "block_confirm_title": "Diesen Kanal ausblenden?",
+  "block_confirm_desc": "Möchtest du die Clips von {name} wirklich ausblenden? Du kannst sie jederzeit aus der Liste der ausgeblendeten Kanäle wiederherstellen."
 };

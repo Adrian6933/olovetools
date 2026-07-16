@@ -12,6 +12,8 @@ import { ClipData, ClipItem, LoadingState } from './types';
 import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import JSZip from 'jszip';
+import { motion } from 'framer-motion';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 const formatBytes = (bytes: number, decimals = 2) => {
     if (!+bytes) return '0 Bytes';
@@ -28,6 +30,7 @@ interface KickboltProps {
 }
 
 const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
+  const prefersReduced = useReducedMotion();
   const [inputText, setInputText] = useState('');
   const [status, setStatus] = useState<LoadingState>('idle');
   const [clips, setClips] = useState<ClipItem[]>([]);
@@ -404,6 +407,12 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                </div>
             </div>
 
+            <motion.div
+              initial={prefersReduced ? false : 'hidden'}
+              whileInView={prefersReduced ? undefined : 'visible'}
+              viewport={{ once: true, amount: 0.2 }}
+              variants={fadeInUp}
+            >
             <section className="mt-48 w-full max-w-6xl animate-slide-up [animation-delay:450ms]">
                 <div className="flex flex-col items-center text-center space-y-4 mb-16">
                     <div className="bg-yellow-500/10 p-4 rounded-[1.5rem] border border-yellow-500/20">
@@ -427,6 +436,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                     ))}
                 </div>
             </section>
+            </motion.div>
           </div>
         )}
 

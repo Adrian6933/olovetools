@@ -24,6 +24,7 @@ import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { ImageItem } from './types';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface BackgroundremoverProps {
   lang: Language;
@@ -45,6 +46,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
   const [progress, setProgress] = useState<{ percent: number; step: 'downloading' | 'processing' } | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const prefersReduced = useReducedMotion();
 
   // Scroll to top helper
   const scrollToTop = () => {
@@ -494,7 +496,12 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
           </div>
 
           {/* Value Propositions / Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
+          <motion.div
+            initial={prefersReduced ? false : 'hidden'}
+            whileInView={prefersReduced ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.2 }}
+            variants={fadeInUp}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
             {t.features.map((feature: any, idx: number) => (
               <div 
                 key={idx}
@@ -507,7 +514,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                 <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* Extra Content - SEO Text */}
           <div className="pt-24 space-y-24 text-left">

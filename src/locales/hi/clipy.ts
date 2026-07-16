@@ -97,5 +97,9 @@ export default {
   "restore": "पुनर्स्थापित करें",
   "restore_desc": "मूल आकार और स्थिति पुनर्स्थापित करें",
   "duration": "अवधि",
-  "total_duration": "कुल अवधि"
+  "total_duration": "कुल अवधि",
+  "group_by_channel": "चैनल समूहित करें",
+  "group_by_channel_desc": "क्लिप्स को उनके ब्रॉडकास्टर चैनल द्वारा समूहित करें",
+  "block_confirm_title": "इस चैनल को छिपाएं?",
+  "block_confirm_desc": "क्या आप वाकई {name} के क्लिप छिपाना चाहते हैं? आप उन्हें कभी भी छिपी हुई सूची से पुनर्स्थापित कर सकते हैं।"
 };

@@ -27,6 +27,7 @@ import { LegalModal } from './components/LegalModal';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { RecordMode, AudioSource, ResolutionMode, FpsMode, RecordingStatus } from './types';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface RecordsnapProps {
   lang: Language;
@@ -35,6 +36,7 @@ interface RecordsnapProps {
 
 export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
 
   // Configuration States
   const [recordMode, setRecordMode] = useState<RecordMode>('screen');
@@ -993,7 +995,12 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
           </div>
 
           {/* Premium Features Details */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
+          <motion.div
+            initial={prefersReduced ? false : 'hidden'}
+            whileInView={prefersReduced ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.2 }}
+            variants={fadeInUp}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
             {featuresList.map((feature: any, idx: number) => (
               <div 
                 key={idx}
@@ -1008,7 +1015,7 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
                 <p className="text-slate-400 text-sm leading-relaxed font-medium">{feature.text}</p>
               </div>
             ))}
-          </div>
+          </motion.div>
 
           {/* FAQ Accordion Section */}
           {faqs.length > 0 && (

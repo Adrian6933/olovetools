@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu } from 'lucide-react';
+import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff } from 'lucide-react';
 import { Clip } from '../types';
 
 interface FloatingPlayerProps {
@@ -9,6 +9,7 @@ interface FloatingPlayerProps {
   isSaved: boolean;
   onToggleSave: (clip: Clip) => void;
   onDownloadExternal: (url: string) => void;
+  onBlockStreamer?: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
 }
 
@@ -16,7 +17,7 @@ type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const STORAGE_KEY = 'clipy_player_dims';
 
-const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, t }) => {
+const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t }) => {
   const defaultSize = { width: 480, height: 270 };
   const getDefaultPosition = () => ({
     x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 520) : 100,
@@ -345,6 +346,19 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                       {isSaved ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                       <span>{isSaved ? t('saved') : t('save')}</span>
                     </button>
+                    {onBlockStreamer && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onBlockStreamer(clip.broadcaster_id, clip.broadcaster_name, clip.broadcaster_image);
+                          setShowMenu(false);
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                      >
+                        <EyeOff className="w-4 h-4" />
+                        <span>{t('block') || 'Ocultar'}</span>
+                      </button>
+                    )}
                     <div className="h-px bg-white/5 my-1"></div>
                     <button
                       onClick={(e) => { e.stopPropagation(); window.open(clip.url, '_blank'); setShowMenu(false); }}
@@ -401,6 +415,17 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                     {isSaved ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                     <span>{isSaved ? t('saved') : t('save')}</span>
                 </button>
+                {onBlockStreamer && (
+                  <button
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={() => onBlockStreamer(clip.broadcaster_id, clip.broadcaster_name, clip.broadcaster_image)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border border-red-500/20 bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white hover:border-red-500 cursor-pointer"
+                      title={`${t('block') || 'Ocultar'} ${clip.broadcaster_name}`}
+                  >
+                      <EyeOff className="w-3.5 h-3.5" />
+                      <span>{t('block') || 'Ocultar'}</span>
+                  </button>
+                )}
                 <div className="w-px h-6 bg-white/10 mx-1"></div>
                 <button
                     onMouseDown={(e) => e.stopPropagation()} 

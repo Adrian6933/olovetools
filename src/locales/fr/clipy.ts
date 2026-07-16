@@ -97,5 +97,9 @@ export default {
   "restore": "Restaurer",
   "restore_desc": "Restaurer la taille et la position d'origine",
   "duration": "Durée",
-  "total_duration": "Durée totale"
+  "total_duration": "Durée totale",
+  "group_by_channel": "Grouper les chaînes",
+  "group_by_channel_desc": "Grouper les clips par leur chaîne d'origine",
+  "block_confirm_title": "Masquer cette chaîne ?",
+  "block_confirm_desc": "Voulez-vous vraiment masquer les clips de {name} ? Vous pouvez les restaurer à tout moment depuis la liste des éléments masqués."
 };

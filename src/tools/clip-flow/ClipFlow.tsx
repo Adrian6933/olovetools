@@ -15,6 +15,8 @@ import {
 } from './services/twitchVodService';
 import { loadFFmpeg, remuxCutToMp4, concatMp4s, cancelExport, deleteFfmpegFile, saveBlob } from './services/exportService';
 import { VodInfo, VodQuality, Cut, CutExportState, FfmpegLoadState, Phase, CUT_COLORS } from './types';
+import { motion } from 'framer-motion';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface ClipFlowProps {
   lang: string;
@@ -35,6 +37,7 @@ const nextCutId = () => `cut_${Date.now()}_${cutIdCounter++}`;
 
 export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
   const [phase, setPhase] = useState<Phase>('input');
@@ -468,22 +471,29 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
 
             <AdBanner id="adsense-clip-flow-mid" />
 
-            <CutList
-              cuts={cuts}
-              activeCutId={activeCutId}
-              duration={duration}
-              cutStates={cutStates}
-              onSelect={setActiveCutId}
-              onChange={handleChangeCut}
-              onRemove={handleRemoveCut}
-              onMove={handleMoveCut}
-              onSetStartAtPlayhead={handleSetStartAtPlayhead}
-              onSetEndAtPlayhead={handleSetEndAtPlayhead}
-              onDownload={exportCut}
-              onCancelDownload={cancelCutExport}
-              onDownloadTsFallback={downloadRawTs}
-              t={t}
-            />
+            <motion.div
+              initial={prefersReduced ? false : 'hidden'}
+              whileInView={prefersReduced ? undefined : 'visible'}
+              viewport={{ once: true, amount: 0.2 }}
+              variants={fadeInUp}
+            >
+              <CutList
+                cuts={cuts}
+                activeCutId={activeCutId}
+                duration={duration}
+                cutStates={cutStates}
+                onSelect={setActiveCutId}
+                onChange={handleChangeCut}
+                onRemove={handleRemoveCut}
+                onMove={handleMoveCut}
+                onSetStartAtPlayhead={handleSetStartAtPlayhead}
+                onSetEndAtPlayhead={handleSetEndAtPlayhead}
+                onDownload={exportCut}
+                onCancelDownload={cancelCutExport}
+                onDownloadTsFallback={downloadRawTs}
+                t={t}
+              />
+            </motion.div>
 
             <ExportBar
               cuts={cuts}

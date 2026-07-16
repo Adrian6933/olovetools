@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from './types';
 import { searchTwitchCategories, searchTwitchClips, getClipById, getTwitchUserAvatars } from './services/geminiService';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
@@ -11,11 +11,14 @@ import FloatingPlayer from './components/FloatingPlayer';
 import LegalModal from './components/LegalModal';
 import BlocklistManager from './components/BlocklistManager';
 import { Clapperboard, Archive, ChevronRight, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 const STORAGE_KEY = 'clipy_saved_session';
 const COLLECTIONS_KEY = 'clipy_saved_collections';
 const ANCHOR_TIME_KEY = 'clipy_anchor_time';
 const BLOCKED_STREAMERS_KEY = 'clipy_blocked_streamers';
+const SORT_TYPE_KEY = 'clipy_sort_type';
 const MAX_COLLECTIONS = 50;
 const POPULAR_TAGS = [
   'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
@@ -34,6 +37,7 @@ interface ClipyProps {
 
 export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const t = createTranslator(dictionary);
+  const prefersReduced = useReducedMotion();
 
   const [state, setState] = useState<SearchState>({
     mode: 'categories',
@@ -43,7 +47,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     clips: [],
     paginationCursor: null,
     timeFilter: TimeFilter.DAY,
-    sortType: SortType.TRENDING,
+    sortType: SortType.VIEWS,
     anchorTime: null,
     isLoading: true,
     error: null
@@ -53,6 +57,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const [savedClips, setSavedClips] = useState<Clip[]>([]);
   const [blockedStreamers, setBlockedStreamers] = useState<Record<string, { id: string; name: string; image?: string }[]>>({});
   const [isBlocklistOpen, setIsBlocklistOpen] = useState(false);
+  const [streamerToBlock, setStreamerToBlock] = useState<{ id: string; name: string; image?: string } | null>(null);
+  const [groupByChannel, setGroupByChannel] = useState(false);
   const [sessionActive, setSessionActive] = useState(false);
   const [deletedClipsStack, setDeletedClipsStack] = useState<Clip[]>([]);
   const [collections, setCollections] = useState<SavedCollection[]>([]);
@@ -144,6 +150,10 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       const savedBlocked = localStorage.getItem(BLOCKED_STREAMERS_KEY);
       if (savedBlocked) {
         setBlockedStreamers(JSON.parse(savedBlocked));
+      }
+      const savedSort = localStorage.getItem(SORT_TYPE_KEY);
+      if (savedSort && (savedSort === SortType.VIEWS || savedSort === SortType.TRENDING)) {
+        setState(prev => ({ ...prev, sortType: savedSort as SortType }));
       }
     } catch (e) {
       console.error(e);
@@ -642,10 +652,13 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   };
   const handleSortChange = (sort: SortType) => {
     setState(prev => ({ ...prev, sortType: sort }));
+    localStorage.setItem(SORT_TYPE_KEY, sort);
     if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter);
   };
 
-  const handleBlockStreamer = (id: string, name: string, image?: string) => {
+  const confirmBlockStreamer = () => {
+    if (!streamerToBlock) return;
+    const { id, name, image } = streamerToBlock;
     const categoryId = state.activeCategory?.id || '';
     if (!categoryId) return;
 
@@ -660,7 +673,11 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       setPlayingClip(null);
     }
 
-    showToast(`${t('block') || 'Ocultado'}: ${name}`);
+    showToast(`${t('blocked') || 'Ocultado'}: ${name}`);
+  };
+
+  const handleBlockStreamer = (id: string, name: string, image?: string) => {
+    setStreamerToBlock({ id, name, image });
   };
 
   const handleUnblockStreamer = (id: string) => {
@@ -742,9 +759,39 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
   const categoryId = state.activeCategory?.id || '';
   const activeBlockedList = blockedStreamers[categoryId] || [];
-  const blockedIds = new Set(activeBlockedList.map(s => s.id));
-  const visibleClips = state.clips.filter(clip => !blockedIds.has(clip.broadcaster_id));
   const blockedCount = activeBlockedList.length;
+
+  const visibleClips = useMemo(() => {
+    const blockedIds = new Set(activeBlockedList.map(s => s.id));
+    const filtered = state.clips.filter(clip => !blockedIds.has(clip.broadcaster_id));
+    
+    if (!groupByChannel) return filtered;
+    
+    const groups: Record<string, Clip[]> = {};
+    for (const clip of filtered) {
+      const channelId = clip.broadcaster_id || clip.broadcaster_name;
+      if (!groups[channelId]) {
+        groups[channelId] = [];
+      }
+      groups[channelId].push(clip);
+    }
+    
+    for (const channelId in groups) {
+      groups[channelId].sort((a, b) => b.view_count - a.view_count);
+    }
+    
+    const sortedChannelIds = Object.keys(groups).sort((a, b) => {
+      const maxViewsA = groups[a][0]?.view_count || 0;
+      const maxViewsB = groups[b][0]?.view_count || 0;
+      return maxViewsB - maxViewsA;
+    });
+    
+    const grouped: Clip[] = [];
+    for (const channelId of sortedChannelIds) {
+      grouped.push(...groups[channelId]);
+    }
+    return grouped;
+  }, [state.clips, activeBlockedList, groupByChannel]);
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -992,6 +1039,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                   isBlocklistOpen={isBlocklistOpen}
                   onToggleBlocklist={() => setIsBlocklistOpen(!isBlocklistOpen)}
                   blockedCount={blockedCount}
+                  groupByChannel={groupByChannel}
+                  onGroupByChannelChange={setGroupByChannel}
                 />
                 {isBlocklistOpen && (
                   <BlocklistManager
@@ -1029,7 +1078,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       {playingClip && <FloatingPlayer clip={playingClip} onClose={() => {
         setPlayingClip(null);
         playingClipRef.current = null;
-      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} t={t} />}
+      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} onBlockStreamer={handleBlockStreamer} t={t} />}
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300">
@@ -1045,6 +1094,46 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         </div>
       )}
 
+      {streamerToBlock && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300">
+          <div className="bg-[#0c0c10] border border-white/10 rounded-[3.5rem] p-12 max-w-lg w-full text-center shadow-[0_0_120px_rgba(0,0,0,0.8)]">
+            <div className="w-20 h-20 rounded-full overflow-hidden border border-white/10 mx-auto mb-6 p-0.5 bg-twitch-surfaceAlt flex items-center justify-center">
+              <img 
+                src={streamerToBlock.image || `https://api.dicebear.com/7.x/avataaars/svg?seed=${streamerToBlock.name}`} 
+                alt={streamerToBlock.name}
+                loading="lazy"
+                className="w-full h-full rounded-full object-cover"
+              />
+            </div>
+            <h3 className="text-3xl font-black mb-4 text-white tracking-tighter">
+              {t('block_confirm_title') === 'block_confirm_title' ? '¿Ocultar este canal?' : t('block_confirm_title')}
+            </h3>
+            <p className="text-gray-400 text-base mb-10 leading-relaxed font-bold">
+              {t('block_confirm_desc') === 'block_confirm_desc'
+                ? `¿Seguro que quieres ocultar los clips de ${streamerToBlock.name}? Podrás volver a mostrarlos desde el panel de ocultados.`
+                : t('block_confirm_desc').replace('{name}', streamerToBlock.name)}
+            </p>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setStreamerToBlock(null)} 
+                className="flex-1 py-5 bg-white/5 rounded-[2rem] text-base font-black hover:bg-white/10 transition-all text-gray-300 cursor-pointer"
+              >
+                {t('cancel') || 'Cancelar'}
+              </button>
+              <button 
+                onClick={() => {
+                  confirmBlockStreamer();
+                  setStreamerToBlock(null);
+                }} 
+                className="flex-1 py-5 bg-red-600/90 rounded-[2rem] text-base font-black text-white hover:bg-red-600 transition-all shadow-xl shadow-red-600/5 cursor-pointer"
+              >
+                {t('block') || 'Ocultar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="fixed bottom-4 right-4 z-[200]">
         <button
           onClick={scrollToTop}
@@ -1055,6 +1144,12 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         </button>
       </div>
 
+      <motion.div
+        initial={prefersReduced ? false : 'hidden'}
+        whileInView={prefersReduced ? undefined : 'visible'}
+        viewport={{ once: true, amount: 0.2 }}
+        variants={fadeInUp}
+      >
       <footer className="mt-32 py-20 bg-transparent border-t border-white/5 relative z-10 px-8">
         <style>{`
           footer b { color: #fff; font-weight: 800; text-shadow: 0 0 10px rgba(145, 70, 255, 0.2); }
@@ -1157,6 +1252,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           </div>
         </div>
       </footer>
+      </motion.div>
 
       {/* Global Legal Components */}
       {legalModal && <LegalModal type={legalModal} onClose={() => setLegalModal(null)} onShowToast={(msg) => showToast(msg)} t={t} />}

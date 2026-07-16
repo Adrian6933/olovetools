@@ -97,5 +97,9 @@ export default {
   "restore": "復元する",
   "restore_desc": "元のサイズと位置を復元する",
   "duration": "再生時間",
-  "total_duration": "合計時間"
+  "total_duration": "合計時間",
+  "group_by_channel": "チャンネルをグループ化",
+  "group_by_channel_desc": "クリップを配信チャンネルごとにグループ化します",
+  "block_confirm_title": "このチャンネルを非表示にしますか？",
+  "block_confirm_desc": "{name}のクリップを非表示にしてもよろしいですか？非表示リストからいつでも元に戻すことができます。"
 };

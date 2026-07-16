@@ -97,5 +97,9 @@ export default {
   "restore": "恢复",
   "restore_desc": "恢复原始尺寸和位置",
   "duration": "时长",
-  "total_duration": "总时长"
+  "total_duration": "总时长",
+  "group_by_channel": "分组频道",
+  "group_by_channel_desc": "按主播频道对剪辑进行分组",
+  "block_confirm_title": "隐藏此频道？",
+  "block_confirm_desc": "确定要隐藏 {name} 的剪辑吗？您可以随时从已隐藏列表中恢复它们。"
 };
