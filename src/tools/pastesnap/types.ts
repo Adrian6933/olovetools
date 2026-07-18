@@ -25,6 +25,8 @@ export interface TranslationSet {
   downloadAllBtn: string;
   clearBtn: string;
   convertBtn: string;
+  moreFormats?: string;
+  dropHere?: string;
   noImageFound: string;
   pastedAt: string;
   onlineClipboardUtility: string;
@@ -71,4 +73,8 @@ export interface PastedImage {
   blob: Blob;
   name: string;
   timestamp: Date;
+  width?: number;
+  height?: number;
+  size?: number;
+  type?: string;
 }

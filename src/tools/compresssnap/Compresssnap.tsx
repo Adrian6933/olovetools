@@ -1,31 +1,27 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import JSZip from 'jszip';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Upload, 
-  Image as ImageIcon, 
-  Settings, 
-  Download, 
-  Trash2, 
-  CheckCircle2, 
-  AlertCircle, 
-  Loader2, 
-  Sparkles, 
-  Eye, 
-  ArrowRight, 
-  Lock, 
-  Zap, 
-  RefreshCw, 
+import {
+  Upload,
+  Image as ImageIcon,
+  Settings,
+  Download,
+  Trash2,
+  AlertCircle,
+  Loader2,
+  ImageDown,
+  MoveHorizontal,
+  Eye,
+  Lock,
+  Zap,
+  RefreshCw,
   Sliders,
   Check
 } from 'lucide-react';
 
 import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { LegalModal } from './components/LegalModal';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
-import { legalTranslations } from '../../locales/legal';
 import { CompressSettings, CompressedImageItem } from './types';
 
 interface CompresssnapProps {
@@ -51,11 +47,13 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
   const [globalSettings, setGlobalSettings] = useState<CompressSettings>(DEFAULT_SETTINGS);
   const [comparedItem, setComparedItem] = useState<CompressedImageItem | null>(null);
   const [sliderPos, setSliderPos] = useState<number>(50);
-  const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeItemSettings, setActiveItemSettings] = useState<string | null>(null); // item ID for individual config
   
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Guard against stale results: only the latest compression run per item may write its result
+  const runCounter = useRef(0);
+  const latestRun = useRef<Record<string, number>>({});
 
   // Scroll to top helper
   const scrollToTop = () => {
@@ -412,9 +410,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
           
           {/* Hero Header */}
           <div className="flex flex-col items-center space-y-6 animate-fade-in">
-            <div className="inline-flex items-center space-x-2 px-5 py-2 rounded-full bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(6,182,212,0.15)]">
-              <Sparkles className="w-4 h-4 animate-float" />
-              <span>{t.title}</span>
+            <div className="inline-flex max-w-full items-center gap-2 px-5 py-2 rounded-full bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(6,182,212,0.15)]">
+              <ImageDown className="w-4 h-4 shrink-0" />
+              <span className="truncate">{t.title}</span>
             </div>
             
             <h1 className="text-4xl md:text-[5.5rem] font-black tracking-tight leading-[0.9] text-white bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400">
@@ -651,6 +649,40 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                   <span>{t.globalSettings}</span>
                 </h3>
 
+                {/* Quick presets: one click sets quality + format for everything */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">
+                    {t.presetsLabel || 'Quick presets'}
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {([
+                      { key: 'light', label: t.presetLight || 'Light', quality: 85, format: 'original' },
+                      { key: 'balanced', label: t.presetBalanced || 'Balanced', quality: 75, format: 'image/webp' },
+                      { key: 'strong', label: t.presetStrong || 'Strong', quality: 55, format: 'image/webp' },
+                      { key: 'extreme', label: t.presetExtreme || 'Extreme', quality: 35, format: 'image/webp' },
+                    ] as const).map((preset) => {
+                      const active =
+                        globalSettings.quality === preset.quality && globalSettings.format === preset.format;
+                      return (
+                        <button
+                          key={preset.key}
+                          onClick={() => {
+                            setGlobalSettings(prev => ({ ...prev, quality: preset.quality, format: preset.format as any }));
+                            // Presets clear per-image overrides so the effect applies everywhere
+                            setItems(prev => prev.map(i => ({ ...i, settings: undefined, status: 'idle' as const })));
+                          }}
+                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold text-center transition-all cursor-pointer
+                            ${active
+                              ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400 shadow-inner'
+                              : 'bg-[#0a0f18]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#0a0f18]/80'}`}
+                        >
+                          {preset.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 {/* Format selection */}
                 <div className="space-y-2">
                   <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">{t.formatLabel}</label>
@@ -700,7 +732,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                   />
                   {globalSettings.format === 'image/png' && (
                     <p className="text-[10px] text-slate-500 font-medium italic mt-1">
-                      * PNG uses lossless compression; quality changes will only apply if resized or converted.
+                      * {t.pngNote || 'PNG is lossless — the quality slider applies when converting to JPG/WebP or resizing.'}
                     </p>
                   )}
                 </div>
@@ -708,14 +740,14 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                 {/* Resize settings */}
                 <div className="space-y-4 border-t border-white/5 pt-5">
                   <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
-                    <span>Resize Mode</span>
+                    <span>{t.resizeModeLabel || 'Resize mode'}</span>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { key: 'none', label: 'None' },
-                      { key: 'scale', label: 'Scale' },
-                      { key: 'dimensions', label: 'Custom' }
+                      { key: 'none', label: t.resizeNone || 'None' },
+                      { key: 'scale', label: t.resizeScale || 'Scale' },
+                      { key: 'dimensions', label: t.resizeCustom || 'Custom' }
                     ].map((opt) => (
                       <button
                         key={opt.key}
@@ -759,7 +791,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                     <div className="space-y-3 pt-2">
                       <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <label className="block text-[10px] text-slate-500 font-black uppercase mb-1">Width (px)</label>
+                          <label className="block text-[10px] text-slate-500 font-black uppercase mb-1">{t.widthLabel || 'Width (px)'}</label>
                           <input 
                             type="number" 
                             value={globalSettings.width}
@@ -772,7 +804,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                           />
                         </div>
                         <div>
-                          <label className="block text-[10px] text-slate-500 font-black uppercase mb-1">Height (px)</label>
+                          <label className="block text-[10px] text-slate-500 font-black uppercase mb-1">{t.heightLabel || 'Height (px)'}</label>
                           <input 
                             type="number" 
                             value={globalSettings.height}
@@ -797,16 +829,53 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                           }}
                           className="w-4 h-4 accent-cyan-500 rounded border-gray-700 bg-gray-900"
                         />
-                        <span>Keep aspect ratio</span>
+                        <span>{t.keepAspectLabel || 'Keep aspect ratio'}</span>
                       </label>
                     </div>
                   )}
                 </div>
 
+                {/* Live estimated result: updates as settings change */}
+                {items.length > 0 && (() => {
+                  const done = items.filter(i => i.status === 'done' && i.compressedSize != null);
+                  const working = items.some(i => i.status === 'compressing' || i.status === 'idle');
+                  const orig = done.reduce((s, i) => s + i.originalSize, 0);
+                  const comp = done.reduce((s, i) => s + (i.compressedSize || 0), 0);
+                  const pct = orig > 0 ? Math.max(0, Math.round(((orig - comp) / orig) * 100)) : 0;
+                  return (
+                    <div className="border-t border-white/5 pt-5 space-y-3 animate-fade-in">
+                      <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
+                        <span>{t.summaryTitle || 'Estimated result'}</span>
+                        {working && <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />}
+                      </div>
+                      {done.length > 0 && (
+                        <>
+                          <div className="flex items-baseline justify-between gap-2">
+                            <span className="text-sm text-slate-400 font-bold line-through decoration-slate-600">
+                              {formatBytes(orig)}
+                            </span>
+                            <span className="text-slate-600">→</span>
+                            <span className="text-xl font-black text-cyan-400">{formatBytes(comp)}</span>
+                          </div>
+                          <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
+                            <div
+                              className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-500"
+                              style={{ width: `${Math.max(4, 100 - pct)}%` }}
+                            ></div>
+                          </div>
+                          <p className="text-xs text-slate-400 font-bold text-right">
+                            {t.savings || 'Saved'}: <span className="text-cyan-400">{formatBytes(Math.max(0, orig - comp))} (-{pct}%)</span>
+                          </p>
+                        </>
+                      )}
+                    </div>
+                  );
+                })()}
+
                 {/* Batch downloads block */}
                 {items.length > 0 && (
                   <div className="border-t border-white/5 pt-6 space-y-3 animate-fade-in">
-                    <button 
+                    <button
                       onClick={downloadAll}
                       disabled={items.filter(i => i.status === 'done').length === 0}
                       className="w-full py-4 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-black font-black text-base rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-cyan-600/20 active:scale-95 cursor-pointer"
@@ -990,8 +1059,8 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                 className="absolute top-0 bottom-0 w-0.5 bg-cyan-400 pointer-events-none shadow-[0_0_10px_#06b6d4] z-20"
                 style={{ left: `${sliderPos}%` }}
               >
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-cyan-500 border-2 border-white text-black flex items-center justify-center shadow-2xl font-bold">
-                  â†”
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-cyan-500 border-2 border-white text-black flex items-center justify-center shadow-2xl">
+                  <MoveHorizontal className="w-5 h-5 stroke-[3]" />
                 </div>
               </div>
 
@@ -1029,19 +1098,6 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
         </button>
       )}
 
-      <LegalModal 
-        isOpen={!!activeModal} 
-        onClose={() => setActiveModal(null)} 
-        title={activeModal === 'privacy' ? t.privacyPolicy : activeModal === 'terms' ? t.termsOfService : t.cookiePolicy}
-        content={
-          (activeModal === 'privacy' ? t.privacyContent : activeModal === 'terms' ? t.termsContent : t.cookiesContent)
-            .split('\n')
-            .map((paragraph: string, index: number) => <p key={index}>{paragraph}</p>)
-        }
-        t={t}
-      />
-
-      <Footer lang={lang} t={t} onOpenModal={(modal) => setActiveModal(modal)} />
     </div>
   );
 };

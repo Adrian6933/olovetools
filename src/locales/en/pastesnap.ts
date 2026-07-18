@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "The fastest way to save images from your clipboard.",
   "pastePrompt": "Press Ctrl + V to paste an image",
-  "downloadBtn": "Download PNG",
+  "downloadBtn": "Download",
+  "moreFormats": "Download as…",
+  "dropHere": "Drop images to add them",
   "downloadAllBtn": "Download All",
   "clearBtn": "Clear All",
   "convertBtn": "Convert Format",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "Part of oLoveTools suite",
   "seoHeroTitle": "Paste and save from your Clipboard in seconds.",
-  "seo_title": "PasteSnap | Clipboard Saver",
+  "seo_title": "PasteSnap | Save Clipboard Images as PNG, JPG & WebP",
   "seoHeroText": "Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.",
-  "seo_description": "Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.",
+  "seo_description": "Paste a screenshot with Ctrl+V and download it as PNG, JPG or WebP in seconds. Free online clipboard image saver — private, no uploads, no sign-up.",
   "seoHeroList": [
     "No registration required",
     "Supports multiple images at once",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "What formats are supported?",
-      "answer": "Currently, we support all standard image formats that can be copied to the clipboard, and they are saved as high-quality PNG files."
+      "answer": "We support every image format your clipboard can hold, and you can download each image as high-quality PNG, JPG or WebP."
     },
     {
       "question": "Do I need to register?",

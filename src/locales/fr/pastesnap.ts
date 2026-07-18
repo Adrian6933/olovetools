@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "Le moyen le plus rapide de sauvegarder des images du presse-papiers.",
   "pastePrompt": "Appuyez sur Ctrl + V pour coller une image",
-  "downloadBtn": "Télécharger PNG",
+  "downloadBtn": "Télécharger",
+  "moreFormats": "Télécharger en…",
+  "dropHere": "Déposez les images pour les ajouter",
   "downloadAllBtn": "Tout télécharger",
   "clearBtn": "Tout effacer",
   "convertBtn": "Changer le format",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "Fait partie de la suite oLoveTools",
   "seoHeroTitle": "Collez et enregistrez depuis votre presse-papiers en quelques secondes.",
-  "seo_title": "Collez et enregistrez depuis votre presse-papiers en quelques secondes.",
+  "seo_title": "PasteSnap | Enregistrer les images du presse-papiers",
   "seoHeroText": "Appuyez simplement sur Ctrl+V et téléchargez votre image instantanément.",
-  "seo_description": "Appuyez simplement sur Ctrl+V et téléchargez votre image instantanément.",
+  "seo_description": "Collez une capture avec Ctrl+V et téléchargez-la en PNG, JPG ou WebP en quelques secondes. Gratuit, privé, sans envoi de fichiers ni inscription.",
   "seoHeroList": [
     "Pas d'inscription",
     "Supporte plusieurs images",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "Quels formats sont supportés ?",
-      "answer": "Nous supportons tous les formats d'image standard."
+      "answer": "Nous supportons tous les formats d'image standard, et chaque image peut être téléchargée en PNG, JPG ou WebP."
     },
     {
       "question": "Dois-je m'inscrire ?",

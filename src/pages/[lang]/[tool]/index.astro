@@ -59,6 +59,7 @@ import Cleansnap from '../../../tools/cleansnap/Cleansnap';
 import Klipy from '../../../tools/klipy/Klipy';
 import ClipFlow from '../../../tools/clip-flow/ClipFlow';
 import JwtBolt from '../../../tools/jwt-bolt/JwtBolt';
+import { Footer as CompressFooter } from '../../../tools/compresssnap/components/Footer';
 import { CookieBanner } from '../../../components/CookieBanner';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
 import { AdRail } from '../../../components/shared/AdRail';
@@ -2175,6 +2176,11 @@ const appSchema = {
         </div>
       </aside>
     </div>
+
+    {/* CompressSnap: el footer se renderiza aquí (tras CTAs, relacionadas y contenido SEO)
+        para que quede al final real de la página, no dentro de la isla */}
+    {tool === 'compresssnap' && <CompressFooter lang={castLang} t={dictionary} client:load />}
+
     <CookieBanner lang={castLang} client:load />
   </body>
 </html>

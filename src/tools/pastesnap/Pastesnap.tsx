@@ -14,6 +14,7 @@ import {
   Package,
   Loader2,
   ArrowUp,
+  ChevronDown,
 } from 'lucide-react';
 import { Header } from './components/Header';
 import { LegalModal } from './components/LegalModal';
@@ -36,8 +37,10 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isZipping, setIsZipping] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [formatMenuId, setFormatMenuId] = useState<string | null>(null);
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const lastClipboardId = useRef<string | null>(null);
+  const dragDepth = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fallback micro-labels (use dictionary when available, English default otherwise)
@@ -47,6 +50,8 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
     copy: t.copyBtn || 'Copy',
     copied: t.copiedBtn || 'Copied!',
     paste: t.pasteBtn || 'Paste',
+    moreFormats: t.moreFormats || 'Download as…',
+    dropHere: t.dropHere || 'Drop images to add them',
   };
 
   const handleLanguageChange = (newLang: string) => {
@@ -63,7 +68,18 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
       blob: file,
       name: `pastesnap-${Date.now()}.${ext}`,
       timestamp: new Date(),
+      size: file.size,
+      type: file.type,
     };
+    const probe = new Image();
+    probe.onload = () => {
+      setImages((prev) =>
+        prev.map((i) =>
+          i.id === newImg.id ? { ...i, width: probe.naturalWidth, height: probe.naturalHeight } : i
+        )
+      );
+    };
+    probe.src = url;
     setImages((prev) => {
       if (prev.length === 0 && typeof window !== 'undefined') {
         window.history.pushState({ view: 'gallery' }, '');
@@ -170,19 +186,43 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
     if (images.length > 0) window.scrollTo(0, 0);
   }, [images.length > 0]);
 
-  // Drag & drop handlers
+  // Escape closes lightbox / format menu; any click closes the format menu
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setFormatMenuId(null);
+        setExpandedImage(null);
+      }
+    };
+    const onClick = () => setFormatMenuId(null);
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('click', onClick);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      window.removeEventListener('click', onClick);
+    };
+  }, []);
+
+  // Global drag & drop: works in both empty state and gallery view,
+  // and prevents the browser from navigating away when a file is dropped
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
+    dragDepth.current = 0;
     setIsDragging(false);
     if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
   };
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (!isDragging) setIsDragging(true);
+  };
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    dragDepth.current += 1;
+    if (e.dataTransfer.types?.includes('Files')) setIsDragging(true);
   };
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    setIsDragging(false);
+    dragDepth.current = Math.max(0, dragDepth.current - 1);
+    if (dragDepth.current === 0) setIsDragging(false);
   };
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) addFiles(e.target.files);
@@ -198,17 +238,64 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
     document.body.removeChild(link);
   };
 
-  // Proactive improvement: copy an image back to the clipboard
+  // Draw a blob onto a canvas to re-encode it in another format
+  const reencodeBlob = async (
+    blob: Blob,
+    mime: 'image/png' | 'image/jpeg' | 'image/webp'
+  ): Promise<Blob> => {
+    if (blob.type === mime) return blob;
+    const bitmap = await createImageBitmap(blob);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d')!;
+    if (mime === 'image/jpeg') {
+      // JPEG has no alpha channel: flatten transparency onto white
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+    ctx.drawImage(bitmap, 0, 0);
+    bitmap.close();
+    return new Promise((resolve, reject) =>
+      canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('encode failed'))), mime, 0.92)
+    );
+  };
+
+  // Chromium only accepts image/png in clipboard.write — re-encode other formats first
   const copyImage = async (img: PastedImage) => {
     try {
-      const response = await fetch(img.url);
-      const blob = await response.blob();
-      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+      const pngBlob = await reencodeBlob(img.blob, 'image/png');
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
       setCopiedId(img.id);
       setTimeout(() => setCopiedId(null), 2000);
     } catch {
-      /* clipboard write not supported for this image type */
+      /* clipboard write not supported in this browser */
     }
+  };
+
+  const downloadImageAs = async (img: PastedImage, format: 'png' | 'jpeg' | 'webp') => {
+    setFormatMenuId(null);
+    try {
+      const blob = await reencodeBlob(img.blob, `image/${format}` as const);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = img.name.replace(/\.[a-z0-9]+$/i, '') + '.' + format.replace('jpeg', 'jpg');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch {
+      /* conversion failed — fall back to original download */
+      downloadImage(img);
+    }
+  };
+
+  const formatBytes = (bytes?: number) => {
+    if (!bytes && bytes !== 0) return '';
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const downloadAllImages = async () => {
@@ -274,7 +361,30 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#04050a] text-gray-100 selection:bg-indigo-500/30 overflow-x-hidden">
+    <div
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      className="min-h-screen flex flex-col bg-[#04050a] text-gray-100 selection:bg-indigo-500/30 overflow-x-hidden"
+    >
+      {/* Global drop overlay (visible when dragging over the gallery view) */}
+      <AnimatePresence>
+        {isDragging && images.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[190] pointer-events-none flex items-center justify-center bg-indigo-950/60 backdrop-blur-sm"
+          >
+            <div className="px-10 py-8 rounded-3xl border-2 border-dashed border-indigo-400 bg-[#04050a]/80 text-center">
+              <ClipboardPaste className="w-10 h-10 text-indigo-300 mx-auto mb-4" strokeWidth={1.5} />
+              <p className="text-xl font-black text-white">{L.dropHere}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Ambient background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] bg-indigo-600/10 blur-[150px] rounded-full animate-fast-pulse"></div>
@@ -333,11 +443,8 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
             />
 
             {images.length === 0 ? (
-              /* Empty state: minimal modern drop zone */
+              /* Empty state: minimal modern drop zone (drop handled globally on the root) */
               <div
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
                 onClick={() => fileInputRef.current?.click()}
                 className={`group relative rounded-3xl border-2 border-dashed transition-all duration-300 cursor-pointer px-8 py-20 md:py-28 flex flex-col items-center justify-center text-center
                   ${
@@ -354,6 +461,15 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                   <ClipboardPaste className="w-9 h-9 md:w-11 md:h-11" strokeWidth={1.5} />
                 </div>
 
+                <div className="hidden md:flex items-center gap-2 mb-5" aria-hidden="true">
+                  <kbd className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-gray-100 text-base font-black shadow-[0_3px_0_rgba(255,255,255,0.12)]">
+                    Ctrl
+                  </kbd>
+                  <span className="text-gray-500 font-black text-lg">+</span>
+                  <kbd className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-gray-100 text-base font-black shadow-[0_3px_0_rgba(255,255,255,0.12)]">
+                    V
+                  </kbd>
+                </div>
                 <p className="text-2xl md:text-3xl font-black text-white tracking-tight mb-2">
                   {t.pastePrompt}
                 </p>
@@ -441,12 +557,21 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
                           <div className="text-left">
                             <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.25em] mb-1">
                               {t.pastedAt}
                             </p>
-                            <p className="text-white font-bold text-lg">{img.timestamp.toLocaleTimeString()}</p>
+                            <p className="text-white font-bold text-lg leading-tight">
+                              {img.timestamp.toLocaleTimeString()}
+                            </p>
+                            <p className="text-gray-500 text-xs font-semibold mt-1">
+                              {img.width && img.height ? `${img.width}×${img.height} · ` : ''}
+                              {formatBytes(img.size)}
+                              {img.type
+                                ? ` · ${(img.type.split('/')[1] || '').replace('jpeg', 'jpg').toUpperCase()}`
+                                : ''}
+                            </p>
                           </div>
                           <div className="flex items-center gap-2">
                             <button
@@ -463,12 +588,48 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
                                 </>
                               )}
                             </button>
-                            <button
-                              onClick={() => downloadImage(img)}
-                              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white text-black hover:bg-indigo-500 hover:text-white font-bold text-sm transition-all active:scale-95 cursor-pointer"
-                            >
-                              <Download className="w-4 h-4" /> {t.downloadBtn}
-                            </button>
+                            <div className="relative flex">
+                              <button
+                                onClick={() => downloadImage(img)}
+                                className="inline-flex items-center gap-1.5 pl-4 pr-3 py-2.5 rounded-l-xl bg-white text-black hover:bg-indigo-500 hover:text-white font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                              >
+                                <Download className="w-4 h-4" /> {t.downloadBtn}
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setFormatMenuId(formatMenuId === img.id ? null : img.id);
+                                }}
+                                aria-label={L.moreFormats}
+                                aria-expanded={formatMenuId === img.id}
+                                className="inline-flex items-center px-2 py-2.5 rounded-r-xl bg-white text-black hover:bg-indigo-500 hover:text-white border-l border-black/10 font-bold text-sm transition-all active:scale-95 cursor-pointer"
+                              >
+                                <ChevronDown
+                                  className={`w-4 h-4 transition-transform ${
+                                    formatMenuId === img.id ? 'rotate-180' : ''
+                                  }`}
+                                />
+                              </button>
+                              {formatMenuId === img.id && (
+                                <div className="absolute bottom-full right-0 mb-2 z-50 min-w-[150px] rounded-xl bg-[#0d0f1c] border border-white/10 shadow-2xl shadow-black/60 overflow-hidden">
+                                  <p className="px-4 pt-3 pb-1 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                                    {L.moreFormats}
+                                  </p>
+                                  {(['png', 'jpeg', 'webp'] as const).map((f) => (
+                                    <button
+                                      key={f}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        downloadImageAs(img, f);
+                                      }}
+                                      className="w-full px-4 py-2.5 text-left text-sm font-bold text-gray-200 hover:bg-indigo-600 hover:text-white transition-colors cursor-pointer"
+                                    >
+                                      {f.replace('jpeg', 'jpg').toUpperCase()}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </motion.div>

@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "Der schnellste Weg, Bilder aus der Zwischenablage zu speichern.",
   "pastePrompt": "Drücken Sie Strg + V, um ein Bild einzufügen",
-  "downloadBtn": "PNG herunterladen",
+  "downloadBtn": "Herunterladen",
+  "moreFormats": "Herunterladen als…",
+  "dropHere": "Bilder hier ablegen, um sie hinzuzufügen",
   "downloadAllBtn": "Alle herunterladen",
   "clearBtn": "Alles löschen",
   "convertBtn": "Format ändern",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "Teil der oLoveTools-Suite",
   "seoHeroTitle": "In Sekunden aus der Zwischenablage einfügen und speichern.",
-  "seo_title": "In Sekunden aus der Zwischenablage einfügen und speichern.",
+  "seo_title": "PasteSnap | Bilder aus der Zwischenablage speichern",
   "seoHeroText": "Drücken Sie einfach Strg+V und laden Sie Ihr Bild sofort herunter.",
-  "seo_description": "Drücken Sie einfach Strg+V und laden Sie Ihr Bild sofort herunter.",
+  "seo_description": "Screenshot mit Strg+V einfügen und in Sekunden als PNG, JPG oder WebP herunterladen. Kostenlos, privat, ohne Uploads und ohne Registrierung.",
   "seoHeroList": [
     "Keine Registrierung erforderlich",
     "Mehrere Bilder gleichzeitig",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "Welche Formate werden unterstützt?",
-      "answer": "Wir unterstützen alle gängigen Bildformate."
+      "answer": "Wir unterstützen alle gängigen Bildformate, und jedes Bild lässt sich als PNG, JPG oder WebP herunterladen."
     },
     {
       "question": "Muss ich mich registrieren?",

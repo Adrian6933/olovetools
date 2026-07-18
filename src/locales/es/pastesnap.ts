@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "La forma más rápida de guardar imágenes de tu portapapeles.",
   "pastePrompt": "Presiona Ctrl + V para pegar una imagen",
-  "downloadBtn": "Descargar PNG",
+  "downloadBtn": "Descargar",
+  "moreFormats": "Descargar como…",
+  "dropHere": "Suelta las imágenes para añadirlas",
   "downloadAllBtn": "Descargar Todas",
   "clearBtn": "Borrar Todo",
   "convertBtn": "Cambiar Formato",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "Parte de la suite oLoveTools",
   "seoHeroTitle": "Pega y guarda desde tu portapapeles en segundos.",
-  "seo_title": "PasteSnap | Guardar del Portapapeles",
+  "seo_title": "PasteSnap | Guardar imágenes del portapapeles online",
   "seoHeroText": "¿Alguna vez has hecho una captura y necesitado el archivo al instante? Con PasteSnap, solo pulsa Ctrl+V y descarga tu imagen.",
-  "seo_description": "¿Alguna vez has hecho una captura y necesitado el archivo al instante? Con PasteSnap, solo pulsa Ctrl+V y descarga tu imagen.",
+  "seo_description": "Pega una captura con Ctrl+V y descárgala como PNG, JPG o WebP en segundos. Guarda imágenes del portapapeles online: gratis, privado y sin registro.",
   "seoHeroList": [
     "Sin registro requerido",
     "Soporta varias imágenes a la vez",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "¿Qué formatos son compatibles?",
-      "answer": "Actualmente, admitimos todos los formatos de imagen estándar que se pueden copiar al portapapeles, y se guardan como archivos PNG de alta calidad."
+      "answer": "Admitimos todos los formatos de imagen que se pueden copiar al portapapeles, y puedes descargar cada imagen como PNG, JPG o WebP de alta calidad."
     },
     {
       "question": "¿Necesito registrarme?",

@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "A maneira mais rápida de salvar imagens da área de transferência.",
   "pastePrompt": "Pressione Ctrl + V para colar uma imagem",
-  "downloadBtn": "Baixar PNG",
+  "downloadBtn": "Baixar",
+  "moreFormats": "Baixar como…",
+  "dropHere": "Solte as imagens para adicioná-las",
   "downloadAllBtn": "Baixar Todas",
   "clearBtn": "Limpar Tudo",
   "convertBtn": "Mudar Formato",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "Parte da suíte oLoveTools",
   "seoHeroTitle": "Cole e salve da sua área de transferência em segundos.",
-  "seo_title": "Cole e salve da sua área de transferência em segundos.",
+  "seo_title": "PasteSnap | Salvar imagens da área de transferência",
   "seoHeroText": "Basta pressionar Ctrl+V e baixar sua imagem instantaneamente.",
-  "seo_description": "Basta pressionar Ctrl+V e baixar sua imagem instantaneamente.",
+  "seo_description": "Cole uma captura com Ctrl+V e baixe como PNG, JPG ou WebP em segundos. Salve imagens da área de transferência: grátis, privado e sem cadastro.",
   "seoHeroList": [
     "Sem registro necessário",
     "Várias imagens ao mesmo tempo",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "Quais formatos são suportados?",
-      "answer": "Suportamos todos os formatos de imagem padrão."
+      "answer": "Suportamos todos os formatos de imagem padrão, e cada imagem pode ser baixada como PNG, JPG ou WebP."
     },
     {
       "question": "Preciso me registrar?",

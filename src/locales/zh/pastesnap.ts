@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "从剪贴板保存图像的最快方法。",
   "pastePrompt": "按 Ctrl + V 粘贴图像",
-  "downloadBtn": "下载 PNG",
+  "downloadBtn": "下载",
+  "moreFormats": "下载为…",
+  "dropHere": "拖放图片以添加",
   "downloadAllBtn": "全部下载",
   "clearBtn": "全部清除",
   "convertBtn": "转换格式",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "oLoveTools 系列工具",
   "seoHeroTitle": "几秒钟内从剪贴板粘贴并保存。",
-  "seo_title": "几秒钟内从剪贴板粘贴并保存。",
+  "seo_title": "PasteSnap | 在线保存剪贴板图片",
   "seoHeroText": "只需按 Ctrl+V，即可立即下载图像。",
-  "seo_description": "只需按 Ctrl+V，即可立即下载图像。",
+  "seo_description": "使用 Ctrl+V 粘贴截图，几秒内即可下载为 PNG、JPG 或 WebP。免费、私密、无需上传服务器、无需注册，全部在浏览器本地完成。",
   "seoHeroList": [
     "无需注册",
     "支持多图粘贴",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "支持哪些格式？",
-      "answer": "我们支持所有标准图像格式。"
+      "answer": "我们支持所有标准图像格式，每张图片都可以下载为 PNG、JPG 或 WebP。"
     },
     {
       "question": "我需要注册吗？",

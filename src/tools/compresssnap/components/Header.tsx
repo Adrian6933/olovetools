@@ -15,9 +15,10 @@ const HeartIcon = () => (
 );
 
 const CompressIcon = () => (
-  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-    <path d="M12 8v8M9 11l3-3 3 3M9 13l3 3 3-3" />
+  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+    <path d="M7 3.5l5 4.5 5-4.5" />
+    <path d="M5 12h14" />
+    <path d="M7 20.5l5-4.5 5 4.5" />
   </svg>
 );
 

@@ -7,7 +7,9 @@ export default {
   "title": "PasteSnap",
   "description": "クリップボードから画像を保存する最も速い方法。",
   "pastePrompt": "Ctrl + V を押して貼り付け",
-  "downloadBtn": "PNGをダウンロード",
+  "downloadBtn": "ダウンロード",
+  "moreFormats": "形式を選んで保存…",
+  "dropHere": "画像をドロップして追加",
   "downloadAllBtn": "すべてダウンロード",
   "clearBtn": "すべてクリア",
   "convertBtn": "形式を変更",
@@ -35,9 +37,9 @@ export default {
   ],
   "footerCredit": "oLoveToolsスイートの一部",
   "seoHeroTitle": "クリップボードから数秒で貼り付けて保存。",
-  "seo_title": "クリップボードから数秒で貼り付けて保存。",
+  "seo_title": "PasteSnap | クリップボードの画像を保存",
   "seoHeroText": "Ctrl+Vを押すだけで、すぐに画像をダウンロードできます。",
-  "seo_description": "Ctrl+Vを押すだけで、すぐに画像をダウンロードできます。",
+  "seo_description": "Ctrl+Vでスクリーンショットを貼り付け、数秒でPNG・JPG・WebPとしてダウンロード。無料・登録不要、画像はブラウザ内で処理され外部に送信されません。",
   "seoHeroList": [
     "登録不要",
     "複数画像の一括処理",
@@ -79,7 +81,7 @@ export default {
     },
     {
       "question": "どの形式がサポートされていますか？",
-      "answer": "すべての標準的な画像形式をサポートしています。"
+      "answer": "すべての標準的な画像形式をサポートしており、各画像はPNG・JPG・WebPでダウンロードできます。"
     },
     {
       "question": "登録は必要ですか？",
