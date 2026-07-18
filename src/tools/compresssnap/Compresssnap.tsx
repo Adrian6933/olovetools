@@ -185,6 +185,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
 
   // Process a single item in queue
   const processItem = useCallback(async (id: string, settings: CompressSettings) => {
+    const runId = ++runCounter.current;
+    latestRun.current[id] = runId;
+
     setItems(prev => prev.map(item => item.id === id ? { ...item, status: 'compressing' } : item));
 
     try {
@@ -192,6 +195,10 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
       if (!item) return;
 
       const result = await compressImage(item, settings);
+
+      // A newer run started while this one was compressing — discard this stale result
+      if (latestRun.current[id] !== runId) return;
+
       const url = URL.createObjectURL(result.blob);
 
       // Revoke previous compressed URL if it existed
@@ -215,13 +222,14 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
             compressedWidth: result.compressedWidth,
             compressedHeight: result.compressedHeight,
             savings,
-            settings // Store settings applied
+            appliedSettings: settings
           };
         }
         return i;
       }));
     } catch (err) {
       console.error('Compression error:', err);
+      if (latestRun.current[id] !== runId) return;
       setItems(prev => prev.map(i => i.id === id ? { ...i, status: 'error', error: String(err) } : i));
     }
   }, [items, compressImage]);
@@ -302,8 +310,8 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
   const downloadSingle = (item: CompressedImageItem) => {
     if (!item.compressedUrl) return;
     
-    // Determine extension
-    let ext: string = item.settings?.format || globalSettings.format;
+    // Determine extension (from the settings actually used to compress)
+    let ext: string = item.appliedSettings?.format || item.settings?.format || globalSettings.format;
     if (ext === 'original') {
       ext = item.file.type;
     }
@@ -331,7 +339,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
       const response = await fetch(item.compressedUrl!);
       const blob = await response.blob();
 
-      let ext: string = item.settings?.format || globalSettings.format;
+      let ext: string = item.appliedSettings?.format || item.settings?.format || globalSettings.format;
       if (ext === 'original') {
         ext = item.file.type;
       }
@@ -522,11 +530,24 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                                     <span className="text-sm font-black text-cyan-400">
                                       {formatBytes(item.compressedSize || 0)}
                                     </span>
-                                    {progressPercent !== null && progressPercent > 0 && (
-                                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-800/30 text-cyan-400 font-bold mt-1">
+                                    {progressPercent !== null && (
+                                      <span
+                                        className={`text-[10px] px-1.5 py-0.5 rounded-full border font-bold mt-1 ${
+                                          progressPercent > 0
+                                            ? 'bg-cyan-950/80 border-cyan-800/30 text-cyan-400'
+                                            : 'bg-white/5 border-white/10 text-slate-500'
+                                        }`}
+                                      >
                                         -{progressPercent}%
                                       </span>
                                     )}
+                                    {item.compressedWidth &&
+                                      item.compressedHeight &&
+                                      (item.compressedWidth !== item.width || item.compressedHeight !== item.height) && (
+                                        <span className="text-[10px] text-slate-500 font-bold mt-1">
+                                          → {item.compressedWidth}×{item.compressedHeight}px
+                                        </span>
+                                      )}
                                   </div>
                                 )}
                                 {item.status === 'error' && (
@@ -595,6 +616,22 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                                   <Sliders className="w-3.5 h-3.5" />
                                   <span>{t.individualSettings}</span>
                                 </button>
+
+                                {item.settings && (
+                                  <button
+                                    onClick={() =>
+                                      setItems(prev =>
+                                        prev.map(i =>
+                                          i.id === item.id ? { ...i, settings: undefined, status: 'idle' } : i
+                                        )
+                                      )
+                                    }
+                                    title={t.followGlobalBtn || 'Use global settings'}
+                                    className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-all cursor-pointer"
+                                  >
+                                    {t.followGlobalBtn || 'Use global settings'}
+                                  </button>
+                                )}
 
                                 {item.status === 'done' && item.compressedUrl && (
                                   <button 
@@ -676,7 +713,10 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                               ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400 shadow-inner'
                               : 'bg-[#0a0f18]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#0a0f18]/80'}`}
                         >
-                          {preset.label}
+                          <span className="block">{preset.label}</span>
+                          <span className="block text-[9px] font-bold opacity-60 mt-0.5">
+                            {preset.format === 'original' ? 'Original' : 'WebP'} · {preset.quality}%
+                          </span>
                         </button>
                       );
                     })}
@@ -730,6 +770,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                     className="w-full h-1.5 rounded bg-white/10 outline-none accent-cyan-500 cursor-pointer"
                     disabled={globalSettings.format === 'image/png'}
                   />
+                  <p className="text-[10px] text-slate-500 font-medium">
+                    {t.qualityHint || 'Lower quality = smaller file.'}
+                  </p>
                   {globalSettings.format === 'image/png' && (
                     <p className="text-[10px] text-slate-500 font-medium italic mt-1">
                       * {t.pngNote || 'PNG is lossless — the quality slider applies when converting to JPG/WebP or resizing.'}
@@ -742,6 +785,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                   <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
                     <span>{t.resizeModeLabel || 'Resize mode'}</span>
                   </div>
+                  <p className="text-[10px] text-slate-500 font-medium -mt-2">
+                    {t.scaleHint || 'Shrinks the image width and height.'}
+                  </p>
 
                   <div className="grid grid-cols-3 gap-2">
                     {[

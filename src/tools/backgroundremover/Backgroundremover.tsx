@@ -1,28 +1,27 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Upload, 
-  Image as ImageIcon, 
-  Download, 
-  Trash2, 
-  CheckCircle2, 
-  AlertCircle, 
-  Loader2, 
-  Sparkles, 
-  Eye, 
-  RefreshCw, 
-  Lock, 
-  Zap, 
+import {
+  Upload,
+  Image as ImageIcon,
+  Download,
+  Trash2,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  Eraser,
+  Wand2,
+  MoveHorizontal,
+  Eye,
+  Lock,
+  Zap,
   Scissors,
   Check
 } from 'lucide-react';
 
 import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { LegalModal } from './components/LegalModal';
+import { RefineEditor } from './components/RefineEditor';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
-import { legalTranslations } from '../../locales/legal';
 import { ImageItem } from './types';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
@@ -39,7 +38,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
   const [activeItem, setActiveItem] = useState<ImageItem | null>(null);
   const [comparedItem, setComparedItem] = useState<ImageItem | null>(null);
   const [sliderPos, setSliderPos] = useState<number>(50);
-  const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const [refineItem, setRefineItem] = useState<ImageItem | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   
   // Inference progress state
@@ -234,6 +233,23 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
     window.location.href = `/${newLang.toLowerCase()}/backgroundremover`;
   };
 
+  // Replace the AI result with the manually refined cutout
+  const applyRefined = (blob: Blob) => {
+    const target = refineItem;
+    if (!target) return;
+    const url = URL.createObjectURL(blob);
+    setItems(prev =>
+      prev.map(i => {
+        if (i.id !== target.id) return i;
+        if (i.processedUrl) URL.revokeObjectURL(i.processedUrl);
+        const updated = { ...i, processedUrl: url, processedSize: blob.size };
+        setActiveItem(updated);
+        return updated;
+      })
+    );
+    setRefineItem(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#07050a] text-slate-100 selection:bg-pink-500/30 overflow-x-hidden font-sans">
       {/* Background Orbs */}
@@ -248,9 +264,9 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
           
           {/* Hero Header */}
           <div className="flex flex-col items-center space-y-6 animate-fade-in">
-            <div className="inline-flex items-center space-x-2 px-5 py-2 rounded-full bg-fuchsia-950/40 border border-fuchsia-800/30 text-fuchsia-400 text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(232,121,249,0.15)]">
-              <Sparkles className="w-4 h-4 animate-float" />
-              <span>{t.title}</span>
+            <div className="inline-flex max-w-full items-center gap-2 px-5 py-2 rounded-full bg-fuchsia-950/40 border border-fuchsia-800/30 text-fuchsia-400 text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(232,121,249,0.15)]">
+              <Eraser className="w-4 h-4 shrink-0" />
+              <span className="truncate">{t.title}</span>
             </div>
             
             <h1 className="text-4xl md:text-[5.5rem] font-black tracking-tight leading-[0.9] text-white bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400">
@@ -306,9 +322,9 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                       <div className="relative aspect-video rounded-2xl overflow-hidden checkered-bg border border-white/5 flex items-center justify-center">
                         
                         {activeItem.status === 'done' && activeItem.processedUrl ? (
-                          <img 
-                            src={activeItem.processedUrl} 
-                            alt="Cutout cutout" 
+                          <img
+                            src={activeItem.processedUrl}
+                            alt="Cutout result"
                             className="max-h-full max-w-full object-contain animate-fade-in"
                           />
                         ) : (
@@ -359,14 +375,14 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                           <h4 className="text-sm font-bold text-white truncate max-w-[280px]">{activeItem.name}</h4>
                           <p className="text-xs text-slate-500 font-semibold mt-1">
                             {t.originalSize}: {formatBytes(activeItem.originalSize)}
-                            {activeItem.processedSize && ` â€¢ ${t.processedSize}: ${formatBytes(activeItem.processedSize)}`}
+                            {activeItem.processedSize && ` · ${t.processedSize}: ${formatBytes(activeItem.processedSize)}`}
                           </p>
                         </div>
 
                         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
                           {activeItem.status === 'done' && activeItem.processedUrl && (
                             <>
-                              <button 
+                              <button
                                 onClick={() => {
                                   setComparedItem(activeItem);
                                   setSliderPos(50);
@@ -376,7 +392,15 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                                 <Eye className="w-4 h-4" />
                                 <span>{t.compareBtn}</span>
                               </button>
-                              
+
+                              <button
+                                onClick={() => setRefineItem(activeItem)}
+                                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/30 text-fuchsia-300 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+                              >
+                                <Wand2 className="w-4 h-4" />
+                                <span>{t.refineBtn || 'Refine'}</span>
+                              </button>
+
                               <button 
                                 onClick={() => downloadImage(activeItem)}
                                 className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-500 text-black font-black text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-fuchsia-600/20 active:scale-95 cursor-pointer"
@@ -392,7 +416,7 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                     </div>
                   ) : (
                     <div className="py-12 text-center text-slate-500">
-                      Select an image from the queue to display.
+                      {t.selectFromQueue || 'Select an image from the queue to display.'}
                     </div>
                   )}
 
@@ -410,13 +434,13 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                   <div className="flex items-center justify-between pb-2 border-b border-white/5">
                     <h3 className="text-base font-bold text-white flex items-center gap-2">
                       <ImageIcon className="w-4 h-4 text-fuchsia-400" />
-                      <span>Queue ({items.length})</span>
+                      <span>{t.queueLabel || 'Queue'} ({items.length})</span>
                     </h3>
-                    <button 
+                    <button
                       onClick={() => fileInputRef.current?.click()}
                       className="text-xs text-fuchsia-400 hover:text-fuchsia-300 font-bold transition-colors cursor-pointer"
                     >
-                      + Add More
+                      + {t.addMoreBtn || 'Add more'}
                     </button>
                   </div>
 
@@ -663,8 +687,8 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                 className="absolute top-0 bottom-0 w-0.5 bg-fuchsia-400 pointer-events-none shadow-[0_0_10px_#ec4899] z-20"
                 style={{ left: `${sliderPos}%` }}
               >
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-fuchsia-500 border-2 border-white text-black flex items-center justify-center shadow-2xl font-bold">
-                  â†”
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-fuchsia-500 border-2 border-white text-black flex items-center justify-center shadow-2xl">
+                  <MoveHorizontal className="w-5 h-5 stroke-[3]" />
                 </div>
               </div>
 
@@ -702,19 +726,17 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
         </button>
       )}
 
-      <LegalModal 
-        isOpen={!!activeModal} 
-        onClose={() => setActiveModal(null)} 
-        title={activeModal === 'privacy' ? t.privacyPolicy : activeModal === 'terms' ? t.termsOfService : t.cookiePolicy}
-        content={
-          (activeModal === 'privacy' ? t.privacyContent : activeModal === 'terms' ? t.termsContent : t.cookiesContent)
-            .split('\n')
-            .map((paragraph: string, index: number) => <p key={index}>{paragraph}</p>)
-        }
-        t={t}
-      />
-
-      <Footer lang={lang} t={t} onOpenModal={(modal) => setActiveModal(modal)} />
+      {/* Manual refinement editor: erase / restore brushes + magic wand */}
+      {refineItem && refineItem.processedUrl && (
+        <RefineEditor
+          originalUrl={refineItem.originalUrl}
+          processedUrl={refineItem.processedUrl}
+          name={refineItem.name}
+          t={t}
+          onClose={() => setRefineItem(null)}
+          onApply={applyRefined}
+        />
+      )}
     </div>
   );
 };

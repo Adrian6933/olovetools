@@ -23,5 +23,6 @@ export interface CompressedImageItem {
   status: 'idle' | 'compressing' | 'done' | 'error';
   savings: number | null;
   error?: string;
-  settings?: CompressSettings; // Individual settings override
+  settings?: CompressSettings; // Individual settings override (only set by the user)
+  appliedSettings?: CompressSettings; // Settings used in the last finished compression
 }
