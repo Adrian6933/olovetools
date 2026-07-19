@@ -61,6 +61,7 @@ import ClipFlow from '../../../tools/clip-flow/ClipFlow';
 import JwtBolt from '../../../tools/jwt-bolt/JwtBolt';
 import { Footer as CompressFooter } from '../../../tools/compresssnap/components/Footer';
 import { Footer as BgRemoverFooter } from '../../../tools/backgroundremover/components/Footer';
+import { Footer as PdfFlowFooter } from '../../../tools/pdf-flow/components/Footer';
 import { CookieBanner } from '../../../components/CookieBanner';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
 import { AdRail } from '../../../components/shared/AdRail';
@@ -551,8 +552,8 @@ const appSchema = {
     {tool === 'pdf-flow' && (
       <style is:inline>
         body {
-          background-color: #0c0506 !important;
-          background-image: radial-gradient(circle at 50% -25%, #2a0b0e 0%, #0c0506 50%) !important;
+          background-color: #1c1012 !important;
+          background-image: radial-gradient(circle at 50% -25%, #5a1f24 0%, #1c1012 55%) !important;
           background-attachment: fixed !important;
           color: #e2e8f0 !important;
           min-height: 100vh !important;
@@ -561,15 +562,15 @@ const appSchema = {
         }
         #root { min-height: 100vh; position: relative; z-index: 10; }
         ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0c0506; }
+        ::-webkit-scrollbar-track { background: #1c1012; }
         ::-webkit-scrollbar-thumb { background: #991b1b; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #b91c1c; }
-        
+
         .glass-card {
-          background: rgba(20, 10, 12, 0.45);
+          background: rgba(52, 30, 33, 0.55);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
-          border: 1px solid rgba(255, 255, 255, 0.06);
+          border: 1px solid rgba(255, 255, 255, 0.08);
           box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         }
 
@@ -2182,6 +2183,7 @@ const appSchema = {
         para que quede al final real de la página, no dentro de la isla */}
     {tool === 'compresssnap' && <CompressFooter lang={castLang} t={dictionary} client:load />}
     {tool === 'backgroundremover' && <BgRemoverFooter lang={castLang} t={dictionary} client:load />}
+    {tool === 'pdf-flow' && <PdfFlowFooter lang={castLang} t={dictionary} client:load />}
 
     <CookieBanner lang={castLang} client:load />
   </body>

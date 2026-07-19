@@ -4,18 +4,17 @@ import { legalTranslations } from '../../../locales/legal';
 interface FooterProps {
   lang: string;
   t: any;
-  onOpenModal: (modal: 'privacy' | 'terms' | 'cookies') => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
+export const Footer: React.FC<FooterProps> = ({ lang, t }) => {
   return (
-    <footer className="py-24 md:py-48 border-t border-white/5 flex flex-col items-center space-y-16 relative z-10 bg-[#050404] w-full">
+    <footer className="py-24 md:py-48 border-t border-white/5 flex flex-col items-center space-y-16 relative z-10 bg-[#150d0e] w-full">
       <div className="flex flex-col items-center space-y-16 max-w-5xl px-8 text-center">
         <div className="text-gray-600 text-xs font-black tracking-[0.6em] uppercase opacity-40">
           {t.footerCredit}
         </div>
-        
-        <a 
+
+        <a
           href={`/${lang.toLowerCase()}/`}
           className="flex items-center space-x-6 group scale-[1.1] md:scale-[1.6] outline-none shrink-0"
         >
@@ -27,43 +26,43 @@ export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
             <span className="text-red-400 group-hover:translate-x-1 group-hover:text-white transition-all">Tools</span>
           </div>
         </a>
-        
+
         <p className="text-gray-500 text-lg md:text-xl font-medium leading-relaxed max-w-2xl">
           {t.footerTagline}
         </p>
 
         <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-gray-800 font-black text-[11px] md:text-xs tracking-widest pt-12 uppercase border-t border-white/5 w-full">
           <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
-          
-          <button 
-            onClick={() => onOpenModal('privacy')} 
+
+          <a
+            href={`/${lang.toLowerCase()}/privacy`}
             className="w-full md:w-auto py-3 md:py-0 hover:text-red-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center font-black"
           >
             {legalTranslations[lang]?.nav.privacy || 'Privacy Policy'}
-          </button>
-          
-          <button 
-            onClick={() => onOpenModal('terms')} 
+          </a>
+
+          <a
+            href={`/${lang.toLowerCase()}/terms`}
             className="w-full md:w-auto py-3 md:py-0 hover:text-red-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center font-black"
           >
             {legalTranslations[lang]?.nav.terms || 'Terms of Service'}
-          </button>
-          
-          <button 
-            onClick={() => onOpenModal('cookies')} 
+          </a>
+
+          <a
+            href={`/${lang.toLowerCase()}/cookies`}
             className="w-full md:w-auto py-3 md:py-0 hover:text-red-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center font-black"
           >
             {legalTranslations[lang]?.nav.cookies || 'Cookie Policy'}
-          </button>
+          </a>
 
-          <a 
-            href={`/${lang.toLowerCase()}/about`} 
+          <a
+            href={`/${lang.toLowerCase()}/about`}
             className="w-full md:w-auto py-3 md:py-0 hover:text-red-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
           >
             {legalTranslations[lang]?.nav.about || 'About'}
           </a>
-          
-          <button 
+
+          <button
             onClick={() => {
               navigator.clipboard.writeText(t.emailAddress);
               const button = document.getElementById('copy-email-footer-btn');

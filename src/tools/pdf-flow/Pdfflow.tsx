@@ -21,15 +21,15 @@ import {
   Plus,
   ArrowRight,
   RefreshCw,
-  FileText
+  FileText,
+  GripVertical
 } from 'lucide-react';
 
 import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { LegalModal } from './components/LegalModal';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { PdfItem, ToolMode } from './types';
+import { renderPdfCoverThumbnail, renderAllPageThumbnails } from './utils/pdfThumbnail';
 
 interface PdfflowProps {
   lang: Language;
@@ -44,13 +44,13 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   const [files, setFiles] = useState<PdfItem[]>([]);
   const [status, setStatus] = useState<'idle' | 'processing' | 'done' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Mode settings
   // Split settings
   const [splitType, setSplitType] = useState<'all' | 'specific'>('all');
   const [splitRange, setSplitRange] = useState<string>('');
+  const [selectedPages, setSelectedPages] = useState<number[]>([]);
   
   // Rotate settings
   const [pageCount, setPageCount] = useState<number>(0);
@@ -61,6 +61,12 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   const [orientation, setOrientation] = useState<'portrait' | 'landscape'>('portrait');
   const [margin, setMargin] = useState<number>(0);
   const [quality, setQuality] = useState<number>(85);
+
+  // Thumbnails: cover page per file (merge/jpg2pdf) and full page grid (split/rotate)
+  const [coverThumbnails, setCoverThumbnails] = useState<Record<string, string>>({});
+  const [pageThumbnails, setPageThumbnails] = useState<string[]>([]);
+  const [pageThumbnailsLoading, setPageThumbnailsLoading] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -85,6 +91,97 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   };
 
+  // Render a first-page cover thumbnail for every PDF queued in merge mode, so each file is
+  // visually identifiable instead of a generic document icon.
+  useEffect(() => {
+    if (activeMode !== 'merge') return;
+    let cancelled = false;
+    files.forEach(item => {
+      if (coverThumbnails[item.id]) return;
+      renderPdfCoverThumbnail(item.file, 160)
+        .then(dataUrl => {
+          if (!cancelled) setCoverThumbnails(prev => ({ ...prev, [item.id]: dataUrl }));
+        })
+        .catch(() => {});
+    });
+    return () => { cancelled = true; };
+  }, [files, activeMode]);
+
+  // Render every page of the loaded PDF for split/rotate, so users see real pages instead of blank cards
+  useEffect(() => {
+    if ((activeMode !== 'split' && activeMode !== 'rotate') || files.length === 0) {
+      setPageThumbnails([]);
+      setPageThumbnailsLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setPageThumbnails([]);
+    setPageThumbnailsLoading(true);
+    renderAllPageThumbnails(files[0].file, 150, 60)
+      .then(thumbs => { if (!cancelled) setPageThumbnails(thumbs); })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setPageThumbnailsLoading(false); });
+    return () => { cancelled = true; };
+  }, [activeMode, files[0]?.id]);
+
+  // Convert a 0-indexed page selection into a human range string (e.g. "1-3, 5")
+  const formatRangeFromPages = (pages: number[]): string => {
+    if (pages.length === 0) return '';
+    const sorted = [...pages].sort((a, b) => a - b);
+    const parts: string[] = [];
+    let start = sorted[0];
+    let prev = sorted[0];
+    for (let i = 1; i <= sorted.length; i++) {
+      const cur = sorted[i];
+      if (cur === prev + 1) {
+        prev = cur;
+        continue;
+      }
+      parts.push(start === prev ? `${start + 1}` : `${start + 1}-${prev + 1}`);
+      if (i < sorted.length) {
+        start = cur;
+        prev = cur;
+      }
+    }
+    return parts.join(', ');
+  };
+
+  // Parse a manually typed range string (e.g. "1-3, 5") into 0-indexed page numbers
+  const parseRangeToPages = (range: string, total: number): number[] => {
+    const pages = new Set<number>();
+    range.split(',').forEach(part => {
+      const trimmed = part.trim();
+      if (!trimmed) return;
+      if (trimmed.includes('-')) {
+        const [startStr, endStr] = trimmed.split('-');
+        const start = parseInt(startStr, 10);
+        const end = parseInt(endStr, 10);
+        if (!isNaN(start) && !isNaN(end)) {
+          for (let i = start; i <= end; i++) {
+            if (i >= 1 && i <= total) pages.add(i - 1);
+          }
+        }
+      } else {
+        const n = parseInt(trimmed, 10);
+        if (!isNaN(n) && n >= 1 && n <= total) pages.add(n - 1);
+      }
+    });
+    return Array.from(pages);
+  };
+
+  const togglePageSelection = (pageIndex: number) => {
+    setSelectedPages(prev => {
+      const next = prev.includes(pageIndex) ? prev.filter(p => p !== pageIndex) : [...prev, pageIndex];
+      setSplitRange(formatRangeFromPages(next));
+      return next;
+    });
+  };
+
+  const handleSplitRangeInput = (value: string) => {
+    setSplitRange(value);
+    setSelectedPages(parseRangeToPages(value, pageCount));
+  };
+
   // Helper to load file page count
   const loadPdfPageCount = async (file: File): Promise<number> => {
     try {
@@ -103,14 +200,25 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     setStatus('idle');
     setErrorMessage('');
 
+    // Reject files the active mode cannot process, and tell the user instead of ignoring them silently
+    const allFiles = Array.from(fileList);
+    const isValidForMode = (file: File) =>
+      activeMode === 'jpg2pdf'
+        ? file.type.startsWith('image/')
+        : (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf'));
+    const validFiles = allFiles.filter(isValidForMode);
+    if (validFiles.length < allFiles.length) {
+      setStatus('error');
+      setErrorMessage(t.invalidFormatError);
+    }
+    if (validFiles.length === 0) return;
+
     const newItems: PdfItem[] = [];
 
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i];
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
 
       if (activeMode === 'jpg2pdf') {
-        // Only accept images in jpg2pdf mode
-        if (!file.type.startsWith('image/')) continue;
         newItems.push({
           id: Math.random().toString(36).substring(2, 9),
           file,
@@ -119,9 +227,6 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           status: 'idle'
         });
       } else {
-        // Only accept PDFs in other modes
-        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) continue;
-        
         let pCount: number | undefined;
         if (activeMode === 'split' || activeMode === 'rotate') {
           // In split/rotate mode we only allow ONE file at a time.
@@ -130,7 +235,8 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           pCount = await loadPdfPageCount(file);
           setPageCount(pCount);
           setPageRotations({});
-          
+          setSelectedPages([]);
+
           const singleItem: PdfItem = {
             id: Math.random().toString(36).substring(2, 9),
             file,
@@ -188,6 +294,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     setPageCount(0);
     setPageRotations({});
     setSplitRange('');
+    setSelectedPages([]);
   };
 
   // Reorder list helper (up/down arrow controls)
@@ -204,12 +311,34 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     });
   };
 
+  // Reorder via native drag & drop (mouse drag on the grip handle)
+  const handleDragStart = (index: number) => setDragIndex(index);
+
+  const handleDragOverItem = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDropOnItem = (index: number) => {
+    if (dragIndex === null || dragIndex === index) {
+      setDragIndex(null);
+      return;
+    }
+    setFiles(prev => {
+      const copy = [...prev];
+      const [moved] = copy.splice(dragIndex, 1);
+      copy.splice(index, 0, moved);
+      return copy;
+    });
+    setDragIndex(null);
+  };
+
   // Remove file
   const removeFile = (id: string) => {
     setFiles(prev => prev.filter(f => f.id !== id));
     if (activeMode === 'split' || activeMode === 'rotate') {
       setPageCount(0);
       setPageRotations({});
+      setSelectedPages([]);
     }
   };
 
@@ -221,6 +350,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     setPageCount(0);
     setPageRotations({});
     setSplitRange('');
+    setSelectedPages([]);
   };
 
   // HTML Image loading inside helper
@@ -305,30 +435,8 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           outputFilename = `${baseName}_extracted_pages.zip`;
 
         } else {
-          // Specific range output merged
-          const targetIndices: number[] = [];
-          const ranges = splitRange.split(',');
-          
-          for (const range of ranges) {
-            const trimmed = range.trim();
-            if (trimmed.includes('-')) {
-              const [startStr, endStr] = trimmed.split('-');
-              const start = parseInt(startStr, 10);
-              const end = parseInt(endStr, 10);
-              if (!isNaN(start) && !isNaN(end)) {
-                for (let idx = start; idx <= end; idx++) {
-                  if (idx >= 1 && idx <= totalPages) {
-                    targetIndices.push(idx - 1);
-                  }
-                }
-              }
-            } else {
-              const idx = parseInt(trimmed, 10);
-              if (!isNaN(idx) && idx >= 1 && idx <= totalPages) {
-                targetIndices.push(idx - 1);
-              }
-            }
-          }
+          // Specific range output merged (0-indexed pages, kept in sync with the visual page picker)
+          const targetIndices = parseRangeToPages(splitRange, totalPages).sort((a, b) => a - b);
 
           if (targetIndices.length === 0) {
             throw new Error('Please specify a valid page range (e.g. 1-3, 5).');
@@ -476,7 +584,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   const featuresList = Array.isArray(t.features) ? t.features : [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0c0506] text-slate-100 selection:bg-red-500/30 overflow-x-hidden font-sans">
+    <div className="min-h-screen flex flex-col bg-[#1c1012] text-slate-100 selection:bg-red-500/30 overflow-x-hidden font-sans">
       {/* Background Glow Orbs */}
       
 
@@ -504,7 +612,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
 
           {/* Mode Switcher Tabs */}
           <div className="flex justify-center">
-            <div className="flex flex-wrap items-center justify-center p-2 rounded-2xl bg-[#140b0c]/80 border border-white/5 shadow-2xl gap-2 max-w-2xl w-full">
+            <div className="flex flex-wrap items-center justify-center p-2 rounded-2xl bg-[#241a1c]/80 border border-white/5 shadow-2xl gap-2 max-w-2xl w-full">
               {[
                 { id: 'merge', label: t.modeMerge, icon: Combine },
                 { id: 'split', label: t.modeSplit, icon: Scissors },
@@ -553,7 +661,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                   onDrop={handleDrop}
                   onDragOver={handleDragOver}
                   onClick={() => fileInputRef.current?.click()}
-                  className="group relative border-2 border-dashed border-red-950 hover:border-red-500/40 bg-[#140a0b]/30 hover:bg-[#1f0f10]/40 rounded-3xl p-12 md:p-16 flex flex-col items-center justify-center space-y-6 cursor-pointer transition-all shadow-xl shadow-black/20"
+                  className="group relative border-2 border-dashed border-red-950 hover:border-red-500/40 bg-[#241719]/30 hover:bg-[#35191c]/40 rounded-3xl p-12 md:p-16 flex flex-col items-center justify-center space-y-6 cursor-pointer transition-all shadow-xl shadow-black/20"
                 >
                   <input 
                     type="file" 
@@ -586,7 +694,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                   <div className="flex items-center justify-between px-2">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2">
                       <FileText className="w-5 h-5 text-red-400" />
-                      <span>{t.modeJpg2Pdf === activeMode ? t.jpg2pdfHelp.split(',')[1] || 'Files' : 'Files'} ({files.length})</span>
+                      <span>{t.filesLabel} ({files.length})</span>
                     </h2>
                     
                     <button 
@@ -601,11 +709,27 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                   {/* MERGE mode view */}
                   {activeMode === 'merge' && (
                     <div className="space-y-3">
+                      <p className="px-2 text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                        <GripVertical className="w-3 h-3" />
+                        <span>{t.dragToReorder}</span>
+                      </p>
                       {files.map((item, index) => (
-                        <div key={item.id} className="glass-card rounded-2xl p-4 flex items-center justify-between gap-4">
-                          <div className="flex items-center space-x-4 min-w-0">
-                            <div className="w-12 h-12 bg-red-950/30 border border-red-900/30 rounded-xl flex items-center justify-center text-red-400 shrink-0">
-                              <FileText className="w-6 h-6" />
+                        <div
+                          key={item.id}
+                          draggable
+                          onDragStart={() => handleDragStart(index)}
+                          onDragOver={handleDragOverItem}
+                          onDrop={() => handleDropOnItem(index)}
+                          className={`glass-card rounded-2xl p-4 flex items-center justify-between gap-4 transition-opacity ${dragIndex === index ? 'opacity-40' : 'opacity-100'}`}
+                        >
+                          <div className="flex items-center space-x-3 min-w-0">
+                            <GripVertical className="w-4 h-4 text-slate-600 cursor-grab active:cursor-grabbing shrink-0" />
+                            <div className="w-12 h-14 bg-red-950/30 border border-red-900/30 rounded-xl flex items-center justify-center text-red-400 shrink-0 overflow-hidden">
+                              {coverThumbnails[item.id] ? (
+                                <img src={coverThumbnails[item.id]} alt={item.name} className="w-full h-full object-cover" />
+                              ) : (
+                                <FileText className="w-6 h-6" />
+                              )}
                             </div>
                             <div className="text-left min-w-0">
                               <h4 className="text-sm font-bold text-white truncate pr-4">{item.name}</h4>
@@ -638,6 +762,15 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                           </div>
                         </div>
                       ))}
+
+                      {files.length > 1 && (
+                        <div className="flex items-center justify-between px-4 py-3 rounded-2xl bg-red-950/10 border border-red-900/20 text-xs font-bold text-slate-400">
+                          <span>{t.mergeSummaryLabel}</span>
+                          <span className="text-red-400">
+                            {files.reduce((sum, f) => sum + (f.pageCount || 0), 0)} {t.pageCount.toLowerCase()} &bull; {formatBytes(files.reduce((sum, f) => sum + f.size, 0))}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -672,10 +805,10 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             className={`p-4 rounded-2xl border text-left transition-all cursor-pointer outline-none flex flex-col justify-between h-28
                               ${splitType === 'all' 
                                 ? 'bg-red-950/20 border-red-500/40 text-red-400 shadow-inner' 
-                                : 'bg-[#140b0c]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#140b0c]/80'}`}
+                                : 'bg-[#241a1c]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#241a1c]/80'}`}
                           >
                             <span className="text-sm font-bold text-white">{t.splitAllPages}</span>
-                            <span className="text-xs text-slate-400 font-medium">Extracts each page as an individual PDF wrapped in a ZIP folder.</span>
+                            <span className="text-xs text-slate-400 font-medium">{t.splitAllPagesDesc}</span>
                           </button>
 
                           <button
@@ -683,24 +816,62 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             className={`p-4 rounded-2xl border text-left transition-all cursor-pointer outline-none flex flex-col justify-between h-28
                               ${splitType === 'specific' 
                                 ? 'bg-red-950/20 border-red-500/40 text-red-400 shadow-inner' 
-                                : 'bg-[#140b0c]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#140b0c]/80'}`}
+                                : 'bg-[#241a1c]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#241a1c]/80'}`}
                           >
                             <span className="text-sm font-bold text-white">{t.splitSpecificPages}</span>
-                            <span className="text-xs text-slate-400 font-medium">Extract and merge custom pages or ranges (e.g. 1, 3-5).</span>
+                            <span className="text-xs text-slate-400 font-medium">{t.splitSpecificPagesDesc}</span>
                           </button>
                         </div>
 
                         {splitType === 'specific' && (
-                          <div className="space-y-2 pt-2 animate-in slide-in-from-top-4 duration-300">
-                            <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">{t.splitRangeLabel}</label>
-                            <input
-                              type="text"
-                              placeholder="e.g. 1-3, 5"
-                              value={splitRange}
-                              onChange={(e) => setSplitRange(e.target.value)}
-                              className="w-full bg-[#100809] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-red-500"
-                            />
-                            <p className="text-[10px] text-slate-500 font-medium">Use commas to separate page numbers and hyphens to define ranges (e.g., 1-4, 7).</p>
+                          <div className="space-y-4 pt-2 animate-in slide-in-from-top-4 duration-300">
+                            <div className="space-y-2">
+                              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">{t.selectPagesHint}</label>
+                              <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+                                {Array.from({ length: pageCount }).map((_, idx) => {
+                                  const isSelected = selectedPages.includes(idx);
+                                  const thumb = pageThumbnails[idx];
+                                  return (
+                                    <button
+                                      key={idx}
+                                      type="button"
+                                      onClick={() => togglePageSelection(idx)}
+                                      className={`relative aspect-[3/4] rounded-lg border overflow-hidden transition-all cursor-pointer outline-none
+                                        ${isSelected
+                                          ? 'border-red-500 shadow-[0_0_15px_rgba(239,68,68,0.4)]'
+                                          : 'border-white/10 hover:border-red-500/40'}`}
+                                    >
+                                      {thumb ? (
+                                        <img src={thumb} alt={`${t.pageLabel} ${idx + 1}`} className="w-full h-full object-cover" />
+                                      ) : (
+                                        <div className="w-full h-full bg-[#241618] flex items-center justify-center">
+                                          {pageThumbnailsLoading ? (
+                                            <Loader2 className="w-4 h-4 text-slate-600 animate-spin" />
+                                          ) : (
+                                            <FileText className="w-4 h-4 text-slate-700" />
+                                          )}
+                                        </div>
+                                      )}
+                                      <div className={`absolute inset-0 transition-colors ${isSelected ? 'bg-red-600/40' : 'bg-black/10'}`}></div>
+                                      <span className="absolute bottom-1 right-1 text-[10px] font-black bg-black/70 text-white px-1.5 py-0.5 rounded-md">
+                                        {idx + 1}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">{t.splitRangeLabel}</label>
+                              <input
+                                type="text"
+                                placeholder="e.g. 1-3, 5"
+                                value={splitRange}
+                                onChange={(e) => handleSplitRangeInput(e.target.value)}
+                                className="w-full bg-[#201316] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-red-500"
+                              />
+                            </div>
                           </div>
                         )}
                       </div>
@@ -723,31 +894,34 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                           </div>
                         </div>
 
-                        <div className="flex flex-wrap gap-2">
-                          <button
-                            onClick={() => rotateAllPages(90)}
-                            className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
-                          >
-                            +90Â° CW
-                          </button>
-                          <button
-                            onClick={() => rotateAllPages(180)}
-                            className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
-                          >
-                            180Â°
-                          </button>
-                          <button
-                            onClick={() => rotateAllPages(270)}
-                            className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
-                          >
-                            +90Â° CCW
-                          </button>
-                          <button
-                            onClick={() => setPageRotations({})}
-                            className="text-xs px-3 py-2 bg-red-950/30 hover:bg-red-950/50 text-red-400 font-bold rounded-lg border border-red-900/30 transition-all cursor-pointer"
-                          >
-                            Reset
-                          </button>
+                        <div className="flex flex-col items-start sm:items-end gap-2">
+                          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{t.rotateAllLabel}</span>
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              onClick={() => rotateAllPages(90)}
+                              className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
+                            >
+                              {t.rotateRight}
+                            </button>
+                            <button
+                              onClick={() => rotateAllPages(180)}
+                              className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
+                            >
+                              {t.rotate180}
+                            </button>
+                            <button
+                              onClick={() => rotateAllPages(270)}
+                              className="text-xs px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 font-bold rounded-lg border border-white/5 transition-all cursor-pointer"
+                            >
+                              {t.rotateLeft}
+                            </button>
+                            <button
+                              onClick={() => setPageRotations({})}
+                              className="text-xs px-3 py-2 bg-red-950/30 hover:bg-red-950/50 text-red-400 font-bold rounded-lg border border-red-900/30 transition-all cursor-pointer"
+                            >
+                              {t.clearRotationsBtn}
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -759,31 +933,31 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             <div
                               key={idx}
                               onClick={() => rotatePage(idx)}
-                              className="group glass-card rounded-2xl p-4 flex flex-col items-center justify-center aspect-[3/4] cursor-pointer hover:border-red-500/40 hover:bg-[#140a0b]/40 transition-premium relative overflow-hidden"
+                              className="group glass-card rounded-2xl p-4 flex flex-col items-center justify-center aspect-[3/4] cursor-pointer hover:border-red-500/40 hover:bg-[#241719]/40 transition-premium relative overflow-hidden"
                             >
                               <div className="absolute inset-0 bg-red-500/0 group-hover:bg-red-500/5 transition-colors"></div>
                               
-                              {/* Visual Sheet of Paper representation with rotation applied */}
-                              <div 
+                              {/* Real rendered page thumbnail with the pending rotation applied visually */}
+                              <div
                                 style={{ transform: `rotate(${rotation}deg)` }}
-                                className="w-20 h-28 bg-[#100809] border border-white/10 rounded-md shadow-lg flex flex-col justify-between p-2 relative z-10 transition-transform duration-300"
+                                className="w-20 h-28 bg-[#201316] border border-white/10 rounded-md shadow-lg relative z-10 transition-transform duration-300 overflow-hidden flex items-center justify-center"
                               >
-                                <div className="w-5 h-1 bg-red-500/30 rounded-full"></div>
-                                <div className="flex flex-col space-y-1">
-                                  <div className="w-full h-1 bg-white/5 rounded-full"></div>
-                                  <div className="w-4/5 h-1 bg-white/5 rounded-full"></div>
-                                  <div className="w-2/3 h-1 bg-white/5 rounded-full"></div>
-                                </div>
-                                <div className="text-[10px] font-black text-red-500/50 uppercase tracking-widest text-center">PDF</div>
+                                {pageThumbnails[idx] ? (
+                                  <img src={pageThumbnails[idx]} alt={`${t.pageLabel} ${idx + 1}`} className="w-full h-full object-cover" />
+                                ) : pageThumbnailsLoading ? (
+                                  <Loader2 className="w-4 h-4 text-slate-600 animate-spin" />
+                                ) : (
+                                  <FileText className="w-5 h-5 text-slate-700" />
+                                )}
                               </div>
 
                               <span className="mt-4 text-xs font-black text-slate-400 group-hover:text-white transition-colors">
-                                Page {idx + 1}
+                                {t.pageLabel} {idx + 1}
                               </span>
 
                               {rotation > 0 && (
                                 <span className="absolute top-3 right-3 text-[10px] font-black bg-red-950 text-red-400 px-1.5 py-0.5 rounded-full border border-red-900/30">
-                                  {rotation}Â°
+                                  {rotation}°
                                 </span>
                               )}
                             </div>
@@ -796,9 +970,21 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                   {/* JPG to PDF mode view */}
                   {activeMode === 'jpg2pdf' && (
                     <div className="space-y-3">
+                      <p className="px-2 text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-1.5">
+                        <GripVertical className="w-3 h-3" />
+                        <span>{t.dragToReorder}</span>
+                      </p>
                       {files.map((item, index) => (
-                        <div key={item.id} className="glass-card rounded-2xl p-4 flex items-center justify-between gap-4">
-                          <div className="flex items-center space-x-4 min-w-0">
+                        <div
+                          key={item.id}
+                          draggable
+                          onDragStart={() => handleDragStart(index)}
+                          onDragOver={handleDragOverItem}
+                          onDrop={() => handleDropOnItem(index)}
+                          className={`glass-card rounded-2xl p-4 flex items-center justify-between gap-4 transition-opacity ${dragIndex === index ? 'opacity-40' : 'opacity-100'}`}
+                        >
+                          <div className="flex items-center space-x-3 min-w-0">
+                            <GripVertical className="w-4 h-4 text-slate-600 cursor-grab active:cursor-grabbing shrink-0" />
                             {/* Thumbnail preview */}
                             <div className="w-12 h-12 bg-black/40 border border-white/5 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
                               <img 
@@ -865,7 +1051,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                 
                 <h3 className="text-lg font-black text-white uppercase tracking-wider flex items-center gap-2 border-b border-white/5 pb-4">
                   <Settings className="w-5 h-5 text-red-400" />
-                  <span>{t.jpgOrientation ? 'Settings' : 'Settings'}</span>
+                  <span>{t.settingsTitle}</span>
                 </h3>
 
                 {/* Display current mode options */}
@@ -879,11 +1065,11 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                       <select
                         value={pageSize}
                         onChange={(e) => setPageSize(e.target.value as any)}
-                        className="w-full bg-[#100809] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 outline-none focus:border-red-500"
+                        className="w-full bg-[#201316] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 outline-none focus:border-red-500"
                       >
-                        <option value="fit">Fit to Image Size</option>
-                        <option value="a4">A4 (595 x 842 pt)</option>
-                        <option value="letter">US Letter (612 x 792 pt)</option>
+                        <option value="fit">{t.jpgFitOption}</option>
+                        <option value="a4">{t.jpgA4Option}</option>
+                        <option value="letter">{t.jpgLetterOption}</option>
                       </select>
                     </div>
 
@@ -897,7 +1083,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             className={`px-3 py-2 rounded-xl border text-xs font-bold text-center transition-all cursor-pointer
                               ${orientation === 'portrait'
                                 ? 'bg-red-950/20 border-red-500/40 text-red-400'
-                                : 'bg-[#100809]/40 border-white/5 text-slate-400 hover:text-white'}`}
+                                : 'bg-[#201316]/40 border-white/5 text-slate-400 hover:text-white'}`}
                           >
                             {t.portrait}
                           </button>
@@ -906,7 +1092,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             className={`px-3 py-2 rounded-xl border text-xs font-bold text-center transition-all cursor-pointer
                               ${orientation === 'landscape'
                                 ? 'bg-red-950/20 border-red-500/40 text-red-400'
-                                : 'bg-[#100809]/40 border-white/5 text-slate-400 hover:text-white'}`}
+                                : 'bg-[#201316]/40 border-white/5 text-slate-400 hover:text-white'}`}
                           >
                             {t.landscape}
                           </button>
@@ -920,11 +1106,11 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                       <select
                         value={margin}
                         onChange={(e) => setMargin(Number(e.target.value))}
-                        className="w-full bg-[#100809] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 outline-none focus:border-red-500"
+                        className="w-full bg-[#201316] border border-white/10 rounded-xl px-3 py-2.5 text-xs text-slate-200 outline-none focus:border-red-500"
                       >
-                        <option value={0}>No Margins (0px)</option>
-                        <option value={20}>Small (20px)</option>
-                        <option value={40}>Large (40px)</option>
+                        <option value={0}>{t.marginNoneOption}</option>
+                        <option value={20}>{t.marginSmallOption}</option>
+                        <option value={40}>{t.marginLargeOption}</option>
                       </select>
                     </div>
 
@@ -946,24 +1132,6 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                   </div>
                 )}
 
-                {activeMode === 'merge' && (
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                    Assemble your PDF files. Drag-and-drop or use the arrow buttons to rearrange files prior to combining them into a single PDF.
-                  </p>
-                )}
-
-                {activeMode === 'split' && (
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                    Split PDF. Choose whether you want to extract every single page to a ZIP file, or combine specified pages into a new PDF.
-                  </p>
-                )}
-
-                {activeMode === 'rotate' && (
-                  <p className="text-xs text-slate-400 leading-relaxed font-medium">
-                    Rotate pages of your PDF. Click individual pages to turn them 90 degrees clockwise, or apply global orientation rotations.
-                  </p>
-                )}
-
                 {/* Primary Action Button */}
                 <div className="pt-4 border-t border-white/5">
                   {status === 'processing' ? (
@@ -975,7 +1143,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                     <button
                       disabled={files.length === 0}
                       onClick={handleProcess}
-                      className="w-full py-4 bg-red-600 hover:bg-red-500 disabled:bg-[#140b0c] disabled:text-slate-600 disabled:border disabled:border-white/5 disabled:shadow-none text-black font-black text-sm rounded-2xl flex items-center justify-center space-x-2 transition-all active:scale-95 cursor-pointer shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:shadow-[0_0_35px_rgba(239,68,68,0.45)] select-none outline-none"
+                      className="w-full py-4 bg-red-600 hover:bg-red-500 disabled:bg-[#241a1c] disabled:text-slate-600 disabled:border disabled:border-white/5 disabled:shadow-none text-black font-black text-sm rounded-2xl flex items-center justify-center space-x-2 transition-all active:scale-95 cursor-pointer shadow-[0_0_30px_rgba(239,68,68,0.3)] hover:shadow-[0_0_35px_rgba(239,68,68,0.45)] select-none outline-none"
                     >
                       <Download className="w-5 h-5 stroke-[2.5]" />
                       <span>{t.downloadBtn}</span>
@@ -1000,7 +1168,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                 {/* Privacy disclaimer */}
                 <div className="flex items-center space-x-2 text-[10px] text-slate-500 font-bold border-t border-white/5 pt-4">
                   <Lock className="w-3.5 h-3.5" />
-                  <span>Processed locally in browser. No file uploads.</span>
+                  <span>{t.localDisclaimer}</span>
                 </div>
               </div>
             </div>
@@ -1092,7 +1260,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                   {keywords.map((kw: string, i: number) => (
                     <span 
                       key={i} 
-                      className="text-[10px] font-bold bg-[#140b0c] text-red-400 px-3 py-1.5 rounded-full border border-red-900/30 uppercase tracking-wider"
+                      className="text-[10px] font-bold bg-[#241a1c] text-red-400 px-3 py-1.5 rounded-full border border-red-900/30 uppercase tracking-wider"
                     >
                       {kw}
                     </span>
@@ -1106,24 +1274,6 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
       {/* Bloque AdSense Horizontal */}
       <AdBanner id="adsense-pdf-flow-bottom" />
       </main>
-
-      <Footer lang={lang} t={t} onOpenModal={setActiveModal} />
-
-      <LegalModal 
-        isOpen={activeModal !== null} 
-        onClose={() => setActiveModal(null)} 
-        title={
-          activeModal === 'privacy' ? t.privacyPolicy :
-          activeModal === 'terms' ? t.termsOfService :
-          t.cookiePolicy
-        }
-        content={
-          activeModal === 'privacy' ? t.privacyContent :
-          activeModal === 'terms' ? t.termsContent :
-          t.cookiesContent
-        }
-        t={t}
-      />
 
       {/* Floating Scroll to Top button */}
       <AnimatePresence>

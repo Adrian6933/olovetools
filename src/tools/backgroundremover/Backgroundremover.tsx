@@ -9,7 +9,6 @@ import {
   AlertCircle,
   Loader2,
   Eraser,
-  Wand2,
   MoveHorizontal,
   Eye,
   Lock,
@@ -19,7 +18,7 @@ import {
 } from 'lucide-react';
 
 import { Header } from './components/Header';
-import { RefineEditor } from './components/RefineEditor';
+import { EditorWorkspace } from './components/EditorWorkspace';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { ImageItem } from './types';
@@ -38,7 +37,6 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
   const [activeItem, setActiveItem] = useState<ImageItem | null>(null);
   const [comparedItem, setComparedItem] = useState<ImageItem | null>(null);
   const [sliderPos, setSliderPos] = useState<number>(50);
-  const [refineItem, setRefineItem] = useState<ImageItem | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   
   // Inference progress state
@@ -233,21 +231,27 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
     window.location.href = `/${newLang.toLowerCase()}/backgroundremover`;
   };
 
-  // Replace the AI result with the manually refined cutout
-  const applyRefined = (blob: Blob) => {
-    const target = refineItem;
-    if (!target) return;
-    const url = URL.createObjectURL(blob);
+  // Persist the editor's canvas back into the item (called debounced after each edit)
+  const commitEdit = (blob: Blob, url: string) => {
+    const id = activeItem?.id;
+    if (!id) return;
     setItems(prev =>
       prev.map(i => {
-        if (i.id !== target.id) return i;
-        if (i.processedUrl) URL.revokeObjectURL(i.processedUrl);
+        if (i.id !== id) return i;
+        if (i.processedUrl && i.processedUrl !== url) URL.revokeObjectURL(i.processedUrl);
         const updated = { ...i, processedUrl: url, processedSize: blob.size };
         setActiveItem(updated);
         return updated;
       })
     );
-    setRefineItem(null);
+  };
+
+  // Re-run the AI cutout from scratch on the active image
+  const rerunAI = () => {
+    const target = items.find(i => i.id === activeItem?.id);
+    if (!target) return;
+    setActiveItem({ ...target, status: 'loading_model' });
+    processImage(target);
   };
 
   return (
@@ -317,57 +321,51 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                   
                   {activeItem ? (
                     <div className="space-y-6">
-                      
-                      {/* Active File Rendering Canvas */}
-                      <div className="relative aspect-video rounded-2xl overflow-hidden checkered-bg border border-white/5 flex items-center justify-center">
-                        
-                        {activeItem.status === 'done' && activeItem.processedUrl ? (
+
+                      {/* Editor workspace (tools visible from the start) or processing state */}
+                      {activeItem.status === 'done' && activeItem.processedUrl ? (
+                        <EditorWorkspace item={activeItem} t={t} onCommit={commitEdit} onRerunAI={rerunAI} />
+                      ) : (
+                        <div className="relative aspect-video rounded-2xl overflow-hidden checkered-bg border border-white/5 flex items-center justify-center">
                           <img
-                            src={activeItem.processedUrl}
-                            alt="Cutout result"
-                            className="max-h-full max-w-full object-contain animate-fade-in"
-                          />
-                        ) : (
-                          <img 
-                            src={activeItem.originalUrl} 
-                            alt="Original preview" 
+                            src={activeItem.originalUrl}
+                            alt="Original preview"
                             className="max-h-full max-w-full object-contain opacity-40 blur-xs"
                           />
-                        )}
 
-                        {/* Processing Overlays */}
-                        {(activeItem.status === 'loading_model' || activeItem.status === 'processing') && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-xs space-y-4">
-                            <Loader2 className="w-12 h-12 text-fuchsia-400 animate-spin" />
-                            <div className="space-y-1 text-center">
-                              <p className="text-sm font-bold text-white uppercase tracking-wider">
-                                {activeItem.status === 'loading_model' ? t.statusDownloadingModel : t.statusProcessing}
-                              </p>
-                              {progress && (
-                                <div className="w-48 h-1.5 bg-white/10 rounded-full mx-auto overflow-hidden mt-2">
-                                  <div 
-                                    className="h-full bg-fuchsia-500 transition-all duration-300"
-                                    style={{ width: `${progress.percent}%` }}
-                                  ></div>
-                                </div>
-                              )}
-                              {progress && (
-                                <span className="text-xs text-fuchsia-400 font-bold mt-1 inline-block">
-                                  {progress.percent}%
-                                </span>
-                              )}
+                          {(activeItem.status === 'loading_model' || activeItem.status === 'processing') && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-xs space-y-4">
+                              <Loader2 className="w-12 h-12 text-fuchsia-400 animate-spin" />
+                              <div className="space-y-1 text-center">
+                                <p className="text-sm font-bold text-white uppercase tracking-wider">
+                                  {activeItem.status === 'loading_model' ? t.statusDownloadingModel : t.statusProcessing}
+                                </p>
+                                {progress && (
+                                  <div className="w-48 h-1.5 bg-white/10 rounded-full mx-auto overflow-hidden mt-2">
+                                    <div
+                                      className="h-full bg-fuchsia-500 transition-all duration-300"
+                                      style={{ width: `${progress.percent}%` }}
+                                    ></div>
+                                  </div>
+                                )}
+                                {progress && (
+                                  <span className="text-xs text-fuchsia-400 font-bold mt-1 inline-block">
+                                    {progress.percent}%
+                                  </span>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        )}
+                          )}
 
-                        {activeItem.status === 'error' && (
-                          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 space-y-4">
-                            <AlertCircle className="w-12 h-12 text-red-500" />
-                            <p className="text-sm font-bold text-red-400">{t.statusError}</p>
-                            <p className="text-xs text-slate-500 max-w-xs truncate">{activeItem.error}</p>
-                          </div>
-                        )}
-                      </div>
+                          {activeItem.status === 'error' && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 space-y-4">
+                              <AlertCircle className="w-12 h-12 text-red-500" />
+                              <p className="text-sm font-bold text-red-400">{t.statusError}</p>
+                              <p className="text-xs text-slate-500 max-w-xs truncate">{activeItem.error}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                       {/* Workspace Footer Actions */}
                       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/5 pt-4">
@@ -393,13 +391,6 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                                 <span>{t.compareBtn}</span>
                               </button>
 
-                              <button
-                                onClick={() => setRefineItem(activeItem)}
-                                className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-fuchsia-500/10 hover:bg-fuchsia-500/20 border border-fuchsia-500/30 text-fuchsia-300 font-bold text-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
-                              >
-                                <Wand2 className="w-4 h-4" />
-                                <span>{t.refineBtn || 'Refine'}</span>
-                              </button>
 
                               <button 
                                 onClick={() => downloadImage(activeItem)}
@@ -726,17 +717,6 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
         </button>
       )}
 
-      {/* Manual refinement editor: erase / restore brushes + magic wand */}
-      {refineItem && refineItem.processedUrl && (
-        <RefineEditor
-          originalUrl={refineItem.originalUrl}
-          processedUrl={refineItem.processedUrl}
-          name={refineItem.name}
-          t={t}
-          onClose={() => setRefineItem(null)}
-          onApply={applyRefined}
-        />
-      )}
     </div>
   );
 };

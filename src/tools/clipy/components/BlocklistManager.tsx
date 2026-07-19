@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Clip } from '../types';
-import { Trash2, Search, X, ShieldAlert, Plus } from 'lucide-react';
+import { Trash2, Search, X, ShieldAlert, Plus, Download, Upload } from 'lucide-react';
 
 interface BlocklistManagerProps {
   categoryId: string;
@@ -9,6 +9,8 @@ interface BlocklistManagerProps {
   onBlockStreamer: (id: string, name: string, image?: string) => void;
   onUnblockStreamer: (id: string) => void;
   onClearBlocklist: () => void;
+  onImportBlocklist: (newBlocklist: Record<string, { id: string; name: string; image?: string }[]>) => void;
+  showToast?: (message: string, type?: 'success' | 'info') => void;
   loadedClips: Clip[];
   t: (key: string) => string;
 }
@@ -20,10 +22,124 @@ const BlocklistManager: React.FC<BlocklistManagerProps> = ({
   onBlockStreamer,
   onUnblockStreamer,
   onClearBlocklist,
+  onImportBlocklist,
+  showToast,
   loadedClips,
   t
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleExport = () => {
+    try {
+      const dataStr = JSON.stringify(blockedStreamers, null, 2);
+      const blob = new Blob([dataStr], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const linkElement = document.createElement('a');
+      linkElement.setAttribute('href', url);
+      linkElement.setAttribute('download', 'clipy_blocked_streamers.txt');
+      linkElement.click();
+      
+      URL.revokeObjectURL(url);
+      
+      if (showToast) {
+        showToast(t('export_success') || 'Lista exportada con éxito');
+      }
+    } catch (e) {
+      console.error(e);
+      if (showToast) {
+        showToast(t('export_error') || 'Error al exportar la lista', 'info');
+      }
+    }
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileReader = new FileReader();
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      fileReader.readAsText(file, "UTF-8");
+      fileReader.onload = (event) => {
+        try {
+          const content = event.target?.result as string;
+          if (!content) return;
+
+          let parsedData: Record<string, { id: string; name: string; image?: string }[]> = {};
+          
+          if (content.trim().startsWith('{')) {
+            parsedData = JSON.parse(content);
+            
+            // Validar la estructura del JSON importado
+            let isValid = true;
+            for (const key in parsedData) {
+              if (!Array.isArray(parsedData[key])) {
+                isValid = false;
+                break;
+              }
+              for (const item of parsedData[key]) {
+                if (!item.id || !item.name) {
+                  isValid = false;
+                  break;
+                }
+              }
+            }
+
+            if (!isValid) {
+              if (showToast) showToast(t('import_invalid_format') || 'Formato de archivo no válido', 'info');
+              return;
+            }
+          } else {
+            // Si es TXT plano (uno por línea), asumimos formato "id,name" o solo "name" o "id"
+            // Lo importamos en la categoría actual
+            const lines = content.split('\n').map(l => l.trim()).filter(Boolean);
+            const importedStreamers: { id: string; name: string; image?: string }[] = [];
+            
+            for (const line of lines) {
+              const parts = line.split(/[,;]/);
+              if (parts.length >= 2) {
+                importedStreamers.push({
+                  id: parts[0].trim(),
+                  name: parts[1].trim(),
+                  image: parts[2]?.trim() || undefined
+                });
+              } else if (line) {
+                importedStreamers.push({
+                  id: line,
+                  name: line
+                });
+              }
+            }
+
+            if (importedStreamers.length === 0) {
+              if (showToast) showToast(t('import_empty') || 'No se encontraron streamers para importar', 'info');
+              return;
+            }
+
+            // Mezclar con la lista existente de la categoría actual
+            const currentList = blockedStreamers[categoryId] || [];
+            const mergedList = [...currentList];
+            
+            for (const streamer of importedStreamers) {
+              if (!mergedList.some(s => s.id === streamer.id)) {
+                mergedList.push(streamer);
+              }
+            }
+
+            parsedData = {
+              ...blockedStreamers,
+              [categoryId]: mergedList
+            };
+          }
+
+          onImportBlocklist(parsedData);
+          if (showToast) showToast(t('import_success') || 'Lista importada con éxito');
+        } catch (error) {
+          console.error(error);
+          if (showToast) showToast(t('import_error') || 'Error al importar el archivo', 'info');
+        }
+      };
+      e.target.value = '';
+    }
+  };
 
   const currentBlocked = useMemo(() => {
     return blockedStreamers[categoryId] || [];
@@ -62,20 +178,45 @@ const BlocklistManager: React.FC<BlocklistManagerProps> = ({
       
       {/* Panel izquierdo: Lista de ocultados actual */}
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <h3 className="font-black text-sm uppercase tracking-widest text-red-400 flex items-center gap-2">
             <ShieldAlert className="w-4 h-4" />
             <span>{t('blocked_in') || 'Streamers ocultos en'} {categoryName}</span>
           </h3>
-          {currentBlocked.length > 0 && (
+          <div className="flex items-center gap-3.5 flex-wrap">
             <button
-              onClick={onClearBlocklist}
-              className="text-xs text-red-500/60 hover:text-red-500 font-bold uppercase tracking-wider flex items-center gap-1 cursor-pointer transition-colors"
+              onClick={handleExport}
+              className="text-[11px] text-gray-400 hover:text-white font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors"
+              title={t('export_blocked') || 'Exportar ocultos'}
             >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>{t('clear_all') || 'Vaciar lista'}</span>
+              <Download className="w-3.5 h-3.5" />
+              <span>{t('export_blocked') || 'Exportar'}</span>
             </button>
-          )}
+            
+            <label
+              className="text-[11px] text-gray-400 hover:text-white font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors"
+              title={t('import_blocked') || 'Importar ocultos'}
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>{t('import_blocked') || 'Importar'}</span>
+              <input
+                type="file"
+                accept=".json,.txt"
+                onChange={handleImport}
+                className="hidden"
+              />
+            </label>
+
+            {currentBlocked.length > 0 && (
+              <button
+                onClick={onClearBlocklist}
+                className="text-[11px] text-red-500/60 hover:text-red-500 font-bold uppercase tracking-wider flex items-center gap-1.5 cursor-pointer transition-colors"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>{t('clear_all') || 'Vaciar lista'}</span>
+              </button>
+            )}
+          </div>
         </div>
 
         {currentBlocked.length === 0 ? (

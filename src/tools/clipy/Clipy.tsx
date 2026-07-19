@@ -928,6 +928,16 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                             <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
                             <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
                           </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openExternalDownload(clip.url);
+                            }}
+                            className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
+                            title={t('download') || 'Descargar'}
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
                           <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       ))}
@@ -1050,6 +1060,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                     onBlockStreamer={handleBlockStreamer}
                     onUnblockStreamer={handleUnblockStreamer}
                     onClearBlocklist={handleClearBlocklist}
+                    onImportBlocklist={(newBlocklist) => setBlockedStreamers(newBlocklist)}
+                    showToast={showToast}
                     loadedClips={state.clips}
                     t={t}
                   />

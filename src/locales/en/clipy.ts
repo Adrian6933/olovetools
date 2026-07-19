@@ -112,5 +112,13 @@ export default {
   "group_by_channel": "Group channels",
   "group_by_channel_desc": "Group clips by their broadcaster channel",
   "block_confirm_title": "Hide this channel?",
-  "block_confirm_desc": "Are you sure you want to hide clips from {name}? You can restore them anytime from the blocked list."
+  "block_confirm_desc": "Are you sure you want to hide clips from {name}? You can restore them anytime from the blocked list.",
+  "export_blocked": "Export",
+  "import_blocked": "Import",
+  "export_success": "List exported successfully",
+  "export_error": "Error exporting list",
+  "import_success": "List imported successfully",
+  "import_error": "Error importing file",
+  "import_invalid_format": "Invalid file format",
+  "download": "Download"
 };

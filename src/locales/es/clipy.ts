@@ -112,5 +112,13 @@ export default {
   "group_by_channel": "Agrupar canales",
   "group_by_channel_desc": "Agrupar los clips por su canal de origen",
   "block_confirm_title": "¿Ocultar este canal?",
-  "block_confirm_desc": "¿Seguro que quieres ocultar los clips de {name}? Podrás volver a mostrarlos desde el panel de ocultados."
+  "block_confirm_desc": "¿Seguro que quieres ocultar los clips de {name}? Podrás volver a mostrarlos desde el panel de ocultados.",
+  "export_blocked": "Exportar",
+  "import_blocked": "Importar",
+  "export_success": "Lista exportada con éxito",
+  "export_error": "Error al exportar la lista",
+  "import_success": "Lista importada con éxito",
+  "import_error": "Error al importar el archivo",
+  "import_invalid_format": "Formato de archivo no válido",
+  "download": "Descargar"
 };
