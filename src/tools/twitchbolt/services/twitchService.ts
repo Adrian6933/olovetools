@@ -111,16 +111,12 @@ export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, t
     if (signal?.aborted) throw new Error("AbortError");
 
     try {
+      // No HEAD pre-flight here: the GET response below already carries
+      // Content-Length (our /proxy forwards it), and a separate HEAD request
+      // used to make the serverless proxy fetch the entire clip a second
+      // time just to read its headers — doubling both latency and bandwidth
+      // per clip.
       let finalTotal = 0;
-      
-      // Try to get Content-Length first via HEAD request if possible
-      try {
-        const headRes = await fetch(makeUrl(url), { method: 'HEAD', signal });
-        const cl = headRes.headers.get('content-length');
-        if (cl) finalTotal = parseInt(cl, 10);
-      } catch (e) {
-        // Ignore HEAD errors, we will try to get it from GET
-      }
 
       const blob = await new Promise<Blob>((resolve, reject) => {
         const xhr = new XMLHttpRequest();

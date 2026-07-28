@@ -15,7 +15,7 @@ function toResponse({ status, headers, body, isBinary }: { status: number; heade
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
   try {
-    return toResponse(await handleProxy(url, request.headers.get('range')));
+    return toResponse(await handleProxy(url, request.headers.get('range'), request.method));
   } catch (e: any) {
     return toResponse(errorResponse(e));
   }

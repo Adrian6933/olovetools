@@ -1,7 +1,14 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff, Gauge, Loader2, ChevronDown } from 'lucide-react';
 import { Clip } from '../types';
+import { getClipVideoSource } from '../services/geminiService';
+
+// Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
+// así que velocidades altas (x3/x4) siguen siendo perfectamente reproducibles
+// en un <video> normal — el límite real es de gusto/comprensión, no técnico.
+const PLAYBACK_SPEEDS = [1, 1.5, 2, 3, 4];
 
 interface FloatingPlayerProps {
   clip: Clip;
@@ -11,13 +18,16 @@ interface FloatingPlayerProps {
   onDownloadExternal: (url: string) => void;
   onBlockStreamer?: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
+  /** Velocidad de reproducción elegida en el filtro; 1 = normal. */
+  playbackSpeed: number;
+  onPlaybackSpeedChange: (speed: number) => void;
 }
 
 type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const STORAGE_KEY = 'clipy_player_dims';
 
-const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t }) => {
+const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange }) => {
   const defaultSize = { width: 480, height: 270 };
   const getDefaultPosition = () => ({
     x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 520) : 100,
@@ -30,16 +40,48 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
   const [resizeDir, setResizeDir] = useState<ResizeDirection>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showSpeedMenu, setShowSpeedMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const speedMenuRef = useRef<HTMLDivElement>(null);
   
   const isCompact = size.width < 500;
-  
+
   const isMockClip = clip.id.startsWith('mock-');
   const isFileProtocol = typeof window !== 'undefined' && window.location.protocol === 'file:';
 
-  const startPos = useRef({ x: 0, y: 0 }); 
-  const startDims = useRef({ x: 0, y: 0, w: 0, h: 0 }); 
+  const startPos = useRef({ x: 0, y: 0 });
+  const startDims = useRef({ x: 0, y: 0, w: 0, h: 0 });
   const playerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Los clips se reproducen a la velocidad elegida en el filtro. El iframe de
+  // embed de Twitch es cross-origin (no hay forma de tocar su <video> interno
+  // desde aquí), así que en vez de usarlo resolvemos la URL real del vídeo
+  // (mismo truco que usa TwitchBolt para la descarga) y lo reproducimos en un
+  // <video> propio donde sí controlamos playbackRate. Si no se puede resolver
+  // (clip eliminado, endpoint bloqueado...), cae de vuelta al iframe de Twitch
+  // sin forzar velocidad — mejor eso que no reproducir nada.
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
+  const [videoResolveFailed, setVideoResolveFailed] = useState(false);
+
+  useEffect(() => {
+    setVideoSrc(null);
+    setVideoResolveFailed(false);
+    if (isMockClip) return;
+    let cancelled = false;
+    getClipVideoSource(clip.id).then(url => {
+      if (cancelled) return;
+      if (url) setVideoSrc(url);
+      else setVideoResolveFailed(true);
+    });
+    return () => { cancelled = true; };
+  }, [clip.id, isMockClip]);
+
+  // Si se cambia la velocidad en el filtro mientras ya hay un clip
+  // reproduciéndose, se aplica al momento en vez de esperar al siguiente clip.
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.playbackRate = playbackSpeed;
+  }, [playbackSpeed]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -269,10 +311,34 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showMenu]);
 
-  return (
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (speedMenuRef.current && !speedMenuRef.current.contains(e.target as Node)) {
+        setShowSpeedMenu(false);
+      }
+    };
+    if (showSpeedMenu) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showSpeedMenu]);
+
+  // Portal directo a <body>: #root tiene su propio z-index en el CSS de
+  // Clipy (crea un contexto de apilamiento), así que un z-index alto aquí
+  // dentro solo gana frente a OTRO contenido de #root — no frente a hermanos
+  // de #root a nivel de body, como el raíl de anuncios fijo (que sí tiene su
+  // propio z-index ahí). Sin el portal, el iframe del anuncio se interponía
+  // por delante y se comía los clics en los controles del reproductor
+  // (incluida la X de cerrar) cuando el raíl quedaba visible y solapado.
+  return createPortal(
     <div
       ref={playerRef}
       style={{
+        // top/left explícitos: sin ellos, "fixed" sin offsets cae a su
+        // posición "estática" en el flujo del documento — con el portal a
+        // <body> eso pasó a ser el final de toda la página (miles de px más
+        // abajo) en vez de la esquina del viewport de la que parte el
+        // transform.
+        top: 0,
+        left: 0,
         transform: `translate(${position.x}px, ${position.y}px)`,
         width: size.width,
         height: size.height,
@@ -300,6 +366,40 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
       >
         <div className="flex items-center gap-2 text-gray-300 flex-1 min-w-0 mr-4">
             <GripHorizontal className="w-4 h-4 text-gray-500 flex-shrink-0" />
+            {videoSrc && (
+                <div className="relative flex-shrink-0" ref={speedMenuRef}>
+                    <button
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onClick={() => setShowSpeedMenu(!showSpeedMenu)}
+                        title={t('playback_speed_desc')}
+                        className={`flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-black cursor-pointer transition-colors ${
+                            playbackSpeed !== 1
+                                ? 'bg-twitch-base/20 text-twitch-base hover:bg-twitch-base/30'
+                                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                        }`}
+                    >
+                        <Gauge className="w-3 h-3" />{playbackSpeed}x
+                        <ChevronDown className={`w-3 h-3 transition-transform ${showSpeedMenu ? 'rotate-180' : ''}`} />
+                    </button>
+                    {showSpeedMenu && (
+                        <div
+                            onMouseDown={(e) => e.stopPropagation()}
+                            className="absolute top-full left-0 mt-1 w-28 bg-[#18181b] border border-[#2b2b2b] rounded-lg shadow-2xl py-1 z-[110] animate-in fade-in zoom-in-95 duration-100"
+                        >
+                            {PLAYBACK_SPEEDS.map((speed) => (
+                                <button
+                                    key={speed}
+                                    onClick={() => { onPlaybackSpeedChange(speed); setShowSpeedMenu(false); }}
+                                    className="w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold text-gray-200 hover:bg-twitch-base hover:text-white transition-colors cursor-pointer"
+                                >
+                                    <span>{speed}x</span>
+                                    {playbackSpeed === speed && <Check className="w-3.5 h-3.5" />}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            )}
             <span className="text-sm font-bold truncate">
                 {isMockClip ? `[DEMO] ${clip.title}` : clip.title}
             </span>
@@ -473,9 +573,26 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                 <h3 className="text-white font-bold">{t('demo_mode')}</h3>
                 <p className="text-xs text-gray-400 mt-1 max-w-[250px]">{t('demo_desc')}</p>
             </div>
-        ) : (
+        ) : videoSrc ? (
+            // <video> propio (no el iframe de Twitch) es lo único que permite
+            // forzar playbackRate — un iframe cross-origin no da acceso a su
+            // <video> interno desde aquí.
+            <video
+                ref={videoRef}
+                key={videoSrc}
+                src={videoSrc}
+                autoPlay
+                controls
+                playsInline
+                className="w-full h-full bg-black"
+                onLoadedMetadata={(e) => { e.currentTarget.playbackRate = playbackSpeed; }}
+                onRateChange={(e) => {
+                    if (e.currentTarget.playbackRate !== playbackSpeed) e.currentTarget.playbackRate = playbackSpeed;
+                }}
+            />
+        ) : videoResolveFailed ? (
             <iframe
-            key={embedUrl} 
+            key={embedUrl}
             src={embedUrl}
             title={clip.title}
             width="100%"
@@ -488,9 +605,14 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
             sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox allow-presentation allow-storage-access-by-user-activation"
             className="w-full h-full border-none bg-black"
             ></iframe>
+        ) : (
+            <div className="w-full h-full flex items-center justify-center bg-black">
+                <Loader2 className="w-8 h-8 text-twitch-base animate-spin" />
+            </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

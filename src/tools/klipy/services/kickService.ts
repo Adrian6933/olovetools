@@ -62,15 +62,39 @@ function mapClip(c: any): KItem {
   };
 }
 
-/** Try to fetch clips for a category. Returns [] if blocked/empty. */
+/**
+ * Fetch ALL clips for a category/time window, not just the first page.
+ * Kick's unofficial clips endpoint paginates ~20 at a time via `nextCursor`
+ * (sorted by view count descending), so without following the cursor,
+ * low-view clips near the end of the ranking never show up. Follows
+ * nextCursor until it runs out (or a safety cap is hit) and returns
+ * everything collected so far even if a later page fails.
+ */
 export async function getClips(categoryId: string, time: string): Promise<KItem[]> {
-  try {
-    const data = await api({ action: 'clips', category_id: categoryId, time, sort: 'view' });
-    const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
-    return arr.map(mapClip).filter((c) => c.thumbnail);
-  } catch {
-    return [];
+  const all: KItem[] = [];
+  const seen = new Set<string>();
+  let cursor: string | undefined;
+  const MAX_PAGES = 25; // ~500 clips safety cap against runaway pagination
+  for (let page = 0; page < MAX_PAGES; page++) {
+    try {
+      const params: Record<string, string> = { action: 'clips', category_id: categoryId, time, sort: 'view' };
+      if (cursor) params.cursor = cursor;
+      const data = await api(params);
+      const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
+      for (const c of arr.map(mapClip)) {
+        if (c.thumbnail && !seen.has(c.id)) {
+          seen.add(c.id);
+          all.push(c);
+        }
+      }
+      const next = typeof data?.nextCursor === 'string' ? data.nextCursor : undefined;
+      if (!next || next === cursor || arr.length === 0) break;
+      cursor = next;
+    } catch {
+      break;
+    }
   }
+  return all;
 }
 
 /** Live channels currently streaming in a category (official API, reliable). */

@@ -1,7 +1,50 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { TimeFilter, SortType } from '../types';
-import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users } from 'lucide-react';
+import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward } from 'lucide-react';
+
+// Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
+// así que velocidades altas (x3/x4) siguen siendo perfectamente reproducibles
+// en un <video> normal — el límite real es de gusto/comprensión, no técnico.
+const PLAYBACK_SPEEDS = [1, 1.5, 2, 3, 4];
+
+// Twitch no expone país/región por clip — el idioma del stream (que Twitch sí
+// reporta en cada clip) es el dato más parecido disponible, así que los
+// filtros de "excluir"/"solo estos" van por ahí. Nombres nativos (autónimos)
+// para no depender de traducir 30 idiomas a cada locale de la app.
+const CLIP_LANGUAGES: { code: string; label: string }[] = [
+  { code: 'en', label: 'English' },
+  { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'it', label: 'Italiano' },
+  { code: 'pt', label: 'Português' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'ja', label: '日本語' },
+  { code: 'ko', label: '한국어' },
+  { code: 'zh', label: '中文' },
+  { code: 'ar', label: 'العربية' },
+  { code: 'tr', label: 'Türkçe' },
+  { code: 'pl', label: 'Polski' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'sv', label: 'Svenska' },
+  { code: 'no', label: 'Norsk' },
+  { code: 'da', label: 'Dansk' },
+  { code: 'fi', label: 'Suomi' },
+  { code: 'cs', label: 'Čeština' },
+  { code: 'sk', label: 'Slovenčina' },
+  { code: 'hu', label: 'Magyar' },
+  { code: 'ro', label: 'Română' },
+  { code: 'bg', label: 'Български' },
+  { code: 'uk', label: 'Українська' },
+  { code: 'el', label: 'Ελληνικά' },
+  { code: 'th', label: 'ไทย' },
+  { code: 'vi', label: 'Tiếng Việt' },
+  { code: 'id', label: 'Bahasa Indonesia' },
+  { code: 'hi', label: 'हिन्दी' },
+  { code: 'asl', label: 'ASL' },
+  { code: 'other', label: 'Other' },
+];
 
 interface FilterBarProps {
   currentTime: TimeFilter;
@@ -19,6 +62,14 @@ interface FilterBarProps {
   blockedCount?: number;
   groupByChannel?: boolean;
   onGroupByChannelChange?: (val: boolean) => void;
+  perfMode?: boolean;
+  onPerfModeChange?: (val: boolean) => void;
+  excludeLanguages?: string[];
+  onExcludeLanguagesChange?: (codes: string[]) => void;
+  onlyLanguages?: string[];
+  onOnlyLanguagesChange?: (codes: string[]) => void;
+  playbackSpeed?: number;
+  onPlaybackSpeedChange?: (speed: number) => void;
 }
 
 const toDatetimeLocalValue = (date: Date) => {
@@ -41,13 +92,27 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onToggleBlocklist,
   blockedCount = 0,
   groupByChannel = false,
-  onGroupByChannelChange
+  onGroupByChannelChange,
+  perfMode = false,
+  onPerfModeChange,
+  excludeLanguages = [],
+  onExcludeLanguagesChange,
+  onlyLanguages = [],
+  onOnlyLanguagesChange,
+  playbackSpeed = 2,
+  onPlaybackSpeedChange
 }) => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isAnchorOpen, setIsAnchorOpen] = useState(false);
+  const [isExcludeLangOpen, setIsExcludeLangOpen] = useState(false);
+  const [isOnlyLangOpen, setIsOnlyLangOpen] = useState(false);
+  const [isSpeedOpen, setIsSpeedOpen] = useState(false);
   const sortRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
   const anchorInputRef = useRef<HTMLInputElement>(null);
+  const excludeLangRef = useRef<HTMLDivElement>(null);
+  const onlyLangRef = useRef<HTMLDivElement>(null);
+  const speedRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -57,10 +122,22 @@ const FilterBar: React.FC<FilterBarProps> = ({
       if (anchorRef.current && !anchorRef.current.contains(event.target as Node)) {
         setIsAnchorOpen(false);
       }
+      if (excludeLangRef.current && !excludeLangRef.current.contains(event.target as Node)) {
+        setIsExcludeLangOpen(false);
+      }
+      if (onlyLangRef.current && !onlyLangRef.current.contains(event.target as Node)) {
+        setIsOnlyLangOpen(false);
+      }
+      if (speedRef.current && !speedRef.current.contains(event.target as Node)) {
+        setIsSpeedOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const toggleLanguageIn = (list: string[], code: string) =>
+    list.includes(code) ? list.filter(c => c !== code) : [...list, code];
 
   useEffect(() => {
     if (!isAnchorOpen) return;
@@ -78,28 +155,112 @@ const FilterBar: React.FC<FilterBarProps> = ({
   }, [isAnchorOpen]);
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 lg:items-center justify-between bg-twitch-surface p-4 rounded-xl border border-twitch-surfaceAlt mb-8 shadow-sm">
-      
-      <div className="flex items-center gap-3 w-full lg:w-auto">
-        <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
-            <Clock className="w-5 h-5 text-twitch-base" />
+    <div className="bg-twitch-surface rounded-xl border border-twitch-surfaceAlt mb-8 shadow-sm">
+
+      {/* Primary row: time range + sort/actions */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4">
+
+        <div className="flex items-center gap-3 w-full lg:w-auto">
+          <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
+              <Clock className="w-5 h-5 text-twitch-base" />
+          </div>
+          <div className="grid grid-cols-2 lg:flex lg:flex-row gap-1 bg-twitch-black p-1 rounded-lg flex-grow lg:flex-none">
+            {Object.values(TimeFilter).map((filter) => (
+              <button
+                key={filter}
+                onClick={() => onTimeChange(filter)}
+                disabled={disabled}
+                className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none cursor-pointer hover:scale-105 active:scale-95 ${
+                  currentTime === filter
+                    ? 'bg-twitch-base text-white shadow-md'
+                    : 'text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+                }`}
+              >
+                {t(`time_${filter}`)}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="grid grid-cols-2 lg:flex lg:flex-row gap-1 bg-twitch-black p-1 rounded-lg flex-grow lg:flex-none">
-          {Object.values(TimeFilter).map((filter) => (
+
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+
+          {!disabled && (
+              <button
+                  onClick={onLoadAll}
+                  disabled={isLoading}
+                  className="flex items-center justify-center gap-2 w-full sm:flex-1 lg:flex-none lg:w-auto px-4 py-2.5 bg-gradient-to-r from-twitch-base/10 to-twitch-base/5 hover:from-twitch-base/20 hover:to-twitch-base/10 border border-twitch-base/30 hover:border-twitch-base text-twitch-base hover:text-white rounded-lg transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:scale-105 active:scale-95 shadow-lg hover:shadow-twitch-base/20"
+                  title={t('load_all')}
+              >
+                  {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                      <div className="relative h-4 w-4">
+                          <ChevronsDown className="w-4 h-4 absolute inset-0 group-hover:animate-bounce" style={{ animationDuration: '1.5s' }} />
+                      </div>
+                  )}
+                  <span className="text-sm font-bold whitespace-nowrap lg:inline">{t('load_all')}</span>
+              </button>
+          )}
+
+          <div className="w-px h-8 bg-twitch-surfaceAlt mx-1 hidden lg:block"></div>
+
+          <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] hidden lg:inline-block">{t('sort_by')}</span>
+
+          <div className="relative w-full sm:flex-1 lg:flex-none lg:w-48" ref={sortRef}>
+              <button
+                  onClick={() => !disabled && setIsSortOpen(!isSortOpen)}
+                  disabled={disabled}
+                  className={`w-full flex items-center justify-between bg-twitch-black text-gray-200 text-sm rounded-lg border px-3 py-2.5 transition-all cursor-pointer hover:border-twitch-base group/sort ${
+                      isSortOpen ? 'border-twitch-base ring-1 ring-twitch-base' : 'border-twitch-surfaceAlt hover:bg-twitch-surfaceAlt/50'
+                  } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                  <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-twitch-base" />
+                      <span>{t(`sort_${currentSort}`)}</span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {isSortOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-full bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                      {Object.values(SortType).map((sort) => (
+                          <button
+                              key={sort}
+                              onClick={() => {
+                                  onSortChange(sort);
+                                  setIsSortOpen(false);
+                              }}
+                              className="w-full text-left px-3 py-2.5 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                          >
+                              <span>{t(`sort_${sort}`)}</span>
+                              {currentSort === sort && <Check className="w-4 h-4 text-twitch-base group-hover:text-white" />}
+                          </button>
+                      ))}
+                  </div>
+              )}
+          </div>
+
+          {onToggleBlocklist && (
             <button
-              key={filter}
-              onClick={() => onTimeChange(filter)}
-              disabled={disabled}
-              className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none cursor-pointer hover:scale-105 active:scale-95 ${
-                currentTime === filter
-                  ? 'bg-twitch-base text-white shadow-md'
-                  : 'text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+              onClick={onToggleBlocklist}
+              className={`w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 text-sm rounded-lg border transition-all cursor-pointer hover:scale-105 active:scale-95 whitespace-nowrap ${
+                isBlocklistOpen
+                  ? 'bg-red-600/20 border-red-500 text-red-400 hover:bg-red-600/30'
+                  : 'bg-twitch-black border-twitch-surfaceAlt hover:border-red-500/40 text-gray-200 hover:text-red-400'
               }`}
             >
-              {t(`time_${filter}`)}
+              <ShieldAlert className="w-4 h-4" />
+              <span>{t('blocklist') || 'Ocultados'} {blockedCount > 0 ? `(${blockedCount})` : ''}</span>
             </button>
-          ))}
+          )}
         </div>
+      </div>
+
+      {/* Secondary row: refinement filters */}
+      <div className="flex flex-wrap items-center gap-2 px-4 py-3 border-t border-twitch-surfaceAlt/60 bg-twitch-black/20 rounded-b-xl">
+        <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mr-1 hidden sm:inline-block">
+          {t('filters_label') || 'Filters'}
+        </span>
 
         {onAnchorChange && currentTime !== TimeFilter.ALL && (
           <div className="relative" ref={anchorRef}>
@@ -166,88 +327,153 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <span className="hidden sm:inline">{t('group_by_channel') || 'Agrupar canales'}</span>
           </button>
         )}
-      </div>
 
-      <div className="h-px w-full bg-twitch-surfaceAlt opacity-50 lg:hidden"></div>
-
-      <div className="flex flex-col lg:flex-row items-center gap-4 w-full lg:w-auto">
-        <div className="w-px h-8 bg-twitch-surfaceAlt mx-2 hidden lg:block opacity-30"></div>
-        
-
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
-        
-        {!disabled && (
-            <button
-                onClick={onLoadAll}
-                disabled={isLoading}
-                className="flex items-center justify-center gap-2 w-full sm:flex-1 lg:flex-none lg:w-auto px-4 py-2.5 bg-gradient-to-r from-twitch-base/10 to-twitch-base/5 hover:from-twitch-base/20 hover:to-twitch-base/10 border border-twitch-base/30 hover:border-twitch-base text-twitch-base hover:text-white rounded-lg transition-all duration-300 group disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer hover:scale-105 active:scale-95 shadow-lg hover:shadow-twitch-base/20"
-                title={t('load_all')}
-            >
-                {isLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                    <div className="relative h-4 w-4">
-                        <ChevronsDown className="w-4 h-4 absolute inset-0 group-hover:animate-bounce" style={{ animationDuration: '1.5s' }} />
-                    </div>
-                )}
-                <span className="text-sm font-bold whitespace-nowrap lg:inline">{t('load_all')}</span>
-            </button>
+        {onPerfModeChange && (
+          <button
+            onClick={() => onPerfModeChange(!perfMode)}
+            disabled={disabled}
+            title={t('perf_mode_desc')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
+              perfMode
+                ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+            } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <Gauge className="w-4 h-4 flex-shrink-0" />
+            <span className="hidden sm:inline">{t('perf_mode')}</span>
+          </button>
         )}
 
-        <div className="w-px h-8 bg-twitch-surfaceAlt mx-1 hidden lg:block"></div>
-        
-        <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] hidden lg:inline-block">{t('sort_by')}</span>
-        
-        <div className="relative w-full sm:flex-1 lg:flex-none lg:w-48" ref={sortRef}>
+        {onPlaybackSpeedChange && (
+          <div className="relative" ref={speedRef}>
             <button
-                onClick={() => !disabled && setIsSortOpen(!isSortOpen)}
-                disabled={disabled}
-                className={`w-full flex items-center justify-between bg-twitch-black text-gray-200 text-sm rounded-lg border px-3 py-2.5 transition-all cursor-pointer hover:border-twitch-base group/sort ${
-                    isSortOpen ? 'border-twitch-base ring-1 ring-twitch-base' : 'border-twitch-surfaceAlt hover:bg-twitch-surfaceAlt/50'
-                } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+              onClick={() => !disabled && setIsSpeedOpen(!isSpeedOpen)}
+              disabled={disabled}
+              title={t('playback_speed_desc')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
+                playbackSpeed !== 1
+                  ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                  : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-                <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-twitch-base" />
-                    <span>{t(`sort_${currentSort}`)}</span>
-                </div>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
+              <FastForward className="w-4 h-4 flex-shrink-0" />
+              <span>{playbackSpeed}x</span>
+              <span className="hidden sm:inline">{t('playback_speed')}</span>
             </button>
 
-            {isSortOpen && (
-                <div className="absolute top-full right-0 mt-2 w-full bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
-                    {Object.values(SortType).map((sort) => (
-                        <button
-                            key={sort}
-                            onClick={() => {
-                                onSortChange(sort);
-                                setIsSortOpen(false);
-                            }}
-                            className="w-full text-left px-3 py-2.5 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
-                        >
-                            <span>{t(`sort_${sort}`)}</span>
-                            {currentSort === sort && <Check className="w-4 h-4 text-twitch-base group-hover:text-white" />}
-                        </button>
-                    ))}
-                </div>
+            {isSpeedOpen && (
+              <div className="absolute top-full left-0 mt-2 w-40 bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                {PLAYBACK_SPEEDS.map((speed) => {
+                  const active = playbackSpeed === speed;
+                  return (
+                    <button
+                      key={speed}
+                      onClick={() => { onPlaybackSpeedChange(speed); setIsSpeedOpen(false); }}
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                    >
+                      <span>{speed}x{speed === 1 ? ` (${t('playback_speed_normal')})` : ''}</span>
+                      {active && <Check className="w-4 h-4 text-twitch-base group-hover:text-white flex-shrink-0" />}
+                    </button>
+                  );
+                })}
+              </div>
             )}
-        </div>
+          </div>
+        )}
 
-        {onToggleBlocklist && (
-          <button
-            onClick={onToggleBlocklist}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 px-3.5 py-2 text-sm rounded-lg border transition-all cursor-pointer hover:scale-105 active:scale-95 whitespace-nowrap ${
-              isBlocklistOpen
-                ? 'bg-red-600/20 border-red-500 text-red-400 hover:bg-red-600/30'
-                : 'bg-twitch-black border-twitch-surfaceAlt hover:border-red-500/40 text-gray-200 hover:text-red-400'
-            }`}
-          >
-            <ShieldAlert className="w-4 h-4" />
-            <span>{t('blocklist') || 'Ocultados'} {blockedCount > 0 ? `(${blockedCount})` : ''}</span>
-          </button>
+        {onOnlyLanguagesChange && (
+          <div className="relative" ref={onlyLangRef}>
+            <button
+              onClick={() => !disabled && setIsOnlyLangOpen(!isOnlyLangOpen)}
+              disabled={disabled}
+              title={t('only_languages_desc')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
+                onlyLanguages.length > 0
+                  ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                  : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Languages className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline">{t('only_languages')}{onlyLanguages.length > 0 ? ` (${onlyLanguages.length})` : ''}</span>
+            </button>
+
+            {isOnlyLangOpen && (
+              <div className="absolute top-full left-0 mt-2 w-56 bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                  {CLIP_LANGUAGES.map(({ code, label }) => {
+                    const active = onlyLanguages.includes(code);
+                    return (
+                      <button
+                        key={code}
+                        onClick={() => onOnlyLanguagesChange(toggleLanguageIn(onlyLanguages, code))}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                      >
+                        <span>{label}</span>
+                        {active && <Check className="w-4 h-4 text-twitch-base group-hover:text-white flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                {onlyLanguages.length > 0 && (
+                  <button
+                    onClick={() => onOnlyLanguagesChange([])}
+                    className="w-full text-center px-3 py-2 text-xs font-bold text-gray-400 hover:text-white hover:bg-twitch-black transition-colors cursor-pointer border-t border-twitch-black"
+                  >
+                    {t('clear_selection')}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {onExcludeLanguagesChange && (
+          <div className="relative" ref={excludeLangRef}>
+            <button
+              onClick={() => !disabled && setIsExcludeLangOpen(!isExcludeLangOpen)}
+              disabled={disabled}
+              title={t('exclude_languages_desc')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
+                excludeLanguages.length > 0
+                  ? 'bg-red-600 border-red-600 text-white shadow-md'
+                  : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+              } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            >
+              <Ban className="w-4 h-4 flex-shrink-0" />
+              <span className="hidden sm:inline">{t('exclude_languages')}{excludeLanguages.length > 0 ? ` (${excludeLanguages.length})` : ''}</span>
+            </button>
+
+            {isExcludeLangOpen && (
+              <div className="absolute top-full left-0 mt-2 w-56 bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+                <div className="max-h-64 overflow-y-auto custom-scrollbar">
+                  {CLIP_LANGUAGES.map(({ code, label }) => {
+                    const active = excludeLanguages.includes(code);
+                    return (
+                      <button
+                        key={code}
+                        onClick={() => onExcludeLanguagesChange(toggleLanguageIn(excludeLanguages, code))}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-red-600 hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                      >
+                        <span>{label}</span>
+                        {active && <Check className="w-4 h-4 text-red-500 group-hover:text-white flex-shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+                {excludeLanguages.length > 0 && (
+                  <button
+                    onClick={() => onExcludeLanguagesChange([])}
+                    className="w-full text-center px-3 py-2 text-xs font-bold text-gray-400 hover:text-white hover:bg-twitch-black transition-colors cursor-pointer border-t border-twitch-black"
+                  >
+                    {t('clear_selection')}
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
-  </div>
 );
 };
 

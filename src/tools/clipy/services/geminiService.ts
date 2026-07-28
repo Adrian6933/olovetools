@@ -61,8 +61,11 @@ const getBoxArtUrl = (url: string) => {
 
 const getThumbnailUrl = (url: string) => {
     if (!url) return 'https://placehold.co/1280x720/202020/white?text=No+Preview';
-    // Balanced HD quality (1280x720) for performance
-    return url.replace(/%?{width}/g, '1280').replace(/%?{height}/g, '720');
+    // Las tarjetas del grid renderizan a ~276-380px de ancho real, así que pedir
+    // 1280x720 a Twitch por cada clip es 4-5x más píxeles (y bytes) de los que
+    // se llegan a pintar. 640x360 sigue viéndose nítido incluso en pantallas
+    // retina a ese tamaño de tarjeta.
+    return url.replace(/%?{width}/g, '640').replace(/%?{height}/g, '360');
 };
 
 export const searchTwitchCategories = async (query: string, cursor?: string | null): Promise<{ categories: Category[], cursor: string | null }> => {
@@ -141,13 +144,88 @@ export const getClipById = async (clipId: string): Promise<Clip | null> => {
             url: clip.url,
             created_at: new Date(clip.created_at).toLocaleDateString(),
             created_at_iso: clip.created_at,
-            duration: Math.round(clip.duration) + 's'
+            duration: Math.round(clip.duration) + 's',
+            language: clip.language || ''
         };
     } catch (error) {
         return null;
     }
 };
 
+// Unauthenticated public GQL endpoint (same one TwitchBolt uses to resolve a
+// clip's real MP4 for download) — needed because the Helix API used above
+// never exposes a playable video URL, only a thumbnail template. This is the
+// only way to get a direct <video> source instead of Twitch's iframe embed,
+// which is what lets us force 2x playback: the embed iframe is cross-origin,
+// so there's no way to reach its internal <video> element or set its
+// playbackRate from the parent page.
+const CLIP_SOURCE_CLIENT_IDS = [
+    "ue6666qo983sx6so1c0vnaz41db287",
+    "kd1unb4r3yd4g17k2488dbw3v89usf",
+    "kimne78kx3ncx6brgo4mv6wki5h1ko",
+];
+const GQL_ENDPOINT = "https://gql.twitch.tv/gql";
+
+export const getClipVideoSource = async (slug: string): Promise<string | null> => {
+    const query = `query GetClip($slug: ID!) { clip(slug: $slug) { playbackAccessToken(params: { platform: "web", playerBackend: "mediaplayer", playerType: "site" }) { signature value } videoQualities { quality sourceURL } } }`;
+
+    for (const clientId of CLIP_SOURCE_CLIENT_IDS) {
+        try {
+            const res = await fetch(GQL_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Client-ID': clientId, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, variables: { slug } }),
+            });
+            if (!res.ok) continue;
+            const json = await res.json();
+            const clip = json?.data?.clip;
+            const qualities = clip?.videoQualities;
+            if (!clip || !Array.isArray(qualities) || qualities.length === 0) continue;
+
+            const best = [...qualities].sort((a: any, b: any) => (parseInt(b.quality, 10) || 0) - (parseInt(a.quality, 10) || 0))[0];
+            if (!best?.sourceURL) continue;
+
+            const sig = clip.playbackAccessToken?.signature;
+            const token = clip.playbackAccessToken?.value;
+            if (!sig || !token) return best.sourceURL;
+            const sep = best.sourceURL.includes('?') ? '&' : '?';
+            return `${best.sourceURL}${sep}sig=${sig}&token=${encodeURIComponent(token)}`;
+        } catch {
+            // Try the next Client-ID
+        }
+    }
+    return null;
+};
+
+const mapClip = (clip: any): Clip => ({
+    id: clip.id,
+    title: clip.title,
+    broadcaster_name: clip.broadcaster_name,
+    broadcaster_id: clip.broadcaster_id,
+    view_count: clip.view_count,
+    thumbnail_url: getThumbnailUrl(clip.thumbnail_url),
+    url: clip.url,
+    created_at: new Date(clip.created_at).toLocaleDateString(),
+    created_at_iso: clip.created_at,
+    duration: Math.round(clip.duration) + 's',
+    language: clip.language || ''
+});
+
+const getDateRangeMs = (timeFilter: TimeFilter): number => {
+    switch (timeFilter) {
+        case TimeFilter.WEEK: return 7 * 24 * 60 * 60 * 1000;
+        case TimeFilter.MONTH: return 30 * 24 * 60 * 60 * 1000;
+        case TimeFilter.DAY:
+        default: return 24 * 60 * 60 * 1000;
+    }
+};
+
+// NOTE: does NOT swallow errors into { clips: [], cursor: null } — a transient
+// failure (network blip, rate limit, expired token) must not look identical
+// to "Twitch says there are no more clips," or infinite-scroll/"Load All"
+// permanently stop short of the full list (cutting off the low-view tail)
+// with no visible error. Callers are responsible for catching and, on
+// failure, leaving the previous cursor in place so pagination can resume.
 export const searchTwitchClips = async (
   categoryId: string,
   categoryName: string,
@@ -155,54 +233,108 @@ export const searchTwitchClips = async (
   cursor?: string | null,
   anchorISO?: string
 ): Promise<{ clips: Clip[], cursor: string | null }> => {
-    try {
-        const headers = await getHeaders();
-        const now = anchorISO ? new Date(anchorISO) : new Date();
-        let startDateStr = '';
-        const endDateStr = now.toISOString();
+    const headers = await getHeaders();
+    const now = anchorISO ? new Date(anchorISO) : new Date();
+    const endDateStr = now.toISOString();
+    const startDateStr = new Date(now.getTime() - getDateRangeMs(timeFilter)).toISOString();
 
-        switch (timeFilter) {
-            case TimeFilter.DAY:
-                startDateStr = new Date(now.getTime() - (24 * 60 * 60 * 1000)).toISOString();
-                break;
-            case TimeFilter.WEEK:
-                startDateStr = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000)).toISOString();
-                break;
-            case TimeFilter.MONTH:
-                startDateStr = new Date(now.getTime() - (30 * 24 * 60 * 60 * 1000)).toISOString();
-                break;
-        }
+    let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
+    if (startDateStr) url += `&started_at=${startDateStr}&ended_at=${endDateStr}`;
+    if (cursor) url += `&after=${cursor}`;
 
-        let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
-        if (startDateStr) url += `&started_at=${startDateStr}&ended_at=${endDateStr}`;
-        if (cursor) url += `&after=${cursor}`;
+    const response = await fetch(url, { headers });
+    if (!response.ok) throw new Error(`Twitch Clip API Error: ${response.status}`);
 
-        const response = await fetch(url, { headers });
-        if (!response.ok) throw new Error("Twitch Clip API Error");
-        
-        const data = await response.json();
-        let clipsData = data.data || [];
-        const nextCursor = data.pagination?.cursor || null;
+    const data = await response.json();
+    let clipsData = data.data || [];
+    const nextCursor = data.pagination?.cursor || null;
 
-        clipsData.sort((a: any, b: any) => b.view_count - a.view_count);
+    clipsData.sort((a: any, b: any) => b.view_count - a.view_count);
 
-        const mappedClips: Clip[] = clipsData.map((clip: any) => ({
-            id: clip.id,
-            title: clip.title,
-            broadcaster_name: clip.broadcaster_name,
-            broadcaster_id: clip.broadcaster_id,
-            view_count: clip.view_count,
-            thumbnail_url: getThumbnailUrl(clip.thumbnail_url),
-            url: clip.url,
-            created_at: new Date(clip.created_at).toLocaleDateString(),
-            created_at_iso: clip.created_at,
-            duration: Math.round(clip.duration) + 's'
-        }));
+    return { clips: clipsData.map(mapClip), cursor: nextCursor };
+};
 
-        return { clips: mappedClips, cursor: nextCursor };
-    } catch (error) {
-        return { clips: [], cursor: null };
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Twitch's Clips API appears to cap how deep a single (game_id, time-range)
+// query can be paginated: a broad 24h window on a hot category (Just Chatting)
+// stopped dead at ~1080 clips with a "no more results" cursor, while a single
+// 1-HOUR slice of that same category/window alone returned 869 clips on its
+// own — including hundreds sitting at exactly 1 view. The low-view long tail
+// isn't missing from Twitch's data, it's just unreachable through one big
+// query. Slicing the requested window into narrower chunks and paginating
+// each one independently is what actually reaches it.
+export interface TwitchCrawlPosition {
+  sliceIndex: number;
+  cursor: string | null;
+}
+
+export const searchAllTwitchClips = async (
+  categoryId: string,
+  timeFilter: TimeFilter,
+  anchorISO: string | undefined,
+  onClips: (clips: Clip[]) => void,
+  // Comprobado antes de cada petición (no aborta una ya en marcha): así el
+  // llamador puede parar el barrido en cuanto quiera — p.ej. la carga
+  // automática en segundo plano del modo rendimiento, que debe detenerse en
+  // el sitio si se desactiva el modo a media carga en vez de terminar igual.
+  shouldContinue?: () => boolean,
+  // Punto por el que se quedó la última vez (para retomar el barrido justo
+  // ahí en vez de volver a empezar desde la franja horaria más antigua).
+  resumeFrom?: TwitchCrawlPosition,
+  // Límite de páginas de Twitch (no de franjas) para ESTA llamada concreta —
+  // el scroll incremental pasa 1 para traer solo un puñado de clips por vez;
+  // "Load all" no lo pasa y usa el límite de seguridad completo.
+  maxPagesThisCall?: number,
+): Promise<{ completed: boolean; resumeFrom?: TwitchCrawlPosition }> => {
+    const now = anchorISO ? new Date(anchorISO) : new Date();
+    const endMs = now.getTime();
+    const rangeMs = getDateRangeMs(timeFilter);
+    // 1h slices for a 24h window, 1-day slices for week/month (finer slicing
+    // for week/month would mean hundreds of requests — impractical for a
+    // single button click).
+    const sliceMs = timeFilter === TimeFilter.DAY ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
+    const startMs = endMs - rangeMs;
+
+    const slices: [number, number][] = [];
+    for (let sliceStart = startMs; sliceStart < endMs; sliceStart += sliceMs) {
+        slices.push([sliceStart, Math.min(sliceStart + sliceMs, endMs)]);
     }
+
+    const MAX_TOTAL_PAGES = 400; // safety ceiling across every slice combined
+    const pageLimit = Math.min(maxPagesThisCall ?? MAX_TOTAL_PAGES, MAX_TOTAL_PAGES);
+    let totalPages = 0;
+    const startSliceIndex = resumeFrom?.sliceIndex ?? 0;
+
+    for (let sliceIndex = startSliceIndex; sliceIndex < slices.length; sliceIndex++) {
+        if (shouldContinue && !shouldContinue()) return { completed: false, resumeFrom: { sliceIndex, cursor: null } };
+        if (totalPages >= pageLimit) return { completed: false, resumeFrom: { sliceIndex, cursor: null } };
+        const [sliceStartMs, sliceEndMs] = slices[sliceIndex];
+        const startISO = new Date(sliceStartMs).toISOString();
+        const endISO = new Date(sliceEndMs).toISOString();
+        let cursor: string | null = sliceIndex === startSliceIndex ? (resumeFrom?.cursor ?? null) : null;
+
+        do {
+            if (shouldContinue && !shouldContinue()) return { completed: false, resumeFrom: { sliceIndex, cursor } };
+            if (totalPages >= pageLimit) return { completed: false, resumeFrom: { sliceIndex, cursor } };
+            const headers = await getHeaders();
+            let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100&started_at=${startISO}&ended_at=${endISO}`;
+            if (cursor) url += `&after=${cursor}`;
+
+            const response = await fetch(url, { headers });
+            if (!response.ok) throw new Error(`Twitch Clip API Error: ${response.status}`);
+
+            const data = await response.json();
+            const clipsData = data.data || [];
+            cursor = data.pagination?.cursor || null;
+            totalPages++;
+            if (clipsData.length > 0) onClips(clipsData.map(mapClip));
+            if (cursor && totalPages < pageLimit) await sleep(150);
+        } while (cursor && totalPages < pageLimit);
+
+        if (cursor) return { completed: false, resumeFrom: { sliceIndex, cursor } };
+    }
+    return { completed: true };
 };
 
 export const getTwitchUserAvatars = async (userIds: string[]): Promise<Record<string, string>> => {

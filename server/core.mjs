@@ -114,7 +114,13 @@ async function kickFetch(url, headers) {
 }
 
 // ---- /proxy — CORS relay for the video CDN hosts above ----
-export async function handleProxy(url, rangeHeader) {
+// Streams the upstream body straight through instead of buffering it in
+// memory first: buffering added a full extra round-trip of latency (wait for
+// the whole clip to land on the serverless function, then re-send it) and
+// collapsed the client's download progress into one or two big jumps instead
+// of many small ones, since no bytes reached the browser until the entire
+// file had already been fetched server-side.
+export async function handleProxy(url, rangeHeader, method = 'GET') {
   const target = url.searchParams.get('url');
   if (!target) return text(400, 'Missing "url" query parameter');
 
@@ -129,9 +135,13 @@ export async function handleProxy(url, rangeHeader) {
   const forwardHeaders = { 'User-Agent': BROWSER_UA };
   if (rangeHeader) forwardHeaders['Range'] = rangeHeader;
 
+  const isHead = method === 'HEAD';
+
   let upstream;
   try {
-    upstream = await fetch(targetUrl.toString(), { headers: forwardHeaders });
+    // Forward HEAD as a real upstream HEAD — otherwise we'd fetch the whole
+    // clip body just to answer a headers-only request.
+    upstream = await fetch(targetUrl.toString(), { method: isHead ? 'HEAD' : 'GET', headers: forwardHeaders });
   } catch (e) {
     return text(502, `Upstream fetch failed: ${e.message}`);
   }
@@ -141,7 +151,7 @@ export async function handleProxy(url, rangeHeader) {
     const value = upstream.headers.get(key);
     if (value) headers[key] = value;
   }
-  return { status: upstream.status, headers, body: await upstream.arrayBuffer(), isBinary: true };
+  return { status: upstream.status, headers, body: isHead ? null : upstream.body, isBinary: true };
 }
 
 // ---- /api/kick — categories, livestreams, clips, single clip ----

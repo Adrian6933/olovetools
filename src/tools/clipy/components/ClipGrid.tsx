@@ -1,7 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Clip } from '../types';
-import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download, EyeOff } from 'lucide-react';
+import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download, EyeOff, CheckCircle2 } from 'lucide-react';
 import ProgressiveImage from './ProgressiveImage';
+
+const GRID_CLASSNAME = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10';
+
+export interface ClipGridHandle {
+  scrollToClip: (clipId: string) => void;
+}
 
 interface ClipGridProps {
   clips: Clip[];
@@ -15,6 +21,10 @@ interface ClipGridProps {
   onDownloadExternal: (url: string) => void;
   onBlockStreamer: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
+  /** false en modo rendimiento: con solo 50 tarjetas montadas, el final de la
+   * lista se alcanza casi al hacer scroll una vez, así que ahí la carga en
+   * segundo plano la dispara Clipy directamente en vez de esto. */
+  autoLoadOnScroll?: boolean;
 }
 
 const ClipCard: React.FC<{
@@ -45,6 +55,7 @@ const ClipCard: React.FC<{
     <div
       id={`clip-card-${clip.id}`}
       className="group flex flex-col gap-4 cursor-pointer"
+      style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 420px' } as React.CSSProperties}
       onClick={() => onClick(clip)}
     >
       <div
@@ -101,11 +112,11 @@ const ClipCard: React.FC<{
           </button>
         </div>
 
-        <div className="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] font-black text-white opacity-80 z-20">
+        <div className="absolute top-4 left-4 bg-black/70 px-3 py-1.5 rounded-xl text-[10px] font-black text-white opacity-80 z-20">
           {clip.duration}
         </div>
 
-        <div className="absolute bottom-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl text-[10px] font-black text-white flex items-center gap-2 opacity-80 z-20">
+        <div className="absolute bottom-4 right-4 bg-black/70 px-3 py-1.5 rounded-xl text-[10px] font-black text-white flex items-center gap-2 opacity-80 z-20">
           <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
           {formattedViews}
         </div>
@@ -142,12 +153,25 @@ const ClipCard: React.FC<{
   );
 };
 
-const ClipGrid: React.FC<ClipGridProps> = ({
-  clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, onBlockStreamer, t
-}) => {
+const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
+  clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, onBlockStreamer, t, autoLoadOnScroll = true
+}, ref) => {
   const observerTarget = useRef<HTMLDivElement>(null);
 
+  useImperativeHandle(ref, () => ({
+    scrollToClip: (clipId: string) => {
+      const element = document.getElementById(`clip-card-${clipId}`);
+      if (!element) return;
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.classList.add('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50', 'transition-all', 'duration-500');
+      setTimeout(() => {
+        element.classList.remove('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50');
+      }, 1500);
+    },
+  }), []);
+
   useEffect(() => {
+    if (!autoLoadOnScroll) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoading) {
@@ -158,11 +182,11 @@ const ClipGrid: React.FC<ClipGridProps> = ({
     );
     if (observerTarget.current) observer.observe(observerTarget.current);
     return () => { if (observerTarget.current) observer.unobserve(observerTarget.current); };
-  }, [hasMore, isLoading, onLoadMore]);
+  }, [hasMore, isLoading, onLoadMore, autoLoadOnScroll]);
 
   if (isLoading && clips.length === 0) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+      <div className={GRID_CLASSNAME}>
         {[...Array(8)].map((_, i) => (
           <div key={i} className="flex flex-col gap-4">
             <div className="aspect-video bg-[#1a1a24] animate-pulse rounded-[2rem]"></div>
@@ -178,7 +202,7 @@ const ClipGrid: React.FC<ClipGridProps> = ({
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+      <div className={GRID_CLASSNAME}>
         {clips.map((clip) => (
           <ClipCard
             key={clip.id} clip={clip} onClick={onClipClick} isSaved={savedClipIds.has(clip.id)}
@@ -199,9 +223,14 @@ const ClipGrid: React.FC<ClipGridProps> = ({
           </div>
         )}
         {isLoading && clips.length > 0 && <div className="flex items-center gap-4 text-twitch-base font-black bg-[#1a1a24] px-12 py-6 rounded-[2rem] shadow-2xl"><Loader2 className="w-6 h-6 animate-spin" /> {t('loading_results')}</div>}
+        {!isLoading && !hasMore && clips.length > 0 && (
+          <div className="flex items-center gap-3 text-gray-500 font-bold text-sm px-8 py-4">
+            <CheckCircle2 className="w-5 h-5 text-twitch-base/60" /> {t('all_clips_loaded')}
+          </div>
+        )}
       </div>
     </>
   );
-};
+});
 
 export default ClipGrid;

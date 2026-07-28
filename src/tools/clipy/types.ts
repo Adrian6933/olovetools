@@ -31,6 +31,11 @@ export interface Clip {
   created_at_iso?: string;
   duration: string;
   broadcaster_image?: string;
+  // Idioma del stream en el momento del clip, tal como lo reporta Twitch
+  // (p.ej. "en", "es", "ja"). Twitch no expone país/región por clip — este es
+  // el campo más cercano disponible, y es lo que usan los filtros de
+  // exclusión/inclusión por idioma.
+  language?: string;
 }
 
 export interface SavedCollection {

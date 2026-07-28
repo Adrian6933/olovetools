@@ -50,8 +50,10 @@ export type AdSlotName = keyof typeof AD_SLOTS;
  * sin importar el hueco disponible. AdRail.tsx ya mide en runtime el hueco
  * real entre el contenido (#root) y el borde del viewport antes de mostrar
  * cada raíl (las herramientas NO comparten un mismo ancho de contenido:
- * algunas usan max-w-7xl/1280px, otras como Clipy llegan a max-w-[2200px]),
- * así que esta lista queda para excepciones manuales puntuales, no para
- * compensar el ancho de contenido.
+ * algunas usan max-w-7xl/1280px, Clipy llega a max-w-[1800px]...), así que
+ * esta lista queda para excepciones manuales puntuales, no para compensar
+ * el ancho de contenido — eso ya lo resuelve la medición en runtime (p.ej.
+ * Clipy no necesita estar aquí: con su main a 1800px de ancho, el hueco solo
+ * pasa el umbral en monitores ultra anchos, y ahí sí tiene sentido mostrarlos).
  */
-export const RAIL_BLOCKLIST: string[] = ['clipy'];
+export const RAIL_BLOCKLIST: string[] = [];

@@ -16,16 +16,13 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({ src, alt, className
   const [startHighRes, setStartHighRes] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // Ultra-Low Resolution calculation for visible pixels
+  // Ultra-Low Resolution calculation for visible pixels. Coincide con
+  // cualquier "WxH" en la URL en vez de un tamaño fijo, para no romperse
+  // si la resolución base que pide geminiService cambia más adelante.
   let lowResUrl: string | null = null;
   if (src) {
-    if (isCategory) {
-      // Box Art: 600x800 -> 90x120 (Medium pixelation)
-      lowResUrl = src.replace('600x800', '90x120');
-    } else {
-      // Thumbnail: 1280x720 -> 120x68 (Medium pixelation)
-      lowResUrl = src.replace('1280x720', '120x68');
-    }
+    const targetSize = isCategory ? '90x120' : '120x68';
+    lowResUrl = src.replace(/\d+x\d+/, targetSize);
     if (lowResUrl === src) lowResUrl = null;
   }
 
@@ -52,6 +49,8 @@ const ProgressiveImage: React.FC<ProgressiveImageProps> = ({ src, alt, className
           src={lowResUrl}
           alt=""
           aria-hidden="true"
+          loading="lazy"
+          decoding="async"
           // @ts-ignore
           fetchPriority="high"
           className={`
