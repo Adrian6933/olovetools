@@ -61,11 +61,15 @@ const getBoxArtUrl = (url: string) => {
 
 const getThumbnailUrl = (url: string) => {
     if (!url) return 'https://placehold.co/1280x720/202020/white?text=No+Preview';
-    // Las tarjetas del grid renderizan a ~276-380px de ancho real, así que pedir
-    // 1280x720 a Twitch por cada clip es 4-5x más píxeles (y bytes) de los que
-    // se llegan a pintar. 640x360 sigue viéndose nítido incluso en pantallas
-    // retina a ese tamaño de tarjeta.
-    return url.replace(/%?{width}/g, '640').replace(/%?{height}/g, '360');
+    // Helix devuelve la miniatura ya a un tamaño fijo (480x272 en el formato
+    // nuevo, 260x147 en clips antiguos), NO como plantilla {width}x{height},
+    // así que el reemplazo de abajo no se aplicaba nunca y las portadas se
+    // servían a 480px de ancho dentro de tarjetas de 300-410px: en cualquier
+    // pantalla retina se estaban estirando al doble y por eso se veían
+    // borrosas. El CDN de Twitch redimensiona a lo que le pidas, así que
+    // fijamos 640x360 como 1x; ProgressiveImage añade el srcset con los 2x.
+    const templated = url.replace(/%?\{width\}/g, '640').replace(/%?\{height\}/g, '360');
+    return templated.replace(/-\d+x\d+(\.\w+)(\?.*)?$/, '-640x360$1$2');
 };
 
 export const searchTwitchCategories = async (query: string, cursor?: string | null): Promise<{ categories: Category[], cursor: string | null }> => {

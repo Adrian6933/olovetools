@@ -90,7 +90,10 @@ export const AdSlot: React.FC<AdSlotProps> = ({
     return () => observer.disconnect();
   }, [lazyLoad, inView]);
 
-  const isActive = ADS_ENABLED && !!client && !!slot && inView;
+  // `!import.meta.env.DEV`: AdSense no sirve anuncios en localhost, así que en
+  // desarrollo el <ins> real se queda vacío y el hueco parece no existir. En DEV
+  // se pinta siempre el recuadro de prueba; en producción manda la config.
+  const isActive = ADS_ENABLED && !!client && !!slot && inView && !import.meta.env.DEV;
 
   useEffect(() => {
     if (!isActive || !insRef.current || pushedRef.current) return;

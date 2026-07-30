@@ -26,13 +26,42 @@ interface FloatingPlayerProps {
 type ResizeDirection = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw' | null;
 
 const STORAGE_KEY = 'clipy_player_dims';
+const VOLUME_KEY = 'clipy_player_volume';
+
+/** Volumen y silencio guardados, para que cada clip no arranque al 100%. */
+const readStoredVolume = (): { volume: number; muted: boolean } | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(VOLUME_KEY);
+    if (!raw) return null;
+    const { volume, muted } = JSON.parse(raw);
+    // Un valor corrupto (NaN, fuera de rango, string) dejaría el <video> mudo
+    // sin que se vea por qué, así que se descarta y se usa el del navegador.
+    if (typeof volume !== 'number' || !Number.isFinite(volume) || volume < 0 || volume > 1) return null;
+    return { volume, muted: muted === true };
+  } catch {
+    return null;
+  }
+};
 
 const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange }) => {
-  const defaultSize = { width: 480, height: 270 };
-  const getDefaultPosition = () => ({
-    x: typeof window !== 'undefined' ? Math.max(20, window.innerWidth - 520) : 100,
-    y: typeof window !== 'undefined' ? Math.max(80, window.innerHeight - 380) : 100
-  });
+  // 480px fijos no caben en un móvil: el reproductor arrancaba saliéndose por
+  // la derecha (x se topaba en 20 y el ancho seguía siendo 480 en una pantalla
+  // de 375). Se ajusta al viewport manteniendo el 16:9.
+  const getDefaultSize = () => {
+    if (typeof window === 'undefined') return { width: 480, height: 270 };
+    const width = Math.max(240, Math.min(480, window.innerWidth - 32));
+    return { width, height: Math.round((width * 9) / 16) };
+  };
+  const defaultSize = getDefaultSize();
+  const getDefaultPosition = () => {
+    if (typeof window === 'undefined') return { x: 100, y: 100 };
+    const { width, height } = getDefaultSize();
+    return {
+      x: Math.max(16, window.innerWidth - width - 20),
+      y: Math.max(80, window.innerHeight - height - 110),
+    };
+  };
 
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [size, setSize] = useState(defaultSize);
@@ -53,6 +82,31 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
   const startDims = useRef({ x: 0, y: 0, w: 0, h: 0 });
   const playerRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  // Arrastrar el control de volumen dispara volumechange decenas de veces, así
+  // que se escribe en localStorage una sola vez al soltar.
+  const volumeSaveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const applyStoredVolume = (video: HTMLVideoElement) => {
+    const stored = readStoredVolume();
+    if (!stored) return;
+    video.volume = stored.volume;
+    video.muted = stored.muted;
+  };
+
+  const rememberVolume = (video: HTMLVideoElement) => {
+    const { volume, muted } = video;
+    clearTimeout(volumeSaveTimer.current);
+    volumeSaveTimer.current = setTimeout(() => {
+      try {
+        localStorage.setItem(VOLUME_KEY, JSON.stringify({ volume, muted }));
+      } catch {
+        // Cuota llena o almacenamiento bloqueado: el volumen de esta sesión
+        // sigue funcionando, solo no se recuerda para la próxima.
+      }
+    }, 250);
+  };
+
+  useEffect(() => () => clearTimeout(volumeSaveTimer.current), []);
 
   // Los clips se reproducen a la velocidad elegida en el filtro. El iframe de
   // embed de Twitch es cross-origin (no hay forma de tocar su <video> interno
@@ -89,10 +143,15 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
       if (saved) {
         try {
           const { x, y, width, height } = JSON.parse(saved);
-          const validX = Math.min(Math.max(0, x), window.innerWidth - 100);
-          const validY = Math.min(Math.max(0, y), window.innerHeight - 100);
+          // El tamaño guardado puede venir de una pantalla mucho más ancha
+          // (mismo localStorage en móvil y escritorio), así que se recorta al
+          // viewport actual antes de colocarlo.
+          const validWidth = Math.max(240, Math.min(width || defaultSize.width, window.innerWidth - 24));
+          const validHeight = Math.max(160, Math.min(height || defaultSize.height, window.innerHeight - 140));
+          const validX = Math.min(Math.max(0, x), Math.max(0, window.innerWidth - validWidth));
+          const validY = Math.min(Math.max(0, y), Math.max(0, window.innerHeight - 100));
           setPosition({ x: validX, y: validY });
-          setSize({ width: width || defaultSize.width, height: height || defaultSize.height });
+          setSize({ width: validWidth, height: validHeight });
         } catch (e) {
           setPosition(getDefaultPosition());
         }
@@ -585,7 +644,14 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                 controls
                 playsInline
                 className="w-full h-full bg-black"
-                onLoadedMetadata={(e) => { e.currentTarget.playbackRate = playbackSpeed; }}
+                // El volumen se aplica ya en onLoadedMetadata (antes de que
+                // empiece a sonar) y no en onPlay, para que no se cuele el
+                // primer instante al 100%.
+                onLoadedMetadata={(e) => {
+                    applyStoredVolume(e.currentTarget);
+                    e.currentTarget.playbackRate = playbackSpeed;
+                }}
+                onVolumeChange={(e) => rememberVolume(e.currentTarget)}
                 onRateChange={(e) => {
                     if (e.currentTarget.playbackRate !== playbackSpeed) e.currentTarget.playbackRate = playbackSpeed;
                 }}

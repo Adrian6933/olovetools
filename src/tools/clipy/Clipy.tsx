@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from './types';
-import { searchTwitchCategories, searchTwitchClips, getClipById, getTwitchUserAvatars } from './services/geminiService';
+import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition } from './services/geminiService';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
 import SearchBar from './components/SearchBar';
 import FilterBar from './components/FilterBar';
-import ClipGrid from './components/ClipGrid';
+import ClipGrid, { type ClipGridHandle } from './components/ClipGrid';
 import CategoryGrid from './components/CategoryGrid';
 import FloatingPlayer from './components/FloatingPlayer';
 import LegalModal from './components/LegalModal';
 import BlocklistManager from './components/BlocklistManager';
-import { Clapperboard, Archive, ChevronRight, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download } from 'lucide-react';
+import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
@@ -19,7 +19,12 @@ const COLLECTIONS_KEY = 'clipy_saved_collections';
 const ANCHOR_TIME_KEY = 'clipy_anchor_time';
 const BLOCKED_STREAMERS_KEY = 'clipy_blocked_streamers';
 const SORT_TYPE_KEY = 'clipy_sort_type';
+const PERF_MODE_KEY = 'clipy_perf_mode';
+const EXCLUDE_LANGUAGES_KEY = 'clipy_exclude_languages';
+const ONLY_LANGUAGES_KEY = 'clipy_only_languages';
+const PLAYBACK_SPEED_KEY = 'clipy_playback_speed';
 const MAX_COLLECTIONS = 50;
+const RENDER_PAGE_SIZE = 50;
 const POPULAR_TAGS = [
   'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
   'Minecraft', 'Rust', 'Fortnite', 'Roblox', 'Call of Duty', 'Apex Legends',
@@ -36,7 +41,11 @@ interface ClipyProps {
 }
 
 export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
-  const t = createTranslator(dictionary);
+  // Memoizado a propósito: `t` viaja como prop hasta cada ClipCard, y ClipCard
+  // está envuelto en React.memo. Si `t` cambiara de identidad en cada render,
+  // la memoización no serviría de nada y se repintarían las 50-500 tarjetas
+  // cada vez que cambia cualquier cosa del padre (toast, spinner, el crawl...).
+  const t = useMemo(() => createTranslator(dictionary), [dictionary]);
   const prefersReduced = useReducedMotion();
 
   const [state, setState] = useState<SearchState>({
@@ -59,6 +68,37 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const [isBlocklistOpen, setIsBlocklistOpen] = useState(false);
   const [streamerToBlock, setStreamerToBlock] = useState<{ id: string; name: string; image?: string } | null>(null);
   const [groupByChannel, setGroupByChannel] = useState(false);
+  // Modo rendimiento: renderiza los clips en páginas de 50 en vez de todos a
+  // la vez, para que las tarjetas (imágenes + animaciones hover) en categorías
+  // masivas no dejen la pestaña pesada en PCs modestos. No afecta a cuántos
+  // clips se han DESCARGADO/cargado en memoria, solo a cuántos se pintan.
+  const [perfMode, setPerfMode] = useState(false);
+  // Reflejado en cada render para que el crawl en curso (una función async ya
+  // arrancada) pueda comprobar el valor MÁS RECIENTE de perfMode entre
+  // peticiones, no el que tenía capturado por closure cuando arrancó.
+  const perfModeRef = useRef(perfMode);
+  useEffect(() => { perfModeRef.current = perfMode; }, [perfMode]);
+  // Velocidad de reproducción del FloatingPlayer; preferencia general del
+  // usuario (no por categoría), 2x por defecto.
+  const [playbackSpeed, setPlaybackSpeed] = useState(2);
+  const [renderPage, setRenderPage] = useState(0);
+  // Evita que "Load all" repita el crawl completo (cientos de peticiones) si
+  // ya se cargó todo para la categoría/filtro actual: la segunda pulsación
+  // solo debe llevarte al final de la lista.
+  const [allClipsLoaded, setAllClipsLoaded] = useState(false);
+  // Mientras el crawl de "Load all" está en curso, state.clips cambia de
+  // referencia muchas veces por segundo según van llegando franjas horarias.
+  // Si en cada una de esas veces reordenamos toda la lista por vistas, lo que
+  // ya se estaba viendo (p.ej. la página 1) cambia de contenido bajo los pies
+  // de quien esté mirando. Con esto congelamos el orden (solo se van
+  // añadiendo clips al final) hasta que el crawl termina, y ahí sí se aplica
+  // el orden por vistas de una sola vez.
+  const [isDeepCrawling, setIsDeepCrawling] = useState(false);
+  // Filtros por idioma del clip (Twitch no da país/región, el idioma del
+  // stream es lo más parecido disponible). Por categoría, igual que los
+  // streamers ocultos: lo que eliges en Rust no debe aplicar en otra categoría.
+  const [excludeLanguages, setExcludeLanguages] = useState<Record<string, string[]>>({});
+  const [onlyLanguages, setOnlyLanguages] = useState<Record<string, string[]>>({});
   const [sessionActive, setSessionActive] = useState(false);
   const [deletedClipsStack, setDeletedClipsStack] = useState<Clip[]>([]);
   const [collections, setCollections] = useState<SavedCollection[]>([]);
@@ -66,8 +106,24 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
   const [showSavedList, setShowSavedList] = useState(false);
+  /** Clip cuyo selector de listas está abierto, y el nombre en el campo de "lista nueva". */
+  const [listPickerClip, setListPickerClip] = useState<Clip | null>(null);
+  const [newListName, setNewListName] = useState('');
+  /** Panel de listas (distinto del historial) y qué lista está desplegada dentro. */
+  const [showListsPanel, setShowListsPanel] = useState(false);
+  const [expandedListId, setExpandedListId] = useState<string | null>(null);
+  const [creatingList, setCreatingList] = useState(false);
   const [triggerShake, setTriggerShake] = useState(false);
   const savedListRef = useRef<HTMLDivElement>(null);
+  // Marca el final de la cuadrícula de clips (justo antes de los controles de
+  // paginación), para que "Load all" baje hasta el último clip cargado en vez
+  // de hasta el final real de la página (que incluye footer, SEO, etc.).
+  const clipsEndRef = useRef<HTMLDivElement>(null);
+  const clipGridRef = useRef<ClipGridHandle>(null);
+  // Dónde se quedó el crawl por franjas horarias (searchAllTwitchClips) la
+  // última vez que se pidió "un paso más" — para que la siguiente llamada
+  // retome justo ahí en vez de volver a la franja más antigua cada vez.
+  const deepCrawlResumeRef = useRef<TwitchCrawlPosition | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -155,6 +211,28 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       if (savedSort && (savedSort === SortType.VIEWS || savedSort === SortType.TRENDING)) {
         setState(prev => ({ ...prev, sortType: savedSort as SortType }));
       }
+      setPerfMode(localStorage.getItem(PERF_MODE_KEY) === '1');
+      const savedSpeed = parseFloat(localStorage.getItem(PLAYBACK_SPEED_KEY) || '');
+      if (!isNaN(savedSpeed) && savedSpeed > 0) setPlaybackSpeed(savedSpeed);
+      const savedExclude = localStorage.getItem(EXCLUDE_LANGUAGES_KEY);
+      if (savedExclude) {
+        const parsed = JSON.parse(savedExclude);
+        if (Array.isArray(parsed)) {
+          // Migración desde el formato antiguo (lista global, no por categoría): se descarta,
+          // ya que aplicarla a todas las categorías por igual sería el bug que se acaba de arreglar.
+        } else if (parsed && typeof parsed === 'object') {
+          setExcludeLanguages(parsed);
+        }
+      }
+      const savedOnly = localStorage.getItem(ONLY_LANGUAGES_KEY);
+      if (savedOnly) {
+        const parsed = JSON.parse(savedOnly);
+        if (Array.isArray(parsed)) {
+          // Migración desde el formato antiguo (lista global, no por categoría): se descarta.
+        } else if (parsed && typeof parsed === 'object') {
+          setOnlyLanguages(parsed);
+        }
+      }
     } catch (e) {
       console.error(e);
     }
@@ -163,6 +241,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   useEffect(() => {
     localStorage.setItem(BLOCKED_STREAMERS_KEY, JSON.stringify(blockedStreamers));
   }, [blockedStreamers]);
+
+  useEffect(() => {
+    localStorage.setItem(EXCLUDE_LANGUAGES_KEY, JSON.stringify(excludeLanguages));
+  }, [excludeLanguages]);
+
+  useEffect(() => {
+    localStorage.setItem(ONLY_LANGUAGES_KEY, JSON.stringify(onlyLanguages));
+  }, [onlyLanguages]);
 
   useEffect(() => {
     localStorage.setItem(COLLECTIONS_KEY, JSON.stringify(collections));
@@ -207,6 +293,38 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     setCollections(prev => [newCollection, ...prev]);
     showToast(t('collection_saved'));
   };
+
+  /**
+   * Crea una lista VACÍA con el nombre que escriba el usuario. Distinto de
+   * handleSaveCollection, que congela la lista de trabajo actual con la fecha
+   * como nombre: esto es un destino al que ir echando clips uno a uno.
+   */
+  const handleCreateList = useCallback((rawName: string): string | null => {
+    const name = rawName.trim();
+    if (!name) return null;
+    const id = crypto.randomUUID();
+    let created = false;
+    setCollections(prev => {
+      if (prev.length >= MAX_COLLECTIONS) return prev;
+      created = true;
+      return [{ id, name, createdAt: new Date().toISOString(), clips: [] }, ...prev];
+    });
+    if (!created) {
+      showToast(t('collections_limit'), 'info');
+      return null;
+    }
+    showToast(t('list_created'));
+    return id;
+  }, [t]);
+
+  /** Mete o saca un clip de una lista con nombre, según ya esté o no. */
+  const handleToggleClipInList = useCallback((clip: Clip, collectionId: string) => {
+    setCollections(prev => prev.map(c => {
+      if (c.id !== collectionId) return c;
+      const has = c.clips.some(x => x.id === clip.id);
+      return { ...c, clips: has ? c.clips.filter(x => x.id !== clip.id) : [...c.clips, clip] };
+    }));
+  }, []);
 
   const handleLoadCollection = (collectionId: string) => {
     const collection = collections.find(c => c.id === collectionId);
@@ -321,7 +439,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     URL.revokeObjectURL(url);
   };
 
-  const openExternalDownload = async (content: string) => {
+  const openExternalDownload = useCallback(async (content: string) => {
     try {
       await navigator.clipboard.writeText(content);
     } catch (err) {
@@ -337,7 +455,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       targetUrl.searchParams.set('clips', content);
     }
     window.open(targetUrl.toString(), '_blank');
-  };
+  }, [lang]);
 
   const handleExternalZip = async () => {
     if (savedClips.length === 0) return;
@@ -353,15 +471,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   };
 
   const handleScrollToClip = (clipId: string) => {
-    const element = document.getElementById(`clip-card-${clipId}`);
-    if (element) {
-      setShowSavedList(false);
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      element.classList.add('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50', 'transition-all', 'duration-500');
-      setTimeout(() => {
-        element.classList.remove('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50');
-      }, 1500);
-    }
+    setShowSavedList(false);
+    clipGridRef.current?.scrollToClip(clipId);
   };
 
   const handleContactClick = (e: React.MouseEvent) => {
@@ -404,29 +515,41 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     prevMode.current = state.mode;
   }, [state.mode, state.activeCategory]);
 
-  // Background Avatar Loader: Carga las fotos de perfil en segundo plano sin bloquear la UI
+  // Background Avatar Loader: Carga las fotos de perfil en segundo plano sin bloquear la UI.
+  // Se salta por completo mientras isDeepCrawling (igual que el orden de
+  // visibleClips): los clips que van llegando durante el barrido de "Load
+  // all" aún no son visibles (están en páginas por delante de la actual), así
+  // que no hace falta pedir su avatar todavía — y si lo hiciéramos, serían
+  // decenas de llamadas a getTwitchUserAvatars solapadas entre sí. En cuanto
+  // el crawl termina, este efecto se dispara una sola vez con todo lo
+  // acumulado. El debounce de 400ms cubre el resto de casos (carga inicial,
+  // "Load more" normal).
   useEffect(() => {
-    if (state.mode !== 'clips' || state.clips.length === 0) return;
+    if (state.mode !== 'clips' || state.clips.length === 0 || isDeepCrawling) return;
 
-    const clipsToEnrich = state.clips.filter(c => !c.broadcaster_image && !c.id.startsWith('mock-'));
-    if (clipsToEnrich.length > 0) {
-      const ids = Array.from(new Set(clipsToEnrich.map(c => c.broadcaster_id)));
-      getTwitchUserAvatars(ids).then(avatars => {
-        if (Object.keys(avatars).length === 0) return;
-        
-        setState(prev => {
-          // Solo actualizamos si seguimos en el mismo set de clips
-          const updatedClips = prev.clips.map(clip => {
-            if (avatars[clip.broadcaster_id]) {
-              return { ...clip, broadcaster_image: avatars[clip.broadcaster_id] };
-            }
-            return clip;
+    const timeoutId = setTimeout(() => {
+      const clipsToEnrich = state.clips.filter(c => !c.broadcaster_image && !c.id.startsWith('mock-'));
+      if (clipsToEnrich.length > 0) {
+        const ids = Array.from(new Set(clipsToEnrich.map(c => c.broadcaster_id)));
+        getTwitchUserAvatars(ids).then(avatars => {
+          if (Object.keys(avatars).length === 0) return;
+
+          setState(prev => {
+            // Solo actualizamos si seguimos en el mismo set de clips
+            const updatedClips = prev.clips.map(clip => {
+              if (avatars[clip.broadcaster_id]) {
+                return { ...clip, broadcaster_image: avatars[clip.broadcaster_id] };
+              }
+              return clip;
+            });
+            return { ...prev, clips: updatedClips };
           });
-          return { ...prev, clips: updatedClips };
-        });
-      }).catch(e => console.error("Avatar enrichment failed", e));
-    }
-  }, [state.clips, state.mode]);
+        }).catch(e => console.error("Avatar enrichment failed", e));
+      }
+    }, 400);
+
+    return () => clearTimeout(timeoutId);
+  }, [state.clips, state.mode, isDeepCrawling]);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -510,15 +633,18 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
   const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter) => {
     // Cambiamos el modo inmediatamente para que el usuario entre a la sección y vea los skeletons
-    setState(prev => ({ 
-      ...prev, 
+    setState(prev => ({
+      ...prev,
       mode: 'clips',
-      isLoading: true, 
-      error: null, 
-      clips: [], 
+      isLoading: true,
+      error: null,
+      clips: [],
       paginationCursor: null,
-      activeCategory: category 
+      activeCategory: category
     }));
+    setRenderPage(0);
+    setAllClipsLoaded(false);
+    deepCrawlResumeRef.current = null;
 
     if (typeof window !== 'undefined') {
       window.history.pushState({ view: 'clips' }, '');
@@ -579,49 +705,142 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     }
   }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime]);
 
-  const loadAllClips = useCallback(async () => {
-    if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
+  // Solo baja la página al final del scroll — NO cambia de página en modo
+  // rendimiento. Saltar de página de golpe (a la vez que el contenido de esa
+  // página cambiaba) se sentía como un bug: mejor quedarse donde estás y ver
+  // el final de lo ya cargado; para ver la cola (vistas más bajas) usan
+  // "Siguiente" con normalidad.
+  const jumpToLoadedEnd = useCallback(() => {
+    // Pequeño delay: el último render (con todas las tarjetas ya añadidas)
+    // todavía no ha pintado cuando se llama a esto, así que hacer scroll en
+    // el mismo tick apunta a una posición vieja y se queda corto o se
+    // cancela a medio camino. Al marcador tras la cuadrícula, no al final de
+    // toda la página (que sigue con footer, SEO, etc.).
+    setTimeout(() => {
+      clipsEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 100);
+  }, []);
+
+  const loadAllClips = useCallback(async (opts?: { silent?: boolean; cancelIfPerfModeOff?: boolean }) => {
+    if (state.isLoading || !state.activeCategory) return;
+    const silent = opts?.silent === true;
+    // Solo la carga automática (en segundo plano, ligada a que el modo
+    // rendimiento siga activo) se para a medio camino si se desactiva; un
+    // "Load all" pulsado a mano siempre termina, esté o no el modo activado.
+    const shouldContinue = opts?.cancelIfPerfModeOff ? () => perfModeRef.current : undefined;
+
+    // Ya se hizo el crawl completo para esta categoría/filtro: no repetirlo
+    // (serían cientos de peticiones de nuevo solo para no encontrar nada
+    // nuevo), solo llevar a la persona al final de lo que ya está cargado.
+    if (allClipsLoaded) {
+      if (!silent) jumpToLoadedEnd();
+      return;
+    }
+
     setState(prev => ({ ...prev, isLoading: true }));
+    setIsDeepCrawling(true);
+
+    // Twitch's single-query cursor silently stops around ~1000 clips even
+    // when far more exist for the selected window — it looks identical to
+    // "that's really all of them," which is what was hiding the long tail of
+    // 1-view clips. searchAllTwitchClips works around it by querying narrower
+    // time slices independently, so it doesn't rely on state.paginationCursor
+    // at all; it always does a full crawl of the whole window.
+    const seen = new Set(state.clips.map(c => c.id));
+    let allLoadedClips: Clip[] = [...state.clips];
+
     try {
-      let currentCursor = state.paginationCursor;
-      let pageCount = 0;
-      const MAX_PAGES = 8;
-      let allLoadedClips: Clip[] = [...state.clips];
-
-      while (currentCursor && pageCount < MAX_PAGES) {
-        const { clips: newClips, cursor: nextCursor } = await searchTwitchClips(
-          state.activeCategory!.id,
-          state.activeCategory!.name,
-          state.timeFilter,
-          currentCursor,
-          state.anchorTime || undefined
-        );
-        allLoadedClips = [...allLoadedClips, ...newClips];
-        
-        // Evitar duplicados por id
-        const uniqueClips: Clip[] = [];
-        const seen = new Set<string>();
-        for (const clip of allLoadedClips) {
-          if (!seen.has(clip.id)) {
-            seen.add(clip.id);
-            uniqueClips.push(clip);
+      const { completed } = await searchAllTwitchClips(
+        state.activeCategory.id,
+        state.timeFilter,
+        state.anchorTime || undefined,
+        (newClips) => {
+          let changed = false;
+          for (const clip of newClips) {
+            if (!seen.has(clip.id)) {
+              seen.add(clip.id);
+              allLoadedClips.push(clip);
+              changed = true;
+            }
           }
-        }
-        allLoadedClips = uniqueClips;
-
-        setState(prev => ({ ...prev, clips: allLoadedClips, paginationCursor: nextCursor }));
-        currentCursor = nextCursor;
-        pageCount++;
-        await new Promise(r => setTimeout(r, 200));
+          if (changed) {
+            const snapshot = [...allLoadedClips];
+            setState(prev => ({ ...prev, clips: snapshot }));
+          }
+        },
+        shouldContinue
+      );
+      if (completed) {
+        setState(prev => ({ ...prev, isLoading: false, paginationCursor: null }));
+        setAllClipsLoaded(true);
+        if (!silent) jumpToLoadedEnd();
+      } else {
+        // Se paró a medio camino (modo rendimiento desactivado durante la
+        // carga automática): se queda tal cual, sin marcarlo como completo.
+        setState(prev => ({ ...prev, isLoading: false }));
       }
+    } catch (error) {
+      // Keep whatever was loaded before the failure; only stop the spinner.
       setState(prev => ({ ...prev, isLoading: false }));
-      setTimeout(() => {
-        window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
-      }, 100);
+    } finally {
+      setIsDeepCrawling(false);
+    }
+  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, state.clips, allClipsLoaded, jumpToLoadedEnd]);
+
+  // Igual que loadAllClips pero se para después de UNA página (~100 clips o
+  // menos) del crawl por franjas horarias, en vez de recorrerlo entero de
+  // golpe — así el scroll incremental sigue sintiéndose "poco a poco" en vez
+  // de disparar una carga masiva la primera vez que el cursor simple se agota.
+  // Retoma desde donde se quedó la vez anterior (deepCrawlResumeRef) para no
+  // volver a pedir las franjas ya recorridas.
+  const loadNextChunk = useCallback(async () => {
+    if (state.isLoading || !state.activeCategory || allClipsLoaded) return;
+    setState(prev => ({ ...prev, isLoading: true }));
+
+    const seen = new Set(state.clips.map(c => c.id));
+    let mergedClips: Clip[] = [...state.clips];
+
+    try {
+      const { completed, resumeFrom } = await searchAllTwitchClips(
+        state.activeCategory.id,
+        state.timeFilter,
+        state.anchorTime || undefined,
+        (newClips) => {
+          for (const clip of newClips) {
+            if (!seen.has(clip.id)) {
+              seen.add(clip.id);
+              mergedClips.push(clip);
+            }
+          }
+        },
+        undefined,
+        deepCrawlResumeRef.current || undefined,
+        1
+      );
+      setState(prev => ({ ...prev, clips: [...mergedClips], isLoading: false }));
+      if (completed) {
+        deepCrawlResumeRef.current = null;
+        setAllClipsLoaded(true);
+      } else {
+        deepCrawlResumeRef.current = resumeFrom || null;
+      }
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.clips]);
+  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, state.clips, allClipsLoaded]);
+
+  // El cursor simple de Twitch (loadMoreClips) se trunca solo a ~1000 clips
+  // aunque existan muchos más — así que cuando se agota, en vez de darlo por
+  // terminado, seguimos pidiendo un paso más del crawl por franjas horarias
+  // (loadNextChunk) cada vez que el usuario sigue haciendo scroll o pulsa
+  // "Cargar más" otra vez, en vez de traerlo todo de golpe.
+  const handleScrollLoadMore = useCallback(() => {
+    if (state.paginationCursor) {
+      loadMoreClips();
+    } else if (!allClipsLoaded) {
+      loadNextChunk();
+    }
+  }, [state.paginationCursor, allClipsLoaded, loadMoreClips, loadNextChunk]);
 
   useEffect(() => {
     handleSearch("popular");
@@ -644,9 +863,15 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     }
     if (state.activeCategory) {
       setState(prev => ({ ...prev, isLoading: true, clips: [], paginationCursor: null }));
+      setRenderPage(0);
+      setAllClipsLoaded(false);
+      deepCrawlResumeRef.current = null;
       searchTwitchClips(state.activeCategory.id, state.activeCategory.name, state.timeFilter, null, value || undefined)
         .then(({ clips, cursor }) => {
           setState(prev => ({ ...prev, clips, paginationCursor: cursor, isLoading: false }));
+        })
+        .catch(() => {
+          setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
         });
     }
   };
@@ -654,6 +879,29 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     setState(prev => ({ ...prev, sortType: sort }));
     localStorage.setItem(SORT_TYPE_KEY, sort);
     if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter);
+  };
+
+  const handlePerfModeChange = (val: boolean) => {
+    setPerfMode(val);
+    setRenderPage(0);
+    localStorage.setItem(PERF_MODE_KEY, val ? '1' : '0');
+  };
+
+  const handlePlaybackSpeedChange = (speed: number) => {
+    setPlaybackSpeed(speed);
+    localStorage.setItem(PLAYBACK_SPEED_KEY, String(speed));
+  };
+
+  const handleExcludeLanguagesChange = (codes: string[]) => {
+    const categoryId = state.activeCategory?.id || '';
+    if (!categoryId) return;
+    setExcludeLanguages(prev => ({ ...prev, [categoryId]: codes }));
+  };
+
+  const handleOnlyLanguagesChange = (codes: string[]) => {
+    const categoryId = state.activeCategory?.id || '';
+    if (!categoryId) return;
+    setOnlyLanguages(prev => ({ ...prev, [categoryId]: codes }));
   };
 
   const confirmBlockStreamer = () => {
@@ -676,9 +924,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     showToast(`${t('blocked') || 'Ocultado'}: ${name}`);
   };
 
-  const handleBlockStreamer = (id: string, name: string, image?: string) => {
+  const handleBlockStreamer = useCallback((id: string, name: string, image?: string) => {
     setStreamerToBlock({ id, name, image });
-  };
+  }, []);
 
   const handleUnblockStreamer = (id: string) => {
     const categoryId = state.activeCategory?.id || '';
@@ -760,11 +1008,48 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const categoryId = state.activeCategory?.id || '';
   const activeBlockedList = blockedStreamers[categoryId] || [];
   const blockedCount = activeBlockedList.length;
+  const activeExcludeLanguages = excludeLanguages[categoryId] || [];
+  const activeOnlyLanguages = onlyLanguages[categoryId] || [];
+
+  // Ambos van como prop a ClipGrid y de ahí a cada ClipCard memoizada. Sin
+  // memoizar aquí, el Set se reconstruía entero (O(n) sobre los guardados) en
+  // cada render del padre y su nueva identidad invalidaba todas las tarjetas.
+  const savedClipIds = useMemo(() => new Set(savedClips.map(c => c.id)), [savedClips]);
+  const handleClipClick = useCallback((clip: Clip) => setPlayingClip(clip), []);
+  const handleOpenListPicker = useCallback((clip: Clip) => {
+    setNewListName('');
+    setListPickerClip(clip);
+  }, []);
+
+  // El historial y las listas son cosas distintas y comparten almacén: las
+  // instantáneas diarias llevan `auto: true` y solo salen en el historial; las
+  // que crea el usuario a mano son las listas. Así el panel de listas nunca se
+  // llena solo de entradas con fecha que nadie ha pedido.
+  const userLists = useMemo(() => collections.filter(c => !c.auto), [collections]);
+  const autoHistory = useMemo(() => collections.filter(c => c.auto), [collections]);
 
   const visibleClips = useMemo(() => {
     const blockedIds = new Set(activeBlockedList.map(s => s.id));
-    const filtered = state.clips.filter(clip => !blockedIds.has(clip.broadcaster_id));
-    
+    const onlySet = activeOnlyLanguages.length > 0 ? new Set(activeOnlyLanguages) : null;
+    const excludeSet = activeExcludeLanguages.length > 0 ? new Set(activeExcludeLanguages) : null;
+    let filtered = state.clips.filter(clip => {
+      if (blockedIds.has(clip.broadcaster_id)) return false;
+      if (onlySet && !onlySet.has(clip.language || '')) return false;
+      if (excludeSet && excludeSet.has(clip.language || '')) return false;
+      return true;
+    });
+
+    // Twitch's clips endpoint has no server-side sort, and each page/slice we
+    // fetch is only sorted within itself — so once results from multiple
+    // pages or time slices are merged, "most views" only holds true if we
+    // sort the merged list ourselves. But NOT while isDeepCrawling: re-sorting
+    // on every one of the dozens of updates a "Load all" crawl produces would
+    // reshuffle whatever page you're currently looking at out from under you.
+    // Keep arrival order until the crawl settles, then sort once.
+    if (state.sortType === SortType.VIEWS && !isDeepCrawling) {
+      filtered = [...filtered].sort((a, b) => b.view_count - a.view_count);
+    }
+
     if (!groupByChannel) return filtered;
     
     const groups: Record<string, Clip[]> = {};
@@ -791,7 +1076,99 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       grouped.push(...groups[channelId]);
     }
     return grouped;
-  }, [state.clips, activeBlockedList, groupByChannel]);
+  }, [state.clips, activeBlockedList, groupByChannel, state.sortType, isDeepCrawling, activeOnlyLanguages, activeExcludeLanguages]);
+
+  const totalRenderPages = Math.max(1, Math.ceil(visibleClips.length / RENDER_PAGE_SIZE));
+
+  // Si el filtrado (bloqueados, cambio de categoría...) deja la lista más
+  // corta que la página en la que estábamos, volvemos a una página válida.
+  useEffect(() => {
+    setRenderPage(p => Math.min(p, totalRenderPages - 1));
+  }, [totalRenderPages]);
+
+  const pagedClips = useMemo(() => {
+    if (!perfMode) return visibleClips;
+    const start = renderPage * RENDER_PAGE_SIZE;
+    return visibleClips.slice(start, start + RENDER_PAGE_SIZE);
+  }, [visibleClips, perfMode, renderPage]);
+
+  const goToRenderPage = useCallback(async (target: number) => {
+    const clamped = Math.max(0, target);
+    const needed = (clamped + 1) * RENDER_PAGE_SIZE;
+    const shortfall = needed - state.clips.length;
+    if (shortfall > 0 && !state.isLoading) {
+      // Salto grande (p.ej. escribiendo un número de página bastante más
+      // adelante de lo ya cargado) o el cursor simple ya se acabó: una sola
+      // llamada a loadMoreClips (~100 clips) no llegaría, así que directamente
+      // lanzamos el crawl completo en vez de dejar huecos a mitad de camino.
+      // El cursor simple de Twitch además se corta antes de tiempo en
+      // categorías muy activas aunque queden muchos más clips.
+      if (!state.paginationCursor || shortfall > RENDER_PAGE_SIZE * 2) {
+        if (!allClipsLoaded) await loadAllClips({ silent: true });
+      } else {
+        await loadMoreClips();
+      }
+    }
+    setRenderPage(clamped);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [state.clips.length, state.paginationCursor, state.isLoading, loadMoreClips, allClipsLoaded, loadAllClips]);
+
+  const isLastRenderPage = renderPage >= totalRenderPages - 1 && !state.paginationCursor && allClipsLoaded;
+
+  // Input para ir directo a una página escribiendo el número. Sin controlar
+  // el <input> por estado (key={renderPage} lo remonta cuando la página
+  // cambia por otra vía, p.ej. flechas) para no pelearnos con lo que la
+  // persona esté escribiendo en cada tecleo.
+  const inlinePageInputRef = useRef<HTMLInputElement>(null);
+  const floatingPageInputRef = useRef<HTMLInputElement>(null);
+  const commitPageInput = useCallback((inputEl: HTMLInputElement | null) => {
+    if (!inputEl) return;
+    const val = parseInt(inputEl.value, 10);
+    if (!isNaN(val) && val >= 1) {
+      goToRenderPage(val - 1);
+    } else {
+      inputEl.value = String(renderPage + 1);
+    }
+  }, [goToRenderPage, renderPage]);
+
+  // Atajos de teclado (solo con el modo rendimiento activo, que es cuando hay
+  // páginas reales que recorrer): flecha derecha/izquierda avanza/retrocede.
+  // Se ignoran si el foco está en un campo de texto (buscador, renombrar
+  // colección, selector de fecha...) para no interceptar la escritura normal.
+  useEffect(() => {
+    if (!perfMode || state.mode !== 'clips' || totalRenderPages <= 1) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isTyping = target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable;
+      if (isTyping) return;
+
+      if (e.key === 'ArrowRight' && !isLastRenderPage) {
+        e.preventDefault();
+        goToRenderPage(renderPage + 1);
+      } else if (e.key === 'ArrowLeft' && renderPage > 0) {
+        e.preventDefault();
+        goToRenderPage(renderPage - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [perfMode, state.mode, totalRenderPages, renderPage, isLastRenderPage, goToRenderPage]);
+
+  // En modo rendimiento ya no se piden más clips al hacer scroll (con solo 50
+  // tarjetas montadas se llega al final casi al instante, así que ese
+  // disparador quedaba raro) — en cuanto entra la primera página, lanzamos el
+  // barrido completo en segundo plano ("silent": sin saltar el scroll al
+  // final). cancelIfPerfModeOff: si se desactiva el modo rendimiento a medio
+  // barrido, se para ahí — no tiene sentido seguir cargándolo todo si ya no
+  // estás en modo rendimiento (que es justo lo que se quería evitar al
+  // activarlo: cargar de más sin necesidad).
+  useEffect(() => {
+    if (!perfMode || state.mode !== 'clips' || !state.activeCategory) return;
+    if (state.clips.length === 0 || state.isLoading || allClipsLoaded) return;
+    loadAllClips({ silent: true, cancelIfPerfModeOff: true });
+  }, [perfMode, state.mode, state.activeCategory, state.clips.length, state.isLoading, allClipsLoaded, loadAllClips]);
 
   return (
     <div className="min-h-screen flex flex-col relative">
@@ -856,6 +1233,24 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                 </div>
               )}
             </div>
+            {/* Listas y historial son cosas distintas, así que botón aparte. */}
+            <div className="relative">
+              <button
+                onClick={() => setShowListsPanel(true)}
+                aria-label={t('my_lists')}
+                title={t('my_lists')}
+                className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/10 text-gray-400 hover:text-white transition-all active:scale-95 cursor-pointer"
+              >
+                <Library className="w-5 h-5 md:w-6 md:h-6" />
+                {/* Cuenta LISTAS, no clips. min-w + px para que un 10 o un 12
+                    no salgan apretados dentro de un círculo fijo. */}
+                {userLists.length > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[1.25rem] md:min-w-[1.5rem] h-5 md:h-6 px-1.5 bg-gradient-to-br from-white to-gray-300 text-[#0d0d12] text-[10px] md:text-[11px] font-black flex items-center justify-center rounded-full ring-2 ring-[#0d0d12] shadow-lg tabular-nums">
+                    {userLists.length}
+                  </span>
+                )}
+              </button>
+            </div>
             <div className="relative" ref={savedListRef}>
               <button onClick={() => setShowSavedList(!showSavedList)} aria-label="Saved clips" className={`w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center bg-[#1c1c24] border border-white/10 transition-all active:scale-95 cursor-pointer ${showSavedList ? 'bg-[#2c2c36] text-twitch-base' : 'text-gray-400 hover:text-white'} ${triggerShake ? 'animate-shake' : ''}`}>
                 <Archive className="w-5 h-5 md:w-6 md:h-6" />
@@ -883,16 +1278,16 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                     {showHistoryMenu && (
                       <div className="border-b border-white/5 bg-[#101014] p-4">
                         <div className="flex items-center justify-between mb-3">
-                          <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2"><FolderOpen className="w-3.5 h-3.5" /> {t('collections_heading')}</h4>
-                          {collections.length > 0 && (
+                          <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] flex items-center gap-2"><History className="w-3.5 h-3.5" /> {t('history_heading')}</h4>
+                          {autoHistory.length > 0 && (
                             <button onClick={handleDeleteAllCollections} className="text-[10px] text-red-500/50 font-black hover:text-red-500 transition-colors uppercase tracking-widest cursor-pointer">{t('delete_all_collections')}</button>
                           )}
                         </div>
-                        {collections.length === 0 ? (
+                        {autoHistory.length === 0 ? (
                           <div className="text-center py-8 text-gray-500 font-bold text-xs uppercase tracking-widest">{t('collections_empty')}</div>
                         ) : (
                           <div className="space-y-2 max-h-64 overflow-y-auto custom-scrollbar pr-1">
-                            {collections.map(collection => (
+                            {autoHistory.map(collection => (
                               <div key={collection.id} onClick={() => handleLoadCollection(collection.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl p-3 flex items-center gap-3 group transition-all cursor-pointer">
                                 <div className="flex-grow min-w-0">
                                   {renamingId === collection.id ? (
@@ -928,6 +1323,20 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                             <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
                             <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
                           </div>
+                          {/* Desde aquí también se puede archivar en una lista
+                              con nombre: si el clip ya no está en la rejilla
+                              (otra categoría, otro filtro), este es el único
+                              sitio desde donde se puede rescatar. */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenListPicker(clip);
+                            }}
+                            className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
+                            title={t('add_to_lists')}
+                          >
+                            <ListPlus className="w-4 h-4" />
+                          </button>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -961,8 +1370,18 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
-      <main className="container mx-auto px-6 pt-52 md:pt-48 flex-grow max-w-[1800px] relative z-10" key={state.mode}>
-        <div className="mb-14">
+      {/* AdRail mide el hueco entre este <main> y el borde del viewport y solo
+          muestra cada raíl si caben 120-160px + margen. Un ancho fijo no sirve:
+          con 1800px no cabían nunca, y con uno fijo más pequeño se malgasta
+          pantalla en monitores grandes. Reservando 440px (220 por lado) el
+          hueco es suficiente, y el tope de 1800px sigue mandando en monitores
+          muy anchos.
+          El hueco SOLO se reserva a partir de 1400px, que es donde los raíles
+          se llegan a pintar. Restarlo siempre era lo que rompía el móvil:
+          calc(100vw-440px) da negativo por debajo de 440px de pantalla, el
+          max-width se queda en 0 y todo el contenido se salía de la caja. */}
+      <main className="w-full mx-auto px-4 sm:px-6 pt-44 md:pt-40 flex-grow max-w-[1800px] min-[1400px]:max-w-[min(1800px,calc(100vw-440px))] relative z-10" key={state.mode}>
+        <div className="mb-8 md:mb-14">
           {state.mode === 'categories' && (
             <div className="relative mb-10">
               <div
@@ -980,14 +1399,17 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           )}
 
           {state.mode === 'clips' && state.activeCategory ? (
-            <div className="flex flex-col gap-10">
-              <button onClick={goBackToCategories} className="flex items-center gap-3 text-gray-500 hover:text-twitch-base text-lg font-black transition-all group w-fit cursor-pointer"><ArrowLeft className="w-6 h-6 group-hover:-translate-x-2 transition-transform" /> {t('back_categories')}</button>
-              <div className="flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-12">
-                <div className="order-2 md:order-1 w-32 h-44 md:w-44 md:h-60 bg-twitch-surfaceAlt rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-white/10 ring-8 ring-twitch-base/5 animate-float">
+            <div className="flex flex-col gap-6 md:gap-10">
+              <button onClick={goBackToCategories} className="flex items-center gap-2 md:gap-3 text-gray-500 hover:text-twitch-base text-sm sm:text-base md:text-lg font-black transition-all group w-fit cursor-pointer"><ArrowLeft className="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-x-2 transition-transform" /> {t('back_categories')}</button>
+              <div className="flex flex-col md:flex-row items-start md:items-center gap-6 md:gap-12">
+                <div className="order-2 md:order-1 w-28 h-40 sm:w-32 sm:h-44 md:w-44 md:h-60 flex-shrink-0 bg-twitch-surfaceAlt rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-2xl border-2 border-white/10 ring-4 md:ring-8 ring-twitch-base/5 animate-float">
                   <img src={state.activeCategory.box_art_url} className="w-full h-full object-cover" alt={state.activeCategory.name} />
                 </div>
-                <div className="order-1 md:order-2">
-                  <h1 className="text-4xl md:text-8xl font-black tracking-tighter text-white mb-6 leading-none">{state.activeCategory.name}</h1>
+                <div className="order-1 md:order-2 min-w-0">
+                  {/* break-words: nombres de juego largos ("Counter-Strike 2",
+                      "PLAYERUNKNOWN'S BATTLEGROUNDS") no caben en una línea a
+                      375px y con tracking-tighter se salían de la caja. */}
+                  <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter text-white mb-4 md:mb-6 leading-none break-words">{state.activeCategory.name}</h1>
                   <div className="flex flex-wrap items-center gap-4 md:gap-8 text-sm md:text-xl text-gray-400 font-bold">
                     <span className="text-twitch-base flex items-center gap-2 md:gap-3"><Sparkles className="w-5 h-5 md:w-6 md:h-6" /> {t('top_clips')}</span>
                     <ChevronRight className="w-4 h-4 md:w-6 md:h-6 opacity-10" />
@@ -997,18 +1419,20 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
               </div>
             </div>
           ) : (
-            <div className="py-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 relative z-10 w-full">
-              <h1 className="text-5xl md:text-[8rem] font-black tracking-tighter text-white mb-8 leading-[0.9]">
+            <div className="py-6 md:py-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 relative z-10 w-full">
+              {/* Escalón intermedio en md/lg: saltar de 48px a 128px de golpe
+                  dejaba un titular de 128px en pantallas de 768px. */}
+              <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-[8rem] font-black tracking-tighter text-white mb-5 md:mb-8 leading-[0.95] md:leading-[0.9] break-words">
                 {state.query && !state.query.includes('clip') && !isTopPopularMode ? `${t('results_for')} "${state.query}"` : t('explore_popular')}
               </h1>
-              <p className="text-gray-500 text-lg md:text-2xl font-medium max-w-2xl leading-relaxed relative z-10">{t('app_subtitle')}</p>
+              <p className="text-gray-500 text-base sm:text-lg md:text-2xl font-medium max-w-2xl leading-relaxed relative z-10">{t('app_subtitle')}</p>
             </div>
           )}
         </div>
 
         {state.error && (
-          <div className="mb-14 p-10 bg-[#1c0c0c] border border-red-500/10 rounded-[3rem] text-red-200 text-lg flex items-center gap-8 shadow-2xl">
-            <AlertTriangle className="w-10 h-10 text-red-500" />
+          <div className="mb-8 md:mb-14 p-6 md:p-10 bg-[#1c0c0c] border border-red-500/10 rounded-3xl md:rounded-[3rem] text-red-200 text-sm md:text-lg flex items-center gap-4 md:gap-8 shadow-2xl">
+            <AlertTriangle className="w-8 h-8 md:w-10 md:h-10 flex-shrink-0 text-red-500" />
             <span className="font-black uppercase tracking-widest">{t('error_prefix')}</span> {state.error}
           </div>
         )}
@@ -1023,9 +1447,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
               showRank={isTopPopularMode}
             />
             {state.paginationCursor && (
-              <div className="flex justify-center pb-32">
-                <button onClick={loadMoreCategories} disabled={state.isLoading} className="flex items-center gap-6 px-16 py-8 bg-[#1a1a24] border border-white/5 hover:border-white/20 rounded-[2rem] text-lg font-black text-gray-400 hover:text-white transition-all shadow-xl active:scale-95 group disabled:opacity-50 cursor-pointer">
-                  {state.isLoading ? <Loader2 className="w-8 h-8 animate-spin text-twitch-base" /> : <PlusCircle className="w-8 h-8 text-twitch-base" />}
+              <div className="flex justify-center pb-24 md:pb-32">
+                <button onClick={loadMoreCategories} disabled={state.isLoading} className="flex items-center gap-3 md:gap-6 px-8 md:px-16 py-5 md:py-8 bg-[#1a1a24] border border-white/5 hover:border-white/20 rounded-3xl md:rounded-[2rem] text-sm md:text-lg font-black text-gray-400 hover:text-white transition-all shadow-xl active:scale-95 group disabled:opacity-50 cursor-pointer">
+                  {state.isLoading ? <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-twitch-base" /> : <PlusCircle className="w-6 h-6 md:w-8 md:h-8 text-twitch-base" />}
                   {t('load_more_games')}
                 </button>
               </div>
@@ -1051,6 +1475,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                   blockedCount={blockedCount}
                   groupByChannel={groupByChannel}
                   onGroupByChannelChange={setGroupByChannel}
+                  perfMode={perfMode}
+                  onPerfModeChange={handlePerfModeChange}
+                  excludeLanguages={activeExcludeLanguages}
+                  onExcludeLanguagesChange={handleExcludeLanguagesChange}
+                  onlyLanguages={activeOnlyLanguages}
+                  onOnlyLanguagesChange={handleOnlyLanguagesChange}
+                  playbackSpeed={playbackSpeed}
+                  onPlaybackSpeedChange={handlePlaybackSpeedChange}
                 />
                 {isBlocklistOpen && (
                   <BlocklistManager
@@ -1069,20 +1501,61 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
               </>
             )}
             <ClipGrid
-              clips={visibleClips}
+              ref={clipGridRef}
+              clips={pagedClips}
               isLoading={state.isLoading}
-              hasMore={!!state.paginationCursor}
-              onLoadMore={loadMoreClips}
+              hasMore={!!state.paginationCursor || !allClipsLoaded}
+              onLoadMore={handleScrollLoadMore}
               onLoadAll={loadAllClips}
-              onClipClick={(clip) => {
-                setPlayingClip(clip);
-              }}
-              savedClipIds={new Set(savedClips.map(c => c.id))}
+              onClipClick={handleClipClick}
+              savedClipIds={savedClipIds}
               onToggleSave={handleToggleSave}
               onDownloadExternal={openExternalDownload}
               onBlockStreamer={handleBlockStreamer}
+              onAddToLists={handleOpenListPicker}
               t={t}
+              autoLoadOnScroll={!perfMode}
             />
+            <div ref={clipsEndRef} />
+            {perfMode && totalRenderPages > 1 && (
+              <div className="flex flex-col items-center justify-center gap-2 mt-10">
+                <div className="flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => goToRenderPage(renderPage - 1)}
+                    disabled={renderPage === 0}
+                    title={`${t('prev_page')} (←)`}
+                    className="px-5 py-2.5 rounded-xl bg-[#1a1a24] border border-white/5 hover:border-white/20 text-sm font-bold text-gray-300 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {t('prev_page')}
+                  </button>
+                  <span className="flex items-center gap-2 text-sm font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
+                    {t('page_label')}
+                    <input
+                      key={renderPage}
+                      ref={inlinePageInputRef}
+                      type="number"
+                      min={1}
+                      defaultValue={renderPage + 1}
+                      onFocus={(e) => e.currentTarget.select()}
+                      onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                      onBlur={() => commitPageInput(inlinePageInputRef.current)}
+                      aria-label={t('page_label')}
+                      className="w-14 text-center bg-twitch-black border border-twitch-surfaceAlt rounded-lg px-1 py-1 text-gray-100 normal-case font-bold outline-none focus:border-twitch-base cursor-text [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    />
+                    / {totalRenderPages}
+                  </span>
+                  <button
+                    onClick={() => goToRenderPage(renderPage + 1)}
+                    disabled={isLastRenderPage}
+                    title={`${t('next_page')} (→)`}
+                    className="px-5 py-2.5 rounded-xl bg-[#1a1a24] border border-white/5 hover:border-white/20 text-sm font-bold text-gray-300 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                  >
+                    {t('next_page')}
+                  </button>
+                </div>
+                <span className="text-[10px] font-bold text-gray-600 tracking-widest">← {t('page_label')} →</span>
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -1090,7 +1563,252 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       {playingClip && <FloatingPlayer clip={playingClip} onClose={() => {
         setPlayingClip(null);
         playingClipRef.current = null;
-      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} onBlockStreamer={handleBlockStreamer} t={t} />}
+      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} onBlockStreamer={handleBlockStreamer} t={t} playbackSpeed={playbackSpeed} onPlaybackSpeedChange={handlePlaybackSpeedChange} />}
+
+      {/* Panel de listas. Aquí se ve QUÉ tiene cada lista; el historial de
+          instantáneas diarias sigue en su propio menú. */}
+      {showListsPanel && (
+        <div
+          className="fixed inset-0 z-[115] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300"
+          onMouseDown={(e) => { if (e.target === e.currentTarget) setShowListsPanel(false); }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clipy-mylists-title"
+            className="bg-[#0c0c10] border border-white/10 rounded-[2.5rem] max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-[0_0_120px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-4 duration-300"
+          >
+            <div className="bg-[#15151b] px-5 sm:px-8 py-5 sm:py-6 border-b border-white/5">
+              <div className="flex items-center justify-between gap-3">
+                <h3 id="clipy-mylists-title" className="font-black text-base sm:text-lg flex items-center gap-3 text-white min-w-0">
+                  <Library className="w-5 h-5 text-twitch-base flex-shrink-0" />
+                  <span className="truncate">{t('my_lists')}</span>
+                  {userLists.length > 0 && (
+                    <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/10 text-[11px] font-black text-gray-300 tabular-nums">{userLists.length}</span>
+                  )}
+                </h3>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  <button
+                    onClick={() => { setCreatingList(v => !v); setNewListName(''); }}
+                    className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all cursor-pointer active:scale-95 ${creatingList ? 'bg-white/10 text-gray-300' : 'bg-twitch-base/80 hover:bg-twitch-base text-white shadow-lg shadow-twitch-base/20'}`}
+                  >
+                    <PlusCircle className={`w-3.5 h-3.5 transition-transform duration-300 ${creatingList ? 'rotate-45' : ''}`} />
+                    <span className="hidden sm:inline">{creatingList ? t('cancel') : t('new_list')}</span>
+                  </button>
+                  <button onClick={() => setShowListsPanel(false)} className="text-gray-400 hover:text-white p-2 rounded-xl hover:bg-white/5 cursor-pointer"><X className="w-4 h-4" /></button>
+                </div>
+              </div>
+
+              {/* Campo en línea en vez de window.prompt del navegador. */}
+              {creatingList && (
+                <form
+                  className="flex gap-2 mt-4 animate-in slide-in-from-top-4 fade-in duration-300"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (handleCreateList(newListName)) { setNewListName(''); setCreatingList(false); }
+                  }}
+                >
+                  <input
+                    autoFocus
+                    value={newListName}
+                    onChange={(e) => setNewListName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === 'Escape') setCreatingList(false); }}
+                    placeholder={t('new_list_placeholder')}
+                    aria-label={t('new_list')}
+                    maxLength={60}
+                    className="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-twitch-base transition-colors"
+                  />
+                  <button
+                    type="submit"
+                    disabled={!newListName.trim()}
+                    className="px-5 py-3 rounded-2xl bg-twitch-base/80 hover:bg-twitch-base text-white text-sm font-black transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+                  >
+                    {t('create')}
+                  </button>
+                </form>
+              )}
+            </div>
+
+            <div className="overflow-y-auto custom-scrollbar p-5 space-y-3">
+              {/* Sin la lista por defecto: esa vive en su propio panel (el del
+                  icono de archivo) y el botón + de las tarjetas ya va ahí. */}
+              {userLists.length === 0 && (
+                <p className="text-center py-12 text-gray-500 font-bold text-xs uppercase tracking-widest">{t('collections_empty')}</p>
+              )}
+              {userLists.map(list => {
+                const open = expandedListId === list.id;
+                return (
+                  <div key={list.id} className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-3 p-4">
+                      <button
+                        onClick={() => setExpandedListId(open ? null : list.id)}
+                        className="flex-grow min-w-0 flex items-center gap-3 text-left cursor-pointer"
+                      >
+                        <ChevronRight className={`w-4 h-4 flex-shrink-0 text-gray-500 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+                        <span className="font-black text-sm text-white truncate">{list.name}</span>
+                        {/* Solo el número, sin la palabra: "1 clips" quedaba mal
+                            y pluralizar bien en 9 idiomas no compensa aquí. */}
+                        <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black text-gray-400 tabular-nums">{list.clips.length}</span>
+                      </button>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <button
+                          onClick={(e) => handleDownloadCollectionTxt(e, list)}
+                          disabled={list.clips.length === 0}
+                          title={t('download_txt')}
+                          className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <FileDown className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => handleSendCollectionExternal(e, list)}
+                          disabled={list.clips.length === 0}
+                          title={t('download_zip_web')}
+                          className="p-2 rounded-xl text-gray-500 hover:text-twitch-base hover:bg-twitch-base/10 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        >
+                          <CloudDownload className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => { handleDeleteCollection(list.id); if (open) setExpandedListId(null); }}
+                          title={t('delete_collection')}
+                          className="p-2 rounded-xl text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {open && (
+                      <div className="border-t border-white/5 p-3 space-y-2 max-h-72 overflow-y-auto custom-scrollbar">
+                        {list.clips.length === 0 ? (
+                          <p className="text-center py-6 text-gray-500 font-bold text-[11px] uppercase tracking-widest">{t('collections_empty')}</p>
+                        ) : list.clips.map(clip => (
+                          <div key={clip.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">
+                            <button onClick={() => { setPlayingClip(clip); setShowListsPanel(false); }} className="flex items-center gap-3 flex-grow min-w-0 text-left cursor-pointer">
+                              <img src={clip.thumbnail_url} alt="" loading="lazy" decoding="async" className="w-20 aspect-video object-cover rounded-lg flex-shrink-0 bg-black/40" />
+                              <span className="flex flex-col min-w-0">
+                                <span className="text-xs font-black text-gray-200 truncate">{clip.title}</span>
+                                <span className="text-[10px] font-bold text-gray-500 truncate">{clip.broadcaster_name}</span>
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => openExternalDownload(clip.url)}
+                              title={t('download_zip_web')}
+                              className="flex-shrink-0 p-2 rounded-lg text-gray-600 hover:text-twitch-base hover:bg-twitch-base/10 transition-colors cursor-pointer"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleToggleClipInList(clip, list.id)}
+                              title={t('delete')}
+                              className="flex-shrink-0 p-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Selector de listas: el botón + de la tarjeta va directo a la lista por
+          defecto sin preguntar; este es el que deja elegir destino. */}
+      {listPickerClip && (
+        <div
+          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300"
+          onMouseDown={(e) => { if (e.target === e.currentTarget) setListPickerClip(null); }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="clipy-lists-title"
+            className="bg-[#0c0c10] border border-white/10 rounded-[2.5rem] p-8 max-w-md w-full shadow-[0_0_120px_rgba(0,0,0,0.8)] animate-in slide-in-from-bottom-4 duration-300"
+          >
+            <h3 id="clipy-lists-title" className="text-2xl font-black text-white tracking-tighter mb-1">{t('choose_lists')}</h3>
+            <p className="text-xs text-gray-500 font-bold truncate mb-6">{listPickerClip.title}</p>
+
+            <div className="flex flex-col gap-2 max-h-64 overflow-y-auto custom-scrollbar pr-1 mb-5">
+              {/* Clips guardados siempre el primero: es el destino por defecto y
+                  desde aquí se llega igual que con el botón + de al lado, sin
+                  tener que cerrar el diálogo para guardarlo. */}
+              <label className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-twitch-base/10 hover:bg-twitch-base/20 border border-twitch-base/25 cursor-pointer transition-colors">
+                <input
+                  type="checkbox"
+                  checked={savedClipIds.has(listPickerClip.id)}
+                  onChange={() => handleToggleSave(listPickerClip)}
+                  className="w-4 h-4 accent-twitch-base cursor-pointer"
+                />
+                <Archive className="w-4 h-4 text-twitch-base flex-shrink-0" />
+                <span className="flex-1 min-w-0 text-sm font-black text-white truncate">{t('saved_clips')}</span>
+                <span className="text-[9px] font-black uppercase tracking-widest text-twitch-base/70 flex-shrink-0">{t('default_list')}</span>
+              </label>
+
+              {userLists.length > 0 && <div className="h-px bg-white/5 my-1" />}
+
+              {userLists.length === 0 && (
+                <p className="text-center py-6 text-gray-500 font-bold text-[11px] uppercase tracking-widest">{t('collections_empty')}</p>
+              )}
+              {userLists.map(collection => {
+                const has = collection.clips.some(c => c.id === listPickerClip.id);
+                return (
+                  <label key={collection.id} className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/5 cursor-pointer transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={has}
+                      onChange={() => handleToggleClipInList(listPickerClip, collection.id)}
+                      className="w-4 h-4 accent-twitch-base cursor-pointer"
+                    />
+                    <span className="flex-1 text-sm font-black text-gray-200 truncate">{collection.name}</span>
+                    <span className="text-[10px] font-black text-gray-500 tabular-nums">{collection.clips.length}</span>
+                  </label>
+                );
+              })}
+            </div>
+
+            {/* Crear y añadir en un paso: las dos actualizaciones son
+                funcionales y se aplican en orden, así que la segunda ya ve la
+                lista recién creada. */}
+            <form
+              className="flex gap-2 mb-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const id = handleCreateList(newListName);
+                if (!id) return;
+                handleToggleClipInList(listPickerClip, id);
+                setNewListName('');
+              }}
+            >
+              <input
+                value={newListName}
+                onChange={(e) => setNewListName(e.target.value)}
+                placeholder={t('new_list_placeholder')}
+                aria-label={t('new_list')}
+                maxLength={60}
+                className="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-2xl px-4 py-3 text-sm font-bold text-white outline-none focus:border-twitch-base transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={!newListName.trim()}
+                className="px-5 py-3 rounded-2xl bg-twitch-base/80 hover:bg-twitch-base text-white text-sm font-black transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-95"
+              >
+                {t('create')}
+              </button>
+            </form>
+
+            <button
+              onClick={() => setListPickerClip(null)}
+              className="w-full py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-sm font-black text-white transition-all cursor-pointer"
+            >
+              {t('done')}
+            </button>
+          </div>
+        </div>
+      )}
 
       {showDeleteModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300">
@@ -1155,6 +1873,47 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           <ArrowUp className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
         </button>
       </div>
+
+      {perfMode && state.mode === 'clips' && totalRenderPages > 1 && (
+        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[200] flex items-center gap-1.5 bg-[#15151b]/95 backdrop-blur-md border border-white/10 rounded-full p-1.5 shadow-2xl">
+          <button
+            onClick={() => goToRenderPage(renderPage - 1)}
+            disabled={renderPage === 0}
+            title={`${t('prev_page')} (←)`}
+            aria-label={t('prev_page')}
+            className="p-2.5 rounded-full bg-white/5 hover:bg-twitch-base text-gray-300 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-90"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <span className="flex flex-col items-center px-1 gap-0.5">
+            <span className="flex items-center gap-1 text-xs font-black text-gray-200 whitespace-nowrap">
+              <input
+                key={renderPage}
+                ref={floatingPageInputRef}
+                type="number"
+                min={1}
+                defaultValue={renderPage + 1}
+                onFocus={(e) => e.currentTarget.select()}
+                onKeyDown={(e) => { if (e.key === 'Enter') e.currentTarget.blur(); }}
+                onBlur={() => commitPageInput(floatingPageInputRef.current)}
+                aria-label={t('page_label')}
+                className="w-9 text-center bg-white/5 border border-white/10 rounded-md py-0.5 text-gray-100 outline-none focus:border-twitch-base cursor-text [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              / {totalRenderPages}
+            </span>
+            <span className="text-[9px] font-bold text-gray-500 tracking-widest">← →</span>
+          </span>
+          <button
+            onClick={() => goToRenderPage(renderPage + 1)}
+            disabled={isLastRenderPage}
+            title={`${t('next_page')} (→)`}
+            aria-label={t('next_page')}
+            className="p-2.5 rounded-full bg-white/5 hover:bg-twitch-base text-gray-300 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer active:scale-90"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+        </div>
+      )}
 
       <motion.div
         initial={prefersReduced ? false : 'hidden'}

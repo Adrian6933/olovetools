@@ -2088,8 +2088,13 @@ const appSchema = {
         )}
     </div>
 
-    <AdRail slug={tool!} client:idle />
-    <AdSlot position="anchor" size="mobile-banner" client:idle />
+    {/* El timeout no es cosmético: `client:idle` a secas espera un hueco de
+        requestIdleCallback que en herramientas pesadas (Clipy con su barrido de
+        clips) no llega NUNCA, y las islas de anuncios se quedaban sin hidratar
+        para siempre. Por eso no se veían los raíles laterales. Con timeout se
+        hidratan igual de tarde, pero se hidratan. */}
+    <AdRail slug={tool!} client:idle={{ timeout: 2000 }} />
+    <AdSlot position="anchor" size="mobile-banner" client:idle={{ timeout: 2000 }} />
 
     {toolCtas.length > 0 && (
       <section aria-label={ctaHeading} class="tool-ctas max-w-5xl mx-auto px-4 pt-10 pb-2">
@@ -2130,7 +2135,7 @@ const appSchema = {
     {/* Unidad in-content responsive central: cubre las 60 herramientas (incl. las que
         no tienen AdBanner propio) sin editar cada una. Oculta en prod sin slot configurado. */}
     <div class="max-w-3xl mx-auto px-4 pb-4">
-      <AdSlot position="content" size="leaderboard" client:idle />
+      <AdSlot position="content" size="leaderboard" client:idle={{ timeout: 2000 }} />
     </div>
 
     <!-- SSR SEO content: visible (not display:none) to avoid cloaking. Some tools already
@@ -2174,7 +2179,7 @@ const appSchema = {
            arriba (mismo texto en todas las herramientas), así no requiere copy nueva por tool. -->
       <aside class="hidden lg:block" aria-label="Advertisement">
         <div class="sticky top-20">
-          <AdSlot position="side" size="rectangle" client:idle />
+          <AdSlot position="side" size="rectangle" client:idle={{ timeout: 2000 }} />
         </div>
       </aside>
     </div>

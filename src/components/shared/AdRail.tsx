@@ -12,7 +12,10 @@ declare global {
   }
 }
 
-const RAIL_MARGIN = 16;
+/** Aire entre el raíl y el borde de la ventana, y entre el raíl y el contenido.
+ *  Pegado al borde (los 8px de antes) quedaba como si se saliera de la pantalla. */
+const RAIL_EDGE = 24;
+const RAIL_MARGIN = RAIL_EDGE * 2;
 
 /**
  * Mide el hueco real entre el contenido visible y el borde del viewport en
@@ -75,9 +78,14 @@ const useRailGaps = () => {
   return gaps;
 };
 
-const Rail: React.FC<{ side: 'left' | 'right'; slot: string; active: boolean; visible: boolean }> = ({ side, slot, active, visible }) => {
+const Rail: React.FC<{ side: 'left' | 'right'; slot: string; configured: boolean; visible: boolean }> = ({ side, slot, configured, visible }) => {
   const insRef = useRef<HTMLModElement>(null);
   const pushedRef = useRef(false);
+
+  // AdSense NO sirve anuncios en localhost, así que en desarrollo el <ins> real
+  // se queda vacío y parece que el raíl no existe. En DEV se pinta siempre el
+  // recuadro de prueba, para poder verificar posición y hueco.
+  const active = configured && !import.meta.env.DEV;
 
   useEffect(() => {
     if (!active || !visible || !insRef.current || pushedRef.current) return;
@@ -93,14 +101,16 @@ const Rail: React.FC<{ side: 'left' | 'right'; slot: string; active: boolean; vi
 
   if (!visible) return null;
 
-  // min-[1560px] es solo un primer filtro barato (evita medir en viewports
-  // obviamente estrechos); la visibilidad real ya la decide `visible`
-  // (hueco medido contra #root), pasado desde AdRail.
+  // Primer filtro barato (evita medir en viewports obviamente estrechos); la
+  // visibilidad real ya la decide `visible` (hueco medido contra #root).
+  // 1400 y no 1560: Windows al 125% de escala hace que un monitor de 1920
+  // reporte 1536 CSS px, así que con el umbral en 1560 los raíles no salían
+  // en la resolución de escritorio más común que existe.
   return (
     <div
       aria-hidden="true"
-      className={`hidden min-[1560px]:flex items-center justify-center fixed top-1/2 -translate-y-1/2 z-30 w-[120px] min-[1650px]:w-[160px] h-[600px] ${
-        side === 'left' ? 'left-2' : 'right-2'
+      className={`hidden min-[1400px]:flex items-center justify-center fixed top-1/2 -translate-y-1/2 z-30 w-[120px] min-[1650px]:w-[160px] h-[600px] ${
+        side === 'left' ? 'left-6' : 'right-6'
       }`}
       style={!active ? { border: '2px dashed #a855f7', borderRadius: '0.5rem', background: 'rgba(168,85,247,0.25)' } : undefined}
     >
@@ -146,8 +156,8 @@ export const AdRail: React.FC<AdRailProps> = ({ slug }) => {
 
   return (
     <>
-      <Rail side="left" slot={AD_SLOTS.railLeft} active={activeLeft} visible={gaps.left >= required} />
-      <Rail side="right" slot={AD_SLOTS.railRight} active={activeRight} visible={gaps.right >= required} />
+      <Rail side="left" slot={AD_SLOTS.railLeft} configured={activeLeft} visible={gaps.left >= required} />
+      <Rail side="right" slot={AD_SLOTS.railRight} configured={activeRight} visible={gaps.right >= required} />
     </>
   );
 };

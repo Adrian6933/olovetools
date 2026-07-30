@@ -157,10 +157,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
   return (
     <div className="bg-twitch-surface rounded-xl border border-twitch-surfaceAlt mb-8 shadow-sm">
 
-      {/* Primary row: time range + sort/actions */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-4">
+      {/* Primary row: time range + sort/actions.
+          flex-wrap y min-w-0 en los dos grupos: sin ellos, en anchos intermedios
+          (y más ahora que los raíles de anuncios se llevan 440px) los hijos no
+          encogen ni saltan de línea, y el último botón se salía del recuadro. */}
+      <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center justify-between gap-3 lg:gap-4 p-4">
 
-        <div className="flex items-center gap-3 w-full lg:w-auto">
+        <div className="flex items-center gap-3 w-full lg:w-auto min-w-0">
           <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
               <Clock className="w-5 h-5 text-twitch-base" />
           </div>
@@ -182,7 +185,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3 w-full lg:w-auto min-w-0">
 
           {!disabled && (
               <button
@@ -206,7 +209,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
           <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] hidden lg:inline-block">{t('sort_by')}</span>
 
-          <div className="relative w-full sm:flex-1 lg:flex-none lg:w-48" ref={sortRef}>
+          <div className="relative w-full sm:flex-1 lg:flex-none lg:w-40 xl:w-48" ref={sortRef}>
               <button
                   onClick={() => !disabled && setIsSortOpen(!isSortOpen)}
                   disabled={disabled}
@@ -249,8 +252,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   : 'bg-twitch-black border-twitch-surfaceAlt hover:border-red-500/40 text-gray-200 hover:text-red-400'
               }`}
             >
-              <ShieldAlert className="w-4 h-4" />
-              <span>{t('blocklist') || 'Ocultados'} {blockedCount > 0 ? `(${blockedCount})` : ''}</span>
+              <ShieldAlert className="w-4 h-4 flex-shrink-0" />
+              {/* El rótulo se cae entre lg y xl, que es donde menos sitio hay:
+                  el icono y el contador ya dicen lo que hace. */}
+              <span className="lg:hidden xl:inline">{t('blocklist')}</span>
+              {blockedCount > 0 && <span className="tabular-nums">({blockedCount})</span>}
             </button>
           )}
         </div>
@@ -362,7 +368,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             </button>
 
             {isSpeedOpen && (
-              <div className="absolute top-full left-0 mt-2 w-40 bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute top-full left-0 mt-2 w-40 max-w-[calc(100vw-2rem)] bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
                 {PLAYBACK_SPEEDS.map((speed) => {
                   const active = playbackSpeed === speed;
                   return (
@@ -398,7 +404,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             </button>
 
             {isOnlyLangOpen && (
-              <div className="absolute top-full left-0 mt-2 w-56 bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute top-full left-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
                 <div className="max-h-64 overflow-y-auto custom-scrollbar">
                   {CLIP_LANGUAGES.map(({ code, label }) => {
                     const active = onlyLanguages.includes(code);
@@ -444,7 +450,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             </button>
 
             {isExcludeLangOpen && (
-              <div className="absolute top-full left-0 mt-2 w-56 bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
+              <div className="absolute top-full left-0 mt-2 w-56 max-w-[calc(100vw-2rem)] bg-twitch-surfaceAlt border border-twitch-surfaceAlt rounded-lg shadow-xl z-30 overflow-hidden animate-in fade-in zoom-in-95 duration-100">
                 <div className="max-h-64 overflow-y-auto custom-scrollbar">
                   {CLIP_LANGUAGES.map(({ code, label }) => {
                     const active = excludeLanguages.includes(code);
