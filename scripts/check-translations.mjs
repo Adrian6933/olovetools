@@ -43,6 +43,8 @@ const ALLOW_VALUES = new Set([
   'Fira Code', 'JetBrains Mono', 'Source Code Pro', 'Geist Mono',
   // Especificaciones técnicas/formato internacionalmente estándar
   'MP4 HD', '1080P', 'ISO 8601',
+  // Designaciones de resolución: son nombres de estándar, no se traducen
+  'QHD (1440p)', 'Full HD (1080p)', 'HD (720p)',
 ]);
 const EMAIL_OR_URL = /(@|https?:\/\/|www\.)/;
 // Frases inglesas que no deberían aparecer literalmente en NINGÚN idioma no-inglés

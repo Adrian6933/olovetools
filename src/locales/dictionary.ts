@@ -588,6 +588,15 @@ import ru_jwtBolt from './ru/jwt-bolt';
 import hi_jwtBolt from './hi/jwt-bolt';
 import ja_jwtBolt from './ja/jwt-bolt';
 import zh_jwtBolt from './zh/jwt-bolt';
+import en_qrReader from './en/qr-reader';
+import es_qrReader from './es/qr-reader';
+import fr_qrReader from './fr/qr-reader';
+import de_qrReader from './de/qr-reader';
+import pt_qrReader from './pt/qr-reader';
+import ru_qrReader from './ru/qr-reader';
+import hi_qrReader from './hi/qr-reader';
+import ja_qrReader from './ja/qr-reader';
+import zh_qrReader from './zh/qr-reader';
 
 export const hubDictionary: Record<string, any> = {
   en: en_hub,
@@ -1321,7 +1330,19 @@ export const jwtBoltDictionary: Record<string, any> = {
   zh: zh_jwtBolt,
 };
 
-export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'passbolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow' | 'jwt-bolt') => {
+export const qrReaderDictionary: Record<string, any> = {
+  en: en_qrReader,
+  es: es_qrReader,
+  fr: fr_qrReader,
+  de: de_qrReader,
+  pt: pt_qrReader,
+  ru: ru_qrReader,
+  hi: hi_qrReader,
+  ja: ja_qrReader,
+  zh: zh_qrReader,
+};
+
+export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'passbolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow' | 'jwt-bolt' | 'qr-reader') => {
   const dictionaryObj = 
     tool === 'clipy' ? clipyDictionary : 
     tool === 'twitchbolt' ? twitchboltDictionary : 
@@ -1383,6 +1404,7 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     tool === 'klipy' ? klipyDictionary :
     tool === 'clip-flow' ? clipFlowDictionary :
     tool === 'jwt-bolt' ? jwtBoltDictionary :
+    tool === 'qr-reader' ? qrReaderDictionary :
     hubDictionary;
     
   const currentDict = dictionaryObj[lang] || dictionaryObj['en'];

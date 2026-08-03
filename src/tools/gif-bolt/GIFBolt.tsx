@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { legalTranslations } from '../../locales/legal';
+import { useHandoffIntake } from '../../lib/useHandoff';
 
 interface GIFBoltProps {
   lang: string;
@@ -71,9 +72,8 @@ export const GIFBolt: React.FC<GIFBoltProps> = ({ lang, dictionary }) => {
     };
   }, []);
 
-  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const loadVideoFile = (file: File) => {
+    setActiveTab('video');
 
     if (videoUrl) {
       URL.revokeObjectURL(videoUrl);
@@ -96,6 +96,15 @@ export const GIFBolt: React.FC<GIFBoltProps> = ({ lang, dictionary }) => {
       setVideoHeight(tempVideo.videoHeight);
     };
   };
+
+  const handleVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) loadVideoFile(file);
+    e.target.value = '';
+  };
+
+  // Picks up a recording handed over by RecordSnap, so no download/re-upload.
+  useHandoffIntake(loadVideoFile);
 
   const handleImagesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

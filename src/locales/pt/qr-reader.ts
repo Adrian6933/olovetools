@@ -1,0 +1,193 @@
+export default {
+  "title": "QR Reader",
+  "badge": "Leitor de códigos QR",
+  "description": "Leia um QR com a câmara, uma imagem ou a área de transferência e veja exatamente o que traz dentro. Mostra-lhe o destino: nunca o abre por si.",
+  "seo_title": "QR Reader | Leitor de QR online grátis que mostra o conteúdo",
+  "seo_description": "Leia qualquer código QR a partir da câmara, de uma foto ou de uma captura e veja todo o conteúdo antes de abrir seja o que for. Deteta domínios sósias e encurtadores. 100 % local, grátis e sem app.",
+  "sourceImage": "Imagem",
+  "sourceCamera": "Câmara",
+  "sourceText": "Texto simples",
+  "dropTitle": "Largue aqui uma imagem com QR",
+  "dropHint": "PNG, JPG, WebP, capturas… ou carregue em Ctrl+V em qualquer ponto desta página",
+  "browseBtn": "Escolher um ficheiro",
+  "pasteBtn": "Colar da área de transferência",
+  "startCameraBtn": "Ligar a câmara",
+  "stopCameraBtn": "Desligar a câmara",
+  "torchBtn": "Lanterna",
+  "cameraDefault": "Câmara predefinida",
+  "cameraIdle": "A câmara fica desligada até a ligar, e os fotogramas só são lidos em memória.",
+  "manualLabel": "Cole o conteúdo em bruto de um código QR",
+  "manualHint": "Salta o descodificador por completo: útil quando já tem o texto e só quer que seja desmontado e verificado.",
+  "analyseBtn": "Analisar",
+  "emptyResult": "O que o código contiver aparecerá aqui, por inteiro, antes de acontecer seja o que for.",
+  "scanAgainBtn": "Ler outro",
+  "historyTitle": "Esta sessão",
+  "clearBtn": "Limpar",
+  "copyBtn": "Copiar",
+  "showBtn": "Ver",
+  "hideBtn": "Ocultar",
+  "openBtn": "Abrir a ligação",
+  "openAnywayBtn": "Abrir mesmo assim",
+  "destinationLabel": "Destino completo",
+  "rawLabel": "Conteúdo em bruto",
+  "saveContactBtn": "Guardar como .vcf",
+  "kindUrl": "Ligação",
+  "kindWifi": "Rede WiFi",
+  "kindContact": "Cartão de contacto",
+  "kindEmail": "E-mail",
+  "kindSms": "SMS",
+  "kindTel": "Número de telefone",
+  "kindGeo": "Localização no mapa",
+  "kindEvent": "Evento de calendário",
+  "kindText": "Texto simples",
+  "fieldHost": "Domínio",
+  "fieldSsid": "Nome da rede",
+  "fieldSecurity": "Segurança",
+  "fieldPassword": "Palavra-passe",
+  "fieldHidden": "Rede oculta",
+  "fieldName": "Nome",
+  "fieldOrganization": "Organização",
+  "fieldJobTitle": "Cargo",
+  "fieldPhone": "Telefone",
+  "fieldEmail": "E-mail",
+  "fieldWebsite": "Site",
+  "fieldAddress": "Morada",
+  "fieldNote": "Nota",
+  "fieldBirthday": "Aniversário",
+  "fieldSubject": "Assunto",
+  "fieldBody": "Mensagem",
+  "fieldMessage": "Mensagem",
+  "fieldLatitude": "Latitude",
+  "fieldLongitude": "Longitude",
+  "fieldSummary": "Título",
+  "fieldStart": "Começa",
+  "fieldEnd": "Termina",
+  "fieldLocation": "Local",
+  "verdictClean": "Não encontrámos nada suspeito",
+  "verdictCleanHint": "Ainda assim nunca abrimos nada por si: essa decisão continua a ser sua.",
+  "verdictCaution": "Merece uma segunda vista de olhos",
+  "verdictSevere": "Trate isto com desconfiança",
+  "warnInsecure": "Esta ligação é http simples, por isso tudo o que enviar por ela viaja sem cifra.",
+  "warnPunycode": "O domínio usa punycode. Pode ser um nome acentuado legítimo, ou a imitação de um em que confia.",
+  "warnMixedScript": "O domínio mistura alfabetos — o truque clássico para se fazer passar por um site verdadeiro.",
+  "warnShortener": "É um encurtador de ligações: o destino real fica escondido atrás de um redirecionamento.",
+  "warnIpHost": "A ligação aponta para um endereço IP em bruto em vez de um nome de domínio.",
+  "warnCredentials": "A ligação transporta um utilizador e uma palavra-passe lá dentro.",
+  "warnLongUrl": "A ligação é invulgarmente longa, o que costuma servir para enterrar o destino real.",
+  "warnOpenWifi": "Esta rede não tem palavra-passe, por isso o tráfego nela não vai cifrado.",
+  "warnExecutable": "A ligação aponta diretamente para um ficheiro instalável.",
+  "errorNoCode": "Não encontrámos nenhum código QR nessa imagem. Tente uma foto mais próxima e nítida.",
+  "errorBadImage": "Não foi possível ler esse ficheiro como imagem.",
+  "errorCameraDenied": "A permissão da câmara foi negada. Ainda pode ler uma imagem ou colá-la.",
+  "errorCameraMissing": "Não há nenhuma câmara disponível neste dispositivo.",
+  "errorNoClipboardImage": "Não há nenhuma imagem na sua área de transferência.",
+  "errorClipboardBlocked": "O seu navegador bloqueou o acesso à área de transferência. Carregue antes em Ctrl+V sobre a página.",
+  "makerCta": "Prefere criar um QR? Abra o QRBolt",
+  "makerCtaLong": "Criar um código QR",
+  "makerCardTitle": "Precisa de criar um?",
+  "makerCardText": "O QRBolt faz códigos QR com estilo e prova que são legíveis antes de os imprimir.",
+  "howItWorksTitle": "Como funciona",
+  "step1Title": "Traga o código",
+  "step1Text": "Aponte a câmara, largue uma captura, ou simplesmente cole da área de transferência.",
+  "step2Title": "É descodificado aqui",
+  "step2Text": "O descodificador corre no seu navegador. A imagem nunca sai da máquina.",
+  "step3Title": "Leia antes de agir",
+  "step3Text": "Vê o destino completo, os campos que traz dentro e qualquer sinal de alarme.",
+  "step4Title": "E depois decide",
+  "step4Text": "Copie um campo, guarde o contacto ou abra a ligação — só se for essa a sua escolha.",
+  "scrollTopLabel": "Voltar ao topo",
+  "features": [
+    {
+      "title": "Mostra, nunca redireciona",
+      "text": "Um autocolante com QR pode apontar para onde quer que seja. Este leitor escreve o destino por inteiro e espera que decida."
+    },
+    {
+      "title": "Assinala os truques do costume",
+      "text": "Domínios sósias, alfabetos misturados, encurtadores, endereços IP em bruto, credenciais embutidas e ligações para instaladores."
+    },
+    {
+      "title": "100 % local",
+      "text": "O descodificador corre no seu navegador. Nem a imagem, nem a leitura, nem a ligação chegam alguma vez a um servidor."
+    },
+    {
+      "title": "Câmara, ficheiro ou área de transferência",
+      "text": "Leia em direto com a câmara traseira, largue uma captura, ou carregue apenas em Ctrl+V na página."
+    },
+    {
+      "title": "Percebe a estrutura",
+      "text": "WiFi, vCard, MeCard, e-mail, SMS, telefone, mapa e eventos de calendário são separados em campos identificados."
+    },
+    {
+      "title": "Nada fica guardado",
+      "text": "A lista de leituras vive no separador e desaparece assim que o fecha. Não há histórico em servidor nenhum."
+    }
+  ],
+  "footerCredit": "Part of the oLoveTools suite",
+  "seoHeroTitle": "Veja o que diz um QR antes de lhe obedecer",
+  "seoHeroText": "A câmara do seu telemóvel lê um código QR e oferece-se para o abrir, mostrando normalmente um domínio encurtado e mais nada. É exatamente dessa brecha que vivem os autocolantes fraudulentos em parquímetros e mesas de restaurante. Este leitor faz o contrário: descodifica o código, escreve o destino completo, separa os conteúdos estruturados em campos identificados e aponta os truques que fazem uma ligação má parecer vulgar.",
+  "seoHeroList": [
+    "Nunca abre uma ligação sozinho",
+    "Funciona offline depois de carregado",
+    "Sem app, sem conta, sem envios"
+  ],
+  "seoBrowserSpeedTitle": "Tudo acontece dentro do separador",
+  "seoBrowserSpeedText": "O descodificador é uma pequena biblioteca JavaScript que corre na sua máquina. Os fotogramas da câmara são amostrados em memória e deitados fora, as imagens que larga são lidas localmente, e nada — nem a foto, nem o texto descodificado, nem a ligação — é alguma vez enviado para lado nenhum.",
+  "seoSecondaryTitle": "Um leitor de QR para quem prefere olhar primeiro",
+  "seoKeywordsTitle": "Palavras-chave",
+  "seoKeywords": [
+    "Leitor de QR online",
+    "Ler QR a partir de imagem",
+    "Scanner de QR sem app",
+    "Ler código QR de uma foto",
+    "Verificar se um QR é seguro",
+    "Descodificar QR online",
+    "Leitor de QR WiFi",
+    "Ver conteúdo de um QR"
+  ],
+  "seoUseCaseTitle": "Autocolantes, faturas, cartazes e embalagens",
+  "seoUseCaseText": "Um código colado por cima do verdadeiro num parquímetro, um QR de pagamento numa fatura inesperada, um cartaz na rua, um cartão de visita que lhe acabaram de dar: todos merecem ser lidos antes de abertos. Aponte a câmara ou largue a foto e tem o destino em texto simples.",
+  "seoPrivacyTitle": "Não pode vazar o que nunca envia",
+  "seoPrivacyText": "Não há ponto de envio nem análise sobre o conteúdo. As palavras-passe de WiFi encontradas dentro de um código ficam tapadas até pedir para as ver, e a lista da sessão vive apenas na memória do separador, por isso fechá-lo basta para apagar tudo.",
+  "faqTitle": "Perguntas frequentes",
+  "faq": [
+    {
+      "question": "Abre a ligação automaticamente?",
+      "answer": "Nunca. É esse o sentido inteiro da ferramenta. Tem o URL completo, o domínio numa linha própria e a lista de tudo o que é questionável. Abrir exige um clique deliberado, e se a ligação parecer perigosa esse botão passa a ter aspeto de aviso."
+    },
+    {
+      "question": "A minha imagem ou o que a câmara vê é enviado para algum lado?",
+      "answer": "Não. O descodificador é uma biblioteca JavaScript a correr no seu navegador. Os fotogramas da câmara são copiados para um canvas em memória e descartados de imediato, e as imagens que larga são lidas com a API de ficheiros do próprio navegador. Nada é transmitido."
+    },
+    {
+      "question": "O que é a fraude com códigos QR?",
+      "answer": "Um código impresso que leva a um sítio hostil, muitas vezes um autocolante colado por cima de um legítimo num parquímetro, numa ementa ou num terminal de pagamento. Resulta porque a app da câmara quase nada lhe mostra antes de abrir a página. Ler o código aqui primeiro fecha essa brecha."
+    },
+    {
+      "question": "Porque me avisa sobre uma ligação encurtada?",
+      "answer": "Porque um encurtador esconde o destino real atrás de um redirecionamento: o que consegue ver não é onde vai acabar. De propósito não o resolvemos por si: fazê-lo contactaria esse servidor em seu nome e diria-lhe que leu o código."
+    },
+    {
+      "question": "O que é um domínio em punycode ou com alfabetos misturados?",
+      "answer": "Algumas letras são idênticas entre alfabetos — um а cirílico aparece exatamente como um a latino. Um domínio construído assim lê-se como um nome que reconhece mas pertence a outra pessoa. O punycode (xn--) é a forma como esse nome é codificado, por isso assinalamos os dois casos."
+    },
+    {
+      "question": "Não consegue ler a minha foto. O que posso fazer?",
+      "answer": "Aproxime-se para o código ocupar mais do enquadramento, segure o telemóvel de frente em vez de na diagonal, e evite reflexos de um ecrã ou da plastificação. A ferramenta já tenta de novo com recortes cada vez maiores, mas a uma foto desfocada ou muito inclinada resta demasiado pouco detalhe para recuperar."
+    },
+    {
+      "question": "Que tipos de conteúdo de QR percebe?",
+      "answer": "Ligações, texto simples, credenciais de WiFi, contactos vCard e MeCard, e-mail, SMS, números de telefone, coordenadas de mapa e eventos de calendário. Os estruturados são desdobrados em campos identificados que pode copiar um a um, e um contacto pode ser guardado logo num ficheiro .vcf."
+    }
+  ],
+  "footerTagline": "Leitor de códigos QR gratuito que lhe mostra o conteúdo em vez de o abrir.",
+  "privacyPolicy": "Política de Privacidade",
+  "termsOfService": "Termos de Serviço",
+  "cookiePolicy": "Política de Cookies",
+  "contactForIdeas": "Contact for ideas and comments:",
+  "emailCopied": "Copied!",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "privacyContent": "A sua privacidade é importante para nós.\n\nToda a descodificação acontece localmente no seu navegador. Nenhuma imagem, fotograma de câmara, texto descodificado ou ligação é enviado para os nossos servidores, e não registamos o que lê.\n\nA lista da sessão vive na memória do seu separador e desaparece quando o fecha.",
+  "termsContent": "Ao usar o QR Reader, aceita estes termos.\n\n1. Esta ferramenta é fornecida «tal como está», sem garantias.\n2. Os avisos de segurança são heurísticas, não uma garantia: um código sem avisos também pode ser malicioso.\n3. É responsável por aquilo que decidir abrir.\n4. Reservamo-nos o direito de alterar estes termos a qualquer momento.",
+  "cookiesContent": "Usamos cookies para melhorar a sua experiência.\n\n1. Cookies essenciais: necessários para o funcionamento do site.\n2. Cookies de preferências: guardam o seu idioma e as suas preferências de cookies.\n\nPode configurá-los nas definições do navegador.",
+  "contact": "Contato"
+};

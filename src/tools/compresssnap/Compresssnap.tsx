@@ -23,6 +23,7 @@ import { Header } from './components/Header';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { CompressSettings, CompressedImageItem } from './types';
+import { useHandoffIntake } from '../../lib/useHandoff';
 
 interface CompresssnapProps {
   lang: Language;
@@ -246,7 +247,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
   }, [items, globalSettings, processItem]);
 
   // Handle uploaded files
-  const addFiles = async (files: FileList) => {
+  const addFiles = async (files: FileList | File[]) => {
     const newItems: CompressedImageItem[] = [];
 
     for (let i = 0; i < files.length; i++) {
@@ -275,6 +276,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
       setItems(prev => [...prev, ...newItems]);
     }
   };
+
+  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
+  useHandoffIntake(file => addFiles([file]));
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -411,10 +415,10 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
 
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
-      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         {/* Bloque AdSense Horizontal */}
         <AdBanner id="adsense-compresssnap-top" />
-        <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
+        <div className="w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
           <div className="flex flex-col items-center space-y-6 animate-fade-in">

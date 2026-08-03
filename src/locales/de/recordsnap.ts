@@ -1,61 +1,160 @@
 export default {
   "title": "RecordSnap",
-  "description": "Nehmen Sie Ihren Bildschirm, Ihre Webcam oder beides gleichzeitig direkt in Ihrem Browser auf. Privat, sicher und 100 % lokal.",
+  "badge": "Lokaler Bildschirmrekorder",
+  "description": "Nimm deinen Bildschirm, deine Webcam oder beides gleichzeitig auf – vollständig im Browser. Nichts wird hochgeladen, und die Bitrate bestimmst du.",
   "seo_title": "RecordSnap | Kostenloser Online-Bildschirm- & Webcam-Recorder",
   "seo_description": "Nehmen Sie Bildschirm, Fenster oder Webcam direkt im Browser auf. 100 % lokal, sicher, kein Software-Download oder Registrierung nötig. Laden Sie Ihre Videos sofort herunter.",
   "modeScreen": "Nur Bildschirm",
+  "modeScreenDesc": "Ein Monitor, ein Anwendungsfenster oder ein Browser-Tab.",
   "modeCamera": "Nur Webcam",
+  "modeCameraDesc": "Direkt von deiner Kamera, ohne Bildschirmaufnahme.",
   "modeBoth": "Bildschirm + Webcam",
+  "modeBothDesc": "Deine Kamera als bewegliche Blase über dem geteilten Bildschirm.",
+  "modeLabel": "Aufnahmemodus",
+  "settingsTitle": "Aufnahmeeinstellungen",
   "labelAudioSource": "Audioquelle",
-  "audioNone": "Stumm (Kein Audio)",
+  "audioNone": "Kein Ton",
   "audioMic": "Mikrofon",
-  "audioSystem": "System-Audio",
+  "audioSystem": "Systemton",
   "audioBoth": "Mikrofon + System",
+  "labelCamera": "Kamera",
+  "labelMic": "Mikrofon",
+  "optionDefault": "Systemstandard",
+  "voiceProcessingLabel": "Sprachaufbereitung (Echo + Rauschen)",
+  "voiceProcessingHint": "Ideal fürs Sprechen in die Kamera, verheerend für Musik und Spielesound. Schalte es aus, wenn du Klang statt Sprache aufnimmst.",
   "labelResolution": "Auflösung",
-  "resNative": "Nativ (Max)",
+  "resNative": "Nativ (maximal)",
+  "res1440p": "QHD (1440p)",
   "res1080p": "Full HD (1080p)",
   "res720p": "HD (720p)",
   "labelFps": "Bilder pro Sekunde",
+  "fps60": "60 fps · ultraflüssig",
+  "fps30": "30 fps · Standard",
+  "fps24": "24 fps · Kino",
+  "fps15": "15 fps · sparsam",
+  "labelQuality": "Qualität",
+  "qualityEco": "Öko",
+  "qualityBalanced": "Ausgewogen",
+  "qualityHigh": "Hoch",
+  "qualityMax": "Maximal",
+  "labelFormat": "Dateiformat",
+  "labelCodec": "Codec",
+  "labelCountdown": "Countdown",
+  "countdownOff": "Keiner",
+  "idleTitle": "Es wird nichts aufgenommen",
+  "idleText": "Wähle rechts deine Quellen und erteile den Zugriff. Zuerst siehst du eine Live-Vorschau – die Aufnahme startet erst auf dein Kommando.",
+  "armBtn": "Aufnahmequelle wählen",
+  "armingBtn": "Warte auf die Berechtigungsabfrage des Browsers…",
+  "recordNowBtn": "Vorschau überspringen und sofort aufnehmen",
+  "skipCountdownBtn": "Sofort aufnehmen",
+  "changeSourcesBtn": "Quellen ändern",
+  "cancelBtn": "Abbrechen",
   "startBtn": "Aufnahme starten",
-  "pauseBtn": "Pausieren",
+  "pauseBtn": "Pause",
   "resumeBtn": "Fortsetzen",
-  "stopBtn": "Stoppen",
+  "stopBtn": "Stopp",
   "downloadBtn": "Video herunterladen",
   "resetBtn": "Erneut aufnehmen",
-  "statusInit": "Konfigurieren Sie die Einstellungen und klicken Sie auf Start...",
-  "statusCountdown": "Start in...",
-  "statusRecording": "Aufnahme läuft... Klicken Sie auf Stopp zum Beenden",
+  "recordAgainBtn": "Erneut aufnehmen",
+  "discardBtn": "Verwerfen",
+  "retryBtn": "Erneut versuchen",
+  "statusInit": "Richte deine Quellen ein und starte, wenn du bereit bist.",
+  "statusArmed": "Bereit – es wird noch nichts aufgenommen",
+  "statusCountdown": "Start in…",
+  "statusRecording": "Aufnahme läuft… zum Beenden auf Stopp drücken",
   "statusPaused": "Aufnahme pausiert",
-  "statusProcessing": "Aufnahme wird vorbereitet...",
-  "statusDone": "Aufnahme bereit zum Herunterladen!",
-  "statusError": "Aufnahme fehlgeschlagen. Bitte stellen Sie sicher, dass Geräte-Berechtigungen erteilt wurden.",
+  "statusProcessing": "Deine Aufnahme wird zusammengesetzt…",
+  "statusDone": "Aufnahme bereit zum Download",
+  "statusError": "Die Aufnahme konnte nicht gestartet werden",
+  "labelRecording": "Aufnahme",
+  "labelPaused": "Pausiert",
+  "doneTitle": "Aufnahme fertig",
+  "errorTitle": "Die Aufnahme konnte nicht gestartet werden",
+  "errorDenied": "Du hast den Freigabedialog des Browsers geschlossen, oder die Berechtigung wurde verweigert.",
+  "errorNoDevice": "Keine Kamera und kein Mikrofon passt zum ausgewählten Gerät.",
+  "errorNoTrack": "Der Browser hat keine Videoquelle zurückgegeben.",
+  "unsupportedText": "Dein Browser kann keine Medien aufnehmen. Für die Bildschirmaufnahme brauchst du einen Desktop-Browser wie Chrome, Edge, Firefox oder Opera.",
   "permissionRequired": "Berechtigungen erforderlich",
-  "permissionMessage": "Bitte erteilen Sie Ihrem Browser die Berechtigungen für Bildschirmfreigabe und Webcam, um dieses Tool zu verwenden.",
+  "permissionMessage": "Erteile im Browser die Berechtigungen für Bildschirmfreigabe und Kamera, um dieses Werkzeug zu nutzen.",
+  "surfaceMonitor": "Gesamter Bildschirm",
+  "surfaceWindow": "Anwendungsfenster",
+  "surfaceBrowser": "Browser-Tab",
+  "monitorWarning": "Du teilst den gesamten Bildschirm, deshalb bleibt die Vorschau aus – sie würde sich selbst filmen.",
+  "previewToggle": "Vorschau trotzdem anzeigen",
+  "previewHide": "Vorschau ausblenden",
+  "levelLabel": "Eingangspegel",
+  "micMuteBtn": "Mikrofon an",
+  "micUnmuteBtn": "Mikrofon stumm",
+  "sysMuteBtn": "System an",
+  "sysUnmuteBtn": "System stumm",
+  "statLength": "Länge",
+  "statSize": "Größe",
+  "statBitrate": "Bitrate",
+  "statResolution": "Auflösung",
+  "shortcutsTitle": "Tastenkürzel",
+  "shortcutPause": "Leertaste — Pause / Fortsetzen",
+  "shortcutStop": "Esc — Stopp",
+  "shortcutMute": "M — Mikrofon stumm",
+  "overlayTitle": "Webcam-Blase",
+  "overlaySize": "Größe",
+  "overlayCircle": "Kreis",
+  "overlayRounded": "Abgerundet",
+  "overlayMirror": "Spiegeln",
+  "overlayRing": "Rand",
+  "overlayDragHint": "Zieh die Webcam-Blase in der Vorschau, um sie zu verschieben – auch während der Aufnahme.",
+  "howItWorksTitle": "So funktioniert es",
+  "step1Title": "Wähle, was aufgenommen wird",
+  "step1Text": "Bildschirm, Webcam oder beides, dazu Mikrofon und Systemton nach Wunsch.",
+  "step2Title": "Quellen prüfen",
+  "step2Text": "Der Browser fragt nach der Berechtigung und du siehst den exakten Bildausschnitt. Aufgenommen wird noch nichts.",
+  "step3Title": "Aufnahme starten",
+  "step3Text": "Pausieren, fortsetzen, dich stummschalten und die Webcam-Blase verschieben – alles im Laufen.",
+  "step4Title": "Speichern oder weitermachen",
+  "step4Text": "Lade die MP4- oder WebM-Datei herunter oder schicke sie direkt an ein anderes Werkzeug der Suite.",
+  "nextStepTitle": "Weitermachen",
+  "nextStepHint": "Deine Aufnahme reist mit – kein erneuter Upload",
+  "nextGif": "In ein GIF umwandeln",
+  "nextFrames": "Einzelbilder herausholen",
+  "scrollTopLabel": "Nach oben",
   "features": [
     {
       "title": "100 % lokale Aufnahme",
-      "text": "Die gesamte Audio- und Videoverarbeitung erfolgt direkt in Ihrem Browser. Ihre Aufnahmen berühren niemals einen externen Server."
+      "text": "Jedes Einzelbild wird im Arbeitsspeicher deines Browsers kodiert. Deine Aufnahmen berühren keinen Server."
     },
     {
-      "title": "Bildschirm + Webcam Overlay",
-      "text": "Nehmen Sie Ihren Bildschirm oder Desktop mit einer kreisförmigen Webcam-Einblendung auf. Perfekt für Video-Tutorials und Präsentationen."
+      "title": "Bewegliche Webcam-Blase",
+      "text": "Setze deine Kamera auf den geteilten Bildschirm und zieh sie, skaliere sie oder ändere ihre Form während der Aufnahme."
     },
     {
-      "title": "Hohe Qualität & Unbegrenzt",
-      "text": "Keine Zeitlimits, keine künstliche Auflösungsreduzierung und keine Wasserzeichen. Genießen Sie alle Funktionen kostenlos."
+      "title": "Ohne Limits und Wasserzeichen",
+      "text": "Kein Zeitlimit, keine erzwungene Skalierung, kein Logo in der Ecke. Alles kostenlos."
+    }
+  ],
+  "extraFeatures": [
+    {
+      "title": "Eine Bitrate, die du steuerst",
+      "text": "Vier Voreinstellungen, die eine echte Encoder-Bitrate setzen statt des pauschalen Browserwerts, der aus 1080p Matsch macht."
+    },
+    {
+      "title": "Audiopult in Echtzeit",
+      "text": "Wähle das Mikrofon, misch den Systemton dazu und schalte dich mitten in der Aufnahme stumm, ohne sie zu stoppen."
+    },
+    {
+      "title": "Verkettet mit der Suite",
+      "text": "Schick die Aufnahme an den GIF-Ersteller oder den Einzelbild-Extraktor, ohne sie herunter- und wieder hochzuladen."
     }
   ],
   "footerCredit": "Teil der oLoveTools-Suite",
-  "seoHeroTitle": "100 % lokale, private & installationsfreie Bildschirmaufnahme",
-  "seoHeroText": "Standard-Online-Bildschirmrecorder zwingen Sie dazu, große Videodateien in die Cloud hochzuladen oder zweifelhafte Software zu installieren. RecordSnap erfasst Ihren Bildschirm und Ihre Webcam direkt in der sicheren Browser-Sandbox. Das Video wird lokal gespeichert, wodurch absolute Privatsphäre gewährleistet wird.",
+  "seoHeroTitle": "100 % lokale, private Bildschirmaufnahme ohne Installation",
+  "seoHeroText": "Die meisten Online-Bildschirmrekorder zwingen dich, riesige Videodateien in die Cloud zu laden, oder eine Desktop-App zu installieren, nach der du nie gefragt hast. RecordSnap nimmt Bildschirm, Kamera und Ton in der Browser-Sandbox auf und schreibt die Datei direkt auf deine Festplatte.",
   "seoHeroList": [
-    "Keine Registrierung oder Anmeldung erforderlich",
-    "Völlig kostenlos und ohne Wasserzeichen",
-    "Funktioniert nach dem ersten Laden auch offline"
+    "Keine Registrierung, kein Login",
+    "Komplett kostenlos, ohne Wasserzeichen",
+    "Läuft nach dem Laden auch offline"
   ],
-  "seoBrowserSpeedTitle": "Browserbasierte Medienstreams",
-  "seoBrowserSpeedText": "Durch das native Erfassen von Medienströmen in HTML5 und das Codieren von WebM-Containern in Echtzeit hat RecordSnap keinerlei Serverlatenz und speichert Ihre Aufnahmen sofort beim Klicken auf Stopp.",
-  "seoSecondaryTitle": "Ein vollwertiger Bildschirmrecorder auf Ihrem Gerät",
+  "seoBrowserSpeedTitle": "MP4 oder WebM, mit der Bitrate deiner Wahl",
+  "seoBrowserSpeedText": "Der Browser-Rekorder begnügt sich mit rund 2,5 Mbit/s – unabhängig von der Auflösung. Genau deshalb sehen kostenlose Rekorder in 1080p verwaschen aus. RecordSnap berechnet die Bitrate aus Auflösung, Bildrate und Qualitätsstufe und schreibt H.264-MP4, sobald dein Browser es kann.",
+  "seoSecondaryTitle": "Ein vollwertiger Bildschirmrekorder, der dein Gerät nie verlässt",
   "seoKeywordsTitle": "Schlüsselwörter",
   "seoKeywords": [
     "Bildschirm online aufnehmen",
@@ -68,27 +167,39 @@ export default {
     "Kostenloser Video Capture",
     "Desktop online aufnehmen"
   ],
-  "seoUseCaseTitle": "Perfekt für Ersteller, Lehrer und Profis",
-  "seoUseCaseText": "Egal ob Sie Software-Tutorials, Online-Kurse, Folienpräsentationen oder Fehlerberichte aufnehmen – RecordSnap erfasst Ihren Bildschirm und Ihr Gesicht lokal mit maximalem Datenschutz.",
+  "seoUseCaseTitle": "Perfekt für Creator, Lehrende und Profis",
+  "seoUseCaseText": "Software-Tutorials, Online-Unterricht, Folienpräsentationen, Fehlerberichte, Feedback an Kolleginnen und Kollegen: RecordSnap nimmt Bildschirm und Gesicht lokal auf und liefert dir eine Datei, die du überall weiterbearbeiten kannst.",
   "seoPrivacyTitle": "Datenschutz von Grund auf",
-  "seoPrivacyText": "Digitale Privatsphäre ist unser Versprechen. Der Aufnahmeprozess läuft im Arbeitsspeicher ab, und die Datei wird lokal als WebM-Stream generiert. Wir erfassen, sammeln oder speichern keine Ihrer Videoaufnahmen.",
+  "seoPrivacyText": "Die gesamte Aufnahme bleibt im Arbeitsspeicher, bis du sie herunterlädst. Es gibt keinen Upload-Endpunkt, kein Konto und keine Analyse der Medien selbst. Was du aufnimmst, gehört dir und bleibt auf deinem Rechner.",
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
-      "question": "Ist dieses Tool sicher?",
-      "answer": "Absolut. Die Aufnahme wird vollständig in Ihrem Browser verarbeitet. Nichts wird ins Internet hochgeladen, sodass Ihre Aufnahmen zu 100 % privat bleiben."
+      "question": "Ist dieses Werkzeug sicher?",
+      "answer": "Ja. Aufnahme, Mischung und Kodierung passieren alle in deinem Browser. Nichts wird hochgeladen, deine Aufnahmen bleiben also vollständig privat."
     },
     {
       "question": "Wie lange kann ich aufnehmen?",
-      "answer": "Es gibt kein vom Server auferlegtes Limit für die Aufnahmezeit. Sie können so lange aufnehmen, wie Ihr lokaler Festplattenspeicher es zulässt."
+      "answer": "Wir setzen kein Zeitlimit. Die praktische Grenze ist dein freier Speicherplatz und der Arbeitsspeicher deines Browsers, denn die Datei entsteht lokal."
     },
     {
-      "question": "Kann ich System-Audio aufnehmen?",
-      "answer": "Die System-Audioaufnahme wird auf Desktop-Browsern wie Chrome, Edge und Opera unterstützt. Aufgrund von Sandbox-Einschränkungen auf Betriebssystemebene ist System-Audio unter macOS Safari oder auf Mobilgeräten möglicherweise nicht verfügbar."
+      "question": "Kann ich den Systemton aufnehmen?",
+      "answer": "Ja, in Chrome, Edge und Opera auf dem Desktop: Setze im Freigabedialog des Browsers den Haken bei „Audio teilen“. Du kannst ihn mit deinem Mikrofon mischen. Wegen Systembeschränkungen ist Systemton in Safari und auf Mobilgeräten nicht verfügbar."
     },
     {
-      "question": "In welchem Format werden die Aufnahmen gespeichert?",
-      "answer": "Die Aufnahmen werden lokal als standardmäßige, qualitativ hochwertige WebM-Videos gespeichert, die in jedem modernen Browser oder Mediaplayer abgespielt werden können."
+      "question": "Welches Format bekomme ich?",
+      "answer": "MP4 mit H.264, sobald dein Browser es schreiben kann – das Format, das Schnittprogramme und Smartphones erwarten. Sonst WebM mit VP9. Den Container wählst du im Qualitätsbereich, und der tatsächlich verwendete Codec steht direkt daneben."
+    },
+    {
+      "question": "Warum sehen andere Browser-Rekorder verwaschen aus?",
+      "answer": "Weil sie den Encoder auf seiner Standardbitrate von etwa 2,5 Mbit/s belassen, egal bei welcher Auflösung. Text und feine Linien leiden zuerst. Hier ergibt sich die Bitrate aus Auflösung, Bildrate und Qualitätsstufe – und sie steht vor dem Start im Panel."
+    },
+    {
+      "question": "Läuft die Aufnahme weiter, wenn ich das Fenster wechsle?",
+      "answer": "Ja. Die Komposition läuft über einen Worker-Timer statt über den Animation-Callback, den Browser in Hintergrund-Tabs einfrieren. Genau darin befindest du dich, während du etwas anderes präsentierst."
+    },
+    {
+      "question": "Kann ich auf dem Handy aufnehmen?",
+      "answer": "Kamera und Mikrofon ja. Bildschirmaufnahme bieten mobile Browser nicht an – dafür brauchst du einen Desktop-Browser."
     }
   ],
   "footerTagline": "Kostenloser, browserbasierter Bildschirm- und Webcam-Recorder, der vollständig auf Ihrem eigenen Gerät ausgeführt wird.",

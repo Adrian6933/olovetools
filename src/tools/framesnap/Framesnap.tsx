@@ -27,6 +27,7 @@ import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { motion } from 'framer-motion';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
+import { useHandoffIntake } from '../../lib/useHandoff';
 
 interface FramesnapProps {
   lang: string;
@@ -96,6 +97,9 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
     setDuration(0);
     setIsPlaying(false);
   }, []);
+
+  // Picks up a recording handed over by RecordSnap, so no download/re-upload.
+  useHandoffIntake(loadFile);
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) loadFile(e.target.files[0]);

@@ -25,6 +25,7 @@ import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import type { Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
+import { useHandoffIntake } from '../../lib/useHandoff';
 import { AspectRatioPreset, OutputFormat } from './types';
 
 interface CropsnapProps {
@@ -286,6 +287,9 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
     }, 100);
   };
 
+  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
+  useHandoffIntake(file => handleImageFile(file));
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -377,10 +381,10 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
 
       <Header currentLang={lang} onLanguageChange={(newLang) => window.location.href = `/${newLang.toLowerCase()}/cropsnap`} onReset={handleReset} t={t} />
 
-      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full">
+      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         {/* Bloque AdSense Horizontal */}
         <AdBanner id="adsense-cropsnap-top" />
-        <div className="max-w-6xl w-full text-center space-y-16 md:space-y-24">
+        <div className="w-full text-center space-y-16 md:space-y-24">
           
           {/* Hero Header */}
           <div className="flex flex-col items-center space-y-6 animate-fade-in">

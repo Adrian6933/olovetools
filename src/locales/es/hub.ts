@@ -116,6 +116,9 @@ export default {
     },
     "31": {
       "description": "Optimiza, limpia y comprime archivos SVG 100% localmente en tu navegador con vistas previas en tiempo real y formateo de código."
+    },
+    "61": {
+      "description": "Lee cualquier QR desde la cámara, una imagen o el portapapeles y mira exactamente qué contiene antes de abrir nada. 100 % local."
     }
   },
   "tags": {

@@ -1,0 +1,193 @@
+export default {
+  "title": "QR Reader",
+  "badge": "QR code reader",
+  "description": "Scan a QR code with your camera, an image or the clipboard and see exactly what is inside it. It shows you the destination — it never opens it for you.",
+  "seo_title": "QR Reader | Free Online QR Code Scanner That Shows the Content",
+  "seo_description": "Read any QR code from your camera, a photo or a screenshot and see its full content before opening anything. Detects lookalike domains and link shorteners. 100% local, free, no app.",
+  "sourceImage": "Image",
+  "sourceCamera": "Camera",
+  "sourceText": "Raw text",
+  "dropTitle": "Drop a QR image",
+  "dropHint": "PNG, JPG, WebP, screenshots — or press Ctrl+V anywhere on this page",
+  "browseBtn": "Choose a file",
+  "pasteBtn": "Paste from clipboard",
+  "startCameraBtn": "Start camera",
+  "stopCameraBtn": "Stop camera",
+  "torchBtn": "Torch",
+  "cameraDefault": "Default camera",
+  "cameraIdle": "The camera stays off until you start it, and the frames are only read in memory.",
+  "manualLabel": "Paste the raw content of a QR code",
+  "manualHint": "Skips the decoder entirely: useful when you already have the text and just want it taken apart and checked.",
+  "analyseBtn": "Analyse it",
+  "emptyResult": "Whatever the code contains will be shown here, in full, before anything happens.",
+  "scanAgainBtn": "Scan again",
+  "historyTitle": "This session",
+  "clearBtn": "Clear",
+  "copyBtn": "Copy",
+  "showBtn": "Show",
+  "hideBtn": "Hide",
+  "openBtn": "Open the link",
+  "openAnywayBtn": "Open anyway",
+  "destinationLabel": "Full destination",
+  "rawLabel": "Raw content",
+  "saveContactBtn": "Save as .vcf",
+  "kindUrl": "Link",
+  "kindWifi": "WiFi network",
+  "kindContact": "Contact card",
+  "kindEmail": "Email",
+  "kindSms": "SMS",
+  "kindTel": "Phone number",
+  "kindGeo": "Map location",
+  "kindEvent": "Calendar event",
+  "kindText": "Plain text",
+  "fieldHost": "Domain",
+  "fieldSsid": "Network name",
+  "fieldSecurity": "Security",
+  "fieldPassword": "Password",
+  "fieldHidden": "Hidden network",
+  "fieldName": "Name",
+  "fieldOrganization": "Organisation",
+  "fieldJobTitle": "Job title",
+  "fieldPhone": "Phone",
+  "fieldEmail": "Email",
+  "fieldWebsite": "Website",
+  "fieldAddress": "Address",
+  "fieldNote": "Note",
+  "fieldBirthday": "Birthday",
+  "fieldSubject": "Subject",
+  "fieldBody": "Message",
+  "fieldMessage": "Message",
+  "fieldLatitude": "Latitude",
+  "fieldLongitude": "Longitude",
+  "fieldSummary": "Title",
+  "fieldStart": "Starts",
+  "fieldEnd": "Ends",
+  "fieldLocation": "Location",
+  "verdictClean": "Nothing suspicious found",
+  "verdictCleanHint": "We still never open anything on your behalf — that stays your call.",
+  "verdictCaution": "Worth a second look",
+  "verdictSevere": "Treat this one with suspicion",
+  "warnInsecure": "This link is plain http, so anything you send over it travels unencrypted.",
+  "warnPunycode": "The domain uses punycode. It may be a legitimate accented name, or a lookalike of one you trust.",
+  "warnMixedScript": "The domain mixes alphabets — a classic trick for impersonating a real site.",
+  "warnShortener": "This is a link shortener: the real destination is hidden behind a redirect.",
+  "warnIpHost": "The link points at a raw IP address rather than a domain name.",
+  "warnCredentials": "The link carries a username and password inside it.",
+  "warnLongUrl": "The link is unusually long, which is often used to bury the real destination.",
+  "warnOpenWifi": "This network has no password, so traffic on it is not encrypted.",
+  "warnExecutable": "The link points straight at an installable file.",
+  "errorNoCode": "No QR code was found in that image. Try a closer, sharper shot.",
+  "errorBadImage": "That file could not be read as an image.",
+  "errorCameraDenied": "Camera permission was denied. You can still scan an image or paste one.",
+  "errorCameraMissing": "No camera is available on this device.",
+  "errorNoClipboardImage": "There is no image in your clipboard.",
+  "errorClipboardBlocked": "Your browser blocked clipboard access. Press Ctrl+V over the page instead.",
+  "makerCta": "Want to create a QR instead? Open QRBolt",
+  "makerCtaLong": "Create a QR code instead",
+  "makerCardTitle": "Need to create one?",
+  "makerCardText": "QRBolt builds styled QR codes and proves they scan before you print them.",
+  "howItWorksTitle": "How it works",
+  "step1Title": "Bring the code in",
+  "step1Text": "Point your camera at it, drop a screenshot, or just paste from the clipboard.",
+  "step2Title": "It gets decoded here",
+  "step2Text": "The decoder runs in your browser. The image never leaves the machine.",
+  "step3Title": "Read before you act",
+  "step3Text": "You see the full destination, the fields inside it, and any red flags.",
+  "step4Title": "Then decide",
+  "step4Text": "Copy a field, save the contact, or open the link — only if you choose to.",
+  "scrollTopLabel": "Back to top",
+  "features": [
+    {
+      "title": "Shows, never redirects",
+      "text": "A QR sticker can point anywhere at all. This reader prints the destination in full and waits for you to decide."
+    },
+    {
+      "title": "Flags the classic tricks",
+      "text": "Lookalike domains, mixed alphabets, link shorteners, raw IP addresses, embedded credentials and installer links."
+    },
+    {
+      "title": "100% local",
+      "text": "The decoder runs in your browser. No image, no scan and no link ever reaches a server."
+    },
+    {
+      "title": "Camera, file or clipboard",
+      "text": "Scan live with the rear camera, drop a screenshot in, or just press Ctrl+V anywhere on the page."
+    },
+    {
+      "title": "Reads the structure",
+      "text": "WiFi, vCard, MeCard, email, SMS, phone, map and calendar payloads are broken out into labelled fields."
+    },
+    {
+      "title": "Nothing is stored",
+      "text": "The scan list lives in the tab and disappears the moment you close it. There is no history on any server."
+    }
+  ],
+  "footerCredit": "Part of oLoveTools suite",
+  "seoHeroTitle": "See what a QR code says before you obey it",
+  "seoHeroText": "Your phone's camera reads a QR code and offers to open it, usually showing a shortened domain and nothing else. That is exactly the gap the sticker scams on parking meters and restaurant tables rely on. This reader does the opposite: it decodes the code, writes out the entire destination, breaks structured payloads into named fields, and points out the tricks used to make a bad link look ordinary.",
+  "seoHeroList": [
+    "Never opens a link by itself",
+    "Works offline once loaded",
+    "No app, no account, no upload"
+  ],
+  "seoBrowserSpeedTitle": "The whole thing runs in the tab",
+  "seoBrowserSpeedText": "The decoder is a small JavaScript library that runs on your machine. Camera frames are sampled in memory and thrown away, images you drop are read locally, and nothing — not the picture, not the decoded text, not the link — is ever sent anywhere.",
+  "seoSecondaryTitle": "A QR scanner for people who would rather look first",
+  "seoKeywordsTitle": "Keywords",
+  "seoKeywords": [
+    "QR code reader online",
+    "Scan QR from image",
+    "QR scanner without app",
+    "Read QR code from photo",
+    "Check QR code safety",
+    "Decode QR code online",
+    "WiFi QR code reader",
+    "QR code content viewer"
+  ],
+  "seoUseCaseTitle": "Stickers, invoices, posters and packaging",
+  "seoUseCaseText": "A code stuck over the real one on a parking meter, a payment QR in an unexpected invoice, a poster in the street, a business card you were handed: all of these are worth reading before opening. Point the camera or drop the photo in and you get the destination in plain text.",
+  "seoPrivacyTitle": "It cannot leak what it never sends",
+  "seoPrivacyText": "There is no upload endpoint and no analytics on the content. WiFi passwords found inside a code are masked until you ask to see them, and the session list is held in the tab's memory only, so closing it is enough to erase everything.",
+  "faqTitle": "Frequently asked questions",
+  "faq": [
+    {
+      "question": "Does it open the link automatically?",
+      "answer": "Never. That is the entire point of the tool. You get the full URL, the domain on its own line, and a list of anything questionable about it. Opening it takes a deliberate click, and if the link looks dangerous that button is restyled as a warning."
+    },
+    {
+      "question": "Is my image or my camera feed uploaded anywhere?",
+      "answer": "No. The decoder is a JavaScript library running in your browser. Camera frames are sampled into a canvas in memory and discarded immediately, and images you drop in are read with the browser's own file API. Nothing is transmitted."
+    },
+    {
+      "question": "What is QR phishing?",
+      "answer": "A printed code that leads somewhere hostile, often a sticker placed over a legitimate one on a parking meter, a menu or a payment terminal. It works because a camera app shows you almost nothing before opening the page. Reading the code here first closes that gap."
+    },
+    {
+      "question": "Why does it warn me about a shortened link?",
+      "answer": "Because a shortener hides the real destination behind a redirect, so what you can see is not where you end up. We deliberately do not resolve it for you: doing so would contact that server on your behalf and tell it you scanned the code."
+    },
+    {
+      "question": "What is a punycode or mixed-alphabet domain?",
+      "answer": "Some letters look identical across alphabets — a Cyrillic а renders exactly like a Latin a. A domain built from that renders as a name you recognise while belonging to somebody else. Punycode (xn--) is how such a name is encoded, so we surface both."
+    },
+    {
+      "question": "It cannot read my photo. What can I do?",
+      "answer": "Get closer so the code fills more of the frame, hold the phone square to it rather than at an angle, and avoid glare from a screen or lamination. The tool already retries with progressively larger crops, but a blurry or heavily skewed photo has too little detail left to recover."
+    },
+    {
+      "question": "Which kinds of QR content does it understand?",
+      "answer": "Links, plain text, WiFi credentials, vCard and MeCard contacts, email, SMS, phone numbers, map coordinates and calendar events. Structured ones are unfolded into labelled fields you can copy one at a time, and a contact can be saved straight to a .vcf file."
+    }
+  ],
+  "footerTagline": "Free QR code reader that shows you the content instead of opening it.",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "cookiePolicy": "Cookie Policy",
+  "contactForIdeas": "Contact for ideas and feedback:",
+  "emailCopied": "Email copied to clipboard!",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "privacyContent": "Your privacy is important to us.\n\nAll decoding happens locally in your web browser. No image, camera frame, decoded text or link is ever sent to our servers, and we do not track what you scan.\n\nThe session list lives in your tab's memory and disappears when you close it.",
+  "termsContent": "By using QR Reader, you agree to these terms.\n\n1. This tool is provided \"as-is\" without any warranties.\n2. The safety warnings are heuristics, not a guarantee: a code without warnings can still be malicious.\n3. You are responsible for what you choose to open.\n4. We reserve the right to modify these terms at any time.",
+  "cookiesContent": "We use cookies to improve your experience.\n\n1. Essential Cookies: Required for site operations.\n2. Preference Cookies: Used to save your language and cookie preferences.\n\nYou can configure cookies in your browser settings.",
+  "contact": "Contact"
+};

@@ -396,8 +396,8 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
 
       <Header currentLang={lang || 'en'} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
-      <main className="flex-1 flex flex-col items-center pt-32 md:pt-36 pb-24 px-4 md:px-8 relative z-10 w-full">
-        <div className="max-w-5xl w-full space-y-12 md:space-y-16">
+      <main className="flex-1 flex flex-col items-center pt-32 md:pt-36 pb-24 px-4 md:px-8 relative z-10 w-full max-w-5xl mx-auto min-[1400px]:max-w-[min(64rem,calc(100vw-440px))]">
+        <div className="w-full space-y-12 md:space-y-16">
           {/* ---------- Uniform clean header: badge + H1 (SEO keyword) + 2-line description ---------- */}
           <header className="flex flex-col items-center text-center space-y-5 pt-4">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[11px] font-bold tracking-[0.2em] uppercase">

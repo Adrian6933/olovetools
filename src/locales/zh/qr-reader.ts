@@ -1,0 +1,193 @@
+export default {
+  "title": "QR Reader",
+  "badge": "二维码读取器",
+  "description": "用摄像头、图片或剪贴板扫描二维码，直接看清里面到底是什么。它把目的地展示给你，从不替你打开。",
+  "seo_title": "QR Reader | 免费在线二维码读取器，直接显示内容",
+  "seo_description": "用摄像头、照片或截图读取任何二维码，在打开任何东西之前先看清全部内容。能识别仿冒域名和短链接。100% 本地、免费、无需安装应用。",
+  "sourceImage": "图片",
+  "sourceCamera": "摄像头",
+  "sourceText": "纯文本",
+  "dropTitle": "把二维码图片拖进来",
+  "dropHint": "PNG、JPG、WebP、截图——或者在本页任意位置按 Ctrl+V",
+  "browseBtn": "选择文件",
+  "pasteBtn": "从剪贴板粘贴",
+  "startCameraBtn": "打开摄像头",
+  "stopCameraBtn": "关闭摄像头",
+  "torchBtn": "补光灯",
+  "cameraDefault": "默认摄像头",
+  "cameraIdle": "摄像头在你打开之前一直是关的，画面也只在内存里读取。",
+  "manualLabel": "粘贴二维码的原始内容",
+  "manualHint": "完全跳过解码器：当你已经有这段文字，只想把它拆开检查时很有用。",
+  "analyseBtn": "解析它",
+  "emptyResult": "二维码里的内容会完整地显示在这里，在任何事情发生之前。",
+  "scanAgainBtn": "再扫一个",
+  "historyTitle": "本次会话",
+  "clearBtn": "清空",
+  "copyBtn": "复制",
+  "showBtn": "显示",
+  "hideBtn": "隐藏",
+  "openBtn": "打开链接",
+  "openAnywayBtn": "仍然打开",
+  "destinationLabel": "完整目的地",
+  "rawLabel": "原始内容",
+  "saveContactBtn": "保存为 .vcf",
+  "kindUrl": "链接",
+  "kindWifi": "Wi-Fi 网络",
+  "kindContact": "联系人名片",
+  "kindEmail": "邮件",
+  "kindSms": "短信",
+  "kindTel": "电话号码",
+  "kindGeo": "地图位置",
+  "kindEvent": "日历事件",
+  "kindText": "纯文本",
+  "fieldHost": "域名",
+  "fieldSsid": "网络名称",
+  "fieldSecurity": "加密方式",
+  "fieldPassword": "密码",
+  "fieldHidden": "隐藏网络",
+  "fieldName": "姓名",
+  "fieldOrganization": "单位",
+  "fieldJobTitle": "职位",
+  "fieldPhone": "电话",
+  "fieldEmail": "邮箱",
+  "fieldWebsite": "网站",
+  "fieldAddress": "地址",
+  "fieldNote": "备注",
+  "fieldBirthday": "生日",
+  "fieldSubject": "主题",
+  "fieldBody": "内容",
+  "fieldMessage": "内容",
+  "fieldLatitude": "纬度",
+  "fieldLongitude": "经度",
+  "fieldSummary": "标题",
+  "fieldStart": "开始",
+  "fieldEnd": "结束",
+  "fieldLocation": "地点",
+  "verdictClean": "没发现可疑之处",
+  "verdictCleanHint": "我们依然不会替你打开任何东西——那始终由你决定。",
+  "verdictCaution": "值得再看一眼",
+  "verdictSevere": "请带着怀疑对待它",
+  "warnInsecure": "这是普通的 http 链接，你在上面发送的一切都不加密传输。",
+  "warnPunycode": "该域名使用了 punycode。它可能是合法的带重音名称，也可能是你信任的名称的仿冒品。",
+  "warnMixedScript": "域名里混用了不同字母系统——这是冒充真实网站的经典手法。",
+  "warnShortener": "这是短链接服务：真正的目的地被藏在一次跳转后面。",
+  "warnIpHost": "链接指向的是一个裸 IP 地址，而不是域名。",
+  "warnCredentials": "链接里带着用户名和密码。",
+  "warnLongUrl": "这个链接异常地长，这种做法常被用来把真实目的地埋起来。",
+  "warnOpenWifi": "这个网络没有密码，所以上面的流量不加密。",
+  "warnExecutable": "链接直接指向一个可安装的文件。",
+  "errorNoCode": "在这张图里没找到二维码。试试拍得更近、更清楚一些。",
+  "errorBadImage": "这个文件无法作为图片读取。",
+  "errorCameraDenied": "摄像头权限被拒绝。你仍然可以扫描图片或粘贴图片。",
+  "errorCameraMissing": "这台设备上没有可用的摄像头。",
+  "errorNoClipboardImage": "你的剪贴板里没有图片。",
+  "errorClipboardBlocked": "浏览器阻止了剪贴板访问。请改为在页面上按 Ctrl+V。",
+  "makerCta": "想生成二维码？打开 QRBolt",
+  "makerCtaLong": "改为生成二维码",
+  "makerCardTitle": "需要生成一个吗？",
+  "makerCardText": "QRBolt 能做出有设计感的二维码，并在你打印之前证明它能被扫出来。",
+  "howItWorksTitle": "工作原理",
+  "step1Title": "把码带进来",
+  "step1Text": "用摄像头对准它、拖进一张截图，或者直接从剪贴板粘贴。",
+  "step2Title": "在这里被解码",
+  "step2Text": "解码器在你的浏览器里运行。图片始终不会离开这台机器。",
+  "step3Title": "动手之前先读一遍",
+  "step3Text": "你会看到完整的目的地、里面的各个字段，以及所有值得警惕的地方。",
+  "step4Title": "然后由你决定",
+  "step4Text": "复制某个字段、保存联系人，或者打开链接——只在你选择的时候。",
+  "scrollTopLabel": "回到顶部",
+  "features": [
+    {
+      "title": "只展示，从不跳转",
+      "text": "一张二维码贴纸可以指向任何地方。这个读取器把目的地完整写出来，然后等你决定。"
+    },
+    {
+      "title": "标出那些老套路",
+      "text": "仿冒域名、混用字母、短链接、裸 IP 地址、内嵌的账号密码，以及指向安装包的链接。"
+    },
+    {
+      "title": "100% 本地",
+      "text": "解码器在你的浏览器里运行。图片、扫描记录和链接都不会到达任何服务器。"
+    },
+    {
+      "title": "摄像头、文件或剪贴板",
+      "text": "用后置摄像头实时扫描、把截图拖进来，或者干脆在页面上按 Ctrl+V。"
+    },
+    {
+      "title": "读得懂结构",
+      "text": "Wi-Fi、vCard、MeCard、邮件、短信、电话、地图和日历事件都会被拆成带名字的字段。"
+    },
+    {
+      "title": "什么都不保存",
+      "text": "扫描列表只活在这个标签页里，关掉就没了。任何服务器上都没有历史记录。"
+    }
+  ],
+  "footerCredit": "oLoveTools 工具集的一部分",
+  "seoHeroTitle": "在照办之前，先看清二维码到底说了什么",
+  "seoHeroText": "手机相机读到二维码后会问你要不要打开，通常只给你看一个被缩短的域名，别的什么也没有。停车计时器和餐厅桌上的诈骗贴纸，靠的正是这个空档。这个读取器反过来做：它把码解出来，完整写出目的地，把结构化内容拆成带名字的字段，并指出那些让一个坏链接看起来很普通的手法。",
+  "seoHeroList": [
+    "从不自己打开链接",
+    "加载后可离线使用",
+    "无需应用、无需账号、不上传"
+  ],
+  "seoBrowserSpeedTitle": "整件事都在标签页里完成",
+  "seoBrowserSpeedText": "解码器是一个在你机器上运行的小型 JavaScript 库。摄像头画面在内存里采样后即被丢弃，你拖进来的图片在本地读取，而任何东西——照片、解码出的文字、链接——都不会被送到任何地方。",
+  "seoSecondaryTitle": "给愿意先看一眼的人用的二维码扫描器",
+  "seoKeywordsTitle": "关键词",
+  "seoKeywords": [
+    "在线二维码读取器",
+    "从图片扫描二维码",
+    "免安装二维码扫描器",
+    "读取照片里的二维码",
+    "检查二维码是否安全",
+    "在线解码二维码",
+    "Wi-Fi 二维码读取器",
+    "查看二维码内容"
+  ],
+  "seoUseCaseTitle": "贴纸、账单、海报和包装",
+  "seoUseCaseText": "停车计时器上盖住真码的贴纸、一份意料之外的账单里的付款码、街上的海报、刚递到手里的名片：这些都值得先读一遍再打开。对准摄像头或把照片拖进来，你就能拿到纯文本形式的目的地。",
+  "seoPrivacyTitle": "从不发送的东西，也就无从泄露",
+  "seoPrivacyText": "没有上传接口，也没有针对内容的统计。码里发现的 Wi-Fi 密码在你要求查看之前一直是遮住的，会话列表也只存在于标签页的内存中，关掉它就足以把一切抹掉。",
+  "faqTitle": "常见问题",
+  "faq": [
+    {
+      "question": "它会自动打开链接吗？",
+      "answer": "绝不会。这正是这个工具存在的意义。你会拿到完整的 URL、单独一行的域名，以及所有可疑之处的清单。要打开需要你有意识地点一下，而如果链接看起来危险，那个按钮会变成警告的样子。"
+    },
+    {
+      "question": "我的图片或摄像头画面会被上传吗？",
+      "answer": "不会。解码器是运行在你浏览器里的 JavaScript 库。摄像头画面被复制到内存中的画布后立刻丢弃，你拖进来的图片则由浏览器自带的文件 API 读取。没有任何内容被传出去。"
+    },
+    {
+      "question": "什么是二维码钓鱼？",
+      "answer": "一个印出来的码把人带向恶意目的地，常见做法是在停车计时器、菜单或收款终端上，把贴纸盖在真码上面。它之所以奏效，是因为相机应用在打开页面前几乎什么都不给你看。先在这里读一遍，就把这个空档堵上了。"
+    },
+    {
+      "question": "为什么它要提醒我短链接？",
+      "answer": "因为短链接把真实目的地藏在跳转后面：你能看到的并不是你最终到达的地方。我们故意不替你展开它——那样会以你的名义联系那台服务器，并告诉它你扫过这个码。"
+    },
+    {
+      "question": "什么是 punycode 或混用字母的域名？",
+      "answer": "有些字母跨字母系统看起来完全一样——西里尔字母 а 显示出来和拉丁字母 a 一模一样。这样拼出来的域名读起来是你认识的名字，实际却属于别人。punycode（xn--）就是这类名字的编码方式，所以两者我们都会提示。"
+    },
+    {
+      "question": "它读不出我的照片，怎么办？",
+      "answer": "靠近一点，让码在画面里占得更多；把手机端正对着码而不是斜着拍；避开屏幕或塑封膜的反光。工具本身已经会用越来越大的裁切范围反复尝试，但一张模糊或严重倾斜的照片，剩下的细节实在太少了。"
+    },
+    {
+      "question": "它能看懂哪些类型的二维码内容？",
+      "answer": "链接、纯文本、Wi-Fi 凭据、vCard 和 MeCard 联系人、邮件、短信、电话号码、地图坐标和日历事件。结构化的内容会展开成带标签的字段，可以逐个复制，联系人还能直接保存成 .vcf 文件。"
+    }
+  ],
+  "footerTagline": "免费的二维码读取器，把内容显示给你，而不是替你打开。",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "cookiePolicy": "Cookie 政策",
+  "contactForIdeas": "欢迎来信提出想法和意见：",
+  "emailCopied": "Copied!",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "privacyContent": "我们重视你的隐私。\n\n所有解码都在你的浏览器里本地完成。图片、摄像头画面、解码出的文字和链接都不会发送到我们的服务器，我们也不记录你扫了什么。\n\n会话列表只存在于标签页的内存中，关闭即消失。",
+  "termsContent": "使用 QR Reader 即表示你接受以下条款。\n\n1. 本工具按「现状」提供，不作任何担保。\n2. 安全提示是启发式判断而非保证：没有提示的码同样可能是恶意的。\n3. 你要为自己选择打开的内容负责。\n4. 我们保留随时修改本条款的权利。",
+  "cookiesContent": "我们使用 Cookie 来改善你的体验。\n\n1. 必要 Cookie：网站运行所必需。\n2. 偏好 Cookie：保存你的语言和 Cookie 偏好。\n\n你可以在浏览器设置中进行配置。",
+  "contact": "联系我们"
+};

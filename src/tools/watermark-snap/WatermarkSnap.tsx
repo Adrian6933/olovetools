@@ -6,6 +6,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { legalTranslations } from '../../locales/legal';
+import { useHandoffIntake } from '../../lib/useHandoff';
 import JSZip from 'jszip';
 
 interface WatermarkSnapProps {
@@ -329,6 +330,9 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
     ctx.restore();
   };
 
+  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
+  useHandoffIntake(file => addUploadedFiles([file]));
+
   // Upload handlers
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -336,7 +340,7 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
     }
   };
 
-  const addUploadedFiles = (fileList: FileList) => {
+  const addUploadedFiles = (fileList: FileList | File[]) => {
     const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml'];
     Array.from(fileList).forEach(file => {
       if (!validTypes.includes(file.type)) return;

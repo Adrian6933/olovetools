@@ -33,6 +33,7 @@ export const TOOL_FAVICONS: Record<string, string> = {
   'graph-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><line x1='18' y1='20' x2='18' y2='10'/><line x1='12' y1='20' x2='12' y2='4'/><line x1='6' y1='20' x2='6' y2='14'/><line x1='2' y1='20' x2='22' y2='20'/></svg>",
   'url-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/><path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/></svg>",
   'clip-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='6' cy='6' r='3'/><circle cx='6' cy='18' r='3'/><line x1='20' y1='4' x2='8.12' y2='15.88'/><line x1='14.47' y1='14.48' x2='20' y2='20'/><line x1='8.12' y1='8.12' x2='12' y2='12'/></svg>",
+  'qr-reader': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 7V5a2 2 0 0 1 2-2h2'/><path d='M17 3h2a2 2 0 0 1 2 2v2'/><path d='M21 17v2a2 2 0 0 1-2 2h-2'/><path d='M7 21H5a2 2 0 0 1-2-2v-2'/><path d='M7 12h10'/></svg>",
   'jwt-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='7' cy='15' r='4'/><path d='M10.85 12.15 19 4'/><path d='m18 5 3 3'/><path d='m15 8 3 3'/><path d='M3 21l3-3'/></svg>",
   default: "/icon.svg"
 };
@@ -48,6 +49,7 @@ export const TOOL_THEME_COLORS: Record<string, string> = {
   'pdf-flow': "#ef4444",
   recordsnap: "#f59e0b",
   'qr-bolt': "#10b981",
+  'qr-reader': "#06b6d4",
   codecard: "#6366f1",
   cropsnap: "#f43f5e",
   'css-designer': "#8b5cf6",
@@ -689,5 +691,15 @@ export const MOCK_PROJECTS: Project[] = [
     tags: ['JWT', 'Token', 'Decoder', 'Security'],
     icon: 'KeyRound',
     color: 'bg-gradient-to-br from-violet-500 to-fuchsia-600'
+  },
+  {
+    id: '61',
+    name: 'QR Reader',
+    slug: 'qr-reader',
+    description: 'Read any QR code from your camera, an image or the clipboard and see exactly what it contains before you open anything. 100% local.',
+    category: ProjectCategory.IMAGE_DESIGN,
+    tags: ['QR', 'Scanner', 'Reader', 'Decoder'],
+    icon: 'ScanLine',
+    color: 'bg-gradient-to-br from-cyan-500 to-sky-600'
   }
 ];

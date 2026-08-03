@@ -7,6 +7,7 @@ import LegalModal from './components/LegalModal';
 import { ImageFormat, ConversionSettings, BatchImageItem, ConversionResult } from './types';
 import type { Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
+import { useHandoffIntake } from '../../lib/useHandoff';
 import { convertImage, formatBytes, readFileAsDataURL, loadImage, createBatchZip, processUploadedFile } from './services/imageService';
 import { X, ArrowRight, ArrowUp, SplitSquareHorizontal, Layers, Ruler, ScanLine, FileImage, ShieldCheck, Zap, Maximize, FileType, Home, Sparkles, Wand2, ArrowRightLeft, Mail } from 'lucide-react';
 
@@ -89,6 +90,9 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
       setIsBatchProcessing(false);
     }
   };
+
+  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
+  useHandoffIntake(file => handleFilesSelect([file]));
 
   const handleSpecificSettingsChange = (id: string, newSettings: ConversionSettings | undefined) => {
     setImages(prevImages => prevImages.map(img => 

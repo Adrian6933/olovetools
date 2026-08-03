@@ -116,6 +116,9 @@ export default {
     },
     "31": {
       "description": "Optimize, clean and compress SVG files 100% locally in your browser with real-time side-by-side previews and code formatting."
+    },
+    "61": {
+      "description": "Read any QR code from your camera, an image or the clipboard and see exactly what it contains before you open anything. 100% local."
     }
   },
   "tags": {

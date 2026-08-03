@@ -1,0 +1,193 @@
+export default {
+  "title": "QR Reader",
+  "badge": "Lecteur de QR codes",
+  "description": "Scannez un QR code avec la caméra, une image ou le presse-papiers et voyez exactement ce qu'il contient. Il vous montre la destination : il ne l'ouvre jamais à votre place.",
+  "seo_title": "QR Reader | Lecteur de QR en ligne gratuit qui affiche le contenu",
+  "seo_description": "Lisez n'importe quel QR code depuis votre caméra, une photo ou une capture et voyez tout son contenu avant d'ouvrir quoi que ce soit. Détecte les domaines sosies et les raccourcisseurs. 100 % local, gratuit, sans appli.",
+  "sourceImage": "Image",
+  "sourceCamera": "Caméra",
+  "sourceText": "Texte brut",
+  "dropTitle": "Déposez une image de QR",
+  "dropHint": "PNG, JPG, WebP, captures… ou appuyez sur Ctrl+V n'importe où sur cette page",
+  "browseBtn": "Choisir un fichier",
+  "pasteBtn": "Coller depuis le presse-papiers",
+  "startCameraBtn": "Démarrer la caméra",
+  "stopCameraBtn": "Arrêter la caméra",
+  "torchBtn": "Lampe",
+  "cameraDefault": "Caméra par défaut",
+  "cameraIdle": "La caméra reste éteinte jusqu'à ce que vous la démarriez, et les images ne sont lues qu'en mémoire.",
+  "manualLabel": "Collez le contenu brut d'un QR code",
+  "manualHint": "Contourne complètement le décodeur : pratique quand vous avez déjà le texte et voulez seulement le décomposer et le vérifier.",
+  "analyseBtn": "Analyser",
+  "emptyResult": "Ce que contient le code s'affichera ici, en entier, avant que quoi que ce soit ne se produise.",
+  "scanAgainBtn": "Scanner à nouveau",
+  "historyTitle": "Cette session",
+  "clearBtn": "Vider",
+  "copyBtn": "Copier",
+  "showBtn": "Afficher",
+  "hideBtn": "Masquer",
+  "openBtn": "Ouvrir le lien",
+  "openAnywayBtn": "Ouvrir quand même",
+  "destinationLabel": "Destination complète",
+  "rawLabel": "Contenu brut",
+  "saveContactBtn": "Enregistrer en .vcf",
+  "kindUrl": "Lien",
+  "kindWifi": "Réseau WiFi",
+  "kindContact": "Carte de contact",
+  "kindEmail": "E-mail",
+  "kindSms": "SMS",
+  "kindTel": "Numéro de téléphone",
+  "kindGeo": "Position sur la carte",
+  "kindEvent": "Événement de calendrier",
+  "kindText": "Texte brut",
+  "fieldHost": "Domaine",
+  "fieldSsid": "Nom du réseau",
+  "fieldSecurity": "Sécurité",
+  "fieldPassword": "Mot de passe",
+  "fieldHidden": "Réseau masqué",
+  "fieldName": "Nom",
+  "fieldOrganization": "Organisation",
+  "fieldJobTitle": "Fonction",
+  "fieldPhone": "Téléphone",
+  "fieldEmail": "E-mail",
+  "fieldWebsite": "Site web",
+  "fieldAddress": "Adresse",
+  "fieldNote": "Note",
+  "fieldBirthday": "Anniversaire",
+  "fieldSubject": "Objet",
+  "fieldBody": "Message",
+  "fieldMessage": "Message",
+  "fieldLatitude": "Latitude",
+  "fieldLongitude": "Longitude",
+  "fieldSummary": "Titre",
+  "fieldStart": "Début",
+  "fieldEnd": "Fin",
+  "fieldLocation": "Lieu",
+  "verdictClean": "Rien de suspect n'a été trouvé",
+  "verdictCleanHint": "Nous n'ouvrons toujours rien à votre place : la décision reste la vôtre.",
+  "verdictCaution": "Mérite un second regard",
+  "verdictSevere": "À traiter avec méfiance",
+  "warnInsecure": "Ce lien est en http simple : tout ce que vous y envoyez circule sans chiffrement.",
+  "warnPunycode": "Le domaine utilise du punycode. Ce peut être un nom accentué légitime, ou l'imitation d'un nom en qui vous avez confiance.",
+  "warnMixedScript": "Le domaine mélange les alphabets — le grand classique pour se faire passer pour un vrai site.",
+  "warnShortener": "C'est un raccourcisseur de liens : la vraie destination est cachée derrière une redirection.",
+  "warnIpHost": "Le lien pointe vers une adresse IP brute plutôt que vers un nom de domaine.",
+  "warnCredentials": "Le lien transporte un identifiant et un mot de passe à l'intérieur.",
+  "warnLongUrl": "Le lien est anormalement long, ce qui sert souvent à noyer la vraie destination.",
+  "warnOpenWifi": "Ce réseau n'a pas de mot de passe : le trafic qui y circule n'est pas chiffré.",
+  "warnExecutable": "Le lien pointe directement vers un fichier installable.",
+  "errorNoCode": "Aucun QR code trouvé dans cette image. Essayez une photo plus proche et plus nette.",
+  "errorBadImage": "Ce fichier n'a pas pu être lu comme une image.",
+  "errorCameraDenied": "L'autorisation de la caméra a été refusée. Vous pouvez toujours scanner ou coller une image.",
+  "errorCameraMissing": "Aucune caméra n'est disponible sur cet appareil.",
+  "errorNoClipboardImage": "Il n'y a aucune image dans votre presse-papiers.",
+  "errorClipboardBlocked": "Votre navigateur a bloqué l'accès au presse-papiers. Appuyez plutôt sur Ctrl+V sur la page.",
+  "makerCta": "Vous voulez plutôt créer un QR ? Ouvrez QRBolt",
+  "makerCtaLong": "Créer un QR code",
+  "makerCardTitle": "Besoin d'en créer un ?",
+  "makerCardText": "QRBolt fabrique des QR codes stylés et prouve qu'ils se scannent avant que vous ne les imprimiez.",
+  "howItWorksTitle": "Comment ça marche",
+  "step1Title": "Amenez le code",
+  "step1Text": "Visez-le avec la caméra, déposez une capture, ou collez simplement depuis le presse-papiers.",
+  "step2Title": "Il est décodé ici",
+  "step2Text": "Le décodeur tourne dans votre navigateur. L'image ne quitte jamais la machine.",
+  "step3Title": "Lisez avant d'agir",
+  "step3Text": "Vous voyez la destination complète, les champs qu'elle contient, et tous les signaux d'alerte.",
+  "step4Title": "Et vous décidez",
+  "step4Text": "Copiez un champ, enregistrez le contact, ou ouvrez le lien — uniquement si vous le choisissez.",
+  "scrollTopLabel": "Retour en haut",
+  "features": [
+    {
+      "title": "Il montre, il ne redirige jamais",
+      "text": "Un autocollant QR peut pointer absolument n'importe où. Ce lecteur écrit la destination en entier et attend votre décision."
+    },
+    {
+      "title": "Il signale les vieux trucs",
+      "text": "Domaines sosies, alphabets mélangés, raccourcisseurs, adresses IP brutes, identifiants intégrés et liens vers des installeurs."
+    },
+    {
+      "title": "100 % local",
+      "text": "Le décodeur tourne dans votre navigateur. Ni l'image, ni le scan, ni le lien n'atteignent jamais un serveur."
+    },
+    {
+      "title": "Caméra, fichier ou presse-papiers",
+      "text": "Scannez en direct avec la caméra arrière, déposez une capture, ou appuyez simplement sur Ctrl+V sur la page."
+    },
+    {
+      "title": "Il comprend la structure",
+      "text": "WiFi, vCard, MeCard, e-mail, SMS, téléphone, carte et événements de calendrier sont éclatés en champs nommés."
+    },
+    {
+      "title": "Rien n'est conservé",
+      "text": "La liste des scans vit dans l'onglet et disparaît dès que vous le fermez. Aucun historique sur aucun serveur."
+    }
+  ],
+  "footerCredit": "Part of the oLoveTools suite",
+  "seoHeroTitle": "Voyez ce que dit un QR code avant de lui obéir",
+  "seoHeroText": "L'appareil photo de votre téléphone lit un QR code et propose de l'ouvrir, en n'affichant en général qu'un domaine raccourci. C'est exactement la faille dont vivent les autocollants frauduleux sur les horodateurs et les tables de restaurant. Ce lecteur fait l'inverse : il décode le code, écrit la destination complète, éclate les contenus structurés en champs nommés et pointe les astuces qui font passer un mauvais lien pour un lien ordinaire.",
+  "seoHeroList": [
+    "N'ouvre jamais un lien tout seul",
+    "Fonctionne hors ligne une fois chargé",
+    "Sans appli, sans compte, sans envoi"
+  ],
+  "seoBrowserSpeedTitle": "Tout se passe dans l'onglet",
+  "seoBrowserSpeedText": "Le décodeur est une petite bibliothèque JavaScript qui tourne sur votre machine. Les images de la caméra sont échantillonnées en mémoire puis jetées, les images que vous déposez sont lues en local, et rien — ni la photo, ni le texte décodé, ni le lien — n'est jamais envoyé où que ce soit.",
+  "seoSecondaryTitle": "Un scanner de QR pour ceux qui préfèrent regarder d'abord",
+  "seoKeywordsTitle": "Mots-clés",
+  "seoKeywords": [
+    "Lecteur QR en ligne",
+    "Scanner un QR depuis une image",
+    "Scanner QR sans appli",
+    "Lire un QR code sur une photo",
+    "Vérifier la sécurité d'un QR",
+    "Décoder un QR en ligne",
+    "Lecteur QR WiFi",
+    "Voir le contenu d'un QR"
+  ],
+  "seoUseCaseTitle": "Autocollants, factures, affiches et emballages",
+  "seoUseCaseText": "Un code collé par-dessus le vrai sur un horodateur, un QR de paiement dans une facture inattendue, une affiche dans la rue, une carte de visite qu'on vient de vous tendre : tous méritent d'être lus avant d'être ouverts. Visez avec la caméra ou déposez la photo, et vous obtenez la destination en clair.",
+  "seoPrivacyTitle": "Il ne peut pas fuiter ce qu'il n'envoie jamais",
+  "seoPrivacyText": "Il n'y a aucun point d'envoi ni aucune analytique sur le contenu. Les mots de passe WiFi trouvés dans un code restent masqués jusqu'à ce que vous demandiez à les voir, et la liste de session n'existe que dans la mémoire de l'onglet : le fermer suffit à tout effacer.",
+  "faqTitle": "Questions fréquentes",
+  "faq": [
+    {
+      "question": "Est-ce qu'il ouvre le lien automatiquement ?",
+      "answer": "Jamais. C'est tout l'intérêt de l'outil. Vous obtenez l'URL complète, le domaine sur sa propre ligne, et la liste de tout ce qui est discutable. L'ouvrir demande un clic délibéré, et si le lien paraît dangereux ce bouton prend l'apparence d'un avertissement."
+    },
+    {
+      "question": "Mon image ou le flux de ma caméra sont-ils envoyés quelque part ?",
+      "answer": "Non. Le décodeur est une bibliothèque JavaScript qui tourne dans votre navigateur. Les images de la caméra sont copiées dans un canvas en mémoire puis immédiatement jetées, et les images que vous déposez sont lues avec l'API fichier du navigateur. Rien n'est transmis."
+    },
+    {
+      "question": "Qu'est-ce que l'hameçonnage par QR code ?",
+      "answer": "Un code imprimé qui mène vers un site hostile, souvent un autocollant posé par-dessus un code légitime sur un horodateur, un menu ou un terminal de paiement. Ça marche parce que l'appareil photo ne vous montre presque rien avant d'ouvrir la page. Lire le code ici d'abord referme cette faille."
+    },
+    {
+      "question": "Pourquoi m'avertit-il à propos d'un lien raccourci ?",
+      "answer": "Parce qu'un raccourcisseur cache la vraie destination derrière une redirection : ce que vous voyez n'est pas où vous arrivez. Nous ne le résolvons délibérément pas pour vous : cela contacterait ce serveur en votre nom et lui apprendrait que vous avez scanné le code."
+    },
+    {
+      "question": "Qu'est-ce qu'un domaine en punycode ou à alphabets mélangés ?",
+      "answer": "Certaines lettres sont identiques d'un alphabet à l'autre : un а cyrillique s'affiche exactement comme un a latin. Un domaine construit ainsi se lit comme un nom que vous reconnaissez tout en appartenant à quelqu'un d'autre. Le punycode (xn--) est la façon dont un tel nom est encodé, d'où nos deux signalements."
+    },
+    {
+      "question": "Il n'arrive pas à lire ma photo, que faire ?",
+      "answer": "Rapprochez-vous pour que le code occupe davantage l'image, tenez le téléphone bien en face plutôt qu'en biais, et évitez les reflets d'un écran ou d'une plastification. L'outil réessaie déjà avec des recadrages de plus en plus larges, mais une photo floue ou très inclinée n'a plus assez de détail à récupérer."
+    },
+    {
+      "question": "Quels types de contenu comprend-il ?",
+      "answer": "Liens, texte brut, identifiants WiFi, contacts vCard et MeCard, e-mail, SMS, numéros de téléphone, coordonnées de carte et événements de calendrier. Les contenus structurés sont dépliés en champs nommés que vous pouvez copier un par un, et un contact peut être enregistré directement en fichier .vcf."
+    }
+  ],
+  "footerTagline": "Lecteur de QR codes gratuit qui vous montre le contenu au lieu de l'ouvrir.",
+  "privacyPolicy": "Politique de Confidentialité",
+  "termsOfService": "Conditions d'Utilisation",
+  "cookiePolicy": "Politique de Cookies",
+  "contactForIdeas": "Contact for ideas and comments:",
+  "emailCopied": "Copied!",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "privacyContent": "Votre vie privée compte pour nous.\n\nTout le décodage se fait localement dans votre navigateur. Aucune image, aucune image de caméra, aucun texte décodé ni aucun lien n'est envoyé à nos serveurs, et nous ne suivons pas ce que vous scannez.\n\nLa liste de session vit dans la mémoire de votre onglet et disparaît à sa fermeture.",
+  "termsContent": "En utilisant QR Reader, vous acceptez ces conditions.\n\n1. Cet outil est fourni « en l'état », sans garantie.\n2. Les avertissements de sécurité sont des heuristiques, pas une garantie : un code sans avertissement peut malgré tout être malveillant.\n3. Vous êtes responsable de ce que vous choisissez d'ouvrir.\n4. Nous nous réservons le droit de modifier ces conditions à tout moment.",
+  "cookiesContent": "Nous utilisons des cookies pour améliorer votre expérience.\n\n1. Cookies essentiels : nécessaires au fonctionnement du site.\n2. Cookies de préférences : mémorisent votre langue et vos choix de cookies.\n\nVous pouvez les configurer dans les réglages de votre navigateur.",
+  "contact": "Contact"
+};

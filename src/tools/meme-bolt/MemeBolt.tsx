@@ -19,6 +19,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
 import { legalTranslations } from '../../locales/legal';
+import { useHandoffIntake } from '../../lib/useHandoff';
 
 // Type declarations
 interface TextLayer {
@@ -494,16 +495,21 @@ export const MemeBolt: React.FC<MemeBoltProps> = ({ lang, dictionary }) => {
   };
 
   // File Upload Handlers
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setCustomImageFile(e.target.files[0]);
-      setSelectedTemplateId('');
-      setTextLayers([]);
-      setStickerLayers([]);
-      setSelectedElement(null);
-      addTextLayer(); // add a starting text layer for custom image
-    }
+  const useCustomImage = (file: File) => {
+    setCustomImageFile(file);
+    setSelectedTemplateId('');
+    setTextLayers([]);
+    setStickerLayers([]);
+    setSelectedElement(null);
+    addTextLayer(); // add a starting text layer for custom image
   };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) useCustomImage(e.target.files[0]);
+  };
+
+  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
+  useHandoffIntake(useCustomImage);
 
   const triggerFileInput = () => {
     if (fileInputRef.current) fileInputRef.current.click();

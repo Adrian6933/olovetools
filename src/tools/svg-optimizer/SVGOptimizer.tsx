@@ -271,7 +271,7 @@ const SVGOptimizer: React.FC<SVGOptimizerProps> = ({ lang, dictionary }) => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 pt-28 md:pt-32 pb-8 px-4 md:px-8">
+      <main className="flex-1 pt-28 md:pt-32 pb-8 px-4 md:px-8 w-full max-w-7xl mx-auto min-[1400px]:max-w-[min(80rem,calc(100vw-440px))]">
         {/* Bloque AdSense Horizontal */}
         <AdBanner id="adsense-svg-optimizer-top" />
         <div className="max-w-7xl mx-auto space-y-6">

@@ -116,6 +116,9 @@ export default {
     },
     "31": {
       "description": "Optimieren, bereinigen und komprimieren Sie SVG-Dateien zu 100% lokal im Browser mit Echtzeit-Vorschau und Formatierung."
+    },
+    "61": {
+      "description": "Lies jeden QR-Code von der Kamera, einem Bild oder der Zwischenablage und sieh genau, was drinsteht, bevor du etwas öffnest. 100 % lokal."
     }
   },
   "tags": {

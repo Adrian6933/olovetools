@@ -59,6 +59,7 @@ import Cleansnap from '../../../tools/cleansnap/Cleansnap';
 import Klipy from '../../../tools/klipy/Klipy';
 import ClipFlow from '../../../tools/clip-flow/ClipFlow';
 import JwtBolt from '../../../tools/jwt-bolt/JwtBolt';
+import QrReader from '../../../tools/qr-reader/QrReader';
 import { Footer as CompressFooter } from '../../../tools/compresssnap/components/Footer';
 import { Footer as BgRemoverFooter } from '../../../tools/backgroundremover/components/Footer';
 import { Footer as PdfFlowFooter } from '../../../tools/pdf-flow/components/Footer';
@@ -77,7 +78,7 @@ import '../../../styles/global.css';
 export const prerender = true;
 
 export function getStaticPaths() {
-  const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt', 'audiosnap', 'drawsnap', 'diffsnap', 'watermark-snap', 'favicon-bolt', 'exif-clear', 'meme-bolt', 'wordflow', 'markdown-live', 'hash-bolt', 'zip-flow', 'regex-flow', 'lottie-viewer', 'svg-optimizer', 'graph-flow', 'url-bolt', 'base64-bolt', 'uuid-generator', 'list-mixer', 'html-sanitizer', 'colorsnap', 'hex-to-rgb', 'aspect-ratio', 'unitflow', 'sql-flow', 'cron-flow', 'xml-json', 'binary-flow', 'morse-flow', 'epoch-flow', 'time-bolt', 'device-test', 'lorem-flow', 'key-doctor', 'whiteboard-flow', 'subtitles-bolt', 'passbolt', 'whois-bolt', 'framesnap', 'cleansnap', 'klipy', 'clip-flow', 'jwt-bolt'];
+  const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt', 'audiosnap', 'drawsnap', 'diffsnap', 'watermark-snap', 'favicon-bolt', 'exif-clear', 'meme-bolt', 'wordflow', 'markdown-live', 'hash-bolt', 'zip-flow', 'regex-flow', 'lottie-viewer', 'svg-optimizer', 'graph-flow', 'url-bolt', 'base64-bolt', 'uuid-generator', 'list-mixer', 'html-sanitizer', 'colorsnap', 'hex-to-rgb', 'aspect-ratio', 'unitflow', 'sql-flow', 'cron-flow', 'xml-json', 'binary-flow', 'morse-flow', 'epoch-flow', 'time-bolt', 'device-test', 'lorem-flow', 'key-doctor', 'whiteboard-flow', 'subtitles-bolt', 'passbolt', 'whois-bolt', 'framesnap', 'cleansnap', 'klipy', 'clip-flow', 'jwt-bolt', 'qr-reader'];
   const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
   
   return tools.flatMap(tool => 
@@ -158,7 +159,8 @@ const toolNames: Record<string, string> = {
   'whiteboard-flow': 'WhiteboardFlow',
   'subtitles-bolt': 'SubtitlesBolt',
   'whois-bolt': 'WhoisBolt',
-  'jwt-bolt': 'JWTBolt'
+  'jwt-bolt': 'JWTBolt'  , 'qr-reader': 'QR Reader'
+
 
 };
 const name = toolNames[tool as string] || ((tool as string).charAt(0).toUpperCase() + (tool as string).slice(1));
@@ -2018,6 +2020,26 @@ const appSchema = {
         .glow-violet { box-shadow: 0 0 25px -5px rgba(139, 92, 246, 0.35); }
       </style>
     )}
+    {tool === 'qr-reader' && (
+      <style is:inline>
+        body {
+          background-color: #04080a !important;
+          background-image: radial-gradient(circle at 50% -25%, #05222e 0%, #04080a 60%) !important;
+          background-attachment: fixed !important;
+          color: #ecf8fd !important;
+          min-height: 100vh !important;
+          overflow-x: hidden !important;
+          width: 100% !important;
+        }
+        #root { min-height: 100vh; position: relative; z-index: 10; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #04080a; }
+        ::-webkit-scrollbar-thumb { background: #0891b2; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #06b6d4; }
+        .glass-card { background: rgba(3, 15, 20, 0.45); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.06); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); }
+        .glow-cyan { box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.35); }
+      </style>
+    )}
   </head>
   <body>
     <div id="root">
@@ -2081,7 +2103,8 @@ const appSchema = {
         {tool === 'klipy' && <Klipy lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'clip-flow' && <ClipFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'jwt-bolt' && <JwtBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
-        {tool !== 'clipy' && tool !== 'twitchbolt' && tool !== 'kickbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && tool !== 'compresssnap' && tool !== 'backgroundremover' && tool !== 'pdf-flow' && tool !== 'recordsnap' && tool !== 'qr-bolt' && tool !== 'codecard' && tool !== 'cropsnap' && tool !== 'css-designer' && tool !== 'json-flow' && tool !== 'socialbolt' && tool !== 'tts-bolt' && tool !== 'gif-bolt' && tool !== 'audiosnap' && tool !== 'drawsnap' && tool !== 'diffsnap' && tool !== 'watermark-snap' && tool !== 'favicon-bolt' && tool !== 'exif-clear' && tool !== 'meme-bolt' && tool !== 'wordflow' && tool !== 'markdown-live' && tool !== 'hash-bolt' && tool !== 'zip-flow' && tool !== 'regex-flow' && tool !== 'lottie-viewer' && tool !== 'svg-optimizer' && tool !== 'graph-flow' && tool !== 'url-bolt' && tool !== 'base64-bolt' && tool !== 'uuid-generator' && tool !== 'list-mixer' && tool !== 'html-sanitizer' && tool !== 'colorsnap' && tool !== 'hex-to-rgb' && tool !== 'aspect-ratio' && tool !== 'unitflow' && tool !== 'sql-flow' && tool !== 'cron-flow' && tool !== 'xml-json' && tool !== 'binary-flow' && tool !== 'morse-flow' && tool !== 'epoch-flow' && tool !== 'time-bolt' && tool !== 'device-test' && tool !== 'lorem-flow' && tool !== 'key-doctor' && tool !== 'whiteboard-flow' && tool !== 'subtitles-bolt' && tool !== 'passbolt' && tool !== 'whois-bolt' && tool !== 'framesnap' && tool !== 'cleansnap' && tool !== 'klipy' && tool !== 'clip-flow' && tool !== 'jwt-bolt' && (
+        {tool === 'qr-reader' && <QrReader lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool !== 'clipy' && tool !== 'twitchbolt' && tool !== 'kickbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && tool !== 'compresssnap' && tool !== 'backgroundremover' && tool !== 'pdf-flow' && tool !== 'recordsnap' && tool !== 'qr-bolt' && tool !== 'codecard' && tool !== 'cropsnap' && tool !== 'css-designer' && tool !== 'json-flow' && tool !== 'socialbolt' && tool !== 'tts-bolt' && tool !== 'gif-bolt' && tool !== 'audiosnap' && tool !== 'drawsnap' && tool !== 'diffsnap' && tool !== 'watermark-snap' && tool !== 'favicon-bolt' && tool !== 'exif-clear' && tool !== 'meme-bolt' && tool !== 'wordflow' && tool !== 'markdown-live' && tool !== 'hash-bolt' && tool !== 'zip-flow' && tool !== 'regex-flow' && tool !== 'lottie-viewer' && tool !== 'svg-optimizer' && tool !== 'graph-flow' && tool !== 'url-bolt' && tool !== 'base64-bolt' && tool !== 'uuid-generator' && tool !== 'list-mixer' && tool !== 'html-sanitizer' && tool !== 'colorsnap' && tool !== 'hex-to-rgb' && tool !== 'aspect-ratio' && tool !== 'unitflow' && tool !== 'sql-flow' && tool !== 'cron-flow' && tool !== 'xml-json' && tool !== 'binary-flow' && tool !== 'morse-flow' && tool !== 'epoch-flow' && tool !== 'time-bolt' && tool !== 'device-test' && tool !== 'lorem-flow' && tool !== 'key-doctor' && tool !== 'whiteboard-flow' && tool !== 'subtitles-bolt' && tool !== 'passbolt' && tool !== 'whois-bolt' && tool !== 'framesnap' && tool !== 'cleansnap' && tool !== 'klipy' && tool !== 'clip-flow' && tool !== 'jwt-bolt' && tool !== 'qr-reader' && (
           <div class="min-h-screen bg-[#060609] text-slate-200 font-sans">
              <ToolPlaceholder lang={castLang} toolSlug={tool!} client:load />
           </div>
