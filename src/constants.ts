@@ -624,8 +624,8 @@ export const MOCK_PROJECTS: Project[] = [
   },
   {
     id: '54',
-    name: 'PassBolt',
-    slug: 'passbolt',
+    name: 'EntropyBolt',
+    slug: 'entropy-bolt',
     description: 'Generate secure passwords and test their strength with entropy analysis 100% locally.',
     category: ProjectCategory.SECURITY_CRYPTO,
     tags: ['Password', 'Generator', 'Security', 'Entropy'],

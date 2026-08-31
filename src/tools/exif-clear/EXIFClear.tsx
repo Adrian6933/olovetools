@@ -1,1160 +1,1308 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Shield, 
-  Trash2, 
-  Upload, 
-  Download, 
-  Info, 
-  CheckCircle, 
-  AlertTriangle, 
-  MapPin, 
-  Camera, 
-  Calendar, 
-  Image as ImageIcon,
-  Cpu
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  AlertTriangle,
+  Check,
+  ClipboardPaste,
+  Download,
+  Eye,
+  Loader2,
+  Redo2,
+  RotateCcw,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+  Trash2,
+  Undo2,
+  Upload,
 } from 'lucide-react';
-import { createTranslator, type Language } from '../../locales/meta';
+import JSZip from 'jszip';
+
+import { createTranslator } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
+import { useHandoffIntake } from '../../lib/useHandoff';
+import { legalTranslations } from '../../locales/legal';
+
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { legalTranslations } from '../../locales/legal';
-import JSZip from 'jszip';
+import { Inspector } from './components/Inspector';
+import { NextStepBar } from './components/NextStepBar';
+import {
+  CleanerHeroArt,
+  EmptyInspectorArt,
+  IconFormats,
+  IconLocalOnly,
+  IconLossless,
+  IconNoLocation,
+  IconTagPicker,
+  IconVerified,
+  StepChoose,
+  StepDrop,
+  StepInspect,
+  StepSave,
+} from './components/Illustrations';
 
-// Interface declarations
-interface ImageMetadata {
-  make?: string;
-  model?: string;
-  dateTime?: string;
-  software?: string;
-  gps?: {
-    latitude: number;
-    longitude: number;
-    formatted?: string;
-  };
-  hasMetadata: boolean;
-  hasGps: boolean;
-}
-
-interface LoadedFile {
-  id: string;
-  file: File;
-  previewUrl: string;
-  arrayBuffer: ArrayBuffer;
-  metadata: ImageMetadata;
-  status: 'pending' | 'cleaning' | 'cleaned' | 'error';
-}
+import {
+  buildSelection,
+  clean,
+  formatBytes,
+  inspect,
+  type PresetId,
+  type Report,
+  type Selection,
+} from './lib/report';
+import { ACCEPT, cleanedName, loadFile, MAX_BYTES, MIME_BY_FORMAT, type IntakeError } from './lib/intake';
+import type { ImageFormat } from './lib/containers';
 
 interface EXIFClearProps {
   lang: string;
   dictionary: any;
 }
 
-// Binary Helper Class for TIFF parsing
-class BinaryReader {
-  private view: DataView;
-  private littleEndian: boolean = true;
-
-  constructor(buffer: ArrayBuffer, byteOffset: number = 0, byteLength?: number) {
-    this.view = new DataView(buffer, byteOffset, byteLength);
-  }
-
-  getUint8(offset: number): number {
-    return this.view.getUint8(offset);
-  }
-
-  getUint16(offset: number): number {
-    return this.view.getUint16(offset, this.littleEndian);
-  }
-
-  getUint32(offset: number): number {
-    return this.view.getUint32(offset, this.littleEndian);
-  }
-
-  setLittleEndian(le: boolean) {
-    this.littleEndian = le;
-  }
-
-  getString(offset: number, length: number): string {
-    let str = '';
-    for (let i = 0; i < length; i++) {
-      if (offset + i >= this.view.byteLength) break;
-      const char = this.view.getUint8(offset + i);
-      if (char === 0) break; // null-terminated
-      str += String.fromCharCode(char);
-    }
-    return str.trim();
-  }
+interface CleanOutput {
+  blob: Blob;
+  name: string;
+  verification: Report | null;
+  removedBytes: number;
 }
 
-// Helper to parse directory entries (IFD)
-function parseIFD(
-  reader: BinaryReader, 
-  offset: number, 
-  exifOffsetHandler?: (off: number) => void, 
-  gpsOffsetHandler?: (off: number) => void
-): Record<number, any> {
-  const tags: Record<number, any> = {};
-  if (offset + 2 > reader.getUint8.length * 256 && offset >= 1000000) return tags; // Safe upper bound check
-  
-  try {
-    const numEntries = reader.getUint16(offset);
-    let entryOffset = offset + 2;
-
-    for (let i = 0; i < numEntries; i++) {
-      const tagId = reader.getUint16(entryOffset);
-      const type = reader.getUint16(entryOffset + 2);
-      const count = reader.getUint32(entryOffset + 4);
-      const valOffset = reader.getUint32(entryOffset + 8);
-
-      let val: any = undefined;
-      
-      if (type === 2) { // ASCII
-        if (count <= 4) {
-          val = reader.getString(entryOffset + 8, count);
-        } else {
-          val = reader.getString(valOffset, count);
-        }
-      } else if (type === 3) { // SHORT
-        if (count === 1) {
-          val = reader.getUint16(entryOffset + 8);
-        } else if (count === 2) {
-          val = [reader.getUint16(valOffset), reader.getUint16(valOffset + 2)];
-        }
-      } else if (type === 4) { // LONG
-        if (count === 1) {
-          val = reader.getUint32(entryOffset + 8);
-        }
-      } else if (type === 5 || type === 10) { // RATIONAL / SRATIONAL
-        if (count === 1) {
-          const num = reader.getUint32(valOffset);
-          const den = reader.getUint32(valOffset + 4);
-          val = den === 0 ? 0 : num / den;
-        } else {
-          val = [];
-          for (let j = 0; j < count; j++) {
-            const num = reader.getUint32(valOffset + j * 8);
-            const den = reader.getUint32(valOffset + j * 8 + 4);
-            val.push(den === 0 ? 0 : num / den);
-          }
-        }
-      }
-
-      if (val !== undefined) {
-        tags[tagId] = val;
-      }
-
-      if (tagId === 0x8769 && exifOffsetHandler) {
-        exifOffsetHandler(valOffset);
-      }
-      if (tagId === 0x8825 && gpsOffsetHandler) {
-        gpsOffsetHandler(valOffset);
-      }
-
-      entryOffset += 12;
-    }
-  } catch (err) {
-    console.error("IFD reading bounds error:", err);
-  }
-
-  return tags;
+interface Item {
+  id: string;
+  /** The bytes we will re-read at export time. Never held decoded in state. */
+  source: Blob;
+  name: string;
+  format: ImageFormat;
+  converted: boolean;
+  originalBytes: number;
+  previewUrl: string;
+  report: Report;
+  /** Manual per-file selection. Null means "follow the preset". */
+  override: Selection | null;
+  result: CleanOutput | null;
+  status: 'ready' | 'working' | 'done';
 }
 
-// Helper to parse GPS coordinates
-function parseGPS(gpsTags: Record<number, any>): { latitude: number, longitude: number, formatted: string } | undefined {
-  const latRef = gpsTags[1] as string; // 'N' or 'S'
-  const latVal = gpsTags[2] as number[]; // [deg, min, sec]
-  const lngRef = gpsTags[3] as string; // 'E' or 'W'
-  const lngVal = gpsTags[4] as number[]; // [deg, min, sec]
+/** Waits a turn so React can paint the progress line between two files. */
+const yieldToPaint = () => new Promise<void>(resolve => window.setTimeout(resolve, 0));
 
-  if (!latVal || !lngVal || !latRef || !lngRef) return undefined;
-
-  const getDecimal = (vals: number[]): number => {
-    if (!vals || vals.length < 3) return 0;
-    return vals[0] + vals[1]/60 + vals[2]/3600;
-  };
-
-  let lat = getDecimal(latVal);
-  if (latRef === 'S') lat = -lat;
-
-  let lng = getDecimal(lngVal);
-  if (lngRef === 'W') lng = -lng;
-
-  const latDeg = Math.floor(latVal[0]);
-  const latMin = Math.floor(latVal[1]);
-  const latSec = (latVal[2] || 0).toFixed(2);
-  
-  const lngDeg = Math.floor(lngVal[0]);
-  const lngMin = Math.floor(lngVal[1]);
-  const lngSec = (lngVal[2] || 0).toFixed(2);
-
-  const formatted = `${latDeg}°${latMin}'${latSec}"${latRef}, ${lngDeg}°${lngMin}'${lngSec}"${lngRef}`;
-
-  return { latitude: lat, longitude: lng, formatted };
-}
-
-// Parse JPEG Metadata
-function parseJpegMetadata(arrayBuffer: ArrayBuffer): ImageMetadata {
-  const view = new DataView(arrayBuffer);
-  if (view.byteLength < 4 || view.getUint16(0) !== 0xFFD8) {
-    return { hasMetadata: false, hasGps: false };
-  }
-
-  let offset = 2;
-  const length = view.byteLength;
-  
-  let make = '';
-  let model = '';
-  let dateTime = '';
-  let software = '';
-  let gps: any = undefined;
-  let hasMetadata = false;
-  let hasGps = false;
-
-  while (offset < length - 2) {
-    const marker = view.getUint16(offset);
-    if (marker === 0xFFDA) { // SOS segment
-      break;
-    }
-    
-    if (offset + 4 > length) break;
-    const blockLength = view.getUint16(offset + 2);
-    
-    if (marker === 0xFFE1 && offset + 10 <= length) { // APP1 EXIF segment
-      const sig = String.fromCharCode(
-        view.getUint8(offset + 4),
-        view.getUint8(offset + 5),
-        view.getUint8(offset + 6),
-        view.getUint8(offset + 7),
-        view.getUint8(offset + 8),
-        view.getUint8(offset + 9)
-      );
-
-      if (sig === 'Exif\0\0') {
-        hasMetadata = true;
-        const tiffOffset = offset + 10;
-        try {
-          const reader = new BinaryReader(arrayBuffer, tiffOffset);
-          const endianSig = reader.getUint16(0);
-          const le = endianSig === 0x4949; // 'II'
-          reader.setLittleEndian(le);
-          
-          if (reader.getUint16(2) === 0x002A) {
-            const ifd0Offset = reader.getUint32(4);
-            
-            let exifIFDOffset = 0;
-            let gpsIFDOffset = 0;
-
-            const ifd0Tags = parseIFD(
-              reader, 
-              ifd0Offset, 
-              (exifOff) => { exifIFDOffset = exifOff; }, 
-              (gpsOff) => { gpsIFDOffset = gpsOff; }
-            );
-
-            make = ifd0Tags[0x010F] || '';
-            model = ifd0Tags[0x0110] || '';
-            dateTime = ifd0Tags[0x0132] || '';
-            software = ifd0Tags[0x0131] || '';
-
-            if (exifIFDOffset > 0) {
-              const exifTags = parseIFD(reader, exifIFDOffset);
-              if (!dateTime && exifTags[0x9003]) {
-                dateTime = exifTags[0x9003];
-              }
-            }
-
-            if (gpsIFDOffset > 0) {
-              const gpsTags = parseIFD(reader, gpsIFDOffset);
-              const parsedGps = parseGPS(gpsTags);
-              if (parsedGps) {
-                gps = parsedGps;
-                hasGps = true;
-              }
-            }
-          }
-        } catch (e) {
-          console.error("EXIF TIFF parse error:", e);
-        }
-      }
-    }
-    
-    offset += blockLength + 2;
-  }
-
-  return { make, model, dateTime, software, gps, hasMetadata, hasGps };
-}
-
-// Parse PNG Metadata
-function parsePngMetadata(arrayBuffer: ArrayBuffer): ImageMetadata {
-  const view = new DataView(arrayBuffer);
-  if (
-    view.byteLength < 8 ||
-    view.getUint32(0) !== 0x89504E47 ||
-    view.getUint32(4) !== 0x0D0A1A0A
-  ) {
-    return { hasMetadata: false, hasGps: false };
-  }
-
-  let offset = 8;
-  const length = view.byteLength;
-
-  let make = '';
-  let model = '';
-  let dateTime = '';
-  let software = '';
-  let gps: any = undefined;
-  let hasMetadata = false;
-  let hasGps = false;
-
-  while (offset < length - 8) {
-    const chunkLength = view.getUint32(offset);
-    const chunkType = String.fromCharCode(
-      view.getUint8(offset + 4),
-      view.getUint8(offset + 5),
-      view.getUint8(offset + 6),
-      view.getUint8(offset + 7)
-    );
-
-    if (chunkType === 'IEND') break;
-
-    if (chunkType === 'eXIf') {
-      hasMetadata = true;
-      const tiffOffset = offset + 8;
-      try {
-        const reader = new BinaryReader(arrayBuffer, tiffOffset, chunkLength);
-        const endianSig = reader.getUint16(0);
-        const le = endianSig === 0x4949; // 'II'
-        reader.setLittleEndian(le);
-        
-        if (reader.getUint16(2) === 0x002A) {
-          const ifd0Offset = reader.getUint32(4);
-          
-          let exifIFDOffset = 0;
-          let gpsIFDOffset = 0;
-
-          const ifd0Tags = parseIFD(
-            reader, 
-            ifd0Offset, 
-            (exifOff) => { exifIFDOffset = exifOff; }, 
-            (gpsOff) => { gpsIFDOffset = gpsOff; }
-          );
-
-          make = ifd0Tags[0x010F] || '';
-          model = ifd0Tags[0x0110] || '';
-          dateTime = ifd0Tags[0x0132] || '';
-          software = ifd0Tags[0x0131] || '';
-
-          if (exifIFDOffset > 0) {
-            const exifTags = parseIFD(reader, exifIFDOffset);
-            if (!dateTime && exifTags[0x9003]) {
-              dateTime = exifTags[0x9003];
-            }
-          }
-
-          if (gpsIFDOffset > 0) {
-            const gpsTags = parseIFD(reader, gpsIFDOffset);
-            const parsedGps = parseGPS(gpsTags);
-            if (parsedGps) {
-              gps = parsedGps;
-              hasGps = true;
-            }
-          }
-        }
-      } catch (e) {
-        console.error("PNG eXIf parsing error:", e);
-      }
-    } else if (['tEXt', 'zTXt', 'iTXt'].includes(chunkType)) {
-      if (chunkType === 'tEXt') {
-        let key = '';
-        let idx = offset + 8;
-        const limit = offset + 8 + chunkLength;
-        while (idx < limit) {
-          const char = view.getUint8(idx++);
-          if (char === 0) break;
-          key += String.fromCharCode(char);
-        }
-        let val = '';
-        while (idx < limit) {
-          val += String.fromCharCode(view.getUint8(idx++));
-        }
-        if (key.toLowerCase() === 'software') {
-          software = val.trim();
-          hasMetadata = true;
-        } else if (key.toLowerCase() === 'creation time') {
-          dateTime = val.trim();
-          hasMetadata = true;
-        }
-      }
-    }
-
-    offset += 12 + chunkLength;
-  }
-
-  return { make, model, dateTime, software, gps, hasMetadata, hasGps };
-}
-
-// Strip JPEG Metadata APP markers
-function stripJpegMetadata(arrayBuffer: ArrayBuffer, options: { gpsOnly: boolean; cameraOnly: boolean; fullStrip: boolean }): ArrayBuffer {
-  const view = new DataView(arrayBuffer);
-  if (view.byteLength < 4 || view.getUint16(0) !== 0xFFD8) {
-    return arrayBuffer;
-  }
-
-  const length = view.byteLength;
-  const segments: { offset: number; size: number; keep: boolean }[] = [];
-  
-  segments.push({ offset: 0, size: 2, keep: true }); // SOI
-
-  let offset = 2;
-  let stopLoop = false;
-
-  while (offset < length - 2 && !stopLoop) {
-    const marker = view.getUint16(offset);
-    
-    if (marker === 0xFFDA) { // SOS marker
-      segments.push({ offset, size: length - offset, keep: true });
-      stopLoop = true;
-      break;
-    }
-
-    if (offset + 4 > length) break;
-    const blockLength = view.getUint16(offset + 2);
-    const size = blockLength + 2;
-
-    let keep = true;
-    if (options.fullStrip) {
-      if (marker === 0xFFE1 || marker === 0xFFED || marker === 0xFFFE) {
-        keep = false;
-      }
-    } else if (options.gpsOnly) {
-      if (marker === 0xFFE1) {
-        keep = false;
-      }
-    } else if (options.cameraOnly) {
-      if (marker === 0xFFE1 || marker === 0xFFED) {
-        keep = false;
-      }
-    }
-
-    segments.push({ offset, size, keep });
-    offset += size;
-  }
-
-  let newSize = 0;
-  segments.forEach(s => {
-    if (s.keep) newSize += s.size;
-  });
-
-  const outBuffer = new Uint8Array(newSize);
-  let writeOffset = 0;
-  segments.forEach(s => {
-    if (s.keep) {
-      outBuffer.set(new Uint8Array(arrayBuffer, s.offset, s.size), writeOffset);
-      writeOffset += s.size;
-    }
-  });
-
-  return outBuffer.buffer;
-}
-
-// Strip PNG Metadata chunks
-function stripPngMetadata(arrayBuffer: ArrayBuffer, options: { gpsOnly: boolean; cameraOnly: boolean; fullStrip: boolean }): ArrayBuffer {
-  const view = new DataView(arrayBuffer);
-  if (
-    view.byteLength < 8 ||
-    view.getUint32(0) !== 0x89504E47 ||
-    view.getUint32(4) !== 0x0D0A1A0A
-  ) {
-    return arrayBuffer;
-  }
-
-  const length = view.byteLength;
-  const segments: { offset: number; size: number; keep: boolean }[] = [];
-  
-  segments.push({ offset: 0, size: 8, keep: true }); // PNG Signature
-
-  let offset = 8;
-  while (offset < length - 8) {
-    const chunkLength = view.getUint32(offset);
-    const chunkType = String.fromCharCode(
-      view.getUint8(offset + 4),
-      view.getUint8(offset + 5),
-      view.getUint8(offset + 6),
-      view.getUint8(offset + 7)
-    );
-
-    const size = 12 + chunkLength;
-    let keep = true;
-
-    if (options.fullStrip) {
-      if (['eXIf', 'tEXt', 'zTXt', 'iTXt'].includes(chunkType)) {
-        keep = false;
-      }
-    } else if (options.gpsOnly) {
-      if (chunkType === 'eXIf') {
-        keep = false;
-      }
-    } else if (options.cameraOnly) {
-      if (['eXIf', 'tEXt', 'zTXt', 'iTXt'].includes(chunkType)) {
-        keep = false;
-      }
-    }
-
-    segments.push({ offset, size, keep });
-    offset += size;
-
-    if (chunkType === 'IEND') {
-      if (offset < length) {
-        segments.push({ offset, size: length - offset, keep: true });
-      }
-      break;
-    }
-  }
-
-  let newSize = 0;
-  segments.forEach(s => {
-    if (s.keep) newSize += s.size;
-  });
-
-  const outBuffer = new Uint8Array(newSize);
-  let writeOffset = 0;
-  segments.forEach(s => {
-    if (s.keep) {
-      outBuffer.set(new Uint8Array(arrayBuffer, s.offset, s.size), writeOffset);
-      writeOffset += s.size;
-    }
-  });
-
-  return outBuffer.buffer;
-}
+const cloneSelection = (selection: Selection): Selection => ({
+  blocks: new Set(selection.blocks),
+  tags: new Set(selection.tags),
+  keepOrientation: selection.keepOrientation,
+});
 
 export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
   const t = createTranslator(dictionary);
+  const prefersReduced = useReducedMotion();
 
-  // App States
-  const [loadedFiles, setLoadedFiles] = useState<LoadedFile[]>([]);
-  const [selectedFileId, setSelectedFileId] = useState<string | null>(null);
-  
-  // Options
-  const [stripLevel, setStripLevel] = useState<'full' | 'gps' | 'camera'>('full');
-  
-  // Exporter progress
-  const [isCompiling, setIsCompiling] = useState<boolean>(false);
-  const [progressText, setProgressText] = useState<string>('');
+  const [items, setItems] = useState<Item[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [preset, setPreset] = useState<PresetId>('full');
+  const [keepOrientation, setKeepOrientation] = useState(true);
+  const [removeIcc, setRemoveIcc] = useState(false);
 
-  // Modals
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [modalType, setModalType] = useState<'privacy' | 'terms' | 'cookies'>('privacy');
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<{ current: number; total: number; name: string } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showAfter, setShowAfter] = useState(false);
+  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
-  // Refs
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const dragCounterRef = useRef<number>(0);
-  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [dragging, setDragging] = useState(false);
+  const dragDepth = useRef(0);
+  const nextId = useRef(1);
 
-  // Auto-select first loaded file
-  useEffect(() => {
-    if (loadedFiles.length > 0 && !selectedFileId) {
-      setSelectedFileId(loadedFiles[0].id);
-    }
-  }, [loadedFiles, selectedFileId]);
+  /** Undo/redo over the selected file's manual selection. Sets of ids only. */
+  const historyRef = useRef<{ id: string; past: Selection[]; future: Selection[] }>({
+    id: '',
+    past: [],
+    future: [],
+  });
+  const [historyTick, setHistoryTick] = useState(0);
 
-  const handleDragEnter = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounterRef.current++;
-    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
-      setIsDragging(true);
-    }
-  };
+  const selected = items.find(item => item.id === selectedId) || null;
 
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dragCounterRef.current--;
-    if (dragCounterRef.current === 0) {
-      setIsDragging(false);
-    }
-  };
+  // Object URLs outlive React state unless someone revokes them.
+  const itemsRef = useRef<Item[]>(items);
+  itemsRef.current = items;
+  useEffect(
+    () => () => {
+      for (const item of itemsRef.current) URL.revokeObjectURL(item.previewUrl);
+    },
+    []
+  );
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  };
+  // ==========================================================================
+  // Intake
+  // ==========================================================================
+  const errorText = useCallback(
+    (kind: IntakeError) => {
+      const messages: Record<IntakeError, string> = {
+        size: (t.errSize || 'That file is larger than {max}.').replace('{max}', formatBytes(MAX_BYTES)),
+        format: t.errFormat || 'Only JPEG, PNG, WebP and HEIC files carry the metadata this tool reads.',
+        heic: t.errHeic || 'That HEIC could not be converted. Export it as JPEG from your phone and try again.',
+        read: t.errRead || 'That file could not be read.',
+      };
+      return messages[kind];
+    },
+    [t]
+  );
 
-  const handleDrop = async (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-    dragCounterRef.current = 0;
+  const addFiles = useCallback(
+    async (files: File[]) => {
+      if (files.length === 0) return;
+      setLoading(true);
+      setError(null);
 
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      await processFiles(Array.from(e.dataTransfer.files));
-    }
-  };
+      const added: Item[] = [];
+      let failure: string | null = null;
 
-  const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      await processFiles(Array.from(e.target.files));
-    }
-  };
-
-  const processFiles = async (files: File[]) => {
-    const validImageTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-    const imageFiles = files.filter(f => {
-      const extension = f.name.substring(f.name.lastIndexOf('.')).toLowerCase();
-      return validImageTypes.includes(f.type) || ['.jpg', '.jpeg', '.png'].includes(extension);
-    });
-
-    if (imageFiles.length === 0) return;
-
-    const newLoadedFiles: LoadedFile[] = [];
-
-    for (const file of imageFiles) {
-      const id = Math.random().toString(36).substring(2, 9);
-      const previewUrl = URL.createObjectURL(file);
-      
-      const fileData = await new Promise<LoadedFile>((resolve) => {
-        const fileReader = new FileReader();
-        fileReader.onload = (event) => {
-          const ab = event.target?.result as ArrayBuffer;
-          let meta: ImageMetadata = { hasMetadata: false, hasGps: false };
-          
-          try {
-            const isPng = file.type === 'image/png' || file.name.toLowerCase().endsWith('.png');
-            if (isPng) {
-              meta = parsePngMetadata(ab);
-            } else {
-              meta = parseJpegMetadata(ab);
-            }
-          } catch (err) {
-            console.error('Metadata parsing crash:', err);
-          }
-
-          resolve({
-            id,
-            file,
-            previewUrl,
-            arrayBuffer: ab,
-            metadata: meta,
-            status: 'pending'
-          });
-        };
-        fileReader.onerror = () => {
-          resolve({
-            id,
-            file,
-            previewUrl,
-            arrayBuffer: new ArrayBuffer(0),
-            metadata: { hasMetadata: false, hasGps: false },
-            status: 'error'
-          });
-        };
-        fileReader.readAsArrayBuffer(file);
-      });
-
-      newLoadedFiles.push(fileData);
-    }
-
-    setLoadedFiles(prev => [...prev, ...newLoadedFiles]);
-  };
-
-  const deleteFile = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const targetFile = loadedFiles.find(lf => lf.id === id);
-    if (targetFile) {
-      URL.revokeObjectURL(targetFile.previewUrl);
-    }
-    setLoadedFiles(prev => prev.filter(lf => lf.id !== id));
-    if (selectedFileId === id) {
-      setSelectedFileId(null);
-    }
-  };
-
-  const clearAll = () => {
-    loadedFiles.forEach(lf => URL.revokeObjectURL(lf.previewUrl));
-    setLoadedFiles([]);
-    setSelectedFileId(null);
-  };
-
-  const triggerFileInput = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
-  };
-
-  const handleDownload = async () => {
-    if (loadedFiles.length === 0) return;
-    setIsCompiling(true);
-
-    const opts = {
-      gpsOnly: stripLevel === 'gps',
-      cameraOnly: stripLevel === 'camera',
-      fullStrip: stripLevel === 'full'
-    };
-
-    try {
-      const processedFilesList = loadedFiles.map((lf, idx) => {
-        setProgressText(
-          (t.progress_clearing || 'Stripping metadata from image {current} of {total}...')
-            .replace('{current}', String(idx + 1))
-            .replace('{total}', String(loadedFiles.length))
-        );
-
-        let cleanBuffer: ArrayBuffer;
-        const isPng = lf.file.type === 'image/png' || lf.file.name.toLowerCase().endsWith('.png');
-        
-        if (isPng) {
-          cleanBuffer = stripPngMetadata(lf.arrayBuffer, opts);
-        } else {
-          cleanBuffer = stripJpegMetadata(lf.arrayBuffer, opts);
+      for (const file of files) {
+        const loaded = await loadFile(file);
+        if (!loaded.value) {
+          failure = errorText(loaded.error || 'read');
+          continue;
         }
+        const inspection = inspect(loaded.value.bytes);
+        if (!inspection) {
+          failure = errorText('format');
+          continue;
+        }
+        // Only the report survives this scope: the decoded buffer is dropped so
+        // a batch of forty photos does not sit in memory twice over.
+        const blob =
+          loaded.value.converted || file.size !== loaded.value.bytes.byteLength
+            ? new Blob([loaded.value.bytes.slice().buffer], { type: MIME_BY_FORMAT[loaded.value.format] })
+            : file;
 
-        return {
-          filename: lf.file.name,
-          mime: lf.file.type,
-          buffer: cleanBuffer
-        };
-      });
-
-      if (processedFilesList.length === 1) {
-        // Direct single file download
-        const single = processedFilesList[0];
-        const blob = new Blob([single.buffer], { type: single.mime });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        
-        // Clean name prefix
-        const nameParts = single.filename.split('.');
-        const ext = nameParts.pop();
-        a.download = `${nameParts.join('.')}_clean.${ext}`;
-        
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 5000);
-      } else {
-        // Zip pack download
-        const zip = new JSZip();
-        processedFilesList.forEach(item => {
-          const blob = new Blob([item.buffer], { type: item.mime });
-          zip.file(item.filename, blob);
+        added.push({
+          id: `f${nextId.current++}`,
+          source: blob,
+          name: loaded.value.name,
+          format: loaded.value.format,
+          converted: loaded.value.converted,
+          originalBytes: loaded.value.bytes.byteLength,
+          previewUrl: URL.createObjectURL(blob),
+          report: inspection.report,
+          override: null,
+          result: null,
+          status: 'ready',
         });
-
-        const zipBlob = await zip.generateAsync({ type: 'blob' });
-        const url = URL.createObjectURL(zipBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `cleaned_images.zip`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 5000);
+        await yieldToPaint();
       }
 
-      // Mark all as cleaned in UI
-      setLoadedFiles(prev => prev.map(lf => ({ ...lf, status: 'cleaned' })));
-    } catch (err) {
-      console.error('Stripping operations failed:', err);
-      alert('An error occurred while cleaning metadata headers.');
-    } finally {
-      setIsCompiling(false);
-      setProgressText('');
+      setLoading(false);
+      if (failure) setError(failure);
+      if (added.length === 0) return;
+
+      setItems(prev => [...prev, ...added]);
+      setSelectedId(prev => prev ?? added[0].id);
+    },
+    [errorText]
+  );
+
+  useHandoffIntake(file => {
+    void addFiles([file]);
+  });
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    dragDepth.current = 0;
+    setDragging(false);
+    const files = Array.from(event.dataTransfer?.files || []);
+    if (files.length) void addFiles(files);
+  };
+
+  const pasteFromClipboard = useCallback(async () => {
+    try {
+      const entries = await navigator.clipboard.read();
+      const files: File[] = [];
+      for (const entry of entries) {
+        const type = entry.types.find(candidate => candidate.startsWith('image/'));
+        if (!type) continue;
+        const blob = await entry.getType(type);
+        files.push(new File([blob], `pasted-${Date.now()}.${type.split('/')[1] || 'png'}`, { type }));
+      }
+      if (files.length === 0) {
+        setError(t.errNoClipboardImage || 'There is no image in your clipboard.');
+        return;
+      }
+      void addFiles(files);
+    } catch {
+      setError(t.errClipboardBlocked || 'Your browser blocked clipboard access. Press Ctrl+V over the page instead.');
     }
+  }, [addFiles, t]);
+
+  useEffect(() => {
+    const onPaste = (event: ClipboardEvent) => {
+      const files = Array.from(event.clipboardData?.files || []).filter(f => f.type.startsWith('image/'));
+      if (files.length) {
+        event.preventDefault();
+        void addFiles(files);
+      }
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [addFiles]);
+
+  // ==========================================================================
+  // Selection
+  // ==========================================================================
+  const effectiveSelection = useMemo<Selection>(() => {
+    if (!selected) return { blocks: new Set(), tags: new Set(), keepOrientation };
+    if (selected.override) return selected.override;
+    return buildSelection(selected.report, preset, { keepOrientation, removeIcc });
+  }, [selected, preset, keepOrientation, removeIcc]);
+
+  const pushHistory = useCallback((id: string, snapshot: Selection) => {
+    const history = historyRef.current;
+    if (history.id !== id) {
+      history.id = id;
+      history.past = [];
+      history.future = [];
+    }
+    history.past.push(cloneSelection(snapshot));
+    if (history.past.length > 60) history.past.shift();
+    history.future = [];
+  }, []);
+
+  const applyOverride = useCallback(
+    (mutate: (draft: Selection) => void) => {
+      if (!selected) return;
+      const base = selected.override ?? effectiveSelection;
+      pushHistory(selected.id, base);
+      const draft = cloneSelection(base);
+      mutate(draft);
+      setItems(prev =>
+        prev.map(item => (item.id === selected.id ? { ...item, override: draft, result: null } : item))
+      );
+      if (preset !== 'custom') setPreset('custom');
+      setShowAfter(false);
+      setHistoryTick(tick => tick + 1);
+    },
+    [selected, effectiveSelection, pushHistory, preset]
+  );
+
+  const toggleTags = useCallback(
+    (ids: string[], remove: boolean) => {
+      applyOverride(draft => {
+        for (const id of ids) {
+          if (remove) draft.tags.add(id);
+          else draft.tags.delete(id);
+        }
+      });
+    },
+    [applyOverride]
+  );
+
+  const toggleBlocks = useCallback(
+    (ids: string[], remove: boolean) => {
+      applyOverride(draft => {
+        for (const id of ids) {
+          if (remove) draft.blocks.add(id);
+          else draft.blocks.delete(id);
+        }
+      });
+    },
+    [applyOverride]
+  );
+
+  const setOverride = useCallback(
+    (selection: Selection | null) => {
+      if (!selected) return;
+      setItems(prev =>
+        prev.map(item => (item.id === selected.id ? { ...item, override: selection, result: null } : item))
+      );
+      setShowAfter(false);
+    },
+    [selected]
+  );
+
+  const undo = useCallback(() => {
+    const history = historyRef.current;
+    if (!selected || history.id !== selected.id || history.past.length === 0) return;
+    const previous = history.past.pop()!;
+    history.future.push(cloneSelection(selected.override ?? effectiveSelection));
+    setOverride(previous);
+    setHistoryTick(tick => tick + 1);
+  }, [selected, effectiveSelection, setOverride]);
+
+  const redo = useCallback(() => {
+    const history = historyRef.current;
+    if (!selected || history.id !== selected.id || history.future.length === 0) return;
+    const next = history.future.pop()!;
+    history.past.push(cloneSelection(selected.override ?? effectiveSelection));
+    setOverride(next);
+    setHistoryTick(tick => tick + 1);
+  }, [selected, effectiveSelection, setOverride]);
+
+  const choosePreset = (next: PresetId) => {
+    setPreset(next);
+    setShowAfter(false);
+    // Switching preset is a fresh start: manual tweaks stop applying.
+    setItems(prev => prev.map(item => ({ ...item, override: null, result: null })));
+    historyRef.current = { id: '', past: [], future: [] };
+    setHistoryTick(tick => tick + 1);
   };
 
-  const handleOpenLegal = (type: 'privacy' | 'terms' | 'cookies') => {
-    setModalType(type);
-    setModalOpen(true);
-  };
+  // ==========================================================================
+  // Cleaning
+  // ==========================================================================
+  const cleanOne = useCallback(
+    async (item: Item): Promise<CleanOutput | null> => {
+      const bytes = new Uint8Array(await item.source.arrayBuffer());
+      const inspection = inspect(bytes);
+      if (!inspection) return null;
+      const selection =
+        item.override ?? buildSelection(inspection.report, preset, { keepOrientation, removeIcc });
+      const result = clean(inspection, selection);
+      return {
+        blob: new Blob([result.bytes.slice().buffer], { type: MIME_BY_FORMAT[item.format] }),
+        name: cleanedName(item.name),
+        verification: result.verification,
+        removedBytes: result.removedBytes,
+      };
+    },
+    [preset, keepOrientation, removeIcc]
+  );
 
-  const resetAll = () => {
+  const runClean = useCallback(async () => {
+    if (busy || items.length === 0) return;
+    setBusy(true);
+    setError(null);
+    setShowAfter(true);
+
+    const current = itemsRef.current;
+    for (let index = 0; index < current.length; index++) {
+      const item = current[index];
+      setProgress({ current: index + 1, total: current.length, name: item.name });
+      // Yield first: without it every setProgress in the loop batches into one
+      // paint at the end and the progress line never actually moves.
+      await yieldToPaint();
+      try {
+        const output = await cleanOne(item);
+        setItems(prev =>
+          prev.map(entry => (entry.id === item.id ? { ...entry, result: output, status: 'done' } : entry))
+        );
+      } catch {
+        setItems(prev => prev.map(entry => (entry.id === item.id ? { ...entry, status: 'ready' } : entry)));
+        setError(t.errClean || 'One of the files could not be rewritten and was left untouched.');
+      }
+    }
+
+    setProgress(null);
+    setBusy(false);
+  }, [busy, items.length, cleanOne, t]);
+
+  const download = useCallback(async () => {
+    const ready = itemsRef.current.filter(item => item.result);
+    if (ready.length === 0) return;
+
+    const save = (blob: Blob, name: string) => {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = name;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 4000);
+    };
+
+    if (ready.length === 1) {
+      save(ready[0].result!.blob, ready[0].result!.name);
+      return;
+    }
+
+    const zip = new JSZip();
+    for (const item of ready) zip.file(item.result!.name, item.result!.blob);
+    save(await zip.generateAsync({ type: 'blob' }), 'cleaned-images.zip');
+  }, []);
+
+  const removeItem = useCallback(
+    (id: string) => {
+      const target = itemsRef.current.find(item => item.id === id);
+      if (target) URL.revokeObjectURL(target.previewUrl);
+      setItems(prev => {
+        const next = prev.filter(item => item.id !== id);
+        setSelectedId(current => (current === id ? (next[0]?.id ?? null) : current));
+        return next;
+      });
+    },
+    []
+  );
+
+  const clearAll = useCallback(() => {
+    for (const item of itemsRef.current) URL.revokeObjectURL(item.previewUrl);
+    setItems([]);
+    setSelectedId(null);
+    setError(null);
+    setShowAfter(false);
+    historyRef.current = { id: '', past: [], future: [] };
+  }, []);
+
+  const resetAll = useCallback(() => {
     clearAll();
-    setStripLevel('full');
-  };
+    setPreset('full');
+    setKeepOrientation(true);
+    setRemoveIcc(false);
+  }, [clearAll]);
 
-  const selectedFile = loadedFiles.find(lf => lf.id === selectedFileId);
+  // ==========================================================================
+  // Keyboard
+  // ==========================================================================
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
+      const meta = event.ctrlKey || event.metaKey;
 
+      if (meta && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) redo();
+        else undo();
+        return;
+      }
+      if (meta && event.key === 'Enter') {
+        event.preventDefault();
+        void runClean();
+        return;
+      }
+      if (!meta && (event.key === 'Delete' || event.key === 'Backspace') && selectedId) {
+        event.preventDefault();
+        removeItem(selectedId);
+        return;
+      }
+      if (!meta && (event.key === 'ArrowDown' || event.key === 'ArrowUp') && items.length > 1) {
+        event.preventDefault();
+        const index = items.findIndex(item => item.id === selectedId);
+        const next = (index + (event.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
+        setSelectedId(items[next].id);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo, redo, runClean, removeItem, selectedId, items]);
+
+  // ==========================================================================
+  // Derived view data
+  // ==========================================================================
+  const totals = useMemo(() => {
+    let metadata = 0;
+    let tags = 0;
+    let gps = 0;
+    for (const item of items) {
+      metadata += item.report.metadataBytes;
+      tags += item.report.tags.length;
+      if (item.report.gps) gps++;
+    }
+    return { metadata, tags, gps };
+  }, [items]);
+
+  const cleanedCount = items.filter(item => item.result).length;
+  const savedBytes = items.reduce((sum, item) => sum + (item.result?.removedBytes ?? 0), 0);
+  const leftoverTags = items.reduce(
+    (sum, item) => sum + (item.result?.verification?.tags.length ?? 0),
+    0
+  );
+
+  const canUndo =
+    !!selected && historyRef.current.id === selected.id && historyRef.current.past.length > 0;
+  const canRedo =
+    !!selected && historyRef.current.id === selected.id && historyRef.current.future.length > 0;
+  void historyTick; // the counter exists purely to re-render the undo buttons
+
+  const shownReport = showAfter && selected?.result?.verification ? selected.result.verification : selected?.report;
+
+  const presets: { id: PresetId; title: string; text: string }[] = [
+    {
+      id: 'full',
+      title: t.presetFull || 'Remove everything',
+      text: t.presetFullDesc || 'Exif, GPS, XMP, IPTC, comments and the embedded preview.',
+    },
+    {
+      id: 'gps',
+      title: t.presetGps || 'Location only',
+      text: t.presetGpsDesc || 'Deletes the GPS tags and rebuilds the Exif block with everything else intact.',
+    },
+    {
+      id: 'identity',
+      title: t.presetIdentity || 'Keep the photography',
+      text:
+        t.presetIdentityDesc ||
+        'Drops coordinates, serial numbers, owner names and edit history; keeps exposure, lens and dates.',
+    },
+    {
+      id: 'custom',
+      title: t.presetCustom || 'Manual',
+      text: t.presetCustomDesc || 'Nothing is removed until you tick it yourself, tag by tag.',
+    },
+  ];
+
+  const steps = [
+    { art: StepDrop, title: t.step1Title || 'Bring the photos in', text: t.step1Text || '' },
+    { art: StepInspect, title: t.step2Title || 'Read what is inside', text: t.step2Text || '' },
+    { art: StepChoose, title: t.step3Title || 'Choose what goes', text: t.step3Text || '' },
+    { art: StepSave, title: t.step4Title || 'Clean and check', text: t.step4Text || '' },
+  ];
+
+  const featureIcons = [IconNoLocation, IconTagPicker, IconLossless, IconLocalOnly, IconFormats, IconVerified];
+  const features = Array.isArray(t.features) ? t.features : [];
+  const faqs = Array.isArray(t.faq) ? t.faq : [];
+  const keywords = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
+
+  // ==========================================================================
+  // Render
+  // ==========================================================================
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 font-sans flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#020617] text-slate-200 font-sans relative overflow-x-hidden">
       <Header
         currentLang={lang}
-        onLanguageChange={(newLang) => {
-          window.location.href = `/${newLang.toLowerCase()}/exif-clear`;
-        }}
+        onLanguageChange={next => (window.location.href = `/${next.toLowerCase()}/exif-clear`)}
         onReset={resetAll}
         t={t}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-12 pt-36 pb-24 relative z-10 flex flex-col justify-center">
-        {/* Bloque AdSense Horizontal */}
+      {/* The max width lives on <main>: AdRail measures this element to decide
+          whether the fixed side rails have room. With a plain w-full it measured
+          a zero gap and the rails never rendered at any window size. */}
+      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-exif-clear-top" />
-        {/* Title SEO Hero Section */}
-        <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-black font-outfit tracking-tight text-white mb-4">
-            {t.seoHeroTitle || 'Strip GPS and Camera EXIF Metadata Offline'}
-          </h1>
-          <p className="text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed font-medium">
-            {t.seoHeroText || 'Protect your privacy before sharing photographs. EXIF Cleaner parses and removes metadata headers locally.'}
-          </p>
-        </div>
 
-        {/* 3-Column Secure whiteboard Dashboard */}
-        <div className="w-full bg-[#022c22]/10 backdrop-blur-xl border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch glow-emerald">
-          
-          {/* COLUMN 1: Drag-and-drop & File rack (Col-span 4) */}
-          <div className="lg:col-span-4 flex flex-col gap-6 bg-black/20 p-6 rounded-2xl border border-white/5 justify-between">
-            <div className="flex flex-col gap-6 h-full">
-              <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                <h3 className="text-sm font-black uppercase tracking-wider text-emerald-400 flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  {t.label_files_loaded || 'Loaded Files'}
-                </h3>
-                {loadedFiles.length > 0 && (
-                  <button 
-                    onClick={clearAll}
-                    className="text-xs font-black uppercase text-rose-400 hover:text-rose-300 transition-colors flex items-center gap-1 cursor-pointer border-none bg-transparent outline-none"
+        <div className="w-full space-y-20 md:space-y-28">
+          {/* ================================================================ */}
+          {/* Hero                                                             */}
+          {/* ================================================================ */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-emerald-950/40 border border-emerald-800/30 text-emerald-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(16,185,129,0.15)]">
+                <Shield className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{t.badge || 'Image metadata cleaner'}</span>
+              </div>
+
+              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
+                {t.title}
+              </h1>
+
+              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">{t.description}</p>
+
+              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                {(t.seoHeroList || []).slice(0, 3).map((point: string, index: number) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
                   >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    {t.btn_clear_all || 'Clear All'}
-                  </button>
-                )}
-              </div>
-
-              {/* Upload Input & Area */}
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileInputChange}
-                accept="image/jpeg,image/jpg,image/png"
-                multiple
-                className="hidden"
-              />
-
-              <div
-                onDragEnter={handleDragEnter}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                onClick={triggerFileInput}
-                className={`border-2 border-dashed rounded-2xl p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all hover:bg-black/40 group text-center relative ${
-                  isDragging 
-                    ? 'border-emerald-400 bg-emerald-500/10' 
-                    : 'border-white/15 hover:border-emerald-500/50 bg-black/20'
-                }`}
-              >
-                <Upload className="w-6 h-6 text-slate-500 group-hover:text-emerald-400 transition-colors animate-bounce" />
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider group-hover:text-slate-200 transition-colors max-w-[200px]">
-                  {t.label_upload_box || 'Drag & drop images here or click to browse'}
-                </span>
-                <span className="text-[10px] text-slate-500 font-medium">
-                  JPEG / PNG only
-                </span>
-              </div>
-
-              {/* Scrollable File List */}
-              <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2.5 max-h-[300px] lg:max-h-[350px]">
-                {loadedFiles.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-slate-500 py-12">
-                    <ImageIcon className="w-8 h-8 opacity-20 mb-2" />
-                    <span className="text-xs uppercase font-bold tracking-wider opacity-60">
-                      {t.no_files_loaded || 'No images loaded yet'}
-                    </span>
-                  </div>
-                ) : (
-                  loadedFiles.map(lf => {
-                    const isSelected = lf.id === selectedFileId;
-                    let badgeClass = 'bg-slate-500/10 text-slate-400 border-slate-500/20';
-                    let badgeText = t.status_clean || 'Clean';
-
-                    if (lf.metadata.hasGps) {
-                      badgeClass = 'bg-red-500/10 text-red-400 border-red-500/20';
-                      badgeText = t.status_has_gps || 'GPS Found';
-                    } else if (lf.metadata.hasMetadata) {
-                      badgeClass = 'bg-amber-500/10 text-amber-400 border-amber-500/20';
-                      badgeText = t.status_has_meta || 'EXIF Found';
-                    }
-
-                    return (
-                      <div
-                        key={lf.id}
-                        onClick={() => setSelectedFileId(lf.id)}
-                        className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all cursor-pointer text-left select-none relative group ${
-                          isSelected 
-                            ? 'bg-emerald-500/5 border-emerald-500/50' 
-                            : 'border-white/5 bg-black/30 hover:border-white/10'
-                        }`}
-                      >
-                        <img
-                          src={lf.previewUrl}
-                          alt="Thumbnail"
-                          className="w-10 h-10 object-cover rounded-lg bg-black/40 border border-white/10"
-                        />
-                        <div className="flex-1 min-w-0 flex flex-col gap-0.5">
-                          <span className="text-xs font-bold text-white truncate max-w-[130px] md:max-w-none">
-                            {lf.file.name}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wide leading-none ${badgeClass}`}>
-                              {badgeText}
-                            </span>
-                            {lf.status === 'cleaned' && (
-                              <span className="text-[9px] font-bold text-emerald-400 flex items-center gap-0.5 uppercase tracking-wide">
-                                <CheckCircle className="w-3 h-3" />
-                                Done
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        <button
-                          onClick={(e) => deleteFile(lf.id, e)}
-                          className="w-7 h-7 bg-white/5 border border-white/10 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg flex items-center justify-center transition-all cursor-pointer opacity-0 group-hover:opacity-100 outline-none"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-            </div>
-          </div>
-
-          {/* COLUMN 2: Metadata Property Inspector (Col-span 5) */}
-          <div className="lg:col-span-5 flex flex-col gap-6 bg-black/40 border border-white/5 p-6 rounded-2xl justify-between overflow-hidden">
-            <div className="flex flex-col gap-6 h-full">
-              <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest border-b border-white/5 pb-2">
-                {t.preview_title || 'Metadata Inspector'}
-              </h3>
-
-              {/* Selected image preview frame */}
-              <div className="flex-1 min-h-[180px] lg:min-h-[220px] max-h-[300px] flex items-center justify-center p-4 bg-black/60 rounded-2xl border border-white/5 relative overflow-hidden group">
-                {selectedFile ? (
-                  <>
-                    <img
-                      src={selectedFile.previewUrl}
-                      alt="Selected preview"
-                      className="w-full h-full object-contain rounded-lg max-h-[260px] relative z-10 transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none" />
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center gap-2 text-slate-500 py-12">
-                    <ImageIcon className="w-12 h-12 opacity-15" />
-                    <span className="text-xs uppercase font-bold tracking-wider opacity-60">
-                      Select a file to inspect metadata
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Attributes Table */}
-              <div className="flex flex-col gap-3">
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  {t.label_meta_details || 'Metadata Properties'}
-                </span>
-                
-                {selectedFile ? (
-                  <div className="border border-white/5 rounded-xl overflow-hidden bg-black/25">
-                    <table className="w-full text-xs text-left border-collapse">
-                      <tbody>
-                        <tr className="border-b border-white/5">
-                          <td className="p-3 text-slate-400 font-bold uppercase tracking-wider w-[40%] flex items-center gap-1.5">
-                            <Cpu className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            {t.meta_make || 'Manufacturer'}
-                          </td>
-                          <td className="p-3 text-white font-medium break-all">
-                            {selectedFile.metadata.make || <span className="text-slate-600">—</span>}
-                          </td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                          <td className="p-3 text-slate-400 font-bold uppercase tracking-wider w-[40%] flex items-center gap-1.5">
-                            <Camera className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            {t.meta_model || 'Camera Model'}
-                          </td>
-                          <td className="p-3 text-white font-medium break-all">
-                            {selectedFile.metadata.model || <span className="text-slate-600">—</span>}
-                          </td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                          <td className="p-3 text-slate-400 font-bold uppercase tracking-wider w-[40%] flex items-center gap-1.5">
-                            <Calendar className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            {t.meta_datetime || 'Date Taken'}
-                          </td>
-                          <td className="p-3 text-white font-medium break-all">
-                            {selectedFile.metadata.dateTime || <span className="text-slate-600">—</span>}
-                          </td>
-                        </tr>
-                        <tr className="border-b border-white/5">
-                          <td className="p-3 text-slate-400 font-bold uppercase tracking-wider w-[40%] flex items-center gap-1.5">
-                            <Cpu className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            {t.meta_software || 'Software'}
-                          </td>
-                          <td className="p-3 text-white font-medium break-all">
-                            {selectedFile.metadata.software || <span className="text-slate-600">—</span>}
-                          </td>
-                        </tr>
-                        <tr>
-                          <td className="p-3 text-slate-400 font-bold uppercase tracking-wider w-[40%] flex items-center gap-1.5">
-                            <MapPin className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                            {t.meta_gps || 'GPS Coordinates'}
-                          </td>
-                          <td className="p-3 text-white font-medium break-all">
-                            {selectedFile.metadata.gps?.formatted ? (
-                              <span className="text-red-400 font-semibold">{selectedFile.metadata.gps.formatted}</span>
-                            ) : (
-                              <span className="text-slate-600">—</span>
-                            )}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                ) : (
-                  <div className="border border-white/5 border-dashed rounded-xl py-6 text-center text-xs text-slate-600 font-medium bg-black/10">
-                    Inspector idle
-                  </div>
-                )}
-
-                {selectedFile && !selectedFile.metadata.hasMetadata && (
-                  <div className="flex items-center gap-2 p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-xl text-xs font-semibold">
-                    <Shield className="w-4 h-4 shrink-0" />
-                    <span>{t.status_clean || 'Clean / No Metadata'}</span>
-                  </div>
-                )}
-              </div>
-
-            </div>
-          </div>
-
-          {/* COLUMN 3: Stripping Controls & Downloads (Col-span 3) */}
-          <div className="lg:col-span-3 flex flex-col gap-6 bg-black/20 p-6 rounded-2xl border border-white/5 justify-between">
-            <div className="flex flex-col gap-6">
-              <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest border-b border-white/5 pb-2">
-                {t.label_options || 'Removal Level'}
-              </h3>
-
-              {/* Mode switch radio checkable card list */}
-              <div className="flex flex-col gap-3">
-                {[
-                  { 
-                    key: 'full', 
-                    title: t.opt_full_strip || 'Full Clean (Recommended)', 
-                    desc: 'EXIF, GPS, XMP, Comments' 
-                  },
-                  { 
-                    key: 'gps', 
-                    title: t.opt_gps_only || 'GPS Location Only', 
-                    desc: 'Preserves aperture / camera info' 
-                  },
-                  { 
-                    key: 'camera', 
-                    title: t.opt_camera_only || 'Camera details only', 
-                    desc: 'Keeps XMP software annotations' 
-                  }
-                ].map(opt => (
-                  <div
-                    key={opt.key}
-                    onClick={() => setStripLevel(opt.key as any)}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer select-none text-left flex flex-col gap-1 ${
-                      stripLevel === opt.key 
-                        ? 'bg-emerald-500/10 border-emerald-500 text-white' 
-                        : 'border-white/5 bg-black/40 hover:border-white/10 text-slate-300'
-                    }`}
-                  >
-                    <span className="text-xs font-bold leading-tight">
-                      {opt.title}
-                    </span>
-                    <span className="text-[10px] text-slate-500 font-medium">
-                      {opt.desc}
-                    </span>
-                  </div>
+                    <Check className="w-3.5 h-3.5 text-emerald-400 stroke-[3]" />
+                    {point}
+                  </span>
                 ))}
               </div>
             </div>
 
-            {/* Compile progress & Download Trigger */}
-            <div className="flex flex-col gap-3">
-              {isCompiling && (
-                <div className="text-xs font-bold text-emerald-400 animate-pulse text-center leading-relaxed">
-                  {progressText}
+            <div className="relative">
+              <div className="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full" />
+              <CleanerHeroArt
+                className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+                animated={!prefersReduced}
+              />
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* Workspace                                                        */}
+          {/* ================================================================ */}
+          <section
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start"
+            onDragEnter={event => {
+              event.preventDefault();
+              dragDepth.current++;
+              setDragging(true);
+            }}
+            onDragOver={event => event.preventDefault()}
+            onDragLeave={event => {
+              event.preventDefault();
+              dragDepth.current--;
+              if (dragDepth.current <= 0) setDragging(false);
+            }}
+            onDrop={onDrop}
+          >
+            {/* ---------------------------------------------------- files */}
+            <div className="lg:col-span-4 space-y-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={ACCEPT}
+                multiple
+                className="hidden"
+                onChange={event => {
+                  const files = Array.from(event.target.files || []);
+                  if (files.length) void addFiles(files);
+                  event.target.value = '';
+                }}
+              />
+
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className={`rounded-3xl border-2 border-dashed p-7 text-center flex flex-col items-center gap-3 cursor-pointer transition-all ${
+                  dragging
+                    ? 'border-emerald-500/60 bg-emerald-500/5'
+                    : 'border-white/10 hover:border-emerald-500/40 bg-black/20 hover:bg-black/40'
+                }`}
+              >
+                {loading ? (
+                  <Loader2 className="w-9 h-9 text-emerald-400 animate-spin" />
+                ) : (
+                  <Upload className="w-9 h-9 text-emerald-400/70" />
+                )}
+                <span className="text-sm font-bold text-white">{t.dropTitle || 'Drop your photos here'}</span>
+                <span className="text-[11px] text-slate-500 font-medium leading-relaxed max-w-[15rem]">
+                  {t.dropHint || 'JPEG, PNG, WebP and iPhone HEIC — or press Ctrl+V anywhere on this page'}
+                </span>
+                <div className="flex flex-wrap justify-center gap-2 pt-1">
+                  <span className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-[11px] font-bold">
+                    {t.browseBtn || 'Choose files'}
+                  </span>
+                  <span
+                    role="button"
+                    tabIndex={0}
+                    onClick={event => {
+                      event.stopPropagation();
+                      void pasteFromClipboard();
+                    }}
+                    onKeyDown={event => {
+                      if (event.key === 'Enter') {
+                        event.stopPropagation();
+                        void pasteFromClipboard();
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/10 transition-all"
+                  >
+                    <ClipboardPaste className="w-3.5 h-3.5" />
+                    {t.pasteBtn || 'Paste'}
+                  </span>
+                </div>
+              </div>
+
+              {error && (
+                <div className="flex items-start gap-2 rounded-2xl border border-amber-500/25 bg-amber-500/5 px-4 py-3 text-[11px] text-amber-300 leading-relaxed">
+                  <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                  <span className="flex-1">{error}</span>
+                  <button
+                    onClick={() => setError(null)}
+                    className="text-amber-400/60 hover:text-amber-300 font-black cursor-pointer"
+                  >
+                    ×
+                  </button>
                 </div>
               )}
 
-              <button
-                onClick={handleDownload}
-                disabled={loadedFiles.length === 0 || isCompiling}
-                className="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 text-white font-black text-sm uppercase rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-3 active:scale-95 duration-200 outline-none shadow-lg shadow-emerald-500/20"
-              >
-                <Download className="w-4 h-4" />
-                <span>
-                  {loadedFiles.length > 1 
-                    ? (t.btn_download_zip || 'Download Cleaned (.ZIP)')
-                    : (t.btn_download_cleaned || 'Download Cleaned Images')
-                  }
-                </span>
-              </button>
-            </div>
-          </div>
+              <div className="rounded-3xl border border-white/5 bg-black/25 overflow-hidden">
+                <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-white/5">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 truncate">
+                    {t.filesTitle || 'Queue'} {items.length > 0 && `· ${items.length}`}
+                  </span>
+                  {items.length > 0 && (
+                    <button
+                      onClick={clearAll}
+                      className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-rose-400 hover:text-rose-300 transition-colors cursor-pointer shrink-0"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                      {t.clearAllBtn || 'Clear'}
+                    </button>
+                  )}
+                </div>
 
+                {items.length === 0 ? (
+                  <div className="px-6 py-10 flex flex-col items-center gap-3 text-center">
+                    <EmptyInspectorArt className="w-20 h-20 text-emerald-400/60" animated={!prefersReduced} />
+                    <span className="text-xs font-bold text-slate-400">{t.noFiles || 'Nothing queued yet'}</span>
+                    <span className="text-[11px] text-slate-600 leading-relaxed max-w-[16rem]">
+                      {t.noFilesHint ||
+                        'Adding a photo only reads its headers. Nothing is rewritten until you press the button.'}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="max-h-[420px] overflow-y-auto divide-y divide-white/5">
+                    {items.map(item => {
+                      const active = item.id === selectedId;
+                      const badge = item.report.gps
+                        ? { label: t.badgeGps || 'GPS', className: 'bg-rose-500/10 text-rose-400 border-rose-500/20' }
+                        : item.report.tags.length || item.report.blocks.length
+                          ? {
+                              label: (t.badgeTags || '{n} tags').replace('{n}', String(item.report.tags.length)),
+                              className: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+                            }
+                          : { label: t.badgeClean || 'Clean', className: 'bg-slate-500/10 text-slate-400 border-slate-500/20' };
+
+                      return (
+                        <div
+                          key={item.id}
+                          onClick={() => {
+                            setSelectedId(item.id);
+                            setShowAfter(false);
+                          }}
+                          className={`flex items-center gap-3 px-3 py-3 cursor-pointer transition-colors group ${
+                            active ? 'bg-emerald-500/[0.07]' : 'hover:bg-white/[0.03]'
+                          }`}
+                        >
+                          <img
+                            src={item.previewUrl}
+                            alt=""
+                            loading="lazy"
+                            className="w-11 h-11 rounded-lg object-cover bg-black/50 border border-white/10 shrink-0"
+                          />
+                          <div className="min-w-0 flex-1 space-y-1">
+                            <p className="text-xs font-bold text-white truncate">{item.name}</p>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded border leading-none ${badge.className}`}
+                              >
+                                {badge.label}
+                              </span>
+                              <span className="text-[10px] text-slate-600 font-mono">
+                                {formatBytes(item.originalBytes)}
+                              </span>
+                              {item.override && (
+                                <span className="text-[9px] font-black uppercase tracking-wide px-1.5 py-0.5 rounded border border-emerald-500/20 bg-emerald-500/10 text-emerald-400 leading-none">
+                                  {t.customBadge || 'custom'}
+                                </span>
+                              )}
+                              {item.result && (
+                                <span className="inline-flex items-center gap-0.5 text-[9px] font-black uppercase tracking-wide text-emerald-400">
+                                  <Check className="w-3 h-3 stroke-[3]" />
+                                  {t.doneBadge || 'done'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <button
+                            onClick={event => {
+                              event.stopPropagation();
+                              removeItem(item.id);
+                            }}
+                            aria-label={t.removeFile || 'Remove'}
+                            className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 flex items-center justify-center transition-all cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {items.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: t.statFiles || 'Files', value: String(items.length) },
+                    { label: t.statTags || 'Tags', value: String(totals.tags) },
+                    { label: t.statMetadata || 'Metadata', value: formatBytes(totals.metadata) },
+                  ].map(stat => (
+                    <div key={stat.label} className="rounded-2xl border border-white/5 bg-black/25 px-3 py-3 text-center">
+                      <p className="text-sm font-black text-white truncate">{stat.value}</p>
+                      <p className="text-[9px] font-black uppercase tracking-wider text-slate-600 truncate">
+                        {stat.label}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ------------------------------------------------ inspector */}
+            <div className="lg:col-span-8 space-y-4">
+              <div className="glass-card rounded-3xl p-5 md:p-7 space-y-5">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">
+                    {showAfter ? t.afterLabel || 'After cleaning' : t.inspectorTitle || 'What is inside'}
+                  </h2>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {selected?.result && (
+                      <button
+                        onMouseDown={() => setShowAfter(true)}
+                        onMouseUp={() => setShowAfter(false)}
+                        onMouseLeave={() => setShowAfter(false)}
+                        onTouchStart={() => setShowAfter(true)}
+                        onTouchEnd={() => setShowAfter(false)}
+                        onClick={event => event.preventDefault()}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer select-none"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        {t.compareBtn || 'Hold to see the result'}
+                      </button>
+                    )}
+                    <button
+                      onClick={undo}
+                      disabled={!canUndo}
+                      aria-label={t.undoLabel || 'Undo'}
+                      className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <Undo2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={redo}
+                      disabled={!canRedo}
+                      aria-label={t.redoLabel || 'Redo'}
+                      className="w-8 h-8 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <Redo2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {!selected || !shownReport ? (
+                  <div className="py-14 flex flex-col items-center gap-4 text-center">
+                    <EmptyInspectorArt className="w-28 h-28 text-emerald-400/50" animated={!prefersReduced} />
+                    <p className="text-sm font-bold text-slate-400 max-w-sm">
+                      {t.emptyInspector ||
+                        'Add a photo and every tag hidden inside it shows up here — before anything is changed.'}
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex items-start gap-4 flex-wrap">
+                      <img
+                        src={selected.previewUrl}
+                        alt=""
+                        className="w-24 h-24 rounded-2xl object-cover bg-black/50 border border-white/10 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <p className="text-sm font-bold text-white break-all">{selected.name}</p>
+                        <div className="flex flex-wrap gap-1.5 text-[10px] font-mono text-slate-500">
+                          <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 uppercase">
+                            {selected.format}
+                          </span>
+                          <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10">
+                            {formatBytes(selected.originalBytes)}
+                          </span>
+                          <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10">
+                            {(t.metaSize || 'metadata {n}').replace('{n}', formatBytes(shownReport.metadataBytes))}
+                          </span>
+                        </div>
+                        {selected.converted && (
+                          <p className="text-[11px] text-amber-400/90 leading-relaxed">
+                            {t.convertedNote ||
+                              'HEIC files have to be re-encoded to JPEG before they can be rewritten, so this one is not byte-identical to the original.'}
+                          </p>
+                        )}
+                        {!shownReport.ok && (
+                          <p className="text-[11px] text-amber-400/90 leading-relaxed">
+                            {t.partialScan ||
+                              'The byte scan stopped early on this file, so the list below may be incomplete.'}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {showAfter && selected.result && (
+                      <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/5 p-4 flex items-start gap-3">
+                        <ShieldCheck className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                        <div className="space-y-1 min-w-0">
+                          <p className="text-sm font-bold text-white">
+                            {(t.verifiedTitle || '{n} of metadata removed').replace(
+                              '{n}',
+                              formatBytes(selected.result.removedBytes)
+                            )}
+                          </p>
+                          <p className="text-[11px] text-slate-400 leading-relaxed">
+                            {t.verifiedText ||
+                              'This is not what we intended to remove — it is what a fresh parse of the finished file actually found.'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    <Inspector
+                      report={shownReport}
+                      selection={showAfter ? { blocks: new Set(), tags: new Set(), keepOrientation } : effectiveSelection}
+                      onToggleTags={showAfter ? () => {} : toggleTags}
+                      onToggleBlocks={showAfter ? () => {} : toggleBlocks}
+                      t={t}
+                    />
+                  </>
+                )}
+              </div>
+
+              {/* ------------------------------------------------ controls */}
+              <div className="glass-card rounded-3xl p-5 md:p-7 space-y-5">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <h2 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">
+                    {t.presetTitle || 'What to remove'}
+                  </h2>
+                  {selected?.override && (
+                    <button
+                      onClick={() => setOverride(null)}
+                      className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-white transition-colors cursor-pointer"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      {t.resetSelection || 'Back to the preset'}
+                    </button>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {presets.map(option => (
+                    <button
+                      key={option.id}
+                      onClick={() => choosePreset(option.id)}
+                      className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
+                        preset === option.id
+                          ? 'bg-emerald-500/10 border-emerald-500/60'
+                          : 'bg-black/30 border-white/5 hover:border-white/15'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2 mb-1.5">
+                        <span
+                          className={`w-3.5 h-3.5 rounded-full border-[3px] shrink-0 ${
+                            preset === option.id ? 'border-emerald-400 bg-emerald-400/30' : 'border-white/20'
+                          }`}
+                        />
+                        <span className="text-xs font-black text-white">{option.title}</span>
+                      </span>
+                      <span className="block text-[11px] text-slate-500 leading-relaxed">{option.text}</span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-2">
+                  {[
+                    {
+                      checked: keepOrientation,
+                      toggle: () => setKeepOrientation(value => !value),
+                      title: t.optKeepOrientation || 'Keep the rotation flag',
+                      text:
+                        t.optKeepOrientationHint ||
+                        'Writes back a 30-byte Exif block holding nothing but Orientation, so portrait shots do not come out sideways.',
+                    },
+                    {
+                      checked: removeIcc,
+                      toggle: () => setRemoveIcc(value => !value),
+                      title: t.optRemoveIcc || 'Also remove the colour profile',
+                      text:
+                        t.optRemoveIccHint ||
+                        'The ICC profile is not personal data and dropping it can visibly shift colours, so it stays by default.',
+                    },
+                  ].map(option => (
+                    <button
+                      key={option.title}
+                      onClick={() => {
+                        option.toggle();
+                        setItems(prev => prev.map(item => ({ ...item, result: null })));
+                        setShowAfter(false);
+                      }}
+                      className="w-full flex items-start gap-3 p-3.5 rounded-2xl border border-white/5 bg-black/25 hover:bg-white/[0.03] text-left transition-colors cursor-pointer"
+                    >
+                      <span
+                        className={`mt-0.5 w-4 h-4 shrink-0 rounded-[5px] border flex items-center justify-center transition-all ${
+                          option.checked
+                            ? 'bg-emerald-500 border-emerald-400 text-black'
+                            : 'border-white/20 bg-black/40'
+                        }`}
+                      >
+                        {option.checked && <Check className="w-3 h-3 stroke-[3.5]" />}
+                      </span>
+                      <span className="min-w-0 space-y-1">
+                        <span className="block text-xs font-bold text-white">{option.title}</span>
+                        <span className="block text-[11px] text-slate-500 leading-relaxed">{option.text}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                {progress && (
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-emerald-400">
+                      <span className="truncate">{progress.name}</span>
+                      <span className="shrink-0 font-mono">
+                        {progress.current}/{progress.total}
+                      </span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                      <div
+                        className="h-full bg-emerald-500 transition-[width] duration-200"
+                        style={{ width: `${(progress.current / progress.total) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => void runClean()}
+                    disabled={items.length === 0 || busy}
+                    className="flex-1 py-4 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 text-white font-black text-sm uppercase tracking-wide transition-all cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2.5 shadow-lg shadow-emerald-500/20 disabled:shadow-none"
+                  >
+                    {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                    <span className="truncate">
+                      {busy
+                        ? t.cleaningLabel || 'Cleaning…'
+                        : (t.cleanBtn || 'Clean {n} file(s)').replace('{n}', String(items.length))}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => void download()}
+                    disabled={cleanedCount === 0}
+                    className="flex-1 py-4 px-5 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 disabled:opacity-30 disabled:cursor-not-allowed text-emerald-300 font-black text-sm uppercase tracking-wide transition-all cursor-pointer flex items-center justify-center gap-2.5"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span className="truncate">
+                      {cleanedCount > 1 ? t.downloadZipBtn || 'Download .zip' : t.downloadBtn || 'Download'}
+                    </span>
+                  </button>
+                </div>
+
+                {cleanedCount > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    {[
+                      { label: t.statCleaned || 'Cleaned', value: `${cleanedCount}/${items.length}` },
+                      { label: t.statSaved || 'Bytes dropped', value: formatBytes(savedBytes) },
+                      {
+                        label: t.statLeftover || 'Tags left',
+                        value: String(leftoverTags),
+                        good: leftoverTags === 0,
+                      },
+                    ].map(stat => (
+                      <div
+                        key={stat.label}
+                        className="rounded-2xl border border-white/5 bg-black/25 px-3 py-3 text-center"
+                      >
+                        <p
+                          className={`text-sm font-black truncate ${
+                            'good' in stat && stat.good ? 'text-emerald-400' : 'text-white'
+                          }`}
+                        >
+                          {stat.value}
+                        </p>
+                        <p className="text-[9px] font-black uppercase tracking-wider text-slate-600 truncate">
+                          {stat.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <p className="text-[10px] text-slate-600 leading-relaxed">
+                  {t.shortcutsHint ||
+                    'Ctrl+Enter cleans, Ctrl+Z and Ctrl+Shift+Z undo and redo your tag picks, ↑ ↓ walk the queue, Del removes a file, Ctrl+V pastes one in.'}
+                </p>
+              </div>
+
+              {selected && (
+                <NextStepBar
+                  lang={lang}
+                  t={t}
+                  getResult={async () => {
+                    const output = selected.result ?? (await cleanOne(selected));
+                    return output ? { blob: output.blob, name: output.name } : null;
+                  }}
+                />
+              )}
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* How it works                                                     */}
+          {/* ================================================================ */}
+          <section className="space-y-10">
+            <div className="text-center space-y-3">
+              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                {t.howItWorksTitle || 'How it works'}
+              </h2>
+              <div className="h-1 w-16 bg-emerald-500 mx-auto rounded-full" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {steps.map((step, index) => {
+                const Art = step.art;
+                return (
+                  <div
+                    key={index}
+                    className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-emerald-500/20 transition-all group"
+                  >
+                    <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-emerald-500/10 transition-colors">
+                      {index + 1}
+                    </span>
+                    <Art className="w-24 h-auto text-emerald-400" />
+                    <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                    <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* Features                                                         */}
+          {/* ================================================================ */}
+          <motion.section
+            initial={prefersReduced ? false : 'hidden'}
+            whileInView={prefersReduced ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.15 }}
+            variants={fadeInUp}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {features.map((feature: any, index: number) => {
+              const Icon = featureIcons[index] || IconNoLocation;
+              return (
+                <div
+                  key={index}
+                  className="p-7 glass-card rounded-3xl text-left hover:-translate-y-1.5 transition-all duration-300 group border border-white/5"
+                >
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 mb-5 group-hover:scale-110 group-hover:border-emerald-500/40 transition-all">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-white text-lg font-bold mb-2.5 group-hover:text-emerald-400 transition-colors">
+                    {feature.title}
+                  </h3>
+                  <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
+                </div>
+              );
+            })}
+          </motion.section>
+
+          {/* ================================================================ */}
+          {/* SEO content                                                      */}
+          {/* ================================================================ */}
+          <section className="space-y-24 text-left">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+              <div className="space-y-7">
+                {keywords[0] && (
+                  <div className="inline-block px-4 py-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 text-[11px] font-black uppercase tracking-[0.2em] border border-emerald-500/20">
+                    {keywords[0]}
+                  </div>
+                )}
+                <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
+                  {t.seoHeroTitle}
+                </h2>
+                <p className="text-slate-400 text-lg leading-relaxed font-medium">{t.seoHeroText}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(t.seoHeroList || []).map((point: string, index: number) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all"
+                    >
+                      <span className="w-7 h-7 shrink-0 bg-emerald-500/20 text-emerald-400 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </span>
+                      <span className="text-slate-300 font-bold text-sm">{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative glass-card rounded-[3rem] p-10 py-16 min-h-[400px] flex flex-col items-center justify-center gap-7 text-center overflow-hidden">
+                <div className="absolute -top-16 -right-16 w-56 h-56 bg-emerald-500/10 rounded-full blur-3xl" />
+                <IconLossless className="w-20 h-20 text-emerald-400 relative" />
+                <div className="space-y-3 max-w-sm relative">
+                  <h3 className="text-2xl font-black text-white tracking-tight leading-tight">
+                    {t.seoBrowserSpeedTitle}
+                  </h3>
+                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-[#04140f] border border-white/5 space-y-10">
+              <div className="max-w-4xl space-y-4">
+                <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
+                <div className="h-1.5 w-20 bg-emerald-500 rounded-full" />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
+                    {t.seoUseCaseTitle}
+                  </div>
+                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoUseCaseText}</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
+                    {t.seoPrivacyTitle}
+                  </div>
+                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoPrivacyText}</p>
+                </div>
+              </div>
+            </div>
+
+            {faqs.length > 0 && (
+              <div className="max-w-4xl mx-auto w-full space-y-10">
+                <div className="text-center space-y-3">
+                  <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                  <div className="h-1 w-16 bg-emerald-500 mx-auto rounded-full" />
+                </div>
+                <div className="grid gap-3">
+                  {faqs.map((faq: any, index: number) => (
+                    <details
+                      key={index}
+                      className="glass-card rounded-2xl px-6 py-5 text-left border border-white/5 hover:border-emerald-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                    >
+                      <summary className="flex items-start gap-3 cursor-pointer list-none text-base font-bold text-white group-hover:text-emerald-400 transition-colors">
+                        <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-400 text-[11px] font-black">
+                          Q
+                        </span>
+                        <span className="flex-1">{faq.question}</span>
+                        <span className="shrink-0 text-emerald-400 transition-transform group-open:rotate-45 text-xl leading-none">
+                          +
+                        </span>
+                      </summary>
+                      <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {keywords.length > 0 && (
+              <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
+                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  {t.seoKeywordsTitle}
+                </h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {keywords.map((keyword: string, index: number) => (
+                    <span
+                      key={index}
+                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:text-emerald-400 transition-all cursor-default"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
         </div>
 
-        {/* Informative Grid */}
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {[
-            {
-              title: t.seoBrowserSpeedTitle || 'Real-Time Binary Header Filtering',
-              desc: t.seoBrowserSpeedText || 'By parsing raw file bytes on high-performance ArrayBuffers, we strip segments instantly.'
-            },
-            {
-              title: t.seoUseCaseTitle || 'Crucial for Photographers & Mobile Users',
-              desc: t.seoUseCaseText || 'Photos taken on smartphones pack exact geographic coordinates. Strip EXIF data prior to publishing.'
-            },
-            {
-              title: t.seoPrivacyTitle || 'Guaranteed Local Sandboxing',
-              desc: t.seoPrivacyText || 'None of your source photos or graphics touch external networks. Operations occur strictly inside your sandboxed browser tab.'
-            }
-          ].map((item, idx) => (
-            <div key={idx} className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 relative overflow-hidden group hover:border-emerald-500/20 transition-all duration-300">
-              <h4 className="text-white font-bold text-lg mb-3 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:scale-125 transition-transform" />
-                {item.title}
-              </h4>
-              <p className="text-slate-400 text-sm leading-relaxed font-medium">
-                {item.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-exif-clear-bottom" />
+        <AdBanner id="adsense-exif-clear-bottom" />
       </main>
 
-      <Footer
-        lang={lang}
-        t={t}
-        onOpenModal={handleOpenLegal}
-      />
+      <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />
 
       <LegalModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={
-          modalType === 'privacy' 
-            ? (legalTranslations[lang]?.nav.privacy || 'Privacy Policy') 
-            : modalType === 'terms' 
-              ? (legalTranslations[lang]?.nav.terms || 'Terms of Service') 
-              : (legalTranslations[lang]?.nav.cookies || 'Cookie Policy')
-        }
-        content={
-          modalType === 'privacy' 
-            ? (legalTranslations[lang]?.privacy.content || '') 
-            : modalType === 'terms' 
-              ? (legalTranslations[lang]?.terms.content || '') 
-              : (legalTranslations[lang]?.cookies.content || '')
-        }
+        isOpen={legalModal === 'privacy'}
+        onClose={() => setLegalModal(null)}
+        title={legalTranslations[lang]?.nav.privacy || 'Privacy Policy'}
+        content={legalTranslations[lang]?.privacy.content || ''}
+        t={t}
+      />
+      <LegalModal
+        isOpen={legalModal === 'terms'}
+        onClose={() => setLegalModal(null)}
+        title={legalTranslations[lang]?.nav.terms || 'Terms of Service'}
+        content={legalTranslations[lang]?.terms.content || ''}
+        t={t}
+      />
+      <LegalModal
+        isOpen={legalModal === 'cookies'}
+        onClose={() => setLegalModal(null)}
+        title={legalTranslations[lang]?.nav.cookies || 'Cookie Policy'}
+        content={legalTranslations[lang]?.cookies.content || ''}
         t={t}
       />
     </div>

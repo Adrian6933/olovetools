@@ -1,52 +1,98 @@
 export default {
   "title": "LoremFlow",
-  "seo_title": "LoremFlow | Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement.",
-  "seo_description": "Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement dans votre navigateur.",
+  "seo_title": "Générateur de faux texte en huit écritures",
+  "seo_description": "Générateur de faux texte gratuit. Le Lorem ipsum classique plus l'espagnol, le japonais, le chinois, le russe, l'hindi, le grec et l'arabe, par paragraphes, phrases, mots ou nombre exact de caractères. Avec une graine le résultat est reproductible, et l'export se fait en texte brut, HTML ou Markdown avec titres et listes. Tout dans votre navigateur.",
   "seoHeroTitle": "LoremFlow",
-  "seoHeroText": "Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement dans votre navigateur.",
+  "seoHeroText": "Du faux texte en huit écritures, pas seulement en latin : testez une maquette avec le japonais, le russe ou l'arabe qu'elle portera vraiment. Demandez des paragraphes, des mots ou un nombre exact de caractères, figez le résultat avec une graine pour qu'il revienne à l'identique, et exportez en texte, HTML ou Markdown.",
   "label_unit_type": "Type d'unité",
   "label_count": "Quantité",
   "label_start_lorem": "Commencer par « Lorem ipsum »",
   "button_generate": "Générer",
   "label_output": "Texte généré",
   "label_words": "Mots",
-  "message_empty": "Appuyez sur Générer pour créer du texte Lorem Ipsum.",
+  "message_empty": "Appuyez sur Générer pour créer du faux texte.",
   "label_total_words": "Mots totaux",
   "message_copied": "Copié !",
   "button_copy": "Copier",
   "button_download": "Télécharger .txt",
   "button_reset": "Réinitialiser",
-  "seoBrowserSpeedTitle": "Traitement Local Instantané",
-  "seoBrowserSpeedText": "Tout le traitement est exécuté dans votre navigateur via les API JavaScript natives. Aucune donnée n'est jamais envoyée à un serveur.",
-  "seoUseCaseTitle": "100% Côté Client",
-  "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
+  "seoBrowserSpeedTitle": "Le faux texte latin masque de vrais problèmes",
+  "seoBrowserSpeedText": "Le japonais et le chinois coupent les lignes entre caractères et non entre mots, l'arabe va de droite à gauche et lie ses lettres, l'hindi empile des signes au-dessus de la ligne, et les mots russes sont tout simplement plus longs. Une maquette impeccable en Lorem ipsum peut céder sur n'importe lequel d'entre eux : d'où un faux texte écrit dans l'écriture que vous publierez vraiment.",
+  "seoUseCaseTitle": "Maquettes, tests et captures",
+  "seoUseCaseText": "Remplissez une carte avec exactement les 240 caractères que le design autorise, vérifiez qu'un titre survit à sa traduction en russe, alimentez un test avec un fichier de référence qui ne doit pas changer d'une exécution à l'autre, ou collez le HTML directement dans un gabarit pour voir les vraies balises en place.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
   "seoKeywords": [
-    "lorem flow",
-    "outil en ligne",
-    "gratuit",
-    "local",
-    "navigateur"
+    "générateur lorem ipsum",
+    "faux texte",
+    "texte factice japonais",
+    "faux texte arabe",
+    "lorem ipsum reproductible",
+    "lorem ipsum html"
   ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
       "question": "Mes données sont-elles envoyées à un serveur ?",
-      "answer": "Non. Toutes les opérations se déroulent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
+      "answer": "Non. Les listes de mots sont livrées avec la page et le texte est construit dans votre navigateur. Rien n'est téléchargé, téléversé ni conservé."
     },
     {
-      "question": "Puis-je choisir la quantité de texte générée par LoremFlow ?",
-      "answer": "Oui. Vous pouvez générer entre 1 et 100 unités, en choisissant si chaque unité est un paragraphe, une phrase ou un seul mot, et éventuellement commencer par l'ouverture classique Lorem ipsum."
+      "question": "Pourquoi proposer d'autres écritures que le latin ?",
+      "answer": "Parce qu'une maquette ne se vérifie que face au texte qu'elle portera réellement. Le japonais et le chinois coupent entre caractères, l'arabe s'écrit de droite à gauche, l'hindi place des signes au-dessus de la ligne, et les mots russes sont plus longs qu'en anglais. Le Lorem ipsum masque ces quatre problèmes."
     },
     {
-      "question": "Puis-je télécharger le texte généré dans un fichier ?",
-      "answer": "Oui. Après avoir généré le texte, cliquez sur Télécharger .txt pour enregistrer la sortie dans un fichier texte prêt à coller dans vos maquettes ou designs."
+      "question": "À quoi sert la graine ?",
+      "answer": "Elle rend la sortie reproductible. Avec une graine, les mêmes réglages produisent toujours exactement le même texte : pratique pour une capture à refaire ou un jeu de test qui ne doit pas dériver d'une exécution à l'autre."
+    },
+    {
+      "question": "Est-ce que j'obtiens vraiment le nombre exact de mots demandé ?",
+      "answer": "Oui. Les mots et les caractères sont coupés au nombre saisi plutôt qu'arrondis à la fin d'une phrase, et la virgule finale est nettoyée pour que le résultat se lise encore comme une phrase."
+    },
+    {
+      "question": "Puis-je obtenir du HTML plutôt que du texte brut ?",
+      "answer": "Oui — du HTML avec de vraies balises p, h2, h3 et ul, ou du Markdown de même structure. Activez titres et listes et vous obtenez une maquette en forme d'article au lieu d'un bloc gris. La sortie arabe porte dir=\"rtl\" pour que la direction survive au collage."
     }
   ],
-  "footerTagline": "Génère du texte de remplissage Lorem Ipsum par paragraphes, phrases ou mots 100% localement dans votre navigateur.",
+  "footerTagline": "Du faux texte en huit écritures, avec des comptes exacts, une graine pour un rendu reproductible et un export HTML ou Markdown.",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "heroBadge": "Tourne dans votre navigateur",
+  "heroSecondary": "Voir comment ça marche",
+  "label_script": "Écriture",
+  "label_format": "Format",
+  "label_seed": "Graine (facultatif)",
+  "seedPlaceholder": "vide = différent à chaque fois",
+  "newSeed": "Nouvelle graine",
+  "label_rich": "Ajouter titres et listes",
+  "unit_paragraphs": "Paragraphes",
+  "unit_sentences": "Phrases",
+  "unit_words": "Mots",
+  "unit_characters": "Caractères",
+  "format_text": "Texte brut",
+  "statsLine": "{w} mots · {c} caractères · {p} paragraphes",
+  "howTitle": "Comment ça marche",
+  "step1Title": "Choisissez l'écriture",
+  "step1Text": "Latin, espagnol, japonais, chinois, russe, hindi, grec ou arabe — de vrais mots, pas du bruit généré.",
+  "step2Title": "Dites combien",
+  "step2Text": "Paragraphes, phrases, mots ou un nombre exact de caractères, ce qu'un brief de design demande le plus souvent.",
+  "step3Title": "Fixez-le avec une graine",
+  "step3Text": "Tapez n'importe quelle graine et le même texte revient à chaque fois : une capture devient reproductible.",
+  "step4Title": "Emportez-le comme il vous faut",
+  "step4Text": "Texte brut, HTML avec de vraies balises, ou Markdown — copiez-le ou téléchargez le fichier.",
+  "featuresTitle": "Ce qu'il fait vraiment",
+  "feat1Title": "Huit écritures, pas une",
+  "feat1Text": "Un bloc en latin ne dit rien de la façon dont une maquette encaisse le japonais ou l'arabe. Ici vous testez avec le vrai texte.",
+  "feat2Title": "Droite à gauche incluse",
+  "feat2Text": "La sortie en arabe est marquée RTL, dans la zone et dans le HTML exporté : la direction fait partie du test.",
+  "feat3Title": "Sortie reproductible",
+  "feat3Text": "Une graine rend le texte déterministe : la même graine donne exactement les mêmes paragraphes.",
+  "feat4Title": "Comptes exacts",
+  "feat4Text": "Demandez 240 caractères ou 75 mots et c'est ce que vous obtenez, coupé net plutôt qu'arrondi à la phrase.",
+  "feat5Title": "Texte, HTML, Markdown",
+  "feat5Text": "Avec titres et listes en option, pour maquetter un article entier et pas seulement un bloc gris.",
+  "feat6Title": "Ne quitte jamais la page",
+  "feat6Text": "Généré dans votre navigateur à partir d'une liste de mots intégrée. Rien n'est téléchargé ni téléversé.",
+  "scrollTop": "Retour en haut"
 };

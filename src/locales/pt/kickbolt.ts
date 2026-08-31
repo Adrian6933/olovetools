@@ -1,6 +1,6 @@
 export default {
   "heroTitle": "BAIXAR CLIPES DA KICK",
-  "seo_title": "BAIXAR CLIPES DA KICK",
+  "seo_title": "KickBolt | Descarrega clipes do Kick em lote, sem conta",
   "heroDesc": "A ferramenta definitiva para salvar momentos da Kick. Rápido, confiável e sem registro. Baixe listas completas de uma vez.",
   "seo_description": "A ferramenta definitiva para salvar momentos da Kick. Rápido, confiável e sem registro. Baixe listas completas de uma vez.",
   "uploadTxt": "SUBIR LISTA .TXT",
@@ -18,7 +18,7 @@ export default {
   "tips2": "Mobile Ready: Nossos arquivos estão prontos para formato vertical. Perfeito para TikTok e Reels.",
   "tips3": "Modo em Massa: Use o envio .txt para listas de até 50 clipes e baixe tudo em segundos.",
   "footerDesc": "Downloader profissional de clipes da Kick. Motor otimizado para vídeos MP4 em HD instantâneos.",
-  "footerSeoPara": "Kickclip usa tecnologia avançada para obter fluxos MP4 diretos sem perda de qualidade.",
+  "footerSeoPara": "O KickBolt lê os metadados públicos dos clipes do Kick, procura a versão mais alta que o streamer publicou mesmo e entrega-te o MP4 — um a um ou num único ZIP armazenado. O Kick não permite que um navegador peça a API nem o vídeo diretamente, por isso os pedidos são reencaminhados: primeiro pelo nosso próprio endpoint e por proxies CORS públicos apenas como recurso, que podes desligar.",
   "proTipsTitle": "DICAS PRO PARA EDITORES",
   "tip1Title": "DESEMPENHO",
   "tip2Title": "FORMATO",
@@ -82,9 +82,67 @@ export default {
     "cookies": "Cookies",
     "contactEmail": "CONTATO POR E-MAIL",
     "gotIt": "ENTENDI",
-    "privacyText": "Na Kickclip, a privacidade é fundamental. Não coletamos, armazenamos ou compartilhamos dados pessoais identificáveis. Os links são processados em tempo real e nenhum registro de clipes baixados é mantido em nossos servidores. Para qualquer dúvida, entre em contato em adrian.contact.me.69@gmail.com.",
-    "termsText": "Kickclip é uma ferramenta técnica para acessar conteúdo público da Kick. O usuário é o único responsável pelo uso dos materiais baixados. A Kickclip não é afiliada à Kick.",
+    "privacyText": "O KickBolt não guarda qualquer registo sobre ti: sem registo de conta, sem perfil de analítica, sem base de dados dos links que colas. O que não pode afirmar é que nada toca num servidor — o Kick recusa pedidos diretos do navegador, por isso cada clipe é reencaminhado. O nosso próprio endpoint trata disso primeiro e não regista nada; se falhar, o pedido cai em proxies CORS públicos (corsproxy.io, allorigins.win, codetabs.com e semelhantes), geridos por terceiros cujo registo não controlamos. O URL do clipe, e o próprio vídeo, passam por aquele que responder. Podes desligar esse recurso na ferramenta, e a página diz-te que anfitrião serviu a tua última transferência. O teu idioma e essa preferência ficam no teu próprio navegador. Dúvidas: adrian.contact.me.69@gmail.com.",
+    "termsText": "KickBolt é uma ferramenta técnica para acessar conteúdo público da Kick. O usuário é o único responsável pelo uso dos materiais baixados. A KickBolt não é afiliada à Kick.",
     "cookiesText": "Nosso site usa apenas o LocalStorage estritamente necessário para a operação técnica do site."
   },
-  "loadingClips": "CARREGANDO CLIPES..."
+  "loadingClips": "CARREGANDO CLIPES...",
+  "qMaxLabel": "Qualidade máxima",
+  "qMaxSub": "Fonte original",
+  "q720Label": "720p HD",
+  "q720Sub": "Equilibrado",
+  "q360Label": "360p rápido",
+  "q360Sub": "Poucos dados",
+  "zipError": "Não foi possível criar o ZIP. Alguns clipes podem ter falhado ao descarregar; tenta com menos de cada vez.",
+  "twitchCrossSell": "Queres descarregar clipes da Twitch?",
+  "twitchCrossSellCta": "Experimenta o TwitchBolt",
+  "routeNotice": "O Kick bloqueia pedidos diretos do navegador, por isso cada clipe passa por um relé. O nosso é tentado primeiro; os públicos são só o recurso alternativo, e podes desligá-los.",
+  "routeLast": "A última transferência foi servida por: {host}",
+  "routeAllowOn": "Relés públicos: sim",
+  "routeAllowOff": "Relés públicos: não",
+  "howTitle": "Como funciona",
+  "step1Title": "Cola os links",
+  "step1Text": "Um URL de clipe por linha, ou larga uma lista .txt. Nada é procurado até carregares no botão.",
+  "step2Title": "Escolhe a qualidade",
+  "step2Text": "A fonte mantém a stream original; 720p e 360p trocam detalhe por um ficheiro muito mais pequeno.",
+  "step3Title": "Deixa-o procurar",
+  "step3Text": "Os clipes são resolvidos três de cada vez para o Kick não te limitar, com uma barra de progresso por ficheiro.",
+  "step4Title": "Guarda um ou todos",
+  "step4Text": "Descarrega os clipes um a um, ou leva o lote inteiro num único ZIP sem recomprimir nada.",
+  "featuresTitle": "O que faz mesmo",
+  "feat1Title": "Qualquer URL de clipe do Kick",
+  "feat1Text": "Links de canal com ?clip=, caminhos /clips/ e os links curtos de partilha resolvem todos para o mesmo clipe.",
+  "feat2Title": "Listas inteiras de uma vez",
+  "feat2Text": "Cola cinquenta links ou carrega um ficheiro .txt; os duplicados são descartados antes de se pedir seja o que for.",
+  "feat3Title": "A qualidade escolhes tu",
+  "feat3Text": "Nem todos os clipes merecem o bitrate da fonte. Desce para 720p ou 360p quando o tamanho importa mais do que o detalhe.",
+  "feat4Title": "Um ZIP, sem recodificar",
+  "feat4Text": "O pacote é armazenado, não comprimido: o vídeo não encolhe dentro de um zip, e saltar esse passo poupa a espera.",
+  "feat5Title": "Sem conta, nunca",
+  "feat5Text": "Sem registo, sem e-mail, sem extensão. Abres a página, colas, descarregas e fechas o separador.",
+  "feat6Title": "Honesto quanto à rota",
+  "feat6Text": "O Kick não serve diretamente um navegador, por isso a ferramenta diz que relé transportou o teu clipe e deixa-te recusar os públicos.",
+  "faqTitle": "Perguntas frequentes",
+  "faq": [
+    {
+      "question": "O clipe vem diretamente do Kick?",
+      "answer": "Não, e não pode. A API de clipes do Kick está atrás da Cloudflare e a sua CDN de vídeo não envia cabeçalhos CORS, por isso o navegador não tem permissão para ler nenhuma das duas diretamente. Todos os clipes passam por um relé. O nosso é tentado primeiro; se falhar, alguns proxies CORS públicos são o recurso alternativo, e o aviso por cima do campo deixa-te desligá-los e diz que anfitrião serviu a tua última transferência."
+    },
+    {
+      "question": "Há limite de clipes de cada vez?",
+      "answer": "Não há limite rígido, mas os clipes são resolvidos três de cada vez e descarregados cinco de cada vez de propósito, para o Kick não começar a recusar pedidos. Cinquenta links de uma vez são confortáveis; várias centenas vão demorar e é mais provável que apanhem um limite a meio."
+    },
+    {
+      "question": "Porque é que o ZIP tem o mesmo tamanho dos clipes?",
+      "answer": "Porque é armazenado, não comprimido. O vídeo já vem comprimido, por isso passá-lo pelo deflate do zip não poupa quase nada e custa muita espera. O pacote é um contentor, não um aperto."
+    },
+    {
+      "question": "O que descarrega realmente a \"qualidade máxima\"?",
+      "answer": "A versão mais alta que o Kick publicou para esse clipe, seja ela qual for. Não há upscaling para 1080p: se o streamer transmitiu a 720p, a fonte é 720p, e a ferramenta não inventa detalhe que nunca foi gravado."
+    },
+    {
+      "question": "Guardam os meus links ou os clipes?",
+      "answer": "Nem uma coisa nem outra. Os links são resolvidos à medida que chegam e nada é escrito numa base de dados. O teu idioma e a tua preferência sobre os relés públicos ficam no teu próprio navegador e não são enviados para lado nenhum. O que não podemos prometer por ti é o que um relé público faz com um URL que lhe pedem para ir buscar — que é exatamente por isso que os podes desligar."
+    }
+  ]
 };

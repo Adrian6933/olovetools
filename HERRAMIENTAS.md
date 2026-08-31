@@ -88,7 +88,7 @@
 ### 🔒 Seguridad & Privacidad (2)
 | Herramienta | Ruta | Descripción | Tecnologías |
 | :--- | :--- | :--- | :--- |
-| **PassBolt** 🔑 | `/passbolt` | Generador de contraseñas + analizador de entropía. | `crypto.getRandomValues`. |
+| **EntropyBolt** 🔑 | `/entropy-bolt` | Generador de contraseñas + analizador de entropía. | `crypto.getRandomValues`. |
 | **Whois-Bolt** 🔍 | `/whois-bolt` | Consulta DNS via DNS over HTTPS. | Google DoH API (`dns.google`). |
 
 ### 🎲 Generadores & Texto Creativo (3)

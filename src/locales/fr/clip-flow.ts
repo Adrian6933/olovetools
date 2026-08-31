@@ -4,12 +4,12 @@ export default {
   "seo_description": "Collez un VOD ou un direct Twitch, marquez autant de découpes que vous voulez sur une timeline complète, et exportez chacune — ou toutes réunies — en MP4. Sans limite de 60 secondes, 100% dans votre navigateur.",
   "seoHeroTitle": "Découpez des VODs Twitch en Clips MP4 Multi-Segments",
   "seoHeroText": "Collez le lien d'un VOD ou d'une chaîne en direct Twitch, parcourez une timeline complète et marquez autant de découpes que vous voulez — de la minute 1 à 2, puis passez à la minute 5 à 7. Téléchargez chaque découpe séparément ou réunissez-les toutes en un seul MP4. Sans la limite de 60 secondes des clips Twitch.",
-  "seoBrowserSpeedTitle": "Traitement Local Instantané",
-  "seoBrowserSpeedText": "Le découpage et la fusion se font grâce à un moteur vidéo qui tourne directement dans votre onglet. Rien n'est envoyé à un serveur — vos clips ne quittent jamais votre appareil.",
+  "seoBrowserSpeedTitle": "Le découpage est local, le téléchargement non",
+  "seoBrowserSpeedText": "Un moteur vidéo tourne dans votre onglet et y effectue tout le découpage et l'assemblage, par copie de flux plutôt que par réencodage. Ce qui ne peut pas être local, c'est l'arrivée de la vidéo : le CDN de segments de Twitch n'envoie pas d'en-têtes CORS, le navigateur n'a donc pas le droit de le récupérer directement et les segments passent par un relais.",
   "seoUseCaseTitle": "Compilations de Moments Forts",
   "seoUseCaseText": "Idéal pour créer des compilations à partir de longs VODs : marquez chaque bon moment sur une émission de plusieurs heures et exportez-les en un seul MP4 continu, ou récupérez chaque moment séparément.",
-  "seoPrivacyTitle": "100% Privé et Sécurisé",
-  "seoPrivacyText": "Les données vidéo sont diffusées directement depuis les serveurs de Twitch vers votre navigateur. Tout le découpage et la fusion se font localement sur votre appareil — rien n'est jamais envoyé où que ce soit.",
+  "seoPrivacyTitle": "Ce qui quitte votre machine, et ce qui ne la quitte pas",
+  "seoPrivacyText": "Sachez que les segments vidéo passent par un relais au lieu d'être récupérés directement chez Twitch, car son CDN refuse les requêtes cross-origin. Par défaut ils transitent par le point d'accès de ce site ; en cas d'échec, l'outil bascule sur des proxys publics tiers, dont les opérateurs peuvent voir quelle vidéo est demandée. Ce secours peut être désactivé dans l'outil. Ce qui ne quitte jamais votre appareil, c'est le résultat : découpe, rognage et assemblage tournent dans le navigateur, et le fichier exporté est écrit directement dans vos téléchargements.",
   "seoKeywords": [
     "éditeur de clips twitch",
     "découper vod twitch",
@@ -22,28 +22,24 @@ export default {
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
-      "question": "Puis-je créer des clips plus longs que la limite de 60 secondes de Twitch ?",
-      "answer": "Oui. ClipFlow n'a aucune limite de durée — marquez des découpes de la durée souhaitée, de quelques secondes à une heure entière."
+      "question": "Ma vidéo est-elle envoyée quelque part ?",
+      "answer": "Le fichier que vous exportez ne quitte jamais votre appareil : découpe et assemblage tournent dans le navigateur et le résultat va directement dans vos téléchargements. L'arrivée de la vidéo, c'est autre chose : le CDN de segments de Twitch refuse les requêtes cross-origin, donc les segments passent par un relais, par défaut le point d'accès de ce site, sinon des proxys publics. L'outil indique le relais utilisé et permet de désactiver le secours tiers."
     },
     {
-      "question": "Mes données sont-elles envoyées à un serveur ?",
-      "answer": "Non. Les données vidéo vont directement de Twitch à votre navigateur, et tout le découpage et l'export se font localement sur votre appareil."
+      "question": "Pourquoi n'y a-t-il pas de limite de 60 secondes ?",
+      "answer": "Cette limite appartient à la fonction clips de Twitch elle-même. Cet outil lit les segments du VOD et découpe la plage que vous marquez : la durée est celle que vous choisissez."
     },
     {
-      "question": "Pourquoi les découpes ne sont-elles pas parfaites à l'image près ?",
-      "answer": "Pour garder des exports rapides et sans perte de qualité, ClipFlow s'aligne sur le keyframe le plus proche (environ 2 secondes de précision) au lieu de réencoder toute la vidéo."
+      "question": "L'export dégrade-t-il la qualité ?",
+      "answer": "Non. ffmpeg tourne avec -c copy, qui copie les flux vidéo et audio existants au lieu de les réencoder. Cela rend aussi l'export bien plus rapide qu'un réencodage."
     },
     {
-      "question": "Cela fonctionne-t-il avec les directs en cours ?",
-      "answer": "Oui. Collez le lien d'une chaîne en direct et ClipFlow chargera son enregistrement en cours, qui continue de grandir tant que le streamer est en direct."
+      "question": "Pourquoi un VOD refuse-t-il parfois de se charger ?",
+      "answer": "Les VOD réservés aux abonnés sont refusés par Twitch et ne s'ouvrent pas sans être connecté. Sinon, c'est généralement le relais : si vous avez désactivé les proxys tiers et que le point d'accès de ce site est indisponible, il ne reste aucune route. Réactiver le secours règle en général le problème."
     },
     {
-      "question": "Pourquoi mon export a-t-il échoué ?",
-      "answer": "C'est généralement un problème réseau temporaire lors du téléchargement des données vidéo, ou le moteur vidéo qui n'a pas réussi à se charger. Réessayez, ou utilisez le téléchargement de secours au format .ts."
-    },
-    {
-      "question": "Puis-je télécharger plusieurs découpes à la fois ?",
-      "answer": "Oui. Téléchargez chaque découpe individuellement, ou utilisez « Tout télécharger réuni » pour obtenir toutes les découpes combinées en un seul MP4, dans l'ordre où vous les avez organisées."
+      "question": "Dois-je installer quelque chose ?",
+      "answer": "Non, mais le moteur vidéo est une version WebAssembly de ffmpeg que la page télécharge depuis un CDN public au premier export. Il n'est récupéré qu'une fois puis mis en cache par le navigateur ; ensuite tout tourne en local."
     }
   ],
   "footerTagline": "Découpez plusieurs clips de n'importe quelle durée depuis des VODs et directs Twitch et exportez-les en MP4, 100% dans votre navigateur.",
@@ -99,5 +95,31 @@ export default {
   "tsFallbackNote": "Le fichier .ts se lit dans VLC et peut être converti plus tard.",
   "precisionNote": "Les découpes s'alignent sur le keyframe le plus proche (~2s) pour rester sans perte.",
   "memoryWarning": "Des découpes très longues en qualité source peuvent dépasser la mémoire du navigateur. Pensez au 720p ou à des découpes plus courtes.",
-  "overlapHint": "Les découpes peuvent se chevaucher ; la vidéo réunie suit l'ordre de la liste."
+  "overlapHint": "Les découpes peuvent se chevaucher ; la vidéo réunie suit l'ordre de la liste.",
+  "relayTitle": "Comment la vidéo vous parvient",
+  "relayUsed": "dernier segment via {host}",
+  "relayExplain": "Le CDN vidéo de Twitch n'envoie pas d'en-têtes CORS : le navigateur ne peut donc pas récupérer les segments directement. Ils passent par un relais — d'abord le point d'accès de ce site, puis des proxys publics en cas d'échec. Le découpage et l'assemblage se font toujours entièrement sur votre appareil, et rien de ce que vous exportez n'est envoyé où que ce soit.",
+  "relayAllowThird": "Autoriser les proxys publics tiers en secours. Désactivez pour n'utiliser que le relais propre à ce site : plus privé, mais certains VOD ne se chargeront pas.",
+  "howTitle": "Comment ça marche",
+  "step1Title": "Collez un lien de VOD",
+  "step1Text": "Une URL de vidéo ou un nom de chaîne. Choisissez la qualité à partir de laquelle découper.",
+  "step2Title": "Marquez toutes les coupes",
+  "step2Text": "Parcourez toute la timeline et marquez autant de morceaux que vous voulez.",
+  "step3Title": "Les segments passent par un relais",
+  "step3Text": "Seul le saut de téléchargement quitte votre machine, et l'outil indique quel relais l'a servi.",
+  "step4Title": "Exportez séparément ou assemblé",
+  "step4Text": "La coupe se fait par copie de flux : c'est rapide et la qualité reste intacte.",
+  "featuresTitle": "Ce qu'il fait vraiment",
+  "feat1Title": "Plusieurs coupes en une passe",
+  "feat1Text": "Marquez la minute 1 à 2 et la minute 40 à 43 dans la même session et exportez les deux.",
+  "feat2Title": "Sans plafond de 60 secondes",
+  "feat2Text": "Twitch limite ses propres clips à une minute. Découper depuis le VOD, non.",
+  "feat3Title": "Assembler en un seul fichier",
+  "feat3Text": "Tous les morceaux marqués concaténés en un seul MP4, dans l'ordre que vous définissez.",
+  "feat4Title": "Copie de flux, sans réencodage",
+  "feat4Text": "ffmpeg tourne avec -c copy : l'export est rapide et l'image correspond à la source.",
+  "feat5Title": "Honnête sur le relais",
+  "feat5Text": "Le saut de téléchargement est nommé dans l'interface, et le secours tiers peut être désactivé.",
+  "feat6Title": "Le découpage reste sur votre appareil",
+  "feat6Text": "Le moteur vidéo tourne dans l'onglet. Ce que vous exportez n'est envoyé nulle part."
 };

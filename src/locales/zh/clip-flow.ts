@@ -4,28 +4,49 @@ export default {
   "seo_description": "粘贴Twitch VOD或直播频道链接，在完整时间轴上标记任意数量的剪辑片段，然后将每段——或全部合并——导出为MP4。没有60秒限制，100%在你的浏览器中完成。",
   "seoHeroTitle": "将Twitch VOD剪辑成多段MP4片段",
   "seoHeroText": "粘贴Twitch VOD或直播频道链接，在完整时间轴上拖动，标记任意数量的剪辑片段——第1分钟到第2分钟，然后跳到第5分钟到第7分钟。可以单独下载每一段，也可以将它们合并为一个MP4。没有Twitch片段60秒的限制。",
-  "seoBrowserSpeedTitle": "即时本地处理",
-  "seoBrowserSpeedText": "剪辑和合并由运行在你浏览器标签页中的视频引擎完成。不会上传任何内容到服务器——你的片段永远不会离开你的设备。",
+  "seoBrowserSpeedTitle": "剪切在本地，下载不是",
+  "seoBrowserSpeedText": "视频引擎在你的标签页里运行，剪切与合并全都在那里完成，用的是流复制而不是重新编码。唯一不能本地完成的是把视频取进来：Twitch 的分段 CDN 不发送 CORS 头，浏览器无权直接抓取，分段只能经中转到达。",
   "seoUseCaseTitle": "多段精彩集锦",
   "seoUseCaseText": "非常适合从长时间VOD中制作精彩集锦：在数小时的直播中标记每一个精彩瞬间，导出为一个连续的MP4，或单独获取每个瞬间。",
-  "seoPrivacyTitle": "100%私密安全",
-  "seoPrivacyText": "视频数据直接从Twitch自己的服务器流式传输到你的浏览器。所有剪辑、裁剪和合并都在你的设备本地完成——绝不会上传到任何地方。",
-  "seoKeywords": ["twitch剪辑制作", "twitch vod剪辑", "超过60秒的twitch片段", "vod转mp4", "twitch精彩集锦制作", "剪切twitch vod", "twitch在线视频编辑器"],
+  "seoPrivacyTitle": "什么会离开你的机器，什么不会",
+  "seoPrivacyText": "请注意，视频分段是经中转到达的，而不是直接从 Twitch 抓取，因为它的 CDN 拒绝跨源请求。默认情况下它们经过本站自己的接口；一旦失败，工具会退回到公共的第三方代理，而那些运营方能看到正在请求哪个视频。这个备选可以在工具里关掉。永远不会离开你设备的是结果：剪切、修剪和合并全在浏览器里完成，导出的文件直接写进你的下载。",
+  "seoKeywords": [
+    "twitch剪辑制作",
+    "twitch vod剪辑",
+    "超过60秒的twitch片段",
+    "vod转mp4",
+    "twitch精彩集锦制作",
+    "剪切twitch vod",
+    "twitch在线视频编辑器"
+  ],
   "faqTitle": "常见问题",
   "faq": [
-    { "question": "我能制作比Twitch 60秒限制更长的片段吗?", "answer": "可以。ClipFlow没有长度限制——你可以标记任意时长的剪辑片段，从几秒钟到整整一小时。" },
-    { "question": "我的数据会发送到服务器吗?", "answer": "不会。视频数据直接从Twitch传输到你的浏览器，所有剪辑和导出都在你的设备本地完成。" },
-    { "question": "为什么剪辑不是逐帧精确的?", "answer": "为了保持导出速度快且无损，ClipFlow会对齐到最近的关键帧(约2秒精度)，而不是重新编码整个视频。" },
-    { "question": "这适用于正在进行的直播吗?", "answer": "适用。粘贴直播频道链接，ClipFlow会加载正在录制的直播回放，只要主播在直播中，它就会持续增长。" },
-    { "question": "为什么我的导出失败了?", "answer": "这通常是下载视频数据时的临时网络故障，或视频引擎加载失败。请重试，或使用原始.ts文件的备用下载方式。" },
-    { "question": "我能一次下载多个剪辑片段吗?", "answer": "可以。你可以单独下载每个片段，也可以使用“全部合并下载”按你排列的顺序将所有片段合并为一个MP4。" }
+    {
+      "question": "我的视频会被上传到哪里吗？",
+      "answer": "你导出的文件永远不会离开设备：剪切和合并在浏览器里完成，结果直接写进你的下载。把视频取进来则是另一回事 — Twitch 的分段 CDN 拒绝跨源请求，所以分段会被中转，默认经过本站自己的接口，否则走公共代理。工具会显示用了哪个中转，也允许你关掉第三方备选。"
+    },
+    {
+      "question": "为什么没有 60 秒限制？",
+      "answer": "那个限制属于 Twitch 自家的片段功能。这个工具读取 VOD 自身的分段，剪出你标记的区间，所以时长由你决定。"
+    },
+    {
+      "question": "导出会损失画质吗？",
+      "answer": "不会。ffmpeg 用 -c copy 运行，直接复制现有的音视频流而不是重新编码。这也让导出比重新编码快得多。"
+    },
+    {
+      "question": "为什么有时候 VOD 加载不出来？",
+      "answer": "仅限订阅者的 VOD 会被 Twitch 自己拒绝，未登录就打不开。除此之外通常是中转的问题：如果你关掉了第三方代理，而本站自己的接口又不可用，就没有路可走了。把备选重新打开通常就好了。"
+    },
+    {
+      "question": "需要安装什么吗？",
+      "answer": "不需要，但视频引擎是 ffmpeg 的 WebAssembly 版本，页面会在你第一次导出时从公共 CDN 下载它。只取一次，之后由浏览器缓存；再往后一切都在本地运行。"
+    }
   ],
   "footerTagline": "从Twitch VOD和直播中剪辑任意长度的多个片段，并100%在浏览器中导出为MP4。",
   "footerCredit": "oLoveTools套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制!",
   "contactForIdeas": "如有想法或意见，请联系:",
-
   "inputTitle": "粘贴Twitch VOD或频道",
   "inputPlaceholder": "twitch.tv/videos/123456789 或频道名称",
   "inputButton": "加载视频",
@@ -36,23 +57,18 @@ export default {
   "featureCutText": "标记任意数量、任意时长的片段范围。",
   "featureExportTitle": "3. 导出",
   "featureExportText": "分别下载或合并为一个MP4下载。",
-
   "loadingVod": "正在获取VOD信息…",
   "loadingPlaylist": "正在加载视频流…",
-
   "errorInvalidUrl": "该链接似乎不是有效的Twitch VOD或频道。",
   "errorVodNotFound": "找不到该VOD，可能已被删除。",
   "errorChannelNotFound": "找不到该频道，请检查拼写后重试。",
   "errorVodsDisabled": "该频道没有可用的VOD——过往直播回放可能已被禁用。",
   "errorPlaylist": "无法加载视频流，请重试。",
   "errorVodRestricted": "此 VOD 仅限订阅者观看或已在 Twitch 上被限制，未登录 Twitch 无法播放——任何下载工具都无法绕过此限制。",
-
   "liveBadge": "直播中 — 录制仍在增长",
   "qualityLabel": "画质",
-
   "timelineTitle": "时间轴",
   "addCut": "在当前位置添加剪辑",
-
   "cutLabel": "剪辑",
   "cutsLabel": "个剪辑",
   "startLabel": "开始",
@@ -64,12 +80,10 @@ export default {
   "moveUp": "上移",
   "moveDown": "下移",
   "noCutsYet": "还没有剪辑片段——点击“添加剪辑”标记你的第一个片段范围。",
-
   "downloadCut": "下载MP4",
   "downloadAllJoined": "全部合并下载(MP4)",
   "totalLabel": "总计",
   "estimatedSize": "预计大小",
-
   "loadingEngine": "正在加载视频引擎({pct}%)——仅首次需要…",
   "downloadingSegments": "正在下载视频({pct}%)…",
   "processingCut": "正在转换为MP4…",
@@ -81,5 +95,31 @@ export default {
   "tsFallbackNote": ".ts文件可在VLC中播放，之后也可以转换格式。",
   "precisionNote": "为保持无损，剪辑会对齐到最近的关键帧(约2秒)。",
   "memoryWarning": "以源画质剪辑过长的片段可能超出浏览器内存限制，建议使用720p或缩短剪辑时长。",
-  "overlapHint": "剪辑片段可以重叠；合并后的视频按列表顺序排列。"
+  "overlapHint": "剪辑片段可以重叠；合并后的视频按列表顺序排列。",
+  "relayTitle": "视频是怎么到你这里的",
+  "relayUsed": "最近一个分段经由 {host}",
+  "relayExplain": "Twitch 的视频 CDN 不发送 CORS 头，浏览器无法直接抓取分段。于是它们会被中转 — 先经过本站自己的接口，失败时再走公共代理。剪切与合并仍然完全在你的设备上完成，你导出的内容不会被上传到任何地方。",
+  "relayAllowThird": "允许把公共第三方代理作为备选。关闭后只用本站自己的中转 — 更私密，但有些 VOD 会加载失败。",
+  "howTitle": "使用方法",
+  "step1Title": "粘贴 VOD 链接",
+  "step1Text": "一个视频链接或频道名。选好你要从哪个画质剪。",
+  "step2Title": "标出每一段",
+  "step2Text": "拖动整条时间轴，想标多少段就标多少段。",
+  "step3Title": "分段会被中转",
+  "step3Text": "离开你机器的只有下载这一跳，而且工具会显示是哪个中转提供的。",
+  "step4Title": "分开导出或合成一个",
+  "step4Text": "用流复制来剪，所以又快又不动画质。",
+  "featuresTitle": "它到底能做什么",
+  "feat1Title": "一次标多段",
+  "feat1Text": "同一次里既标第 1 到 2 分钟，也标第 40 到 43 分钟，两段一起导出。",
+  "feat2Title": "没有 60 秒上限",
+  "feat2Text": "Twitch 自家的片段最长一分钟，从 VOD 里剪则没有这个限制。",
+  "feat3Title": "合成一个文件",
+  "feat3Text": "所有标出的片段按你设定的顺序拼成一个 MP4。",
+  "feat4Title": "流复制，不重新编码",
+  "feat4Text": "ffmpeg 用 -c copy 运行，导出很快，画面也和源一致。",
+  "feat5Title": "对中转这件事诚实",
+  "feat5Text": "下载走的哪一跳会在界面里写明，第三方备选也可以关掉。",
+  "feat6Title": "剪切留在你的设备上",
+  "feat6Text": "视频引擎在标签页里运行。你导出的东西不会被上传到任何地方。"
 };

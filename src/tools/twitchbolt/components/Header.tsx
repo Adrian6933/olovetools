@@ -4,12 +4,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LANGUAGES } from '../../../constants';
 
 interface HeaderProps {
-  onReset: () => void;
   currentLang: string;
   onLangChange: (code: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ onReset, currentLang, onLangChange }) => {
+const Header: React.FC<HeaderProps> = ({ currentLang, onLangChange }) => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +47,10 @@ const Header: React.FC<HeaderProps> = ({ onReset, currentLang, onLangChange }) =
             <div className="w-px h-6 bg-white/10 hidden md:block" />
 
             {/* LOGO CLIPBOLT */}
-            <div className="flex items-center gap-3 cursor-pointer group shrink-0 transition-all active:scale-95 active:opacity-80" onClick={onReset}>
+            {/* Deliberately not clickable: this was wired to a reset that aborted
+                any download in progress and threw away every loaded clip, so
+                clicking what looks like the tool name lost the whole session. */}
+            <div className="flex items-center gap-3 shrink-0">
                 <div className="w-11 h-11 md:w-12 md:h-12 bg-twitch rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(145,70,255,0.25)] group-hover:scale-105 transition-all duration-300">
                     <Zap className="w-5 h-5 md:w-6 md:h-6 text-white fill-current" />
                 </div>

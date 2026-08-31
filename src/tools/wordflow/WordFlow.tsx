@@ -1,863 +1,1584 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  ALargeSmall,
+  Check,
+  ClipboardPaste,
+  Copy,
+  Download,
+  Eye,
+  FileCode2,
+  FileJson,
+  FileText,
+  Gauge,
+  Highlighter,
+  Languages,
+  Loader2,
+  Printer,
+  Redo2,
+  Save,
+  ScanText,
+  Search,
+  Sliders,
+  Sparkles,
+  Table2,
+  Target,
+  Trash2,
+  Undo2,
+  Upload,
+  X,
+} from 'lucide-react';
+
 import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
+import { useHandoffIntake } from '../../lib/useHandoff';
+import { legalTranslations } from '../../locales/legal';
+
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { 
-  FileText, 
-  Trash2, 
-  Copy, 
-  Check, 
-  Sparkles, 
-  Download, 
-  BookOpen, 
-  Volume2, 
-  Clock,
-  Code,
-  Heading,
-  RefreshCw,
-  Sliders,
-  AlignLeft,
-  Briefcase,
-  PenTool,
-  Smile,
-  Shield,
-  Search
-} from 'lucide-react';
+import { Editor, ISSUE_TONE, type Mark } from './components/Editor';
+import { FindReplace } from './components/FindReplace';
+import { NextStepBar } from './components/NextStepBar';
+import {
+  EmptyInsightArt,
+  IconEditor,
+  IconGauge,
+  IconHandoff,
+  IconKeywords,
+  IconLocalOnly,
+  IconProse,
+  IconSegmenter,
+  IconTiming,
+  StepAnalyse,
+  StepShip,
+  StepTune,
+  StepWrite,
+  WordFlowHeroArt,
+} from './components/Illustrations';
+
+import { useTextDoc } from './lib/history';
+import { useAnalysis } from './lib/useAnalysis';
+import {
+  AUTO_LIMIT,
+  HIGHLIGHT_LIMIT,
+  READING_WPM,
+  SPEAKING_WPM,
+  secondsFor,
+} from './lib/analyze';
+import {
+  ACCEPT_ATTRIBUTE,
+  MAX_FILE_BYTES,
+  baseName,
+  copyText,
+  downloadText,
+  formatBytes,
+  formatDuration,
+  printDocument,
+  readDocument,
+} from './lib/io';
+import {
+  TRANSFORMS,
+  applyTransform,
+  buildFinder,
+  findMatches,
+  replaceAll,
+  type FindOptions,
+  type Range,
+  type Transform,
+  type TransformGroup,
+} from './lib/transforms';
+import type { IssueKind, LangId } from './types';
 
 interface WordFlowProps {
   lang: Language;
   dictionary: any;
 }
 
-interface SentimentMetrics {
-  positive: number;
-  neutral: number;
-  negative: number;
-}
+const DRAFT_KEY = 'wordflow:draft';
+const DRAFT_FLAG = 'wordflow:autosave';
 
-interface ToneMetrics {
-  formal: number;
-  casual: number;
-  academic: number;
-  confident: number;
-  creative: number;
-}
+const ISSUE_ORDER: IssueKind[] = [
+  'veryLongSentence',
+  'longSentence',
+  'passive',
+  'adverb',
+  'filler',
+  'complexWord',
+  'repeatedWord',
+  'whitespace',
+];
 
-// Multilingual Sentiment Dictionary Seeds (Stemmed / Root Words)
-const SENTIMENT_SEEDS = {
-  positive: [
-    'happy', 'good', 'great', 'love', 'excellent', 'win', 'wonderful', 'beautiful', 'positive', 'success', 'best', 'amazing', 'joy', 'smile', 'glad', 'pleased', 'progress', 'clean', 'easy', 'simple',
-    'feliz', 'bueno', 'genial', 'amor', 'excelente', 'ganar', 'maravilloso', 'hermoso', 'positivo', 'exito', 'mejor', 'increible', 'alegrÃ­a', 'sonrisa', 'alegre', 'progreso', 'limpio', 'facil', 'simple',
-    'heureux', 'bon', 'excellent', 'aimer', 'magnifique', 'positif', 'succes', 'joie', 'progres', 'facile',
-    'glÃ¼cklich', 'gut', 'liebe', 'ausgezeichnet', 'wunderbar', 'schÃ¶n', 'positiv', 'erfolg', 'freude', 'einfach',
-    'feliz', 'bom', 'Ã³timo', 'maravilhoso', 'lindo', 'sucesso', 'alegria', 'fÃ¡cil',
-    'ÑÑ‡Ð°ÑÑ‚Ð»Ð¸Ð²Ñ‹Ð¹', 'Ñ…Ð¾Ñ€Ð¾ÑˆÐ¸Ð¹', 'Ð¾Ñ‚Ð»Ð¸Ñ‡Ð½Ñ‹Ð¹', 'Ð»ÑŽÐ±Ð¾Ð²ÑŒ', 'Ð¿Ñ€ÐµÐºÑ€Ð°ÑÐ½Ñ‹Ð¹', 'ÑƒÑÐ¿ÐµÑ…', 'Ñ€Ð°Ð´Ð¾ÑÑ‚ÑŒ', 'Ð»ÐµÐ³ÐºÐ¾',
-    'à¤–à¥à¤¶', 'à¤…à¤šà¥à¤›à¤¾', 'à¤®à¤¹à¤¾à¤¨', 'à¤ªà¥à¤¯à¤¾à¤°', 'à¤¸à¤«à¤²à¤¤à¤¾', 'à¤¸à¥à¤‚à¤¦à¤°', 'à¤ªà¥à¤°à¤—à¤¤à¤¿', 'à¤†à¤¸à¤¾à¤¨',
-    'å¬‰ã—ã„', 'è‰¯ã„', 'ç´ æ™´ã‚‰ã—ã„', 'æ„›', 'æˆåŠŸ', 'ç¾Žã—ã„', 'å–œã³', 'ç°¡å˜',
-    'å¿«ä¹', 'å¥½', 'æ£’', 'çˆ±', 'æˆåŠŸ', 'ç¾Žä¸½', 'å–œæ‚¦', 'ç®€å•', 'å®¹æ˜“'
-  ],
-  negative: [
-    'sad', 'bad', 'hate', 'terrible', 'fail', 'lose', 'poor', 'negative', 'worst', 'danger', 'angry', 'worry', 'pain', 'fault', 'broke', 'error', 'fear', 'doubt', 'stress', 'difficult', 'slow',
-    'triste', 'malo', 'odio', 'terrible', 'fallar', 'perder', 'pobre', 'negativo', 'peor', 'peligro', 'enojado', 'preocupado', 'dolor', 'culpa', 'roto', 'error', 'miedo', 'duda', 'estres', 'dificil', 'lento',
-    'triste', 'mauvais', 'dÃ©tester', 'terrible', 'Ã©chouer', 'perdre', 'pauvre', 'nÃ©gatif', 'danger', 'colÃ¨re',
-    'traurig', 'schlecht', 'hassen', 'schrecklich', 'fehler', 'verlieren', 'schlecht', 'negativ', 'gefahr',
-    'triste', 'ruim', 'odiar', 'terrÃ­vel', 'falhar', 'perder', 'negativo', 'pior', 'perigo',
-    'Ð³Ñ€ÑƒÑÑ‚Ð½Ñ‹Ð¹', 'Ð¿Ð»Ð¾Ñ…Ð¾Ð¹', 'ÑƒÐ¶Ð°ÑÐ½Ñ‹Ð¹', 'Ð¾ÑˆÐ¸Ð±ÐºÐ°', 'Ð¿Ð¾Ñ‚ÐµÑ€ÑÑ‚ÑŒ', 'Ð½ÐµÐ³Ð°Ñ‚Ð¸Ð²Ð½Ñ‹Ð¹', 'Ð¾Ð¿Ð°ÑÐ½Ð¾ÑÑ‚ÑŒ',
-    'à¤¦à¥à¤–à¥€', 'à¤–à¤°à¤¾à¤¬', 'à¤¨à¤«à¤°à¤¤', 'à¤¦à¤°à¥à¤¦', 'à¤—à¤²à¤¤à¥€', 'à¤–à¤¤à¤°à¤¾', 'à¤¤à¤¨à¤¾à¤µ', 'à¤®à¥à¤¶à¥à¤•à¤¿à¤²',
-    'æ‚²ã—ã„', 'æ‚ªã„', 'å«Œã„', 'å¤±æ•—', 'å¤±ã†', 'æ€’ã‚Š', 'å›°é›£', 'é…ã„',
-    'æ‚²ä¼¤', 'å', 'è®¨åŽŒ', 'å¤±è´¥', 'å¤±åŽ»', 'ç³Ÿç³•', 'å±é™©', 'ç”Ÿæ°”', 'å›°éš¾', 'æ…¢'
-  ]
+const ISSUE_KEY: Record<IssueKind, string> = {
+  veryLongSentence: 'iVeryLongSentence',
+  longSentence: 'iLongSentence',
+  passive: 'iPassive',
+  adverb: 'iAdverb',
+  filler: 'iFiller',
+  complexWord: 'iComplexWord',
+  repeatedWord: 'iRepeatedWord',
+  whitespace: 'iWhitespace',
 };
 
-// Multilingual Tone Dictionary Seeds
-const TONE_SEEDS = {
-  formal: [
-    'however', 'therefore', 'furthermore', 'consequently', 'respectively', 'initial', 'establish', 'execute', 'framework', 'implementation', 'structure', 'regards', 'sincerely',
-    'sin embargo', 'por lo tanto', 'ademÃ¡s', 'consecuentemente', 'respectivamente', 'inicial', 'establecer', 'ejecutar', 'marco', 'implementacion', 'estructura', 'saludos', 'atentamente',
-    'cependant', 'par consÃ©quent', 'Ã©tablir', 'sincÃ¨rement', 'somit', 'daher', 'bezÃ¼glich', 'etablieren', 'portanto', 'estabelecer', 'sinceramente', 'Ð¾Ð´Ð½Ð°ÐºÐ¾', 'ÑÐ»ÐµÐ´Ð¾Ð²Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾', 'ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ',
-    'à¤¤à¤¥à¤¾à¤ªà¤¿', 'à¤‡à¤¸à¤²à¤¿à¤', 'à¤¸à¥à¤¥à¤¾à¤ªà¤¿à¤¤', 'ã—ã‹ã—ãªãŒã‚‰', 'ã—ãŸãŒã£ã¦', 'è¨­ç«‹', 'ç„¶è€Œ', 'å› æ­¤', 'æ­¤å¤–'
-  ],
-  casual: [
-    'hey', 'cool', 'stuff', 'vibe', 'anyway', 'wow', 'kid', 'guess', 'guy', 'bit', 'totally', 'super', 'awesome', 'literally', 'lol', 'haha',
-    'hola', 'genial', 'cosas', 'vibra', 'de todos modos', 'wow', 'chico', 'adivinar', 'tipo', 'un poco', 'totalmente', 'super', 'increible', 'literalmente',
-    'salut', 'truc', 'mec', 'marrant', 'hallo', 'zeug', 'kumpel', 'cool', 'olÃ¡', 'cara', 'coisas', 'legal', 'Ð¿Ñ€Ð¸Ð²ÐµÑ‚', 'ÐºÑ€ÑƒÑ‚Ð¾', 'ÑˆÑ‚ÑƒÐºÐ°', 'Ð¿Ð°Ñ€ÐµÐ½ÑŒ',
-    'à¤…à¤°à¥‡', 'à¤•à¥‚à¤²', 'à¤šà¥€à¤œà¥‡à¤‚', 'à¤¯à¤¾à¤°', 'ã­ãˆ', 'ã™ã”ã„', 'ã‚„ã¤', 'ã¨ã«ã‹ã', 'å˜¿', 'é…·', 'çŽ©æ„', 'ä¼™è®¡', 'å“ˆå“ˆ'
-  ],
-  academic: [
-    'analysis', 'data', 'research', 'result', 'methodology', 'hypothesis', 'conclude', 'evidence', 'context', 'theory', 'examine', 'experiment', 'significant',
-    'analisis', 'datos', 'investigacion', 'resultado', 'metodologia', 'hipotesis', 'concluir', 'evidencia', 'contexto', 'teoria', 'examinar', 'experimento', 'significativo',
-    'recherche', 'hypothÃ¨se', 'donnÃ©es', 'forschung', 'daten', 'hypothese', 'pesquisa', 'dados', 'hipÃ³tese', 'Ð°Ð½Ð°Ð»Ð¸Ð·', 'Ð´Ð°Ð½Ð½Ñ‹Ðµ', 'Ð¸ÑÑÐ»ÐµÐ´Ð¾Ð²Ð°Ð½Ð¸Ðµ', 'Ð¼ÐµÑ‚Ð¾Ð´Ð¾Ð»Ð¾Ð³Ð¸Ñ',
-    'à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£', 'à¤†à¤‚à¤•à¤¡à¤¼à¥‡', 'à¤…à¤¨à¥à¤¸à¤‚à¤§à¤¾à¤¨', 'à¤¨à¤¿à¤·à¥à¤•à¤°à¥à¤·', 'è§£æž', 'ãƒ‡ãƒ¼ã‚¿', 'ç ”ç©¶', 'ä»®èª¬', 'åˆ†æž', 'æ•°æ®', 'ç ”ç©¶', 'å‡è®¾', 'ç»“è®º'
-  ],
-  confident: [
-    'will', 'must', 'definitely', 'clear', 'absolute', 'essential', 'crucial', 'guarantee', 'resolve', 'primary', 'standard', 'assure', 'strongly',
-    'sera', 'debe', 'definitivamente', 'claro', 'absoluto', 'esencial', 'crucial', 'garantizar', 'resolver', 'primario', 'estandar', 'asegurar', 'fuertemente',
-    'dois', 'absolument', 'crucial', 'muss', 'sicher', 'garantieren', 'certamente', 'garantir', 'Ð¾Ð±ÑÐ·Ð°Ð½', 'ÑÑÐ½Ð¾', 'Ð°Ð±ÑÐ¾Ð»ÑŽÑ‚Ð½Ð¾',
-    'à¤…à¤µà¤¶à¥à¤¯', 'à¤¨à¤¿à¤¶à¥à¤šà¤¿à¤¤', 'à¤¸à¥à¤ªà¤·à¥à¤Ÿ', 'à¤—à¤¾à¤°à¤‚à¤Ÿà¥€', 'çµ¶å¯¾ã«', 'ç¢ºä¿¡', 'æ˜Žç¢º', 'å¿…é¡»', 'ç»å¯¹', 'å…³é”®', 'ä¿è¯'
-  ],
-  creative: [
-    'feel', 'see', 'imagine', 'bright', 'dark', 'sound', 'flow', 'visual', 'paint', 'magic', 'story', 'dream', 'wild', 'breath', 'poetic', 'canvas',
-    'sentir', 'ver', 'imaginar', 'brillante', 'oscuro', 'sonido', 'fluir', 'visual', 'pintar', 'magia', 'historia', 'sueÃ±o', 'salvaje', 'aliento', 'poetico', 'lienzo',
-    'imaginer', 'sombre', 'magique', 'rÃªve', 'fÃ¼hlen', 'traum', 'magisch', 'sentir', 'imaginar', 'sonho', 'Ñ‡ÑƒÐ²ÑÑ‚Ð²Ð¾Ð²Ð°Ñ‚ÑŒ', 'Ð¼ÐµÑ‡Ñ‚Ð°', 'Ð¼Ð°Ð³Ð¸Ñ',
-    'à¤®à¤¹à¤¸à¥‚à¤¸', 'à¤•à¤²à¥à¤ªà¤¨à¤¾', 'à¤œà¤¾à¤¦à¥‚', 'à¤¸à¤ªà¤¨à¤¾', 'æ„Ÿã˜ã‚‹', 'æƒ³åƒ', 'å¤¢', 'é­”æ³•', 'æ„Ÿè§‰', 'æƒ³è±¡', 'æ¢¦å¢ƒ', 'é­”æ³•'
-  ]
+const FORMULA_KEY: Record<string, string> = {
+  flesch: 'fFlesch',
+  fleschKincaid: 'fFleschKincaid',
+  ari: 'fAri',
+  gunningFog: 'fGunningFog',
+  colemanLiau: 'fColemanLiau',
+  smog: 'fSmog',
+  lix: 'fLix',
+  huerta: 'fHuerta',
 };
 
-// Common Stop Words for SEO Keyword Density Filter
-const COMMON_STOP_WORDS = new Set([
-  'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'of', 'for', 'with', 'by', 'as', 'at', 'from', 'into', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'my', 'your', 'his', 'her', 'its', 'our', 'their', 'this', 'that', 'these', 'those', 'which', 'who', 'whom', 'whose', 'what', 'how', 'why', 'where', 'when',
-  'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'y', 'o', 'pero', 'en', 'sobre', 'en', 'a', 'de', 'para', 'con', 'por', 'como', 'desde', 'hacia', 'es', 'son', 'era', 'eran', 'ser', 'sido', 'estar', 'tengo', 'tiene', 'mi', 'tu', 'su', 'este', 'ese', 'aquel', 'que', 'quien', 'cual', 'como', 'cuando', 'donde', 'porque',
-  'le', 'la', 'les', 'un', 'une', 'des', 'et', 'ou', 'mais', 'dans', 'sur', 'Ã ', 'de', 'pour', 'avec', 'par', 'comme',
-  'der', 'die', 'das', 'ein', 'eine', 'und', 'oder', 'aber', 'in', 'auf', 'zu', 'von', 'fÃ¼r', 'mit', 'von', 'wie',
-  'o', 'a', 'os', 'as', 'um', 'uma', 'e', 'ou', 'mas', 'em', 'no', 'na', 'para', 'com', 'por', 'como', 'de',
-  'Ð¸', 'Ð²', 'Ð²Ð¾', 'Ð½Ð°', 'Ñ', 'ÑÐ¾', 'Ñƒ', 'Ð¾', 'Ð¾Ð±', 'Ð¾Ð±Ð¾', 'Ðº', 'ÐºÐ¾', 'Ð¸Ð·', 'Ð¾Ñ‚', 'Ð´Ð¾', 'Ð´Ð»Ñ', 'Ð·Ð°', 'Ð¿Ð¾Ð´', 'Ð½Ð°Ð´', 'Ð¿ÐµÑ€ÐµÐ´', 'Ð¿Ñ€Ð¸', 'Ð°', 'Ð½Ð¾', 'Ð¸Ð»Ð¸', 'Ð´Ð°', 'Ñ‡Ñ‚Ð¾', 'ÐºÐ°Ðº', 'ÑÑ‚Ð¾', 'Ñ‚Ð¾', 'Ð¾Ð½', 'Ð¾Ð½Ð°', 'Ð¾Ð½Ð¾', 'Ð¾Ð½Ð¸',
-  'à¤”à¤°', 'à¤¯à¤¾', 'à¤²à¥‡à¤•à¤¿à¤¨', 'à¤®à¥‡à¤‚', 'à¤ªà¤°', 'à¤¤à¤•', 'à¤•à¥‹', 'à¤•à¥‡', 'à¤²à¤¿à¤', 'à¤¸à¥‡', 'à¤¦à¥à¤µà¤¾à¤°à¤¾', 'à¤¹à¥ˆ', 'à¤¹à¥ˆà¤‚', 'à¤¥à¤¾', 'à¤¥à¥‡',
-  'ã®', 'ã«', 'ã¯', 'ã‚’', 'ãŸ', 'ãŒ', 'ã§', 'ã¦', 'ã¨', 'ã—', 'ã‚Œ', 'ã•', 'ã‚ã‚‹', 'ã™ã‚‹', 'ã‚‚',
-  'çš„', 'äº†', 'å’Œ', 'æ˜¯', 'åœ¨', 'æˆ‘', 'ä½ ', 'ä»–', 'å¥¹', 'å®ƒ', 'ä»¬', 'è¿™', 'é‚£', 'éƒ½', 'å°±', 'ä¹Ÿ', 'è€Œ', 'åŠ'
-]);
+const GROUP_KEY: Record<TransformGroup, string> = {
+  case: 'groupCase',
+  clean: 'groupClean',
+  lines: 'groupLines',
+};
+
+const GOAL_PRESETS: { id: string; key: string; fallback: string; kind: 'chars' | 'words'; value: number }[] = [
+  { id: 'seo', key: 'goalSeoTitle', fallback: 'SEO title', kind: 'chars', value: 60 },
+  { id: 'meta', key: 'goalMeta', fallback: 'Meta description', kind: 'chars', value: 155 },
+  { id: 'post', key: 'goalTweet', fallback: 'Social post', kind: 'chars', value: 280 },
+  { id: 'essay', key: 'goalEssay', fallback: 'Short essay', kind: 'words', value: 500 },
+  { id: 'article', key: 'goalArticle', fallback: 'Long article', kind: 'words', value: 1200 },
+];
+
+const LANG_CHOICES: LangId[] = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+
+/** Alt swaps every tool button to its second reading while it is held. */
+function useAltKey(): boolean {
+  const [alt, setAlt] = useState(false);
+  useEffect(() => {
+    const down = (event: KeyboardEvent) => {
+      if (event.altKey) setAlt(true);
+    };
+    const up = (event: KeyboardEvent) => {
+      if (!event.altKey) setAlt(false);
+    };
+    const clear = () => setAlt(false);
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    // Alt+Tab leaves the key "held" forever without this.
+    window.addEventListener('blur', clear);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+      window.removeEventListener('blur', clear);
+    };
+  }, []);
+  return alt;
+}
 
 export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
   const t = createTranslator(dictionary);
+  const prefersReduced = useReducedMotion();
+  const alt = useAltKey();
 
-  const [text, setText] = useState<string>('');
-  const [copied, setCopied] = useState<boolean>(false);
-  const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const doc = useTextDoc('');
+  const text = doc.text;
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const areaRef = useRef<HTMLTextAreaElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  // Focus textarea on mount
+  const [selection, setSelection] = useState<Range>({ start: 0, end: 0 });
+  const [fontSize, setFontSize] = useState(16);
+  const [highlightOn, setHighlightOn] = useState(true);
+  const [ghost, setGhost] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+
+  const [staged, setStaged] = useState<{ name: string; size: number; body: string } | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const [langOverride, setLangOverride] = useState<LangId | null>(null);
+  const [live, setLive] = useState(true);
+  const [keywordSize, setKeywordSize] = useState<1 | 2 | 3>(1);
+  const [showMoreStats, setShowMoreStats] = useState(false);
+
+  const [goalId, setGoalId] = useState<string>('none');
+  const [wpmOverride, setWpmOverride] = useState<number | null>(null);
+  const [autosave, setAutosave] = useState(false);
+  const [restored, setRestored] = useState(false);
+
+  const [showFind, setShowFind] = useState(false);
+  const [query, setQuery] = useState('');
+  const [replacement, setReplacement] = useState('');
+  const [findOptions, setFindOptions] = useState<FindOptions>({
+    regex: false,
+    caseSensitive: false,
+    wholeWord: false,
+  });
+  const [matchIndex, setMatchIndex] = useState(0);
+
+  const { analysis, busy, stale, run } = useAnalysis(text, langOverride, live);
+
+  // -----------------------------------------------------------------------
+  // Intake — a file never overwrites the editor on its own
+  // -----------------------------------------------------------------------
+  const stageFile = useCallback(
+    async (file: File) => {
+      setError(null);
+      setLoading(true);
+      try {
+        if (file.size > MAX_FILE_BYTES) {
+          setError((t.errTooLarge || 'That file is over {n}.').replace('{n}', formatBytes(MAX_FILE_BYTES)));
+          return;
+        }
+        const body = await readDocument(file);
+        if (!body.trim()) {
+          setError(t.errEmpty || 'That file has no readable text.');
+          return;
+        }
+        setStaged({ name: file.name, size: file.size, body });
+      } catch (cause) {
+        const code = cause instanceof Error ? cause.message : 'read-failed';
+        setError(
+          code === 'too-large'
+            ? (t.errTooLarge || 'That file is over {n}.').replace('{n}', formatBytes(MAX_FILE_BYTES))
+            : code === 'unsupported'
+              ? t.errUnsupported || 'That file type cannot be read here.'
+              : t.errRead || 'That file could not be read.'
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [t]
+  );
+
+  const stageFiles = useCallback(
+    (files: FileList) => {
+      const file = files.item(0);
+      if (file) void stageFile(file);
+    },
+    [stageFile]
+  );
+
+  // One line, right next to the normal intake: this is what makes the tool a
+  // stop on a chain instead of an island.
+  useHandoffIntake(file => {
+    void stageFile(file);
+  });
+
+  const acceptStaged = useCallback(
+    (mode: 'replace' | 'append') => {
+      if (!staged) return;
+      if (mode === 'replace') doc.load(staged.body);
+      else doc.setText(text ? `${text.replace(/\s*$/, '')}\n\n${staged.body}` : staged.body, { label: 'stagedAppend' });
+      setStaged(null);
+      window.setTimeout(() => areaRef.current?.focus(), 0);
+    },
+    [doc, staged, text]
+  );
+
+  // -----------------------------------------------------------------------
+  // Local draft — opt-in, and the copy on the page says where it lives
+  // -----------------------------------------------------------------------
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.focus();
+    try {
+      if (localStorage.getItem(DRAFT_FLAG) !== '1') return;
+      setAutosave(true);
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        doc.load(saved);
+        setRestored(true);
+      }
+    } catch {
+      // Storage disabled: the tool simply keeps nothing, which is the default.
     }
+    // Runs once; `doc.load` is stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Multilingual Word Count Helper
-  const getWordCount = (val: string) => {
-    const clean = val.trim();
-    if (!clean) return 0;
-    // Count CJK characters (Chinese, Japanese character count is usually per glyph)
-    const cjkMatches = clean.match(/[\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff]/g);
-    const cjkCount = cjkMatches ? cjkMatches.length : 0;
-    // Strip CJK to count latin words correctly
-    const latinText = clean.replace(/[\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff]/g, ' ');
-    const latinWords = latinText.trim().split(/\s+/).filter(w => w.length > 0).length;
-    return cjkCount + latinWords;
-  };
+  useEffect(() => {
+    if (!autosave) return;
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, text);
+      } catch {
+        /* quota or private mode */
+      }
+    }, 600);
+    return () => window.clearTimeout(timer);
+  }, [text, autosave]);
 
-  // Metric Computations
-  const wordCount = getWordCount(text);
-  const charCountWithSpaces = text.length;
-  const charCountNoSpaces = text.replace(/\s/g, '').length;
-  
-  const paragraphCount = text.split(/\n+/).filter(p => p.trim().length > 0).length;
-  const sentenceCount = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
-  const lineCount = text === '' ? 0 : text.split('\n').length;
-
-  // Reading & Speaking Times
-  // Average reading speed: 200 words per minute
-  // Average speaking speed: 130 words per minute
-  const formatTime = (words: number, speed: number) => {
-    if (words === 0) return '0s';
-    const totalMinutes = words / speed;
-    if (totalMinutes < 1) {
-      const seconds = Math.ceil(totalMinutes * 60);
-      return `${seconds}s`;
-    }
-    const minutes = Math.floor(totalMinutes);
-    const seconds = Math.round((totalMinutes - minutes) * 60);
-    return seconds > 0 ? `${minutes}m ${seconds}s` : `${minutes}m`;
-  };
-
-  const readingTime = formatTime(wordCount, 200);
-  const speakingTime = formatTime(wordCount, 130);
-
-  // Automated Readability Index (ARI)
-  const getReadability = () => {
-    if (wordCount === 0 || sentenceCount === 0) {
-      return { score: 0, label: '-' };
-    }
-    // Formula: 4.71 * (chars / words) + 0.5 * (words / sentences) - 21.43
-    const score = Math.round(4.71 * (charCountNoSpaces / wordCount) + 0.5 * (wordCount / sentenceCount) - 21.43);
-    
-    // Custom label map matching education levels
-    let label = '';
-    if (score <= 1) label = 'Kindergarten';
-    else if (score === 2) label = '1st Grade (Age 6)';
-    else if (score === 3) label = '2nd Grade (Age 7)';
-    else if (score === 4) label = '3rd Grade (Age 8)';
-    else if (score === 5) label = '4th Grade (Age 9)';
-    else if (score === 6) label = '5th Grade (Age 10)';
-    else if (score === 7) label = '6th Grade (Age 11)';
-    else if (score === 8) label = '7th Grade (Age 12)';
-    else if (score === 9) label = '8th Grade (Age 13)';
-    else if (score === 10) label = '9th Grade (Age 14)';
-    else if (score === 11) label = '10th Grade (Age 15)';
-    else if (score === 12) label = '11th Grade (Age 16)';
-    else if (score === 13) label = '12th Grade (Age 17)';
-    else label = 'College / Professional';
-
-    return { score: Math.max(0, score), label };
-  };
-
-  const readability = getReadability();
-
-  // Keyword Density analysis
-  const getKeywordDensity = () => {
-    if (!text.trim()) return [];
-    
-    // Extract tokens: strip punctuation, lowercase
-    const tokens = text
-      .toLowerCase()
-      .replace(/[^\w\s\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]/g, '')
-      .split(/\s+/)
-      .map(t => t.trim())
-      .filter(t => t.length > 1); // skip very short single characters in English
-
-    const counts: Record<string, number> = {};
-    let totalCounted = 0;
-
-    tokens.forEach(t => {
-      // Skip common stop words
-      if (COMMON_STOP_WORDS.has(t)) return;
-      counts[t] = (counts[t] || 0) + 1;
-      totalCounted++;
+  const toggleAutosave = useCallback(() => {
+    setAutosave(current => {
+      const next = !current;
+      try {
+        localStorage.setItem(DRAFT_FLAG, next ? '1' : '0');
+        if (!next) localStorage.removeItem(DRAFT_KEY);
+      } catch {
+        /* ignore */
+      }
+      return next;
     });
+    setRestored(false);
+  }, []);
 
-    if (totalCounted === 0) return [];
+  // -----------------------------------------------------------------------
+  // Find and replace
+  // -----------------------------------------------------------------------
+  const finder = useMemo(() => buildFinder(query, findOptions), [query, findOptions]);
+  const invalidQuery = query.length > 0 && finder === null;
+  const matches = useMemo(() => (showFind ? findMatches(text, finder) : []), [text, finder, showFind]);
 
-    // Sort by count descending
-    return Object.entries(counts)
-      .map(([word, count]) => ({
-        word,
-        count,
-        density: ((count / wordCount) * 100).toFixed(1)
-      }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 8); // Top 8 density keyword nodes
-  };
+  useEffect(() => {
+    if (matchIndex >= matches.length) setMatchIndex(0);
+  }, [matches.length, matchIndex]);
 
-  const keywordDensity = getKeywordDensity();
+  const jumpTo = useCallback((range: Range) => {
+    const area = areaRef.current;
+    if (!area) return;
+    area.focus();
+    area.setSelectionRange(range.start, range.end);
+    setSelection({ start: range.start, end: range.end });
+    // Chrome only scrolls the caret into view on focus, so nudge it after the
+    // selection is in place.
+    const ratio = range.start / Math.max(1, area.value.length);
+    area.scrollTop = Math.max(0, ratio * area.scrollHeight - area.clientHeight / 2);
+  }, []);
 
-  // Client-side Local Heuristics Sentiment Analyzer
-  const getSentiment = (): SentimentMetrics => {
-    if (!text.trim()) {
-      return { positive: 0, neutral: 100, negative: 0 };
+  const stepMatch = useCallback(
+    (delta: number) => {
+      if (matches.length === 0) return;
+      const next = (matchIndex + delta + matches.length) % matches.length;
+      setMatchIndex(next);
+      jumpTo(matches[next]);
+    },
+    [matches, matchIndex, jumpTo]
+  );
+
+  const replaceOne = useCallback(() => {
+    if (matches.length === 0) return;
+    const target = matches[Math.min(matchIndex, matches.length - 1)];
+    const value = findOptions.regex ? replacement : replacement;
+    doc.setText(text.slice(0, target.start) + value + text.slice(target.end), { label: 'replaceOne' });
+  }, [matches, matchIndex, replacement, findOptions.regex, doc, text]);
+
+  const doReplaceAll = useCallback(() => {
+    if (!finder) return;
+    const next = replaceAll(text, finder, replacement, findOptions.regex);
+    if (next !== text) doc.setText(next, { label: 'replaceAll' });
+  }, [finder, text, replacement, findOptions.regex, doc]);
+
+  const findMarks: Mark[] = useMemo(() => {
+    if (!showFind || matches.length === 0) return [];
+    return matches.map((match, index) => ({
+      ...match,
+      kind: index === matchIndex ? ('findActive' as const) : ('find' as const),
+    }));
+  }, [matches, matchIndex, showFind]);
+
+  // -----------------------------------------------------------------------
+  // Transforms
+  // -----------------------------------------------------------------------
+  const runTransform = useCallback(
+    (transform: Transform, useAlt: boolean, ignoreSelection: boolean) => {
+      if (!text) return;
+      const result = applyTransform(text, selection, transform, useAlt, ignoreSelection);
+      if (result.text === text) return;
+      const variant = useAlt && transform.alt ? transform.alt : transform;
+      doc.setText(result.text, { label: variant.key });
+      window.setTimeout(() => {
+        const area = areaRef.current;
+        if (!area) return;
+        area.focus();
+        area.setSelectionRange(result.selection.start, result.selection.end);
+        setSelection(result.selection);
+      }, 0);
+    },
+    [doc, selection, text]
+  );
+
+  // -----------------------------------------------------------------------
+  // Derived numbers
+  // -----------------------------------------------------------------------
+  const counts = analysis.counts;
+  const detected = analysis.lang;
+  const readingWpm = wpmOverride ?? READING_WPM[detected] ?? READING_WPM.other;
+  const speakingWpm = SPEAKING_WPM[detected] ?? SPEAKING_WPM.other;
+  const readingTime = formatDuration(secondsFor(counts.words, readingWpm));
+  const speakingTime = formatDuration(secondsFor(counts.words, speakingWpm));
+
+  const goal = GOAL_PRESETS.find(preset => preset.id === goalId) || null;
+  const goalCurrent = goal ? (goal.kind === 'chars' ? counts.chars : counts.words) : 0;
+  const goalPercent = goal ? Math.min(100, Math.round((goalCurrent / goal.value) * 100)) : 0;
+
+  const levels: string[] = Array.isArray(t.readabilityLevels) ? t.readabilityLevels : [];
+  const bandLabel = levels[analysis.readability.band] || '—';
+
+  const keywordRows =
+    keywordSize === 1 ? analysis.keywords.one : keywordSize === 2 ? analysis.keywords.two : analysis.keywords.three;
+
+  const totalIssues = ISSUE_ORDER.reduce((sum, kind) => sum + analysis.issueCounts[kind], 0);
+  const highlightPossible = text.length <= HIGHLIGHT_LIMIT;
+
+  const selectionLength = selection.end - selection.start;
+
+  // -----------------------------------------------------------------------
+  // Exports
+  // -----------------------------------------------------------------------
+  const fileStem = useMemo(() => {
+    const firstLine = text.trim().split('\n')[0] || 'wordflow';
+    const stem = baseName(firstLine).replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 40);
+    return stem || 'wordflow';
+  }, [text]);
+
+  const buildReport = useCallback((): string => {
+    const rows = analysis.keywords.one.slice(0, 15);
+    const lines: string[] = [];
+    lines.push(`# ${t.reportTitle || 'WordFlow report'}`);
+    lines.push('');
+    lines.push(`| ${t.words || 'Words'} | ${counts.words} |`);
+    lines.push('| --- | --- |');
+    lines.push(`| ${t.characters || 'Characters'} | ${counts.chars} |`);
+    lines.push(`| ${t.sentences || 'Sentences'} | ${counts.sentences} |`);
+    lines.push(`| ${t.paragraphs || 'Paragraphs'} | ${counts.paragraphs} |`);
+    lines.push(`| ${t.uniqueWords || 'Unique words'} | ${counts.uniqueWords} |`);
+    lines.push(`| ${t.readingTime || 'Reading time'} | ${readingTime} |`);
+    lines.push(`| ${t.speakingTime || 'Speaking time'} | ${speakingTime} |`);
+    lines.push(`| ${t.readability || 'Readability'} | ${bandLabel} (${analysis.readability.ease}/100) |`);
+    lines.push('');
+    if (totalIssues > 0) {
+      lines.push(`## ${t.issuesTitle || 'Style check'}`);
+      lines.push('');
+      for (const kind of ISSUE_ORDER) {
+        const value = analysis.issueCounts[kind];
+        if (value > 0) lines.push(`- ${t[ISSUE_KEY[kind]] || kind}: ${value}`);
+      }
+      lines.push('');
     }
-
-    const words = text.toLowerCase().split(/\s+/);
-    let posCount = 0;
-    let negCount = 0;
-
-    words.forEach(w => {
-      const cleanWord = w.replace(/[^\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff]/g, '');
-      if (SENTIMENT_SEEDS.positive.some(seed => cleanWord.includes(seed))) posCount++;
-      if (SENTIMENT_SEEDS.negative.some(seed => cleanWord.includes(seed))) negCount++;
-    });
-
-    const totalMatches = posCount + negCount;
-    if (totalMatches === 0) {
-      return { positive: 0, neutral: 100, negative: 0 };
+    if (rows.length) {
+      lines.push(`## ${t.keywordDensity || 'Keyword density'}`);
+      lines.push('');
+      lines.push(`| # | ${t.count || 'Count'} | ${t.density || 'Density'} |`);
+      lines.push('| --- | --- | --- |');
+      for (const row of rows) lines.push(`| ${row.phrase} | ${row.count} | ${row.density}% |`);
+      lines.push('');
     }
+    lines.push('---');
+    lines.push('');
+    lines.push(text);
+    return lines.join('\n');
+  }, [analysis, counts, readingTime, speakingTime, bandLabel, totalIssues, text, t]);
 
-    const positive = Math.round((posCount / totalMatches) * 100);
-    const negative = Math.round((negCount / totalMatches) * 100);
-    const neutral = Math.max(0, 100 - positive - negative);
+  const exportCsv = useCallback(() => {
+    const header = `phrase,count,density\n`;
+    const body = analysis.keywords.one
+      .map(row => `"${row.phrase.replace(/"/g, '""')}",${row.count},${row.density}`)
+      .join('\n');
+    downloadText(header + body, `${fileStem}-keywords.csv`, 'text/csv;charset=utf-8');
+  }, [analysis.keywords.one, fileStem]);
 
-    return { positive, neutral, negative };
-  };
+  const exportJson = useCallback(() => {
+    // The sentence table on a long document is megabytes of offsets nobody
+    // asked for; the export keeps the summary.
+    const { sentences, issues, ...summary } = analysis;
+    downloadText(
+      JSON.stringify({ ...summary, readingTime, speakingTime, generatedAt: new Date().toISOString() }, null, 2),
+      `${fileStem}-analysis.json`,
+      'application/json;charset=utf-8'
+    );
+  }, [analysis, fileStem, readingTime, speakingTime]);
 
-  const sentiment = getSentiment();
-
-  // Client-side Local Tone Style Gauge
-  const getTone = (): ToneMetrics => {
-    if (!text.trim()) {
-      return { formal: 0, casual: 0, academic: 0, confident: 0, creative: 0 };
+  const doCopy = useCallback(async () => {
+    const chunk = selectionLength > 0 ? text.slice(selection.start, selection.end) : text;
+    const ok = await copyText(chunk);
+    if (ok) {
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
     }
+  }, [text, selection, selectionLength]);
 
-    const words = text.toLowerCase().split(/\s+/);
-    const counts = { formal: 0, casual: 0, academic: 0, confident: 0, creative: 0 };
-
-    words.forEach(w => {
-      const cleanWord = w.replace(/[^\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff]/g, '');
-      if (TONE_SEEDS.formal.some(seed => cleanWord.includes(seed))) counts.formal++;
-      if (TONE_SEEDS.casual.some(seed => cleanWord.includes(seed))) counts.casual++;
-      if (TONE_SEEDS.academic.some(seed => cleanWord.includes(seed))) counts.academic++;
-      if (TONE_SEEDS.confident.some(seed => cleanWord.includes(seed))) counts.confident++;
-      if (TONE_SEEDS.creative.some(seed => cleanWord.includes(seed))) counts.creative++;
-    });
-
-    // Punctuation heuristics
-    const exclamations = (text.match(/!/g) || []).length;
-    const questions = (text.match(/\?/g) || []).length;
-    const quotes = (text.match(/["'â€œâ€]/g) || []).length;
-
-    counts.casual += exclamations * 2;
-    counts.creative += quotes;
-    counts.academic += questions;
-
-    const total = counts.formal + counts.casual + counts.academic + counts.confident + counts.creative;
-    if (total === 0) {
-      // Default fallback distribution based on writing length
-      return { formal: 20, casual: 20, academic: 20, confident: 20, creative: 20 };
+  const doPaste = useCallback(async () => {
+    try {
+      const clip = await navigator.clipboard.readText();
+      if (!clip) return;
+      const area = areaRef.current;
+      const at = area ? area.selectionStart : text.length;
+      const to = area ? area.selectionEnd : text.length;
+      doc.setText(text.slice(0, at) + clip + text.slice(to), { label: 'pasteLabel' });
+    } catch {
+      setError(t.errClipboard || 'The browser refused clipboard access — use Ctrl+V instead.');
     }
+  }, [doc, text, t]);
 
-    return {
-      formal: Math.round((counts.formal / total) * 100),
-      casual: Math.round((counts.casual / total) * 100),
-      academic: Math.round((counts.academic / total) * 100),
-      confident: Math.round((counts.confident / total) * 100),
-      creative: Math.round((counts.creative / total) * 100)
+  const clearAll = useCallback(() => {
+    doc.load('');
+    setStaged(null);
+    setError(null);
+    setSelection({ start: 0, end: 0 });
+    areaRef.current?.focus();
+  }, [doc]);
+
+  // -----------------------------------------------------------------------
+  // Keyboard
+  // -----------------------------------------------------------------------
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const meta = event.ctrlKey || event.metaKey;
+      if (!meta) {
+        if (event.key === 'Escape' && showFind) setShowFind(false);
+        return;
+      }
+      const key = event.key.toLowerCase();
+      if (key === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) doc.redo();
+        else doc.undo();
+      } else if (key === 'y') {
+        event.preventDefault();
+        doc.redo();
+      } else if (key === 'f' || key === 'h') {
+        event.preventDefault();
+        setShowFind(true);
+      } else if (key === 's') {
+        event.preventDefault();
+        if (text) downloadText(text, `${fileStem}.txt`);
+      } else if (event.altKey && (key === '+' || key === '=')) {
+        event.preventDefault();
+        setFontSize(size => Math.min(24, size + 1));
+      } else if (event.altKey && key === '-') {
+        event.preventDefault();
+        setFontSize(size => Math.max(12, size - 1));
+      }
     };
-  };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [doc, showFind, text, fileStem]);
 
-  const tone = getTone();
+  // -----------------------------------------------------------------------
+  // Static content
+  // -----------------------------------------------------------------------
+  const steps = [
+    { art: StepWrite, title: t.step1Title, text: t.step1Text },
+    { art: StepTune, title: t.step2Title, text: t.step2Text },
+    { art: StepAnalyse, title: t.step3Title, text: t.step3Text },
+    { art: StepShip, title: t.step4Title, text: t.step4Text },
+  ];
+  const featureIcons = [IconSegmenter, IconGauge, IconProse, IconKeywords, IconEditor, IconHandoff];
+  const features = Array.isArray(t.features) ? t.features : [];
+  const faqs = Array.isArray(t.faq) ? t.faq : [];
+  const keywords: string[] = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
 
-  // Helper formatting cleaners
-  const handleUppercase = () => setText(text.toUpperCase());
-  const handleLowercase = () => setText(text.toLowerCase());
-  
-  const handleTitleCase = () => {
-    const titleCased = text.replace(/\b\w+/g, s => s.charAt(0).toUpperCase() + s.substring(1).toLowerCase());
-    setText(titleCased);
-  };
-
-  const handleSentenceCase = () => {
-    const sentenceCased = text.toLowerCase().replace(/(^\s*|[.!?]\s+)([a-z])/g, (_, sep, char) => sep + char.toUpperCase());
-    setText(sentenceCased);
-  };
-
-  const handleSlugify = () => {
-    const slugified = text
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-    setText(slugified);
-  };
-
-  const handleRemoveSpaces = () => {
-    const cleaned = text.replace(/[ \t]+/g, ' ').trim();
-    setText(cleaned);
-  };
-
-  const handleRemoveDuplicates = () => {
-    const lines = text.split('\n');
-    const uniqueLines = Array.from(new Set(lines));
-    setText(uniqueLines.join('\n'));
-  };
-
-  const handleStripHtml = () => {
-    const stripped = text.replace(/<[^>]*>/g, '');
-    setText(stripped);
-  };
-
-  const handleClear = () => {
-    setText('');
-    if (textareaRef.current) textareaRef.current.focus();
-  };
-
-  const handleCopy = () => {
-    if (!text) return;
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // Native Client-Side Export Utilities
-  const handleDownloadTxt = () => {
-    if (!text) return;
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `wordflow-document-${Date.now()}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
-
-  const handleDownloadPdf = () => {
-    if (!text) return;
-    
-    // Print window strategy: renders clean print layout natively inside the browser printing frame
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-
-    printWindow.document.write(`
-      <html>
-        <head>
-          <title>WordFlow Export Document</title>
-          <style>
-            body {
-              font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-              padding: 40px;
-              color: #111;
-              line-height: 1.6;
-            }
-            .header {
-              border-bottom: 2px solid #0d9488;
-              padding-bottom: 12px;
-              margin-bottom: 30px;
-              display: flex;
-              justify-content: space-between;
-              align-items: flex-end;
-            }
-            .title {
-              font-size: 24px;
-              font-weight: 800;
-              color: #0d9488;
-              margin: 0;
-            }
-            .meta {
-              font-size: 11px;
-              color: #666;
-            }
-            .content {
-              font-size: 14px;
-              white-space: pre-wrap;
-            }
-            .footer {
-              margin-top: 50px;
-              border-top: 1px solid #ddd;
-              padding-top: 10px;
-              font-size: 10px;
-              color: #888;
-              text-align: center;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="header">
-            <h1 class="title">WordFlow Document</h1>
-            <span class="meta">${new Date().toLocaleDateString()} | Words: ${wordCount} | Chars: ${charCountWithSpaces}</span>
-          </div>
-          <div class="content">${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
-          <div class="footer">
-            Generated locally on oLoveTools.com - 100% Secure & Private
-          </div>
-          <script>
-            window.onload = function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            };
-          </script>
-        </body>
-      </html>
-    `);
-    printWindow.document.close();
-  };
-
-  // Modal handlers
-  const openModal = (modal: 'privacy' | 'terms' | 'cookies') => {
-    setActiveModal(modal);
-  };
-
-  const getModalContent = () => {
-    if (!activeModal) return { title: '', content: '' };
-    const navKey = activeModal === 'privacy' ? 'privacy' : activeModal === 'terms' ? 'terms' : 'cookies';
-    const title = dictionary.nav[navKey] || '';
-    const content = dictionary.sections[activeModal]?.join('\n\n') || '';
-    return { title, content };
-  };
-
-  const { title: modalTitle, content: modalText } = getModalContent();
+  const groups: TransformGroup[] = ['case', 'clean', 'lines'];
 
   return (
-    <div className="min-h-screen bg-[#030708] text-slate-100 flex flex-col font-sans selection:bg-teal-500/20 selection:text-teal-200 relative">
-      <Header 
-        currentLang={lang} 
-        onLanguageChange={(newLang) => window.location.href = `/${newLang}/wordflow`}
-        onReset={handleClear}
+    <div className="min-h-screen text-slate-100 flex flex-col font-sans selection:bg-teal-500/20 selection:text-teal-100 relative">
+      <Header
+        currentLang={lang}
+        onLanguageChange={newLang => {
+          window.location.href = `/${newLang}/wordflow`;
+        }}
+        onReset={clearAll}
         t={t}
       />
 
-      {/* Dynamic Background Glow */}
-      
-
-      {/* Main Container */}
-      <main className="flex-1 w-full max-w-5xl mx-auto px-6 pt-32 pb-24 flex flex-col space-y-10 relative z-10">
-        {/* Bloque AdSense Horizontal */}
+      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 sm:px-6 pt-28 md:pt-36 pb-20 flex flex-col gap-16 relative z-10">
         <AdBanner id="adsense-wordflow-top" />
-        
-        {/* Title / Description */}
-        <section className="text-center space-y-3 max-w-2xl mx-auto">
-          <div className="inline-flex p-3 bg-teal-500/10 rounded-2xl border border-teal-500/20 text-teal-400 mb-2">
-            <Sparkles className="w-6 h-6 animate-pulse" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-white font-outfit">
-            {t.seoHeroTitle}
-          </h1>
-          <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl mx-auto font-medium">
-            {t.seoHeroText}
-          </p>
-        </section>
 
-        {/* Counter Analytics Ribbon */}
-        <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-[#0b0c10] border border-white/5 p-5 rounded-2xl flex flex-col items-center justify-center space-y-1 shadow-md hover:border-teal-500/30 transition-all duration-300">
-            <span className="text-slate-500 text-xs font-black uppercase tracking-wider">{t.words}</span>
-            <span className="text-2xl font-black text-white font-mono">{wordCount.toLocaleString()}</span>
-          </div>
-          <div className="bg-[#0b0c10] border border-white/5 p-5 rounded-2xl flex flex-col items-center justify-center space-y-1 shadow-md hover:border-teal-500/30 transition-all duration-300">
-            <span className="text-slate-500 text-xs font-black uppercase tracking-wider">{t.characters}</span>
-            <span className="text-2xl font-black text-white font-mono">{charCountWithSpaces.toLocaleString()}</span>
-            <span className="text-[10px] text-slate-600 font-semibold font-mono">({charCountNoSpaces.toLocaleString()} no spaces)</span>
-          </div>
-          <div className="bg-[#0b0c10] border border-white/5 p-5 rounded-2xl flex flex-col items-center justify-center space-y-1 shadow-md hover:border-teal-500/30 transition-all duration-300">
-            <span className="text-slate-500 text-xs font-black uppercase tracking-wider flex items-center space-x-1.5">
-              <Clock className="w-3.5 h-3.5 text-teal-400" />
-              <span>{t.readingTime}</span>
-            </span>
-            <span className="text-2xl font-black text-teal-400 font-mono">{readingTime}</span>
-          </div>
-          <div className="bg-[#0b0c10] border border-white/5 p-5 rounded-2xl flex flex-col items-center justify-center space-y-1 shadow-md hover:border-teal-500/30 transition-all duration-300">
-            <span className="text-slate-500 text-xs font-black uppercase tracking-wider flex items-center space-x-1.5">
-              <Volume2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>{t.speakingTime}</span>
-            </span>
-            <span className="text-2xl font-black text-cyan-400 font-mono">{speakingTime}</span>
-          </div>
-        </section>
-
-        {/* Interactive Workspace Area */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
-          {/* Main Focused Editor Workspace */}
-          <div className="lg:col-span-2 space-y-4">
-            <div className="bg-[#0b0c10] border border-white/10 rounded-3xl p-1 shadow-xl hover:border-teal-500/40 transition-all duration-500 focus-within:ring-2 focus-within:ring-teal-500/30">
-              
-              {/* Writer Header Toolbar */}
-              <div className="flex items-center justify-between border-b border-white/5 px-6 py-3.5">
-                <span className="text-xs font-bold text-slate-500 flex items-center space-x-2">
-                  <FileText className="w-4 h-4 text-teal-500" />
-                  <span>Interactive Editor canvas</span>
-                </span>
-                
-                {/* Clean/Export Actions */}
-                <div className="flex items-center space-x-2">
-                  <button 
-                    onClick={handleCopy}
-                    disabled={!text}
-                    className="p-2 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-lg border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                    title={t.copyText}
-                  >
-                    {copied ? <Check className="w-4 h-4 text-teal-400" /> : <Copy className="w-4 h-4" />}
-                  </button>
-                  <button 
-                    onClick={handleClear}
-                    disabled={!text}
-                    className="p-2 bg-white/5 hover:bg-red-500/10 text-slate-400 hover:text-red-400 rounded-lg border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                    title={t.clearText}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Text Writing Area */}
-              <textarea 
-                ref={textareaRef}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder={t.placeholder}
-                className="w-full h-80 md:h-[450px] p-6 bg-transparent border-none outline-none resize-none text-slate-100 placeholder:text-slate-600 text-sm md:text-base font-normal leading-relaxed overflow-y-auto"
-              />
-
-              {/* Writer Footer Metrics */}
-              <div className="flex items-center justify-between border-t border-white/5 px-6 py-3 text-[11px] text-slate-600 font-bold font-mono">
-                <span>{t.lines}: {lineCount} | {t.sentences}: {sentenceCount} | {t.paragraphs}: {paragraphCount}</span>
-                <span className="text-slate-500 lowercase">100% browser sandbox</span>
-              </div>
+        {/* ================================================================= */}
+        {/* Hero                                                              */}
+        {/* ================================================================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="space-y-6 text-center lg:text-left">
+            <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-teal-950/40 border border-teal-800/40 text-teal-400 text-[11px] font-black tracking-[0.2em] uppercase">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{t.badge || 'Local text analytics'}</span>
             </div>
-
-            {/* Quick clean/format Actions Grid */}
-            <div className="bg-[#0b0c10] border border-white/5 rounded-3xl p-6 space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                <Sliders className="w-4 h-4 text-teal-400" />
-                <span>{t.textTools}</span>
-              </h3>
-              
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <button 
-                  onClick={handleUppercase}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.uppercase}
-                </button>
-                <button 
-                  onClick={handleLowercase}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.lowercase}
-                </button>
-                <button 
-                  onClick={handleTitleCase}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.titlecase}
-                </button>
-                <button 
-                  onClick={handleSentenceCase}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.sentencecase}
-                </button>
-                <button 
-                  onClick={handleSlugify}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.slugify}
-                </button>
-                <button 
-                  onClick={handleRemoveSpaces}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.removeSpaces}
-                </button>
-                <button 
-                  onClick={handleRemoveDuplicates}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.removeDuplicates}
-                </button>
-                <button 
-                  onClick={handleStripHtml}
-                  disabled={!text}
-                  className="px-4 py-2.5 bg-white/[0.02] hover:bg-teal-500/10 border border-white/5 text-slate-300 hover:text-teal-300 disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-slate-300 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                >
-                  {t.stripHtml}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Floating Analytics Desk */}
-          <div className="space-y-6">
-            
-            {/* Readability Score Gauge */}
-            <div className="bg-[#0b0c10] border border-white/5 rounded-3xl p-6 space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                <BookOpen className="w-4 h-4 text-teal-400" />
-                <span>{t.analysis}</span>
-              </h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400 font-bold">{t.readability}</span>
-                  <span className="text-xs text-teal-400 font-black tracking-wider uppercase font-mono bg-teal-500/10 px-2 py-0.5 rounded">
-                    Score: {readability.score}
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-[1.05] text-balance">
+              {t.seoHeroTitle}
+            </h1>
+            <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+              {t.description}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-xl mx-auto lg:mx-0">
+              {(Array.isArray(t.heroPoints) ? t.heroPoints : []).map((point: string, index: number) => (
+                <div key={index} className="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 border border-white/5 text-left">
+                  <span className="w-6 h-6 shrink-0 bg-teal-500/20 text-teal-300 rounded-lg flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
                   </span>
+                  <span className="text-slate-300 font-bold text-[13px] leading-snug">{point}</span>
                 </div>
-                <div className="text-lg font-black text-white">{readability.label}</div>
-                <p className="text-[11px] text-slate-500 leading-relaxed font-semibold">
-                  {t.readabilityDesc} (Automated Readability Index)
+              ))}
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute -top-10 -right-10 w-56 h-56 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+            <WordFlowHeroArt
+              className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+              animated={!prefersReduced}
+            />
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Workspace                                                         */}
+        {/* ================================================================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          {/* -- editor column ---------------------------------------------- */}
+          <div className="lg:col-span-2 space-y-4 min-w-0">
+            {staged && (
+              <div className="rounded-2xl border border-teal-500/30 bg-teal-500/5 p-4 space-y-3">
+                <div className="flex items-start gap-3">
+                  <span className="w-9 h-9 shrink-0 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-300">
+                    <FileText className="w-4 h-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-bold text-white truncate">{staged.name}</p>
+                    <p className="text-[11px] text-slate-400">
+                      {formatBytes(staged.size)} · {staged.body.length.toLocaleString()} {t.characters || 'characters'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setStaged(null)}
+                    className="p-2 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    title={t.stagedDiscard || 'Discard'}
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  {t.stagedHint || 'Nothing has been loaded yet — pick what should happen to your current text.'}
                 </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => acceptStaged('replace')}
+                    className="px-3.5 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-black transition-all cursor-pointer"
+                  >
+                    {t.stagedReplace || 'Replace the editor'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => acceptStaged('append')}
+                    className="px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-black transition-all cursor-pointer"
+                  >
+                    {t.stagedAppend || 'Append at the end'}
+                  </button>
+                </div>
               </div>
+            )}
 
-              {/* Exports */}
-              <div className="flex gap-2 pt-2">
-                <button 
-                  onClick={handleDownloadTxt}
-                  disabled={!text}
-                  className="flex-1 px-3 py-2 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 disabled:opacity-40 disabled:cursor-not-allowed text-xs font-extrabold tracking-wide rounded-xl flex items-center justify-center space-x-1.5 transition-all cursor-pointer"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>TXT</span>
+            {error && (
+              <div className="flex items-start gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-[12px] text-red-200">
+                <span className="flex-1">{error}</span>
+                <button type="button" onClick={() => setError(null)} className="text-red-300 hover:text-white cursor-pointer">
+                  <X className="w-4 h-4" />
                 </button>
-                <button 
-                  onClick={handleDownloadPdf}
-                  disabled={!text}
-                  className="flex-1 px-3 py-2 bg-teal-600 hover:bg-teal-500 text-white disabled:opacity-40 disabled:cursor-not-allowed text-xs font-extrabold tracking-wide rounded-xl flex items-center justify-center space-x-1.5 transition-all cursor-pointer"
+              </div>
+            )}
+
+            <div className="rounded-3xl border border-white/10 bg-[#0b0f10]/80 glass-card overflow-hidden">
+              {/* toolbar */}
+              <div className="flex flex-wrap items-center gap-1.5 px-3 py-2.5 border-b border-white/5">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>PDF</span>
+                  {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
+                  <span className="hidden sm:inline">{t.openFile || 'Open file'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => void doPaste()}
+                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
+                >
+                  <ClipboardPaste className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{t.pasteText || 'Paste'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => doc.load(String(t.sampleText || ''))}
+                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
+                >
+                  <ScanText className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{t.loadSample || 'Sample'}</span>
+                </button>
+
+                <span className="w-px h-6 bg-white/10 mx-0.5" />
+
+                <button
+                  type="button"
+                  onClick={doc.undo}
+                  disabled={!doc.canUndo}
+                  title={`${t.undo || 'Undo'} (Ctrl+Z)`}
+                  className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  <Undo2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={doc.redo}
+                  disabled={!doc.canRedo}
+                  title={`${t.redo || 'Redo'} (Ctrl+Shift+Z)`}
+                  className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  <Redo2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  disabled={!doc.canUndo}
+                  title={t.compareBefore || 'Hold to see the text before the last change'}
+                  onMouseDown={() => setGhost(doc.previous())}
+                  onMouseUp={() => setGhost(null)}
+                  onMouseLeave={() => setGhost(null)}
+                  onTouchStart={() => setGhost(doc.previous())}
+                  onTouchEnd={() => setGhost(null)}
+                  className={`p-2 rounded-lg border transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                    ghost !== null
+                      ? 'bg-amber-500/20 border-amber-500/40 text-amber-300'
+                      : 'border-white/10 bg-white/5 hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <Eye className="w-3.5 h-3.5" />
+                </button>
+
+                <span className="w-px h-6 bg-white/10 mx-0.5" />
+
+                <button
+                  type="button"
+                  onClick={() => setShowFind(value => !value)}
+                  title={`${t.findTitle || 'Find & replace'} (Ctrl+F)`}
+                  className={`p-2 rounded-lg border transition-all cursor-pointer ${
+                    showFind ? 'bg-teal-500/20 border-teal-500/40 text-teal-300' : 'border-white/10 bg-white/5 hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <Search className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHighlightOn(value => !value)}
+                  disabled={!highlightPossible}
+                  title={t.highlights || 'Style highlights'}
+                  className={`p-2 rounded-lg border transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                    highlightOn && highlightPossible
+                      ? 'bg-teal-500/20 border-teal-500/40 text-teal-300'
+                      : 'border-white/10 bg-white/5 hover:bg-white/10 text-slate-300'
+                  }`}
+                >
+                  <Highlighter className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFontSize(size => (size >= 22 ? 13 : size + 2))}
+                  title={t.textSize || 'Text size'}
+                  className="flex items-center gap-1 px-2 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 text-[10px] font-mono transition-all cursor-pointer"
+                >
+                  <ALargeSmall className="w-3.5 h-3.5" />
+                  {fontSize}
+                </button>
+
+                <span className="flex-1" />
+
+                <button
+                  type="button"
+                  onClick={() => void doCopy()}
+                  disabled={!text}
+                  title={t.copyText}
+                  className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-teal-400" /> : <Copy className="w-3.5 h-3.5" />}
+                </button>
+                <button
+                  type="button"
+                  onClick={clearAll}
+                  disabled={!text}
+                  title={t.clearText}
+                  className="p-2 rounded-lg border border-white/10 bg-white/5 hover:bg-red-500/10 text-slate-300 hover:text-red-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-            </div>
 
-            {/* AI Sentiment Analysis */}
-            <div className="bg-[#0b0c10] border border-white/5 rounded-3xl p-6 space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                <Smile className="w-4 h-4 text-teal-400" />
-                <span>{t.sentiment}</span>
-              </h3>
-
-              <div className="space-y-3">
-                {/* Positive */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.sentimentPositive}</span>
-                    <span className="font-mono text-emerald-400">{sentiment.positive}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-emerald-500 rounded-full transition-all duration-500" style={{ width: `${sentiment.positive}%` }} />
-                  </div>
+              {showFind && (
+                <div className="px-3 pt-3">
+                  <FindReplace
+                    t={t}
+                    query={query}
+                    replacement={replacement}
+                    options={findOptions}
+                    total={matches.length}
+                    index={matchIndex}
+                    invalid={invalidQuery}
+                    onQuery={setQuery}
+                    onReplacement={setReplacement}
+                    onOption={key => setFindOptions(current => ({ ...current, [key]: !current[key] }))}
+                    onStep={stepMatch}
+                    onReplaceOne={replaceOne}
+                    onReplaceAll={doReplaceAll}
+                    onClose={() => setShowFind(false)}
+                  />
                 </div>
+              )}
 
-                {/* Neutral */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.sentimentNeutral}</span>
-                    <span className="font-mono text-slate-300">{sentiment.neutral}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-slate-500 rounded-full transition-all duration-500" style={{ width: `${sentiment.neutral}%` }} />
-                  </div>
-                </div>
+              <div className="h-[46vh] min-h-[320px] lg:h-[560px] p-1.5">
+                <Editor
+                  value={text}
+                  onChange={next => doc.setText(next, { coalesce: true })}
+                  onSelectionChange={setSelection}
+                  placeholder={t.placeholder}
+                  ariaLabel={t.editorLabel || 'Document'}
+                  fontSize={fontSize}
+                  issues={analysis.issues}
+                  findMarks={findMarks}
+                  highlightEnabled={highlightOn && highlightPossible}
+                  ghost={ghost}
+                  areaRef={areaRef}
+                  onDropFiles={stageFiles}
+                />
+              </div>
 
-                {/* Negative */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.sentimentNegative}</span>
-                    <span className="font-mono text-rose-400">{sentiment.negative}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-rose-500 rounded-full transition-all duration-500" style={{ width: `${sentiment.negative}%` }} />
-                  </div>
-                </div>
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 py-2.5 border-t border-white/5 text-[10px] font-bold font-mono text-slate-500">
+                <span>
+                  {t.lines}: {counts.lines} · {t.sentences}: {counts.sentences} · {t.paragraphs}: {counts.paragraphs}
+                </span>
+                {selectionLength > 0 && (
+                  <span className="text-teal-400">
+                    {(t.selectionLabel || '{n} selected').replace('{n}', selectionLength.toLocaleString())}
+                  </span>
+                )}
+                <span className="flex-1" />
+                {doc.steps > 0 && (
+                  <span className="text-slate-600">
+                    {(t.historyLabel || '{n} steps · {size}')
+                      .replace('{n}', String(doc.steps))
+                      .replace('{size}', formatBytes(doc.bytes))}
+                  </span>
+                )}
+                <span className="text-slate-600 lowercase">{t.localBadge || '100% in this tab'}</span>
               </div>
             </div>
 
-            {/* Tone Style Detector */}
-            <div className="bg-[#0b0c10] border border-white/5 rounded-3xl p-6 space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                <Briefcase className="w-4 h-4 text-teal-400" />
-                <span>{t.tone}</span>
-              </h3>
-
-              <div className="space-y-3">
-                {/* Formal */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.toneFormal}</span>
-                    <span className="font-mono text-blue-400">{tone.formal}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-blue-500 rounded-full transition-all duration-500" style={{ width: `${tone.formal}%` }} />
-                  </div>
-                </div>
-
-                {/* Casual */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.toneCasual}</span>
-                    <span className="font-mono text-amber-400">{tone.casual}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${tone.casual}%` }} />
-                  </div>
-                </div>
-
-                {/* Academic */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.toneAcademic}</span>
-                    <span className="font-mono text-purple-400">{tone.academic}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-purple-500 rounded-full transition-all duration-500" style={{ width: `${tone.academic}%` }} />
-                  </div>
-                </div>
-
-                {/* Confident */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.toneConfident}</span>
-                    <span className="font-mono text-teal-400">{tone.confident}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-teal-500 rounded-full transition-all duration-500" style={{ width: `${tone.confident}%` }} />
-                  </div>
-                </div>
-
-                {/* Creative */}
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400">
-                    <span>{t.toneCreative}</span>
-                    <span className="font-mono text-pink-400">{tone.creative}%</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
-                    <div className="h-full bg-pink-500 rounded-full transition-all duration-500" style={{ width: `${tone.creative}%` }} />
-                  </div>
-                </div>
+            {/* -- transforms ---------------------------------------------- */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-teal-400" />
+                  {t.toolsTitle || 'Text tools'}
+                </h3>
+                <span className="flex-1" />
+                <span className={`text-[10px] font-bold px-2 py-1 rounded-md border ${alt ? 'text-teal-300 border-teal-500/40 bg-teal-500/10' : 'text-slate-600 border-white/5'}`}>
+                  {alt ? t.altOn || 'Alt — second version' : t.altHint || 'Hold Alt for the second version'}
+                </span>
               </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                {selectionLength > 0
+                  ? t.toolsSelection || 'These apply to your selection. Right-click a button to run it on the whole document instead.'
+                  : t.toolsWhole || 'With nothing selected these apply to the whole document. Select a paragraph to narrow them down.'}
+              </p>
+
+              {groups.map(group => (
+                <div key={group} className="space-y-2">
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
+                    {t[GROUP_KEY[group]] || group}
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2">
+                    {TRANSFORMS.filter(item => item.group === group).map(item => {
+                      const variant = alt && item.alt ? item.alt : item;
+                      return (
+                        <button
+                          key={item.id}
+                          type="button"
+                          disabled={!text}
+                          onClick={() => runTransform(item, alt, false)}
+                          onContextMenu={event => {
+                            event.preventDefault();
+                            runTransform(item, alt, true);
+                          }}
+                          // Wrapping, not truncating: "Remove duplicate lines"
+                          // does not fit a 145 px cell at 375 px and a tooltip
+                          // is no help on a touch screen.
+                          className={`px-3 py-2.5 rounded-xl border text-[11px] font-bold tracking-wide leading-tight text-center transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${
+                            alt && item.alt
+                              ? 'border-teal-500/30 bg-teal-500/10 text-teal-200 hover:bg-teal-500/20'
+                              : 'border-white/5 bg-white/[0.03] text-slate-300 hover:bg-teal-500/10 hover:text-teal-200'
+                          }`}
+                          title={variant.fallback}
+                        >
+                          {t[variant.key] || variant.fallback}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+
+              <p className="text-[10px] text-slate-600 leading-relaxed pt-1">
+                {t.shortcutsHint ||
+                  'Ctrl+Z and Ctrl+Shift+Z undo and redo every tool, Ctrl+F opens find & replace, Ctrl+S saves a .txt, Ctrl+Alt+plus and minus change the text size.'}
+              </p>
             </div>
 
-            {/* Keyword Density Matrix */}
-            <div className="bg-[#0b0c10] border border-white/5 rounded-3xl p-6 space-y-4">
-              <h3 className="text-sm font-black uppercase tracking-wider text-slate-400 flex items-center space-x-2">
-                <Search className="w-4 h-4 text-teal-400" />
-                <span>{t.keywordDensity}</span>
-              </h3>
+            <NextStepBar
+              lang={lang}
+              t={t}
+              disabled={!text}
+              getResult={async () => {
+                if (!text) return null;
+                return { blob: new Blob([text], { type: 'text/plain;charset=utf-8' }), name: `${fileStem}.txt` };
+              }}
+            />
+          </div>
 
-              {keywordDensity.length === 0 ? (
-                <div className="text-slate-600 text-xs py-4 text-center leading-relaxed font-semibold italic">
-                  {t.noKeywords}
-                </div>
-              ) : (
-                <div className="space-y-2.5 max-h-60 overflow-y-auto">
-                  <div className="grid grid-cols-3 text-[10px] uppercase font-black tracking-wider text-slate-600 border-b border-white/5 pb-1 px-1">
-                    <span>Keyword</span>
-                    <span className="text-center">{t.count}</span>
-                    <span className="text-right">{t.density}</span>
+          {/* -- insight column --------------------------------------------- */}
+          <aside className="space-y-5 min-w-0">
+            {/* counters */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <ScanText className="w-4 h-4 text-teal-400" />
+                  {t.statsTitle || 'Counters'}
+                </h3>
+                <span className="flex-1" />
+                {busy && <Loader2 className="w-3.5 h-3.5 animate-spin text-teal-400" />}
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                {[
+                  { label: t.words, value: counts.words.toLocaleString(), tone: 'text-white' },
+                  { label: t.characters, value: counts.chars.toLocaleString(), tone: 'text-white' },
+                  { label: t.readingTime, value: readingTime, tone: 'text-teal-400' },
+                  { label: t.speakingTime, value: speakingTime, tone: 'text-cyan-400' },
+                ].map(stat => (
+                  <div key={String(stat.label)} className="rounded-2xl bg-black/30 border border-white/5 px-3 py-3 text-center">
+                    <p className={`text-lg font-black font-mono truncate ${stat.tone}`}>{stat.value}</p>
+                    <p className="text-[9px] font-black uppercase tracking-wider text-slate-600 truncate">{stat.label}</p>
                   </div>
-                  
-                  {keywordDensity.map((item, idx) => (
-                    <div key={idx} className="grid grid-cols-3 text-xs font-bold text-slate-300 hover:text-white items-center py-1 px-1 rounded transition-colors hover:bg-white/[0.01]">
-                      <span className="truncate max-w-[100px] text-slate-400 font-semibold">{item.word}</span>
-                      <span className="text-center font-mono font-medium">{item.count}</span>
-                      <span className="text-right text-teal-400 font-mono">{item.density}%</span>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2 text-[10px] text-slate-500">
+                <span className="shrink-0">{t.readingSpeed || 'Reading speed'}</span>
+                <input
+                  type="range"
+                  min={80}
+                  max={450}
+                  step={10}
+                  value={readingWpm}
+                  onChange={event => setWpmOverride(Number(event.target.value))}
+                  className="flex-1 accent-teal-500 cursor-pointer"
+                  aria-label={String(t.readingSpeed || 'Reading speed')}
+                />
+                <span className="font-mono text-slate-400 shrink-0 tabular-nums">{readingWpm} {t.wpm || 'wpm'}</span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowMoreStats(value => !value)}
+                className="w-full text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-teal-400 transition-colors cursor-pointer"
+              >
+                {showMoreStats ? t.lessStats || 'Fewer numbers' : t.moreStats || 'More numbers'}
+              </button>
+
+              {showMoreStats && (
+                <div className="space-y-1.5 text-[11px]">
+                  {[
+                    { label: t.charactersNoSpaces || 'Characters, no spaces', value: counts.charsNoSpaces.toLocaleString() },
+                    { label: t.uniqueWords || 'Unique words', value: counts.uniqueWords.toLocaleString() },
+                    { label: t.syllables || 'Syllables', value: counts.syllables.toLocaleString() },
+                    { label: t.avgWord || 'Average word', value: `${counts.avgWordChars} ${t.charsShort || 'chars'}` },
+                    { label: t.avgSentence || 'Average sentence', value: `${counts.avgSentenceWords} ${t.wordsShort || 'words'}` },
+                    { label: t.diversity || 'Vocabulary variety', value: `${counts.lexicalDiversity}%` },
+                    { label: t.longestWord || 'Longest word', value: counts.longestWord || '—' },
+                    { label: t.size || 'Size', value: formatBytes(counts.bytes) },
+                  ].map(row => (
+                    <div key={String(row.label)} className="flex items-baseline justify-between gap-3 border-b border-white/5 pb-1">
+                      <span className="text-slate-500 truncate">{row.label}</span>
+                      <span className="font-mono text-slate-300 shrink-0 truncate max-w-[9rem]">{row.value}</span>
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-          </div>
+            {/* target */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <Target className="w-4 h-4 text-teal-400" />
+                {t.goalTitle || 'Target'}
+              </h3>
+              <select
+                value={goalId}
+                onChange={event => setGoalId(event.target.value)}
+                className="w-full px-3 py-2 rounded-xl bg-black/40 border border-white/10 text-xs text-slate-200 outline-none focus:border-teal-500/50 cursor-pointer"
+              >
+                <option value="none">{t.goalNone || 'No target'}</option>
+                {GOAL_PRESETS.map(preset => (
+                  <option key={preset.id} value={preset.id}>
+                    {`${t[preset.key] || preset.fallback} — ${preset.value} ${
+                      preset.kind === 'chars' ? t.charsShort || 'chars' : t.wordsShort || 'words'
+                    }`}
+                  </option>
+                ))}
+              </select>
+              {goal && (
+                <div className="space-y-2">
+                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-[width] duration-300 ${
+                        goalCurrent > goal.value ? 'bg-amber-500' : 'bg-teal-500'
+                      }`}
+                      style={{ width: `${goalPercent}%` }}
+                    />
+                  </div>
+                  <p className="text-[11px] font-bold text-slate-400 tabular-nums">
+                    {goalCurrent.toLocaleString()} / {goal.value.toLocaleString()} ·{' '}
+                    {goalCurrent > goal.value ? (
+                      <span className="text-amber-400">
+                        {(t.goalOver || '{n} over').replace('{n}', (goalCurrent - goal.value).toLocaleString())}
+                      </span>
+                    ) : goalCurrent === goal.value ? (
+                      <span className="text-teal-400">{t.goalReached || 'Target reached'}</span>
+                    ) : (
+                      <span>{(t.goalRemaining || '{n} to go').replace('{n}', (goal.value - goalCurrent).toLocaleString())}</span>
+                    )}
+                  </p>
+                </div>
+              )}
+            </div>
 
+            {/* readability */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-4">
+              <div className="flex items-center gap-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Gauge className="w-4 h-4 text-teal-400" />
+                  {t.readability || 'Readability'}
+                </h3>
+                <span className="flex-1" />
+                <div className="flex items-center gap-1 text-[10px] text-slate-500">
+                  <Languages className="w-3 h-3" />
+                  <select
+                    value={langOverride ?? 'auto'}
+                    onChange={event => setLangOverride(event.target.value === 'auto' ? null : (event.target.value as LangId))}
+                    className="bg-transparent border-none outline-none text-slate-400 cursor-pointer"
+                    aria-label={String(t.detectedLang || 'Language')}
+                  >
+                    <option value="auto" className="bg-slate-900">
+                      {`${t.langAuto || 'Auto'}${analysis.counts.words ? ` · ${detected}` : ''}`}
+                    </option>
+                    {LANG_CHOICES.map(id => (
+                      <option key={id} value={id} className="bg-slate-900">
+                        {id}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {counts.words === 0 ? (
+                <div className="flex flex-col items-center gap-3 py-4 text-slate-700">
+                  <EmptyInsightArt className="w-24 h-auto" animated={!prefersReduced} />
+                  <p className="text-[11px] text-slate-600 text-center leading-relaxed">
+                    {t.emptyInsight || 'Write or load something and every panel here fills in.'}
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-end justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-xl font-black text-white leading-tight truncate">{bandLabel}</p>
+                      <p className="text-[11px] text-slate-500">
+                        {analysis.readability.gradeMeaningful && analysis.readability.grade !== null
+                          ? (t.gradeLabel || 'School year {n}').replace('{n}', String(Math.round(analysis.readability.grade)))
+                          : t.gradeNa || 'School-year scales are built on English syllables.'}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-2xl font-black font-mono text-teal-400 tabular-nums">
+                      {analysis.readability.ease}
+                    </span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-rose-500 via-amber-400 to-teal-400 transition-[width] duration-300"
+                      style={{ width: `${analysis.readability.ease}%` }}
+                    />
+                  </div>
+
+                  <details className="group">
+                    <summary className="cursor-pointer list-none text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-teal-400 transition-colors">
+                      {t.formulaTitle || 'All formulas'}
+                    </summary>
+                    <div className="pt-3 space-y-1.5 text-[11px]">
+                      {analysis.readability.formulas.map(formula => (
+                        <div key={formula.id} className="flex items-baseline justify-between gap-3 border-b border-white/5 pb-1">
+                          <span className={`truncate ${formula.id === analysis.readability.primary ? 'text-teal-400 font-bold' : 'text-slate-500'}`}>
+                            {t[FORMULA_KEY[formula.id]] || formula.id}
+                          </span>
+                          <span className="font-mono text-slate-300 shrink-0 tabular-nums">{formula.score}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                </>
+              )}
+            </div>
+
+            {/* style check */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <IconProse className="w-4 h-4 text-teal-400" />
+                {t.issuesTitle || 'Style check'}
+              </h3>
+              {counts.words === 0 || totalIssues === 0 ? (
+                <p className="text-[11px] text-slate-600 italic leading-relaxed py-2">
+                  {counts.words === 0 ? t.emptyInsight || '—' : t.issuesNone || 'Nothing flagged — this reads clean.'}
+                </p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-1 gap-1.5">
+                    {ISSUE_ORDER.filter(kind => analysis.issueCounts[kind] > 0).map(kind => (
+                      <button
+                        key={kind}
+                        type="button"
+                        onClick={() => {
+                          const first = analysis.issues.find(issue => issue.kind === kind);
+                          if (first) jumpTo({ start: first.start, end: first.end });
+                        }}
+                        className={`flex items-center justify-between gap-3 px-3 py-2 rounded-xl border text-[11px] font-bold transition-all cursor-pointer hover:brightness-125 ${ISSUE_TONE[kind]}`}
+                      >
+                        <span className="truncate text-left">{t[ISSUE_KEY[kind]] || kind}</span>
+                        <span className="font-mono tabular-nums shrink-0">{analysis.issueCounts[kind]}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-slate-600 leading-relaxed">
+                    {t.issuesHint || 'Click a row to jump to the first one. The marks are painted straight onto the text.'}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* keywords */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <Search className="w-4 h-4 text-teal-400" />
+                  {t.keywordDensity}
+                </h3>
+                <span className="flex-1" />
+                <div className="flex rounded-lg border border-white/10 overflow-hidden">
+                  {([1, 2, 3] as const).map(size => (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setKeywordSize(size)}
+                      className={`px-2 py-1 text-[10px] font-black transition-colors cursor-pointer ${
+                        keywordSize === size ? 'bg-teal-500/20 text-teal-300' : 'text-slate-500 hover:text-slate-300'
+                      }`}
+                    >
+                      {size === 1 ? t.kwOne || '1' : size === 2 ? t.kwTwo || '2' : t.kwThree || '3'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {keywordRows.length === 0 ? (
+                <p className="text-[11px] text-slate-600 italic leading-relaxed py-2">{t.noKeywords}</p>
+              ) : (
+                <div className="space-y-1 max-h-64 overflow-y-auto pr-1">
+                  <div className="grid grid-cols-[1fr_auto_auto] gap-3 text-[9px] uppercase font-black tracking-wider text-slate-600 border-b border-white/5 pb-1">
+                    <span>{t.kwPhrase || 'Phrase'}</span>
+                    <span className="text-right w-10">{t.count}</span>
+                    <span className="text-right w-12">{t.density}</span>
+                  </div>
+                  {keywordRows.map(row => (
+                    <button
+                      key={row.phrase}
+                      type="button"
+                      onClick={() => {
+                        setQuery(row.phrase);
+                        setShowFind(true);
+                      }}
+                      className="w-full grid grid-cols-[1fr_auto_auto] gap-3 text-[11px] items-center py-1 rounded hover:bg-white/5 transition-colors cursor-pointer text-left"
+                    >
+                      <span className="truncate text-slate-300 font-semibold">{row.phrase}</span>
+                      <span className="text-right w-10 font-mono text-slate-500 tabular-nums">{row.count}</span>
+                      <span className="text-right w-12 font-mono text-teal-400 tabular-nums">{row.density}%</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+              <p className="text-[10px] text-slate-600 leading-relaxed">{t.kwHint || 'Stop words are filtered per language.'}</p>
+            </div>
+
+            {/* sentiment */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-3">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <IconGauge className="w-4 h-4 text-teal-400" />
+                {t.sentiment}
+              </h3>
+              <div className="space-y-2.5">
+                {[
+                  { label: t.sentimentPositive, value: analysis.sentiment.positive, bar: 'bg-emerald-500', tone: 'text-emerald-400' },
+                  { label: t.sentimentNeutral, value: analysis.sentiment.neutral, bar: 'bg-slate-500', tone: 'text-slate-300' },
+                  { label: t.sentimentNegative, value: analysis.sentiment.negative, bar: 'bg-rose-500', tone: 'text-rose-400' },
+                ].map(row => (
+                  <div key={String(row.label)} className="space-y-1">
+                    <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
+                      <span className="truncate">{row.label}</span>
+                      <span className={`font-mono tabular-nums ${row.tone}`}>{row.value}%</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className={`h-full ${row.bar} rounded-full transition-[width] duration-300`} style={{ width: `${row.value}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {analysis.sentiment.top.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {analysis.sentiment.top.map(item => (
+                    <span
+                      key={item.word}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${
+                        item.score > 0
+                          ? 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10'
+                          : 'text-rose-300 border-rose-500/30 bg-rose-500/10'
+                      }`}
+                    >
+                      {item.word}
+                      {item.count > 1 && <span className="opacity-50"> ×{item.count}</span>}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <p className="text-[10px] text-slate-600 leading-relaxed">
+                {t.sentimentNote || 'Scored from a per-language word list with negation handling — not a machine-learning model.'}
+              </p>
+            </div>
+
+            {/* tone */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-3">
+              <div className="flex items-center gap-2">
+                <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                  <IconSegmenter className="w-4 h-4 text-teal-400" />
+                  {t.tone}
+                </h3>
+                <span className="flex-1" />
+                {analysis.tone.dominant && (
+                  <span className="text-[10px] font-black uppercase tracking-wider text-teal-400 truncate">
+                    {t[`tone${analysis.tone.dominant.charAt(0).toUpperCase()}${analysis.tone.dominant.slice(1)}`] || analysis.tone.dominant}
+                  </span>
+                )}
+              </div>
+              <div className="space-y-2.5">
+                {[
+                  { key: 'formal', label: t.toneFormal, bar: 'bg-blue-500', tone: 'text-blue-400' },
+                  { key: 'casual', label: t.toneCasual, bar: 'bg-amber-500', tone: 'text-amber-400' },
+                  { key: 'academic', label: t.toneAcademic, bar: 'bg-purple-500', tone: 'text-purple-400' },
+                  { key: 'confident', label: t.toneConfident, bar: 'bg-teal-500', tone: 'text-teal-400' },
+                  { key: 'creative', label: t.toneCreative, bar: 'bg-pink-500', tone: 'text-pink-400' },
+                ].map(row => {
+                  const value = analysis.tone[row.key as 'formal'];
+                  return (
+                    <div key={row.key} className="space-y-1">
+                      <div className="flex items-center justify-between text-[11px] font-bold text-slate-400">
+                        <span className="truncate">{row.label}</span>
+                        <span className={`font-mono tabular-nums ${row.tone}`}>{value}%</span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                        <div className={`h-full ${row.bar} rounded-full transition-[width] duration-300`} style={{ width: `${value}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <p className="text-[10px] text-slate-600 leading-relaxed">
+                {t.toneNote || 'Vocabulary plus structure: sentence length, passives, questions and punctuation all count.'}
+              </p>
+            </div>
+
+            {/* analysis mode + export */}
+            <div className="rounded-3xl border border-white/5 bg-[#0b0f10]/70 glass-card p-5 space-y-4">
+              <h3 className="text-xs font-black uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <IconTiming className="w-4 h-4 text-teal-400" />
+                {t.controlTitle || 'Analysis & export'}
+              </h3>
+
+              <label className="flex items-start gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={live}
+                  onChange={() => setLive(value => !value)}
+                  className="mt-0.5 accent-teal-500 cursor-pointer"
+                />
+                <span className="min-w-0">
+                  <span className="block text-[11px] font-bold text-slate-300">{t.liveAnalysis || 'Analyse as I type'}</span>
+                  <span className="block text-[10px] text-slate-600 leading-relaxed">
+                    {t.liveHint || 'Turn this off to keep the editor untouched and run everything by hand.'}
+                  </span>
+                </span>
+              </label>
+
+              {(!live || stale) && text.length > 0 && (
+                <button
+                  type="button"
+                  onClick={run}
+                  disabled={busy}
+                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-400 hover:to-cyan-500 disabled:from-slate-800 disabled:to-slate-800 disabled:text-slate-600 text-white font-black text-xs uppercase tracking-wide transition-all cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                  {busy ? t.analysing || 'Analysing…' : t.runAnalysis || 'Analyse now'}
+                </button>
+              )}
+
+              {text.length > AUTO_LIMIT && live && (
+                <p className="text-[10px] text-amber-400/80 leading-relaxed">
+                  {(t.manualHint || 'Past {n} characters the analysis waits for the button so typing stays smooth.').replace(
+                    '{n}',
+                    AUTO_LIMIT.toLocaleString()
+                  )}
+                </p>
+              )}
+              {!highlightPossible && (
+                <p className="text-[10px] text-amber-400/80 leading-relaxed">
+                  {(t.highlightOffHint || 'Highlighting is off past {n} characters.').replace('{n}', HIGHLIGHT_LIMIT.toLocaleString())}
+                </p>
+              )}
+
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" checked={autosave} onChange={toggleAutosave} className="mt-0.5 accent-teal-500 cursor-pointer" />
+                <span className="min-w-0">
+                  <span className="block text-[11px] font-bold text-slate-300">{t.autosave || 'Keep a local draft'}</span>
+                  <span className="block text-[10px] text-slate-600 leading-relaxed">
+                    {t.autosaveHint || 'Saved in this browser only, never uploaded. Off unless you switch it on.'}
+                  </span>
+                </span>
+              </label>
+              {restored && <p className="text-[10px] text-teal-400">{t.draftRestored || 'Draft restored from this browser.'}</p>}
+
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { icon: <FileText className="w-3.5 h-3.5" />, label: t.exportTxt || 'Text', onClick: () => downloadText(text, `${fileStem}.txt`) },
+                  { icon: <FileCode2 className="w-3.5 h-3.5" />, label: t.exportMd || 'Report', onClick: () => downloadText(buildReport(), `${fileStem}-report.md`, 'text/markdown;charset=utf-8') },
+                  { icon: <Table2 className="w-3.5 h-3.5" />, label: t.exportCsv || 'Keywords', onClick: exportCsv },
+                  { icon: <FileJson className="w-3.5 h-3.5" />, label: t.exportJson || 'Analysis', onClick: exportJson },
+                ].map(action => (
+                  <button
+                    key={String(action.label)}
+                    type="button"
+                    onClick={action.onClick}
+                    disabled={!text}
+                    className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  >
+                    {action.icon}
+                    <span className="truncate">{action.label}</span>
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  printDocument(
+                    text,
+                    t.reportTitle || 'WordFlow',
+                    `${new Date().toLocaleDateString()} · ${counts.words} ${t.wordsShort || 'words'} · ${counts.chars} ${t.charsShort || 'chars'}`
+                  )
+                }
+                disabled={!text}
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-teal-500/30 bg-teal-500/10 hover:bg-teal-500/20 text-[11px] font-bold text-teal-300 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
+              >
+                <Printer className="w-3.5 h-3.5" />
+                {t.exportPrint || 'Print / PDF'}
+              </button>
+            </div>
+          </aside>
         </section>
 
-        {/* Feature SEO Grid */}
-        <section className="bg-white/[0.02] border border-white/5 p-8 rounded-3xl grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-          <div className="space-y-2">
-            <h3 className="text-white font-bold text-base">{t.seoBrowserSpeedTitle}</h3>
-            <p className="text-slate-400 text-xs leading-relaxed font-medium">{t.seoBrowserSpeedText}</p>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={ACCEPT_ATTRIBUTE}
+          className="hidden"
+          onChange={event => {
+            if (event.target.files?.length) stageFiles(event.target.files);
+            event.target.value = '';
+          }}
+        />
+
+        {/* ================================================================= */}
+        {/* How it works                                                      */}
+        {/* ================================================================= */}
+        <section className="space-y-8">
+          <div className="text-center space-y-3">
+            <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">{t.howItWorksTitle || 'How it works'}</h2>
+            <div className="h-1 w-16 bg-teal-500 mx-auto rounded-full" />
           </div>
-          <div className="space-y-2">
-            <h3 className="text-white font-bold text-base">{t.seoUseCaseTitle}</h3>
-            <p className="text-slate-400 text-xs leading-relaxed font-medium">{t.seoUseCaseText}</p>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-white font-bold text-base">{t.seoPrivacyTitle}</h3>
-            <p className="text-slate-400 text-xs leading-relaxed font-medium">{t.seoPrivacyText}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step, index) => {
+              const Art = step.art;
+              return (
+                <div
+                  key={index}
+                  className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-teal-500/20 transition-all group overflow-hidden"
+                >
+                  <span className="absolute top-4 right-5 text-5xl font-black text-white/5 group-hover:text-teal-500/10 transition-colors">
+                    {index + 1}
+                  </span>
+                  <Art className="w-24 h-auto text-teal-400" />
+                  <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-wordflow-bottom" />
+        {/* ================================================================= */}
+        {/* Features                                                          */}
+        {/* ================================================================= */}
+        <motion.section
+          initial={prefersReduced ? false : 'hidden'}
+          whileInView={prefersReduced ? undefined : 'visible'}
+          viewport={{ once: true, amount: 0.12 }}
+          variants={fadeInUp}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {features.map((feature: any, index: number) => {
+            const Icon = featureIcons[index] || IconLocalOnly;
+            return (
+              <div key={index} className="p-6 glass-card rounded-3xl border border-white/5 hover:-translate-y-1 transition-all duration-300 group">
+                <div className="w-11 h-11 rounded-2xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-4 group-hover:scale-110 group-hover:border-teal-500/40 transition-all">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-white text-base font-bold mb-2 group-hover:text-teal-400 transition-colors">{feature.title}</h3>
+                <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{feature.text}</p>
+              </div>
+            );
+          })}
+        </motion.section>
+
+        {/* ================================================================= */}
+        {/* SEO copy + FAQ                                                    */}
+        {/* ================================================================= */}
+        <section className="space-y-16 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="space-y-6">
+              {keywords[0] && (
+                <div className="inline-block px-4 py-1.5 rounded-lg bg-teal-500/10 text-teal-400 text-[11px] font-black uppercase tracking-[0.2em] border border-teal-500/20">
+                  {keywords[0]}
+                </div>
+              )}
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-tight tracking-tight">{t.seoBrowserSpeedTitle}</h2>
+              <p className="text-slate-400 text-base leading-relaxed">{t.seoBrowserSpeedText}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {(Array.isArray(t.seoHeroList) ? t.seoHeroList : []).map((point: string, index: number) => (
+                  <div key={index} className="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <span className="w-6 h-6 shrink-0 bg-teal-500/20 text-teal-300 rounded-lg flex items-center justify-center">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </span>
+                    <span className="text-slate-300 font-bold text-[13px]">{point}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="relative glass-card rounded-[2.5rem] p-8 py-14 min-h-[340px] flex flex-col items-center justify-center gap-6 text-center overflow-hidden border border-white/5">
+              <div className="absolute -top-16 -right-16 w-56 h-56 bg-teal-500/10 rounded-full blur-3xl" />
+              <IconLocalOnly className="w-16 h-16 text-teal-400 relative" />
+              <div className="space-y-3 max-w-sm relative">
+                <h3 className="text-xl font-black text-white tracking-tight leading-tight">{t.seoPrivacyTitle}</h3>
+                <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoPrivacyText}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-7 md:p-12 rounded-3xl bg-[#04140f] border border-white/5 space-y-8">
+            <div className="max-w-3xl space-y-3">
+              <h2 className="text-xl md:text-3xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
+              <div className="h-1.5 w-20 bg-teal-500 rounded-full" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                  <span className="w-6 h-px bg-white/20" />
+                  {t.seoUseCaseTitle}
+                </div>
+                <p className="text-slate-400 text-[15px] leading-relaxed">{t.seoUseCaseText}</p>
+              </div>
+              <div className="space-y-3">
+                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                  <span className="w-6 h-px bg-white/20" />
+                  {t.seoHeroTitle}
+                </div>
+                <p className="text-slate-400 text-[15px] leading-relaxed">{t.seoHeroText}</p>
+              </div>
+            </div>
+          </div>
+
+          {faqs.length > 0 && (
+            <div className="max-w-4xl mx-auto w-full space-y-8">
+              <div className="text-center space-y-3">
+                <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                <div className="h-1 w-16 bg-teal-500 mx-auto rounded-full" />
+              </div>
+              <div className="grid gap-3">
+                {faqs.map((faq: any, index: number) => (
+                  <details
+                    key={index}
+                    className="glass-card rounded-2xl px-5 py-4 text-left border border-white/5 hover:border-teal-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                  >
+                    <summary className="flex items-start gap-3 cursor-pointer list-none text-[15px] font-bold text-white group-hover:text-teal-400 transition-colors">
+                      <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-teal-500/10 flex items-center justify-center text-teal-400 text-[11px] font-black">
+                        Q
+                      </span>
+                      <span className="flex-1 min-w-0">{faq.question}</span>
+                      <span className="shrink-0 text-teal-400 transition-transform group-open:rotate-45 text-xl leading-none">+</span>
+                    </summary>
+                    <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {keywords.length > 0 && (
+            <div className="max-w-4xl mx-auto w-full space-y-4 opacity-55 text-center">
+              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
+              <div className="flex flex-wrap justify-center gap-2">
+                {keywords.map((keyword: string, index: number) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-teal-500/10 hover:border-teal-500/20 hover:text-teal-400 transition-all cursor-default"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        <AdBanner id="adsense-wordflow-bottom" />
       </main>
 
-      {/* Footer Accordion */}
-      <Footer lang={lang} t={t} onOpenModal={openModal} />
+      <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />
 
-      {/* Modal Layout */}
-      <LegalModal 
-        isOpen={activeModal !== null}
-        onClose={() => setActiveModal(null)}
-        title={modalTitle}
-        content={modalText}
+      <LegalModal
+        isOpen={legalModal === 'privacy'}
+        onClose={() => setLegalModal(null)}
+        title={legalTranslations[lang]?.nav.privacy || 'Privacy Policy'}
+        content={legalTranslations[lang]?.privacy.content || ''}
+        t={t}
+      />
+      <LegalModal
+        isOpen={legalModal === 'terms'}
+        onClose={() => setLegalModal(null)}
+        title={legalTranslations[lang]?.nav.terms || 'Terms of Service'}
+        content={legalTranslations[lang]?.terms.content || ''}
+        t={t}
+      />
+      <LegalModal
+        isOpen={legalModal === 'cookies'}
+        onClose={() => setLegalModal(null)}
+        title={legalTranslations[lang]?.nav.cookies || 'Cookie Policy'}
+        content={legalTranslations[lang]?.cookies.content || ''}
         t={t}
       />
     </div>

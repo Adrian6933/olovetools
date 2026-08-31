@@ -1,6 +1,6 @@
 export default {
   "heroTitle": "DOWNLOAD KICK CLIPS",
-  "seo_title": "Kickclip | Download Kick Clips",
+  "seo_title": "KickBolt | Download Kick clips in bulk, no account",
   "heroDesc": "The ultimate tool to save Kick moments. Fast, reliable and zero registration. Download entire lists of clips at once.",
   "seo_description": "The ultimate tool to save Kick moments. Fast, reliable and zero registration. Download entire lists of clips at once.",
   "uploadTxt": "UPLOAD .TXT LIST",
@@ -18,7 +18,7 @@ export default {
   "tips2": "Mobile Ready: Our files are vertical-ready. Perfect for TikTok, Reels, and YouTube Shorts.",
   "tips3": "Bulk Mode: Use the .txt upload to save lists of up to 50 clips and download them all in seconds.",
   "footerDesc": "Professional Kick clip downloader. Optimized engine to get high-definition MP4 videos instantly.",
-  "footerSeoPara": "Kickclip uses advanced technology to parse Kick metadata and fetch direct MP4 streams. Our infrastructure is designed for speed, allowing users to convert clips to high-definition video files in seconds without any quality loss.",
+  "footerSeoPara": "KickBolt reads Kick's public clip metadata, finds the highest rendition the streamer actually published, and hands you the MP4 — one at a time or as a single stored ZIP. Kick does not allow a browser to fetch either the API or the video directly, so requests are relayed: through our own endpoint first, and through public CORS proxies only as a fallback you can switch off.",
   "proTipsTitle": "PRO TIPS FOR EDITORS",
   "tip1Title": "PERFORMANCE",
   "tip2Title": "FORMAT",
@@ -43,16 +43,106 @@ export default {
   "views": "Views",
   "ready": "READY",
   "preparing": "PREPARING...",
-  "quickLinks": ["Kick to MP4", "Download Clips", "Bulk Downloader", "Clip Saver", "1080p Download", "Stream Tools", "Kick to TikTok", "Mobile Downloader", "Fast Clip Converter", "Offline Kick Viewer"],
-  "seoTags": ["KICK DOWNLOADER", "MP4 HD", "BULK DOWNLOAD", "NO LOGIN", "FREE TOOL", "1080P", "KICK CLIPS", "EDITOR KIT", "TIKTOK CONVERTER", "GAMING VIDEO", "REELS MAKER", "STREAMING KIT", "HIGH DEFINITION", "DIRECT DOWNLOAD", "FAST DOWNLOAD", "MOBILE READY", "KICK SAVER", "CLIP CONVERTER", "NO WATERMARK", "BEST KICK TOOL"],
+  "quickLinks": [
+    "Kick to MP4",
+    "Download Clips",
+    "Bulk Downloader",
+    "Clip Saver",
+    "1080p Download",
+    "Stream Tools",
+    "Kick to TikTok",
+    "Mobile Downloader",
+    "Fast Clip Converter",
+    "Offline Kick Viewer"
+  ],
+  "seoTags": [
+    "KICK DOWNLOADER",
+    "MP4 HD",
+    "BULK DOWNLOAD",
+    "NO LOGIN",
+    "FREE TOOL",
+    "1080P",
+    "KICK CLIPS",
+    "EDITOR KIT",
+    "TIKTOK CONVERTER",
+    "GAMING VIDEO",
+    "REELS MAKER",
+    "STREAMING KIT",
+    "HIGH DEFINITION",
+    "DIRECT DOWNLOAD",
+    "FAST DOWNLOAD",
+    "MOBILE READY",
+    "KICK SAVER",
+    "CLIP CONVERTER",
+    "NO WATERMARK",
+    "BEST KICK TOOL"
+  ],
   "legal": {
     "privacy": "Privacy",
     "terms": "Terms",
     "cookies": "Cookies",
     "contactEmail": "CONTACT BY EMAIL",
     "gotIt": "I UNDERSTAND",
-    "privacyText": "At Kickclip, privacy is paramount. We do not collect, store, or share any personally identifiable data. When using our tool, links are processed in real-time and no log of downloaded clips is kept on our servers. We do not use databases to track user activity. For any questions regarding your data, you can reach us at adrian.contact.me.69@gmail.com.",
-    "termsText": "Kickclip is a technical tool for accessing public Kick content. The user is solely responsible for their use of downloaded materials and must respect copyrights and licenses of content creators. Kickclip is not affiliated with Kick Interactive Inc. The service is provided 'as is' without warranties of any kind.",
-    "cookiesText": "Our website uses only strictly necessary LocalStorage for the technical operation of the site, such as remembering your language preferences. We do not use third-party tracking cookies or advertising pixels. By browsing Kickclip, you accept this essential technical usage to ensure the best possible experience."
-  }
+    "privacyText": "KickBolt keeps no account of you: no sign-up, no analytics profile, no database of the links you paste. What it cannot claim is that nothing touches a server — Kick refuses direct browser requests, so every clip is relayed. Our own endpoint handles it first and logs nothing; if it fails, the request falls back to public CORS proxies (corsproxy.io, allorigins.win, codetabs.com and similar), which are run by third parties whose logging we do not control. The clip URL, and the video itself, pass through whichever one answers. You can switch that fallback off in the tool, and the page tells you which host served your last download. Your language and that preference live in your own browser. Questions: adrian.contact.me.69@gmail.com.",
+    "termsText": "KickBolt is a technical tool for accessing public Kick content. The user is solely responsible for their use of downloaded materials and must respect copyrights and licenses of content creators. KickBolt is not affiliated with Kick Interactive Inc. The service is provided 'as is' without warranties of any kind.",
+    "cookiesText": "Our website uses only strictly necessary LocalStorage for the technical operation of the site, such as remembering your language preferences. We do not use third-party tracking cookies or advertising pixels. By browsing KickBolt, you accept this essential technical usage to ensure the best possible experience."
+  },
+  "qMaxLabel": "Max Quality",
+  "qMaxSub": "Original source",
+  "q720Label": "720p HD",
+  "q720Sub": "Balanced",
+  "q360Label": "360p Fast",
+  "q360Sub": "Low data",
+  "zipError": "The ZIP could not be built. Some clips may have failed to download; try again with fewer at a time.",
+  "twitchCrossSell": "Looking to download Twitch clips?",
+  "twitchCrossSellCta": "Try TwitchBolt",
+  "routeNotice": "Kick blocks direct browser requests, so every clip is relayed. Our own relay is tried first; the public ones are only a fallback, and you can turn them off.",
+  "routeLast": "Last download handled by: {host}",
+  "routeAllowOn": "Public relays: on",
+  "routeAllowOff": "Public relays: off",
+  "howTitle": "How it works",
+  "step1Title": "Paste the links",
+  "step1Text": "One clip URL per line, or drop in a .txt list. Nothing is fetched until you press the button.",
+  "step2Title": "Pick a quality",
+  "step2Text": "Source keeps the original stream; 720p and 360p trade detail for a much smaller file.",
+  "step3Title": "Let it fetch",
+  "step3Text": "Clips are resolved three at a time so Kick does not rate-limit you, with a progress bar per file.",
+  "step4Title": "Save one or all",
+  "step4Text": "Download clips one by one, or take the whole batch as a single ZIP without recompressing anything.",
+  "featuresTitle": "What it actually does",
+  "feat1Title": "Any Kick clip URL",
+  "feat1Text": "Channel links with ?clip=, /clips/ paths and the shortened share links all resolve to the same clip.",
+  "feat2Title": "Whole lists at once",
+  "feat2Text": "Paste fifty links or upload a .txt file; duplicates are dropped before anything is requested.",
+  "feat3Title": "You choose the quality",
+  "feat3Text": "Not every clip is worth the source bitrate. Drop to 720p or 360p when size matters more than detail.",
+  "feat4Title": "One ZIP, no re-encode",
+  "feat4Text": "The pack is stored, not compressed: video does not shrink under zip, and skipping it saves the wait.",
+  "feat5Title": "No account, ever",
+  "feat5Text": "No sign-up, no email, no extension. Open the page, paste, download, close the tab.",
+  "feat6Title": "Honest about the route",
+  "feat6Text": "Kick will not serve a browser directly, so the tool says which relay carried your clip and lets you refuse the public ones.",
+  "faqTitle": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Does the clip come straight from Kick?",
+      "answer": "No, and it cannot. Kick's clip API sits behind Cloudflare and its video CDN sends no CORS headers, so a browser is not allowed to read either one directly. Every clip is relayed. Our own relay is tried first; if it fails, a handful of public CORS proxies are the fallback, and the notice above the input lets you switch those off and shows which host actually served your last download."
+    },
+    {
+      "question": "Is there a limit on how many clips at once?",
+      "answer": "No hard limit, but clips are resolved three at a time and downloaded five at a time on purpose, so Kick does not start refusing requests. Fifty links in one go is comfortable; several hundred will take a while and is more likely to hit a rate limit partway through."
+    },
+    {
+      "question": "Why is the ZIP the same size as the clips?",
+      "answer": "Because it is stored, not compressed. Video is already compressed, so running it through zip's deflate saves almost nothing and costs a lot of waiting. The pack is a container, not a squeeze."
+    },
+    {
+      "question": "What does \"Max Quality\" actually download?",
+      "answer": "The highest rendition Kick published for that clip, whatever that happens to be. It is not upscaled to 1080p: if the streamer broadcast at 720p, the source is 720p, and the tool will not invent detail that was never recorded."
+    },
+    {
+      "question": "Do you keep my links or the clips?",
+      "answer": "We keep neither. Links are resolved as they arrive and nothing is written to a database. Your language choice and your public-relay preference are stored in your own browser and never sent anywhere. What we cannot promise for you is what a public relay does with a URL it is asked to fetch, which is exactly why you can turn them off."
+    }
+  ]
 };

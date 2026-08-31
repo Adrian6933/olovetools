@@ -25,26 +25,165 @@ const REF = 'en';
 const NON_LATIN = new Set(['ru', 'hi', 'ja', 'zh']);
 
 // Claves (segmento final de la ruta) que legítimamente pueden quedar igual que en inglés
-const SKIP_KEYS = new Set(['title', 'emailAddress', 'languageName', 'seoHeroTitle']);
+// `keys` es el nombre físico de una tecla dentro de una lista de atajos
+// ("Del", "Ctrl+Z", "A / D"): es lo que está impreso en el teclado del usuario,
+// no una etiqueta traducible. La descripción del atajo sí se traduce (`label`).
+// `paste_placeholder` es un fragmento de JSON de ejemplo dentro de un textarea:
+// código literal, no prosa, así que es idéntico en los nueve idiomas.
+// `placeholder_input` (hex-to-rgb) es la misma clase de caso que
+// `paste_placeholder`: una muestra literal de sintaxis CSS dentro de un input
+// ("#FF6347, rebeccapurple, oklch(70% 0.15 30)"), no prosa traducible.
+/** Nombres de unidad del catálogo de UnitFlow: `u_meter`, `u_psi`, `u_mmhg`… */
+const UNIT_NAME_KEY = /^u_[a-z0-9_]+$/;
+// `d_clauseOrder` (cron-flow) no es prosa: es la lista de cláusulas que arma la
+// descripción legible ("time,day,month,weekday,year"). Cada idioma la reordena
+// —japonés y chino leen año → mes → día → hora—, pero las lenguas latinas y
+// germánicas comparten legítimamente el orden inglés. `d_weekdayGenders` es la
+// misma clase de caso: la lista de géneros gramaticales de los siete días
+// ("n,m,m,f,m,f,f" en ruso), que en los idiomas sin concordancia queda toda en
+// masculino y por tanto idéntica al inglés. `stamp_format` es el patrón de
+// fecha de cada ejecución ("{wd} {d} {mo} {y} · {t}"): japonés y chino lo
+// reordenan a año-mes-día, pero las lenguas latinas comparten legítimamente el
+// patrón inglés.
+// `acceptedHint` (pastesnap) es la lista de formatos aceptados
+// ("PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG"): nombres de formato
+// separados por puntos, no prosa, asi que es identica en los nueve idiomas.
+const SKIP_KEYS = new Set(['title', 'acceptedHint', 'emailAddress', 'languageName', 'seoHeroTitle', 'keys', 'paste_placeholder', 'placeholder_input', 'd_clauseOrder', 'd_weekdayGenders', 'stamp_format', 'batch_placeholder']);
 // Valores exactos permitidos aunque coincidan con el inglés (marcas y tecnicismos)
 const ALLOW_VALUES = new Set([
   'oLoveTools', 'FAQ', 'OK', 'URL', 'PNG', 'JPG', 'JPEG', 'SVG', 'GIF', 'PDF', 'ZIP',
   'JSON', 'XML', 'SQL', 'CSV', 'HTML', 'CSS', 'RGB', 'HEX', 'HSL', 'CMYK', 'UUID',
   'QR', 'MP3', 'MP4', 'WebP', 'Base64', 'Markdown', 'Lorem Ipsum', 'Twitch', 'Kick',
+  // Nombres de familias tipograficas (CodeCard): son marcas, no se traducen
+  'JetBrains Mono', 'Fira Code', 'Source Code Pro', 'IBM Plex Mono',
   'TikTok', 'YouTube', 'Instagram', 'EXIF', 'SRT', 'VTT', 'Cron', 'Regex', 'Lottie',
   // Nombres de marca de las propias herramientas (no se traducen, aparecen en seoKeywords/seoTags)
-  'Binary-Flow', 'Cron-Flow', 'Epoch-Flow', 'Klipy', 'PassBolt', 'Lorem-Flow',
+  'Binary-Flow', 'Cron-Flow', 'Epoch-Flow', 'Klipy', 'Entropy-Bolt', 'Lorem-Flow',
   'Morse-Flow', 'SQL-Flow', 'Time-Bolt', 'Whiteboard-Flow', 'Whois-Bolt', 'XML-JSON',
   'UnitFlow', 'Device Test', 'CleanSnap', 'binary flow', 'cron flow', 'epoch flow',
   'lorem flow', 'morse flow', 'sql flow', 'time bolt', 'whiteboard flow', 'whois bolt',
-  'device test', 'key doctor', 'subtitles bolt', 'passbolt', 'klipy', 'colorsnap',
+  'device test', 'key doctor', 'subtitles bolt', 'entropy-bolt', 'klipy', 'colorsnap',
   'cleansnap', 'xml json',
   // Nombres de fuentes tipográficas (nunca se traducen, son nombres propios)
   'Fira Code', 'JetBrains Mono', 'Source Code Pro', 'Geist Mono',
   // Especificaciones técnicas/formato internacionalmente estándar
   'MP4 HD', '1080P', 'ISO 8601',
+  // Tecnicismos que no se traducen en ningún idioma latino/germánico
+  'JSONPath', 'JSON Lines', 'JSON Schema', 'Worker', 'XML ⇄ JSON',
+  // SQL-Flow: sintaxis SQL literal (no es prosa) y tecnicismos que se usan
+  // en inglés en los nueve idiomas. 'Tables' además coincide en francés.
+  'AND / OR', 'SELECT *', 'Joins', 'CTE', 'CTEs', 'Tables',
+  // XML-JSON: nombres de tecnologia y de formato (XPath y CDATA se escriben
+  // igual en los nueve idiomas), las dos etiquetas de direccion (que son
+  // simbolos, no prosa) y las palabras que coinciden con el ingles en frances
+  // y en aleman ("Options", "Arrays").
+  'XPath', 'CDATA', 'cdata', 'worker', 'XML → JSON', 'JSON → XML', 'Arrays', 'Options',
+  // JWTBolt: nomenclatura de la especificacion JWT (RFC 7519) y palabras que
+  // coinciden con el ingles en frances, castellano y portugues ("payload",
+  // "signature", "secret", "audience" se usan tal cual en los tres).
+  'payload', 'signature', 'Secret (base64)', 'Secret (hex)', 'Audience (aud)',
+  'json web token', 'jwks', 'hs256 rs256', 'jwt debugger', 'jwt claims',
+  // FrameSnap: "Format" se escribe igual en ingles, frances y aleman.
+  'Format',
+  // MorseFlow: "Morse" y "Prosigns" se escriben igual en los idiomas latinos y
+  // germanicos, "Farnsworth" es un apellido y "source" es palabra francesa.
+  'Morse', 'Prosigns', 'farnsworth', 'source',
+  // Base64Bolt: el alfabeto es un literal (los caracteres impresos, no prosa),
+  // y "Padding"/"Payload" son los términos que se usan tal cual en las lenguas
+  // latinas y germánicas cuando se habla de codificación.
+  // ("Alphabet" se escribe igual en inglés, francés y alemán.)
+  'A-Z a-z 0-9 + /', 'Padding =', 'Payload', 'Alphabet',
+  // CronFlow: nombres de plataforma y de sintaxis que la gente busca en latín
+  // en los nueve idiomas (nadie busca "systemd oncalendar" traducido), más las
+  // palabras que coinciden de verdad con el inglés en francés ("Expression",
+  // "Minute") y en alemán ("Minute", "April", "August", "September",
+  // "November").
+  // SubtitlesBolt: nombres de norma de emisión (marcas) y "Timing", que en
+  // alemán se escribe igual que en inglés.
+  'Netflix', 'BBC', 'Timing',
+  // "Contact" se escribe igual en frances que en ingles.
+  'Contact',
+  'quartz cron', 'github actions cron', 'aws eventbridge cron', 'systemd oncalendar',
+  'kubernetes cronjob', 'crontab', 'Expression', 'Minute', 'April', 'August',
+  'September', 'November',
+  // Nombres de notación y de algoritmos de hash: no se traducen en ningún idioma
+  'Base64URL', 'Hash A', 'Hash B', 'BLAKE3 online',
+  // Aspect Ratio: nomenclatura de cine y de composicion que no se traduce en
+  // ningun idioma (IMAX es una marca; letterbox/pillarbox y "scope" son los
+  // terminos que usa la industria tal cual), mas las palabras que son
+  // identicas en ingles y en las lenguas latinas/germanicas.
+  'IMAX', 'letterbox', 'pillarbox', 'Reels, Stories, Shorts, TikTok',
+  'Decimal', 'Orientation', 'Portrait', 'Multiple', 'Cinema', 'Megapixels',
+  'transparent', 'Scope', 'Open Graph',
+  'Code', 'Type', 'Types',
+  // Nombres de tecnologías/formatos que no se traducen en ningún idioma
+  // (etiquetas cortas de pestañas en el generador de snippets de Lottie Viewer)
+  'React', 'JS', 'Web', 'WebM', 'Bodymovin', 'dotLottie', 'After Effects Bodymovin',
+  'Video (WebM)',
+  // Cognados exactos en varios idiomas latinos/germánicos
+  'Inspector', 'Version', 'Dimensions',
+  // UnitFlow: "Angle", "Force" y "Notation" son literalmente la palabra
+  // francesa; traducirlas de otra forma seria inventarse un sinonimo peor.
+  // `batch_placeholder` va en SKIP_KEYS porque es una muestra literal de lo que
+  // se pega en el textarea ("1 / 2.5 / 3/4 / 12 km"): cifras y un simbolo de
+  // unidad, no prosa.
+  'Angle', 'Force', 'Notation',
+  // Convenciones de código y nombres de fórmulas de legibilidad: son nombres
+  // propios de sus autores o acrónimos, no se traducen en ningún idioma
+  'camelCase', 'SMOG', 'Gunning Fog', 'Coleman–Liau', 'Fernández Huerta',
+  // Cognados exactos en es/fr/de/pt (etiquetas de una sola palabra)
+  'Auto', 'Formal', 'Document', 'Standard', 'Neutral', 'Text',
+  // HtmlSanitizer: "Strict" se escribe igual en francés, y los términos de
+  // búsqueda de SEO en alemán son los ingleses (un alemán busca "html
+  // sanitizer", no "HTML-Bereiniger"): traducirlos perdería el tráfico.
+  // "dompurify" es el nombre de la librería.
+  'Strict', 'html sanitizer', 'html cleaner', 'dompurify online', 'DOMPurify',
   // Designaciones de resolución: son nombres de estándar, no se traducen
   'QHD (1440p)', 'Full HD (1080p)', 'HD (720p)',
+  // Bitrates y formatos de audio: notación internacional idéntica en todos los idiomas
+  'WAV', '96 kbps', '48 kbps',
+  // Palabras que coinciden de verdad con el inglés en fr/de/pt (no son un olvido)
+  'Volume', 'Script', 'Pause', 'Dithering',
+  // Idem: cognados exactos en es/fr/de/pt (modo de fusión "Normal", "Original",
+  // "Centre" en francés, "Rotation" en francés, "Export" en fr/de, "Banner" en alemán)
+  'Normal', 'Original', 'Centre', 'Rotation', 'Export', 'Banner',
+  // Idem con la etiqueta del lado A de un diff, y "Syntax" en alemán
+  'Original (A)', 'Syntax',
+  // FaviconBolt: "Emoji", "Image" (fr) y "Zoom" son la palabra real en es/fr/de/pt;
+  // "Squircle" es el nombre técnico de la superelipse (no se traduce en ningún
+  // idioma) y "apple touch icon" es el nombre literal del rel de HTML.
+  'Emoji', 'Image', 'Zoom', 'Squircle', 'apple touch icon',
+  // EXIF Cleaner: "Manual" es la palabra real en es/pt y "Altitude" en fr/pt;
+  // coinciden con el inglés porque son cognados exactos, no por estar sin traducir.
+  'Manual', 'Altitude',
+  // ZipFlow: "Deflate" es el nombre del algoritmo del formato ZIP (no se traduce
+  // en ningún idioma); "Compression" es la palabra francesa real, y "Archive"
+  // ("archive" en fr) y "Name" (alemán) son cognados exactos.
+  'Deflate', 'Compression', 'Archive', 'Name',
+  // MarkdownLive: "Editor" (es/pt/de), "Link" (de) y "code" (fr) son la palabra
+  // real en esos idiomas; "Front matter" es el nombre del bloque YAML de cabecera
+  // y no se traduce en ninguna comunidad de Markdown; la muestra de bloque de
+  // código es código, no prosa. Los términos de búsqueda alemanes para editores
+  // de Markdown son literalmente los ingleses.
+  'Editor', 'Link', 'code', 'Front matter', 'const answer = 42;',
+  'markdown editor', 'online markdown editor', 'readme editor',
+  // URLBolt: nombres literales de las funciones de JavaScript y de la RFC (no se
+  // traducen en ningún idioma), y cognados exactos de las partes de una URL:
+  // "Host" (es/pt/de), "Port" (fr/de), "Fragment" (fr/de), "Query"/"Query string"
+  // (de/pt), "Bytes" y "URLs" como unidad y como sigla, "social" y "Reversible"
+  // (es), que son la palabra real en esos idiomas.
+  'encodeURIComponent (JavaScript)', 'encodeURI (JavaScript)', 'RFC 3986 strict',
+  'Host', 'Port', 'Fragment', 'Query', 'Query string', 'Bytes', 'URLs',
+  // List Mixer: "union" es literalmente la palabra francesa de la unión de
+  // conjuntos y "Filter" la alemana de filtro; coinciden con el inglés por ser
+  // cognados exactos del vocabulario matemático, no por estar sin traducir.
+  'union', 'Filter',
+  '{0} URLs', 'social', 'Social', 'Reversible',
+  // Hex to RGB: nombre de la propia norma ("WCAG 2.1") y cognados exactos del
+  // vocabulario del color: "Palette" (de/fr), "Chroma" (es/pt/de/fr), "Alpha"
+  // (es/pt/de/fr), "Harmonies" y "Monochrome" (fr). Son la palabra real en esos
+  // idiomas, no inglés sin traducir.
+  'WCAG 2.1', 'Palette', 'Chroma', 'Alpha', 'Harmonies', 'Monochrome',
 ]);
 const EMAIL_OR_URL = /(@|https?:\/\/|www\.)/;
 // Frases inglesas que no deberían aparecer literalmente en NINGÚN idioma no-inglés
@@ -144,6 +283,13 @@ for (const lang of LANGS) {
     for (const [key, val] of Object.entries(flat)) {
       if (typeof val !== 'string' || !(key in ref)) continue;
       const enVal = ref[key];
+      // Los nombres de unidad (u_*) de UnitFlow coinciden a propósito con el
+      // inglés en muchos idiomas: las unidades SI epónimas (Newton, Pascal,
+      // Joule, Hertz, Kelvin, Celsius, Bar, Torr, Erg, Dyne…) se escriben igual
+      // en alemán, francés, portugués o italiano porque son apellidos, no
+      // sustantivos. Marcarlas como "sin traducir" llenaría el informe de ruido
+      // permanente y escondería los avisos que sí importan.
+      if (UNIT_NAME_KEY.test(leaf(key))) continue;
       if (SKIP_KEYS.has(leaf(key)) || ALLOW_VALUES.has(val) || EMAIL_OR_URL.test(val)) continue;
       if (val === enVal && val.length > 3 && /[a-zA-Z]/.test(val)) {
         (r.untranslated[tool] ??= {})[key] = enVal;

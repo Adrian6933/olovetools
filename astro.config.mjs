@@ -14,6 +14,7 @@ export default defineConfig({
   site: 'https://olovetools.com',
   output: 'server',
   adapter: vercel(),
+
   integrations: [
     react(),
     sitemap({

@@ -1,68 +1,217 @@
 export default {
   "title": "Device Test",
-  "seo_title": "Device Test | 测试您的网络摄像头和麦克风并查看系统信息，100% 本地完成。",
-  "seo_description": "测试您的网络摄像头、麦克风并查看系统信息，全部在浏览器中本地完成。",
+  "seo_title": "Device Test | 检测摄像头、麦克风、扬声器和屏幕",
+  "seo_description": "用真实的数字确认你的摄像头、麦克风、扬声器、屏幕、键盘和指针是否真的能用：采集分辨率、帧率、以 dBFS 计的输入电平，以及摄像头实际支持的分辨率。什么都不上传。",
   "seoHeroTitle": "Device Test",
-  "seoHeroText": "测试您的网络摄像头、麦克风并查看系统信息，全部在浏览器中本地完成。",
-  "camTitle": "网络摄像头",
-  "camDenied": "摄像头访问被拒绝",
-  "camPlaceholder": "摄像头预览",
-  "camNone": "未检测到摄像头",
-  "camLabel": "摄像头",
-  "camStart": "启动摄像头",
-  "camStop": "停止摄像头",
-  "micTitle": "麦克风",
-  "micRecording": "录制中",
-  "micStart": "启动麦克风",
-  "micRecord": "录制5秒",
-  "micPlaying": "播放中",
-  "micPlay": "播放",
-  "sysTitle": "系统信息",
-  "statusReady": "就绪",
-  "sysNote": "通过 navigator API 在本地检测",
-  "sysResolution": "屏幕分辨率",
-  "sysPixelRatio": "像素比",
-  "sysColorDepth": "颜色深度",
-  "sysBrowser": "浏览器",
-  "sysOS": "操作系统",
-  "sysCpuCores": "CPU核心",
-  "sysRam": "设备内存",
-  "sysTouch": "触摸支持",
-  "statusRecording": "录制中",
-  "statusActive": "活跃",
-  "statusError": "错误",
-  "statusIdle": "空闲",
-  "seoBrowserSpeedTitle": "即时本地处理",
-  "seoBrowserSpeedText": "所有处理均使用原生 JavaScript API 在您的浏览器内执行。数据绝不会发送到服务器。",
-  "seoUseCaseTitle": "100% 客户端",
-  "seoUseCaseText": "一切都在您的浏览器中本地运行。您的数据永远不会离开您的设备。",
-  "seoPrivacyTitle": "100% 隐私与安全",
-  "seoPrivacyText": "无数据库、追踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
-  "seoKeywords": [
-    "device test",
-    "在线工具",
-    "免费",
-    "本地",
-    "浏览器"
-  ],
+  "seoHeroText": "检测摄像头、麦克风、扬声器、屏幕、键盘和指针，看到的是每一项背后的数字，而不是一个绿勾。",
+  "seoBrowserSpeedTitle": "实测，而非假设",
+  "seoBrowserSpeedText": "依次向摄像头请求 4K、1440p、1080p、720p 和 480p，并如实报告它到底给了什么。麦克风以 dBFS 计量，带峰值保持、削波检测和静音检测。请求不等于得到，所以我们看结果。",
+  "seoUseCaseTitle": "六项检测，没有一项是自动的",
+  "seoUseCaseText": "摄像头、麦克风、扬声器、屏幕、键盘和指针。每项都有自己的按钮，只有在你启动时才申请权限：打开页面不会点亮任何摄像头。",
+  "seoPrivacyTitle": "什么都不会离开你的设备",
+  "seoPrivacyText": "摄像头预览、电平表和五秒录音全都留在这个标签页里。不上传、不注册、也不对这些做任何统计，关掉页面就全部消失。",
+  "hero": {
+    "badge": "全程在你的浏览器里运行",
+    "title": "检测摄像头、麦克风和屏幕，",
+    "titleHighlight": "看真正的数字",
+    "subtitle": "不是一个什么都说明不了的绿勾。摄像头实际输出的分辨率和帧率、以 dBFS 计的输入电平、它支持哪些分辨率，还有扬声器、屏幕、键盘和触控的检测。",
+    "trust1": "不上传，不注册",
+    "trust2": "没有东西会自己启动",
+    "trust3": "六项独立检测"
+  },
+  "ui": {
+    "tabCamera": "摄像头",
+    "tabMic": "麦克风",
+    "tabSpeakers": "扬声器",
+    "tabScreen": "屏幕",
+    "tabKeyboard": "键盘",
+    "tabPointer": "指针",
+    "start": "开始",
+    "stop": "停止",
+    "refresh": "刷新设备列表",
+    "defaultDevice": "系统默认",
+    "labelsHint": "在你授权一次之前，设备名称是隐藏的：这是浏览器的规矩，不是故障。随便启动一项检测，真实名称就会出现。",
+    "probeResolutions": "探测分辨率",
+    "probeResults": "摄像头实际给出的结果",
+    "probeHint": "逐个请求每种分辨率，并报告返回的结果。请求不是承诺：浏览器不会直接失败，而是给你最接近的那个。",
+    "actualResolution": "正在采集",
+    "frameRate": "帧率",
+    "facing": "朝向",
+    "maxSupported": "声称的上限",
+    "notAvailable": "不可用",
+    "capture": "拍一张",
+    "download": "下载",
+    "clear": "清除",
+    "record": "录 5 秒",
+    "peak": "峰值",
+    "clipping": "已削波 —— 请调低输入增益",
+    "silent": "没有信号 —— 是不是静音了？",
+    "meterHint": "RMS 是你听到的响度，峰值抓的是短促的冲击。正常说话大致在 −18 dBFS 左右，条形不该一直停在红色区。",
+    "speakersIntro": "在你选择的声道上播放 440 Hz 的音。如果只有一边出声，或者左右反了，问题在线材或系统设置，不在浏览器。",
+    "speakersHint": "声音特意做了淡入淡出：直接启停一段正弦波会产生一声爆音，在耳机里比音本身还响。",
+    "channelLeft": "左声道",
+    "channelBoth": "双声道",
+    "channelRight": "右声道",
+    "screenIntro": "全屏纯色用来找坏点和亮点，另有渐变和细网格用来看色带与背光漏光。",
+    "screenStart": "开始屏幕检测",
+    "screenHint": "点击或按 → 切换下一张，按 Esc 退出。",
+    "screenGradient": "渐变",
+    "screenGrid": "网格",
+    "screenNext": "下一张",
+    "close": "关闭",
+    "keyboardStart": "开始监听",
+    "keyboardStop": "停止监听",
+    "keysSeen": "个按键已记录",
+    "keyboardHint": "监听期间按键会被拦截而不执行原本的功能：否则按 Tab 或 F5 就会把你带离页面。绿色表示该键至少被记录过一次。",
+    "reset": "重置",
+    "pointerHint": "在这里按住并拖动。触摸屏上可以同时用多根手指。",
+    "pointerActive": "当前",
+    "pointerMax": "同时最多",
+    "pointerType": "类型",
+    "pointerButtons": "按键",
+    "sysTitle": "系统",
+    "sysNote": "通过浏览器的标准 API 在本地读取，并在你改变窗口大小或旋转设备时重新读取。",
+    "sysScreen": "屏幕",
+    "sysViewport": "视口",
+    "sysPixelRatio": "像素密度",
+    "sysColorDepth": "色深",
+    "sysColorGamut": "色域",
+    "sysBrowser": "浏览器",
+    "sysEngine": "内核",
+    "sysOS": "操作系统",
+    "sysGpu": "显卡",
+    "sysCpuCores": "CPU 线程",
+    "sysMemory": "设备内存",
+    "sysTouchPoints": "触控点数",
+    "sysPointer": "指针",
+    "sysLanguages": "语言",
+    "sysTimezone": "时区",
+    "sysConnection": "连接",
+    "sysOnline": "在线",
+    "sysReducedMotion": "减弱动效",
+    "unknown": "—",
+    "yes": "是",
+    "no": "否",
+    "errors": {
+      "NotAllowedError": "权限被拒绝。请在浏览器地址栏里允许后再试。",
+      "NotFoundError": "没有找到这一类设备。",
+      "NotReadableError": "设备正被占用 —— 多半是另一个程序在用。",
+      "OverconstrainedError": "这个设备做不到所要求的参数。",
+      "AbortError": "设备不再响应。"
+    }
+  },
+  "next": {
+    "nextStepTitle": "继续处理",
+    "nextStepHint": "照片随你带走，无需重新上传",
+    "nextCrop": "裁剪它",
+    "nextCutout": "抠掉背景",
+    "nextCompress": "压缩它",
+    "nextFormat": "换个格式",
+    "nextWatermark": "加水印"
+  },
+  "how": {
+    "title": "怎么用",
+    "subtitle": "三步，而且在你开口之前摄像头一直是关着的。",
+    "steps": [
+      {
+        "title": "挑一项检测",
+        "text": "摄像头、麦克风、扬声器、屏幕、键盘或指针。你不选，就什么都不会跑。"
+      },
+      {
+        "title": "授予权限",
+        "text": "只针对你启动的那一项，也只在你启动时。打开页面本身什么都不申请。"
+      },
+      {
+        "title": "读数字",
+        "text": "采集分辨率与帧率、以 dBFS 计的输入电平、支持的分辨率 —— 而不是一个什么都说明不了的勾。"
+      }
+    ]
+  },
+  "features": {
+    "title": "它测得出来、而绿勾测不出来的东西",
+    "items": [
+      {
+        "title": "你的摄像头真正做得到的分辨率",
+        "desc": "4K、1440p、1080p、720p 和 480p 逐个请求，并报告返回的结果。浏览器不会拒绝，而是给最接近的那个，所以唯一的办法就是请求并查看。"
+      },
+      {
+        "title": "以 dBFS 计的输入电平",
+        "desc": "带保持的 RMS 与峰值，加上削波和静音检测 —— 回答“我的麦克风到底有没有收到声音”的正是这些数字，而不是一根高度不明所以的条。"
+      },
+      {
+        "title": "左、右和双声道",
+        "desc": "每个声道一段 440 Hz 的音，用来分辨是扬声器坏了还是线接反了。带淡入淡出，因为一段生硬的正弦波爆音比它本身还响。"
+      },
+      {
+        "title": "坏点与色带",
+        "desc": "全屏纯色、渐变和细网格。是真正的全屏，因为画面里还留着浏览器工具栏时，黑位和漏光都没法判断。"
+      },
+      {
+        "title": "键盘与多点触控",
+        "desc": "哪些物理按键有反应 —— 特意拦截，好让 Tab 和 F5 被记录而不是把你带走 —— 以及屏幕同时能跟踪几根手指。"
+      },
+      {
+        "title": "什么都不出这个标签页",
+        "desc": "预览、电平表和录音全在本地。不上传、不注册，插上新设备时列表还会自己刷新。"
+      }
+    ]
+  },
   "faqTitle": "常见问题",
   "faq": [
     {
-      "question": "我的数据会发送到服务器吗？",
-      "answer": "不会。所有操作完全在您的浏览器内进行。您的数据永远不会离开您的设备。"
+      "question": "这些东西会被上传吗？",
+      "answer": "不会。摄像头预览、电平表和五秒录音都只存在于这个标签页里，别处没有。没有账号、没有上传、没有服务器；关掉页面，什么都不剩。"
     },
     {
-      "question": "为什么浏览器会请求摄像头和麦克风权限？",
-      "answer": "为了预览您的网络摄像头和可视化麦克风输入，浏览器需要通过 getUserMedia API 获得明确许可。除非您启动5秒测试录制，否则不会录制或上传任何内容，录制仅保留在您的标签页中。"
+      "question": "为什么开始之前设备列表里没有名字？",
+      "answer": "因为在页面至少获得过一次授权之前，浏览器会隐藏设备名称：这能防止任何网站仅靠加载就摸清你的硬件。随便启动一项检测，真实名称就会出现。上一版是在加载时枚举的，所以到处都显示“Camera 1”。"
     },
     {
-      "question": "Device Test 检测哪些系统信息？",
-      "answer": "Device Test 读取屏幕分辨率、像素比、颜色深度、浏览器、操作系统、CPU核心、设备内存和触摸支持，全部通过浏览器中本地可用的标准 navigator 和 screen API。"
+      "question": "“探测分辨率”到底做了什么？",
+      "answer": "它逐个向你的摄像头请求 4K、1440p、1080p、720p 和 480p，并报告实际返回的画面尺寸。约束是请求而非承诺：浏览器不会失败，而是给出最接近的结果，所以想知道一个摄像头到底支持什么，唯一的办法就是问它并测量。"
+    },
+    {
+      "question": "麦克风电平多少算合适？",
+      "answer": "正常说话时 RMS 大致在 −18 dBFS，峰值低于 −6。如果条形冲到红色，说明输入已经削波、声音会失真，请在系统设置里调低增益。如果它始终贴着最左边，那就是麦克风被静音了，或者选错了设备。"
+    },
+    {
+      "question": "页面会自己打开我的摄像头吗？",
+      "answer": "绝不会。每项检测都有自己的按钮，只有你按下时才申请权限，所以仅仅访问这个页面不会申请任何东西。停止检测会立刻释放设备，摄像头上的指示灯也会熄灭。"
+    },
+    {
+      "question": "屏幕检测为什么要全屏？",
+      "answer": "因为画面里还有浏览器工具栏和任务栏时，黑位、背光漏光和面板边缘都无从判断。它用的是浏览器的全屏模式；按 Esc，或者用任何其他方式退出全屏，检测就会自行关闭。"
+    },
+    {
+      "question": "键盘检测时按键为什么不做原本的事？",
+      "answer": "在检测监听期间，按键会被接管而不是执行。否则按 Tab 会移走焦点、F5 会重新加载页面、F11 会切换全屏 —— 这些都无法让你确认按键是否正常。"
+    },
+    {
+      "question": "系统面板显示我的显卡是通用型号，为什么？",
+      "answer": "真正的型号来自一个 WebGL 扩展，有些浏览器为了减少指纹追踪会刻意隐藏它，Firefox 尤其常常屏蔽。这种情况下显示的是通用字符串，而这本身也是一个真实的答案：页面被允许看到的就只有这些。"
     }
   ],
-  "footerTagline": "测试您的网络摄像头、麦克风并查看系统信息，全部在浏览器中本地完成。",
+  "seoKeywordsTitle": "关键词",
+  "seoKeywords": [
+    "摄像头测试",
+    "麦克风测试",
+    "在线相机检测",
+    "在线麦克风检测",
+    "扬声器左右声道测试",
+    "坏点检测",
+    "在线屏幕检测",
+    "键盘测试工具",
+    "多点触控测试",
+    "查看摄像头分辨率",
+    "浏览器设备检测",
+    "在线系统信息"
+  ],
+  "footer_seo_title": "一次会把数字摊开讲的设备检测",
+  "footer_seo_paragraph1": "Device Test 完全在你的浏览器里检测摄像头、麦克风、扬声器、屏幕、键盘和指针。它给的不是一个什么都说明不了的勾，而是摄像头实际输出的分辨率与帧率；它通过逐个请求并测量结果，探明摄像头真正支持哪些分辨率；它以 dBFS 计量你的麦克风，带峰值保持、削波检测和静音检测。",
+  "footer_seo_paragraph2": "没有东西会自己跑：每项检测都有自己的按钮，只有你按下时才申请权限，所以打开页面不会点亮任何摄像头。预览、电平表和五秒录音都留在标签页里，插上设备时列表会自己刷新，系统面板会在你改变窗口大小或旋转设备时重新读取，而不是一直显示页面加载那一刻的旧值。",
   "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
-  "contactForIdeas": "联系提交想法和评论:"
+  "contactForIdeas": "联系提交想法和评论:",
+  "footerTagline": "检测摄像头、麦克风、扬声器、屏幕、键盘和指针，每一项都给出真实数字。所有过程都留在你的浏览器里。"
 };

@@ -52,7 +52,7 @@ import LoremFlow from '../../../tools/lorem-flow/LoremFlow';
 import KeyDoctor from '../../../tools/key-doctor/KeyDoctor';
 import WhiteboardFlow from '../../../tools/whiteboard-flow/WhiteboardFlow';
 import SubtitlesBolt from '../../../tools/subtitles-bolt/SubtitlesBolt';
-import Passbolt from '../../../tools/passbolt/Passbolt';
+import EntropyBolt from '../../../tools/entropy-bolt/EntropyBolt';
 import WhoisBolt from '../../../tools/whois-bolt/WhoisBolt';
 import Framesnap from '../../../tools/framesnap/Framesnap';
 import Cleansnap from '../../../tools/cleansnap/Cleansnap';
@@ -62,7 +62,10 @@ import JwtBolt from '../../../tools/jwt-bolt/JwtBolt';
 import QrReader from '../../../tools/qr-reader/QrReader';
 import { Footer as CompressFooter } from '../../../tools/compresssnap/components/Footer';
 import { Footer as BgRemoverFooter } from '../../../tools/backgroundremover/components/Footer';
+import { Footer as WatermarkFooter } from '../../../tools/watermark-snap/components/Footer';
 import { Footer as PdfFlowFooter } from '../../../tools/pdf-flow/components/Footer';
+import { Footer as CodecardFooter } from '../../../tools/codecard/components/Footer';
+import { Footer as PastesnapFooter } from '../../../tools/pastesnap/components/Footer';
 import { CookieBanner } from '../../../components/CookieBanner';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
 import { AdRail } from '../../../components/shared/AdRail';
@@ -78,7 +81,7 @@ import '../../../styles/global.css';
 export const prerender = true;
 
 export function getStaticPaths() {
-  const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt', 'audiosnap', 'drawsnap', 'diffsnap', 'watermark-snap', 'favicon-bolt', 'exif-clear', 'meme-bolt', 'wordflow', 'markdown-live', 'hash-bolt', 'zip-flow', 'regex-flow', 'lottie-viewer', 'svg-optimizer', 'graph-flow', 'url-bolt', 'base64-bolt', 'uuid-generator', 'list-mixer', 'html-sanitizer', 'colorsnap', 'hex-to-rgb', 'aspect-ratio', 'unitflow', 'sql-flow', 'cron-flow', 'xml-json', 'binary-flow', 'morse-flow', 'epoch-flow', 'time-bolt', 'device-test', 'lorem-flow', 'key-doctor', 'whiteboard-flow', 'subtitles-bolt', 'passbolt', 'whois-bolt', 'framesnap', 'cleansnap', 'klipy', 'clip-flow', 'jwt-bolt', 'qr-reader'];
+  const tools = ['clipy', 'twitchbolt', 'kickbolt', 'formatflow', 'pastesnap', 'compresssnap', 'backgroundremover', 'pdf-flow', 'recordsnap', 'qr-bolt', 'codecard', 'cropsnap', 'css-designer', 'json-flow', 'socialbolt', 'tts-bolt', 'gif-bolt', 'audiosnap', 'drawsnap', 'diffsnap', 'watermark-snap', 'favicon-bolt', 'exif-clear', 'meme-bolt', 'wordflow', 'markdown-live', 'hash-bolt', 'zip-flow', 'regex-flow', 'lottie-viewer', 'svg-optimizer', 'graph-flow', 'url-bolt', 'base64-bolt', 'uuid-generator', 'list-mixer', 'html-sanitizer', 'colorsnap', 'hex-to-rgb', 'aspect-ratio', 'unitflow', 'sql-flow', 'cron-flow', 'xml-json', 'binary-flow', 'morse-flow', 'epoch-flow', 'time-bolt', 'device-test', 'lorem-flow', 'key-doctor', 'whiteboard-flow', 'subtitles-bolt', 'entropy-bolt', 'whois-bolt', 'framesnap', 'cleansnap', 'klipy', 'clip-flow', 'jwt-bolt', 'qr-reader'];
   const languages = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
   
   return tools.flatMap(tool => 
@@ -119,7 +122,7 @@ const toolNames: Record<string, string> = {
   wordflow: 'WordFlow',
   colorsnap: 'ColorSnap',
   unitflow: 'UnitFlow',
-  passbolt: 'PassBolt',
+  'entropy-bolt': 'EntropyBolt',
   framesnap: 'FrameSnap',
   cleansnap: 'CleanSnap',
   'pdf-flow': 'PDFFlow',
@@ -679,6 +682,27 @@ const appSchema = {
         }
         
         .glow-indigo { box-shadow: 0 0 25px -5px rgba(99, 102, 241, 0.35); }
+
+        /* Fuentes monoespaciadas auto-alojadas (OFL) en public/fonts/.
+           Antes el selector de fuente de CodeCard era decorativo: las cuatro
+           familias se pedían por nombre sin que existiera ningún @font-face ni
+           <link>, así que las cuatro caían al monoespaciado del sistema.
+           Auto-alojadas y no traídas de un CDN por dos razones: la tool promete
+           funcionar sin conexión, y html-to-image solo puede empotrar en el PNG
+           las fuentes que puede releer del mismo origen. JetBrains/Fira/Source
+           son variables (un archivo cubre 400-700); IBM Plex Mono es estática.
+           Sin preload a propósito: el navegador solo descarga la familia que el
+           usuario tiene seleccionada. */
+        @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/jetbrains-mono-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+        @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/jetbrains-mono-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+        @font-face { font-family: 'Fira Code'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/fira-code-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+        @font-face { font-family: 'Fira Code'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/fira-code-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+        @font-face { font-family: 'Source Code Pro'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/source-code-pro-var-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+        @font-face { font-family: 'Source Code Pro'; font-style: normal; font-weight: 400 700; font-display: swap; src: url(/fonts/source-code-pro-var-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+        @font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/ibm-plex-mono-400-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+        @font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 400; font-display: swap; src: url(/fonts/ibm-plex-mono-400-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+        @font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url(/fonts/ibm-plex-mono-700-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+        @font-face { font-family: 'IBM Plex Mono'; font-style: normal; font-weight: 700; font-display: swap; src: url(/fonts/ibm-plex-mono-700-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
       </style>
     )}
 
@@ -1303,6 +1327,8 @@ const appSchema = {
         }
         
         .glow-emerald { box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35); }
+      </style>
+    )}
     {tool === 'base64-bolt' && (
       <style is:inline>
         body {
@@ -1863,7 +1889,7 @@ const appSchema = {
         .glow-blue { box-shadow: 0 0 25px -5px rgba(59, 130, 246, 0.35); }
       </style>
     )}
-    {tool === 'passbolt' && (
+    {tool === 'entropy-bolt' && (
       <style is:inline>
         body {
           background-color: #020a08 !important;
@@ -2096,7 +2122,7 @@ const appSchema = {
         {tool === 'key-doctor' && <KeyDoctor lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'whiteboard-flow' && <WhiteboardFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'subtitles-bolt' && <SubtitlesBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
-        {tool === 'passbolt' && <Passbolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
+        {tool === 'entropy-bolt' && <EntropyBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'whois-bolt' && <WhoisBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'framesnap' && <Framesnap lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'cleansnap' && <Cleansnap lang={castLang} dictionary={dictionary} client:load transition:persist />}
@@ -2104,7 +2130,7 @@ const appSchema = {
         {tool === 'clip-flow' && <ClipFlow lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'jwt-bolt' && <JwtBolt lang={castLang} dictionary={dictionary} client:load transition:persist />}
         {tool === 'qr-reader' && <QrReader lang={castLang} dictionary={dictionary} client:load transition:persist />}
-        {tool !== 'clipy' && tool !== 'twitchbolt' && tool !== 'kickbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && tool !== 'compresssnap' && tool !== 'backgroundremover' && tool !== 'pdf-flow' && tool !== 'recordsnap' && tool !== 'qr-bolt' && tool !== 'codecard' && tool !== 'cropsnap' && tool !== 'css-designer' && tool !== 'json-flow' && tool !== 'socialbolt' && tool !== 'tts-bolt' && tool !== 'gif-bolt' && tool !== 'audiosnap' && tool !== 'drawsnap' && tool !== 'diffsnap' && tool !== 'watermark-snap' && tool !== 'favicon-bolt' && tool !== 'exif-clear' && tool !== 'meme-bolt' && tool !== 'wordflow' && tool !== 'markdown-live' && tool !== 'hash-bolt' && tool !== 'zip-flow' && tool !== 'regex-flow' && tool !== 'lottie-viewer' && tool !== 'svg-optimizer' && tool !== 'graph-flow' && tool !== 'url-bolt' && tool !== 'base64-bolt' && tool !== 'uuid-generator' && tool !== 'list-mixer' && tool !== 'html-sanitizer' && tool !== 'colorsnap' && tool !== 'hex-to-rgb' && tool !== 'aspect-ratio' && tool !== 'unitflow' && tool !== 'sql-flow' && tool !== 'cron-flow' && tool !== 'xml-json' && tool !== 'binary-flow' && tool !== 'morse-flow' && tool !== 'epoch-flow' && tool !== 'time-bolt' && tool !== 'device-test' && tool !== 'lorem-flow' && tool !== 'key-doctor' && tool !== 'whiteboard-flow' && tool !== 'subtitles-bolt' && tool !== 'passbolt' && tool !== 'whois-bolt' && tool !== 'framesnap' && tool !== 'cleansnap' && tool !== 'klipy' && tool !== 'clip-flow' && tool !== 'jwt-bolt' && tool !== 'qr-reader' && (
+        {tool !== 'clipy' && tool !== 'twitchbolt' && tool !== 'kickbolt' && tool !== 'formatflow' && tool !== 'pastesnap' && tool !== 'compresssnap' && tool !== 'backgroundremover' && tool !== 'pdf-flow' && tool !== 'recordsnap' && tool !== 'qr-bolt' && tool !== 'codecard' && tool !== 'cropsnap' && tool !== 'css-designer' && tool !== 'json-flow' && tool !== 'socialbolt' && tool !== 'tts-bolt' && tool !== 'gif-bolt' && tool !== 'audiosnap' && tool !== 'drawsnap' && tool !== 'diffsnap' && tool !== 'watermark-snap' && tool !== 'favicon-bolt' && tool !== 'exif-clear' && tool !== 'meme-bolt' && tool !== 'wordflow' && tool !== 'markdown-live' && tool !== 'hash-bolt' && tool !== 'zip-flow' && tool !== 'regex-flow' && tool !== 'lottie-viewer' && tool !== 'svg-optimizer' && tool !== 'graph-flow' && tool !== 'url-bolt' && tool !== 'base64-bolt' && tool !== 'uuid-generator' && tool !== 'list-mixer' && tool !== 'html-sanitizer' && tool !== 'colorsnap' && tool !== 'hex-to-rgb' && tool !== 'aspect-ratio' && tool !== 'unitflow' && tool !== 'sql-flow' && tool !== 'cron-flow' && tool !== 'xml-json' && tool !== 'binary-flow' && tool !== 'morse-flow' && tool !== 'epoch-flow' && tool !== 'time-bolt' && tool !== 'device-test' && tool !== 'lorem-flow' && tool !== 'key-doctor' && tool !== 'whiteboard-flow' && tool !== 'subtitles-bolt' && tool !== 'entropy-bolt' && tool !== 'whois-bolt' && tool !== 'framesnap' && tool !== 'cleansnap' && tool !== 'klipy' && tool !== 'clip-flow' && tool !== 'jwt-bolt' && tool !== 'qr-reader' && (
           <div class="min-h-screen bg-[#060609] text-slate-200 font-sans">
              <ToolPlaceholder lang={castLang} toolSlug={tool!} client:load />
           </div>
@@ -2211,7 +2237,10 @@ const appSchema = {
         para que quede al final real de la página, no dentro de la isla */}
     {tool === 'compresssnap' && <CompressFooter lang={castLang} t={dictionary} client:load />}
     {tool === 'backgroundremover' && <BgRemoverFooter lang={castLang} t={dictionary} client:load />}
+    {tool === 'watermark-snap' && <WatermarkFooter lang={castLang} t={dictionary} client:load />}
     {tool === 'pdf-flow' && <PdfFlowFooter lang={castLang} t={dictionary} client:load />}
+    {tool === 'codecard' && <CodecardFooter lang={castLang} t={dictionary} client:load />}
+    {tool === 'pastesnap' && <PastesnapFooter lang={castLang} t={dictionary} client:load />}
 
     <CookieBanner lang={castLang} client:load />
   </body>

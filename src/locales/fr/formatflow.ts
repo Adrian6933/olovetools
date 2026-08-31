@@ -1,195 +1,272 @@
 export default {
   "languageName": "Français",
   "header": {
-    "subtitle": "CONVERTISSEUR D'IMAGE INTELLIGENT"
+    "subtitle": "CONVERTISSEUR DE FORMATS D'IMAGE"
+  },
+  "hero": {
+    "badge": "Fonctionne dans votre navigateur",
+    "title": "Convertissez vos images dans le format qu'il vous faut,",
+    "titleHighlight": "et voyez ce que ça a coûté",
+    "subtitle": "Déposez jusqu'à 50 photos, choisissez le format, la taille et le poids, puis convertissez quand vous êtes prêt. Rien n'est envoyé et rien ne démarre tant que vous n'appuyez pas sur le bouton.",
+    "trust1": "Aucun envoi, aucun compte",
+    "trust2": "Qualité mesurée (SSIM)",
+    "trust3": "Lots de 50"
   },
   "dropzone": {
-    "drop": "Déposez les images ici !",
-    "click": "Cliquez pour télécharger des images",
-    "dragInfoStart": "Glissez et déposez jusqu'à",
-    "dragInfoCount": "50 images",
-    "dragInfoEnd": "à la fois ou COLLEZ votre image.",
-    "settingsInfo": "Prend en charge JPG, PNG, WEBP, SVG, ICO, PDF, TIFF, HEIC, EPS, RAW...",
-    "pastePrompt": "Vous voulez coller une image ?",
-    "pasteAction": "Essayez PasteSnap",
-    "tooMany": "Trop de fichiers ! Sélection des 50 premiers.",
-    "invalid": "Veuillez sélectionner des fichiers image valides."
+    "title": "Déposez vos images ici",
+    "subtitle": "Jusqu'à {max} à la fois. Vous pouvez aussi coller depuis le presse-papiers.",
+    "waits": "Les fichiers attendent ici : la conversion ne démarre qu'au moment où vous appuyez sur Convertir.",
+    "tooMany": "La file accepte 50 images ; les fichiers en trop ont été laissés de côté.",
+    "unsupported": "EPS et RAW d'appareil photo ne peuvent pas être décodés dans un navigateur : ils ont été écartés.",
+    "decodeFailed": "Ce fichier n'a pas pu être décodé comme une image.",
+    "full": "La file est pleine. Retirez une image pour en ajouter une autre."
   },
-  "app": {
-    "title": "Format",
-    "titleHighlight": "Flow",
-    "subtitle": "Convertissez jusqu'à 50 images à la fois. Ajustez les paramètres globalement ou personnalisez-les individuellement.",
-    "liveComparison": "Comparaison en direct",
-    "comparing": "Comparaison de la taille et de la qualité",
-    "clearAll": "Tout effacer",
-    "startOver": "Recommencer",
+  "stage": {
     "original": "Original",
-    "preview": "Aperçu",
-    "specific": "(Spécifique)",
-    "global": "(Global)",
-    "dimensions": "Dimensions",
-    "newDimensions": "Nouvelles dimensions",
-    "size": "Taille",
-    "estSize": "Taille est.",
-    "queue": "File d'attente",
-    "processing": "Traitement...",
-    "footer": "Conversion locale.",
-    "contactFeedback": "CONTACT POUR IDÉES ET RETOURS :",
-    "copiedEmail": "Copié !",
-    "privacyPolicy": "Politique de confidentialité",
-    "termsOfService": "Conditions d'utilisation",
-    "cookiePolicy": "Politique de cookies",
-    "privacyPolicyContent": {
-      "title": "Politique de confidentialité",
-      "intro": "Votre vie privée est importante pour nous. La politique de FormatFlow est de respecter votre vie privée concernant toute information que nous pourrions collecter sur notre site Web et sur d'autres sites que nous possédons et exploitons.",
-      "section1": {
-        "title": "1. Informations que nous collectons",
-        "text": "Nous ne demandons des informations personnelles que lorsque nous en avons vraiment besoin pour vous fournir un service. Nous les collectons par des moyens justes et légaux, avec votre connaissance et votre consentement. Nous vous informons également de la raison de la collecte et de la manière dont elles seront utilisées."
-      },
-      "section2": {
-        "title": "2. Utilisation des informations",
-        "text": "Nous ne conservons les informations collectées que pendant la durée nécessaire pour vous fournir le service demandé. Nous protégeons les données que nous stockons par des moyens commercialement acceptables pour éviter la perte, le vol, ainsi que l'accès, la divulgation, la copie, l'utilisation ou la modification non autorisés."
-      },
-      "section3": {
-        "title": "3. Traitement local",
-        "text": "Toutes les conversions d'images sont effectuées localement dans votre navigateur. Nous ne téléchargeons, ne stockons ni ne traitons vos images sur nos serveurs. Vos fichiers ne quittent jamais votre appareil."
-      },
-      "contact": "Pour toute question ou suggestion, contactez-nous à : adrian.contact.me.69@gmail.com"
-    },
-    "termsOfServiceContent": {
-      "title": "Conditions d'utilisation",
-      "intro": "En accédant au site Web FormatFlow, vous acceptez d'être lié par ces conditions d'utilisation, toutes les lois et réglementations applicables, et acceptez que vous êtes responsable du respect de toutes les lois locales applicables.",
-      "section1": {
-        "title": "1. Licence d'utilisation",
-        "text": "La permission est accordée de télécharger temporairement une copie des documents (informations ou logiciels) sur le site Web de FormatFlow pour une visualisation personnelle, non commerciale et transitoire uniquement. Il s'agit de l'octroi d'une licence, et non d'un transfert de titre."
-      },
-      "section2": {
-        "title": "2. Clause de non-responsabilité",
-        "text": "Les documents sur le site Web de FormatFlow sont fournis 'tels quels'. FormatFlow n'offre aucune garantie, expresse ou implicite, et rejette et nie par la présente toutes les autres garanties, y compris, sans limitation, les garanties ou conditions implicites de qualité marchande, d'adéquation à un usage particulier ou de non-violation de la propriété intellectuelle ou autre violation des droits."
-      },
-      "section3": {
-        "title": "3. Limitations",
-        "text": "En aucun cas, FormatFlow ou ses fournisseurs ne seront responsables de tout dommage (y compris, sans limitation, les dommages pour perte de données ou de profit, ou en raison d'une interruption d'activité) découlant de l'utilisation ou de l'impossibilité d'utiliser les documents sur le site Web de FormatFlow."
-      }
-    },
-    "cookiePolicyContent": {
-      "title": "Politique de cookies",
-      "intro": "Ceci est la politique de cookies pour FormatFlow, accessible depuis notre site Web.",
-      "section1": {
-        "title": "1. Que sont les cookies ?",
-        "text": "Comme il est d'usage avec presque tous les sites Web professionnels, ce site utilise des cookies, qui sont de minuscules fichiers téléchargés sur votre ordinateur, pour améliorer votre expérience. Cette page décrit les informations qu'ils recueillent, comment nous les utilisons et pourquoi nous devons parfois stocker ces cookies."
-      },
-      "section2": {
-        "title": "2. Comment nous utilisons les cookies",
-        "text": "Nous utilisons des cookies pour diverses raisons détaillées ci-dessous. Malheureusement, dans la plupart des cas, il n'existe aucune option standard de l'industrie pour désactiver les cookies sans désactiver complètement les fonctionnalités et les caractéristiques qu'ils ajoutent à ce site."
-      },
-      "section3": {
-        "title": "3. Cookies que nous définissons",
-        "text": "Cookies de préférences du site : Pour vous offrir une excellente expérience sur ce site, nous fournissons la fonctionnalité permettant de définir vos préférences sur la façon dont ce site fonctionne lorsque vous l'utilisez. Afin de mémoriser vos préférences, nous devons définir des cookies afin que ces informations puissent être appelées chaque fois que vous interagissez avec une page affectée par vos préférences. Cookies d'analyse : Nous utilisons des cookies tiers pour suivre et mesurer l'utilisation de ce site afin que nous puissions continuer à produire du contenu attrayant. Ces cookies peuvent suivre des choses telles que le temps que vous passez sur le site ou les pages que vous visitez, ce qui nous aide à comprendre comment nous pouvons améliorer le site pour vous."
-      }
-    }
+    "converted": "Convertie",
+    "stale": "Réglages modifiés",
+    "zoomIn": "Zoomer",
+    "zoomOut": "Dézoomer",
+    "fit": "Ajuster",
+    "splitLabel": "Séparateur de comparaison",
+    "stageHint": "Molette pour zoomer sur le pointeur, glissez pour déplacer. Maintenez Espace, Alt ou le clic droit pour voir l'original."
   },
   "controls": {
-    "globalSettings": "Paramètres Globaux",
-    "globalInfo": "S'applique à toutes les",
-    "images": "images",
-    "overrideInfo": "sauf exception ci-dessous.",
-    "outputFormat": "Format de Sortie",
+    "presetsTitle": "Préréglages",
+    "presets": {
+      "web": "Web (WEBP, 1920px)",
+      "social": "Réseaux (JPG, 1440px)",
+      "archive": "Archive (PNG, taille réelle)",
+      "email": "E-mail (moins de 500 Ko)"
+    },
+    "presetsHint": "Un préréglage ne fait que remplir les réglages ci-dessous. Ignorez-le et réglez tout à la main si vous préférez.",
+    "outputFormat": "Format de sortie",
+    "formatUnavailable": "Votre navigateur ne sait pas écrire ce format",
+    "formatUnavailableHint": "Les formats barrés sont ceux pour lesquels ce navigateur n'a pas d'encodeur. Nous le vérifions au lieu de le supposer : vous ne récupérez jamais un PNG avec la mauvaise extension.",
+    "qualityTitle": "Qualité et poids",
     "quality": "Qualité",
-    "resize": "Redimensionner (Échelle)",
-    "specificSettings": "Paramètres Spécifiques",
-    "specificHintTitle": "Voulez-vous que cette image soit différente ?",
-    "specificHintText": "Utilisez des paramètres spécifiques pour appliquer une taille ou un format différent uniquement à cette image, en ignorant les paramètres globaux.",
-    "customize": "Personnaliser",
-    "usingGlobal": "Utilise actuellement les paramètres globaux. Basculez pour remplacer.",
-    "downloadImage": "Télécharger l'Image",
-    "downloadAll": "Tout Télécharger",
-    "imageOverride": "REMPLACEMENT D'IMAGE",
-    "filesReady": "FICHIERS PRÊTS"
+    "qualityLossless": "Ce format est sans perte : la qualité n'a aucun effet ici.",
+    "targetSize": "Viser un poids maximal",
+    "targetSizeHint": "La qualité est trouvée par dichotomie : jusqu'à 8 encodages pour se placer juste sous la limite.",
+    "resizeTitle": "Taille",
+    "resizeModes": {
+      "none": "Garder",
+      "scale": "Échelle",
+      "longEdge": "Côté long",
+      "dimensions": "Exacte"
+    },
+    "scale": "Échelle",
+    "longEdgeHint": "côté le plus long",
+    "lockAspect": "Conserver les proportions",
+    "fits": {
+      "contain": "Contenir",
+      "cover": "Couvrir",
+      "stretch": "Étirer"
+    },
+    "sharpen": "Accentuer après redimensionnement",
+    "sharpenHint": "Masque flou appliqué à la seule luminance, pour des bords nets sans halos de couleur.",
+    "transformTitle": "Rotation et fond",
+    "flipH": "Retourner horizontalement",
+    "flipV": "Retourner verticalement",
+    "background": "Fond sous l'image (formats sans transparence)",
+    "engineTitle": "Moteur",
+    "measureQuality": "Mesurer la qualité",
+    "measureQualityHint": "Redécode le résultat et le compare à la source (SSIM). Coûte quelques millisecondes.",
+    "livePreview": "Aperçu en direct",
+    "livePreviewHint": "Désactivé par défaut : activé, chaque changement reconvertit l'image sélectionnée.",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "historyHint": "Historique des réglages"
+  },
+  "editor": {
+    "startOver": "Recommencer",
+    "shortcuts": "← → pour naviguer, Entrée pour convertir, Ctrl+Z pour annuler",
+    "queue": "File d'attente",
+    "addMore": "Ajouter",
+    "remove": "Retirer de la file",
+    "perImage": "Réglages propres à cette image",
+    "perImageOn": "Cette image ignore les réglages globaux.",
+    "perImageOff": "Cette image suit les réglages globaux.",
+    "convert": "Convertir",
+    "convertAll": "Tout convertir",
+    "converting": "Conversion",
+    "reading": "Lecture",
+    "download": "Télécharger",
+    "downloadZip": "ZIP",
+    "dimensions": "Dimensions",
+    "size": "Poids",
+    "vsOriginal": "par rapport à l'original",
+    "quality": "Qualité",
+    "attempts": "passages",
+    "ssimBands": {
+      "identical": "indiscernable",
+      "excellent": "excellente",
+      "good": "bonne",
+      "fair": "visible de près",
+      "poor": "nettement dégradée"
+    },
+    "icoMultisize": "Le .ico contient des versions de 16, 32, 48, 64, 128 et 256 px ; la taille affichée est celle de la plus grande qu'il renferme.",
+    "missedTarget": "Le poids maximal n'a pas pu être atteint, même à la qualité la plus basse. Voici le résultat le plus léger possible.",
+    "notConverted": "Pas encore convertie",
+    "notConvertedHint": "Votre fichier est chargé et en attente. Réglez ce qu'il vous faut et appuyez sur Convertir.",
+    "engineNote": "L'encodage tourne dans {n} workers en arrière-plan : la page ne se fige jamais. Chaque image est décodée une fois et toutes les conversions repartent de là.",
+    "dismiss": "Fermer",
+    "backToTop": "Remonter"
+  },
+  "next": {
+    "nextStepTitle": "Continuez",
+    "nextStepHint": "Le résultat vous suit, sans réenvoi",
+    "nextCompress": "La compresser",
+    "nextCrop": "La recadrer",
+    "nextExif": "Effacer les métadonnées",
+    "nextWatermark": "Ajouter un filigrane",
+    "nextCutout": "Détourer le fond"
+  },
+  "how": {
+    "title": "Comment ça marche",
+    "subtitle": "Trois étapes, et aucune ne démarre toute seule.",
+    "steps": [
+      {
+        "title": "Déposez les fichiers",
+        "text": "Ils sont décodés une fois et attendent dans la file. Rien n'est converti et rien ne quitte votre appareil."
+      },
+      {
+        "title": "Choisissez la sortie",
+        "text": "Format, qualité, taille, rotation, fond. Ou un préréglage et c'est réglé."
+      },
+      {
+        "title": "Convertissez et comparez",
+        "text": "Vous repartez avec le poids, les dimensions et une note SSIM de ce que la conversion a coûté."
+      }
+    ]
   },
   "features": {
-    "heicTitle": "Transformez N'importe Quel Format",
-    "heicDesc": "Passez facilement de n'importe quel format (JPG, PNG, WEBP, etc.) aux nouveaux formats comme SVG, ICO, PDF, TIFF, HEIC, EPS et RAW sans perte de qualité.",
-    "privacyTitle": "100% Privé",
-    "privacyDesc": "Tout se passe localement dans votre navigateur. Aucune image n'est téléchargée sur des serveurs externes.",
-    "batchTitle": "Traitement par Lots",
-    "batchDesc": "Convertissez jusqu'à 50 images à la fois. Téléchargez individuellement ou dans un fichier ZIP.",
-    "resizeTitle": "Redimensionnement Intelligent",
-    "resizeDesc": "Agrandissez jusqu'à 300% ou réduisez pour économiser de l'espace avec des algorithmes de haute qualité.",
-    "formatsTitle": "Formats Modernes",
-    "formatsDesc": "Prise en charge des formats de nouvelle génération comme WEBP et AVIF pour une meilleure compression.",
-    "freeTitle": "Gratuit et Rapide",
-    "freeDesc": "Pas de limites quotidiennes, pas de filigranes et traitement instantané."
+    "title": "Ce qu'il fait et qu'un convertisseur ordinaire ne fait pas",
+    "items": [
+      {
+        "title": "Workers en parallèle",
+        "desc": "L'encodage se fait hors du fil principal, réparti sur plusieurs workers : la page reste réactive même avec 50 images en file."
+      },
+      {
+        "title": "Formats vérifiés, pas supposés",
+        "desc": "Chaque encodeur est testé au démarrage par un vrai encodage de deux pixels. Un navigateur incapable d'écrire l'AVIF ne vous le propose pas."
+      },
+      {
+        "title": "Une qualité lisible",
+        "desc": "Une note SSIM face à la source vous dit ce que la compression a réellement coûté, pas seulement ce que vous avez gagné."
+      },
+      {
+        "title": "Poids cible",
+        "desc": "Vous dites « moins de 500 Ko » et la qualité est trouvée par dichotomie, en 8 encodages au plus, pour se placer juste sous la limite."
+      },
+      {
+        "title": "Aucun envoi",
+        "desc": "Décodage, redimensionnement et encodage se passent dans votre navigateur. Aucun serveur ne voit vos photos, et ça marche hors ligne."
+      },
+      {
+        "title": "Lots avec réglages par image",
+        "desc": "Jusqu'à 50 images à la fois, et chacune peut faire bande à part avec son propre format et sa propre taille."
+      }
+    ]
   },
   "formats": {
-    "title": "Formats Pris en Charge",
-    "svg": {
-      "title": "SVG",
-      "desc": "Fondamental pour les logos et les vecteurs."
+    "title": "Les formats, et ce que chacun apporte vraiment",
+    "subtitle": "En entrée : JPG, PNG, WEBP, AVIF, GIF, BMP, SVG, TIFF et HEIC. EPS et RAW d'appareil photo exigent un interpréteur PostScript et une table par modèle de boîtier : ils sont refusés plutôt que renvoyés en douce sous forme de PNG.",
+    "rows": [
+      {
+        "label": "WEBP",
+        "desc": "Aujourd'hui le meilleur compromis poids/qualité pour le web, avec transparence. Pris en charge partout où ça compte."
+      },
+      {
+        "label": "AVIF",
+        "desc": "Encore plus léger à qualité égale, mais seuls certains navigateurs savent l'écrire. Si le vôtre ne peut pas, le bouton est désactivé."
+      },
+      {
+        "label": "JPG",
+        "desc": "Le format photographique universel. Sans transparence : c'est vous qui choisissez la couleur de fond placée dessous."
+      },
+      {
+        "label": "PNG",
+        "desc": "Sans perte et avec transparence. Le curseur de qualité n'y change rien, et c'est pour ça qu'il est grisé."
+      },
+      {
+        "label": "ICO",
+        "desc": "Une vraie icône multi-tailles : 16, 32, 48, 64, 128 et 256 px dans un seul fichier, recadrée au carré depuis le centre."
+      },
+      {
+        "label": "PDF",
+        "desc": "Une page ajustée à l'image, avec un JPEG à l'intérieur à la qualité que vous avez choisie."
+      },
+      {
+        "label": "TIFF",
+        "desc": "RGBA non compressé pour l'impression et l'archivage. Également accepté en entrée."
+      },
+      {
+        "label": "SVG",
+        "desc": "Une enveloppe : le raster est intégré dans un SVG. Ça ne vectorise pas — aucun outil de navigateur ne le fait — mais ça passe partout où seul le .svg est accepté."
+      }
+    ]
+  },
+  "app": {
+    "footer": "Tout se passe dans votre navigateur.",
+    "contactFeedback": "CONTACT POUR IDÉES ET RETOURS :",
+    "copiedEmail": "Copié !"
+  },
+  "faqTitle": "Questions fréquentes",
+  "faq": [
+    {
+      "question": "Mes images sont-elles envoyées quelque part ?",
+      "answer": "Non. Le décodage, le redimensionnement et l'encodage se font dans votre navigateur, avec le canvas et des web workers. Rien n'est envoyé à un serveur et, une fois la page chargée, tout fonctionne sans connexion."
     },
-    "ico": {
-      "title": "ICO",
-      "desc": "Très recherché par les développeurs pour créer des favicons."
+    {
+      "question": "Pourquoi certains formats sont-ils barrés ?",
+      "answer": "Parce que votre navigateur n'a pas d'encodeur pour eux. Les navigateurs ne le signalent pas : demandez un GIF ou un HEIC et vous récupérez un PNG dont le type a été changé en silence. Au démarrage, nous encodons deux pixels dans chaque format et regardons ce qui sort vraiment, pour ne vous proposer que ce qui marche."
     },
-    "pdf": {
-      "title": "PDF",
-      "desc": "Indispensable pour les utilisateurs qui souhaitent regrouper des images dans des documents."
+    {
+      "question": "Peut-il convertir en HEIC, EPS ou RAW d'appareil photo ?",
+      "answer": "Non, et il ne prétend plus le contraire. Aucun navigateur ne sait écrire le HEIC, l'EPS demande un interpréteur PostScript et le RAW est un format capteur différent pour chaque modèle. Le HEIC et le TIFF sont acceptés en entrée ; les fichiers EPS et RAW sont refusés avec un message plutôt que renvoyés en PNG mal étiqueté."
     },
-    "tiff": {
-      "title": "TIFF",
-      "desc": "Pour les utilisateurs qui ont besoin d'une haute qualité sans perte (impression)."
+    {
+      "question": "Que signifie le nombre SSIM affiché à côté du résultat ?",
+      "answer": "C'est une note de similarité entre l'image convertie et la source, de 0 à 1. Au-dessus de 0,98 la différence est très difficile à voir ; en dessous de 0,95 des artefacts apparaissent sur les photographies. Elle existe parce que « 68 % de gagné » ne raconte que la moitié flatteuse de l'histoire."
     },
-    "heic": {
-      "title": "HEIC",
-      "desc": "Le format des iPhones ; beaucoup cherchent à le convertir en JPG pour le voir sur Windows."
+    {
+      "question": "Pourquoi rien ne se passe quand je dépose un fichier ?",
+      "answer": "C'est voulu. Déposer un fichier se contente de le décoder et de le mettre en file. La conversion — la partie coûteuse — attend que vous appuyiez sur Convertir, pour que vous prépariez tout au calme au lieu de courir après un aperçu qui redémarre sans cesse."
     },
-    "eps": {
-      "title": "EPS",
-      "desc": "Format vectoriel utilisé pour l'impression de haute qualité et la conception graphique."
+    {
+      "question": "Le redimensionnement fait-il perdre du détail ?",
+      "answer": "Toute forte réduction en perd, mais l'ampleur dépend du moteur. Certains navigateurs réduisent en une passe avec un noyau 2x2 et jettent le reste des pixels, ce qui donne des bords crénelés. FormatFlow le mesure au démarrage — il réduit une mire et la compare à une moyenne exacte — et ne se rabat sur la réduction par moitiés successives que si le navigateur en a besoin. Quand le navigateur filtre déjà correctement, ces passes supplémentaires coûteraient du temps sans rien changer : elles sont donc évitées. Vous pouvez aussi ajouter une passe d'accentuation par-dessus."
     },
-    "raw": {
-      "title": "RAW",
-      "desc": "Données d'image non traitées provenant d'appareils photo, idéales pour l'édition professionnelle."
+    {
+      "question": "Pourquoi mes photos de téléphone ne sont-elles plus tournées de travers ?",
+      "answer": "Parce que l'image est décodée avec createImageBitmap et que l'orientation EXIF y est appliquée, une seule fois. L'ancienne méthode chargeait le fichier dans un élément <img>, où certains navigateurs appliquent la balise d'orientation et d'autres non, et le canvas se retrouvait avec l'image non tournée."
+    },
+    {
+      "question": "Combien d'images puis-je convertir d'un coup ?",
+      "answer": "Cinquante. Elles sont encodées en même temps sur plusieurs workers en arrière-plan, et chacune peut porter son propre format et sa propre taille si vous activez les réglages par image."
     }
-  },
-  "seo": {
-    "popularHeader": "Conversions Populaires",
-    "toolsHeader": "Outils d'Image",
-    "tags": [
-      "HEIC en JPG",
-      "PNG en JPG",
-      "JPG en PNG",
-      "WEBP en JPG",
-      "HEIC en PNG",
-      "JPG en AVIF",
-      "PNG en WEBP",
-      "RAW en JPG",
-      "GIF en JPG",
-      "SVG en PNG",
-      "TIFF en JPG",
-      "EPS en PNG",
-      "AVIF en JPG",
-      "ICO en PNG",
-      "WEBP en PNG",
-      "BMP en JPG"
-    ],
-    "actions": [
-      "Convertisseur d'Image",
-      "Redimensionnement en Masse",
-      "Compresser les Images",
-      "Convertisseur Photo Gratuit",
-      "Changer le Format",
-      "Exportation Haute Qualité",
-      "Mettre à l'Échelle",
-      "Outil Hors Ligne"
-    ],
-    "description": "FormatFlow est l'outil ultime pour convertir n'importe quel format (JPG, PNG, WEBP) en HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, redimensionner des photos et changer de format en toute sécurité dans votre navigateur."
-  },
-  "cookies": {
-    "message": "Nous utilisons des cookies pour améliorer votre expérience et à des fins d'analyse. En continuant à utiliser ce site, vous acceptez notre",
-    "privacyPolicy": "Politique de confidentialité",
-    "accept": "Accepter et continuer"
-  },
-  "seo_title": "oLoveTools | FormatFlow",
-  "seo_description": "FormatFlow est l'outil ultime pour convertir n'importe quel format (JPG, PNG, WEBP) en HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, redimensionner des photos et changer de format en toute sécurité dans votre navigateur."
+  ],
+  "seoKeywordsTitle": "Mots-clés",
+  "seoKeywords": [
+    "convertisseur d'images",
+    "convertir HEIC en JPG",
+    "PNG en WEBP",
+    "JPG en AVIF",
+    "WEBP en PNG",
+    "TIFF en JPG",
+    "image en ICO",
+    "générateur de favicon",
+    "image en PDF",
+    "convertisseur d'images par lot",
+    "redimensionner des images en ligne",
+    "compresser des images à un poids donné",
+    "convertisseur d'images hors ligne",
+    "convertisseur d'images gratuit sans envoi"
+  ],
+  "footer_seo_title": "Un convertisseur qui vous dit ce qu'il a fait",
+  "footer_seo_paragraph1": "FormatFlow convertit des images entre JPG, PNG, WEBP, AVIF, ICO, PDF, TIFF et SVG entièrement dans votre navigateur. Il lit le HEIC des iPhone et le TIFF en entrée, redimensionne par échelle, par côté long ou à des dimensions exactes, fait pivoter, retourne, choisit la couleur de fond pour les formats sans transparence et sait viser un poids maximal en cherchant la bonne qualité.",
+  "footer_seo_paragraph2": "Ce qu'il ne fait pas, c'est vous mentir. Les formats que votre navigateur ne sait pas encoder apparaissent désactivés au lieu de renvoyer un PNG mal nommé, l'EPS et le RAW d'appareil photo sont refusés d'emblée, et chaque résultat arrive avec son poids, ses dimensions et une note SSIM de la qualité qu'il a coûtée. Rien n'est envoyé : toute la chaîne tourne sur votre machine.",
+  "seo_title": "FormatFlow | Convertisseur d'images à qualité mesurée",
+  "seo_description": "Convertissez vos images en WEBP, AVIF, JPG, PNG, ICO, PDF, TIFF ou SVG dans votre navigateur. Lots de 50, poids cible, vrai ICO multi-tailles, entrée HEIC et TIFF, et note de qualité SSIM. Aucun envoi."
 };

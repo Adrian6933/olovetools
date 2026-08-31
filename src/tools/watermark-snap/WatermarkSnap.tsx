@@ -1,1065 +1,1169 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Tag, Plus, Trash2, Download, RefreshCw, Upload, Move, Settings, Grid, Sparkles, AlertCircle, X, HelpCircle } from 'lucide-react';
-import { createTranslator, type Language } from '../../locales/meta';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  AlertCircle, ArrowUp, Check, Copy, Download, Eye, Image as ImageIcon, Layers as LayersIcon,
+  Loader2, Package, Plus, Redo2, Stamp, Trash2, Type, Undo2, Upload, X, Zap,
+} from 'lucide-react';
+
+import { createTranslator } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { LegalModal } from './components/LegalModal';
-import { legalTranslations } from '../../locales/legal';
+import { fadeInUp } from '../../components/shared/motion';
 import { useHandoffIntake } from '../../lib/useHandoff';
-import JSZip from 'jszip';
+
+import { Header } from './components/Header';
+import { LayerPanel } from './components/LayerPanel';
+import { NextStepBar } from './components/NextStepBar';
+import { Stage } from './components/Stage';
+import { Toggle } from './components/Fields';
+import {
+  IconBatch, IconHandoff, IconLayers, IconLocal, IconPlace, IconTile,
+  StepDesign, StepDrop, StepExport, StepPlace, WatermarkHeroArt,
+} from './components/Illustrations';
+
+import type {
+  EditorSnapshot, ExportSettings, ImageItem, Layer, LogoAsset, OutputFormat, TextLayer,
+} from './types';
+import { applyPreset, createLogoLayer, createTextLayer, duplicateLayer, newId, type PresetId } from './lib/layers';
+import { ensureFonts } from './lib/render';
+import {
+  ACCEPT_ATTRIBUTE, Encoder, PREVIEW_MAX_EDGE, decodeImage, downloadBlob, formatBytes,
+  looksLikeImage, normaliseFile, outputName,
+} from './lib/pipeline';
 
 interface WatermarkSnapProps {
   lang: string;
   dictionary: any;
 }
 
-interface ImageItem {
-  id: string;
-  file: File;
-  name: string;
-  dataUrl: string;
-  width: number;
-  height: number;
-}
+const MAX_HISTORY = 80;
+const OUTPUT_FORMATS: OutputFormat[] = ['png', 'jpeg', 'webp'];
+const SIZE_LIMITS = [0, 4096, 2560, 1920, 1280];
 
 export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }) => {
   const t = createTranslator(dictionary);
 
-  // Input files state
-  const [images, setImages] = useState<ImageItem[]>([]);
-  const [selectedImageId, setSelectedImageId] = useState<string | null>(null);
+  // ---------------------------------------------------------------------------
+  // Estado
+  // ---------------------------------------------------------------------------
+  const [items, setItems] = useState<ImageItem[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [preview, setPreview] = useState<{ id: string; bitmap: ImageBitmap; width: number; height: number } | null>(null);
 
-  // Watermark parameters
-  const [mode, setMode] = useState<'text' | 'logo'>('text');
-  const [text, setText] = useState<string>('Watermark');
-  const [fontSizeRatio, setFontSizeRatio] = useState<number>(40); // base width 1000px
-  const [color, setColor] = useState<string>('#ffffff');
-  const [opacity, setOpacity] = useState<number>(0.5);
-  const [rotation, setRotation] = useState<number>(0);
-  const [fontFamily, setFontFamily] = useState<string>('sans-serif');
-  const [placementMode, setPlacementMode] = useState<'align' | 'tile' | 'custom'>('align');
-  const [alignPreset, setAlignPreset] = useState<'center' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'>('center');
-  const [customPos, setCustomPos] = useState<{ x: number; y: number }>({ x: 0.5, y: 0.5 });
-  
-  // Custom logo image states
-  const [logoFile, setLogoFile] = useState<File | null>(null);
-  const [logoImgEl, setLogoImgEl] = useState<HTMLImageElement | null>(null);
-  const [logoSizeRatio, setLogoSizeRatio] = useState<number>(20); // logo size relative to base width
+  const [layers, setLayers] = useState<Layer[]>([]);
+  const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
+  const [assetTick, setAssetTick] = useState(0);
+  const assetsRef = useRef<Map<string, LogoAsset>>(new Map());
 
-  // Batch Export & UI statuses
-  const [isCompiling, setIsCompiling] = useState<boolean>(false);
-  const [compileProgress, setCompileProgress] = useState<number>(0);
-  const [activeImageIdx, setActiveImageIdx] = useState<number>(0);
+  // El historial vive en refs y no en el estado: un `commit` disparado desde el
+  // mismo manejador que acaba de llamar a `patchLayer` leería el `layers` viejo
+  // si dependiera del closure de React.
+  const historyRef = useRef<EditorSnapshot[]>([{ layers: [], selectedLayerId: null }]);
+  const historyIndexRef = useRef(0);
+  const [, bumpHistory] = useState(0);
 
-  // Modal statuses
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const [modalType, setModalType] = useState<'privacy' | 'terms' | 'cookies'>('privacy');
+  const [settings, setSettings] = useState<ExportSettings>({
+    format: 'png',
+    quality: 0.92,
+    maxSize: 0,
+    suffix: '-watermarked',
+  });
 
-  // Refs
-  const previewCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const previewContainerRef = useRef<HTMLDivElement | null>(null);
-  const imageCacheRef = useRef<Record<string, HTMLImageElement>>({});
-  const isDraggingRef = useRef<boolean>(false);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const logoInputRef = useRef<HTMLInputElement | null>(null);
+  const [compare, setCompare] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [progress, setProgress] = useState<{ current: number; total: number } | null>(null);
+  const [notice, setNotice] = useState<{ kind: 'error' | 'info'; text: string } | null>(null);
+  const [stats, setStats] = useState<{ drawCalls: number; ms: number } | null>(null);
+  const [redrawKey, setRedrawKey] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [prefersReduced, setPrefersReduced] = useState(false);
 
-  const selectedImage = images.find(img => img.id === selectedImageId) || null;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const encoderRef = useRef<Encoder | null>(null);
+  const previewRef = useRef(preview);
+  previewRef.current = preview;
 
-  // Cleanup ObjectURLs on unmount
+  const activeItem = useMemo(() => items.find(i => i.id === activeId) || null, [items, activeId]);
+  // Copia nueva en cada `assetTick`: el Map de refs conserva su identidad, así
+  // que sin esto el visor no se enteraría de que hay un logo nuevo que dibujar.
+  const assets = useMemo(() => new Map(assetsRef.current), [assetTick]);
+
+  const layersRef = useRef(layers);
+  layersRef.current = layers;
+  const selectedLayerRef = useRef(selectedLayerId);
+  selectedLayerRef.current = selectedLayerId;
+
   useEffect(() => {
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setPrefersReduced(query.matches);
+    sync();
+    query.addEventListener('change', sync);
+    const onScroll = () => setShowScrollTop(window.scrollY > 900);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => {
-      images.forEach(img => URL.revokeObjectURL(img.dataUrl));
+      query.removeEventListener('change', sync);
+      window.removeEventListener('scroll', onScroll);
     };
   }, []);
 
-  // Pre-load watermark logo image
   useEffect(() => {
-    if (logoFile) {
-      const url = URL.createObjectURL(logoFile);
-      const img = new Image();
-      img.onload = () => {
-        setLogoImgEl(img);
-      };
-      img.src = url;
-      return () => {
-        URL.revokeObjectURL(url);
-      };
-    } else {
-      setLogoImgEl(null);
-    }
-  }, [logoFile]);
+    if (!notice) return;
+    const id = setTimeout(() => setNotice(null), 6000);
+    return () => clearTimeout(id);
+  }, [notice]);
 
-  // Redraw preview canvas whenever dependencies modify
-  useEffect(() => {
-    if (!selectedImage || !previewCanvasRef.current) return;
-    
-    const canvas = previewCanvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  // ---------------------------------------------------------------------------
+  // Historial (guarda descripciones de capa, no bitmaps: ~400 bytes por paso)
+  // ---------------------------------------------------------------------------
+  const pushSnapshot = useCallback((snapshot: EditorSnapshot) => {
+    const stack = historyRef.current.slice(0, historyIndexRef.current + 1);
+    const last = stack[stack.length - 1];
+    // Un slider emite decenas de eventos; sólo entra en el historial lo que
+    // realmente cambió el resultado.
+    if (last && JSON.stringify(last.layers) === JSON.stringify(snapshot.layers)) return;
+    stack.push(snapshot);
+    while (stack.length > MAX_HISTORY) stack.shift();
+    historyRef.current = stack;
+    historyIndexRef.current = stack.length - 1;
+    bumpHistory(n => n + 1);
+  }, []);
 
-    // Load or fetch cached image element for instant responsive drawings
-    const draw = (imgEl: HTMLImageElement) => {
-      canvas.width = selectedImage.width;
-      canvas.height = selectedImage.height;
-      
-      drawWatermark(canvas, ctx, imgEl, {
-        mode,
-        text,
-        fontSizeRatio,
-        color,
-        opacity,
-        rotation,
-        fontFamily,
-        placementMode,
-        alignPreset,
-        customPos,
-        logoImgEl,
-        logoSizeRatio
-      });
-    };
+  /** Cierra el cambio en curso. Se aplaza un tick para leer el estado ya aplicado. */
+  const commit = useCallback(() => {
+    window.setTimeout(
+      () => pushSnapshot({ layers: layersRef.current, selectedLayerId: selectedLayerRef.current }),
+      0
+    );
+  }, [pushSnapshot]);
 
-    const cachedImg = imageCacheRef.current[selectedImage.id];
-    if (cachedImg) {
-      draw(cachedImg);
-    } else {
-      const img = new Image();
-      img.onload = () => {
-        imageCacheRef.current[selectedImage.id] = img;
-        draw(img);
-      };
-      img.src = selectedImage.dataUrl;
-    }
-  }, [
-    selectedImage,
-    mode,
-    text,
-    fontSizeRatio,
-    color,
-    opacity,
-    rotation,
-    fontFamily,
-    placementMode,
-    alignPreset,
-    customPos,
-    logoImgEl,
-    logoSizeRatio
-  ]);
+  const jumpHistory = useCallback((direction: -1 | 1) => {
+    const target = historyIndexRef.current + direction;
+    if (target < 0 || target >= historyRef.current.length) return;
+    historyIndexRef.current = target;
+    const snapshot = historyRef.current[target];
+    setLayers(snapshot.layers);
+    setSelectedLayerId(snapshot.selectedLayerId);
+    bumpHistory(n => n + 1);
+  }, []);
 
-  // Core Watermark Rendering Engine
-  const drawWatermark = (
-    canvas: HTMLCanvasElement,
-    ctx: CanvasRenderingContext2D,
-    imageElement: HTMLImageElement,
-    options: {
-      mode: 'text' | 'logo';
-      text: string;
-      fontSizeRatio: number;
-      color: string;
-      opacity: number;
-      rotation: number;
-      fontFamily: string;
-      placementMode: 'align' | 'tile' | 'custom';
-      alignPreset: string;
-      customPos: { x: number; y: number };
-      logoImgEl: HTMLImageElement | null;
-      logoSizeRatio: number;
-    }
-  ) => {
-    // 1. Draw source image
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(imageElement, 0, 0, canvas.width, canvas.height);
-    
-    // 2. Set opacity & styling scale
-    ctx.save();
-    ctx.globalAlpha = options.opacity;
-    
-    const baseScale = canvas.width / 1000; // treating 1000px width as 1.0 scale
-    
-    if (options.mode === 'text') {
-      const actualFontSize = Math.max(12, options.fontSizeRatio * baseScale);
-      ctx.font = `bold ${actualFontSize}px ${options.fontFamily}, sans-serif`;
-      ctx.fillStyle = options.color;
-      ctx.textBaseline = 'middle';
-      ctx.textAlign = 'center';
-      
-      const textMetrics = ctx.measureText(options.text);
-      const textWidth = textMetrics.width;
-      const textHeight = actualFontSize;
-      
-      if (options.placementMode === 'tile') {
-        const stepX = textWidth * 2.2 + 60 * baseScale;
-        const stepY = textHeight * 4.0 + 80 * baseScale;
-        
-        ctx.restore();
-        ctx.save();
-        ctx.rect(0, 0, canvas.width, canvas.height);
-        ctx.clip();
-        
-        const diag = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
-        const startX = -diag;
-        const endX = canvas.width + diag;
-        const startY = -diag;
-        const endY = canvas.height + diag;
-        
-        ctx.globalAlpha = options.opacity;
-        
-        for (let x = startX; x < endX; x += stepX) {
-          for (let y = startY; y < endY; y += stepY) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate((options.rotation * Math.PI) / 180);
-            ctx.fillText(options.text, 0, 0);
-            ctx.restore();
-          }
-        }
-      } else {
-        let posX = canvas.width / 2;
-        let posY = canvas.height / 2;
-        
-        if (options.placementMode === 'align') {
-          const padding = actualFontSize * 1.5;
-          switch (options.alignPreset) {
-            case 'top-left':
-              posX = padding + textWidth / 2;
-              posY = padding;
-              break;
-            case 'top-right':
-              posX = canvas.width - padding - textWidth / 2;
-              posY = padding;
-              break;
-            case 'bottom-left':
-              posX = padding + textWidth / 2;
-              posY = canvas.height - padding;
-              break;
-            case 'bottom-right':
-              posX = canvas.width - padding - textWidth / 2;
-              posY = canvas.height - padding;
-              break;
-            case 'center':
-            default:
-              posX = canvas.width / 2;
-              posY = canvas.height / 2;
-              break;
-          }
-        } else if (options.placementMode === 'custom') {
-          posX = options.customPos.x * canvas.width;
-          posY = options.customPos.y * canvas.height;
-        }
-        
-        ctx.translate(posX, posY);
-        ctx.rotate((options.rotation * Math.PI) / 180);
-        ctx.fillText(options.text, 0, 0);
+  const canUndo = historyIndexRef.current > 0;
+  const canRedo = historyIndexRef.current < historyRef.current.length - 1;
+
+  // ---------------------------------------------------------------------------
+  // Entrada de ficheros
+  // ---------------------------------------------------------------------------
+  const addFiles = useCallback(async (list: FileList | File[]) => {
+    const incoming = Array.from(list);
+    if (incoming.length === 0) return;
+
+    const accepted: ImageItem[] = [];
+    let rejected = 0;
+
+    for (const raw of incoming) {
+      if (!looksLikeImage(raw)) {
+        rejected++;
+        continue;
       }
-    } else {
-      // LOGO WATERMARK
-      if (!options.logoImgEl) {
-        ctx.restore();
-        return;
-      }
-      
-      const logoWidth = (options.logoSizeRatio / 100) * canvas.width;
-      const logoHeight = (logoWidth / options.logoImgEl.width) * options.logoImgEl.height;
-      
-      if (options.placementMode === 'tile') {
-        const stepX = logoWidth * 2.2 + 60 * baseScale;
-        const stepY = logoHeight * 2.2 + 60 * baseScale;
-        
-        ctx.restore();
-        ctx.save();
-        ctx.rect(0, 0, canvas.width, canvas.height);
-        ctx.clip();
-        
-        const diag = Math.sqrt(canvas.width * canvas.width + canvas.height * canvas.height);
-        const startX = -diag;
-        const endX = canvas.width + diag;
-        const startY = -diag;
-        const endY = canvas.height + diag;
-        
-        ctx.globalAlpha = options.opacity;
-        
-        for (let x = startX; x < endX; x += stepX) {
-          for (let y = startY; y < endY; y += stepY) {
-            ctx.save();
-            ctx.translate(x, y);
-            ctx.rotate((options.rotation * Math.PI) / 180);
-            ctx.drawImage(options.logoImgEl, -logoWidth / 2, -logoHeight / 2, logoWidth, logoHeight);
-            ctx.restore();
-          }
-        }
-      } else {
-        let posX = canvas.width / 2;
-        let posY = canvas.height / 2;
-        
-        if (options.placementMode === 'align') {
-          const padding = Math.max(15, baseScale * 30);
-          switch (options.alignPreset) {
-            case 'top-left':
-              posX = padding + logoWidth / 2;
-              posY = padding + logoHeight / 2;
-              break;
-            case 'top-right':
-              posX = canvas.width - padding - logoWidth / 2;
-              posY = padding + logoHeight / 2;
-              break;
-            case 'bottom-left':
-              posX = padding + logoWidth / 2;
-              posY = canvas.height - padding - logoHeight / 2;
-              break;
-            case 'bottom-right':
-              posX = canvas.width - padding - logoWidth / 2;
-              posY = canvas.height - padding - logoHeight / 2;
-              break;
-            case 'center':
-            default:
-              posX = canvas.width / 2;
-              posY = canvas.height / 2;
-              break;
-          }
-        } else if (options.placementMode === 'custom') {
-          posX = options.customPos.x * canvas.width;
-          posY = options.customPos.y * canvas.height;
-        }
-        
-        ctx.translate(posX, posY);
-        ctx.rotate((options.rotation * Math.PI) / 180);
-        ctx.drawImage(options.logoImgEl, -logoWidth / 2, -logoHeight / 2, logoWidth, logoHeight);
-      }
-    }
-    
-    ctx.restore();
-  };
-
-  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
-  useHandoffIntake(file => addUploadedFiles([file]));
-
-  // Upload handlers
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      addUploadedFiles(e.target.files);
-    }
-  };
-
-  const addUploadedFiles = (fileList: FileList | File[]) => {
-    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/svg+xml'];
-    Array.from(fileList).forEach(file => {
-      if (!validTypes.includes(file.type)) return;
-      
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        const item: ImageItem = {
-          id: Math.random().toString(36).substring(2, 11),
+      try {
+        // El HEIC se convierte aquí, en la entrada, para que el resto del
+        // programa trabaje siempre con algo que el canvas sepa dibujar.
+        const file = await normaliseFile(raw);
+        const probe = await decodeImage(file, 64);
+        accepted.push({
+          id: newId('i'),
           file,
           name: file.name,
-          dataUrl: url,
-          width: img.width,
-          height: img.height
-        };
-        imageCacheRef.current[item.id] = img;
-        setImages(prev => {
-          const next = [...prev, item];
-          if (prev.length === 0) {
-            setSelectedImageId(item.id);
-          }
-          return next;
+          size: file.size,
+          width: probe.width,
+          height: probe.height,
+          url: URL.createObjectURL(file),
+          status: 'ready',
         });
-      };
-      img.src = url;
-    });
-  };
-
-  const deleteImage = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setImages(prev => {
-      const filtered = prev.filter(img => img.id !== id);
-      if (selectedImageId === id) {
-        setSelectedImageId(filtered.length > 0 ? filtered[0].id : null);
+        probe.bitmap.close();
+      } catch {
+        rejected++;
       }
-      return filtered;
-    });
-    // Cleanup cache
-    if (imageCacheRef.current[id]) {
-      delete imageCacheRef.current[id];
     }
+
+    if (rejected > 0) {
+      setNotice({
+        kind: 'error',
+        text: (t.errorUnsupported || '{n} file(s) could not be read. Supported: JPG, PNG, WebP, AVIF, GIF, SVG and HEIC.')
+          .replace('{n}', String(rejected)),
+      });
+    }
+    if (accepted.length === 0) return;
+
+    setItems(prev => [...prev, ...accepted]);
+    setActiveId(current => current ?? accepted[0].id);
+  }, [t]);
+
+  // Recibe un fichero de otra herramienta (p. ej. un recorte de Background Remover).
+  useHandoffIntake(file => { void addFiles([file]); });
+
+  // Pegar una imagen del portapapeles.
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const files = Array.from(e.clipboardData?.files || []);
+      if (files.length > 0) {
+        e.preventDefault();
+        void addFiles(files);
+      }
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [addFiles]);
+
+  // ---------------------------------------------------------------------------
+  // Decodificación perezosa: sólo la imagen activa mantiene un bitmap abierto.
+  // Con 40 fotos de 12 MP, tenerlas todas decodificadas serían ~1,9 GB.
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    if (!activeItem) {
+      previewRef.current?.bitmap.close();
+      setPreview(null);
+      return;
+    }
+    if (previewRef.current?.id === activeItem.id) return;
+
+    let cancelled = false;
+    decodeImage(activeItem.file, PREVIEW_MAX_EDGE)
+      .then(decoded => {
+        if (cancelled) {
+          decoded.bitmap.close();
+          return;
+        }
+        previewRef.current?.bitmap.close();
+        setPreview({ id: activeItem.id, bitmap: decoded.bitmap, width: decoded.width, height: decoded.height });
+      })
+      .catch(() => {
+        if (!cancelled) setNotice({ kind: 'error', text: t.errorDecode || 'That image could not be decoded.' });
+      });
+
+    return () => { cancelled = true; };
+  }, [activeItem, t]);
+
+  // Libera todo al desmontar. La versión anterior tenía este mismo efecto con
+  // deps [] y cerraba sobre el array vacío del primer render, así que no
+  // revocaba absolutamente nada.
+  const itemsRef = useRef(items);
+  itemsRef.current = items;
+  useEffect(() => {
+    return () => {
+      itemsRef.current.forEach(item => URL.revokeObjectURL(item.url));
+      previewRef.current?.bitmap.close();
+      assetsRef.current.forEach(asset => asset.bitmap.close());
+      encoderRef.current?.dispose();
+    };
+  }, []);
+
+  const removeItem = (id: string, event?: React.MouseEvent) => {
+    event?.stopPropagation();
+    setItems(prev => {
+      const target = prev.find(i => i.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      const next = prev.filter(i => i.id !== id);
+      setActiveId(current => (current === id ? next[0]?.id ?? null : current));
+      return next;
+    });
   };
 
   const clearAll = () => {
-    images.forEach(img => URL.revokeObjectURL(img.dataUrl));
-    setImages([]);
-    setSelectedImageId(null);
-    imageCacheRef.current = {};
+    items.forEach(item => URL.revokeObjectURL(item.url));
+    setItems([]);
+    setActiveId(null);
+    setProgress(null);
+    setNotice(null);
   };
 
-  // Drag and drop custom coordinate positioning handlers
-  const handleDragStart = () => {
-    if (placementMode !== 'custom') return;
-    isDraggingRef.current = true;
+  const resetAll = () => {
+    clearAll();
+    assetsRef.current.forEach(asset => asset.bitmap.close());
+    assetsRef.current = new Map();
+    setLayers([]);
+    setSelectedLayerId(null);
+    historyRef.current = [{ layers: [], selectedLayerId: null }];
+    historyIndexRef.current = 0;
+    bumpHistory(n => n + 1);
   };
 
-  const handleDragMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDraggingRef.current || !previewContainerRef.current) return;
-    
-    const rect = previewContainerRef.current.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    
-    let x = (clientX - rect.left) / rect.width;
-    let y = (clientY - rect.top) / rect.height;
-    
-    // Clamp to [0, 1] bounds
-    x = Math.max(0, Math.min(1, x));
-    y = Math.max(0, Math.min(1, y));
-    
-    setCustomPos({ x, y });
+  // ---------------------------------------------------------------------------
+  // Capas
+  // ---------------------------------------------------------------------------
+  const pushLayers = useCallback((next: Layer[], selected: string | null) => {
+    setLayers(next);
+    setSelectedLayerId(selected);
+    pushSnapshot({ layers: next, selectedLayerId: selected });
+  }, [pushSnapshot]);
+
+  const addTextLayer = (placement: 'anchor' | 'free' = 'anchor') => {
+    const layer = createTextLayer(t.defaultWatermarkText || '© Your Brand', {
+      placement,
+      ...(placement === 'free' ? { pos: { x: 0.5, y: 0.5 }, opacity: 0.6 } : {}),
+    });
+    pushLayers([...layers, layer], layer.id);
   };
 
-  const handleDragEnd = () => {
-    isDraggingRef.current = false;
-  };
-
-  // Logo file upload handler
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setLogoFile(e.target.files[0]);
-    }
-  };
-
-  // Batch compilation & zip download
-  const handleBatchDownload = async () => {
-    if (images.length === 0) return;
-    setIsCompiling(true);
-    setCompileProgress(0);
-    setActiveImageIdx(0);
-
-    const zip = new JSZip();
-    const offscreenCanvas = document.createElement('canvas');
-    const offscreenCtx = offscreenCanvas.getContext('2d');
-
-    if (!offscreenCtx) {
-      setIsCompiling(false);
-      alert('Could not allocate canvas resources.');
-      return;
-    }
-
+  const handleLogoFile = async (file: File | undefined) => {
+    if (!file) return;
     try {
-      for (let i = 0; i < images.length; i++) {
-        const item = images[i];
-        setActiveImageIdx(i);
-        setCompileProgress(Math.round((i / images.length) * 100));
+      const normalised = await normaliseFile(file);
+      const decoded = await decodeImage(normalised, 1600);
+      const asset: LogoAsset = {
+        id: newId('a'),
+        name: normalised.name,
+        bitmap: decoded.bitmap,
+        width: decoded.bitmap.width,
+        height: decoded.bitmap.height,
+      };
+      assetsRef.current.set(asset.id, asset);
+      setAssetTick(n => n + 1);
+      const layer = createLogoLayer(asset.id);
+      pushLayers([...layers, layer], layer.id);
+    } catch {
+      setNotice({ kind: 'error', text: t.errorLogo || 'That logo could not be read. Try a PNG with transparency.' });
+    }
+  };
 
-        // Ensure source image is loaded in cache
-        let imgEl = imageCacheRef.current[item.id];
-        if (!imgEl) {
-          imgEl = await new Promise<HTMLImageElement>((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve(img);
-            img.onerror = reject;
-            img.src = item.dataUrl;
-          });
-          imageCacheRef.current[item.id] = imgEl;
-        }
+  const patchLayer = (id: string, patch: Partial<Layer>) => {
+    setLayers(prev => prev.map(l => (l.id === id ? ({ ...l, ...patch } as Layer) : l)));
+  };
 
-        // Draw on offscreen canvas
-        offscreenCanvas.width = item.width;
-        offscreenCanvas.height = item.height;
+  const removeLayer = (id: string) => {
+    const next = layers.filter(l => l.id !== id);
+    pushLayers(next, next[next.length - 1]?.id ?? null);
+  };
 
-        drawWatermark(offscreenCanvas, offscreenCtx, imgEl, {
-          mode,
-          text,
-          fontSizeRatio,
-          color,
-          opacity,
-          rotation,
-          fontFamily,
-          placementMode,
-          alignPreset,
-          customPos,
-          logoImgEl,
-          logoSizeRatio
-        });
+  const duplicate = (id: string) => {
+    const source = layers.find(l => l.id === id);
+    if (!source) return;
+    const copy = duplicateLayer(source);
+    pushLayers([...layers, copy], copy.id);
+  };
 
-        // Convert offscreen canvas to blob
-        const blob = await new Promise<Blob | null>(resolve => {
-          offscreenCanvas.toBlob(resolve, 'image/jpeg', 0.92);
-        });
+  const reorder = (id: string, direction: -1 | 1) => {
+    const index = layers.findIndex(l => l.id === id);
+    const target = index + direction;
+    if (index < 0 || target < 0 || target >= layers.length) return;
+    const next = [...layers];
+    [next[index], next[target]] = [next[target], next[index]];
+    pushLayers(next, id);
+  };
 
-        if (blob) {
-          // Keep base name without extension, append _watermarked
-          const originalName = item.name.substring(0, item.name.lastIndexOf('.')) || item.name;
-          zip.file(`${originalName}_watermarked.jpg`, blob);
-        }
+  const usePreset = (id: string, preset: PresetId) => {
+    const source = layers.find(l => l.id === id);
+    if (!source || source.kind !== 'text') return;
+    const next = layers.map(l => (l.id === id ? applyPreset(l as TextLayer, preset) : l));
+    pushLayers(next, id);
+  };
+
+  const moveLayer = (id: string, pos: { x: number; y: number }, shouldCommit: boolean) => {
+    setLayers(prev => prev.map(l => (l.id === id ? ({ ...l, placement: 'free', pos } as Layer) : l)));
+    if (shouldCommit) commit();
+  };
+
+  // Las fuentes de Google llegan con `display=swap`: si dibujamos antes de que
+  // estén rasterizadas, el canvas usa Arial en silencio. Esto redibuja cuando
+  // la familia real ya está lista.
+  const fontSignature = layers.map(l => (l.kind === 'text' ? `${l.fontFamily}|${l.fontWeight}|${l.italic}` : '')).join(',');
+  useEffect(() => {
+    let cancelled = false;
+    void ensureFonts(layers).then(() => { if (!cancelled) setRedrawKey(n => n + 1); });
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fontSignature]);
+
+  // ---------------------------------------------------------------------------
+  // Atajos de teclado
+  // ---------------------------------------------------------------------------
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      const typing = !!target && (/^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName) || target.isContentEditable);
+
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        jumpHistory(e.shiftKey ? 1 : -1);
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+        e.preventDefault();
+        jumpHistory(1);
+        return;
+      }
+      if (typing) return;
+
+      if (!e.ctrlKey && !e.metaKey && e.key.toLowerCase() === 'c' && !e.altKey) {
+        setCompare(c => !c);
+        return;
       }
 
-      setCompileProgress(100);
-      
-      const zipContent = await zip.generateAsync({ type: 'blob' });
-      const downloadUrl = URL.createObjectURL(zipContent);
-      
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = `watermark-snap-${Date.now()}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      
-      setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
-    } catch (err) {
-      console.error('Batch compilation failed:', err);
-      alert('Failed compiling batch archive.');
+      if (!selectedLayerId) return;
+      const layer = layers.find(l => l.id === selectedLayerId);
+      if (!layer || layer.placement !== 'free') return;
+
+      const step = (e.shiftKey ? 0.02 : 0.002);
+      const delta: Record<string, [number, number]> = {
+        ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step],
+      };
+      const move = delta[e.key];
+      if (!move) return;
+      e.preventDefault();
+      patchLayer(selectedLayerId, {
+        pos: {
+          x: Math.min(1, Math.max(0, layer.pos.x + move[0])),
+          y: Math.min(1, Math.max(0, layer.pos.y + move[1])),
+        },
+      } as Partial<Layer>);
+      commit();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [jumpHistory, layers, selectedLayerId, commit]);
+
+  // ---------------------------------------------------------------------------
+  // Exportación
+  // ---------------------------------------------------------------------------
+  const getEncoder = () => {
+    if (!encoderRef.current) encoderRef.current = new Encoder();
+    return encoderRef.current;
+  };
+
+  const renderItem = async (item: ImageItem, options: { archive: boolean; wantBlob: boolean }) => {
+    const decoded = await decodeImage(item.file, 0);
+    try {
+      return await getEncoder().add({
+        id: item.id,
+        name: outputName(item.name, settings),
+        source: decoded.bitmap,
+        width: decoded.width,
+        height: decoded.height,
+        layers,
+        assets: assetsRef.current,
+        settings,
+        archive: options.archive,
+        wantBlob: options.wantBlob,
+      });
     } finally {
-      setIsCompiling(false);
+      decoded.bitmap.close();
     }
   };
 
-  const triggerFileInput = () => {
-    if (fileInputRef.current) fileInputRef.current.click();
+  const runExport = async (mode: 'single' | 'all') => {
+    const targets = mode === 'single' ? (activeItem ? [activeItem] : []) : items;
+    if (targets.length === 0 || progress) return;
+
+    setNotice(null);
+    setProgress({ current: 0, total: targets.length });
+    await ensureFonts(layers);
+    getEncoder().reset();
+
+    try {
+      for (let i = 0; i < targets.length; i++) {
+        const item = targets[i];
+        setProgress({ current: i + 1, total: targets.length });
+        setItems(prev => prev.map(it => (it.id === item.id ? { ...it, status: 'exporting' } : it)));
+
+        try {
+          const result = await renderItem(item, { archive: mode === 'all', wantBlob: mode === 'single' });
+          setItems(prev => prev.map(it => (it.id === item.id ? { ...it, status: 'done', outputSize: result.size } : it)));
+          if (mode === 'single' && result.blob) downloadBlob(result.blob, outputName(item.name, settings));
+        } catch (err) {
+          setItems(prev => prev.map(it => (it.id === item.id ? { ...it, status: 'error', error: String(err) } : it)));
+        }
+
+        // Cede el hilo entre imágenes: sin esto la barra de progreso se queda
+        // congelada en 0 hasta que termina todo el lote.
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+
+      if (mode === 'all') {
+        const blob = await getEncoder().zip();
+        downloadBlob(blob, `watermark-snap-${Date.now()}.zip`);
+      }
+    } catch (err) {
+      setNotice({ kind: 'error', text: (t.errorExport || 'Export failed: {msg}').replace('{msg}', String(err)) });
+    } finally {
+      setProgress(null);
+    }
   };
 
-  const triggerLogoInput = () => {
-    if (logoInputRef.current) logoInputRef.current.click();
+  /** Para el handoff: la imagen activa, ya compuesta, sin pasar por Descargas. */
+  const getResult = useCallback(async () => {
+    if (!activeItem) return null;
+    await ensureFonts(layers);
+    const result = await renderItem(activeItem, { archive: false, wantBlob: true });
+    if (!result.blob) return null;
+    return { blob: result.blob, name: outputName(activeItem.name, settings) };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeItem, layers, settings]);
+
+  const copyToClipboard = async () => {
+    if (!activeItem) return;
+    try {
+      await ensureFonts(layers);
+      // Sólo PNG: es el único tipo de imagen que la Clipboard API acepta.
+      const png = { ...settings, format: 'png' as OutputFormat };
+      const decoded = await decodeImage(activeItem.file, 0);
+      const result = await getEncoder().add({
+        id: `clip-${activeItem.id}`,
+        name: outputName(activeItem.name, png),
+        source: decoded.bitmap,
+        width: decoded.width,
+        height: decoded.height,
+        layers,
+        assets: assetsRef.current,
+        settings: png,
+        archive: false,
+        wantBlob: true,
+      });
+      decoded.bitmap.close();
+      if (!result.blob) throw new Error('blob');
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': result.blob })]);
+      setNotice({ kind: 'info', text: t.copiedNotice || 'Watermarked image copied to the clipboard.' });
+    } catch {
+      setNotice({ kind: 'error', text: t.errorClipboard || 'Your browser refused the clipboard write. Download it instead.' });
+    }
   };
 
-  const handleOpenLegal = (type: 'privacy' | 'terms' | 'cookies') => {
-    setModalType(type);
-    setModalOpen(true);
+  // ---------------------------------------------------------------------------
+  // Arrastrar y soltar sobre la página
+  // ---------------------------------------------------------------------------
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    if (e.dataTransfer.files.length) void addFiles(e.dataTransfer.files);
   };
+
+  // ---------------------------------------------------------------------------
+  // Contenido editorial
+  // ---------------------------------------------------------------------------
+  const steps = [
+    { art: StepDrop, title: t.step1Title || 'Drop your images', text: t.step1Text || 'JPG, PNG, WebP, AVIF, GIF, SVG or HEIC from an iPhone. They queue up; nothing is processed yet.' },
+    { art: StepDesign, title: t.step2Title || 'Design the watermark', text: t.step2Text || 'Text or logo, outline, shadow, plate and blend modes. Stack as many layers as you need.' },
+    { art: StepPlace, title: t.step3Title || 'Place it exactly', text: t.step3Text || 'Nine anchors, free dragging with the mouse, or a diagonal tiled grid across the whole photo.' },
+    { art: StepExport, title: t.step4Title || 'Export when you say so', text: t.step4Text || 'PNG, WebP or JPEG at full resolution, one file or the whole batch as a ZIP.' },
+  ];
+
+  const featureIcons = [IconLocal, IconLayers, IconTile, IconPlace, IconBatch, IconHandoff];
+  const fallbackFeatures = [
+    { title: 'Nothing leaves your device', text: 'Every pixel is composited by your own browser. No upload, no server, no queue.' },
+    { title: 'Non-destructive layers', text: 'The watermark stays a description, never baked in. Undo costs bytes, not megabytes.' },
+    { title: 'Real diagonal tiling', text: 'The whole grid rotates in a single pass, so the pattern is even edge to edge.' },
+    { title: 'Place it by hand', text: 'Drag it on the canvas, nudge with arrows, zoom to the cursor, hold Alt to see the original.' },
+    { title: 'Batch that scales', text: 'Only the image you are looking at stays decoded, so a folder of 12 MP photos does not eat your RAM.' },
+    { title: 'Chained with the suite', text: 'Send the result to compress, crop, convert or resize for social without downloading it.' },
+  ];
+  const features = Array.isArray(t.features) && t.features.length >= 6 ? t.features : fallbackFeatures;
+
+  const outputInfo = activeItem?.outputSize ? formatBytes(activeItem.outputSize) : null;
+  const doneCount = items.filter(i => i.status === 'done').length;
 
   return (
-    <div className="min-h-screen bg-[#080604] text-slate-200 font-sans flex flex-col">
+    <div
+      className="min-h-screen flex flex-col bg-[#080604] text-slate-200 selection:bg-amber-500/30 overflow-x-hidden font-sans"
+      onDragOver={e => { e.preventDefault(); setDragging(true); }}
+      onDragLeave={e => { if (e.currentTarget === e.target) setDragging(false); }}
+      onDrop={onDrop}
+    >
       <Header
         currentLang={lang}
-        onLanguageChange={(newLang) => {
-          window.location.href = `/${newLang.toLowerCase()}/watermark-snap`;
-        }}
-        onReset={clearAll}
+        onLanguageChange={newLang => { window.location.href = `/${newLang.toLowerCase()}/watermark-snap`; }}
+        onReset={resetAll}
         t={t}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-12 pt-36 pb-24 relative z-10 flex flex-col justify-center">
-        {/* Bloque AdSense Horizontal */}
+      {/* El max-width vive en <main> a propósito: AdRail mide este elemento para
+          decidir si caben los raíles laterales, y reservar 440px a partir de
+          1400px es lo que los mantiene visibles en vez de suprimidos en
+          silencio. Con el max-w-7xl anterior el hueco a 1400px era de 57px. */}
+      <main className="flex-1 flex flex-col items-center pt-32 md:pt-36 pb-28 px-4 md:px-10 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-watermark-snap-top" />
-        {/* Title SEO Hero */}
-        <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-black font-outfit tracking-tight text-white mb-4">
-            {t.seoHeroTitle || 'Protect Images with Local Batch Watermarks'}
-          </h1>
-          <p className="text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed font-medium">
-            {t.seoHeroText || 'Overlay branding logos or custom text in bulk instantly. Runs 100% in-browser.'}
-          </p>
-        </div>
 
-        {/* 3-Zone Workspace Dashboard Container */}
-        <div className="w-full bg-[#120d09]/40 backdrop-blur-xl border border-white/[0.08] rounded-3xl p-6 md:p-8 shadow-2xl relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch min-h-[650px] glow-amber">
-          
-          {/* ZONE 1: Left parameter controls (Col-span 4) */}
-          <div className="lg:col-span-4 flex flex-col gap-6 bg-black/20 p-6 rounded-2xl border border-white/5 justify-between">
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between border-b border-white/5 pb-4">
-                <h3 className="text-sm font-black uppercase tracking-wider text-amber-500 flex items-center gap-2">
-                  <Settings className="w-4 h-4" />
-                  {t.title || 'WatermarkSnap'}
-                </h3>
-                <span className="text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-                  {mode === 'text' ? (t.label_mode_text || 'Text') : (t.label_mode_logo || 'Logo')}
-                </span>
+        <div className="w-full space-y-20 md:space-y-28">
+          {/* ================================================================ */}
+          {/* Héroe                                                            */}
+          {/* ================================================================ */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-amber-950/40 border border-amber-800/30 text-amber-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(245,158,11,0.15)]">
+                <Stamp className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{t.badge || t.title}</span>
               </div>
 
-              {/* Mode switch */}
-              <div className="grid grid-cols-2 gap-2 p-1 bg-white/5 rounded-xl border border-white/5">
-                <button
-                  onClick={() => setMode('text')}
-                  className={`py-2 px-3 text-xs font-black uppercase rounded-lg transition-all cursor-pointer border-none outline-none ${
-                    mode === 'text'
-                      ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {t.label_mode_text || 'Text'}
-                </button>
-                <button
-                  onClick={() => setMode('logo')}
-                  className={`py-2 px-3 text-xs font-black uppercase rounded-lg transition-all cursor-pointer border-none outline-none ${
-                    mode === 'logo'
-                      ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
-                  }`}
-                >
-                  {t.label_mode_logo || 'Logo'}
-                </button>
-              </div>
+              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
+                {t.seoHeroTitle}
+              </h1>
 
-              {/* TEXT WATERMARK CONTROL FIELDS */}
-              {mode === 'text' && (
-                <div className="flex flex-col gap-4">
-                  {/* Text string input */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      {t.label_watermark_text || 'Watermark Text'}
-                    </label>
-                    <input
-                      type="text"
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      placeholder="e.g. © My Brand"
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none transition-colors"
-                    />
-                  </div>
+              <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+                {t.description}
+              </p>
 
-                  {/* Font select picker */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      Font Family
-                    </label>
-                    <select
-                      value={fontFamily}
-                      onChange={(e) => setFontFamily(e.target.value)}
-                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 outline-none transition-colors cursor-pointer"
-                    >
-                      <option value="sans-serif">System Sans</option>
-                      <option value="serif">System Serif</option>
-                      <option value="monospace">System Mono</option>
-                      <option value="'Outfit'">Outfit (Google)</option>
-                      <option value="'Plus Jakarta Sans'">Jakarta (Google)</option>
-                      <option value="Impact">Impact</option>
-                      <option value="Courier New">Courier New</option>
-                    </select>
-                  </div>
-
-                  {/* Size Ratio slider */}
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      <span>{t.label_font_size || 'Font Size'}</span>
-                      <span className="text-amber-500 font-mono">{fontSizeRatio}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="10"
-                      max="120"
-                      value={fontSizeRatio}
-                      onChange={(e) => setFontSizeRatio(parseInt(e.target.value))}
-                      className="w-full accent-amber-500 cursor-pointer"
-                    />
-                  </div>
-
-                  {/* Hex Color picker */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      {t.label_color || 'Text Color'}
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="color"
-                        value={color}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="w-10 h-10 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0"
-                      />
-                      <input
-                        type="text"
-                        value={color}
-                        onChange={(e) => setColor(e.target.value)}
-                        className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white uppercase outline-none"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* LOGO WATERMARK CONTROL FIELDS */}
-              {mode === 'logo' && (
-                <div className="flex flex-col gap-4">
-                  {/* File Upload drag area */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      {t.label_logo_file || 'Logo Asset'}
-                    </label>
-                    <input
-                      type="file"
-                      ref={logoInputRef}
-                      onChange={handleLogoUpload}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <div
-                      onClick={triggerLogoInput}
-                      className="border-2 border-dashed border-white/15 hover:border-amber-500/50 bg-black/20 rounded-2xl p-4 flex flex-col items-center justify-center gap-2 cursor-pointer transition-all hover:bg-black/40 group text-center"
-                    >
-                      {logoFile ? (
-                        <div className="flex flex-col items-center gap-1.5">
-                          <img
-                            src={logoImgEl?.src || ''}
-                            alt="Watermark Logo Preview"
-                            className="w-12 h-12 object-contain rounded bg-white/5 border border-white/10 p-1"
-                          />
-                          <span className="text-xs font-bold text-white truncate max-w-[200px]">
-                            {logoFile.name}
-                          </span>
-                        </div>
-                      ) : (
-                        <>
-                          <Upload className="w-5 h-5 text-slate-500 group-hover:text-amber-400 transition-colors" />
-                          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                            Upload Logo Image
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Logo Size ratio slider */}
-                  <div className="flex flex-col gap-1.5">
-                    <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
-                      <span>{t.label_logo_size || 'Logo Size'}</span>
-                      <span className="text-amber-500 font-mono">{logoSizeRatio}%</span>
-                    </div>
-                    <input
-                      type="range"
-                      min="5"
-                      max="80"
-                      value={logoSizeRatio}
-                      onChange={(e) => setLogoSizeRatio(parseInt(e.target.value))}
-                      className="w-full accent-amber-500 cursor-pointer"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* SHARED PARAMS: OPACITY & ROTATION */}
-              <div className="flex flex-col gap-4 border-t border-white/5 pt-4">
-                {/* Opacity */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <span>{t.label_opacity || 'Opacity'}</span>
-                    <span className="text-amber-500 font-mono">{Math.round(opacity * 100)}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={opacity}
-                    onChange={(e) => setOpacity(parseFloat(e.target.value))}
-                    className="w-full accent-amber-500 cursor-pointer"
-                  />
-                </div>
-
-                {/* Rotation */}
-                <div className="flex flex-col gap-1.5">
-                  <div className="flex justify-between text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    <span>{t.label_rotation || 'Rotation'}</span>
-                    <span className="text-amber-500 font-mono">{rotation}°</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="-180"
-                    max="180"
-                    value={rotation}
-                    onChange={(e) => setRotation(parseInt(e.target.value))}
-                    className="w-full accent-amber-500 cursor-pointer"
-                  />
-                </div>
-              </div>
-
-              {/* PLACEMENT / ALIGNMENT SETTINGS */}
-              <div className="flex flex-col gap-3 border-t border-white/5 pt-4">
-                <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                  {t.label_position || 'Positioning Mode'}
-                </label>
-                
-                {/* Placement Mode Tabs */}
-                <div className="grid grid-cols-3 gap-1 bg-white/5 p-1 rounded-xl border border-white/5 text-[10px]">
-                  <button
-                    onClick={() => setPlacementMode('align')}
-                    className={`py-1.5 font-bold uppercase rounded-lg transition-all cursor-pointer border-none outline-none ${
-                      placementMode === 'align'
-                        ? 'bg-amber-500 text-black'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Align
-                  </button>
-                  <button
-                    onClick={() => setPlacementMode('tile')}
-                    className={`py-1.5 font-bold uppercase rounded-lg transition-all cursor-pointer border-none outline-none ${
-                      placementMode === 'tile'
-                        ? 'bg-amber-500 text-black'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Tile
-                  </button>
-                  <button
-                    onClick={() => setPlacementMode('custom')}
-                    className={`py-1.5 font-bold uppercase rounded-lg transition-all cursor-pointer border-none outline-none ${
-                      placementMode === 'custom'
-                        ? 'bg-amber-500 text-black'
-                        : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    Drag
-                  </button>
-                </div>
-
-                {/* Preset alignment positions */}
-                {placementMode === 'align' && (
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { key: 'top-left', label: '◤ TL' },
-                      { key: 'center', label: '✦ C' },
-                      { key: 'top-right', label: '◥ TR' },
-                      { key: 'bottom-left', label: '◣ BL' },
-                      { key: 'bottom-right', label: '◢ BR' }
-                    ].map((p) => (
-                      <button
-                        key={p.key}
-                        onClick={() => setAlignPreset(p.key as any)}
-                        className={`py-1.5 text-[10px] font-bold uppercase border rounded-lg transition-all cursor-pointer outline-none ${
-                          alignPreset === p.key
-                            ? 'bg-amber-500/10 border-amber-500 text-amber-400'
-                            : 'border-white/10 hover:border-white/20 text-slate-300'
-                        }`}
-                      >
-                        {p.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Drag info details */}
-                {placementMode === 'custom' && (
-                  <div className="flex items-center gap-2 text-[11px] text-slate-400 bg-white/5 border border-white/5 rounded-xl p-2.5">
-                    <Move className="w-4 h-4 text-amber-500 animate-bounce" />
-                    <span>
-                      Drag-and-drop the watermark on the preview container to place it.
-                    </span>
-                  </div>
-                )}
+              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                {(t.seoHeroList || []).slice(0, 3).map((point: string, i: number) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300">
+                    <Check className="w-3.5 h-3.5 text-amber-400 stroke-[3]" />
+                    {point}
+                  </span>
+                ))}
               </div>
             </div>
 
-            {/* ACTION: ZIP download trigger */}
-            <div className="border-t border-white/5 pt-4">
-              <button
-                disabled={images.length === 0}
-                onClick={handleBatchDownload}
-                className="w-full py-4 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 disabled:from-white/10 disabled:to-white/10 disabled:text-slate-500 text-black font-black text-sm uppercase rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-3 active:scale-95 duration-200 outline-none shadow-lg shadow-amber-500/20 disabled:shadow-none"
+            <div className="relative">
+              <div className="absolute inset-0 bg-amber-500/10 blur-[80px] rounded-full" />
+              <WatermarkHeroArt className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]" animated={!prefersReduced} />
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* Espacio de trabajo                                               */}
+          {/* ================================================================ */}
+          <section className="space-y-4">
+            {notice && (
+              <div
+                role="status"
+                className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-sm font-medium ${
+                  notice.kind === 'error'
+                    ? 'border-red-500/25 bg-red-500/10 text-red-300'
+                    : 'border-amber-500/25 bg-amber-500/10 text-amber-200'
+                }`}
               >
-                <Download className="w-4 h-4" />
-                <span>{t.btn_download_zip || 'Download ZIP'}</span>
-              </button>
-            </div>
-          </div>
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                <span className="flex-1 break-words">{notice.text}</span>
+                <button onClick={() => setNotice(null)} className="p-0.5 bg-transparent border-none text-current opacity-60 hover:opacity-100 cursor-pointer">
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            )}
 
-          {/* ZONE 2: Middle interactive sandbox canvas (Col-span 5) */}
-          <div className="lg:col-span-5 flex flex-col gap-4 bg-black/40 border border-white/5 p-6 rounded-2xl relative items-center justify-center overflow-hidden min-h-[350px] lg:min-h-0">
-            {selectedImage ? (
-              <div className="w-full h-full flex flex-col justify-between items-center relative">
-                
-                {/* Visual drag sandbox container */}
-                <div
-                  ref={previewContainerRef}
-                  onMouseDown={handleDragStart}
-                  onMouseMove={handleDragMove}
-                  onMouseUp={handleDragEnd}
-                  onMouseLeave={handleDragEnd}
-                  onTouchStart={handleDragStart}
-                  onTouchMove={handleDragMove}
-                  onTouchEnd={handleDragEnd}
-                  className={`max-w-full max-h-[450px] relative overflow-hidden bg-black/60 rounded-xl flex items-center justify-center ${
-                    placementMode === 'custom' ? 'cursor-move' : ''
-                  }`}
-                >
-                  <canvas
-                    ref={previewCanvasRef}
-                    className="max-w-full max-h-[450px] object-contain shadow-2xl rounded"
-                  />
-                  
-                  {/* Absolute Drag Visual indicator overlay box */}
-                  {placementMode === 'custom' && (
-                    <div 
-                      className="absolute w-8 h-8 rounded-full bg-amber-500/30 border-2 border-amber-500 flex items-center justify-center -translate-x-1/2 -translate-y-1/2 shadow-lg shadow-black/50 pointer-events-none"
-                      style={{
-                        left: `${customPos.x * 100}%`,
-                        top: `${customPos.y * 100}%`
-                      }}
-                    >
-                      <Move className="w-4 h-4 text-white" />
-                    </div>
-                  )}
+            {items.length === 0 ? (
+              /* ---------------- Zona de carga ---------------- */
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className={`group relative border-2 border-dashed rounded-3xl p-10 md:p-20 flex flex-col items-center justify-center gap-6 cursor-pointer transition-all shadow-xl shadow-black/20 ${
+                  dragging ? 'border-amber-400 bg-amber-500/10 scale-[1.01]' : 'border-amber-950 hover:border-amber-500/40 bg-[#150e07]/40 hover:bg-[#1b1209]/50'
+                }`}
+              >
+                <div className="relative">
+                  <div className="absolute inset-0 bg-amber-500/10 blur-xl rounded-full scale-125 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  <div className="w-20 h-20 bg-[#1a1108] border border-white/5 rounded-2xl flex items-center justify-center text-amber-400 relative z-10 transition-transform group-hover:scale-105 group-hover:-translate-y-1 shadow-lg shadow-black/40">
+                    <Upload className="w-10 h-10" />
+                  </div>
                 </div>
-
-                {/* Current preview details */}
-                <div className="w-full flex justify-between items-center mt-4 border-t border-white/5 pt-4 text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-                  <span className="truncate max-w-[200px]">{selectedImage.name}</span>
-                  <span>{selectedImage.width}x{selectedImage.height}px</span>
+                <div className="space-y-2 text-center">
+                  <h2 className="text-lg md:text-xl font-bold text-white tracking-tight">
+                    {t.dropzonePrompt || 'Drop your images here'}
+                  </h2>
+                  <p className="text-slate-500 text-sm font-medium max-w-md">
+                    {t.dropzoneSubtitle || 'JPG, PNG, WebP, AVIF, GIF, SVG and HEIC. You can also paste from the clipboard.'}
+                  </p>
                 </div>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center text-center p-8">
-                <div 
-                  onClick={triggerFileInput}
-                  className="w-20 h-20 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-500 flex items-center justify-center hover:scale-105 active:scale-95 duration-300 shadow-xl group cursor-pointer mb-6"
-                >
-                  <Upload className="w-8 h-8 group-hover:rotate-6 transition-transform" />
+              /* ---------------- Editor ---------------- */
+              <div className="glass-card rounded-3xl p-3 sm:p-4 md:p-6 space-y-4 shadow-2xl border border-white/5">
+                {/* Tira de miniaturas */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1">
+                  {items.map(item => {
+                    const active = item.id === activeId;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveId(item.id)}
+                        title={item.name}
+                        className={`group relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+                          active ? 'border-amber-500 shadow-[0_0_14px_rgba(245,158,11,0.35)]' : 'border-white/10 hover:border-white/30 opacity-70 hover:opacity-100'
+                        }`}
+                      >
+                        <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
+                        <span className="absolute bottom-0.5 right-0.5">
+                          {item.status === 'exporting' && <Loader2 className="w-3.5 h-3.5 text-amber-300 animate-spin drop-shadow" />}
+                          {item.status === 'done' && <Check className="w-3.5 h-3.5 text-amber-400 drop-shadow stroke-[3]" />}
+                          {item.status === 'error' && <AlertCircle className="w-3.5 h-3.5 text-red-400 drop-shadow" />}
+                        </span>
+                        <span
+                          onClick={e => removeItem(item.id, e)}
+                          className="absolute top-0.5 left-0.5 p-0.5 rounded-md bg-black/80 text-slate-400 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </span>
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    title={t.btn_add_files || 'Add images'}
+                    className="shrink-0 w-16 h-16 rounded-xl border-2 border-dashed border-white/15 hover:border-amber-500/50 text-slate-500 hover:text-amber-400 flex items-center justify-center transition-all cursor-pointer bg-transparent"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </button>
+
+                  <div className="ml-auto shrink-0 pl-3 flex items-center gap-2">
+                    <button
+                      onClick={clearAll}
+                      className="px-3 py-2 rounded-xl bg-red-500/5 hover:bg-red-500/15 border border-red-500/20 text-red-400 text-[10px] font-black tracking-widest uppercase transition-all cursor-pointer"
+                    >
+                      {t.btn_clear || 'Clear all'}
+                    </button>
+                  </div>
                 </div>
-                <h4 className="text-lg font-black text-white uppercase tracking-wider mb-2">
-                  No Image Loaded
-                </h4>
-                <p className="text-xs text-slate-500 max-w-xs font-medium leading-relaxed">
-                  Drag and drop images here, or choose a file from the right panel to get started.
-                </p>
+
+                {/* Lienzo + panel. flex-col en móvil, dos columnas a partir de lg:
+                    ojo, `lg:flex-1` y no `flex-1` a secas — en flex-col, flex-1
+                    pone flex-basis:0 sobre el eje vertical y colapsa el panel. */}
+                <div className="flex flex-col lg:flex-row gap-4">
+                  <div className="lg:flex-1 min-w-0 flex flex-col gap-3">
+                    <div className="relative h-[320px] sm:h-[420px] lg:h-[560px] rounded-2xl border border-white/5 bg-[#0b0704] overflow-hidden">
+                      {preview && activeItem ? (
+                        <Stage
+                          bitmap={preview.bitmap}
+                          redrawKey={redrawKey}
+                          width={preview.width}
+                          height={preview.height}
+                          layers={layers}
+                          assets={assets}
+                          selectedLayerId={selectedLayerId}
+                          onSelectLayer={setSelectedLayerId}
+                          onMoveLayer={moveLayer}
+                          compare={compare}
+                          onStats={setStats}
+                          t={t}
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
+                        </div>
+                      )}
+
+                      {/* Nada arranca solo al subir: el usuario decide qué marca
+                          poner y cuándo. */}
+                      {layers.length === 0 && preview && (
+                        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 bg-gradient-to-t from-black via-black/85 to-transparent flex flex-col items-center gap-3">
+                          <div className="flex flex-wrap items-center justify-center gap-2.5">
+                            <button
+                              onClick={() => addTextLayer('anchor')}
+                              className="px-5 sm:px-7 py-3 rounded-2xl bg-amber-500 hover:bg-amber-400 text-black font-black text-xs sm:text-sm uppercase tracking-widest transition-all flex items-center gap-2 shadow-xl shadow-amber-600/30 hover:scale-[1.03] active:scale-95 cursor-pointer"
+                            >
+                              <Type className="w-4 h-4 stroke-[3]" />
+                              {t.addTextWatermark || 'Add text watermark'}
+                            </button>
+                            <button
+                              onClick={() => logoInputRef.current?.click()}
+                              className="px-5 py-3 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 text-white font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer"
+                            >
+                              <ImageIcon className="w-4 h-4" />
+                              {t.addLogoWatermark || 'Use a logo'}
+                            </button>
+                            <button
+                              onClick={() => addTextLayer('free')}
+                              title={t.manualHint || 'Skip the presets: drop the watermark in the middle and place it yourself.'}
+                              className="px-5 py-3 rounded-2xl border border-white/15 bg-white/5 hover:bg-white/10 text-white font-black text-[11px] sm:text-xs uppercase tracking-widest transition-all flex items-center gap-2 cursor-pointer"
+                            >
+                              <Zap className="w-4 h-4" />
+                              {t.manualBtn || 'Place by hand'}
+                            </button>
+                          </div>
+                          <p className="text-[11px] text-slate-400 font-medium text-center max-w-md">
+                            {t.readyHint || 'Nothing has been processed yet. Your images are just queued up.'}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Barra de estado del lienzo */}
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 justify-between rounded-2xl border border-white/5 bg-black/30 px-3 py-2.5">
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={() => jumpHistory(-1)}
+                          disabled={!canUndo}
+                          title={`${t.undoBtn || 'Undo'} (Ctrl+Z)`}
+                          className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:text-amber-400 disabled:opacity-25 transition-colors cursor-pointer disabled:cursor-default"
+                        >
+                          <Undo2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => jumpHistory(1)}
+                          disabled={!canRedo}
+                          title={`${t.redoBtn || 'Redo'} (Ctrl+Shift+Z)`}
+                          className="p-2 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:text-amber-400 disabled:opacity-25 transition-colors cursor-pointer disabled:cursor-default"
+                        >
+                          <Redo2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onMouseDown={() => setCompare(true)}
+                          onMouseUp={() => setCompare(false)}
+                          onMouseLeave={() => setCompare(false)}
+                          onTouchStart={() => setCompare(true)}
+                          onTouchEnd={() => setCompare(false)}
+                          title={t.compareHint || 'Hold to see the original (or hold Alt anywhere)'}
+                          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer ${
+                            compare ? 'bg-amber-500 border-amber-500 text-black' : 'bg-white/5 border-white/10 text-slate-300 hover:text-amber-400'
+                          }`}
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">{t.compareBtn || 'Compare'}</span>
+                        </button>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-bold text-slate-500 tabular-nums">
+                        <span className="truncate max-w-[180px] text-slate-300">{activeItem?.name}</span>
+                        <span>{activeItem?.width}×{activeItem?.height}</span>
+                        <span>{formatBytes(activeItem?.size || 0)}</span>
+                        {outputInfo && <span className="text-amber-400">→ {outputInfo}</span>}
+                        {stats && (
+                          <span title={t.statsHint || 'Draw calls and milliseconds of the last composite. Tiling uses one single fill.'}>
+                            {stats.drawCalls} {t.statsDraws || 'draws'} · {stats.ms.toFixed(1)} ms
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    {doneCount > 0 && <NextStepBar lang={lang} t={t} getResult={getResult} />}
+                  </div>
+
+                  {/* Panel de control */}
+                  <div className="w-full lg:w-[340px] xl:w-[380px] shrink-0 flex flex-col gap-4 bg-black/25 border border-white/5 rounded-2xl p-4 lg:max-h-[680px] lg:overflow-y-auto">
+                    <LayerPanel
+                      layers={layers}
+                      assets={assets}
+                      selectedId={selectedLayerId}
+                      t={t}
+                      onSelect={setSelectedLayerId}
+                      onAddText={() => addTextLayer('anchor')}
+                      onAddLogo={() => logoInputRef.current?.click()}
+                      onRemove={removeLayer}
+                      onDuplicate={duplicate}
+                      onReorder={reorder}
+                      onPatch={patchLayer}
+                      onCommit={commit}
+                      onPreset={usePreset}
+                    />
+
+                    {/* ------------------ Exportación ------------------ */}
+                    <div className="flex flex-col gap-3 border-t border-white/5 pt-4">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                        {t.sectionExport || 'Export'}
+                      </span>
+
+                      <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-white/5 border border-white/5">
+                        {OUTPUT_FORMATS.map(format => (
+                          <button
+                            key={format}
+                            onClick={() => setSettings(s => ({ ...s, format }))}
+                            className={`py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer border-none ${
+                              settings.format === format ? 'bg-amber-500 text-black' : 'bg-transparent text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            {format}
+                          </button>
+                        ))}
+                      </div>
+
+                      {settings.format !== 'png' && (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex justify-between items-baseline">
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                              {t.labelQuality || 'Quality'}
+                            </span>
+                            <span className="text-[11px] text-amber-400 font-black tabular-nums">
+                              {Math.round(settings.quality * 100)}%
+                            </span>
+                          </div>
+                          <input
+                            type="range" min={0.4} max={1} step={0.01}
+                            value={settings.quality}
+                            onChange={e => setSettings(s => ({ ...s, quality: parseFloat(e.target.value) }))}
+                            className="w-full accent-amber-500 cursor-pointer"
+                          />
+                        </div>
+                      )}
+                      {settings.format === 'jpeg' && layers.length > 0 && (
+                        <p className="text-[10px] text-amber-500/80 leading-relaxed">
+                          {t.jpegWarning || 'JPEG has no transparency: a PNG with a transparent background will come out on black.'}
+                        </p>
+                      )}
+
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                          {t.labelMaxSize || 'Max size'}
+                        </span>
+                        <select
+                          value={settings.maxSize}
+                          onChange={e => setSettings(s => ({ ...s, maxSize: parseInt(e.target.value, 10) }))}
+                          className="w-full bg-black/40 border border-white/10 rounded-lg px-2 py-2 text-xs text-white outline-none focus:border-amber-500/60 cursor-pointer"
+                        >
+                          {SIZE_LIMITS.map(limit => (
+                            <option key={limit} value={limit}>
+                              {limit === 0 ? (t.sizeOriginal || 'Original resolution') : `${limit} px`}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">
+                          {t.labelSuffix || 'Filename suffix'}
+                        </span>
+                        <input
+                          type="text"
+                          value={settings.suffix}
+                          onChange={e => setSettings(s => ({ ...s, suffix: e.target.value.replace(/[\\/:*?"<>|]/g, '') }))}
+                          className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-amber-500/60 transition-colors"
+                        />
+                      </div>
+
+                      <div className="flex flex-col gap-2 pt-1">
+                        <button
+                          onClick={() => runExport('single')}
+                          disabled={!activeItem || !!progress}
+                          className="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 disabled:from-white/10 disabled:to-white/10 disabled:text-slate-500 text-black font-black text-xs uppercase tracking-widest rounded-xl transition-all cursor-pointer disabled:cursor-default flex items-center justify-center gap-2 active:scale-95 shadow-lg shadow-amber-500/20 disabled:shadow-none"
+                        >
+                          <Download className="w-4 h-4" />
+                          {t.btnDownloadOne || 'Download this image'}
+                        </button>
+
+                        <button
+                          onClick={() => runExport('all')}
+                          disabled={items.length === 0 || !!progress}
+                          className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-[11px] uppercase tracking-widest rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-default flex items-center justify-center gap-2"
+                        >
+                          <Package className="w-3.5 h-3.5" />
+                          {(t.btnDownloadZip || 'All {n} as ZIP').replace('{n}', String(items.length))}
+                        </button>
+
+                        <button
+                          onClick={copyToClipboard}
+                          disabled={!activeItem || !!progress}
+                          className="w-full py-2.5 bg-transparent hover:bg-white/5 border border-white/10 text-slate-300 font-black text-[11px] uppercase tracking-widest rounded-xl transition-all cursor-pointer disabled:opacity-40 disabled:cursor-default flex items-center justify-center gap-2"
+                        >
+                          <Copy className="w-3.5 h-3.5" />
+                          {t.copyBtn || 'Copy to clipboard'}
+                        </button>
+                      </div>
+
+                      <div className="pt-1">
+                        <Toggle
+                          label={t.labelCompareToggle || 'Keep showing the original'}
+                          checked={compare}
+                          onChange={setCompare}
+                          hint={t.compareHint || 'Hold to see the original (or hold Alt anywhere)'}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
-          </div>
 
-          {/* ZONE 3: Right thumbnails list rack (Col-span 3) */}
-          <div className="lg:col-span-3 flex flex-col gap-4 justify-between bg-black/20 p-6 rounded-2xl border border-white/5">
-            <div className="flex flex-col gap-4 flex-1 overflow-hidden">
-              <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-                  {t.label_images_count || 'Images'} ({images.length})
-                </h4>
-                {images.length > 0 && (
-                  <button
-                    onClick={clearAll}
-                    className="text-[10px] font-bold text-amber-500 hover:text-amber-400 bg-transparent border-none outline-none cursor-pointer uppercase tracking-wider"
-                  >
-                    {t.btn_clear || 'Clear'}
-                  </button>
-                )}
-              </div>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={e => { void addFiles(e.target.files || []); e.target.value = ''; }}
+              accept={ACCEPT_ATTRIBUTE}
+              multiple
+              className="hidden"
+            />
+            <input
+              type="file"
+              ref={logoInputRef}
+              onChange={e => { void handleLogoFile(e.target.files?.[0]); e.target.value = ''; }}
+              accept={ACCEPT_ATTRIBUTE}
+              className="hidden"
+            />
+          </section>
 
-              {/* Upload trigger hidden */}
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={onFileChange}
-                accept="image/*"
-                multiple
-                className="hidden"
-              />
+          {/* ================================================================ */}
+          {/* Cómo funciona                                                    */}
+          {/* ================================================================ */}
+          <section className="space-y-10">
+            <div className="text-center space-y-3">
+              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                {t.howItWorksTitle || 'How it works'}
+              </h2>
+              <div className="h-1 w-16 bg-amber-500 mx-auto rounded-full" />
+            </div>
 
-              {/* Thumbnails list items scroll box */}
-              {images.length > 0 ? (
-                <div className="flex-1 overflow-y-auto pr-1 flex flex-col gap-2 max-h-[350px] lg:max-h-[400px]">
-                  {images.map((img) => (
-                    <div
-                      key={img.id}
-                      onClick={() => setSelectedImageId(img.id)}
-                      className={`flex items-center justify-between p-2 rounded-xl border transition-all cursor-pointer ${
-                        selectedImageId === img.id
-                          ? 'border-amber-500/60 bg-amber-500/5'
-                          : 'border-white/10 hover:border-white/20 bg-black/20'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <img
-                          src={img.dataUrl}
-                          alt="Thumb"
-                          className="w-10 h-10 object-cover rounded bg-black/40 border border-white/5"
-                        />
-                        <div className="min-w-0 flex flex-col gap-0.5 text-left">
-                          <span className="text-[11px] font-bold text-white truncate max-w-[100px]">
-                            {img.name}
-                          </span>
-                          <span className="text-[9px] text-slate-500 font-bold">
-                            {img.width}x{img.height}
-                          </span>
-                        </div>
-                      </div>
-                      <button
-                        onClick={(e) => deleteImage(img.id, e)}
-                        className="p-1.5 hover:text-red-500 text-slate-500 transition-colors border-none bg-transparent outline-none cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {steps.map((step, i) => {
+                const Art = step.art;
+                return (
+                  <div key={i} className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-amber-500/20 transition-all group">
+                    <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-amber-500/10 transition-colors">
+                      {i + 1}
+                    </span>
+                    <Art className="w-24 h-auto text-amber-400" />
+                    <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                    <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* Features                                                         */}
+          {/* ================================================================ */}
+          <motion.section
+            initial={prefersReduced ? false : 'hidden'}
+            whileInView={prefersReduced ? undefined : 'visible'}
+            viewport={{ once: true, amount: 0.15 }}
+            variants={fadeInUp}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {features.map((feature: any, idx: number) => {
+              const Icon = featureIcons[idx] || IconLayers;
+              return (
+                <div key={idx} className="p-7 glass-card rounded-3xl text-left hover:-translate-y-1.5 hover:shadow-2xl hover:shadow-amber-500/5 transition-all duration-300 group border border-white/5">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-5 group-hover:scale-110 group-hover:border-amber-500/40 transition-all">
+                    <Icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-white text-lg font-bold mb-2.5 group-hover:text-amber-400 transition-colors">{feature.title}</h3>
+                  <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
+                </div>
+              );
+            })}
+          </motion.section>
+
+          {/* ================================================================ */}
+          {/* Contenido SEO                                                    */}
+          {/* ================================================================ */}
+          <section className="space-y-20 md:space-y-24 text-left">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+              <div className="space-y-7">
+                <div className="inline-block px-4 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 text-[11px] font-black uppercase tracking-[0.2em] border border-amber-500/20">
+                  {t.seoKeywords?.[0]}
+                </div>
+                <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
+                  {t.seoBrowserSpeedTitle}
+                </h2>
+                <p className="text-slate-400 text-base md:text-lg leading-relaxed font-medium">{t.seoBrowserSpeedText}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(t.seoHeroList || []).map((point: string, i: number) => (
+                    <div key={i} className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
+                      <span className="w-7 h-7 shrink-0 bg-amber-500/20 text-amber-400 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </span>
+                      <span className="text-slate-300 font-bold text-sm">{point}</span>
                     </div>
                   ))}
                 </div>
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-center p-4 py-12 border-2 border-dashed border-white/10 rounded-xl bg-black/10">
-                  <Tag className="w-6 h-6 text-slate-600 mb-2" />
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                    Rack Empty
-                  </span>
+              </div>
+
+              <div className="relative glass-card rounded-[3rem] p-8 md:p-10 py-14 min-h-[360px] flex flex-col items-center justify-center gap-7 text-center overflow-hidden">
+                <div className="absolute -top-16 -right-16 w-56 h-56 bg-amber-500/10 rounded-full blur-3xl" />
+                <IconLocal className="w-20 h-20 text-amber-400 relative" />
+                <div className="space-y-3 max-w-sm relative">
+                  <h3 className="text-2xl font-black text-white tracking-tight leading-tight">{t.seoPrivacyTitle}</h3>
+                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoPrivacyText}</p>
                 </div>
-              )}
+              </div>
             </div>
 
-            {/* Trigger input button */}
-            <div className="border-t border-white/5 pt-4">
-              <button
-                onClick={triggerFileInput}
-                className="w-full py-2.5 bg-white/5 hover:bg-white/10 text-white font-bold text-xs uppercase rounded-xl transition-all cursor-pointer flex items-center justify-center gap-2 border border-white/10 outline-none"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>{t.btn_add_files || 'Add Images'}</span>
-              </button>
+            <div className="p-7 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-[#150e07] border border-white/5 space-y-10">
+              <div className="max-w-4xl space-y-4">
+                <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
+                <div className="h-1.5 w-20 bg-amber-500 rounded-full" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
+                    {t.seoUseCaseTitle}
+                  </div>
+                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoUseCaseText}</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
+                    {t.seoEngineTitle}
+                  </div>
+                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoEngineText}</p>
+                </div>
+              </div>
             </div>
-          </div>
 
+            {/* FAQ en acordeón */}
+            <div className="max-w-4xl mx-auto w-full space-y-10">
+              <div className="text-center space-y-3">
+                <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                <div className="h-1 w-16 bg-amber-500 mx-auto rounded-full" />
+              </div>
+              <div className="grid gap-3">
+                {(t.faq || []).map((faq: any, idx: number) => (
+                  <details
+                    key={idx}
+                    className="glass-card rounded-2xl px-5 sm:px-6 py-5 text-left border border-white/5 hover:border-amber-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                  >
+                    <summary className="flex items-start gap-3 cursor-pointer list-none text-[15px] sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors">
+                      <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-amber-500/10 flex items-center justify-center text-amber-400 text-[11px] font-black">Q</span>
+                      <span className="flex-1 min-w-0">{faq.question}</span>
+                      <span className="shrink-0 text-amber-400 transition-transform group-open:rotate-45 text-xl leading-none">+</span>
+                    </summary>
+                    <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+
+            {/* Palabras clave */}
+            <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
+              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
+              <div className="flex flex-wrap justify-center gap-2">
+                {(t.seoKeywords || []).map((keyword: string, idx: number) => (
+                  <span key={idx} className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400">
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
 
-        {/* BATCH EXPORT PROGRESS DIALOG OVERLAY */}
-        {isCompiling && (
-          <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#120d09] border border-amber-500/20 p-8 rounded-3xl shadow-2xl w-full max-w-md flex flex-col items-center text-center gap-6 relative">
-              <div className="p-4 rounded-full bg-amber-500/10 text-amber-500 animate-pulse">
-                <Sparkles className="w-8 h-8" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <h3 className="text-xl font-black text-white uppercase tracking-wider">
-                  Watermarking Batch...
-                </h3>
-                <p className="text-xs text-slate-400 font-medium">
-                  {t.progress_generating
-                    ? t.progress_generating.replace('{current}', String(activeImageIdx + 1)).replace('{total}', String(images.length))
-                    : `Processing image ${activeImageIdx + 1} of ${images.length}...`}
-                </p>
-              </div>
-
-              {/* Progress bar */}
-              <div className="w-full flex flex-col gap-2">
-                <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
-                  <div
-                    className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-300"
-                    style={{ width: `${compileProgress}%` }}
-                  />
-                </div>
-                <span className="text-[10px] text-amber-500 font-mono font-bold tracking-wider">
-                  {compileProgress}% COMPLETE
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-watermark-snap-bottom" />
+        <AdBanner id="adsense-watermark-snap-bottom" />
       </main>
 
-      {/* FOOTER & ACCORDION FAQ SECTIONS */}
-      <Footer lang={lang} t={t} onOpenModal={handleOpenLegal} />
+      {/* Progreso del lote */}
+      {progress && (
+        <div className="fixed inset-0 z-[400] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm">
+          <div className="bg-[#150e07] border border-amber-500/20 p-8 rounded-3xl shadow-2xl w-full max-w-md flex flex-col items-center text-center gap-6">
+            <div className="p-4 rounded-full bg-amber-500/10 text-amber-500">
+              <LayersIcon className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h3 className="text-lg font-black text-white uppercase tracking-wider">
+                {t.exportingTitle || 'Applying watermarks'}
+              </h3>
+              <p className="text-xs text-slate-400 font-medium">
+                {(t.progress_generating || 'Processing image {current} of {total}...')
+                  .replace('{current}', String(progress.current))
+                  .replace('{total}', String(progress.total))}
+              </p>
+            </div>
+            <div className="w-full flex flex-col gap-2">
+              <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <div
+                  className="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full transition-all duration-300"
+                  style={{ width: `${Math.round((progress.current / progress.total) * 100)}%` }}
+                />
+              </div>
+              <span className="text-[10px] text-amber-500 font-mono font-bold tracking-wider">
+                {Math.round((progress.current / progress.total) * 100)}%
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* PRIVACY & COMPLIANCE MODALS */}
-      <LegalModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        title={
-          modalType === 'privacy' 
-            ? (legalTranslations[lang]?.privacy.title || 'Privacy Policy')
-            : modalType === 'terms'
-              ? (legalTranslations[lang]?.terms.title || 'Terms of Service')
-              : (legalTranslations[lang]?.cookies.title || 'Cookie Policy')
-        }
-        content={
-          modalType === 'privacy' 
-            ? (legalTranslations[lang]?.privacy.content || '')
-            : modalType === 'terms'
-              ? (legalTranslations[lang]?.terms.content || '')
-              : (legalTranslations[lang]?.cookies.content || '')
-        }
-        t={t}
-      />
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label={t.scrollTopLabel || 'Back to top'}
+          className="fixed bottom-24 right-5 md:bottom-10 md:right-10 z-[200] w-12 h-12 bg-white text-black rounded-2xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 cursor-pointer"
+        >
+          <ArrowUp className="w-5 h-5 stroke-[3]" />
+        </button>
+      )}
     </div>
   );
 };

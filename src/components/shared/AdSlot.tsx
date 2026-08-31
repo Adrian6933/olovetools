@@ -16,11 +16,20 @@ interface AdSlotProps {
   adSenseSlot?: string;
 }
 
+/**
+ * Alturas MÍNIMAS, nunca fijas. Todas las unidades de AdSense de este sitio
+ * (salvo la in-feed) son "display responsive": el alto real lo decide Google a
+ * partir del ancho disponible (un 728x90 puede servirse como 970x250 en
+ * escritorio o como 336x280 en móvil). Con `h-*` fijo + `overflow-hidden` el
+ * anuncio se recortaba —además de perder relleno, mostrar un anuncio cortado
+ * incumple las políticas de AdSense—, así que aquí solo se reserva el mínimo
+ * para que el CLS sea bajo y se deja crecer al contenedor.
+ */
 const SIZE_CLASSES: Record<AdSlotSize, string> = {
-  leaderboard: 'h-24 md:h-20 max-w-[728px]',
-  rectangle: 'h-[250px] max-w-[300px]',
-  'mobile-banner': 'h-16 max-w-[320px]',
-  skyscraper: 'w-[160px] h-[600px]',
+  leaderboard: 'min-h-[90px] max-w-[970px]',
+  rectangle: 'min-h-[250px] max-w-[300px]',
+  'mobile-banner': 'min-h-[50px] max-w-[728px]',
+  skyscraper: 'w-[160px] min-h-[600px]',
 };
 
 const POSITION_LABELS: Record<AdSlotPosition, string> = {
@@ -111,16 +120,19 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   if (!isActive && !import.meta.env.DEV) return null;
   if (position === 'anchor' && dismissed) return null;
 
+  // Sin `h-full`: el <ins> debe poder crecer hasta el alto que decida AdSense.
+  // Todas las unidades del panel son responsive salvo la in-feed (fluid), así
+  // que el único caso especial es esa; el resto lleva format=auto igual que el
+  // snippet que genera AdSense.
   const adBody = isActive ? (
     <ins
       ref={insRef}
-      className="adsbygoogle block w-full h-full"
+      className="adsbygoogle block w-full"
+      style={{ display: 'block', minHeight: size === 'skyscraper' ? 600 : undefined }}
       data-ad-client={client}
       data-ad-slot={slot}
       {...(position === 'infeed'
         ? { 'data-ad-format': 'fluid', 'data-ad-layout-key': AD_INFEED_LAYOUT_KEY }
-        : size === 'skyscraper' || size === 'rectangle'
-        ? {}
         : { 'data-ad-format': 'auto', 'data-full-width-responsive': 'true' })}
     />
   ) : (
@@ -148,7 +160,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
         aria-label={`Advertisement slot: ${POSITION_LABELS[position]}`}
       >
         <div
-          className={`relative flex items-center justify-center overflow-hidden ${SIZE_CLASSES[size]} w-full`}
+          className={`relative flex items-center justify-center ${SIZE_CLASSES[size]} w-full`}
           style={{
             backgroundColor: `${theme.primaryHex}05`,
             border: `1px dashed ${theme.border}`,
@@ -180,7 +192,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
       aria-label={`Advertisement slot: ${POSITION_LABELS[position]}`}
     >
       <div
-        className="relative w-full h-full flex items-center justify-center overflow-hidden"
+        className="relative w-full flex-1 flex items-center justify-center"
         style={{
           backgroundColor: `${theme.primaryHex}05`,
           border: `1px dashed ${theme.border}`,

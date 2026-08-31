@@ -82,9 +82,67 @@ export default {
     "cookies": "Cookies",
     "contactEmail": "E-MAIL-KONTAKT",
     "gotIt": "VERSTANDEN",
-    "privacyText": "Bei TwitchBolt hat Privatsphäre Priorität. Wir sammeln, speichern oder teilen keine personenbezogenen Daten. Links werden in Echtzeit verarbeitet und es werden keine Protokolle der heruntergeladenen Clips auf unseren Servern gespeichert. Bei Fragen wenden Sie sich bitte an adrian.contact.me.69@gmail.com.",
+    "privacyText": "TwitchBolt führt kein Konto über dich: keine Anmeldung, kein Analyseprofil, keine Datenbank der Links, die du einfügst. Was es nicht behaupten kann, ist, dass nichts einen Server berührt — Twitch lehnt direkte Browser-Anfragen ab, also wird jeder Clip weitergeleitet. Zuerst übernimmt das unser eigener Endpunkt, der nichts protokolliert; scheitert er, fällt die Anfrage auf öffentliche CORS-Proxys zurück (corsproxy.io, codetabs.com und thingproxy.freeboard.io), betrieben von Dritten, deren Protokollierung wir nicht kontrollieren. Die Clip-URL und das Video selbst laufen über den, der antwortet. Du kannst diese Rückfallebene im Tool abschalten, und die Seite nennt dir den Host, der deinen letzten Download ausgeliefert hat. Deine Sprache und diese Einstellung bleiben in deinem eigenen Browser. Fragen: adrian.contact.me.69@gmail.com.",
     "termsText": "TwitchBolt ist ein technisches Tool für den Zugriff auf öffentliche Twitch-Inhalte. Der Nutzer ist allein für die Verwendung der heruntergeladenen Materialien verantwortlich. TwitchBolt ist nicht mit Twitch verbunden.",
     "cookiesText": "Unsere Website verwendet nur unbedingt erforderlichen LocalStorage für den technischen Betrieb der Website."
   },
-  "loadingClips": "CLIPS WERDEN GELADEN..."
+  "loadingClips": "CLIPS WERDEN GELADEN...",
+  "qMaxLabel": "Höchste Qualität",
+  "qMaxSub": "Originalquelle",
+  "q720Label": "720p HD",
+  "q720Sub": "Ausgewogen",
+  "q360Label": "360p schnell",
+  "q360Sub": "Wenig Daten",
+  "zipError": "Das ZIP konnte nicht erstellt werden. Womöglich sind einzelne Clips beim Herunterladen fehlgeschlagen; versuch es mit weniger auf einmal.",
+  "routeNotice": "Twitch blockiert direkte Browser-Anfragen, deshalb läuft jeder Clip über ein Relais. Unser eigenes wird zuerst versucht; die öffentlichen sind nur die Rückfallebene, und du kannst sie abschalten.",
+  "routeLast": "Letzter Download bearbeitet von: {host}",
+  "routeAllowOn": "Öffentliche Relais: an",
+  "routeAllowOff": "Öffentliche Relais: aus",
+  "howTitle": "So funktioniert es",
+  "featuresTitle": "Was es wirklich kann",
+  "faqTitle": "Häufige Fragen",
+  "kickCrossSell": "Willst du Kick-Clips herunterladen?",
+  "kickCrossSellCta": "Probier KickBolt",
+  "step1Title": "Links einfügen",
+  "step1Text": "Eine Clip-URL pro Zeile, oder wirf eine .txt-Liste rein. Abgerufen wird nichts, bis du den Knopf drückst.",
+  "step2Title": "Qualität wählen",
+  "step2Text": "Die Quelle behält den Originalstream; 720p und 360p tauschen Details gegen eine viel kleinere Datei.",
+  "step3Title": "Abrufen lassen",
+  "step3Text": "Clips werden zu dritt aufgelöst, damit Twitch dich nicht drosselt, mit einem Fortschrittsbalken pro Datei.",
+  "step4Title": "Einen oder alle sichern",
+  "step4Text": "Lad Clips einzeln herunter, oder nimm den ganzen Stapel als ein ZIP, ohne irgendetwas neu zu komprimieren.",
+  "feat1Title": "Jede Twitch-Clip-URL",
+  "feat1Text": "clips.twitch.tv-Links, /clip/-Pfade eines Kanals und der Slug allein führen alle zum selben Clip.",
+  "feat2Title": "Ganze Listen auf einmal",
+  "feat2Text": "Füg fünfzig Links ein oder lad eine .txt-Datei hoch; Duplikate fliegen raus, bevor irgendetwas angefragt wird.",
+  "feat3Title": "Du wählst die Qualität",
+  "feat3Text": "Nicht jeder Clip ist die Quell-Bitrate wert. Geh auf 720p oder 360p runter, wenn die Größe wichtiger ist als das Detail.",
+  "feat4Title": "Ein ZIP, ohne Neukodierung",
+  "feat4Text": "Das Paket wird gespeichert, nicht komprimiert: Video schrumpft im Zip nicht, und der Verzicht spart die Wartezeit.",
+  "feat5Title": "Nie ein Konto",
+  "feat5Text": "Keine Anmeldung, keine E-Mail, keine Erweiterung. Seite öffnen, einfügen, herunterladen, Tab schließen.",
+  "feat6Title": "Ehrlich zum Weg",
+  "feat6Text": "Twitch beliefert keinen Browser direkt, also nennt das Tool das Relais, das deinen Clip getragen hat, und lässt dich die öffentlichen ablehnen.",
+  "faq": [
+    {
+      "question": "Kommt der Clip direkt von Twitch?",
+      "answer": "Nein, und das geht auch nicht. Twitch liefert weder seinen GraphQL-Endpunkt noch sein Clip-CDN mit CORS-Headern aus, die ein Browser lesen darf, also wird jeder Clip weitergeleitet. Unser eigenes Relais wird zuerst versucht; scheitert es, springen ein paar öffentliche CORS-Proxys ein. Der Hinweis über dem Eingabefeld lässt dich die abschalten und zeigt, welcher Host deinen letzten Download tatsächlich ausgeliefert hat."
+    },
+    {
+      "question": "Gibt es ein Limit, wie viele Clips auf einmal gehen?",
+      "answer": "Kein hartes Limit, aber Clips werden absichtlich zu dritt aufgelöst und zu fünft geladen, damit Twitch nicht anfängt, Anfragen abzulehnen. Fünfzig Links am Stück sind bequem; mehrere hundert dauern und laufen eher unterwegs in eine Drosselung."
+    },
+    {
+      "question": "Warum ist das ZIP genauso groß wie die Clips?",
+      "answer": "Weil es gespeichert und nicht komprimiert wird. Video ist bereits komprimiert, also bringt der Deflate des Zips fast nichts und kostet viel Wartezeit. Das Paket ist ein Behälter, keine Presse."
+    },
+    {
+      "question": "Was lädt „Höchste Qualität\" wirklich herunter?",
+      "answer": "Die höchste Fassung, die Twitch für diesen Clip veröffentlicht hat — welche das auch ist. Es wird nichts hochskaliert: hat der Streamer in 720p gesendet, ist die Quelle 720p, und das Tool erfindet keine Details, die nie aufgezeichnet wurden."
+    },
+    {
+      "question": "Speichert ihr meine Links oder die Clips?",
+      "answer": "Weder noch. Links werden im Vorbeigehen aufgelöst, und in keine Datenbank wird etwas geschrieben. Deine Sprache und deine Einstellung zu den öffentlichen Relais liegen in deinem eigenen Browser und gehen nirgendwohin. Was wir dir nicht versprechen können, ist, was ein öffentliches Relais mit einer URL macht, die es abrufen soll — genau deshalb kannst du sie abschalten."
+    }
+  ]
 };

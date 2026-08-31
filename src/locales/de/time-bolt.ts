@@ -1,9 +1,9 @@
 export default {
   "title": "TimeBolt",
-  "seo_title": "TimeBolt | Zeit zwischen weltweiten Zeitzonen umrechnen mit interaktivem Meeting-Planer 100% lokal.",
-  "seo_description": "Zeit zwischen weltweiten Zeitzonen umrechnen mit interaktivem Meeting-Planer 100% lokal.",
+  "seo_title": "Weltuhr und Besprechungsplaner über Zeitzonen",
+  "seo_description": "Kostenlose Weltuhr und Besprechungsplaner. Füge jede der ~400 IANA-Zeitzonen hinzu, die dein Browser kennt, sieh alle 24 Stunden nebeneinander mit hinterlegter Arbeitszeit, werde gewarnt, wenn an dem Tag die Uhr umgestellt wird, und exportiere das Treffen als .ics-Datei. Alles läuft im Browser, und deine Zonen bleiben gespeichert.",
   "seoHeroTitle": "TimeBolt",
-  "seoHeroText": "Zeit zwischen weltweiten Zeitzonen umrechnen mit interaktivem Meeting-Planer 100% lokal.",
+  "seoHeroText": "Füge die Orte hinzu, von denen dein Team arbeitet, und sieh alle vierundzwanzig Stunden auf einmal — mit hinterlegter Arbeitszeit und einer Zählung, wer in jeder Spalte wach ist. Es warnt, wenn eine Zone an dem Tag die Uhr umstellt, und liefert ein .ics für den gewählten Slot.",
   "section_world_clocks": "Weltuhren",
   "button_close": "Schließen",
   "button_add_timezone": "Zeitzone hinzufügen",
@@ -26,37 +26,94 @@ export default {
   "planner_yesterday": "Gestern",
   "planner_source_tag": "Quelle",
   "tooltip_copy": "Kopieren",
-  "seoBrowserSpeedTitle": "Sofortige Lokale Verarbeitung",
-  "seoBrowserSpeedText": "Die gesamte Verarbeitung erfolgt in Ihrem Browser über native JavaScript-APIs. Es werden keine Daten an einen Server gesendet.",
-  "seoUseCaseTitle": "100% Clientseitig",
-  "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
+  "seoBrowserSpeedTitle": "Dein Browser kennt die Regeln schon",
+  "seoBrowserSpeedText": "Jeder Browser bringt die IANA-Zeitzonendatenbank mit, samt historischer Regeln und der Termine, an denen jedes Land die Uhr umstellt. Dieses Tool liest sie direkt: kein Server zu fragen, nichts herunterzuladen, und keine Liste, die veraltet, wenn ein Land es sich mit der Sommerzeit anders überlegt.",
+  "seoUseCaseTitle": "Verteilte Teams, Calls und Reisen",
+  "seoUseCaseText": "Finde die eine Stunde, die für niemanden mitten in der Nacht liegt, prüfe, wann dein Call bei der Kollegin in Bogotá ankommt, oder klär, ob dein gebuchter Flug vor oder nach der Zeitumstellung landet.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
   "seoKeywords": [
-    "time bolt",
-    "online-tool",
-    "kostenlos",
-    "lokal",
-    "Browser"
+    "weltuhr",
+    "besprechungsplaner zeitzonen",
+    "zeitzonen überschneidung",
+    "zeitzonen umrechner",
+    "ics termin export",
+    "sommerzeit prüfen"
   ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
       "question": "Werden meine Daten an einen Server gesendet?",
-      "answer": "Nein. Alle Vorgänge erfolgen vollständig in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät."
+      "answer": "Nein. Die Zeitzonenregeln kommen aus deinem eigenen Browser, und alles wird auf der Seite berechnet. Gespeichert wird nur die Liste der hinzugefügten Zonen, lokal, damit sie beim nächsten Mal noch da ist."
     },
     {
-      "question": "Wie viele Zeitzonen kann ich gleichzeitig hinzufügen?",
-      "answer": "Sie können beliebig viele Zeitzonen aus der durchsuchbaren Liste von über 80 Städten weltweit hinzufügen, und der Meeting-Planer zeigt die entsprechende Ortszeit für jede an."
+      "question": "Wie viele Zeitzonen kann ich hinzufügen?",
+      "answer": "Alle, die dein Browser kennt — rund 400 IANA-Zonen. Suche nach Stadt, Land oder Kennung; Akzente werden ignoriert, „bogota“ findet also Bogotá und „beijing“ findet Asia/Shanghai."
     },
     {
-      "question": "Berücksichtigt TimeBolt die Sommerzeit?",
-      "answer": "Ja. TimeBolt verwendet die native Intl-API Ihres Browsers, die Sommerzeit und historische Offset-Änderungen für jede Zeitzone automatisch verwaltet."
+      "question": "Was bedeutet die Zahl über jeder Spalte?",
+      "answer": "Wie viele deiner Orte in diesem Moment in der Arbeitszeit sind. Die Spalte mit der höchsten Zahl wird hervorgehoben — meist genau der gesuchte Termin."
+    },
+    {
+      "question": "Was passiert am Tag der Zeitumstellung?",
+      "answer": "Du bekommst eine Warnung mit den Zonen, die an dem Tag umstellen, und den Verschiebungen davor und danach. Wählst du eine Stunde, welche die Uhren überspringen, sagt das Tool, dass es diese Stunde nicht gibt, statt dein Treffen stillschweigend zu verschieben."
+    },
+    {
+      "question": "Kann ich das Treffen in meinen Kalender legen?",
+      "answer": "Ja. Die .ics-Schaltfläche baut auf der Seite eine normale Kalenderdatei, mit Beginn in UTC und allen Ortszeiten in der Beschreibung. Sie öffnet sich in Google Kalender, Outlook, Apple Kalender und allem anderen, das iCalendar liest."
     }
   ],
-  "footerTagline": "Zeit zwischen weltweiten Zeitzonen umrechnen mit interaktivem Meeting-Planer 100% lokal.",
+  "footerTagline": "Eine Weltuhr mit echtem Überschneidungsraster, ehrlich zur Sommerzeit und mit .ics-Ausgabe.",
   "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
-  "contactForIdeas": "Kontakt für Ideen und Kommentare:"
+  "contactForIdeas": "Kontakt für Ideen und Kommentare:",
+  "heroBadge": "Läuft in deinem Browser",
+  "heroSecondary": "So funktioniert es",
+  "clear": "Leeren",
+  "remove": "Entfernen",
+  "isReference": "Bezugszone",
+  "makeReference": "Als Bezug verwenden",
+  "nextDay": "(+1 Tag)",
+  "prevDay": "(−1 Tag)",
+  "zoneCount": "{shown} von {total} Zonen — tippen zum Eingrenzen",
+  "workingHours": "Arbeitszeit",
+  "workStart": "Beginn der Arbeitszeit",
+  "workEnd": "Ende der Arbeitszeit",
+  "duration": "Dauer (Min.)",
+  "legendWork": "Arbeitszeit {a}-{b}",
+  "legendEarly": "Früh",
+  "legendEvening": "Abend",
+  "legendNight": "Nacht",
+  "skippedHour": "An dem Tag gibt es {h}:00 in {z} nicht: die Uhren springen einfach darüber.",
+  "dstWarningTitle": "An dem Tag wird die Uhr umgestellt",
+  "dstWarningLine": "{city}: aus {from} wird {to}",
+  "summaryTitle": "Das Treffen, überall",
+  "copyTimes": "Zeiten kopieren",
+  "copied": "Kopiert",
+  "downloadIcs": ".ics herunterladen",
+  "meetingTitle": "Besprechung",
+  "howTitle": "So funktioniert es",
+  "step1Title": "Orte hinzufügen",
+  "step1Text": "Suche jede Stadt oder Zone, die dein Browser kennt — rund 400, nicht eine kurze fest verdrahtete Liste.",
+  "step2Title": "Überschneidung ablesen",
+  "step2Text": "Vierundzwanzig Spalten, eine Zeile je Ort. Grün ist Arbeitszeit, und die Zahl oben zählt, wer gerade arbeitet.",
+  "step3Title": "Auf Zeitumstellungen achten",
+  "step3Text": "Stellt eine Zone an dem Tag die Uhr um, oder gibt es die gewählte Stunde nicht, wird das gesagt.",
+  "step4Title": "Verschick es",
+  "step4Text": "Kopier die Zeiten als Text, oder lade ein .ics herunter, das in jeden Kalender passt.",
+  "featuresTitle": "Was es wirklich kann",
+  "feat1Title": "Ein echtes Überschneidungsraster",
+  "feat1Text": "Jede Stunde des Tages gegen jeden Ort auf einmal, damit der gute Slot sichtbar ist statt von Hand ausgerechnet.",
+  "feat2Title": "Jede Zone, keine Auswahlliste",
+  "feat2Text": "Die komplette IANA-Liste aus deinem Browser, durchsuchbar nach Stadt, Land oder Kennung, Akzente egal.",
+  "feat3Title": "Ehrlich zur Sommerzeit",
+  "feat3Text": "Warnt, wenn an dem Tag die Uhr umgestellt wird, und tut nicht so, als gäbe es die übersprungene Stunde.",
+  "feat4Title": "Direkt in den Kalender",
+  "feat4Text": "Eine .ics-Datei, direkt auf der Seite gebaut, mit allen Ortszeiten in der Beschreibung.",
+  "feat5Title": "Merkt sich deine Orte",
+  "feat5Text": "Die Zonenliste bleibt in deinem Browser und ist morgen noch da.",
+  "feat6Title": "Verlässt die Seite nie",
+  "feat6Text": "Die Zeitzonendaten kommen aus deinem eigenen Browser. Nichts wird hochgeladen und nichts verfolgt.",
+  "scrollTop": "Nach oben"
 };

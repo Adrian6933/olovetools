@@ -1,6 +1,6 @@
 export default {
   "title": "GIFBolt",
-  "description": "Convierte vídeos y secuencias de imágenes en GIFs animados optimizados 100% local en tu navegador.",
+  "description": "Extrae fotogramas de un vídeo o encadena imágenes, edita la línea de tiempo y codifica un GIF con paleta global y compresión entre fotogramas, todo en tu navegador.",
   "tab_video": "Vídeo a GIF",
   "tab_images": "Imágenes a GIF",
   "label_upload_video": "Subir Vídeo",
@@ -23,42 +23,212 @@ export default {
   "quality_high": "Alta calidad",
   "quality_medium": "Calidad media",
   "quality_low": "Baja calidad (Rápido)",
-  "drop_zone_video": "Arrastra el vídeo aquí o haz clic para buscar (MP4, WebM)",
-  "drop_zone_images": "Arrastra las imágenes aquí o haz clic para buscar (PNG, JPG, WebP)",
+  "drop_zone_video": "MP4, WebM, MOV, MKV, AVI — o imágenes PNG, JPG, WebP, AVIF, GIF, BMP y HEIC.",
+  "drop_zone_images": "PNG, JPG, WebP, AVIF, GIF, BMP y HEIC. Suéltalas en el orden en que quieras verlas.",
   "seo_title": "GIFBolt | Conversor Gratis de Vídeo a GIF e Imágenes a GIF Online",
-  "seo_description": "Convierte vídeos y secuencias de imágenes en GIFs animados de alta calidad directamente en tu navegador. Opciones de corte, FPS, tamaño y compresión configurables.",
-  "seoHeroTitle": "Convierte Vídeos e Imágenes a GIFs Animados en Local",
-  "seoHeroText": "Crea GIFs optimizados totalmente en tu navegador. GIFBolt procesa todo offline para garantizar la máxima privacidad.",
+  "seo_description": "Convierte vídeo o secuencias de imágenes en GIFs animados desde el navegador: línea de tiempo editable, paleta global, tramado Floyd–Steinberg y compresión entre fotogramas. No se sube nada.",
+  "seoHeroTitle": "Convierte un vídeo o un montón de imágenes en un GIF, en el propio navegador",
+  "seoHeroText": "Extrae los fotogramas de un clip, edita la línea de tiempo y codifica con paleta global, tramado y compresión entre fotogramas. No se sube nada.",
   "seoHeroList": [
-    "Sin límites de tamaño ni subidas de archivos",
-    "Selecciona tiempos de inicio/fin y ajusta los FPS",
-    "Privacidad local absoluta (sin transferir a servidores)"
+    "Los fotogramas siguen siendo editables antes de codificar",
+    "Una única paleta para todo el bucle",
+    "No se sube nada ni se descarga nada"
   ],
-  "seoBrowserSpeedTitle": "Sandbox Local del Navegador",
-  "seoBrowserSpeedText": "Utilizando el motor de renderizado de lienzo nativo de tu navegador, capturamos los fotogramas de tus vídeos y los compilamos en local. Tus archivos nunca viajan a un servidor.",
-  "seoUseCaseTitle": "Perfecto para Memes y Documentación",
-  "seoUseCaseText": "Crea rápidamente memes de reacción a partir de clips de vídeo cortos, o graba flujos de trabajo de software limpios para tus guías de desarrollo y readmes en GitHub.",
-  "seoPrivacyTitle": "Procesamiento 100% Seguro",
-  "seoPrivacyText": "Toda la codificación de imágenes, el redimensionamiento del lienzo y el historial de salida ocurren en el sandbox de tu navegador. No almacenamos tus archivos.",
+  "seoBrowserSpeedTitle": "Un codificador de GIF de verdad, no un volcado de canvas",
+  "seoBrowserSpeedText": "Los fotogramas se leen directamente del vídeo ya decodificado con un reescalado de alta calidad, sin pasar nunca por un JPEG intermedio. La paleta se construye por corte mediano sobre toda la animación, los píxeles se mapean con tramado Floyd–Steinberg en serpentina y todo lo que un fotograma comparte con el anterior se escribe como transparente y se hereda. El trabajo se reparte entre varios web workers, así que la página sigue respondiendo y la barra de progreso mide fotogramas reales.",
+  "seoUseCaseTitle": "Para informes de errores, demos y bucles de reacción",
+  "seoUseCaseText": "Graba un fallo una vez y recórtalo a los cuatro segundos que importan. Convierte el recorrido de un diseño en algo que se reproduzca solo dentro de una pull request. O encadena unas cuantas capturas y ajústales el tiempo a mano. La línea de tiempo sigue siendo editable hasta que pulsas codificar.",
+  "seoPrivacyTitle": "No se sube nada, y tampoco se descarga nada",
+  "seoPrivacyText": "Todo ocurre en esta pestaña: el decodificador de vídeo es el del propio navegador, el cuantizador y el compresor LZW son JavaScript que llega con la página, y el resultado es un Blob que nunca sale de tu equipo. No hay servidor al que enviar archivos ni modelo o códec que descargar de un CDN. La contrapartida es honesta: todo está limitado por tu memoria RAM, así que un clip en 4K hay que recortarlo y reducirlo antes de que se pueda codificar.",
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
-      "question": "¿Hay un límite de tamaño de archivo para la conversión de vídeo?",
-      "answer": "No. Como los archivos se procesan directamente en la RAM de tu navegador, no hay límites estrictos. Sin embargo, procesar vídeos muy largos o de resoluciones muy altas (como 4K) puede ralentizar el navegador."
+      "question": "¿Hay un límite de tamaño de archivo?",
+      "answer": "Fijo no, pero real sí: los fotogramas viven en la memoria de tu pestaña. Un GIF de 480 px y 4 segundos a 12 fps son unos 50 MB de datos de trabajo y se codifica en un par de segundos; un clip en 4K agotará la pestaña mucho antes de terminar. Recorta el tramo y baja el tamaño de trabajo: para eso están esos controles."
     },
     {
-      "question": "¿GIFBolt sube mis archivos?",
-      "answer": "No. Todo funciona en el lado del cliente con JavaScript. Tus archivos se procesan localmente en la pestaña del navegador."
+      "question": "¿Por qué mi GIF sigue siendo tan grande?",
+      "answer": "El GIF es un formato de 1987: 256 colores y sin compensación de movimiento. Reduce primero el ancho, luego la velocidad y luego la paleta. Dejar activada la opción de «reutilizar los píxeles que no cambian» suele valer más que las tres cosas: en una grabación de pantalla se lleva por delante casi todo el archivo."
     },
     {
-      "question": "¿Cómo puedo conseguir archivos GIF más pequeños?",
-      "answer": "Reduce las dimensiones (ej. 320px de ancho), reduce los FPS a 8 o 10, o disminuye la calidad de compresión. Los GIFs tienen un límite de 256 colores por fotograma, por lo que los rangos de tiempo más cortos ayudan a mantener el archivo pequeño."
+      "question": "¿Por qué la velocidad no es exactamente la que he elegido?",
+      "answer": "El GIF guarda cada espera en centésimas de segundo, así que solo existen velocidades de la forma 100/n. Pedir 12 fps significa en realidad 8 centésimas por fotograma, es decir, 12,5. El panel muestra la velocidad que vas a obtener de verdad, no la que has pedido."
     },
     {
-      "question": "¿Qué formatos son compatibles?",
-      "answer": "Para vídeo, admitimos MP4 y WebM. Para imágenes, admitimos PNG, JPG y WebP."
+      "question": "¿Qué formatos admite?",
+      "answer": "Cualquier vídeo que el navegador sepa reproducir (MP4/H.264, WebM, MOV y a menudo MKV) y, como imágenes, PNG, JPG, WebP, AVIF, GIF, BMP y el HEIC del iPhone. Un GIF animado que entre como imagen aporta solo su primer fotograma."
+    },
+    {
+      "question": "¿Se sube algo a algún sitio?",
+      "answer": "No. No hay paso de subida ni ninguna petición externa: el codificador viaja con la página y se ejecuta en web workers dentro de esta pestaña."
+    },
+    {
+      "question": "¿Puedo conservar la transparencia?",
+      "answer": "Sí, con el interruptor «conservar la transparencia». El GIF admite exactamente un color totalmente transparente, así que los bordes suaves se vuelven duros. No se puede combinar con la reutilización de píxeles, porque ambas cosas necesitan esa misma ranura transparente."
     }
   ],
   "footerTagline": "Herramientas de creación de GIF gratuitas, privadas y configurables en cliente.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "badge": "Vídeo e imágenes → GIF",
+  "dropTitle": "Suelta un vídeo o un conjunto de imágenes",
+  "dropHintNothing": "Soltar un archivo no lanza nada: tú eliges los ajustes y pulsas el botón.",
+  "modeAuto": "Extraer un tramo",
+  "modeManual": "Elegir fotogramas a mano",
+  "manualHint": "Recorre el vídeo y añade exactamente los fotogramas que quieras. No se ejecuta ningún proceso automático.",
+  "btnCapture": "Capturar este fotograma",
+  "labelWorkingSize": "Tamaño de trabajo",
+  "extractSummary": "{0} fotogramas a {1}×{2}. A partir de aquí el GIF solo se puede reducir.",
+  "btnExtract": "Extraer los fotogramas",
+  "btnExtractAgain": "Volver a extraerlos",
+  "waitingHint": "Ajusta el tramo y pulsa el botón. Hasta entonces no se ejecuta nada.",
+  "btnPlay": "Reproducir",
+  "btnPause": "Pausar",
+  "btnPrevFrame": "Fotograma anterior",
+  "btnNextFrame": "Fotograma siguiente",
+  "btnUndo": "Deshacer",
+  "btnRedo": "Rehacer",
+  "frameSummary": "{0} fotogramas · {1} fps reales",
+  "btnSelectAll": "Seleccionar todo",
+  "btnSelectNone": "Quitar la selección",
+  "btnDeleteSelected": "Borrar {0}",
+  "btnKeepSelected": "Conservar solo estos",
+  "btnReverse": "Invertir",
+  "btnPingPong": "Ida y vuelta",
+  "btnHalve": "Quitar uno de cada dos",
+  "btnAddImages": "Añadir imágenes",
+  "btnResetDelays": "Restablecer los tiempos",
+  "delayHint": "El GIF guarda las esperas en centésimas de segundo, así que el valor se ajusta a los 10 ms más cercanos y nunca baja de 20.",
+  "outputTitle": "Salida",
+  "qualityCustom": "Personalizada",
+  "labelDiff": "Reutilizar los píxeles que no cambian",
+  "diffHint": "Solo escribe lo que se ha movido entre fotogramas. El mayor ahorro en grabaciones de pantalla.",
+  "showAdvanced": "Afinar los detalles",
+  "hideAdvanced": "Ocultar los detalles",
+  "labelColors": "Tamaño de la paleta",
+  "labelDither": "Tramado",
+  "ditherHint": "Cambia un poco de ruido por el bandeado que una paleta plana deja en los degradados.",
+  "labelDitherStrength": "Intensidad del tramado",
+  "labelTolerance": "Tolerancia por píxel",
+  "labelAlpha": "Conservar la transparencia",
+  "alphaHint": "Traslada los píxeles transparentes al alfa de 1 bit del GIF. No se puede combinar con la reutilización de píxeles.",
+  "labelBackground": "Fondo",
+  "labelFit": "Cuando las formas no coinciden",
+  "fitContain": "Encajar con margen",
+  "fitCover": "Llenar y recortar",
+  "fitStretch": "Estirar",
+  "labelLoop": "Repetir siempre",
+  "loopHint": "Desactívalo para reproducirlo un número fijo de veces y detenerlo en el último fotograma.",
+  "labelLoopCount": "Reproducciones",
+  "btnCancel": "Cancelar",
+  "phaseRaster": "Preparando los fotogramas…",
+  "phasePalette": "Construyendo la paleta…",
+  "resultTitle": "Resultado",
+  "statSize": "Peso",
+  "statFrames": "Fotogramas",
+  "statSizePx": "Tamaño",
+  "statColors": "Colores",
+  "statReuse": "Píxeles reutilizados",
+  "statTime": "Codificado en",
+  "statFps": "Fotogramas reales",
+  "statPerFrame": "Por fotograma",
+  "btnCopy": "Copiar",
+  "dismissLabel": "Cerrar",
+  "errorVideo": "Este navegador no puede decodificar ese vídeo. Prueba con MP4 (H.264) o WebM.",
+  "errorImages": "Al menos una de esas imágenes no se ha podido decodificar.",
+  "errorExtract": "No se han podido leer los fotogramas. Puede que el vídeo use un códec que este navegador solo soporta a medias.",
+  "errorEncode": "La codificación ha fallado. Prueba con menos fotogramas o con menos ancho.",
+  "errorClipboard": "Tu navegador ha bloqueado el portapapeles. Descárgalo en su lugar.",
+  "errorTooManyFrames": "Parado en {0} fotogramas: a partir de ahí el GIF no es el formato adecuado.",
+  "stageSource": "Fotograma original",
+  "stageResult": "GIF codificado",
+  "stageHint": "La rueda hace zoom hacia el cursor y arrastrando se desplaza.",
+  "stageHintCompare": "La rueda hace zoom hacia el cursor y arrastrando se desplaza. Mantén Alt o el botón derecho para ver el original bajo el GIF.",
+  "zoomIn": "Acercar",
+  "zoomOut": "Alejar",
+  "zoomReset": "Restablecer la vista",
+  "stripHint": "Arrastra sobre la tira para seleccionar fotogramas. Mantén Alt o usa el botón derecho para quitarlos.",
+  "shortcutsTitle": "Atajos",
+  "shortcuts": [
+    {
+      "keys": "Espacio",
+      "label": "reproducir / pausar"
+    },
+    {
+      "keys": "← →",
+      "label": "avanzar un fotograma"
+    },
+    {
+      "keys": "Supr",
+      "label": "borrar la selección"
+    },
+    {
+      "keys": "A / D",
+      "label": "seleccionar todo / nada"
+    },
+    {
+      "keys": "Ctrl+Z",
+      "label": "deshacer"
+    },
+    {
+      "keys": "Intro",
+      "label": "codificar"
+    }
+  ],
+  "nextStepTitle": "Sigue con esto",
+  "nextStepHint": "Envía el fotograma en pantalla como PNG, sin volver a subirlo",
+  "nextCrop": "Recórtalo",
+  "nextCompress": "Comprímelo",
+  "nextCutout": "Quítale el fondo",
+  "nextWatermark": "Ponle una marca de agua",
+  "nextMeme": "Conviértelo en meme",
+  "howItWorksTitle": "Cómo funciona",
+  "step1Title": "Suéltalo aquí",
+  "step1Text": "Un vídeo o un montón de imágenes. No se sube nada y no se pone en marcha nada solo.",
+  "step2Title": "Elige el tramo",
+  "step2Text": "Marca el principio y el final y la velocidad, y extrae los fotogramas, o cógelos uno a uno a mano.",
+  "step3Title": "Edita la línea de tiempo",
+  "step3Text": "Borra fotogramas, inviértelos, alarga uno y ajusta los colores y el tramado.",
+  "step4Title": "Codifica y comprueba",
+  "step4Text": "Mantén Alt sobre la vista previa para comparar el GIF con el original, y luego descárgalo o pásalo a otra herramienta.",
+  "features": [
+    {
+      "title": "Una sola paleta para todo el clip",
+      "text": "Los colores se eligen por corte mediano sobre todos los fotogramas a la vez, así nada cambia de tono a mitad del bucle."
+    },
+    {
+      "title": "Solo se escribe lo que se ha movido",
+      "text": "Los píxeles que un fotograma comparte con el anterior se heredan en vez de volver a codificarse. En una grabación de pantalla eso es casi todo el archivo."
+    },
+    {
+      "title": "Tramado que elimina el bandeado",
+      "text": "Difusión Floyd–Steinberg en serpentina, con la intensidad en un control, para que los degradados sigan limpios incluso con 64 colores."
+    },
+    {
+      "title": "Una línea de tiempo editable",
+      "text": "Borra fotogramas, invierte la secuencia, haz un palíndromo o alarga uno solo. Deshacer no cuesta nada: guarda identificadores, no mapas de bits."
+    },
+    {
+      "title": "Codificado en todos tus núcleos",
+      "text": "La animación se reparte entre varios web workers, así que la pestaña sigue usable y la barra de progreso mide fotogramas reales."
+    },
+    {
+      "title": "Nada sale de la pestaña",
+      "text": "El decodificador, la paleta y el compresor son JavaScript ejecutándose en tu equipo. Sin subidas y sin modelos descargados de un CDN."
+    },
+    {
+      "title": "Encadenado con el resto de la suite",
+      "text": "Pasa el fotograma en pantalla directamente a recortar, comprimir o quitar el fondo sin descargarlo antes."
+    }
+  ],
+  "seoKeywordsTitle": "Búsquedas relacionadas",
+  "seoKeywords": [
+    "vídeo a gif",
+    "crear gif",
+    "imágenes a gif",
+    "mp4 a gif",
+    "comprimir gif",
+    "gif animado",
+    "convertidor de gif gratis",
+    "editor de gif"
+  ]
 };

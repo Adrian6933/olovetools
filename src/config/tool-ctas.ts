@@ -82,6 +82,11 @@ export const TOOL_CTAS: Record<string, ToolCta[]> = {
   'cron-flow': [
     { target: 'epoch-flow', labels: { en: 'Convert timestamps', es: 'Convierte timestamps', fr: 'Convertissez des timestamps', de: 'Timestamps umwandeln', pt: 'Converta timestamps', ru: 'Конвертируйте временные метки', hi: 'टाइमस्टैम्प बदलें', ja: 'タイムスタンプを変換', zh: '转换时间戳' } },
   ],
+  codecard: [
+    { target: 'compresssnap', labels: { en: 'Compress the image', es: 'Comprime la imagen', fr: "Compressez l'image", de: 'Bild komprimieren', pt: 'Comprima a imagem', ru: 'Сожмите изображение', hi: 'छवि संपीड़ित करें', ja: '画像を圧縮', zh: '压缩图像' } },
+    { target: 'watermark-snap', labels: { en: 'Add a watermark', es: 'Añade una marca de agua', fr: 'Ajoutez un filigrane', de: 'Wasserzeichen hinzufügen', pt: 'Adicione uma marca d’água', ru: 'Добавьте водяной знак', hi: 'वॉटरमार्क जोड़ें', ja: 'ウォーターマークを追加', zh: '添加水印' } },
+    { target: 'formatflow', labels: { en: 'Format the source code', es: 'Formatea el código fuente', fr: 'Formatez le code source', de: 'Quellcode formatieren', pt: 'Formate o código-fonte', ru: 'Отформатируйте код', hi: 'सोर्स कोड फ़ॉर्मैट करें', ja: 'ソースコードを整形', zh: '格式化源代码' } },
+  ],
   'json-flow': [
     { target: 'xml-json', labels: { en: 'Convert JSON to XML', es: 'Convierte JSON a XML', fr: 'Convertissez JSON en XML', de: 'JSON in XML umwandeln', pt: 'Converta JSON para XML', ru: 'Конвертируйте JSON в XML', hi: 'JSON को XML में बदलें', ja: 'JSONをXMLに変換', zh: '将 JSON 转换为 XML' } },
   ],
@@ -113,7 +118,14 @@ export const TOOL_CTAS: Record<string, ToolCta[]> = {
     { target: 'device-test', labels: { en: 'Test camera and mic', es: 'Prueba cámara y micro', fr: 'Testez caméra et micro', de: 'Kamera und Mikro testen', pt: 'Teste câmera e microfone', ru: 'Проверьте камеру и микрофон', hi: 'कैमरा और माइक जांचें', ja: 'カメラとマイクをテスト', zh: '测试摄像头和麦克风' } },
   ],
   'uuid-generator': [
-    { target: 'passbolt', labels: { en: 'Generate secure passwords', es: 'Genera contraseñas seguras', fr: 'Générez des mots de passe sûrs', de: 'Sichere Passwörter erzeugen', pt: 'Gere senhas seguras', ru: 'Создайте надёжные пароли', hi: 'सुरक्षित पासवर्ड बनाएं', ja: '安全なパスワードを生成', zh: '生成安全密码' } },
+    { target: 'entropy-bolt', labels: { en: 'Generate secure passwords', es: 'Genera contraseñas seguras', fr: 'Générez des mots de passe sûrs', de: 'Sichere Passwörter erzeugen', pt: 'Gere senhas seguras', ru: 'Создайте надёжные пароли', hi: 'सुरक्षित पासवर्ड बनाएं', ja: '安全なパスワードを生成', zh: '生成安全密码' } },
+  ],
+  // Enlaces de navegación, no traspaso de fichero: una contraseña generada NO
+  // debe viajar por el mecanismo de handoff (queda aparcada en IndexedDB y la
+  // navegación la marca en la URL). Aquí sólo se sugiere la herramienta.
+  'entropy-bolt': [
+    { target: 'hash-bolt', labels: { en: 'Hash a string or a file', es: 'Calcula el hash de un texto o fichero', fr: "Hachez un texte ou un fichier", de: 'Text oder Datei hashen', pt: 'Calcule o hash de um texto ou arquivo', ru: 'Посчитайте хеш строки или файла', hi: 'टेक्स्ट या फ़ाइल का हैश निकालें', ja: '文字列やファイルをハッシュ化', zh: '计算文本或文件的哈希' } },
+    { target: 'uuid-generator', labels: { en: 'Generate identifiers', es: 'Genera identificadores', fr: 'Générez des identifiants', de: 'Bezeichner erzeugen', pt: 'Gere identificadores', ru: 'Создайте идентификаторы', hi: 'पहचानकर्ता बनाएं', ja: '識別子を生成', zh: '生成标识符' } },
   ],
   'lorem-flow': [
     { target: 'wordflow', labels: { en: 'Count words and characters', es: 'Cuenta palabras y caracteres', fr: 'Comptez mots et caractères', de: 'Wörter und Zeichen zählen', pt: 'Conte palavras e caracteres', ru: 'Подсчитайте слова и символы', hi: 'शब्द और अक्षर गिनें', ja: '単語と文字数をカウント', zh: '统计字数和字符' } },
@@ -135,5 +147,13 @@ export const TOOL_CTAS: Record<string, ToolCta[]> = {
   ],
   'aspect-ratio': [
     { target: 'cropsnap', labels: { en: 'Crop to that ratio', es: 'Recorta a esa proporción', fr: 'Recadrez à ce ratio', de: 'Auf dieses Verhältnis zuschneiden', pt: 'Recorte nessa proporção', ru: 'Обрежьте под эту пропорцию', hi: 'उस अनुपात में क्रॉप करें', ja: 'その比率でトリミング', zh: '按该比例裁剪' } },
+  ],
+  // Una tabla de conversiones acaba casi siempre ordenada, en un JSON o dentro
+  // de un documento: son los tres destinos que UnitFlow ya sabe alimentar por
+  // handoff, así que el CTA lleva justo a donde el botón de la herramienta va.
+  unitflow: [
+    { target: 'list-mixer', labels: { en: 'Sort and clean the list', es: 'Ordena y limpia la lista', fr: 'Triez et nettoyez la liste', de: 'Liste sortieren und säubern', pt: 'Ordene e limpe a lista', ru: 'Отсортируйте и почистите список', hi: 'सूची छाँटें और साफ़ करें', ja: 'リストを並べ替えて整理', zh: '排序并清理列表' } },
+    { target: 'json-flow', labels: { en: 'Open the table as JSON', es: 'Abre la tabla como JSON', fr: 'Ouvrez le tableau en JSON', de: 'Tabelle als JSON öffnen', pt: 'Abra a tabela como JSON', ru: 'Откройте таблицу как JSON', hi: 'तालिका को JSON में खोलें', ja: '表をJSONとして開く', zh: '以 JSON 打开表格' } },
+    { target: 'markdown-live', labels: { en: 'Preview the Markdown table', es: 'Previsualiza la tabla Markdown', fr: 'Prévisualisez le tableau Markdown', de: 'Markdown-Tabelle ansehen', pt: 'Pré-visualize a tabela Markdown', ru: 'Посмотрите таблицу Markdown', hi: 'Markdown तालिका देखें', ja: 'Markdownの表をプレビュー', zh: '预览 Markdown 表格' } },
   ],
 };

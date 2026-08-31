@@ -42,7 +42,7 @@
 - [MarkdownLive](https://olovetools.com/en/markdown-live): A real-time visual Markdown editor and HTML previewer with style templates and PDF/HTML exporters 100% locally.
 - [MemeBolt](https://olovetools.com/en/meme-bolt): Generate funny memes locally with custom text and stickers. Select popular templates or upload your own images offline in your browser.
 - [MorseFlow](https://olovetools.com/en/morse-flow): Encode and decode Morse code with audio playback 100% locally in your browser.
-- [PassBolt](https://olovetools.com/en/passbolt): Generate strong passwords and test password strength with entropy analysis 100% locally in your browser.
+- [EntropyBolt](https://olovetools.com/en/entropy-bolt): Generate strong passwords and test password strength with entropy analysis 100% locally in your browser.
 - [PasteSnap](https://olovetools.com/en/pastesnap): Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.
 - [PDFFlow](https://olovetools.com/en/pdf-flow): Merge, split, rotate, and convert JPG/PNG to PDF 100% locally. No registration or server uploads required. Secure, fast, and completely free.
 - [QRBolt](https://olovetools.com/en/qr-bolt): Create custom QR codes with custom logos, gradient colors, and unique shapes. 100% client-side, free, and secure. Download in high-quality PNG or SVG.

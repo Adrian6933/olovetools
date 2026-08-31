@@ -1,119 +1,285 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Check,
+  Download,
+  Droplets,
+  ImagePlus,
+  Keyboard,
+  Layers,
+  Palette,
+  Redo2,
+  RotateCcw,
+  Sliders,
+  Sparkles,
+  Undo2,
+  X,
+} from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { createTranslator, type Language } from '../../locales/meta';
+import { Panel } from './components/Panels';
+import { Preview } from './components/Preview';
+import { CodePanel } from './components/CodePanel';
+import { NextStepBar } from './components/NextStepBar';
+import {
+  CssHeroArt,
+  IconColorSpace,
+  IconCorner,
+  IconHandoff,
+  IconHistory,
+  IconKeys,
+  IconLayers,
+  IconLocal,
+  IconParse,
+  STEP_ART,
+} from './components/Illustrations';
+import { createTranslator } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
-import { Copy, Check, RotateCcw, Sliders, Palette, Layout, Settings, Sparkles, Plus, Trash, Layers, Code } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useHandoffIntake } from '../../lib/useHandoff';
+import type { CodeFormat, ColorSpace, Design, PreviewBackdrop, TabId } from './types';
+import { TAB_ORDER } from './lib/defaults';
+import { formatCode } from './lib/serialize';
+import { encodeDesign, useDesignStore } from './lib/useDesign';
+import { parseCss } from './lib/parse';
+import { canvasToBlob, extractPalette, loadImage, renderDesign } from './lib/render';
+import { copyText } from './lib/clipboard';
 
 interface CSSDesignerProps {
   lang: string;
   dictionary?: any;
 }
 
-const hexToRgba = (hex: string, alpha: number): string => {
-  let r = 0, g = 0, b = 0;
-  if (hex.length === 4) {
-    r = parseInt(hex[1] + hex[1], 16);
-    g = parseInt(hex[2] + hex[2], 16);
-    b = parseInt(hex[3] + hex[3], 16);
-  } else if (hex.length === 7) {
-    r = parseInt(hex.substring(1, 3), 16);
-    g = parseInt(hex.substring(3, 5), 16);
-    b = parseInt(hex.substring(5, 7), 16);
-  }
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
+const TAB_META: { id: TabId; key: string; fallback: string; icon: React.FC<{ className?: string }> }[] = [
+  { id: 'glass', key: 'tab_glassmorphism', fallback: 'Glassmorphism', icon: Sparkles as never },
+  { id: 'shadow', key: 'tab_box_shadow', fallback: 'Box Shadow', icon: Layers as never },
+  { id: 'gradient', key: 'tab_gradients', fallback: 'Gradients', icon: Palette as never },
+  { id: 'radius', key: 'tab_border_radius', fallback: 'Border Radius', icon: Sliders as never },
+  { id: 'filter', key: 'tab_filters', fallback: 'Filters', icon: Droplets as never },
+];
+
+const EXPORT_SIZES: { id: string; label: string; width: number; height: number }[] = [
+  { id: 'wide', label: '1600 × 900', width: 1600, height: 900 },
+  { id: 'square', label: '1200 × 1200', width: 1200, height: 1200 },
+  { id: 'story', label: '1080 × 1920', width: 1080, height: 1920 },
+];
 
 const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
   const t = createTranslator(dictionary);
-  
-  // Modals state
+
+  const store = useDesignStore();
+  const { design, tab } = store;
+
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const [backdrop, setBackdrop] = useState<PreviewBackdrop>('mesh');
+  const [format, setFormat] = useState<CodeFormat>('css');
+  const [space, setSpace] = useState<ColorSpace>('hex');
+  const [comparing, setComparing] = useState(false);
+  const [shared, setShared] = useState(false);
+  const [activeStop, setActiveStop] = useState<string | null>(null);
+  const [activeLayer, setActiveLayer] = useState<string | null>(null);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
-  // Current tab: 'glassmorphism' | 'boxshadow' | 'gradients' | 'borderradius'
-  const [activeTab, setActiveTab] = useState<'glassmorphism' | 'boxshadow' | 'gradients' | 'borderradius'>('glassmorphism');
+  // Photo backdrop: parked, never processed on arrival.
+  const [photo, setPhoto] = useState<{ url: string; image: HTMLImageElement; name: string } | null>(null);
+  const [palette, setPalette] = useState<string[] | null>(null);
+  const [paletteBusy, setPaletteBusy] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
 
-  // Preview background style: 'darkGrid' | 'lightGrid' | 'mesh' | 'vibrant'
-  const [bgStyle, setBgStyle] = useState<'darkGrid' | 'lightGrid' | 'mesh' | 'vibrant'>('mesh');
+  const [exportSize, setExportSize] = useState(EXPORT_SIZES[0].id);
+  const [fullBleed, setFullBleed] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
-  // Code Tab: 'css' | 'tailwind' | 'variables'
-  const [codeFormat, setCodeFormat] = useState<'css' | 'tailwind' | 'variables'>('css');
-  const [isCopied, setIsCopied] = useState(false);
+  const prefersReduced =
+    typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
-  // States for Glassmorphism
-  const [glassBlur, setGlassBlur] = useState(16);
-  const [glassOpacity, setGlassOpacity] = useState(0.3);
-  const [glassSaturation, setGlassSaturation] = useState(120);
-  const [glassBorderOpacity, setGlassBorderOpacity] = useState(0.15);
-  const [glassBorderWidth, setGlassBorderWidth] = useState(1);
-  const [glassBgColor, setGlassBgColor] = useState('#ffffff');
-  const [glassBorderColor, setGlassBorderColor] = useState('#ffffff');
+  const code = useMemo(() => formatCode(format, tab, design, space), [format, tab, design, space]);
 
-  // States for Box Shadow
-  const [shadowInset, setShadowInset] = useState(false);
-  const [shadowX, setShadowX] = useState(0);
-  const [shadowY, setShadowY] = useState(12);
-  const [shadowBlur, setShadowBlur] = useState(24);
-  const [shadowSpread, setShadowSpread] = useState(-5);
-  const [shadowColor, setShadowColor] = useState('#000000');
-  const [shadowOpacity, setShadowOpacity] = useState(0.25);
-  const [shadowCardBg, setShadowCardBg] = useState('#1e1b4b');
+  // -- file intake ----------------------------------------------------------
+  // Loading an image only swaps the preview backdrop. The expensive part —
+  // scanning every pixel for a palette — waits for an explicit click.
+  const acceptFile = useCallback(async (file: File) => {
+    if (!file.type.startsWith('image/')) return;
+    try {
+      const image = await loadImage(file);
+      setPhoto(current => {
+        if (current) URL.revokeObjectURL(current.url);
+        return { url: image.src, image, name: file.name };
+      });
+      setPalette(null);
+      setBackdrop('photo');
+    } catch {
+      // A corrupt or unsupported file: leave the current backdrop alone.
+    }
+  }, []);
 
-  // States for Gradients
-  const [gradType, setGradType] = useState<'linear' | 'radial'>('linear');
-  const [gradAngle, setGradAngle] = useState(135);
-  const [gradStops, setGradStops] = useState([
-    { id: 1, color: '#8b5cf6', position: 0 },
-    { id: 2, color: '#ec4899', position: 100 }
-  ]);
+  useHandoffIntake(file => {
+    void acceptFile(file);
+  });
 
-  // States for Border Radius
-  const [radiusFancy, setRadiusFancy] = useState(false);
-  const [radiusTL, setRadiusTL] = useState(24);
-  const [radiusTR, setRadiusTR] = useState(24);
-  const [radiusBR, setRadiusBR] = useState(24);
-  const [radiusBL, setRadiusBL] = useState(24);
-  const [fancyRadiusVal, setFancyRadiusVal] = useState('30% 70% 70% 30% / 30% 30% 70% 70%');
+  // `loadImage` revokes its own URL once the bitmap has decoded, so the only
+  // thing left to clean up is the reference we keep for the CSS background.
+  useEffect(() => {
+    const url = photo?.url;
+    return () => {
+      if (url?.startsWith('blob:')) URL.revokeObjectURL(url);
+    };
+  }, [photo?.url]);
 
-  // Reset tool configurations
-  const handleReset = () => {
-    if (activeTab === 'glassmorphism') {
-      setGlassBlur(16);
-      setGlassOpacity(0.3);
-      setGlassSaturation(120);
-      setGlassBorderOpacity(0.15);
-      setGlassBorderWidth(1);
-      setGlassBgColor('#ffffff');
-      setGlassBorderColor('#ffffff');
-    } else if (activeTab === 'boxshadow') {
-      setShadowInset(false);
-      setShadowX(0);
-      setShadowY(12);
-      setShadowBlur(24);
-      setShadowSpread(-5);
-      setShadowColor('#000000');
-      setShadowOpacity(0.25);
-      setShadowCardBg('#1e1b4b');
-    } else if (activeTab === 'gradients') {
-      setGradType('linear');
-      setGradAngle(135);
-      setGradStops([
-        { id: 1, color: '#8b5cf6', position: 0 },
-        { id: 2, color: '#ec4899', position: 100 }
-      ]);
-    } else if (activeTab === 'borderradius') {
-      setRadiusFancy(false);
-      setRadiusTL(24);
-      setRadiusTR(24);
-      setRadiusBR(24);
-      setRadiusBL(24);
-      setFancyRadiusVal('30% 70% 70% 30% / 30% 30% 70% 70%');
+  const runPalette = async () => {
+    if (!photo || paletteBusy) return;
+    setPaletteBusy(true);
+    // Yield once so the button's busy state paints before the scan blocks.
+    await new Promise(resolve => window.setTimeout(resolve, 0));
+    setPalette(extractPalette(photo.image, 6));
+    setPaletteBusy(false);
+  };
+
+  const applyPaletteColor = (hex: string) => {
+    store.update(current => {
+      switch (tab) {
+        case 'glass':
+          return { ...current, glass: { ...current.glass, bgColor: hex } };
+        case 'shadow':
+          return {
+            ...current,
+            shadow: {
+              ...current.shadow,
+              layers: current.shadow.layers.map(l => ({ ...l, color: hex })),
+            },
+          };
+        case 'gradient': {
+          const target = activeStop || current.gradient.stops[0]?.id;
+          return {
+            ...current,
+            gradient: {
+              ...current.gradient,
+              stops: current.gradient.stops.map(s => (s.id === target ? { ...s, color: hex } : s)),
+            },
+          };
+        }
+        case 'radius':
+          return { ...current, radius: { ...current.radius, fill: hex } };
+        case 'filter':
+          return { ...current, filter: { ...current.filter, dropShadowColor: hex } };
+      }
+    });
+    store.commit();
+  };
+
+  // -- export ---------------------------------------------------------------
+  const renderCurrent = useCallback((): HTMLCanvasElement => {
+    const size = EXPORT_SIZES.find(s => s.id === exportSize) || EXPORT_SIZES[0];
+    return renderDesign(tab, design, {
+      width: size.width,
+      height: size.height,
+      backdrop,
+      backdropImage: photo?.image || null,
+      fullBleed,
+    });
+  }, [tab, design, backdrop, photo, fullBleed, exportSize]);
+
+  const downloadPng = async () => {
+    setExporting(true);
+    try {
+      const blob = await canvasToBlob(renderCurrent());
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `css-designer-${tab}.png`;
+      link.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
     }
   };
 
-  // Language change helper
+  const getResult = useCallback(async () => {
+    const blob = await canvasToBlob(renderCurrent());
+    return blob ? { blob, name: `css-designer-${tab}.png` } : null;
+  }, [renderCurrent, tab]);
+
+  // -- share ----------------------------------------------------------------
+  const share = async () => {
+    const url = `${window.location.origin}${window.location.pathname}#d=${encodeDesign(design, tab)}`;
+    window.history.replaceState(null, '', url);
+    if (await copyText(url)) {
+      setShared(true);
+      window.setTimeout(() => setShared(false), 1800);
+    }
+  };
+
+  // -- import ---------------------------------------------------------------
+  const importCss = (text: string): string => {
+    const result = parseCss(text);
+    if (!result.tab || result.applied.length === 0) {
+      return t.import_failed || 'Nothing recognised in that snippet.';
+    }
+    const next: Design = { ...design };
+    for (const key of Object.keys(result.patch) as (keyof Design)[]) {
+      next[key] = { ...(design[key] as object), ...(result.patch[key] as object) } as never;
+    }
+    store.replace(next, result.tab);
+    if (result.patch.gradient?.stops?.length) setActiveStop(result.patch.gradient.stops[0].id);
+    if (result.patch.shadow?.layers?.length) setActiveLayer(result.patch.shadow.layers[0].id);
+    return (t.import_ok || 'Applied: {0}').replace('{0}', result.applied.join(', '));
+  };
+
+  // -- keyboard -------------------------------------------------------------
+  useEffect(() => {
+    const isTyping = (target: EventTarget | null): boolean => {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+      return (
+        el.tagName === 'INPUT' ||
+        el.tagName === 'TEXTAREA' ||
+        el.tagName === 'SELECT' ||
+        el.isContentEditable
+      );
+    };
+
+    const down = (event: KeyboardEvent) => {
+      if (isTyping(event.target)) return;
+      const mod = event.ctrlKey || event.metaKey;
+
+      if (mod && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) store.redo();
+        else store.undo();
+        return;
+      }
+      if (mod && event.key.toLowerCase() === 'y') {
+        event.preventDefault();
+        store.redo();
+        return;
+      }
+      if (mod && event.shiftKey && event.key.toLowerCase() === 'c') {
+        event.preventDefault();
+        void copyText(code);
+        return;
+      }
+      if (!mod && event.key >= '1' && event.key <= '5') {
+        store.setTab(TAB_ORDER[Number(event.key) - 1]);
+        return;
+      }
+      if (!mod && event.key.toLowerCase() === 'b' && !event.repeat) {
+        setComparing(true);
+      }
+      if (event.key === 'Escape') setShowShortcuts(false);
+    };
+
+    const up = (event: KeyboardEvent) => {
+      if (event.key.toLowerCase() === 'b') setComparing(false);
+    };
+
+    window.addEventListener('keydown', down);
+    window.addEventListener('keyup', up);
+    return () => {
+      window.removeEventListener('keydown', down);
+      window.removeEventListener('keyup', up);
+    };
+  }, [store, code]);
+
   const handleLanguageChange = (newLang: string) => {
     const segments = window.location.pathname.split('/');
     if (segments.length >= 3) {
@@ -124,648 +290,538 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
     }
   };
 
-  // Helper to construct Gradient strings
-  const getGradientCssString = () => {
-    const sortedStops = [...gradStops].sort((a, b) => a.position - b.position);
-    const stopsStr = sortedStops.map(s => `${s.color} ${s.position}%`).join(', ');
-    if (gradType === 'linear') {
-      return `linear-gradient(${gradAngle}deg, ${stopsStr})`;
-    }
-    return `radial-gradient(circle, ${stopsStr})`;
-  };
+  const faqs = Array.isArray(t.faq) ? t.faq : [];
+  const keywords = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
 
-  // Helper to generate gradient tailwind utility
-  const getGradientTailwindString = () => {
-    const sortedStops = [...gradStops].sort((a, b) => a.position - b.position);
-    const stopsStr = sortedStops.map(s => `${s.color}_${s.position}%`).join(',');
-    if (gradType === 'linear') {
-      return `bg-[linear-gradient(${gradAngle}deg,${stopsStr})]`;
-    }
-    return `bg-[radial-gradient(circle,${stopsStr})]`;
-  };
+  const steps = [
+    { title: t.step1Title || 'Pick an effect', text: t.step1Text || 'Glass, layered shadow, gradient, radius or filter — five generators sharing one preview.' },
+    { title: t.step2Title || 'Tune it', text: t.step2Text || 'Drag a slider or type the exact number. Every change is one undo step away.' },
+    { title: t.step3Title || 'Check it', text: t.step3Text || 'Zoom at the cursor, pan, and hold to compare against the unstyled element.' },
+    { title: t.step4Title || 'Ship it', text: t.step4Text || 'Copy CSS, Tailwind, SCSS or variables, share a link, or send the PNG to another tool.' },
+  ];
 
-  // Compute preview styles depending on current active tab
-  const getPreviewStyles = (): React.CSSProperties => {
-    if (activeTab === 'glassmorphism') {
-      return {
-        background: hexToRgba(glassBgColor, glassOpacity),
-        backdropFilter: `blur(${glassBlur}px) saturate(${glassSaturation}%)`,
-        WebkitBackdropFilter: `blur(${glassBlur}px) saturate(${glassSaturation}%)`,
-        border: `${glassBorderWidth}px solid ${hexToRgba(glassBorderColor, glassBorderOpacity)}`,
-        borderRadius: '24px',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)'
-      };
-    } else if (activeTab === 'boxshadow') {
-      const shadowColorRgba = hexToRgba(shadowColor, shadowOpacity);
-      const shadowVal = `${shadowInset ? 'inset' : ''} ${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowSpread}px ${shadowColorRgba}`;
-      return {
-        backgroundColor: shadowCardBg,
-        boxShadow: shadowVal,
-        borderRadius: '24px',
-        border: '1px solid rgba(255,255,255,0.05)'
-      };
-    } else if (activeTab === 'gradients') {
-      return {
-        background: getGradientCssString(),
-        borderRadius: '24px',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)'
-      };
-    } else {
-      // border radius
-      const radStyle = radiusFancy ? fancyRadiusVal : `${radiusTL}px ${radiusTR}px ${radiusBR}px ${radiusBL}px`;
-      return {
-        backgroundColor: '#6366f1',
-        borderRadius: radStyle,
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.2)'
-      };
-    }
-  };
+  const featureIcons = [IconLayers, IconColorSpace, IconParse, IconCorner, IconHistory, IconHandoff, IconLocal, IconKeys];
+  const features = Array.isArray(t.features) && t.features.length
+    ? t.features
+    : [
+        { title: 'Multi-layer shadows', text: 'Stack as many layers as a real elevation needs, toggle each one, and reorder them without losing the rest.' },
+        { title: 'Modern colour spaces', text: 'Interpolate gradients in OKLab or OKLCH and print any value as HEX, RGB, HSL or oklch().' },
+        { title: 'Paste CSS back in', text: 'Drop an existing rule in and the controls jump to it, instead of rebuilding it slider by slider.' },
+      ];
 
-  // Code output formatting
-  const getCodeString = () => {
-    if (activeTab === 'glassmorphism') {
-      const bgRgba = hexToRgba(glassBgColor, glassOpacity);
-      const borderRgba = hexToRgba(glassBorderColor, glassBorderOpacity);
-      
-      if (codeFormat === 'css') {
-        return `.glass-card {
-  background: ${bgRgba};
-  backdrop-filter: blur(${glassBlur}px) saturate(${glassSaturation}%);
-  -webkit-backdrop-filter: blur(${glassBlur}px) saturate(${glassSaturation}%);
-  border: ${glassBorderWidth}px solid ${borderRgba};
-}`;
-      } else if (codeFormat === 'tailwind') {
-        return `bg-[${bgRgba}] backdrop-blur-[${glassBlur}px] backdrop-saturate-[${glassSaturation}%] border border-[${borderRgba}]`;
-      } else {
-        return `:root {
-  --glass-bg: ${bgRgba};
-  --glass-blur: ${glassBlur}px;
-  --glass-saturation: ${glassSaturation}%;
-  --glass-border: ${borderRgba};
-}`;
-      }
-    } else if (activeTab === 'boxshadow') {
-      const shadowColorRgba = hexToRgba(shadowColor, shadowOpacity);
-      const shadowVal = `${shadowInset ? 'inset' : ''} ${shadowX}px ${shadowY}px ${shadowBlur}px ${shadowSpread}px ${shadowColorRgba}`;
-      
-      if (codeFormat === 'css') {
-        return `.custom-shadow {
-  box-shadow: ${shadowVal};
-}`;
-      } else if (codeFormat === 'tailwind') {
-        const twShadow = shadowVal.replace(/\s+/g, '_');
-        return `shadow-[${twShadow}]`;
-      } else {
-        return `:root {
-  --box-shadow: ${shadowVal};
-}`;
-      }
-    } else if (activeTab === 'gradients') {
-      const gradCss = getGradientCssString();
-      if (codeFormat === 'css') {
-        return `.custom-gradient {
-  background: ${gradCss};
-}`;
-      } else if (codeFormat === 'tailwind') {
-        return getGradientTailwindString();
-      } else {
-        return `:root {
-  --custom-gradient: ${gradCss};
-}`;
-      }
-    } else {
-      // border radius
-      const radStyle = radiusFancy ? fancyRadiusVal : `${radiusTL}px ${radiusTR}px ${radiusBR}px ${radiusBL}px`;
-      if (codeFormat === 'css') {
-        return `.custom-radius {
-  border-radius: ${radStyle};
-}`;
-      } else if (codeFormat === 'tailwind') {
-        const twRad = radStyle.replace(/\s+/g, '_');
-        return `rounded-[${twRad}]`;
-      } else {
-        return `:root {
-  --border-radius: ${radStyle};
-}`;
-      }
-    }
-  };
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(getCodeString());
-    setIsCopied(true);
-    setTimeout(() => setIsCopied(false), 2000);
-  };
-
-  // Dynamic slider input updater
-  const renderSlider = (
-    label: string,
-    value: number,
-    min: number,
-    max: number,
-    step: number,
-    onChange: (val: number) => void,
-    suffix = ""
-  ) => (
-    <div className="flex flex-col space-y-2 mb-6">
-      <div className="flex justify-between items-center text-sm font-bold text-slate-300">
-        <span>{label}</span>
-        <span className="text-violet-400 bg-violet-500/10 px-2.5 py-0.5 rounded-lg border border-violet-500/20 text-xs">
-          {value}{suffix}
-        </span>
-      </div>
-      <div className="relative flex items-center">
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={step}
-          value={value}
-          onChange={(e) => onChange(parseFloat(e.target.value))}
-          className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-violet-500 focus:outline-none"
-        />
-      </div>
-    </div>
-  );
+  const shortcuts: [string, string][] = [
+    ['1 – 5', t.sc_tabs || 'Switch generator'],
+    ['B', t.sc_compare || 'Hold to compare'],
+    ['Ctrl / ⌘ + Z', t.sc_undo || 'Undo'],
+    ['Ctrl / ⌘ + ⇧ + Z', t.sc_redo || 'Redo'],
+    ['Ctrl / ⌘ + ⇧ + C', t.sc_copy || 'Copy the generated code'],
+    ['Alt + ←/→', t.sc_fine || 'Fine slider steps (Shift for coarse)'],
+  ];
 
   return (
-    <div className="min-h-screen bg-[#07060b] text-slate-200 flex flex-col justify-between overflow-x-hidden font-sans">
-      <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={handleReset} t={t} />
+    <div className="min-h-screen bg-[#07060b] text-slate-200 flex flex-col justify-between font-sans">
+      <Header currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-12 pt-36 pb-20 w-full flex-1">
-        {/* Bloque AdSense Horizontal */}
+      {/* The max width lives on <main> on purpose: AdRail measures this element
+          against the viewport edge to decide whether the fixed side rails fit.
+          A full-width <main> leaves a 0px gap and the rails never render. */}
+      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-32 md:pt-36 pb-20">
         <AdBanner id="adsense-css-designer-top" />
-        <div className="flex flex-col space-y-12">
-          
-          {/* Hero Header */}
-          <div className="text-center md:text-left max-w-3xl">
-            <span className="px-4 py-1.5 bg-violet-500/10 text-violet-400 text-xs font-black uppercase tracking-wider rounded-full border border-violet-500/20">
-              {t.title} âš¡ Playground
+
+        {/* ================================================================ */}
+        {/* Hero                                                             */}
+        {/* ================================================================ */}
+        <section className="grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-8 lg:gap-12 items-center mb-12">
+          <div className="space-y-5 min-w-0">
+            <span className="inline-block px-3.5 py-1.5 bg-violet-500/10 text-violet-400 text-[11px] font-black uppercase tracking-[0.2em] rounded-full border border-violet-500/20">
+              {t.title} · {t.hero_badge || 'Playground'}
             </span>
-            <h1 className="text-4xl md:text-6xl font-black text-white mt-4 font-outfit tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-white font-outfit tracking-tight leading-[1.08]">
               {t.seoHeroTitle}
             </h1>
-            <p className="text-slate-400 text-lg mt-4 font-medium leading-relaxed">
-              {t.description}
-            </p>
-          </div>
-
-          {/* Interactive Workspace */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Control Panel (Left Pane) */}
-            <div className="lg:col-span-5 bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-2xl shadow-xl space-y-6">
-              
-              {/* Tab selectors */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-white/5">
-                {[
-                  { id: 'glassmorphism', label: t.tab_glassmorphism, icon: Sparkles },
-                  { id: 'boxshadow', label: t.tab_box_shadow, icon: Layers },
-                  { id: 'gradients', label: t.tab_gradients, icon: Palette },
-                  { id: 'borderradius', label: t.tab_border_radius, icon: Sliders }
-                ].map((tab) => {
-                  const Icon = tab.icon;
-                  const active = activeTab === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
-                      className={`flex items-center justify-center gap-2 px-3 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all cursor-pointer border ${
-                        active 
-                          ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-600/30' 
-                          : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span>{tab.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Reset Configuration Button */}
-              <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                <span className="text-slate-400 text-xs font-bold uppercase tracking-wider flex items-center gap-1.5">
-                  <Sliders className="w-4 h-4 text-violet-400" />
-                  Configurar Estilo
+            <p className="text-slate-400 text-base md:text-lg font-medium leading-relaxed">{t.description}</p>
+            <div className="flex flex-wrap gap-2">
+              {(Array.isArray(t.seoHeroList) ? t.seoHeroList : []).map((point: string, i: number) => (
+                <span
+                  key={i}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/5 text-[12px] font-bold text-slate-300"
+                >
+                  <Check className="w-3.5 h-3.5 text-violet-400 stroke-[3]" />
+                  {point}
                 </span>
-                <button 
-                  onClick={handleReset}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs uppercase rounded-lg transition-colors border border-white/10 cursor-pointer"
-                >
-                  <RotateCcw className="w-3 h-3" />
-                  Reset
-                </button>
-              </div>
-
-              {/* Dynamic Controls based on Active Tab */}
-              <div className="min-h-[300px]">
-                
-                {/* 1. GLASSMORPHISM CONTROLS */}
-                {activeTab === 'glassmorphism' && (
-                  <div>
-                    {renderSlider(t.backdrop_blur, glassBlur, 0, 40, 1, setGlassBlur, "px")}
-                    {renderSlider(t.bg_opacity, glassOpacity, 0, 1, 0.01, setGlassOpacity)}
-                    {renderSlider(t.saturation, glassSaturation, 50, 200, 5, setGlassSaturation, "%")}
-                    {renderSlider(t.border_opacity, glassBorderOpacity, 0, 1, 0.01, setGlassBorderOpacity)}
-                    {renderSlider(t.border_width, glassBorderWidth, 0, 8, 1, setGlassBorderWidth, "px")}
-
-                    <div className="grid grid-cols-2 gap-4 mt-6">
-                      <div className="flex flex-col space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.bg_color}</label>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="color" 
-                            value={glassBgColor} 
-                            onChange={(e) => setGlassBgColor(e.target.value)}
-                            className="w-10 h-10 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0 overflow-hidden"
-                          />
-                          <span className="font-mono text-sm text-slate-300 uppercase">{glassBgColor}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.border_color}</label>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="color" 
-                            value={glassBorderColor} 
-                            onChange={(e) => setGlassBorderColor(e.target.value)}
-                            className="w-10 h-10 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0 overflow-hidden"
-                          />
-                          <span className="font-mono text-sm text-slate-300 uppercase">{glassBorderColor}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 2. BOX SHADOW CONTROLS */}
-                {activeTab === 'boxshadow' && (
-                  <div>
-                    <div className="flex items-center justify-between mb-6 bg-slate-900/40 p-4 rounded-xl border border-white/5">
-                      <span className="text-sm font-bold text-slate-300">{t.inset_shadow}</span>
-                      <button
-                        onClick={() => setShadowInset(!shadowInset)}
-                        className={`w-12 h-6 rounded-full transition-colors relative ${shadowInset ? 'bg-violet-600' : 'bg-slate-700'}`}
-                      >
-                        <span className={`w-4 h-4 rounded-full bg-white absolute top-1 transition-all ${shadowInset ? 'right-1' : 'left-1'}`} />
-                      </button>
-                    </div>
-
-                    {renderSlider(t.offset_x, shadowX, -50, 50, 1, setShadowX, "px")}
-                    {renderSlider(t.offset_y, shadowY, -50, 50, 1, setShadowY, "px")}
-                    {renderSlider(t.shadow_blur, shadowBlur, 0, 100, 1, setShadowBlur, "px")}
-                    {renderSlider(t.spread_radius, shadowSpread, -50, 50, 1, setShadowSpread, "px")}
-                    {renderSlider(t.shadow_opacity, shadowOpacity, 0, 1, 0.01, setShadowOpacity)}
-
-                    <div className="grid grid-cols-2 gap-4 mt-6">
-                      <div className="flex flex-col space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.shadow_color}</label>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="color" 
-                            value={shadowColor} 
-                            onChange={(e) => setShadowColor(e.target.value)}
-                            className="w-10 h-10 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0 overflow-hidden"
-                          />
-                          <span className="font-mono text-sm text-slate-300 uppercase">{shadowColor}</span>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col space-y-2">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.bg_color}</label>
-                        <div className="flex items-center gap-2">
-                          <input 
-                            type="color" 
-                            value={shadowCardBg} 
-                            onChange={(e) => setShadowCardBg(e.target.value)}
-                            className="w-10 h-10 rounded-xl border border-white/10 bg-transparent cursor-pointer p-0 overflow-hidden"
-                          />
-                          <span className="font-mono text-sm text-slate-300 uppercase">{shadowCardBg}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 3. GRADIENTS CONTROLS */}
-                {activeTab === 'gradients' && (
-                  <div>
-                    {/* Gradient Type */}
-                    <div className="flex flex-col space-y-2 mb-6">
-                      <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.gradient_type}</label>
-                      <div className="grid grid-cols-2 gap-2 bg-slate-900/50 p-1 rounded-xl border border-white/5">
-                        <button
-                          onClick={() => setGradType('linear')}
-                          className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${gradType === 'linear' ? 'bg-violet-600/30 text-white border border-violet-500/30' : 'text-slate-400 border border-transparent'}`}
-                        >
-                          {t.linear}
-                        </button>
-                        <button
-                          onClick={() => setGradType('radial')}
-                          className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${gradType === 'radial' ? 'bg-violet-600/30 text-white border border-violet-500/30' : 'text-slate-400 border border-transparent'}`}
-                        >
-                          {t.radial}
-                        </button>
-                      </div>
-                    </div>
-
-                    {gradType === 'linear' && renderSlider(t.gradient_angle, gradAngle, 0, 360, 1, setGradAngle, "Â°")}
-
-                    {/* Color Stops Manager */}
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-center">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.color_stops}</label>
-                        <button
-                          onClick={() => {
-                            if (gradStops.length < 5) {
-                              const newId = Date.now();
-                              setGradStops([...gradStops, { id: newId, color: '#10b981', position: 50 }]);
-                            }
-                          }}
-                          disabled={gradStops.length >= 5}
-                          className="flex items-center gap-1 text-xs font-bold text-violet-400 hover:text-violet-300 disabled:opacity-40 disabled:pointer-events-none cursor-pointer bg-transparent border-none"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                          {t.add_stop}
-                        </button>
-                      </div>
-
-                      <div className="space-y-3 bg-slate-900/20 p-4 rounded-2xl border border-white/5">
-                        {gradStops.map((stop, i) => (
-                          <div key={stop.id} className="flex items-center gap-4 bg-slate-950/40 p-3 rounded-xl border border-white/5">
-                            <input
-                              type="color"
-                              value={stop.color}
-                              onChange={(e) => {
-                                const list = [...gradStops];
-                                list[i].color = e.target.value;
-                                setGradStops(list);
-                              }}
-                              className="w-8 h-8 rounded-lg border border-white/10 bg-transparent cursor-pointer p-0"
-                            />
-                            <div className="flex-1">
-                              <div className="flex justify-between text-[11px] font-bold text-slate-400 mb-1">
-                                <span>{t.position}</span>
-                                <span>{stop.position}%</span>
-                              </div>
-                              <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                value={stop.position}
-                                onChange={(e) => {
-                                  const list = [...gradStops];
-                                  list[i].position = parseInt(e.target.value);
-                                  setGradStops(list);
-                                }}
-                                className="w-full accent-violet-500"
-                              />
-                            </div>
-                            {gradStops.length > 2 && (
-                              <button
-                                onClick={() => {
-                                  setGradStops(gradStops.filter(s => s.id !== stop.id));
-                                }}
-                                className="text-slate-400 hover:text-red-400 cursor-pointer bg-transparent border-none outline-none p-1"
-                              >
-                                <Trash className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* 4. BORDER RADIUS CONTROLS */}
-                {activeTab === 'borderradius' && (
-                  <div>
-                    {/* Mode Toggle */}
-                    <div className="flex flex-col space-y-2 mb-6">
-                      <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Modo de Borde</label>
-                      <div className="grid grid-cols-2 gap-2 bg-slate-900/50 p-1 rounded-xl border border-white/5">
-                        <button
-                          onClick={() => setRadiusFancy(false)}
-                          className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${!radiusFancy ? 'bg-violet-600/30 text-white border border-violet-500/30' : 'text-slate-400 border border-transparent'}`}
-                        >
-                          {t.corner_radius}
-                        </button>
-                        <button
-                          onClick={() => setRadiusFancy(true)}
-                          className={`py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${radiusFancy ? 'bg-violet-600/30 text-white border border-violet-500/30' : 'text-slate-400 border border-transparent'}`}
-                        >
-                          8-Point Shapes
-                        </button>
-                      </div>
-                    </div>
-
-                    {!radiusFancy ? (
-                      <div>
-                        {renderSlider(t.top_left, radiusTL, 0, 150, 1, setRadiusTL, "px")}
-                        {renderSlider(t.top_right, radiusTR, 0, 150, 1, setRadiusTR, "px")}
-                        {renderSlider(t.bottom_right, radiusBR, 0, 150, 1, setRadiusBR, "px")}
-                        {renderSlider(t.bottom_left, radiusBL, 0, 150, 1, setRadiusBL, "px")}
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">{t.fancy_radius}</label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {[
-                            { label: 'Oval OrgÃ¡nico', val: '30% 70% 70% 30% / 30% 30% 70% 70%' },
-                            { label: 'Hoja Curva', val: '60% 40% 30% 70% / 60% 30% 70% 40%' },
-                            { label: 'Gota de Agua', val: '50% 50% 50% 50% / 10% 90% 10% 90%' },
-                            { label: 'Piedra Suave', val: '69% 31% 66% 34% / 21% 30% 70% 79%' },
-                            { label: 'Huevo / Oval', val: '50% 50% 50% 50% / 30% 30% 70% 70%' },
-                            { label: 'CÃ¡psula', val: '100px 100px 100px 100px' }
-                          ].map((preset) => (
-                            <button
-                              key={preset.val}
-                              onClick={() => setFancyRadiusVal(preset.val)}
-                              className={`p-3 text-[11px] font-bold rounded-xl border transition-all cursor-pointer text-left ${
-                                fancyRadiusVal === preset.val 
-                                  ? 'bg-violet-600/20 border-violet-500 text-white' 
-                                  : 'bg-slate-900/20 border-white/5 text-slate-400 hover:bg-slate-900/50 hover:text-slate-200'
-                              }`}
-                            >
-                              {preset.label}
-                            </button>
-                          ))}
-                        </div>
-
-                        <div className="flex flex-col space-y-2 mt-4">
-                          <label className="text-xs font-bold text-slate-400 uppercase tracking-wider">Forma Manual (CSS)</label>
-                          <input
-                            type="text"
-                            value={fancyRadiusVal}
-                            onChange={(e) => setFancyRadiusVal(e.target.value)}
-                            className="bg-slate-950/60 border border-white/10 rounded-xl px-4 py-3 font-mono text-sm text-violet-300 focus:outline-none focus:border-violet-500"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              ))}
             </div>
-            
-            {/* Visual Preview Pane & Code Block (Right Pane) */}
-            <div className="lg:col-span-7 flex flex-col space-y-6 lg:sticky lg:top-28">
-              
-              {/* Preview Box Container */}
-              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-2xl shadow-xl flex flex-col space-y-4">
-                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                  <span className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
-                    <Layout className="w-4 h-4 text-violet-400" />
-                    {t.preview_title}
-                  </span>
-                  
-                  {/* Background Presets Toggle */}
-                  <div className="flex bg-slate-900/50 p-1 rounded-xl border border-white/5 self-start sm:self-auto">
-                    {[
-                      { id: 'darkGrid', label: t.theme_dark_grid },
-                      { id: 'lightGrid', label: t.theme_light_grid },
-                      { id: 'mesh', label: t.theme_mesh },
-                      { id: 'vibrant', label: t.theme_vibrant }
-                    ].map((theme) => (
-                      <button
-                        key={theme.id}
-                        onClick={() => setBgStyle(theme.id as any)}
-                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer ${
-                          bgStyle === theme.id 
-                            ? 'bg-slate-800 text-white' 
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        {theme.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+          </div>
+          <CssHeroArt className="w-full h-auto max-w-lg mx-auto" animated={!prefersReduced} />
+        </section>
 
-                {/* Main Interactive Preview Container */}
-                <div 
-                  className={`w-full min-h-[350px] md:min-h-[400px] rounded-2xl flex items-center justify-center relative overflow-hidden transition-all duration-500 border border-white/5 ${
-                    bgStyle === 'darkGrid' ? 'bg-[#0f111a] bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:24px_24px]' :
-                    bgStyle === 'lightGrid' ? 'bg-[#f8fafc] bg-[linear-gradient(to_right,#00000005_1px,transparent_1px),linear-gradient(to_bottom,#00000005_1px,transparent_1px)] bg-[size:24px_24px]' :
-                    bgStyle === 'vibrant' ? 'bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900' :
-                    'bg-[#08060d]' // mesh
-                  }`}
-                >
-                  {/* Mesh Gradient blobs behind cards */}
-                  {bgStyle === 'mesh' && (
-                    <>
-                      
-                      
-                    </>
-                  )}
-
-                  {/* Render styled card dynamically */}
-                  <motion.div 
-                    layout
-                    style={getPreviewStyles()}
-                    className="w-[80%] max-w-sm p-8 flex flex-col space-y-4 text-center transition-all duration-300 relative z-10 select-none shadow-2xl"
-                  >
-                    <div className="w-12 h-12 rounded-full bg-white/10 border border-white/10 flex items-center justify-center mx-auto mb-2 text-white shadow-lg">
-                      <Sparkles className="w-6 h-6 animate-pulse" />
-                    </div>
-                    <h3 className="text-xl font-black text-white font-outfit tracking-tight">{t.preview_text}</h3>
-                    <p className="text-white/70 text-xs font-medium leading-relaxed">
-                      {t.preview_subtext}
-                    </p>
-                    <div className="pt-2">
-                      <button className="px-5 py-2.5 bg-white text-slate-900 font-bold text-xs uppercase rounded-xl shadow-lg border-none hover:scale-105 active:scale-95 transition-all cursor-pointer">
-                        Interact Button
-                      </button>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-
-              {/* Code Generator & Output Panel */}
-              <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-6 backdrop-blur-2xl shadow-xl flex flex-col space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-bold text-slate-300 flex items-center gap-1.5">
-                    <Code className="w-4 h-4 text-violet-400" />
-                    Generador de CÃ³digo
-                  </span>
-                  
-                  {/* Format selector */}
-                  <div className="flex bg-slate-900/50 p-1 rounded-xl border border-white/5">
-                    {[
-                      { id: 'css', label: 'CSS' },
-                      { id: 'tailwind', label: 'Tailwind' },
-                      { id: 'variables', label: 'Variables' }
-                    ].map((format) => (
-                      <button
-                        key={format.id}
-                        onClick={() => setCodeFormat(format.id as any)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          codeFormat === format.id 
-                            ? 'bg-violet-600 text-white' 
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        {format.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Code Block display */}
-                <div className="relative">
-                  <pre className="bg-[#040306] border border-white/10 rounded-2xl p-5 font-mono text-xs text-violet-300 overflow-x-auto min-h-[140px] flex items-center">
-                    <code>{getCodeString()}</code>
-                  </pre>
-                  
-                  {/* Copy Button */}
+        {/* ================================================================ */}
+        {/* Workspace                                                        */}
+        {/* ================================================================ */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Controls */}
+          <div className="lg:col-span-5 glass-card rounded-3xl p-5 sm:p-6 border border-white/5 space-y-5">
+            <div
+              role="tablist"
+              aria-label={t.generators || 'Generators'}
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3 gap-1.5 bg-slate-900/50 p-1.5 rounded-2xl border border-white/5"
+            >
+              {TAB_META.map((item, i) => {
+                const Icon = item.icon;
+                const active = tab === item.id;
+                return (
                   <button
-                    onClick={copyToClipboard}
-                    className={`absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all border outline-none cursor-pointer ${
-                      isCopied 
-                        ? 'bg-emerald-600 border-emerald-500 text-white shadow-lg shadow-emerald-600/20' 
-                        : 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10 hover:border-white/20'
+                    key={item.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    title={`${t[item.key] || item.fallback} (${i + 1})`}
+                    onClick={() => store.setTab(item.id)}
+                    className={`flex items-center justify-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-wider transition-all cursor-pointer border min-w-0 ${
+                      active
+                        ? 'bg-violet-600 border-violet-500 text-white shadow-lg shadow-violet-600/25'
+                        : 'bg-transparent border-transparent text-slate-400 hover:text-slate-200'
                     }`}
                   >
-                    {isCopied ? (
-                      <>
-                        <Check className="w-4 h-4" />
-                        <span>{t.copied}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-4 h-4" />
-                        <span>Copy</span>
-                      </>
-                    )}
+                    <Icon className="w-3.5 h-3.5 shrink-0" />
+                    <span className="truncate">{t[item.key] || item.fallback}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/5 pb-4">
+              <span className="text-slate-400 text-[11px] font-bold uppercase tracking-wider flex items-center gap-1.5">
+                <Sliders className="w-3.5 h-3.5 text-violet-400" />
+                {t.configure || 'Configure'}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={store.undo}
+                  disabled={!store.canUndo}
+                  aria-label={t.undo || 'Undo'}
+                  title={`${t.undo || 'Undo'} (Ctrl+Z)`}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  <Undo2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={store.redo}
+                  disabled={!store.canRedo}
+                  aria-label={t.redo || 'Redo'}
+                  title={`${t.redo || 'Redo'} (Ctrl+Shift+Z)`}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  <Redo2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowShortcuts(true)}
+                  aria-label={t.shortcuts || 'Keyboard shortcuts'}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <Keyboard className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={store.reset}
+                  className="flex items-center gap-1 px-2.5 h-8 bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-[11px] uppercase rounded-lg transition-colors border border-white/10 cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  {t.reset || 'Reset'}
+                </button>
+              </div>
+            </div>
+
+            <Panel
+              tab={tab}
+              design={design}
+              update={store.update}
+              commit={store.commit}
+              t={t}
+              activeStop={activeStop}
+              setActiveStop={setActiveStop}
+              activeLayer={activeLayer}
+              setActiveLayer={setActiveLayer}
+            />
+          </div>
+
+          {/* Preview + output */}
+          <div className="lg:col-span-7 flex flex-col gap-6 min-w-0">
+            <div className="glass-card rounded-3xl p-5 sm:p-6 border border-white/5 flex flex-col gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <span className="text-sm font-bold text-slate-300">{t.preview_title || 'Interactive Preview'}</span>
+                <div className="flex flex-wrap items-center gap-1 bg-slate-900/50 p-1 rounded-xl border border-white/5">
+                  {[
+                    { id: 'darkGrid' as const, label: t.theme_dark_grid || 'Dark Grid' },
+                    { id: 'lightGrid' as const, label: t.theme_light_grid || 'Light Grid' },
+                    { id: 'mesh' as const, label: t.theme_mesh || 'Color Mesh' },
+                    { id: 'vibrant' as const, label: t.theme_vibrant || 'Vibrant' },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setBackdrop(item.id)}
+                      className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer border-none ${
+                        backdrop === item.id ? 'bg-slate-700 text-white' : 'bg-transparent text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => (photo ? setBackdrop('photo') : fileInput.current?.click())}
+                    className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-all cursor-pointer border-none ${
+                      backdrop === 'photo' ? 'bg-slate-700 text-white' : 'bg-transparent text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    <ImagePlus className="w-3 h-3" />
+                    {t.theme_photo || 'Your image'}
                   </button>
                 </div>
               </div>
+
+              <input
+                ref={fileInput}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={e => {
+                  const file = e.target.files?.[0];
+                  if (file) void acceptFile(file);
+                  e.target.value = '';
+                }}
+              />
+
+              <Preview
+                tab={tab}
+                design={design}
+                backdrop={backdrop}
+                photoUrl={photo?.url || null}
+                t={t}
+                comparing={comparing}
+                setComparing={setComparing}
+              />
+
+              {photo && (
+                <div className="rounded-2xl border border-white/5 bg-black/30 p-4 space-y-3">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-[11px] font-bold text-slate-400 truncate max-w-[14rem]">{photo.name}</span>
+                    <span className="h-px flex-1 bg-white/5 min-w-[1rem]" />
+                    <button
+                      type="button"
+                      onClick={runPalette}
+                      disabled={paletteBusy}
+                      className="px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer border-none"
+                    >
+                      {paletteBusy ? t.working || 'Working…' : t.extract_palette || 'Extract palette'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPhoto(null);
+                        setPalette(null);
+                        setBackdrop('mesh');
+                      }}
+                      aria-label={t.remove_image || 'Remove image'}
+                      className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-rose-400 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  {palette && palette.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {palette.map(hex => (
+                        <button
+                          key={hex}
+                          type="button"
+                          onClick={() => applyPaletteColor(hex)}
+                          title={hex}
+                          className="flex items-center gap-1.5 pl-1.5 pr-2.5 py-1.5 rounded-lg border border-white/10 bg-white/5 hover:border-violet-500/40 text-[11px] font-mono text-slate-300 cursor-pointer transition-colors"
+                        >
+                          <span className="w-4 h-4 rounded border border-white/20" style={{ backgroundColor: hex }} />
+                          {hex.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {palette && palette.length === 0 && (
+                    <p className="text-[11px] text-slate-500">{t.palette_failed || 'Could not read this image.'}</p>
+                  )}
+                </div>
+              )}
+
+              {/* Export */}
+              <div className="rounded-2xl border border-white/5 bg-black/30 p-4 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+                    {t.export_title || 'Export'}
+                  </span>
+                  <span className="h-px flex-1 bg-white/5 min-w-[1rem]" />
+                  <div className="flex flex-wrap gap-1 bg-slate-900/50 p-1 rounded-xl border border-white/5">
+                    {EXPORT_SIZES.map(size => (
+                      <button
+                        key={size.id}
+                        type="button"
+                        onClick={() => setExportSize(size.id)}
+                        className={`px-2 py-1 rounded-lg text-[10px] font-mono font-bold transition-all cursor-pointer border-none ${
+                          exportSize === size.id ? 'bg-violet-600/40 text-white' : 'bg-transparent text-slate-500 hover:text-slate-300'
+                        }`}
+                      >
+                        {size.label}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setFullBleed(v => !v)}
+                    aria-pressed={fullBleed}
+                    className={`px-2.5 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border transition-colors cursor-pointer ${
+                      fullBleed ? 'bg-violet-600/30 border-violet-500/40 text-white' : 'bg-white/5 border-white/10 text-slate-400'
+                    }`}
+                  >
+                    {t.full_bleed || 'Full bleed'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={downloadPng}
+                    disabled={exporting}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-slate-200 text-[11px] font-bold uppercase tracking-wider transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    PNG
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  {t.export_hint || 'The PNG is redrawn from the same values on a canvas — not a screenshot — so it stays sharp at any size.'}
+                </p>
+              </div>
+
+              <NextStepBar lang={lang} t={t} getResult={getResult} />
             </div>
 
+            <CodePanel
+              tab={tab}
+              design={design}
+              code={code}
+              format={format}
+              setFormat={setFormat}
+              space={space}
+              setSpace={setSpace}
+              t={t}
+              onImport={importCss}
+              onShare={share}
+              shared={shared}
+            />
           </div>
-        </div>
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-css-designer-bottom" />
+        </section>
+
+        {/* ================================================================ */}
+        {/* How it works                                                     */}
+        {/* ================================================================ */}
+        <section className="mt-24 space-y-10">
+          <div className="text-center space-y-3">
+            <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">
+              {t.howItWorksTitle || 'How it works'}
+            </h2>
+            <div className="h-1 w-16 bg-violet-500 mx-auto rounded-full" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step, i) => {
+              const Art = STEP_ART[i];
+              return (
+                <div
+                  key={i}
+                  className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-violet-500/20 transition-all group"
+                >
+                  <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-violet-500/10 transition-colors">
+                    {i + 1}
+                  </span>
+                  <Art className="w-24 h-auto text-violet-400" />
+                  <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================================================================ */}
+        {/* Features                                                         */}
+        {/* ================================================================ */}
+        <section className="mt-20 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+          {features.map((feature: any, i: number) => {
+            const Icon = featureIcons[i] || IconLayers;
+            return (
+              <div
+                key={i}
+                className="p-6 glass-card rounded-3xl border border-white/5 hover:-translate-y-1 transition-all duration-300 group"
+              >
+                <span className="w-11 h-11 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-4 group-hover:border-violet-500/40 transition-all">
+                  <Icon className="w-5 h-5" />
+                </span>
+                <h3 className="text-white text-base font-bold mb-2 group-hover:text-violet-400 transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{feature.text}</p>
+              </div>
+            );
+          })}
+        </section>
+
+        {/* ================================================================ */}
+        {/* SEO content                                                      */}
+        {/* ================================================================ */}
+        <section className="mt-24 space-y-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="space-y-6 min-w-0">
+              {keywords[0] && (
+                <span className="inline-block px-4 py-1.5 rounded-lg bg-violet-500/10 text-violet-400 text-[11px] font-black uppercase tracking-[0.2em] border border-violet-500/20">
+                  {keywords[0]}
+                </span>
+              )}
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-[1.1] tracking-tight">
+                {t.seoHeroTitle}
+              </h2>
+              <p className="text-slate-400 text-base md:text-lg leading-relaxed font-medium">{t.seoHeroText}</p>
+            </div>
+            <div className="relative glass-card rounded-[2.5rem] p-8 md:p-10 min-h-[320px] flex flex-col items-center justify-center gap-6 text-center overflow-hidden border border-white/5">
+              <span className="absolute -top-16 -right-16 w-56 h-56 bg-violet-500/10 rounded-full blur-3xl" />
+              <IconLocal className="w-16 h-16 text-violet-400 relative" />
+              <div className="space-y-3 max-w-sm relative">
+                <h3 className="text-xl md:text-2xl font-black text-white tracking-tight leading-tight">
+                  {t.seoBrowserSpeedTitle}
+                </h3>
+                <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-7 md:p-12 rounded-3xl bg-[#0d0816] border border-white/5 space-y-8">
+            <div className="max-w-4xl space-y-4">
+              <h2 className="text-xl md:text-3xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
+              <div className="h-1.5 w-20 bg-violet-500 rounded-full" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                  <span className="w-6 h-px bg-white/20" />
+                  {t.seoUseCaseTitle}
+                </div>
+                <p className="text-slate-400 text-[15px] leading-relaxed font-medium">{t.seoUseCaseText}</p>
+              </div>
+              <div className="space-y-3">
+                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                  <span className="w-6 h-px bg-white/20" />
+                  {t.seoPrivacyTitle}
+                </div>
+                <p className="text-slate-400 text-[15px] leading-relaxed font-medium">{t.seoPrivacyText}</p>
+              </div>
+            </div>
+          </div>
+
+          {faqs.length > 0 && (
+            <div className="max-w-4xl mx-auto w-full space-y-8">
+              <div className="text-center space-y-3">
+                <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                <div className="h-1 w-16 bg-violet-500 mx-auto rounded-full" />
+              </div>
+              <div className="grid gap-3">
+                {faqs.map((faq: any, i: number) => (
+                  <details
+                    key={i}
+                    className="glass-card rounded-2xl px-5 sm:px-6 py-5 text-left border border-white/5 hover:border-violet-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                  >
+                    <summary className="flex items-start gap-3 cursor-pointer list-none text-[15px] font-bold text-white group-hover:text-violet-400 transition-colors">
+                      <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 text-[11px] font-black">
+                        Q
+                      </span>
+                      <span className="flex-1 min-w-0">{faq.question}</span>
+                      <span className="shrink-0 text-violet-400 transition-transform group-open:rotate-45 text-xl leading-none">
+                        +
+                      </span>
+                    </summary>
+                    <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {keywords.length > 0 && (
+            <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
+              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
+              <div className="flex flex-wrap justify-center gap-2">
+                {keywords.map((keyword: string, i: number) => (
+                  <span
+                    key={i}
+                    className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        <AdBanner id="adsense-css-designer-bottom" />
       </main>
 
-      <Footer lang={lang} t={t} onOpenModal={(m) => setActiveModal(m)} />
+      <Footer lang={lang} t={t} onOpenModal={m => setActiveModal(m)} />
 
-      {/* Modals rendering */}
-      <LegalModal 
-        isOpen={activeModal !== null} 
-        onClose={() => setActiveModal(null)} 
+      {showShortcuts && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label={t.shortcuts || 'Keyboard shortcuts'}
+          onClick={() => setShowShortcuts(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0d0816] p-6 space-y-4"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-black text-white">{t.shortcuts || 'Keyboard shortcuts'}</h3>
+              <button
+                type="button"
+                onClick={() => setShowShortcuts(false)}
+                aria-label={t.close || 'Close'}
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <ul className="space-y-2 list-none p-0 m-0">
+              {shortcuts.map(([keys, description]) => (
+                <li key={keys} className="flex items-center justify-between gap-4 text-sm">
+                  <kbd className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 font-mono text-[11px] text-violet-300 shrink-0">
+                    {keys}
+                  </kbd>
+                  <span className="text-slate-400 text-right text-[13px]">{description}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
+
+      <LegalModal
+        isOpen={activeModal !== null}
+        onClose={() => setActiveModal(null)}
         title={
-          activeModal === 'privacy' ? t.privacyPolicy || 'Privacy Policy' :
-          activeModal === 'terms' ? t.termsOfService || 'Terms of Service' :
-          t.cookiePolicy || 'Cookie Policy'
+          activeModal === 'privacy'
+            ? t.privacyPolicy || 'Privacy Policy'
+            : activeModal === 'terms'
+              ? t.termsOfService || 'Terms of Service'
+              : t.cookiePolicy || 'Cookie Policy'
         }
         content={
-          activeModal === 'privacy' ? t.privacyContent :
-          activeModal === 'terms' ? t.termsContent :
-          t.cookiesContent
+          activeModal === 'privacy' ? t.privacyContent : activeModal === 'terms' ? t.termsContent : t.cookiesContent
         }
         t={t}
       />

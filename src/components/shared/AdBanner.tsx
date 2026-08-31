@@ -34,7 +34,9 @@ export const AdBanner: React.FC<AdBannerProps> = ({ id, className = '' }) => {
   const pushedRef = useRef(false);
 
   const slot = AD_SLOTS[resolvePosition(id)];
-  const isActive = ADS_ENABLED && !!AD_CLIENT && !!slot;
+  // `!import.meta.env.DEV`, igual que AdSlot: AdSense no sirve anuncios en
+  // localhost y hacer push desde ahí solo genera peticiones inválidas.
+  const isActive = ADS_ENABLED && !!AD_CLIENT && !!slot && !import.meta.env.DEV;
 
   useEffect(() => {
     if (!isActive || !insRef.current || pushedRef.current) return;
@@ -62,7 +64,11 @@ export const AdBanner: React.FC<AdBannerProps> = ({ id, className = '' }) => {
         {isActive ? (
           <ins
             ref={insRef}
-            className="adsbygoogle block w-full max-w-[728px] h-[90px]"
+            /* max-w-[970px] y alto libre: la unidad es responsive, el alto lo
+               decide AdSense (90px, 250px...). Con h-[90px] fijo se recortaban
+               los formatos altos, que son los que mejor pagan. */
+            className="adsbygoogle block w-full max-w-[970px] min-h-[90px]"
+            style={{ display: 'block' }}
             data-ad-client={AD_CLIENT}
             data-ad-slot={slot}
             data-ad-format="auto"

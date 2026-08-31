@@ -19,8 +19,8 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <header className="w-full h-auto md:h-24 py-4 md:py-0 border-b border-white/10 bg-[#060405]/95 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
-        <div className="max-w-7xl mx-auto h-full px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <div className="flex items-center justify-between w-full md:w-auto space-x-4 md:space-x-12">
+        <div className="max-w-7xl mx-auto h-full px-3 sm:px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+          <div className="flex items-center justify-between w-full md:w-auto gap-2 sm:gap-4 md:gap-12 min-w-0">
             {/* oLoveTools Branding */}
             <a 
               href={`/${currentLang.toLowerCase()}`}
@@ -29,7 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
               <div className="w-9 h-9 md:w-11 md:h-11 bg-red-600 rounded-xl md:rounded-2xl flex items-center justify-center group-hover:bg-red-500 transition-all group-hover:rotate-6 group-hover:scale-110 shadow-lg shadow-red-600/40">
                 <HeartIcon />
               </div>
-              <div className="text-2xl md:text-3xl font-black tracking-tighter transition-all group-hover:scale-105">
+              {/* "oLoveTools" + the tool name overflowed 375px viewports. */}
+              <div className="text-xl sm:text-2xl md:text-3xl font-black tracking-tighter transition-all group-hover:scale-105">
                 <span className="text-white">oLove</span>
                 <span className="text-red-400">Tools</span>
               </div>
@@ -38,14 +39,14 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
 
             {/* Current App Link */}
-            <button 
+            <button
               onClick={onReset}
-              className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 md:gap-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer min-w-0"
             >
-              <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 transition-all">
-                <PenTool className="w-5 h-5 text-purple-400 animate-pulse" />
+              <div className="w-8 h-8 md:w-9 md:h-9 shrink-0 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-purple-500/20 group-hover:border-purple-500/50 transition-all">
+                <PenTool className="w-5 h-5 text-purple-400" />
               </div>
-              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-purple-400 transition-all">
+              <span className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-purple-400 transition-all truncate">
                 {t.title}
               </span>
             </button>

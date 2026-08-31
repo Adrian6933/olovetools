@@ -47,25 +47,29 @@ export default {
   "watermarkLabel": "Erstellt mit oLoveTools.com",
   "features": [
     {
-      "title": "High-DPI Ausgangsskalierung",
-      "text": "Exportieren Sie Bilder im 1x-, 2x- oder 4x-Maßstab, um sicherzustellen, dass Ihre Code-Screenshots auf Twitter, LinkedIn und Blogs absolut gestochen scharf aussehen."
+      "title": "Echte Syntax, 48 Sprachen",
+      "text": "Der Highlighter liest den rohen Prism-Tokenstrom: JavaScript, Rust, Zig, Terraform, Dockerfiles und 43 weitere bekommen richtige Farben — geladen wird nur die gewaehlte Grammatik."
     },
     {
-      "title": "100% lokale Privatsphäre",
-      "text": "Ihre Code-Snippets werden vollständig im Browser verarbeitet und hervorgehoben. Es werden keinerlei Daten an Server übertragen."
+      "title": "Die wichtigen Zeilen hervorheben",
+      "text": "Klicke eine Zeilennummer, um sie hervorzuheben und den Rest abzudunkeln. Umschalt+Klick nimmt einen Bereich, Alt+Klick invertiert die ganze Auswahl, Rechtsklick loescht sie."
     },
     {
-      "title": "Umfassender Syntax-Support",
-      "text": "Volle Unterstützung für alle wichtigen Sprachen wie JavaScript, TypeScript, Python, HTML, CSS, Rust, Go, SQL und Markdown."
+      "title": "Exporte, bei denen nichts abgeschnitten wird",
+      "text": "Die Karte wird vor der Aufnahme in voller Breite vermessen, damit lange Zeilen den Export ueberleben statt am Rand der Vorschau abzureissen. PNG, JPEG, WebP oder Vektor-SVG, bis 4x."
+    },
+    {
+      "title": "Lokal — und wirklich offline",
+      "text": "Schriften und Grammatiken kommen von dieser Seite, nicht von einem fremden CDN. Ist die Seite geladen, funktionieren Hervorhebung und Export ohne Netz."
     }
   ],
   "footerCredit": "Teil der oLoveTools-Suite",
   "seoHeroTitle": "Erstellen Sie wunderschöne Code-Screenshot-Bilder online",
   "seoHeroText": "Das Teilen von reinem Text-Code in sozialen Medien oder Präsentationen kann optisch langweilig sein. CodeCard verwandelt Ihren Quellcode sofort in elegante Designerkarten. Passen Sie Abstände, Schatten, Schriftarten und Fensterstile an Ihre persönliche Marke an.",
   "seoHeroList": [
-    "Hochauflösende PNG-, JPEG- und SVG-Exporte",
-    "Offline-bereit, sicher und privatsphäre-orientiert",
-    "Kostenlos und ohne Pflicht-Wasserzeichen"
+    "PNG, JPEG, WebP und Vektor-SVG bis 4x",
+    "Schriften und Grammatiken selbst gehostet — offlinefaehig",
+    "Kein Konto, und das Wasserzeichen ist standardmaessig aus"
   ],
   "seoBrowserSpeedTitle": "Schnelle und sichere lokale Generierung",
   "seoBrowserSpeedText": "CodeCard läuft vollständig im Webbrowser mit Client-seitigem Rendering. Keine Dateien oder Texte verlassen jemals Ihren Computer.",
@@ -86,20 +90,28 @@ export default {
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
-      "question": "Wie erhalte ich den schärfsten Screenshot?",
-      "answer": "Wir empfehlen, im Export-Tab die Auflösungsskalierung auf 2x oder 4x einzustellen. Dadurch wird sichergestellt, dass das ausgegebene PNG- oder JPEG-Bild genügend Pixeldichte hat, um auf hochauflösenden Retina-Displays scharf zu wirken."
+      "question": "Warum wurden meine langen Zeilen anderswo abgeschnitten?",
+      "answer": "Weil die meisten Werkzeuge das DOM genau so aufnehmen, wie es gesetzt ist — und ein Codeblock mit horizontaler Scrollleiste setzt nur den sichtbaren Teil. CodeCard vermisst die Karte vor der Aufnahme in voller, unbeschnittener Breite."
     },
     {
-      "question": "Kann ich CodeCard offline verwenden?",
-      "answer": "Ja! Da CodeCard zu 100% lokal im Browser läuft, funktionieren die gesamte Konvertierung, das Highlighting und die Downloads auch komplett ohne Internetverbindung."
+      "question": "Wie hebe ich bestimmte Zeilen hervor?",
+      "answer": "Klicke in der Vorschau eine Zeilennummer an, um sie hervorzuheben und den Rest abzudunkeln. Umschalt+Klick erweitert einen Bereich, Alt+Klick invertiert die ganze Auswahl, Rechtsklick loescht sie. Du kannst auch Bereiche wie 3, 7-9, 12 eintippen."
+    },
+    {
+      "question": "Welche Sprachen werden unterstuetzt?",
+      "answer": "48, darunter JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfiles, Bash, PowerShell, Markdown und Unified Diffs. Geladen wird nur die gewaehlte Grammatik."
+    },
+    {
+      "question": "Kann ich CodeCard offline nutzen?",
+      "answer": "Ja. Die Monospace-Schriften und die Grammatiken kommen von dieser Seite statt von einem fremden CDN — ist die Seite geladen, laufen Hervorhebung und Export ganz ohne Netz."
     },
     {
       "question": "Ist mein Code sicher?",
-      "answer": "Absolut. Ihr Code wird niemals über das Netzwerk übertragen oder auf unseren Servern gespeichert. Der gesamte Prozess findet ausschließlich lokal auf Ihrem Computer statt."
+      "answer": "Dein Code wird nirgendwohin uebertragen. Hervorhebung, Layout und Bildrendering passieren im Browser; nichts wird hochgeladen oder protokolliert."
     },
     {
-      "question": "Unterstützt es verschiedene Designs?",
-      "answer": "Wir unterstützen gängige dunkle Themen (wie One Dark, Dracula, VS Code, Night Owl) sowie helle Themen (GitHub Light), um alle Entwicklervorlieben abzudecken."
+      "question": "Welche Einstellung liefert den schaerfsten Export?",
+      "answer": "PNG mit 3x oder 4x fuer Rastereinsatz. Akzeptiert das Ziel Vektoren, nimm SVG: bleibt in jeder Groesse scharf und wiegt meist weniger als ein 4x-PNG."
     }
   ],
   "footerTagline": "Kostenloser, stilvoller Code-Screenshot-Generator, der zu 100% lokal auf Ihrem Gerät läuft.",
@@ -112,5 +124,98 @@ export default {
   "privacyContent": "Ihre Privatsphäre ist uns sehr wichtig.\n\nAlle Formatierungen und Bilderstellungen finden auf Ihrem Gerät statt. Es werden keine Daten erfasst oder an Server gesendet.\n\nIhr Code gehört Ihnen.",
   "termsContent": "Mit der Nutzung von CodeCard stimmen Sie Folgendem zu:\n\n1. Dieses Tool wird ohne Gewährleistung bereitgestellt.\n2. Wir haften nicht für Darstellungsfehler oder Download-Probleme.\n3. Sie sind dafür verantwortlich, dass Ihr Code keine vertraulichen Zugangsdaten enthält.\n4. Wir behalten uns das Recht vor, diese Bedingungen jederzeit anzupassen.",
   "cookiesContent": "Wir verwenden Cookies für eine optimale Benutzererfahrung.\n\n1. Notwendige Cookies für technische Grundfunktionen.\n2. Präferenz-Cookies zur Speicherung der gewählten Sprache.\n\nSie können Cookies in Ihren Browsereinstellungen deaktivieren.",
-  "contact": "Kontakt"
+  "contact": "Kontakt",
+  "heroBadge": "Code-Screenshot-Studio",
+  "heroChipLanguages": "48 Sprachen",
+  "heroChipLocal": "Lauft in deinem Browser",
+  "heroChipNoAccount": "Kein Konto, kein Upload",
+  "previewTitle": "Live-Vorschau",
+  "privacyNote": "Hervorhebung im Browser. Dein Code verlasst dieses Gerat nie.",
+  "dropTitle": "Datei hier ablegen",
+  "dropHint": "Lege hier eine Quelldatei ab oder fuge den Code ein.",
+  "dropBrowse": "Datei offnen",
+  "startBlank": "Leer beginnen",
+  "pendingLines": "Zeilen",
+  "pendingLoad": "In den Editor laden",
+  "pendingLoadRaw": "Ohne Erkennung laden",
+  "pendingDiscard": "Verwerfen",
+  "pendingBig": "Grosse Datei: die Hervorhebung kann beim Tippen traege wirken.",
+  "labelStartLine": "Erste Zeilennummer",
+  "labelHighlightLines": "Hervorgehobene Zeilen",
+  "highlightHint": "Oder klicke die Zeilennummern in der Vorschau. Umschalt+Klick fuer einen Bereich, Alt+Klick invertiert, Rechtsklick loescht.",
+  "highlightPlaceholder": "z.B. 3, 7-9, 12",
+  "clearHighlights": "Loeschen",
+  "labelDimOthers": "Andere Zeilen abdunkeln",
+  "labelBgMode": "Hintergrund",
+  "bgModeGradient": "Verlauf",
+  "bgModeSolid": "Einfarbig",
+  "bgModeNone": "Keiner",
+  "labelBgColor": "Hintergrundfarbe",
+  "labelFontFamily": "Schriftart",
+  "fontIbmPlex": "IBM Plex Mono",
+  "fontSystem": "System-Monospace",
+  "labelLineHeight": "Zeilenhoehe",
+  "labelAspect": "Seitenverhaeltnis",
+  "aspectAuto": "Auto",
+  "aspectSquare": "Quadrat",
+  "aspectWide": "Breit",
+  "aspectSocial": "Social",
+  "aspectPortrait": "Hochformat",
+  "windowMacDesc": "Die drei macOS-Punkte",
+  "windowWindowsDesc": "Minimieren, maximieren, schliessen",
+  "windowSimpleDesc": "Ein einzelner Farbmarker",
+  "windowNoneDesc": "Ganz ohne Titelleiste",
+  "labelWordWrap": "Lange Zeilen umbrechen",
+  "wordWrapHint": "Aus: die Karte waechst bis zur laengsten Zeile.",
+  "labelLigatures": "Schrift-Ligaturen",
+  "ligaturesHint": "Macht aus => und !== einzelne Glyphen.",
+  "watermarkHint": "Standardmaessig aus. Ohne dein Zutun wird nichts auf dein Bild gedruckt.",
+  "labelCardWidth": "Kartenbreite",
+  "labelTabSize": "Tabulatorbreite",
+  "labelFormat": "Format",
+  "labelQuality": "Qualitaet",
+  "btnDownload": "Herunterladen",
+  "btnCopy": "Bild kopieren",
+  "copyOk": "Kopiert",
+  "copyFail": "Dein Browser hat die Zwischenablage blockiert. Lade das Bild stattdessen herunter.",
+  "presetsTitle": "Gespeicherte Looks",
+  "presetSave": "Aktuellen speichern",
+  "presetEmpty": "Noch nichts gespeichert. Die Looks bleiben in diesem Browser.",
+  "presetDelete": "Look loeschen",
+  "undo": "Rueckgaengig",
+  "redo": "Wiederholen",
+  "zoomIn": "Vergroessern",
+  "zoomOut": "Verkleinern",
+  "zoomFit": "Ansicht zuruecksetzen",
+  "compareHold": "Gedrueckt halten fuer den rohen Code",
+  "backToTop": "Nach oben",
+  "statusExporting": "Bild wird erzeugt...",
+  "statusGrammar": "Grammatik wird geladen...",
+  "errorGrammar": "Die Grammatik konnte nicht geladen werden. Der Code erscheint unformatiert.",
+  "errorTooBig": "Diese Datei ist groesser als 4 MB.",
+  "howTitle": "So funktioniert es",
+  "howStep1Title": "Code einfugen oder ablegen",
+  "howStep1Text": "Tippen, einfugen oder eine Quelldatei ablegen. Die Datei wartet: Groesse und Zeilenzahl werden angezeigt, geladen wird erst auf Knopfdruck.",
+  "howStep2Title": "Gestalten und Schluesselzeilen waehlen",
+  "howStep2Text": "Zehn Themes, neun Verlaeufe oder deine Farbe, fuenf Fensterrahmen. Klicke eine Zeilennummer, um sie hervorzuheben und den Rest abzudunkeln.",
+  "howStep3Title": "Exportieren oder weiterschicken",
+  "howStep3Text": "PNG, JPEG, WebP oder Vektor-SVG, bis 4x. Direkt in die Zwischenablage kopieren oder ohne Umweg an CompressSnap, CropSnap oder WatermarkSnap uebergeben.",
+  "seoEngineTitle": "Auf dem Prism-Tokenstrom aufgebaut",
+  "seoEngineText": "Statt fertiges HTML vom Highlighter zu holen, liest CodeCard den rohen Tokenstrom und baut den Code Zeile fuer Zeile neu auf. Erst das ermoeglicht exakte Zeilennummern, Hervorhebung pro Zeile, haengenden Einzug und unbeschnittene Exporte.",
+  "nextStepTitle": "Weiter geht es",
+  "nextStepHint": "Dein Bild reist mit — kein erneuter Upload",
+  "nextCompress": "Komprimieren",
+  "nextCrop": "Zuschneiden",
+  "nextFormat": "Format aendern",
+  "nextWatermark": "Wasserzeichen hinzufuegen",
+  "nextMeme": "Meme daraus machen",
+  "groupWeb": "Web",
+  "groupSystems": "Systemnah",
+  "groupApps": "Anwendungen",
+  "groupData": "Daten und Konfiguration",
+  "groupOps": "Shell und Ops",
+  "groupText": "Text und Diffs",
+  "gradientCandy": "Bonbon-Pink",
+  "gradientMono": "Graphit",
+  "gradientPeach": "Zarter Pfirsich",
 };

@@ -23,16 +23,20 @@ export default {
   "pasteMore": "Cole mais imagens para adicioná-las",
   "features": [
     {
-      "title": "Instantâneo",
-      "text": "Sem uploads, sem espera. Processado localmente."
+      "title": "Cola so quando voce pede",
+      "text": "Ctrl+V, soltar ou o botao Colar. A versao anterior lia sua area de transferencia ao carregar e de novo a cada volta para a aba; agora nada e lido ate voce apertar algo."
     },
     {
-      "title": "Privado",
-      "text": "As imagens nunca saem do seu navegador."
+      "title": "Formatos que ele realmente sabe escrever",
+      "text": "PNG, JPG, WebP e AVIF, cada um verificado codificando um pixel de verdade: um navegador sem codificador AVIF devolve um PNG com o rotulo errado em vez de falhar, e essa checagem e a unica forma de pegar isso."
     },
     {
-      "title": "Alta Res",
-      "text": "Mantém a qualidade original."
+      "title": "Converte o lote sem travar",
+      "text": "A codificacao roda num Web Worker sobre bitmaps transferidos, entao a pagina continua respondendo e o contador de progresso e real. Escolha algumas ou selecione todas."
+    },
+    {
+      "title": "Le o que o seu celular realmente tira",
+      "text": "HEIC e HEIF de iPhone, TIFF, SVG, GIF e AVIF, com a rotacao EXIF aplicada para que fotos em pe nao sejam convertidas deitadas."
     }
   ],
   "footerCredit": "Parte da suíte oLoveTools",
@@ -41,9 +45,9 @@ export default {
   "seoHeroText": "Basta pressionar Ctrl+V e baixar sua imagem instantaneamente.",
   "seo_description": "Cole uma captura com Ctrl+V e baixe como PNG, JPG ou WebP em segundos. Salve imagens da área de transferência: grátis, privado e sem cadastro.",
   "seoHeroList": [
-    "Sem registro necessário",
-    "Várias imagens ao mesmo tempo",
-    "Resolução original"
+    "PNG, JPG, WebP e AVIF, com a qualidade que voce escolher",
+    "HEIC, TIFF, SVG e GIF lidos na entrada",
+    "Nada e enviado, e nada e lido da area de transferencia sem pedir"
   ],
   "seoBrowserSpeedTitle": "Velocidade no Navegador",
   "seoBrowserSpeedText": "Tudo é processado localmente, seus dados nunca são enviados.",
@@ -72,20 +76,28 @@ export default {
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
-      "question": "É grátis?",
-      "answer": "Sim, o PasteSnap é totalmente gratuito."
+      "question": "O PasteSnap le minha area de transferencia sozinho?",
+      "answer": "Nao mais. A versao anterior chamava a Clipboard API ao carregar e de novo a cada foco da janela, entao voltar para a aba puxava o que voce tivesse copiado. Agora a area de transferencia so e lida quando voce aperta Colar, ou quando voce mesmo faz Ctrl+V."
     },
     {
-      "question": "Meus dados estão seguros?",
-      "answer": "Com certeza. Suas imagens nunca saem do seu navegador."
+      "question": "Para quais formatos posso converter?",
+      "answer": "PNG, JPG, WebP e, onde o navegador suportar, AVIF. O suporte e testado codificando de verdade uma imagem de um pixel e conferindo o tipo que volta, porque um navegador sem codificador AVIF devolve um PNG rotulado como AVIF em vez de dar erro."
     },
     {
-      "question": "Quais formatos são suportados?",
-      "answer": "Suportamos todos os formatos de imagem padrão, e cada imagem pode ser baixada como PNG, JPG ou WebP."
+      "question": "Por que minha foto de iPhone nao funcionava antes?",
+      "answer": "Um HEIC passa por um teste ingenuo de `image/*`, mas nenhum navegador de desktop o decodifica, entao a versao anterior adicionava uma entrada quebrada sem explicar nada. HEIC e HEIF agora passam por um conversor na importacao, assim como TIFF e SVG."
     },
     {
-      "question": "Preciso me registrar?",
-      "answer": "Não, nenhum registro é necessário."
+      "question": "Minhas imagens sao enviadas para algum lugar?",
+      "answer": "Nao. Decodificacao, conversao e empacotamento em ZIP acontecem no seu navegador. Nao ha chamada a servidor em momento algum, e fechar a aba descarta tudo."
+    },
+    {
+      "question": "Converter um lote grande trava a pagina?",
+      "answer": "Nao. A codificacao roda num Web Worker e cada imagem e entregue como bitmap transferido, entao nenhum pixel e copiado entre as threads e a pagina continua respondendo enquanto o contador avanca."
+    },
+    {
+      "question": "Que qualidade devo escolher?",
+      "answer": "Para capturas que voce vai compartilhar, WebP em torno de 80% costuma pesar uma fracao do JPEG equivalente sem diferenca visivel. Fique no PNG quando precisar de pixels exatos ou transparencia."
     }
   ],
   "footerTagline": "Ajudando você a construir, projetar e criar.",
@@ -100,5 +112,44 @@ export default {
   "privacyContent": "Sua privacidade é importante para nós.\n\nColetamos apenas as informações necessárias para fornecer nosso serviço. Isso inclui dados técnicos sobre seu navegador e dispositivo para garantir que a ferramenta funcione corretamente.\n\nNunca armazenamos, rastreamos ou analisamos suas imagens. Todo o processamento ocorre localmente em seu navegador, garantindo que seus dados nunca saiam do seu dispositivo.",
   "termsContent": "Ao usar o PasteSnap, você concorda com estes termos.\n\n1. Esta ferramenta é fornecida \"como está\" sem qualquer garantia.\n2. Não nos responsabilizamos por qualquer perda de dados ou problemas decorrentes do uso desta ferramenta.\n3. Você é responsável pelo conteúdo que processa usando esta ferramenta.\n4. Reservamo-nos o direito de modificar estes termos a qualquer momento.",
   "cookiesContent": "Usamos cookies para melhorar sua experiência.\n\n1. Cookies essenciais: Necessários para a funcionalidade básica do site.\n2. Cookies de preferência: Usados para lembrar suas configurações de idioma e consentimento de cookies.\n\nVocê pode gerenciar ou desativar os cookies através das configurações do seu navegador a qualquer momento.",
-  "contact": "Contato"
+  "contact": "Contato",
+  "heroBadge": "Da area de transferencia a um arquivo",
+  "acceptedHint": "PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG",
+  "clipboardUnsupported": "Este navegador nao consegue ler a area de transferencia. Use Ctrl+V.",
+  "clipboardEmpty": "Nenhuma imagem na area de transferencia.",
+  "clipboardDenied": "Seu navegador bloqueou a area de transferencia. Use Ctrl+V.",
+  "rejectedTitle": "Nao adicionadas",
+  "rejectUnsupported": "nao e uma imagem",
+  "rejectDecode": "nao pode ser decodificada",
+  "rejectTooBig": "passa de 40 MB",
+  "selectAll": "Selecionar tudo",
+  "removeBtn": "Remover",
+  "expand": "Ampliar",
+  "close": "Fechar",
+  "decodedNote": "Convertida ao importar",
+  "copyFail": "Seu navegador bloqueou a area de transferencia.",
+  "backToTop": "Voltar ao topo",
+  "labelFormat": "Formato de saida",
+  "formatUnavailable": "Seu navegador nao sabe codificar este formato",
+  "labelQuality": "Qualidade",
+  "qualityHint": "Abaixo de 85% nao costuma se notar e pesa bem menos.",
+  "labelMaxSize": "Lado maior",
+  "sizeOriginal": "Original",
+  "labelFlatten": "Achatar a transparencia sobre",
+  "flattenHint": "JPEG nao tem canal alfa, entao os pixels transparentes precisam de uma cor.",
+  "convertedLabel": "convertidas",
+  "howTitle": "Como funciona",
+  "howStep1Title": "Cole, solte ou escolha",
+  "howStep1Text": "Ctrl+V com uma captura, solte arquivos ou use o botao Colar. Nada e lido da sua area de transferencia ate voce pedir: o PasteSnap nao se serve mais sozinho a cada volta para a aba.",
+  "howStep2Title": "Escolha formato e qualidade",
+  "howStep2Text": "PNG, JPG, WebP e AVIF quando o seu navegador realmente souber codificar — isso se verifica codificando um pixel, porque um navegador sem codificador AVIF devolve um PNG em silencio em vez de falhar. Ajuste a qualidade e o lado maior, e veja o peso antes e depois.",
+  "howStep3Title": "Baixe ou mande adiante",
+  "howStep3Text": "Uma imagem, uma selecao ou a galeria inteira em ZIP. Copie para a area de transferencia, ou passe o resultado para CompressSnap, CropSnap ou CleanSnap sem baixar e subir de novo.",
+  "nextStepTitle": "Continue",
+  "nextStepHint": "A imagem vai junto, sem novo upload",
+  "nextCompress": "Comprima",
+  "nextCrop": "Recorte",
+  "nextClean": "Apague objetos",
+  "nextWatermark": "Adicione marca d’agua",
+  "nextMeme": "Faca um meme",
 };

@@ -23,16 +23,20 @@ export default {
   "pasteMore": "Paste more images to add them",
   "features": [
     {
-      "title": "Instant",
-      "text": "No uploads, no waiting. Processed locally."
+      "title": "Paste only when you ask",
+      "text": "Ctrl+V, drop or the Paste button. The old build read your clipboard on load and again every time the tab regained focus; now nothing is read until you press something."
     },
     {
-      "title": "Private",
-      "text": "Images never leave your browser."
+      "title": "Formats it can actually write",
+      "text": "PNG, JPG, WebP and AVIF, each verified by encoding a real pixel first — a browser without an AVIF encoder returns a PNG with the wrong label instead of failing, and that check is the only way to catch it."
     },
     {
-      "title": "High Res",
-      "text": "Maintains original quality from clipboard."
+      "title": "Convert the batch without freezing",
+      "text": "Encoding runs in a Web Worker on transferred bitmaps, so the page stays responsive and the progress counter is real. Pick a few or select them all."
+    },
+    {
+      "title": "Reads what your phone actually takes",
+      "text": "HEIC and HEIF from iPhone, TIFF, SVG, GIF and AVIF, with EXIF rotation applied so portrait photos are not converted lying on their side."
     }
   ],
   "footerCredit": "Part of oLoveTools suite",
@@ -41,9 +45,9 @@ export default {
   "seoHeroText": "Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.",
   "seo_description": "Paste a screenshot with Ctrl+V and download it as PNG, JPG or WebP in seconds. Free online clipboard image saver — private, no uploads, no sign-up.",
   "seoHeroList": [
-    "No registration required",
-    "Supports multiple images at once",
-    "High quality original resolution"
+    "PNG, JPG, WebP and AVIF, with the quality you choose",
+    "HEIC, TIFF, SVG and GIF read on the way in",
+    "Nothing uploaded, nothing read from your clipboard unasked"
   ],
   "seoBrowserSpeedTitle": "Browser-Based Speed",
   "seoBrowserSpeedText": "Everything is processed locally, your data is never uploaded. It is safe, fast, and free.",
@@ -72,20 +76,28 @@ export default {
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
-      "question": "Is it free?",
-      "answer": "Yes, PasteSnap is completely free to use with no hidden costs."
+      "question": "Does PasteSnap read my clipboard on its own?",
+      "answer": "No, not any more. The previous build called the Clipboard API on load and again on every window focus, so returning to the tab pulled in whatever you had copied. Now the clipboard is only read when you press Paste, or when you press Ctrl+V yourself."
     },
     {
-      "question": "Is my data safe?",
-      "answer": "Absolutely. Your images never leave your browser. We don't have a server that stores your files."
+      "question": "Which formats can I convert to?",
+      "answer": "PNG, JPG, WebP and, where the browser supports it, AVIF. Support is tested by actually encoding a one-pixel image and checking the type that comes back, because a browser without an AVIF encoder returns a PNG labelled as AVIF rather than raising an error."
     },
     {
-      "question": "What formats are supported?",
-      "answer": "We support every image format your clipboard can hold, and you can download each image as high-quality PNG, JPG or WebP."
+      "question": "Why did my iPhone photo not work before?",
+      "answer": "HEIC passes a naive `image/*` check but no desktop browser decodes it, so the old build added a broken entry with no explanation. HEIC and HEIF now go through a converter on import, as do TIFF and SVG."
     },
     {
-      "question": "Do I need to register?",
-      "answer": "No registration or account is required. Just open the site and start pasting."
+      "question": "Are my images uploaded anywhere?",
+      "answer": "No. Decoding, conversion and ZIP packaging all happen in your browser. There is no server call at any point, and closing the tab discards everything."
+    },
+    {
+      "question": "Will converting a big batch freeze the page?",
+      "answer": "No. Encoding runs in a Web Worker and each image is handed over as a transferred bitmap, so no pixels are copied between threads and the page keeps responding while the counter advances."
+    },
+    {
+      "question": "What quality should I pick?",
+      "answer": "For screenshots to share, WebP at around 80% is usually a fraction of the size of the equivalent JPEG with no visible difference. Keep PNG when you need exact pixels or transparency."
     }
   ],
   "footerTagline": "Helping you build, design, and create with simple, powerful utilities.",
@@ -100,5 +112,44 @@ export default {
   "privacyContent": "Your privacy is important to us.\n\nWe only collect information necessary to provide our service. This includes technical data about your browser and device to ensure the tool works correctly.\n\nWe never store, track, or analyze your images. All processing happens locally in your browser, ensuring your data never leaves your device.",
   "termsContent": "By using PasteSnap, you agree to these terms.\n\n1. This tool is provided \"as-is\" without any warranties.\n2. We are not responsible for any data loss or issues arising from the use of this tool.\n3. You are responsible for the content you process using this tool.\n4. We reserve the right to modify these terms at any time.",
   "cookiesContent": "We use cookies to improve your experience.\n\n1. Essential Cookies: Required for the basic functionality of the site.\n2. Preference Cookies: Used to remember your language and cookie consent settings.\n\nYou can manage or disable cookies through your browser settings at any time.",
-  "contact": "Contact"
+  "contact": "Contact",
+  "heroBadge": "Clipboard to image file",
+  "acceptedHint": "PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG",
+  "clipboardUnsupported": "This browser cannot read the clipboard. Use Ctrl+V instead.",
+  "clipboardEmpty": "No image found in the clipboard.",
+  "clipboardDenied": "Your browser blocked clipboard access. Use Ctrl+V instead.",
+  "rejectedTitle": "Not added",
+  "rejectUnsupported": "is not an image",
+  "rejectDecode": "could not be decoded",
+  "rejectTooBig": "is over 40 MB",
+  "selectAll": "Select all",
+  "removeBtn": "Remove",
+  "expand": "Expand",
+  "close": "Close",
+  "decodedNote": "Converted on import",
+  "copyFail": "Your browser blocked the clipboard.",
+  "backToTop": "Back to top",
+  "labelFormat": "Output format",
+  "formatUnavailable": "Your browser cannot encode this format",
+  "labelQuality": "Quality",
+  "qualityHint": "Below 85% is usually invisible and much smaller.",
+  "labelMaxSize": "Longest side",
+  "sizeOriginal": "Original",
+  "labelFlatten": "Flatten transparency onto",
+  "flattenHint": "JPEG has no alpha channel, so transparent pixels need a colour.",
+  "convertedLabel": "converted",
+  "howTitle": "How it works",
+  "howStep1Title": "Paste, drop or pick",
+  "howStep1Text": "Ctrl+V a screenshot, drop files, or use the Paste button. Nothing is read from your clipboard until you ask: PasteSnap no longer helps itself every time the tab regains focus.",
+  "howStep2Title": "Choose format and quality",
+  "howStep2Text": "PNG, JPG, WebP and AVIF when your browser can really encode it — that is checked by encoding a pixel, because a browser without an AVIF encoder quietly returns a PNG instead of failing. Set the quality and the longest side, and see the weight before and after.",
+  "howStep3Title": "Download or send it onward",
+  "howStep3Text": "One image, a selection, or the whole gallery as a ZIP. Copy straight to the clipboard, or hand the result to CompressSnap, CropSnap or CleanSnap without downloading and re-uploading it.",
+  "nextStepTitle": "Keep going",
+  "nextStepHint": "The image travels with you — no re-upload",
+  "nextCompress": "Compress it",
+  "nextCrop": "Crop it",
+  "nextClean": "Erase objects",
+  "nextWatermark": "Add a watermark",
+  "nextMeme": "Make a meme",
 };

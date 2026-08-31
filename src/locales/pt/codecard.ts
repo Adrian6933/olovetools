@@ -47,25 +47,29 @@ export default {
   "watermarkLabel": "Criado com oLoveTools.com",
   "features": [
     {
-      "title": "Escala de Saída de Alta Definição",
-      "text": "Exporte imagens em escalas de 1x, 2x ou 4x para garantir que suas capturas de código fiquem super nítidas no Twitter, LinkedIn e posts de blogs."
+      "title": "Sintaxe de verdade, 48 linguagens",
+      "text": "O realcador le o fluxo de tokens cru do Prism, entao JavaScript, Rust, Zig, Terraform, Dockerfiles e mais 43 saem com as cores certas — e so a gramatica escolhida e baixada."
     },
     {
-      "title": "Privacidade 100% no Cliente",
-      "text": "Seus trechos de código são coloridos e processados inteiramente no seu navegador. Nada é enviado para qualquer servidor."
+      "title": "Destaque as linhas que importam",
+      "text": "Clique num numero de linha para realca-la e escurecer o resto. Shift+clique pega um intervalo, Alt+clique inverte a selecao inteira, clique direito limpa."
     },
     {
-      "title": "Suporte de Sintaxe Amplo",
-      "text": "Suporte total para as principais linguagens, incluindo JavaScript, TypeScript, Python, HTML, CSS, Rust, Go, SQL e Markdown."
+      "title": "Exportacoes das quais nada e cortado",
+      "text": "O cartao e medido na largura total antes da captura, entao linhas longas sobrevivem a exportacao em vez de serem cortadas na borda da previa. PNG, JPEG, WebP ou SVG vetorial, ate 4x."
+    },
+    {
+      "title": "Local, e offline de verdade",
+      "text": "Fontes e gramaticas vem deste site, nao de um CDN de terceiros. Carregada a pagina, realce e exportacao funcionam sem rede."
     }
   ],
   "footerCredit": "Parte da suíte oLoveTools",
   "seoHeroTitle": "Crie lindas imagens de capturas de código online",
   "seoHeroText": "Compartilhar código como texto simples nas redes sociais ou em apresentações pode ser visualmente monótono. O CodeCard transforma seu código fonte em elegantes cartões de design instantaneamente. Controle espaçamentos, sombras, fontes e estilos de janela para combinar com sua marca pessoal.",
   "seoHeroList": [
-    "Exportação em alta resolução nos formatos PNG, JPEG e SVG",
-    "Pronto para uso offline, seguro e focado em privacidade",
-    "Totalmente gratuito e sem marcas d'água obrigatórias"
+    "PNG, JPEG, WebP e SVG vetorial ate 4x",
+    "Fontes e gramaticas hospedadas aqui: funciona offline",
+    "Sem conta, e a marca d’agua vem desligada"
   ],
   "seoBrowserSpeedTitle": "Geração local rápida e segura",
   "seoBrowserSpeedText": "O CodeCard é executado inteiramente no seu navegador por meio de renderização no cliente. Nenhum arquivo ou texto sai do seu computador.",
@@ -86,20 +90,28 @@ export default {
   "faqTitle": "Perguntas Frequentes",
   "faq": [
     {
-      "question": "Como obtenho a captura mais nítida possível?",
-      "answer": "Recomendamos escolher a escala de resolução de 2x ou 4x na aba de exportação. Isso garante que a imagem PNG ou JPEG gerada tenha densidade de pixels suficiente para parecer nítida em telas de retina de alta definição."
+      "question": "Por que minhas linhas longas eram cortadas em outras ferramentas?",
+      "answer": "Porque a maioria captura o DOM exatamente como esta diagramado, e um bloco de codigo com barra de rolagem horizontal so diagrama a parte visivel. O CodeCard mede o cartao na largura total, sem cortes, antes da captura."
+    },
+    {
+      "question": "Como destaco linhas especificas?",
+      "answer": "Clique num numero de linha na previa para realca-la e escurecer o resto. Shift+clique estende um intervalo, Alt+clique inverte a selecao inteira e o clique direito limpa. Voce tambem pode digitar intervalos como 3, 7-9, 12."
+    },
+    {
+      "question": "Quais linguagens sao suportadas?",
+      "answer": "48, incluindo JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfiles, Bash, PowerShell, Markdown e diffs unificados. So a gramatica escolhida e baixada."
     },
     {
       "question": "Posso usar o CodeCard offline?",
-      "answer": "Sim! Como o CodeCard funciona 100% no cliente do navegador, uma vez que a página está carregada, todas as conversões, realces e downloads funcionam perfeitamente sem internet."
+      "answer": "Sim. As fontes monoespacadas e as gramaticas vem deste site, nao de um CDN de terceiros, entao depois que a pagina carrega o realce e a exportacao continuam sem rede."
     },
     {
-      "question": "O meu código está seguro?",
-      "answer": "Com certeza. Seu código nunca é transmitido pela rede ou salvo em nossos servidores. Todo o processo acontece localmente no seu computador."
+      "question": "Meu codigo esta seguro?",
+      "answer": "Seu codigo nunca e transmitido. Realce, diagramacao e renderizacao da imagem acontecem no seu navegador, e nada e enviado ou registrado."
     },
     {
-      "question": "Suporta temas personalizados?",
-      "answer": "Suportamos temas escuros padrão (como One Dark, Dracula, VS Code, Night Owl) e temas claros (GitHub Light) para cobrir todas as preferências modernas de desenvolvedores."
+      "question": "Qual ajuste da a exportacao mais nitida?",
+      "answer": "PNG em 3x ou 4x para uso rasterizado. Se o destino aceita vetores, escolha SVG: fica nitido em qualquer tamanho e costuma pesar menos que um PNG 4x."
     }
   ],
   "footerTagline": "Gerador de capturas de código elegante e gratuito executado 100% localmente no seu dispositivo.",
@@ -112,5 +124,98 @@ export default {
   "privacyContent": "Sua privacidade é nossa prioridade máxima.\n\nTodo o realce e a criação de imagem ocorrem no seu dispositivo. Nenhum texto é coletado ou enviado a servidores.\n\nSeu código pertence a você.",
   "termsContent": "Ao usar o CodeCard, você concorda com os seguintes termos:\n\n1. Esta ferramenta é fornecida 'como está', sem garantias.\n2. Não nos responsabilizamos por falhas de renderização ou erros de download.\n3. É sua responsabilidade garantir que seu código não contenha credenciais confidenciais.\n4. Reservamo-nos o direito de alterar estes termos a qualquer momento.",
   "cookiesContent": "Usamos cookies para melhorar sua experiência.\n\n1. Cookies necessários para desempenho técnico básico.\n2. Cookies de preferência para lembrar o idioma selecionado.\n\nVocê pode desativar os cookies nas configurações do seu navegador.",
-  "contact": "Contato"
+  "contact": "Contato",
+  "heroBadge": "Estudio de capturas de codigo",
+  "heroChipLanguages": "48 linguagens",
+  "heroChipLocal": "Funciona no seu navegador",
+  "heroChipNoAccount": "Sem conta nem upload",
+  "previewTitle": "Previa ao vivo",
+  "privacyNote": "Realce no seu navegador. Seu codigo nao sai deste aparelho.",
+  "dropTitle": "Solte o arquivo aqui",
+  "dropHint": "Solte um arquivo de codigo aqui, ou cole o codigo.",
+  "dropBrowse": "Abrir arquivo",
+  "startBlank": "Comecar em branco",
+  "pendingLines": "linhas",
+  "pendingLoad": "Carregar no editor",
+  "pendingLoadRaw": "Carregar sem detectar",
+  "pendingDiscard": "Descartar",
+  "pendingBig": "Arquivo grande: o realce pode ficar lento enquanto voce digita.",
+  "labelStartLine": "Numero da primeira linha",
+  "labelHighlightLines": "Linhas destacadas",
+  "highlightHint": "Ou clique nos numeros de linha na previa. Shift+clique para um intervalo, Alt+clique inverte, clique direito limpa.",
+  "highlightPlaceholder": "ex. 3, 7-9, 12",
+  "clearHighlights": "Limpar",
+  "labelDimOthers": "Escurecer as outras linhas",
+  "labelBgMode": "Fundo",
+  "bgModeGradient": "Gradiente",
+  "bgModeSolid": "Cor solida",
+  "bgModeNone": "Nenhum",
+  "labelBgColor": "Cor de fundo",
+  "labelFontFamily": "Fonte",
+  "fontIbmPlex": "IBM Plex Mono",
+  "fontSystem": "Monoespacada do sistema",
+  "labelLineHeight": "Altura da linha",
+  "labelAspect": "Proporcao",
+  "aspectAuto": "Auto",
+  "aspectSquare": "Quadrado",
+  "aspectWide": "Panoramico",
+  "aspectSocial": "Social",
+  "aspectPortrait": "Vertical",
+  "windowMacDesc": "Os tres pontos do macOS",
+  "windowWindowsDesc": "Minimizar, maximizar, fechar",
+  "windowSimpleDesc": "Um unico marcador colorido",
+  "windowNoneDesc": "Sem barra de titulo",
+  "labelWordWrap": "Quebrar linhas longas",
+  "wordWrapHint": "Desligado, o cartao cresce ate a linha mais longa.",
+  "labelLigatures": "Ligaduras da fonte",
+  "ligaturesHint": "Transforma => e !== em glifos unicos.",
+  "watermarkHint": "Desativada por padrao. Nada e carimbado na sua imagem sem voce pedir.",
+  "labelCardWidth": "Largura do cartao",
+  "labelTabSize": "Tamanho do tab",
+  "labelFormat": "Formato",
+  "labelQuality": "Qualidade",
+  "btnDownload": "Baixar",
+  "btnCopy": "Copiar imagem",
+  "copyOk": "Copiada",
+  "copyFail": "Seu navegador bloqueou a area de transferencia. Baixe a imagem no lugar.",
+  "presetsTitle": "Estilos salvos",
+  "presetSave": "Salvar atual",
+  "presetEmpty": "Nada salvo ainda. Os estilos ficam neste navegador.",
+  "presetDelete": "Excluir estilo",
+  "undo": "Desfazer",
+  "redo": "Refazer",
+  "zoomIn": "Aproximar",
+  "zoomOut": "Afastar",
+  "zoomFit": "Redefinir a vista",
+  "compareHold": "Segure para ver o codigo cru",
+  "backToTop": "Voltar ao topo",
+  "statusExporting": "Gerando a imagem...",
+  "statusGrammar": "Carregando a gramatica...",
+  "errorGrammar": "Nao foi possivel carregar a gramatica. O codigo aparece sem realce.",
+  "errorTooBig": "Esse arquivo passa de 4 MB.",
+  "howTitle": "Como funciona",
+  "howStep1Title": "Cole ou solte seu codigo",
+  "howStep1Text": "Digite, cole ou solte um arquivo. O arquivo fica em espera: mostra tamanho e numero de linhas, e nada carrega ate voce apertar o botao.",
+  "howStep2Title": "De estilo e escolha as linhas-chave",
+  "howStep2Text": "Dez temas, nove gradientes ou sua cor, cinco molduras de janela. Clique num numero de linha para destaca-la e escurecer o resto.",
+  "howStep3Title": "Exporte ou mande adiante",
+  "howStep3Text": "PNG, JPEG, WebP ou SVG vetorial, ate 4x. Copie para a area de transferencia, ou passe a imagem para CompressSnap, CropSnap ou WatermarkSnap sem baixar antes.",
+  "seoEngineTitle": "Construido sobre o fluxo de tokens do Prism",
+  "seoEngineText": "Em vez de pedir HTML pronto ao realcador, o CodeCard le o fluxo de tokens cru e reconstroi o codigo linha a linha. E isso que torna possiveis numeros exatos, realce por linha, quebra com recuo e exportacoes sem cortes.",
+  "nextStepTitle": "Continue",
+  "nextStepHint": "Sua imagem vai junto, sem novo upload",
+  "nextCompress": "Comprima",
+  "nextCrop": "Recorte",
+  "nextFormat": "Mude o formato",
+  "nextWatermark": "Adicione marca d’agua",
+  "nextMeme": "Faca um meme",
+  "groupWeb": "Web",
+  "groupSystems": "Sistemas",
+  "groupApps": "Aplicacoes",
+  "groupData": "Dados e configuracao",
+  "groupOps": "Shell e operacoes",
+  "groupText": "Texto e diffs",
+  "gradientCandy": "Rosa Doce",
+  "gradientMono": "Grafite",
+  "gradientPeach": "Pessego Suave",
 };

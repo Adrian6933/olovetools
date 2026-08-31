@@ -23,16 +23,20 @@ export default {
   "pasteMore": "Fügen Sie weitere Bilder ein, um sie hinzuzufügen",
   "features": [
     {
-      "title": "Sofort",
-      "text": "Kein Upload, kein Warten. Lokal verarbeitet."
+      "title": "Einfuegen nur auf Zuruf",
+      "text": "Strg+V, Ablegen oder der Einfuegen-Knopf. Die alte Fassung las die Zwischenablage beim Laden und danach bei jedem Fokuswechsel; jetzt wird nichts gelesen, bevor du etwas drueckst."
     },
     {
-      "title": "Privat",
-      "text": "Bilder verlassen niemals Ihren Browser."
+      "title": "Formate, die er wirklich schreiben kann",
+      "text": "PNG, JPG, WebP und AVIF, jedes geprueft, indem ein echtes Pixel kodiert wird — ein Browser ohne AVIF-Encoder liefert ein falsch etikettiertes PNG statt zu scheitern, und nur dieser Test faengt das ab."
     },
     {
-      "title": "Hohe Auflösung",
-      "text": "Behält die Originalqualität bei."
+      "title": "Den Stapel umwandeln, ohne einzufrieren",
+      "text": "Die Kodierung laeuft in einem Web Worker auf uebertragenen Bitmaps, die Seite bleibt bedienbar und der Fortschritt ist echt. Waehle einzelne oder alle."
+    },
+    {
+      "title": "Liest, was dein Handy wirklich aufnimmt",
+      "text": "HEIC und HEIF vom iPhone, TIFF, SVG, GIF und AVIF, mit angewandter EXIF-Drehung, damit Hochformatfotos nicht liegend umgewandelt werden."
     }
   ],
   "footerCredit": "Teil der oLoveTools-Suite",
@@ -41,9 +45,9 @@ export default {
   "seoHeroText": "Drücken Sie einfach Strg+V und laden Sie Ihr Bild sofort herunter.",
   "seo_description": "Screenshot mit Strg+V einfügen und in Sekunden als PNG, JPG oder WebP herunterladen. Kostenlos, privat, ohne Uploads und ohne Registrierung.",
   "seoHeroList": [
-    "Keine Registrierung erforderlich",
-    "Mehrere Bilder gleichzeitig",
-    "Originalqualität"
+    "PNG, JPG, WebP und AVIF, in der Qualitaet deiner Wahl",
+    "HEIC, TIFF, SVG und GIF werden beim Import gelesen",
+    "Nichts wird hochgeladen, nichts ungefragt aus der Zwischenablage gelesen"
   ],
   "seoBrowserSpeedTitle": "Browser-basierte Geschwindigkeit",
   "seoBrowserSpeedText": "Alles wird lokal verarbeitet. Sicher, schnell und kostenlos.",
@@ -72,20 +76,28 @@ export default {
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
-      "question": "Ist es kostenlos?",
-      "answer": "Ja, PasteSnap ist völlig kostenlos."
+      "question": "Liest PasteSnap meine Zwischenablage von selbst?",
+      "answer": "Nicht mehr. Die alte Fassung rief die Clipboard-API beim Laden und bei jedem Fensterfokus auf, sodass die Rueckkehr zum Tab holte, was du kopiert hattest. Jetzt wird die Zwischenablage nur gelesen, wenn du auf Einfuegen drueckst oder selbst Strg+V machst."
     },
     {
-      "question": "Sind meine Daten sicher?",
-      "answer": "Absolut. Ihre Bilder verlassen niemals Ihren Browser."
+      "question": "In welche Formate kann ich umwandeln?",
+      "answer": "PNG, JPG, WebP und, wo der Browser es kann, AVIF. Die Unterstuetzung wird geprueft, indem tatsaechlich ein Ein-Pixel-Bild kodiert und der zurueckgegebene Typ kontrolliert wird — ein Browser ohne AVIF-Encoder liefert ein als AVIF etikettiertes PNG, statt einen Fehler zu werfen."
     },
     {
-      "question": "Welche Formate werden unterstützt?",
-      "answer": "Wir unterstützen alle gängigen Bildformate, und jedes Bild lässt sich als PNG, JPG oder WebP herunterladen."
+      "question": "Warum ging mein iPhone-Foto vorher nicht?",
+      "answer": "HEIC besteht eine naive `image/*`-Pruefung, aber kein Desktop-Browser dekodiert es, also legte die alte Fassung kommentarlos einen kaputten Eintrag an. HEIC und HEIF laufen jetzt beim Import durch einen Konverter, ebenso TIFF und SVG."
     },
     {
-      "question": "Muss ich mich registrieren?",
-      "answer": "Nein, keine Registrierung erforderlich."
+      "question": "Werden meine Bilder irgendwohin hochgeladen?",
+      "answer": "Nein. Dekodierung, Umwandlung und ZIP-Packen passieren in deinem Browser. Zu keinem Zeitpunkt gibt es einen Serveraufruf, und beim Schliessen des Tabs ist alles weg."
+    },
+    {
+      "question": "Friert ein grosser Stapel die Seite ein?",
+      "answer": "Nein. Die Kodierung laeuft in einem Web Worker, und jedes Bild wird als uebertragene Bitmap uebergeben: zwischen den Threads werden keine Pixel kopiert, und die Seite bleibt bedienbar, waehrend der Zaehler laeuft."
+    },
+    {
+      "question": "Welche Qualitaet soll ich nehmen?",
+      "answer": "Fuer Screenshots zum Teilen wiegt WebP bei etwa 80% meist einen Bruchteil des entsprechenden JPEG, ohne sichtbaren Unterschied. Bleib bei PNG, wenn du exakte Pixel oder Transparenz brauchst."
     }
   ],
   "footerTagline": "Helfen beim Bauen, Designen und Erstellen.",
@@ -100,5 +112,44 @@ export default {
   "privacyContent": "Ihre Privatsphäre ist uns wichtig.\n\nWir sammeln nur Informationen, die zur Bereitstellung unseres Dienstes erforderlich sind. Dazu gehören technische Daten über Ihren Browser und Ihr Gerät, um sicherzustellen, dass das Tool korrekt funktioniert.\n\nWir speichern, verfolgen oder analysieren niemals Ihre Bilder. Die gesamte Verarbeitung erfolgt lokal in Ihrem Browser, sodass Ihre Daten niemals Ihr Gerät verlassen.",
   "termsContent": "Durch die Nutzung von PasteSnap stimmen Sie diesen Bedingungen zu.\n\n1. Dieses Tool wird \"wie besehen\" ohne jegliche Garantie bereitgestellt.\n2. Wir sind nicht verantwortlich für Datenverluste oder Probleme, die sich aus der Nutzung dieses Tools ergeben.\n3. Sie sind für die Inhalte verantwortlich, die Sie mit diesem Tool verarbeiten.\n4. Wir behalten uns das Recht vor, diese Bedingungen jederzeit zu ändern.",
   "cookiesContent": "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.\n\n1. Essentielle Cookies: Erforderlich für die grundlegende Funktionalität der Website.\n2. Präferenz-Cookies: Werden verwendet, um Ihre Sprach- und Cookie-Zustimmungseinstellungen zu speichern.\n\nSie können Cookies jederzeit über Ihre Browsereinstellungen verwalten oder deaktivieren.",
-  "contact": "Kontakt"
+  "contact": "Kontakt",
+  "heroBadge": "Zwischenablage zu Bilddatei",
+  "acceptedHint": "PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG",
+  "clipboardUnsupported": "Dieser Browser kann die Zwischenablage nicht lesen. Nutze Strg+V.",
+  "clipboardEmpty": "Kein Bild in der Zwischenablage.",
+  "clipboardDenied": "Dein Browser hat den Zugriff auf die Zwischenablage blockiert. Nutze Strg+V.",
+  "rejectedTitle": "Nicht hinzugefuegt",
+  "rejectUnsupported": "ist kein Bild",
+  "rejectDecode": "konnte nicht dekodiert werden",
+  "rejectTooBig": "ist groesser als 40 MB",
+  "selectAll": "Alle auswaehlen",
+  "removeBtn": "Entfernen",
+  "expand": "Vergroessern",
+  "close": "Schliessen",
+  "decodedNote": "Beim Import umgewandelt",
+  "copyFail": "Dein Browser hat die Zwischenablage blockiert.",
+  "backToTop": "Nach oben",
+  "labelFormat": "Ausgabeformat",
+  "formatUnavailable": "Dein Browser kann dieses Format nicht kodieren",
+  "labelQuality": "Qualitaet",
+  "qualityHint": "Unter 85% sieht man kaum einen Unterschied, die Datei ist aber viel kleiner.",
+  "labelMaxSize": "Laengste Seite",
+  "sizeOriginal": "Original",
+  "labelFlatten": "Transparenz aufloesen auf",
+  "flattenHint": "JPEG hat keinen Alphakanal, transparente Pixel brauchen also eine Farbe.",
+  "convertedLabel": "umgewandelt",
+  "howTitle": "So funktioniert es",
+  "howStep1Title": "Einfuegen, ablegen oder waehlen",
+  "howStep1Text": "Strg+V mit einem Screenshot, Dateien ablegen oder auf Einfuegen klicken. Aus deiner Zwischenablage wird nichts gelesen, bis du es willst: PasteSnap bedient sich nicht mehr selbst, sobald der Tab wieder aktiv wird.",
+  "howStep2Title": "Format und Qualitaet waehlen",
+  "howStep2Text": "PNG, JPG, WebP und AVIF, wenn dein Browser es wirklich kodieren kann — geprueft wird das, indem ein Pixel kodiert wird, denn ein Browser ohne AVIF-Encoder liefert still ein PNG statt zu scheitern. Stelle Qualitaet und laengste Seite ein und sieh das Gewicht vorher und nachher.",
+  "howStep3Title": "Herunterladen oder weiterschicken",
+  "howStep3Text": "Ein Bild, eine Auswahl oder die ganze Galerie als ZIP. Direkt in die Zwischenablage kopieren oder das Ergebnis ohne Umweg an CompressSnap, CropSnap oder CleanSnap uebergeben.",
+  "nextStepTitle": "Weiter geht es",
+  "nextStepHint": "Das Bild reist mit — kein erneuter Upload",
+  "nextCompress": "Komprimieren",
+  "nextCrop": "Zuschneiden",
+  "nextClean": "Objekte entfernen",
+  "nextWatermark": "Wasserzeichen hinzufuegen",
+  "nextMeme": "Meme daraus machen",
 };

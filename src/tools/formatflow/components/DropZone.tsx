@@ -1,160 +1,76 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { UploadCloud, Layers, Sparkles, ClipboardCopy, ExternalLink } from 'lucide-react';
-import { motion } from 'framer-motion';
-import type { Language } from '../../../locales/meta';
+// ============================================================================
+// Zona de entrada
+// ----------------------------------------------------------------------------
+// El texto de aquí sólo nombra formatos que la herramienta descodifica de
+// verdad. Antes anunciaba EPS y RAW, que nunca se llegaron a leer, y TIFF, que
+// tampoco — ahora TIFF sí entra, vía utif, y EPS y RAW se rechazan con un
+// mensaje claro en lugar de devolver un PNG disfrazado.
+// ============================================================================
+
+import React, { useCallback, useRef, useState } from 'react';
+import { ACCEPTED_INPUT, ACCEPT_ATTR } from '../lib/intake';
+import { MAX_FILES } from '../lib/useQueue';
 
 interface DropZoneProps {
-  onFilesSelect: (files: File[]) => void;
-  language: Language;
-  dictionary?: any;
+  onFiles: (files: File[]) => void;
+  compact?: boolean;
+  t: any;
 }
 
-const DropZone: React.FC<DropZoneProps> = ({ onFilesSelect, language, dictionary }) => {
-  const [isDragOver, setIsDragOver] = useState(false);
-  const t = (dictionary || {}).dropzone;
+export const DropZone: React.FC<DropZoneProps> = ({ onFiles, compact, t }) => {
+  const [over, setOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const processFiles = (fileList: FileList | File[]) => {
-    const validFiles: File[] = [];
-    const maxFiles = 50;
+  const take = useCallback(
+    (list: FileList | null) => {
+      if (!list || list.length === 0) return;
+      onFiles(Array.from(list));
+    },
+    [onFiles]
+  );
 
-    Array.from(fileList).forEach(file => {
-      if (
-        file.type.startsWith('image/') || 
-        file.name.toLowerCase().endsWith('.heic') || 
-        file.name.toLowerCase().endsWith('.heif')
-      ) {
-        validFiles.push(file);
-      }
-    });
-
-    if (validFiles.length === 0) {
-      alert(t.invalid);
-      return;
-    }
-
-    if (validFiles.length > maxFiles) {
-      alert(t.tooMany);
-      onFilesSelect(validFiles.slice(0, maxFiles));
-    } else {
-      onFilesSelect(validFiles);
-    }
-  };
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  }, []);
-
-  const handleDragLeave = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      processFiles(e.dataTransfer.files);
-    }
-  }, [onFilesSelect, t]);
-
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      processFiles(e.target.files);
-    }
-  }, [onFilesSelect, t]);
-
-
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      event.preventDefault();
+      setOver(false);
+      take(event.dataTransfer.files);
+    },
+    [take]
+  );
 
   return (
-    <div className="flex flex-col gap-6">
-      <motion.div
-        whileHover={{ scale: 1.01 }}
-        whileTap={{ scale: 0.98 }}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`
-          w-full h-[400px] rounded-[3.5rem] border-4 border-dashed transition-all duration-700 flex flex-col items-center justify-center gap-6 p-12 cursor-pointer group relative overflow-hidden glass-card
-          ${isDragOver 
-            ? 'border-primary bg-primary/10 scale-[1.03] shadow-[0_0_80px_-20px_rgba(99,102,241,0.4)]' 
-            : 'border-slate-800 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/80 hover:shadow-2xl'
-          }
-        `}
-        onClick={() => document.getElementById('file-upload')?.click()}
-      >
-        {/* Decorative background glow */}
-        <div className={`absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/5 via-transparent to-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000`}></div>
-        
-        <motion.div 
-          animate={{ 
-            scale: isDragOver ? 1.1 : 1,
-            rotate: isDragOver ? 3 : 0
-          }}
-          className={`p-8 rounded-[2rem] transition-all duration-700 relative z-10 ${isDragOver ? 'bg-primary/20' : 'bg-slate-800 group-hover:bg-slate-700 group-hover:rotate-6'}`}
-        >
-          {isDragOver ? (
-            <Sparkles className="w-16 h-16 text-primary animate-pulse" />
-          ) : (
-            <UploadCloud className="w-16 h-16 text-slate-400 group-hover:text-white transition-colors duration-500" />
-          )}
-        </motion.div>
-        
-        <div className="text-center space-y-6 z-10">
-          <div className="flex flex-col items-center gap-4">
-            {isDragOver ? (
-              <h3 className="text-3xl font-display font-black text-primary animate-pulse tracking-tight">
-                {t.drop}
-              </h3>
-            ) : (
-              <div className="px-8 py-3 bg-primary text-white rounded-full font-bold shadow-[0_0_20px_rgba(99,102,241,0.4)] group-hover:shadow-[0_0_30px_rgba(99,102,241,0.6)] group-hover:-translate-y-1 transition-all duration-300">
-                {t.click}
-              </div>
-            )}
-          </div>
-          <p className="text-lg text-slate-500 max-w-sm mx-auto font-medium opacity-70 group-hover:opacity-100 transition-opacity">
-            {t.dragInfoStart} <span className="text-primary font-black underline decoration-2 underline-offset-4">{t.dragInfoCount}</span> {t.dragInfoEnd}
-            <br/>
-            <span className="text-sm mt-2 block font-bold text-slate-600">{t.settingsInfo}</span>
-          </p>
-        </div>
+    <div
+      onDragOver={e => { e.preventDefault(); setOver(true); }}
+      onDragLeave={e => { e.preventDefault(); setOver(false); }}
+      onDrop={onDrop}
+      onClick={() => inputRef.current && inputRef.current.click()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') inputRef.current && inputRef.current.click(); }}
+      className={`glass-card w-full rounded-3xl border-2 border-dashed transition-colors cursor-pointer flex flex-col items-center justify-center text-center gap-4 px-6 ${
+        compact ? 'py-8' : 'py-14 sm:py-20'
+      } ${over ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-700 hover:border-slate-500'}`}
+    >
+      {/* Bandeja con la hoja entrando: dibujo propio, no un icono a 64px. */}
+      <svg viewBox="0 0 72 56" className={compact ? 'w-12 h-10' : 'w-20 h-16'} fill="none" aria-hidden="true">
+        <path d="M6 34v12a4 4 0 0 0 4 4h52a4 4 0 0 0 4-4V34" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M6 34h16l4 7h20l4-7h16" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" />
+        <rect x="26" y="4" width="20" height="22" rx="3" fill="#a855f7" fillOpacity="0.14" stroke="#a855f7" strokeWidth="2" />
+        <path d="M36 10v10M31.5 16l4.5 4.5 4.5-4.5" stroke="#a855f7" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
 
-        {isDragOver && (
-          <div className="absolute inset-0 pointer-events-none border-8 border-primary/20 animate-pulse rounded-[3rem]"></div>
-        )}
+      <div className="space-y-2 max-w-md">
+        <p className="text-lg sm:text-xl font-black text-white leading-tight">{t.title}</p>
+        <p className="text-sm text-slate-400 leading-relaxed">
+          {t.subtitle.replace('{max}', String(MAX_FILES))}
+        </p>
+        <p className="text-[11px] font-mono text-slate-500 break-words">{ACCEPTED_INPUT}</p>
+        <p className="text-[11px] text-slate-500">{t.waits}</p>
+      </div>
 
-        <input
-          type="file"
-          id="file-upload"
-          className="hidden"
-          accept="image/*,.heic,.heif"
-          multiple
-          onChange={handleFileInput}
-        />
-      </motion.div>
-
-      {/* Referral Link to PasteSnap */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.5 }}
-        className="flex justify-center mb-16"
-      >
-        <a 
-          href={`/${language.toLowerCase()}/pastesnap`}
-          className="group flex items-center gap-4 px-8 py-4 bg-slate-900/40 border border-slate-800 hover:border-secondary/50 rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.15)] hover:bg-slate-800 cursor-pointer"
-        >
-          <div className="p-2 bg-secondary/10 rounded-lg group-hover:scale-110 transition-transform">
-            <ClipboardCopy className="w-4 h-4 text-secondary" />
-          </div>
-          <div className="flex flex-col items-start">
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 group-hover:text-slate-400 transition-colors">{t.pastePrompt}</span>
-            <span className="text-sm font-bold text-slate-300 group-hover:text-white flex items-center gap-2">
-              {t.pasteAction}
-            </span>
-          </div>
-        </a>
-      </motion.div>
+      <input ref={inputRef} type="file" className="hidden" accept={ACCEPT_ATTR} multiple
+        onClick={e => e.stopPropagation()}
+        onChange={e => { take(e.target.files); e.target.value = ''; }} />
     </div>
   );
 };

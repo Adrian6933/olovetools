@@ -308,17 +308,39 @@ cropper-selection {
   box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.45);
 }
 
-cropper-handle {
+/* Every one of these elements draws its accent from `--theme-color` inside its
+   own shadow root. Setting `background-color` on the host instead paints the
+   whole element: `select` spans the entire canvas and `move` spans the entire
+   selection, so a background there covers the photo with a solid rose block —
+   which is exactly what the editor used to show after an upload. */
+cropper-handle[action='select'],
+cropper-handle[action='move'] {
+  background-color: transparent;
+}
+
+/* The edge grips are invisible hit strips; the element's own ::after dot is the
+   only visible part, and it reads the custom property from the host. */
+cropper-handle[action$='-resize'] {
+  --theme-color: rgba(244, 63, 94, 0.95);
+  background-color: transparent;
+}
+
+/* The corners are the ones people actually aim at, so those get a real grip. */
+cropper-handle[action='nw-resize'],
+cropper-handle[action='ne-resize'],
+cropper-handle[action='se-resize'],
+cropper-handle[action='sw-resize'] {
   background-color: #f43f5e;
-  border-radius: 2px;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1.5px rgba(0, 0, 0, 0.45);
 }
 
 cropper-crosshair {
-  background-color: rgba(244, 63, 94, 0.5);
+  --theme-color: rgba(244, 63, 94, 0.55);
 }
 
 cropper-grid {
-  border-color: rgba(244, 63, 94, 0.25);
+  --theme-color: rgba(244, 63, 94, 0.3);
 }
 
 /* ── Global reduced-motion support ──

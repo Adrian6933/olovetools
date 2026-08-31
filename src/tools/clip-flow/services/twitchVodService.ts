@@ -1,4 +1,5 @@
 import { VodInfo, VodQuality, HlsSegment, SegmentIndex } from '../types';
+import { noteRoute, usableProxies } from './route';
 
 const CLIENT_IDS = [
   "ue6666qo983sx6so1c0vnaz41db287",
@@ -44,7 +45,7 @@ class VodError extends Error {
 
 // ---- GQL helper: tries every proxy x client-id combo, returns first successful `data` payload ----
 const gqlRequest = async (query: string, variables: Record<string, any>): Promise<any> => {
-  for (const makeProxyUrl of GQL_PROXIES) {
+  for (const makeProxyUrl of usableProxies(GQL_PROXIES)) {
     for (const clientId of CLIENT_IDS) {
       try {
         const res = await fetch(makeProxyUrl(GQL_ENDPOINT), {
@@ -158,11 +159,11 @@ export const fetchMasterPlaylist = async (videoId: string, token: { signature: s
   const usherUrl = `https://usher.ttvnw.net/vod/${videoId}.m3u8?sig=${token.signature}&token=${encodeURIComponent(token.value)}&allow_source=true&allow_audio_only=false&player=twitchweb`;
 
   let playlistText = '';
-  for (const makeUrl of DOWNLOAD_PROXIES) {
+  for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
     try {
       const res = await fetch(makeUrl(usherUrl));
       const text = await res.text();
-      if (res.ok && text.includes('#EXT-X-STREAM-INF')) { playlistText = text; break; }
+      if (res.ok && text.includes('#EXT-X-STREAM-INF')) { playlistText = text; noteRoute(makeUrl(usherUrl)); break; }
       // Twitch responds with a JSON error body (not proxy-specific) when the VOD
       // itself is inaccessible — e.g. subscriber-only VODs return every quality
       // marked in chansub.restricted_bitrates, so usher rejects the manifest
@@ -213,10 +214,10 @@ export const fetchMasterPlaylist = async (videoId: string, token: { signature: s
 // ---- Media playlist -> ordered segment index with cumulative timing offsets ----
 export const fetchSegmentIndex = async (mediaPlaylistUrl: string): Promise<SegmentIndex> => {
   let playlistText = '';
-  for (const makeUrl of DOWNLOAD_PROXIES) {
+  for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
     try {
       const res = await fetch(makeUrl(mediaPlaylistUrl));
-      if (res.ok) { playlistText = await res.text(); break; }
+      if (res.ok) { playlistText = await res.text(); noteRoute(makeUrl(mediaPlaylistUrl)); break; }
     } catch (e) { /* try next proxy */ }
   }
   if (!playlistText) throw new VodError('errorPlaylist', 'Could not load the video stream.');
@@ -262,12 +263,15 @@ export const downloadSegments = async (segments: HlsSegment[], onProgress: (load
 
   const downloadSegment = async (index: number) => {
     const segUrl = segments[index].url;
-    for (const makeUrl of DOWNLOAD_PROXIES) {
+    for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
       if (signal?.aborted) throw new Error('AbortError');
       try {
         const res = await fetch(makeUrl(segUrl), { signal });
         if (!res.ok) continue;
         const buffer = await res.arrayBuffer();
+        // The segments are the actual video bytes, so this is the route that
+        // matters for the privacy statement.
+        noteRoute(makeUrl(segUrl));
         buffers[index] = buffer;
         loadedBytes += buffer.byteLength;
         completedSegments++;

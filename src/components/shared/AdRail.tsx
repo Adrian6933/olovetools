@@ -30,7 +30,7 @@ const RAIL_MARGIN = RAIL_EDGE * 2;
  * elemento en vez de adivinar su ancho o escanear todo el árbol.
  */
 const useRailGaps = () => {
-  const [gaps, setGaps] = useState({ left: 0, right: 0 });
+  const [gaps, setGaps] = useState({ left: 0, right: 0, viewport: 0 });
 
   useEffect(() => {
     const root = document.getElementById('root');
@@ -45,7 +45,11 @@ const useRailGaps = () => {
 
       if (rect.width === 0 && rect.height === 0) return;
 
-      setGaps({ left: Math.max(0, rect.left), right: Math.max(0, viewportWidth - rect.right) });
+      setGaps({
+        left: Math.max(0, rect.left),
+        right: Math.max(0, viewportWidth - rect.right),
+        viewport: viewportWidth,
+      });
     };
 
     // setTimeout (no requestAnimationFrame) a propósito: rAF se pausa por
@@ -118,8 +122,10 @@ const Rail: React.FC<{ side: 'left' | 'right'; slot: string; configured: boolean
         <ins
           ref={insRef}
           className="adsbygoogle block w-full h-full"
+          style={{ display: 'block' }}
           data-ad-client={AD_CLIENT}
           data-ad-slot={slot}
+          data-ad-format="auto"
         />
       ) : (
         <span className="text-sm font-black uppercase tracking-widest text-white [writing-mode:vertical-rl] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
@@ -151,13 +157,18 @@ export const AdRail: React.FC<AdRailProps> = ({ slug }) => {
   // el placeholder para verificar el diseño antes de activar AdSense.
   if (!import.meta.env.DEV && !activeLeft && !activeRight) return null;
 
-  const railWidth = typeof window !== 'undefined' && document.documentElement.clientWidth >= 1650 ? 160 : 120;
+  const railWidth = gaps.viewport >= 1650 ? 160 : 120;
   const required = railWidth + RAIL_MARGIN;
+  // El contenedor del raíl es `hidden min-[1400px]:flex`: por debajo de 1400px
+  // está en display:none, y hacer push de adsbygoogle sobre un elemento de
+  // ancho 0 quema la petición ("No slot size for availableWidth=0"). El umbral
+  // del JS tiene que coincidir con el del CSS, no solo con el hueco medido.
+  const wideEnough = gaps.viewport >= 1400;
 
   return (
     <>
-      <Rail side="left" slot={AD_SLOTS.railLeft} configured={activeLeft} visible={gaps.left >= required} />
-      <Rail side="right" slot={AD_SLOTS.railRight} configured={activeRight} visible={gaps.right >= required} />
+      <Rail side="left" slot={AD_SLOTS.railLeft} configured={activeLeft} visible={wideEnough && gaps.left >= required} />
+      <Rail side="right" slot={AD_SLOTS.railRight} configured={activeRight} visible={wideEnough && gaps.right >= required} />
     </>
   );
 };

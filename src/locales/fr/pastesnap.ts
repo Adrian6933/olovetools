@@ -23,16 +23,20 @@ export default {
   "pasteMore": "Collez plus d'images pour les ajouter",
   "features": [
     {
-      "title": "Instantané",
-      "text": "Pas d'envoi, pas d'attente. Traité localement."
+      "title": "Colle seulement quand vous le demandez",
+      "text": "Ctrl+V, glisser-deposer ou le bouton Coller. L'ancienne version lisait le presse-papiers au chargement puis a chaque retour sur l'onglet ; plus rien n'est lu sans une action de votre part."
     },
     {
-      "title": "Privé",
-      "text": "Les images ne quittent jamais votre navigateur."
+      "title": "Des formats qu'il sait vraiment ecrire",
+      "text": "PNG, JPG, WebP et AVIF, chacun verifie en encodant un vrai pixel : un navigateur sans encodeur AVIF renvoie un PNG mal etiquete au lieu d'echouer, et ce test est le seul moyen de le detecter."
     },
     {
-      "title": "Haute Rés",
-      "text": "Conserve la qualité originale."
+      "title": "Convertit le lot sans figer la page",
+      "text": "L'encodage tourne dans un Web Worker sur des bitmaps transferes : la page reste reactive et le compteur de progression est reel. Choisissez-en quelques-unes ou tout selectionner."
+    },
+    {
+      "title": "Lit ce que votre telephone produit vraiment",
+      "text": "HEIC et HEIF d'iPhone, TIFF, SVG, GIF et AVIF, avec la rotation EXIF appliquee pour que les photos verticales ne soient pas converties couchees."
     }
   ],
   "footerCredit": "Fait partie de la suite oLoveTools",
@@ -41,9 +45,9 @@ export default {
   "seoHeroText": "Appuyez simplement sur Ctrl+V et téléchargez votre image instantanément.",
   "seo_description": "Collez une capture avec Ctrl+V et téléchargez-la en PNG, JPG ou WebP en quelques secondes. Gratuit, privé, sans envoi de fichiers ni inscription.",
   "seoHeroList": [
-    "Pas d'inscription",
-    "Supporte plusieurs images",
-    "Qualité originale"
+    "PNG, JPG, WebP et AVIF, a la qualite que vous choisissez",
+    "HEIC, TIFF, SVG et GIF lus a l'import",
+    "Rien n'est envoye, rien n'est lu dans le presse-papiers sans votre accord"
   ],
   "seoBrowserSpeedTitle": "Vitesse du navigateur",
   "seoBrowserSpeedText": "Tout est traité localement, vos données ne sont jamais téléchargées.",
@@ -72,20 +76,28 @@ export default {
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
-      "question": "Est-ce gratuit ?",
-      "answer": "Oui, PasteSnap est entièrement gratuit."
+      "question": "PasteSnap lit-il mon presse-papiers tout seul ?",
+      "answer": "Plus maintenant. L'ancienne version appelait la Clipboard API au chargement puis a chaque focus de la fenetre : revenir sur l'onglet importait ce que vous aviez copie. Desormais le presse-papiers n'est lu que si vous cliquez sur Coller, ou si vous faites Ctrl+V vous-meme."
     },
     {
-      "question": "Mes données sont-elles en sécurité ?",
-      "answer": "Absolument. Vos images ne quittent jamais votre navigateur."
+      "question": "Vers quels formats puis-je convertir ?",
+      "answer": "PNG, JPG, WebP et, quand le navigateur le permet, AVIF. La prise en charge est testee en encodant reellement une image d'un pixel et en verifiant le type renvoye, car un navigateur sans encodeur AVIF renvoie un PNG etiquete AVIF au lieu de lever une erreur."
     },
     {
-      "question": "Quels formats sont supportés ?",
-      "answer": "Nous supportons tous les formats d'image standard, et chaque image peut être téléchargée en PNG, JPG ou WebP."
+      "question": "Pourquoi ma photo iPhone ne marchait pas avant ?",
+      "answer": "Un HEIC passe un test naif `image/*` mais aucun navigateur de bureau ne le decode : l'ancienne version ajoutait donc une entree cassee sans explication. HEIC et HEIF passent maintenant par un convertisseur a l'import, comme TIFF et SVG."
     },
     {
-      "question": "Dois-je m'inscrire ?",
-      "answer": "Non, aucune inscription n'est requise."
+      "question": "Mes images sont-elles envoyees quelque part ?",
+      "answer": "Non. Le decodage, la conversion et la mise en ZIP se font dans votre navigateur. Aucun appel serveur a aucun moment, et fermer l'onglet efface tout."
+    },
+    {
+      "question": "Convertir un gros lot fige-t-il la page ?",
+      "answer": "Non. L'encodage tourne dans un Web Worker et chaque image est transmise comme bitmap transfere : aucun pixel n'est copie entre les threads et la page reste reactive pendant que le compteur avance."
+    },
+    {
+      "question": "Quelle qualite choisir ?",
+      "answer": "Pour des captures a partager, WebP autour de 80% pese generalement une fraction du JPEG equivalent sans difference visible. Restez en PNG s'il vous faut des pixels exacts ou de la transparence."
     }
   ],
   "footerTagline": "Vous aider à construire, concevoir et créer.",
@@ -100,5 +112,44 @@ export default {
   "privacyContent": "Votre vie privée est importante pour nous.\n\nNous ne collectons que les informations nécessaires pour fournir notre service. Cela inclut des données techniques sur votre navigateur et votre appareil pour garantir que l'outil fonctionne correctement.\n\nNous ne stockons, ne suivons et n'analysons jamais vos images. Tout le traitement se fait localement dans votre navigateur, garantissant que vos données ne quittent jamais votre appareil.",
   "termsContent": "En utilisant PasteSnap, vous acceptez ces conditions.\n\n1. Cet outil est fourni \"tel quel\" sans aucune garantie.\n2. Nous ne sommes pas responsables de toute perte de données ou problème découlant de l'utilisation de cet outil.\n3. Vous êtes responsable du contenu que vous traitez à l'aide de cet outil.\n4. Nous nous réservons le droit de modifier ces conditions à tout moment.",
   "cookiesContent": "Nous utilisons des cookies pour améliorer votre expérience.\n\n1. Cookies essentiels : Nécessaires au fonctionnement de base du site.\n2. Cookies de préférence : Utilisés pour mémoriser vos paramètres de langue et de consentement aux cookies.\n\nVous pouvez gérer ou désactiver les cookies via les paramètres de votre navigateur à tout moment.",
-  "contact": "Contact"
+  "contact": "Contact",
+  "heroBadge": "Du presse-papiers a un fichier",
+  "acceptedHint": "PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG",
+  "clipboardUnsupported": "Ce navigateur ne peut pas lire le presse-papiers. Utilisez Ctrl+V.",
+  "clipboardEmpty": "Aucune image dans le presse-papiers.",
+  "clipboardDenied": "Votre navigateur a bloque l'acces au presse-papiers. Utilisez Ctrl+V.",
+  "rejectedTitle": "Non ajoutees",
+  "rejectUnsupported": "n'est pas une image",
+  "rejectDecode": "n'a pas pu etre decodee",
+  "rejectTooBig": "depasse 40 Mo",
+  "selectAll": "Tout selectionner",
+  "removeBtn": "Retirer",
+  "expand": "Agrandir",
+  "close": "Fermer",
+  "decodedNote": "Convertie a l'import",
+  "copyFail": "Votre navigateur a bloque le presse-papiers.",
+  "backToTop": "Retour en haut",
+  "labelFormat": "Format de sortie",
+  "formatUnavailable": "Votre navigateur ne sait pas encoder ce format",
+  "labelQuality": "Qualite",
+  "qualityHint": "En dessous de 85% la difference est invisible et le fichier bien plus leger.",
+  "labelMaxSize": "Cote le plus long",
+  "sizeOriginal": "Original",
+  "labelFlatten": "Aplatir la transparence sur",
+  "flattenHint": "JPEG n'a pas de canal alpha : les pixels transparents ont besoin d'une couleur.",
+  "convertedLabel": "converties",
+  "howTitle": "Comment ca marche",
+  "howStep1Title": "Collez, deposez ou choisissez",
+  "howStep1Text": "Ctrl+V pour une capture, deposez des fichiers ou cliquez sur Coller. Rien n'est lu dans votre presse-papiers sans votre accord : PasteSnap ne se sert plus tout seul a chaque retour sur l'onglet.",
+  "howStep2Title": "Choisissez format et qualite",
+  "howStep2Text": "PNG, JPG, WebP et AVIF quand votre navigateur sait vraiment l'encoder : on le verifie en encodant un pixel, car un navigateur sans encodeur AVIF renvoie discretement un PNG au lieu d'echouer. Reglez la qualite et le cote le plus long, et comparez le poids avant/apres.",
+  "howStep3Title": "Telechargez ou envoyez plus loin",
+  "howStep3Text": "Une image, une selection, ou toute la galerie en ZIP. Copiez dans le presse-papiers, ou transmettez le resultat a CompressSnap, CropSnap ou CleanSnap sans le telecharger puis le renvoyer.",
+  "nextStepTitle": "Continuez",
+  "nextStepHint": "Votre image vous suit, sans reenvoi",
+  "nextCompress": "Compressez-la",
+  "nextCrop": "Recadrez-la",
+  "nextClean": "Effacez des objets",
+  "nextWatermark": "Ajoutez un filigrane",
+  "nextMeme": "Faites un meme",
 };

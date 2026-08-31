@@ -1,870 +1,1004 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
-import { AdBanner } from '../../components/shared/AdBanner';
-import { LegalModal } from './components/LegalModal';
-import { 
-  Bold, 
-  Italic, 
-  Heading, 
-  Link as LinkIcon, 
-  Image as ImageIcon, 
-  Code, 
-  Terminal, 
-  Quote, 
-  List, 
-  ListOrdered, 
-  Table as TableIcon, 
-  Minus, 
-  Download, 
-  Copy, 
-  FileCode, 
-  Printer, 
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  AlertTriangle,
+  Check,
+  ClipboardPaste,
+  Columns2,
+  Copy,
+  Download,
+  Eye,
+  FileCode,
+  FileDown,
+  FileText,
+  Layers,
+  Link2,
+  ListTree,
+  Loader2,
+  Palette,
+  PanelLeft,
+  Printer,
   RotateCcw,
   Sparkles,
-  Eye,
-  Settings
+  Upload,
+  X,
 } from 'lucide-react';
+
+import { useHandoffIntake } from '../../lib/useHandoff';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
+
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
+import { LegalModal } from './components/LegalModal';
+import { Editor, type EditorHandle } from './components/Editor';
+import { Preview, type PreviewHandle } from './components/Preview';
+import { NextStepBar } from './components/NextStepBar';
+import {
+  IconExport,
+  IconHandoff,
+  IconHistory,
+  IconLive,
+  IconLocalOnly,
+  IconOutline,
+  IconParser,
+  IconSyntax,
+  IconThemes,
+  MarkdownHeroArt,
+  StepPreview,
+  StepShip,
+  StepStyle,
+  StepWrite,
+} from './components/Illustrations';
+
+import { useTextDoc } from './lib/history';
+import { useCompiled } from './lib/useCompiled';
+import { allThemesCss } from './lib/themes';
+import { THEMES } from './lib/themes';
+import {
+  buildHtmlFile,
+  copyRich,
+  copyText,
+  download,
+  documentName,
+  printDocument,
+  renderBody,
+} from './lib/exporters';
+import { SAMPLE_FALLBACK, templatesFrom } from './lib/samples';
+import type { PaneMode, PreviewMode, StagedDoc, ThemeId } from './types';
 
 interface MarkdownLiveProps {
   lang: string;
   dictionary: any;
 }
 
-type ThemeType = 'slate' | 'journal' | 'retro' | 'cyberpunk';
+const STORAGE_KEY = 'olovetools:markdown-live:draft';
+const THEME_KEY = 'olovetools:markdown-live:theme';
+/** Anything past this is not a document somebody typed; it is a paste accident. */
+const MAX_INPUT_BYTES = 8 * 1024 * 1024;
+
+const ACCEPTED = '.md,.markdown,.mdown,.mkd,.mdx,.txt,.text,text/markdown,text/plain';
+
+const fadeInUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' as const } },
+};
+
+const formatBytes = (bytes: number): string => {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+};
 
 export default function MarkdownLive({ lang, dictionary }: MarkdownLiveProps) {
   const t = dictionary || {};
-  
-  // Initial markdown content
-  const initialMarkdown = t.placeholder || `# Welcome to MarkdownLive!
 
-Type some markdown here on the left to see it rendered instantly on the right.
+  const sample = typeof t.placeholder === 'string' && t.placeholder ? t.placeholder : SAMPLE_FALLBACK;
+  const templates = useMemo(() => templatesFrom(t), [t]);
 
-## Basic Styling
+  // Pinned to the page's language rather than left to `toLocaleString()`. This
+  // island is server-rendered, and the server's default locale is not the
+  // visitor's: "1075" from Node against "1,075" from the browser is a hydration
+  // mismatch that throws away the server markup on every visit.
+  const number = useMemo(() => new Intl.NumberFormat(lang || 'en'), [lang]);
 
-You can make text **bold** or *italic* easily, or embed \`inline code\` or custom links like [oLoveTools](https://olovetools.com).
+  const doc = useTextDoc(sample);
+  // Set once the saved draft has been looked at, so autosave cannot write the
+  // sample document over a real draft during the first render.
+  const restored = useRef(false);
 
-### Code Block Example
-
-\`\`\`javascript
-function greet(name) {
-  console.log('Hello, ' + name + '!');
-}
-greet('World');
-\`\`\`
-
-### Blockquotes & Lists
-
-> Markdown is a lightweight markup language with plain-text-formatting syntax.
-
-- Quick markdown editor
-- 100% offline client-side parsing
-- Responsive split-screen preview
-
-### Tables Support
-
-| Item | Count | Status |
-| :--- | :---: | :---: |
-| Editor | 1 | Done |
-| Previewer | 1 | Live |
-`;
-
-  const [markdown, setMarkdown] = useState<string>(initialMarkdown);
-  const [activeTab, setActiveTab] = useState<'preview' | 'html'>('preview');
-  const [activeTheme, setActiveTheme] = useState<ThemeType>('slate');
-  const [copySuccess, setCopySuccess] = useState(false);
+  const [theme, setTheme] = useState<ThemeId>('slate');
+  const [pane, setPane] = useState<PaneMode>('split');
+  const [previewMode, setPreviewMode] = useState<PreviewMode>('preview');
+  const [syncScroll, setSyncScroll] = useState(true);
+  const [staged, setStaged] = useState<StagedDoc | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [copied, setCopied] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [prefersReduced, setPrefersReduced] = useState(false);
+  // The word count comes from `Intl.Segmenter`, and Node's ICU and the
+  // browser's do not always agree on the same text (157 against 159 on the
+  // sample document). Both numbers are defensible; disagreeing during
+  // hydration is not, so the counters wait for the client.
+  const [mounted, setMounted] = useState(false);
 
-  const editorRef = useRef<HTMLTextAreaElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-  const activeScrollRef = useRef<'editor' | 'preview' | null>(null);
+  const editorRef = useRef<EditorHandle>(null);
+  const previewRef = useRef<PreviewHandle>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Which pane is currently driving the scroll, so the two never fight.
+  const scrollOwner = useRef<'editor' | 'preview' | null>(null);
+  const scrollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Synchronize initial placeholder if dictionary changes
+  const compiled = useCompiled(doc.text);
+
+  // -------------------------------------------------------------------------
+  // Preferences and persistence
+  // -------------------------------------------------------------------------
+
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
-    if (t.placeholder) {
-      setMarkdown(t.placeholder);
+    const query = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setPrefersReduced(query.matches);
+    const onChange = (event: MediaQueryListEvent) => setPrefersReduced(event.matches);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(THEME_KEY) as ThemeId | null;
+      if (saved && THEMES.some(entry => entry.id === saved)) setTheme(saved);
+    } catch {
+      // Storage disabled: the default theme is a perfectly good answer.
     }
-  }, [t.placeholder]);
+  }, []);
 
-  // Markdown parser
-  const parseMarkdown = (md: string): string => {
-    if (!md) return '';
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      /* no-op */
+    }
+  }, [theme]);
 
-    // 1. Escape HTML
-    let html = md
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+  // The saved draft is restored after mount rather than in the initial state:
+  // this island is server-rendered, and reading storage during the first render
+  // makes the server's markup and the client's disagree.
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(STORAGE_KEY);
+      if (saved && saved.trim() !== '' && saved !== sample) doc.load(saved);
+    } catch {
+      /* Storage disabled: the sample document is a fine place to start. */
+    }
+    restored.current = true;
+    // Runs once. `doc.load` is stable and `sample` cannot change after mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // 2. Extract and preserve Code Blocks
-    const codeBlocks: string[] = [];
-    html = html.replace(/```(\w*)\n([\s\S]*?)\n```/g, (match, lang, code) => {
-      const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-      codeBlocks.push(
-        `<pre class="bg-gray-950/90 border border-white/10 p-4 rounded-xl overflow-x-auto my-4 font-mono text-sm text-gray-200"><code class="language-${lang}">${code.trim()}</code></pre>`
-      );
-      return placeholder;
-    });
-
-    // 3. Extract and preserve Inline Code
-    const inlineCodes: string[] = [];
-    html = html.replace(/`([^`]+)`/g, (match, code) => {
-      const placeholder = `__INLINE_CODE_${inlineCodes.length}__`;
-      inlineCodes.push(
-        `<code class="bg-violet-500/10 border border-violet-500/20 px-1.5 py-0.5 rounded font-mono text-xs text-violet-400 font-semibold">${code}</code>`
-      );
-      return placeholder;
-    });
-
-    // 4. Horizontal Rules
-    html = html.replace(/^---$/gm, '<hr class="my-6 border-t border-white/10" />');
-
-    // 5. Headings
-    html = html.replace(/^######\s+(.*)$/gm, '<h6 class="text-xs font-bold text-gray-400 mt-6 mb-2 uppercase tracking-wider">$1</h6>');
-    html = html.replace(/^#####\s+(.*)$/gm, '<h5 class="text-sm font-bold text-gray-300 mt-6 mb-2">$1</h5>');
-    html = html.replace(/^####\s+(.*)$/gm, '<h4 class="text-base font-bold text-gray-200 mt-6 mb-2">$1</h4>');
-    html = html.replace(/^###\s+(.*)$/gm, '<h3 class="text-lg font-bold text-white mt-6 mb-3">$1</h3>');
-    html = html.replace(/^##\s+(.*)$/gm, '<h2 class="text-xl font-extrabold text-white mt-8 mb-4 border-b border-white/5 pb-2">$1</h2>');
-    html = html.replace(/^#\s+(.*)$/gm, '<h1 class="text-3xl font-black text-white mt-10 mb-6">$1</h1>');
-
-    // 6. Blockquotes
-    const lines = html.split('\n');
-    const processedLines: string[] = [];
-    let inBlockquote = false;
-    let blockquoteContent: string[] = [];
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (line.startsWith('&gt;')) {
-        inBlockquote = true;
-        blockquoteContent.push(line.substring(4).trim());
-      } else {
-        if (inBlockquote) {
-          processedLines.push(
-            `<blockquote class="border-l-4 border-violet-500 bg-violet-950/20 px-4 py-3 my-4 rounded-r-xl italic text-gray-300">${blockquoteContent.join('<br />')}</blockquote>`
-          );
-          blockquoteContent = [];
-          inBlockquote = false;
-        }
-        processedLines.push(line);
+  // Autosave, debounced: a refresh, a crash or a mis-click on the tab must not
+  // be the end of what somebody just wrote.
+  useEffect(() => {
+    if (!restored.current) return;
+    const timer = window.setTimeout(() => {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, doc.text);
+      } catch {
+        /* quota or private mode: the editor still works, it just forgets. */
       }
-    }
-    if (inBlockquote) {
-      processedLines.push(
-        `<blockquote class="border-l-4 border-violet-500 bg-violet-950/20 px-4 py-3 my-4 rounded-r-xl italic text-gray-300">${blockquoteContent.join('<br />')}</blockquote>`
-      );
-    }
-    html = processedLines.join('\n');
+    }, 700);
+    return () => window.clearTimeout(timer);
+  }, [doc.text]);
 
-    // 7. Tables
-    const tableLines = html.split('\n');
-    const tableProcessed: string[] = [];
-    let inTable = false;
-    let tableHeader: string[] = [];
-    let tableAlignments: string[] = [];
-    let tableRows: string[][] = [];
+  useEffect(() => {
+    if (!notice) return;
+    const timer = window.setTimeout(() => setNotice(null), 6000);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
 
-    for (let i = 0; i < tableLines.length; i++) {
-      const line = tableLines[i].trim();
-      if (line.startsWith('|') && line.endsWith('|')) {
-        const cells = line.split('|').slice(1, -1).map(c => c.trim());
-        if (!inTable) {
-          inTable = true;
-          tableHeader = cells;
-        } else {
-          const isSeparator = cells.every(c => c.match(/^:?-+:?$/));
-          if (isSeparator) {
-            tableAlignments = cells.map(c => {
-              if (c.startsWith(':') && c.endsWith(':')) return 'center';
-              if (c.endsWith(':')) return 'right';
-              return 'left';
-            });
-          } else {
-            tableRows.push(cells);
-          }
-        }
-      } else {
-        if (inTable) {
-          let tableHtml = `<div class="overflow-x-auto my-6"><table class="w-full text-sm text-left border-collapse border border-white/10 rounded-xl overflow-hidden">`;
-          tableHtml += `<thead class="bg-white/5 border-b border-white/10 text-white font-bold"><tr>`;
-          tableHeader.forEach((th, idx) => {
-            const align = tableAlignments[idx] || 'left';
-            tableHtml += `<th class="px-4 py-3 text-${align}">${th}</th>`;
-          });
-          tableHtml += `</tr></thead><tbody class="divide-y divide-white/5">`;
-          tableRows.forEach(row => {
-            tableHtml += `<tr class="hover:bg-white/[0.02] transition-colors">`;
-            row.forEach((td, idx) => {
-              const align = tableAlignments[idx] || 'left';
-              tableHtml += `<td class="px-4 py-3 text-gray-300 text-${align}">${td}</td>`;
-            });
-            tableHtml += `</tr>`;
-          });
-          tableHtml += `</tbody></table></div>`;
-          tableProcessed.push(tableHtml);
-          inTable = false;
-          tableHeader = [];
-          tableAlignments = [];
-          tableRows = [];
-        }
-        tableProcessed.push(tableLines[i]);
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(null), 2000);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
+  useEffect(() => () => clearTimeout(scrollTimer.current), []);
+
+  // -------------------------------------------------------------------------
+  // Intake — nothing loads itself
+  // -------------------------------------------------------------------------
+
+  const stage = useCallback(
+    async (file: File, from: string | null) => {
+      if (file.size > MAX_INPUT_BYTES) {
+        setNotice(
+          (t.errorTooBig || 'That file is larger than {size} and will not fit in a browser tab.').replace(
+            '{size}',
+            formatBytes(MAX_INPUT_BYTES)
+          )
+        );
+        return;
       }
-    }
-    if (inTable) {
-      let tableHtml = `<div class="overflow-x-auto my-6"><table class="w-full text-sm text-left border-collapse border border-white/10 rounded-xl overflow-hidden">`;
-      tableHtml += `<thead class="bg-white/5 border-b border-white/10 text-white font-bold"><tr>`;
-      tableHeader.forEach((th, idx) => {
-        const align = tableAlignments[idx] || 'left';
-        tableHtml += `<th class="px-4 py-3 text-${align}">${th}</th>`;
-      });
-      tableHtml += `</tr></thead><tbody class="divide-y divide-white/5">`;
-      tableRows.forEach(row => {
-        tableHtml += `<tr class="hover:bg-white/[0.02] transition-colors">`;
-        row.forEach((td, idx) => {
-          const align = tableAlignments[idx] || 'left';
-          tableHtml += `<td class="px-4 py-3 text-gray-300 text-${align}">${td}</td>`;
+      try {
+        const body = await file.text();
+        const isJson = /\.jsonl?$/i.test(file.name);
+        setStaged({
+          name: file.name,
+          size: file.size,
+          body: isJson ? '```json\n' + body.trim() + '\n```' : body,
+          from,
         });
-        tableHtml += `</tr>`;
-      });
-      tableHtml += `</tbody></table></div>`;
-      tableProcessed.push(tableHtml);
-    }
-    html = tableProcessed.join('\n');
-
-    // 8. Lists (Unordered & Ordered)
-    const listLines = html.split('\n');
-    const listProcessed: string[] = [];
-    let currentListType: 'ul' | 'ol' | null = null;
-
-    for (let i = 0; i < listLines.length; i++) {
-      const line = listLines[i];
-      const ulMatch = line.match(/^(\s*)([*\-+])\s+(.*)$/);
-      const olMatch = line.match(/^(\s*)(\d+)\.\s+(.*)$/);
-
-      if (ulMatch) {
-        const content = ulMatch[3];
-        if (currentListType !== 'ul') {
-          if (currentListType === 'ol') listProcessed.push('</ol>');
-          listProcessed.push('<ul class="list-disc pl-6 my-4 space-y-1.5 text-gray-300">');
-          currentListType = 'ul';
-        }
-        listProcessed.push(`<li>${content}</li>`);
-      } else if (olMatch) {
-        const content = olMatch[3];
-        if (currentListType !== 'ol') {
-          if (currentListType === 'ul') listProcessed.push('</ul>');
-          listProcessed.push('<ol class="list-decimal pl-6 my-4 space-y-1.5 text-gray-300">');
-          currentListType = 'ol';
-        }
-        listProcessed.push(`<li>${content}</li>`);
-      } else {
-        if (currentListType === 'ul') {
-          listProcessed.push('</ul>');
-          currentListType = null;
-        } else if (currentListType === 'ol') {
-          listProcessed.push('</ol>');
-          currentListType = null;
-        }
-        listProcessed.push(line);
+      } catch {
+        setNotice(t.errorRead || 'That file could not be read.');
       }
+    },
+    [t]
+  );
+
+  // A document handed over by another tool waits in the same tray a dropped
+  // file does: arriving from wordflow must not silently wipe what is on screen.
+  useHandoffIntake((file, from) => {
+    void stage(file, from);
+  });
+
+  const acceptStaged = (how: 'replace' | 'append') => {
+    if (!staged) return;
+    if (how === 'replace') doc.load(staged.body);
+    else doc.setText(`${doc.text.replace(/\s+$/, '')}\n\n${staged.body}`, { label: 'stagedAppend' });
+    setStaged(null);
+    editorRef.current?.focus();
+  };
+
+  const onFiles = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    void stage(files[0], null);
+  };
+
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragging(false);
+    onFiles(event.dataTransfer.files);
+  };
+
+  const doPaste = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (!text.trim()) return;
+      setStaged({ name: t.pastedName || 'Pasted text', size: new Blob([text]).size, body: text, from: null });
+    } catch {
+      setNotice(t.errorClipboard || 'The browser did not allow reading the clipboard. Paste into the editor instead.');
     }
-    if (currentListType === 'ul') listProcessed.push('</ul>');
-    else if (currentListType === 'ol') listProcessed.push('</ol>');
-    html = listProcessed.join('\n');
-
-    // 9. Inline formatting (Images, Links, Bold, Italic, Strikethrough)
-    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="rounded-xl border border-white/10 max-w-full h-auto my-4 shadow-lg" />');
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-violet-400 hover:text-violet-300 underline font-semibold transition-colors">$1</a>');
-    html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    html = html.replace(/__([^_]+)__/g, '<strong>$1</strong>');
-    html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    html = html.replace(/_([^_]+)_/g, '<em>$1</em>');
-    html = html.replace(/~~([^~]+)~~/g, '<del>$1</del>');
-
-    // 10. Paragraph breaks
-    const blocks = html.split(/\n\s*\n/);
-    const blockProcessed = blocks.map(block => {
-      const trimmed = block.trim();
-      if (!trimmed) return '';
-      const isBlockElement = /^(<h[1-6]|<ul|<ol|<table|<div|<pre|<blockquote|<hr|<li)/i.test(trimmed);
-      if (isBlockElement) return trimmed;
-      const content = trimmed.replace(/\n/g, '<br />');
-      return `<p class="leading-relaxed mb-4 text-gray-300">${content}</p>`;
-    });
-    html = blockProcessed.join('\n');
-
-    // 11. Restore placeholdered codes
-    inlineCodes.forEach((codeHtml, idx) => {
-      html = html.replace(`__INLINE_CODE_${idx}__`, codeHtml);
-    });
-    codeBlocks.forEach((codeHtml, idx) => {
-      html = html.replace(`__CODE_BLOCK_${idx}__`, codeHtml);
-    });
-
-    return html;
   };
 
-  const compiledHtml = parseMarkdown(markdown);
+  // -------------------------------------------------------------------------
+  // Scroll sync
+  // -------------------------------------------------------------------------
 
-  // Scroll Sync
-  const handleEditorScroll = () => {
-    if (activeScrollRef.current === 'preview') return;
-    activeScrollRef.current = 'editor';
-    const editor = editorRef.current;
-    const preview = previewRef.current;
-    if (editor && preview) {
-      const scrollPct = editor.scrollTop / (editor.scrollHeight - editor.clientHeight);
-      preview.scrollTop = scrollPct * (preview.scrollHeight - preview.clientHeight);
+  const releaseOwner = () => {
+    clearTimeout(scrollTimer.current);
+    scrollTimer.current = setTimeout(() => {
+      scrollOwner.current = null;
+    }, 120);
+  };
+
+  const onEditorScroll = (ratio: number) => {
+    if (!syncScroll || pane !== 'split') return;
+    if (scrollOwner.current === 'preview') return;
+    scrollOwner.current = 'editor';
+    previewRef.current?.scrollTo(ratio);
+    releaseOwner();
+  };
+
+  const onPreviewScroll = (ratio: number) => {
+    if (!syncScroll || pane !== 'split') return;
+    if (scrollOwner.current === 'editor') return;
+    scrollOwner.current = 'preview';
+    editorRef.current?.scrollTo(ratio);
+    releaseOwner();
+  };
+
+  // -------------------------------------------------------------------------
+  // Exports
+  // -------------------------------------------------------------------------
+
+  const baseName = useMemo(() => documentName(doc.text), [doc.text]);
+
+  const run = async (id: string, action: () => void | Promise<void>) => {
+    setBusy(id);
+    try {
+      await action();
+    } catch {
+      setNotice(t.errorExport || 'That export could not be produced.');
+    } finally {
+      setBusy(null);
     }
-    setTimeout(() => {
-      if (activeScrollRef.current === 'editor') activeScrollRef.current = null;
-    }, 50);
   };
 
-  const handlePreviewScroll = () => {
-    if (activeScrollRef.current === 'editor') return;
-    activeScrollRef.current = 'preview';
-    const editor = editorRef.current;
-    const preview = previewRef.current;
-    if (editor && preview) {
-      const scrollPct = preview.scrollTop / (preview.scrollHeight - preview.clientHeight);
-      editor.scrollTop = scrollPct * (editor.scrollHeight - editor.clientHeight);
-    }
-    setTimeout(() => {
-      if (activeScrollRef.current === 'preview') activeScrollRef.current = null;
-    }, 50);
-  };
+  const downloadMarkdown = () =>
+    run('md', () => {
+      download(new Blob([doc.text], { type: 'text/markdown;charset=utf-8' }), `${baseName}.md`);
+    });
 
-  // Toolbar Formatting Injection
-  const insertFormatting = (prefix: string, suffix: string = '', defaultText: string = '') => {
-    const textarea = editorRef.current;
-    if (!textarea) return;
+  const downloadHtml = () =>
+    run('html', () => {
+      const file = buildHtmlFile(doc.text, theme, lang);
+      download(new Blob([file], { type: 'text/html;charset=utf-8' }), `${baseName}.html`);
+    });
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selection = textarea.value.substring(start, end);
-    const textToInsert = selection || defaultText;
-    
-    const replacement = prefix + textToInsert + suffix;
-    const newValue = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
-    
-    setMarkdown(newValue);
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, start + prefix.length + textToInsert.length);
-    }, 0);
-  };
+  const doPrint = () => run('pdf', () => printDocument(doc.text, theme));
 
-  // Metric calculation
-  const getMetrics = () => {
-    const text = markdown || '';
-    const charCount = text.length;
-    const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-    return { words: wordCount, chars: charCount };
-  };
+  const copyCleanHtml = () =>
+    run('copyHtml', async () => {
+      const ok = await copyText(renderBody(doc.text, { bare: true, anchors: false }));
+      setCopied(ok ? 'copyHtml' : null);
+      if (!ok) setNotice(t.errorClipboardWrite || 'The clipboard is not available in this browser.');
+    });
 
-  const metrics = getMetrics();
+  const copyFormatted = () =>
+    run('copyRich', async () => {
+      const ok = await copyRich(doc.text, theme);
+      setCopied(ok ? 'copyRich' : null);
+      if (!ok) setNotice(t.errorClipboardWrite || 'The clipboard is not available in this browser.');
+    });
 
-  // Exporters
-  const downloadMarkdownFile = () => {
-    const blob = new Blob([markdown], { type: 'text/markdown;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'document.md');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const copyMarkdown = () =>
+    run('copyMd', async () => {
+      const ok = await copyText(doc.text);
+      setCopied(ok ? 'copyMd' : null);
+    });
 
-  const downloadHtmlFile = () => {
-    const fullHtml = `<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-  <meta charset="UTF-8">
-  <title>Exported Document</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 0 20px; color: #333; }
-    pre { background: #f4f4f4; border: 1px solid #ddd; padding: 15px; border-radius: 5px; overflow-x: auto; }
-    code { font-family: Courier, monospace; background: #eee; padding: 2px 4px; border-radius: 3px; }
-    blockquote { border-left: 4px solid #8b5cf6; padding-left: 15px; color: #555; font-style: italic; }
-    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-    th, td { border: 1px solid #ddd; padding: 8px 12px; text-align: left; }
-    th { background: #f4f4f4; }
-  </style>
-</head>
-<body>
-  ${compiledHtml}
-</body>
-</html>`;
-    const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'document.html');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  const copyHtmlToClipboard = () => {
-    navigator.clipboard.writeText(compiledHtml);
-    setCopySuccess(true);
-    setTimeout(() => setCopySuccess(false), 2000);
-  };
-
-  const printDocument = () => {
-    window.print();
-  };
+  const getResult = useCallback(
+    async () => ({
+      blob: new Blob([doc.text], { type: 'text/markdown;charset=utf-8' }),
+      name: `${documentName(doc.text)}.md`,
+    }),
+    [doc.text]
+  );
 
   const resetWorkspace = () => {
-    if (confirm('Are you sure you want to reset the editor? All current writing will be cleared.')) {
-      setMarkdown(initialMarkdown);
-    }
+    doc.load('');
+    setStaged(null);
+    setNotice(t.noticeCleared || 'Editor cleared. Ctrl+Z brings your text back.');
+    editorRef.current?.focus();
   };
 
-  // Custom styling block for templates
-  const themeStyles = `
-    /* Modern Slate */
-    .preview-body.theme-slate {
-      color: #cbd5e1;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    .preview-body.theme-slate h1, 
-    .preview-body.theme-slate h2, 
-    .preview-body.theme-slate h3 {
-      color: #ffffff;
-      font-family: 'Outfit', sans-serif;
-    }
+  const loadTemplate = (body: string) => {
+    doc.load(body);
+    setStaged(null);
+    editorRef.current?.focus();
+  };
 
-    /* Clean Journal */
-    .preview-body.theme-journal {
-      background-color: #fcfbf9 !important;
-      color: #2d3748 !important;
-      font-family: Georgia, Merriweather, serif !important;
-      padding: 2.5rem !important;
-      border-radius: 1rem;
-    }
-    .preview-body.theme-journal h1, 
-    .preview-body.theme-journal h2, 
-    .preview-body.theme-journal h3 {
-      color: #1a202c !important;
-      font-family: Georgia, serif !important;
-      border-color: #e2e8f0 !important;
-    }
-    .preview-body.theme-journal p {
-      color: #2d3748 !important;
-      line-height: 1.8 !important;
-    }
-    .preview-body.theme-journal pre {
-      background: #f7f6f3 !important;
-      border: 1px solid #e2e8f0 !important;
-      color: #1a202c !important;
-    }
-    .preview-body.theme-journal code {
-      background: #f7f6f3 !important;
-      color: #c026d3 !important;
-      border: none !important;
-    }
-    .preview-body.theme-journal blockquote {
-      border-color: #8b5cf6 !important;
-      background: #faf5ff !important;
-      color: #4a5568 !important;
-    }
-    .preview-body.theme-journal table {
-      border-color: #e2e8f0 !important;
-    }
-    .preview-body.theme-journal th {
-      background-color: #f7f6f3 !important;
-      border-color: #e2e8f0 !important;
-      color: #1a202c !important;
-    }
-    .preview-body.theme-journal td {
-      border-color: #e2e8f0 !important;
-      color: #4a5568 !important;
-    }
+  // -------------------------------------------------------------------------
+  // Copy for the marketing sections
+  // -------------------------------------------------------------------------
 
-    /* Retro Typewriter */
-    .preview-body.theme-retro {
-      background-color: #f5f2eb !important;
-      color: #3b3a36 !important;
-      font-family: 'Courier New', Courier, monospace !important;
-      padding: 2.5rem !important;
-      border-radius: 1rem;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.05);
-    }
-    .preview-body.theme-retro h1, 
-    .preview-body.theme-retro h2, 
-    .preview-body.theme-retro h3 {
-      color: #1c1b18 !important;
-      font-family: 'Courier New', Courier, monospace !important;
-      border-bottom: 1px dashed #b5b2a9 !important;
-    }
-    .preview-body.theme-retro p {
-      color: #3b3a36 !important;
-    }
-    .preview-body.theme-retro pre {
-      background: #ebe7dd !important;
-      border: 1px dashed #b5b2a9 !important;
-      color: #2b2a27 !important;
-    }
-    .preview-body.theme-retro code {
-      background: #ebe7dd !important;
-      color: #b91c1c !important;
-      border: none !important;
-    }
-    .preview-body.theme-retro blockquote {
-      border-color: #78716c !important;
-      background: #e7e5e4/30 !important;
-      color: #57534e !important;
-    }
-    .preview-body.theme-retro table {
-      border-color: #b5b2a9 !important;
-    }
-    .preview-body.theme-retro th, 
-    .preview-body.theme-retro td {
-      border-color: #b5b2a9 !important;
-      color: #3b3a36 !important;
-    }
+  const steps = [
+    { art: StepWrite, title: t.step1Title, text: t.step1Text },
+    { art: StepPreview, title: t.step2Title, text: t.step2Text },
+    { art: StepStyle, title: t.step3Title, text: t.step3Text },
+    { art: StepShip, title: t.step4Title, text: t.step4Text },
+  ];
+  const featureIcons = [IconParser, IconSyntax, IconLive, IconThemes, IconExport, IconOutline, IconHistory, IconHandoff];
+  const features = Array.isArray(t.features) ? t.features : [];
+  const faqs = Array.isArray(t.faq) ? t.faq : [];
+  const keywords: string[] = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
+  const stats = compiled.stats;
+  const isEmpty = doc.text.trim() === '';
 
-    /* Cyberpunk Neon */
-    .preview-body.theme-cyberpunk {
-      background-color: #05050d !important;
-      color: #00ffcc !important;
-      font-family: 'Courier New', Courier, monospace !important;
-      border: 1px solid #ff0055;
-      padding: 2.5rem !important;
-      border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(255, 0, 85, 0.15);
-    }
-    .preview-body.theme-cyberpunk h1, 
-    .preview-body.theme-cyberpunk h2, 
-    .preview-body.theme-cyberpunk h3 {
-      color: #ff0055 !important;
-      text-shadow: 0 0 8px rgba(255, 0, 85, 0.6) !important;
-      border-color: #ff0055 !important;
-    }
-    .preview-body.theme-cyberpunk p {
-      color: #00ffcc !important;
-    }
-    .preview-body.theme-cyberpunk pre {
-      background: #090915 !important;
-      border: 1px solid #00ffcc !important;
-      color: #00ffcc !important;
-      box-shadow: 0 0 10px rgba(0, 255, 204, 0.1);
-    }
-    .preview-body.theme-cyberpunk code {
-      background: #ff0055/10 !important;
-      color: #ff0055 !important;
-      border: 1px solid #ff0055/20 !important;
-    }
-    .preview-body.theme-cyberpunk blockquote {
-      border-color: #ff0055 !important;
-      background: #ff0055/10 !important;
-      color: #ff0055 !important;
-    }
-    .preview-body.theme-cyberpunk table {
-      border-color: #00ffcc !important;
-    }
-    .preview-body.theme-cyberpunk th, 
-    .preview-body.theme-cyberpunk td {
-      border-color: #00ffcc !important;
-      color: #00ffcc !important;
-    }
-  `;
+  const paneButtons: { id: PaneMode; icon: React.ReactNode; labelKey: string; fallback: string }[] = [
+    { id: 'editor', icon: <PanelLeft className="w-3.5 h-3.5" />, labelKey: 'pane_editor', fallback: 'Editor' },
+    { id: 'split', icon: <Columns2 className="w-3.5 h-3.5" />, labelKey: 'pane_split', fallback: 'Split' },
+    { id: 'preview', icon: <Eye className="w-3.5 h-3.5" />, labelKey: 'pane_preview', fallback: 'Preview' },
+  ];
+
+  const previewButtons: { id: PreviewMode; icon: React.ReactNode; labelKey: string; fallback: string }[] = [
+    { id: 'preview', icon: <Eye className="w-3.5 h-3.5" />, labelKey: 'preview_mode', fallback: 'Preview' },
+    { id: 'html', icon: <FileCode className="w-3.5 h-3.5" />, labelKey: 'html_mode', fallback: 'HTML' },
+    { id: 'toc', icon: <ListTree className="w-3.5 h-3.5" />, labelKey: 'toc_mode', fallback: 'Outline' },
+  ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#030208] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      <style dangerouslySetInnerHTML={{ __html: themeStyles }} />
-      
-      {/* Dynamic glow decoration */}
-      
-      
+    <div className="min-h-screen text-slate-100 flex flex-col font-sans selection:bg-violet-500/25 selection:text-violet-50 relative">
+      {/* Every theme's variables, once. Injected here rather than per render so
+          switching skins never re-parses a stylesheet. */}
+      <style dangerouslySetInnerHTML={{ __html: allThemesCss() }} />
 
-      {/* Header */}
-      <Header 
-        currentLang={lang} 
-        onLanguageChange={(l) => window.location.href = `/${l.toLowerCase()}/markdown-live`}
+      <Header
+        currentLang={lang}
+        onLanguageChange={newLang => {
+          window.location.href = `/${newLang.toLowerCase()}/markdown-live`;
+        }}
         onReset={resetWorkspace}
         t={t}
       />
 
-      {/* Main workspace */}
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-6">
-        {/* Bloque AdSense Horizontal */}
+      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 sm:px-6 pt-28 md:pt-36 pb-20 flex flex-col gap-16 relative z-10">
         <AdBanner id="adsense-markdown-live-top" />
-        
-        {/* Banner Title */}
-        <div className="text-center md:text-left space-y-2">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
-            <Sparkles className="w-6 h-6 text-violet-400" />
-            <span>{t.seoHeroTitle || 'Interactive Markdown split-screen editor'}</span>
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
-            {t.seoHeroText}
-          </p>
-        </div>
 
-        {/* Dashboard workspace */}
-        <div className="flex flex-col flex-grow bg-slate-900/40 border border-white/5 backdrop-blur-2xl rounded-3xl overflow-hidden shadow-2xl min-h-[600px]">
-          
-          {/* Toolbar & controls */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-slate-900/80 border-b border-white/5 gap-4">
-            
-            {/* Format actions */}
-            <div className="flex flex-wrap items-center gap-1.5 no-print">
-              <button 
-                onClick={() => insertFormatting('**', '**', 'bold text')} 
-                title={t.tooltip_bold || 'Bold'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Bold className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('*', '*', 'italic text')} 
-                title={t.tooltip_italic || 'Italic'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Italic className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('\n## ', '', 'Heading')} 
-                title={t.tooltip_heading || 'Heading'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Heading className="w-4 h-4" />
-              </button>
-
-              <div className="w-px h-6 bg-white/10 mx-1"></div>
-
-              <button 
-                onClick={() => insertFormatting('[', '](https://example.com)', 'link text')} 
-                title={t.tooltip_link || 'Link'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <LinkIcon className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('![', '](https://example.com/image.png)', 'Image Alt')} 
-                title={t.tooltip_image || 'Image'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <ImageIcon className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('`', '`', 'code')} 
-                title={t.tooltip_code || 'Inline Code'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Code className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('\n```javascript\n', '\n```\n', '// code snippet')} 
-                title={t.tooltip_codeblock || 'Code Block'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Terminal className="w-4 h-4" />
-              </button>
-
-              <div className="w-px h-6 bg-white/10 mx-1"></div>
-
-              <button 
-                onClick={() => insertFormatting('\n> ', '', 'Blockquote text')} 
-                title={t.tooltip_quote || 'Blockquote'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Quote className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('\n- ', '', 'list item')} 
-                title={t.tooltip_ul || 'Unordered List'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <List className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('\n1. ', '', 'list item')} 
-                title={t.tooltip_ol || 'Ordered List'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <ListOrdered className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('\n| Header 1 | Header 2 |\n| :--- | :---: |\n| Cell 1 | Cell 2 |\n')} 
-                title={t.tooltip_table || 'Table'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <TableIcon className="w-4 h-4" />
-              </button>
-
-              <button 
-                onClick={() => insertFormatting('\n---\n')} 
-                title={t.tooltip_hr || 'Horizontal Rule'}
-                className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-slate-300 hover:text-white transition-all cursor-pointer outline-none"
-              >
-                <Minus className="w-4 h-4" />
-              </button>
+        {/* ================================================================= */}
+        {/* Hero                                                              */}
+        {/* ================================================================= */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+          <div className="space-y-6 text-center lg:text-left">
+            <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-violet-950/40 border border-violet-800/40 text-violet-300 text-[11px] font-black tracking-[0.2em] uppercase">
+              <Sparkles className="w-3.5 h-3.5 shrink-0" />
+              <span className="truncate">{t.badge || 'Markdown, rendered in your tab'}</span>
             </div>
-
-            {/* Options Deck (Themes & Tabs) */}
-            <div className="flex flex-wrap items-center gap-4 no-print">
-              
-              {/* Theme skin select */}
-              <div className="flex items-center space-x-2 bg-slate-950/40 px-3 py-1.5 rounded-xl border border-white/5">
-                <Settings className="w-4 h-4 text-violet-400" />
-                <span className="text-xs font-semibold text-slate-400">{t.style_label || 'Skin'}:</span>
-                <select 
-                  value={activeTheme} 
-                  onChange={(e) => setActiveTheme(e.target.value as ThemeType)}
-                  className="bg-transparent border-none text-xs text-white font-bold cursor-pointer outline-none focus:ring-0"
-                >
-                  <option value="slate" className="bg-slate-900 text-white">{t.style_default || 'Default Slate'}</option>
-                  <option value="journal" className="bg-slate-900 text-white">{t.style_clean || 'Clean Journal'}</option>
-                  <option value="retro" className="bg-slate-900 text-white">{t.style_retro || 'Retro Typewriter'}</option>
-                  <option value="cyberpunk" className="bg-slate-900 text-white">{t.style_cyberpunk || 'Cyberpunk Neon'}</option>
-                </select>
-              </div>
-
-              {/* View Selector */}
-              <div className="flex items-center bg-slate-950/60 p-1 rounded-xl border border-white/5">
-                <button
-                  onClick={() => setActiveTab('preview')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer outline-none flex items-center space-x-1.5 ${
-                    activeTab === 'preview' ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>{t.preview_mode || 'Preview Pane'}</span>
-                </button>
-                <button
-                  onClick={() => setActiveTab('html')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer outline-none flex items-center space-x-1.5 ${
-                    activeTab === 'html' ? 'bg-violet-600 text-white shadow-lg shadow-violet-600/30' : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <FileCode className="w-3.5 h-3.5" />
-                  <span>{t.html_mode || 'Raw HTML'}</span>
-                </button>
-              </div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white leading-[1.05] text-balance">
+              {t.seoHeroTitle}
+            </h1>
+            <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
+              {t.description}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-xl mx-auto lg:mx-0">
+              {(Array.isArray(t.heroPoints) ? t.heroPoints : []).map((point: string, index: number) => (
+                <div key={index} className="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 border border-white/5 text-left">
+                  <span className="w-6 h-6 shrink-0 bg-violet-500/20 text-violet-300 rounded-lg flex items-center justify-center">
+                    <Check className="w-3.5 h-3.5 stroke-[3]" />
+                  </span>
+                  <span className="text-slate-300 font-bold text-[13px] leading-snug">{point}</span>
+                </div>
+              ))}
             </div>
           </div>
+          <div className="relative">
+            <div className="absolute -top-10 -right-10 w-56 h-56 bg-violet-500/10 rounded-full blur-3xl pointer-events-none" />
+            <MarkdownHeroArt
+              className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+              animated={!prefersReduced}
+            />
+          </div>
+        </section>
 
-          {/* Split workspace area */}
-          <div className="flex flex-col md:flex-row flex-grow min-h-[500px]">
-            
-            {/* Left Column: Editor text panel */}
-            <div className="w-full md:w-1/2 flex flex-col border-b md:border-b-0 md:border-r border-white/5 relative bg-slate-950/20 no-print">
-              <textarea
-                ref={editorRef}
-                value={markdown}
-                onChange={(e) => setMarkdown(e.target.value)}
-                onScroll={handleEditorScroll}
-                placeholder="Type some markdown here..."
-                className="w-full flex-grow p-6 md:p-8 bg-transparent text-slate-300 font-mono text-sm resize-none border-none outline-none focus:ring-0 focus:border-none scrollbar-thin"
-              />
+        {/* ================================================================= */}
+        {/* Workspace                                                         */}
+        {/* ================================================================= */}
+        <section className="space-y-4">
+          {/* --- staged document ------------------------------------------- */}
+          {staged && (
+            <div className="rounded-2xl border border-violet-500/30 bg-violet-500/5 p-4 space-y-3">
+              <div className="flex items-start gap-3">
+                <span className="w-9 h-9 shrink-0 rounded-xl bg-violet-500/15 border border-violet-500/30 flex items-center justify-center text-violet-300">
+                  <FileText className="w-4 h-4" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-bold text-white truncate">{staged.name}</p>
+                  <p className="text-[11px] text-slate-400">
+                    {formatBytes(staged.size)}
+                    {staged.from ? ` · ${(t.fromTool || 'from {tool}').replace('{tool}', staged.from)}` : ''}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setStaged(null)}
+                  title={t.stagedDiscard || 'Discard'}
+                  aria-label={t.stagedDiscard || 'Discard'}
+                  className="p-2 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                {t.stagedHint || 'Nothing has been loaded yet — say what should happen to the text you already have.'}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => acceptStaged('replace')}
+                  className="px-3.5 py-2 rounded-xl bg-violet-600 hover:bg-violet-500 text-white text-xs font-black transition-all cursor-pointer"
+                >
+                  {t.stagedReplace || 'Replace the editor'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => acceptStaged('append')}
+                  className="px-3.5 py-2 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-200 text-xs font-black transition-all cursor-pointer"
+                >
+                  {t.stagedAppend || 'Append at the end'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {notice && (
+            <div className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-[12px] text-amber-100">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+              <span className="flex-1">{notice}</span>
+              <button
+                type="button"
+                onClick={() => setNotice(null)}
+                aria-label={t.dismiss || 'Dismiss'}
+                className="text-amber-200 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          )}
+
+          {/* --- the workspace card ---------------------------------------- */}
+          <div
+            onDragOver={event => {
+              event.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={onDrop}
+            className={`glass-card rounded-3xl border overflow-hidden transition-colors ${
+              dragging ? 'border-violet-500/60 bg-violet-500/5' : 'border-white/10'
+            }`}
+          >
+            {/* top bar */}
+            <div className="flex flex-wrap items-center gap-2 px-3 py-2.5 border-b border-white/5 bg-black/25">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{t.openFile || 'Open file'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => void doPaste()}
+                className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
+              >
+                <ClipboardPaste className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{t.pasteText || 'Paste'}</span>
+              </button>
+
+              {/* Start from scratch or from a skeleton: the manual route, with
+                  no file and no handoff involved. */}
+              <div className="relative group">
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{t.startFrom || 'Start from'}</span>
+                </button>
+                <div className="absolute left-0 top-full pt-1.5 z-30 hidden group-hover:block group-focus-within:block">
+                  <div className="w-56 rounded-xl border border-white/10 bg-[#0d0718] shadow-2xl shadow-black/60 p-1.5 space-y-0.5">
+                    <button
+                      type="button"
+                      onClick={() => loadTemplate('')}
+                      className="w-full text-left px-3 py-2 rounded-lg text-[12px] font-bold text-slate-300 hover:bg-violet-500/15 hover:text-white transition-colors cursor-pointer"
+                    >
+                      {t.tplBlank || 'Blank document'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => loadTemplate(sample)}
+                      className="w-full text-left px-3 py-2 rounded-lg text-[12px] font-bold text-slate-300 hover:bg-violet-500/15 hover:text-white transition-colors cursor-pointer"
+                    >
+                      {t.tplSample || 'Syntax tour'}
+                    </button>
+                    {templates.map((template, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => loadTemplate(template.body)}
+                        className="w-full text-left px-3 py-2 rounded-lg text-[12px] font-bold text-slate-300 hover:bg-violet-500/15 hover:text-white transition-colors cursor-pointer"
+                      >
+                        {template.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={resetWorkspace}
+                className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-[11px] font-bold text-slate-300 transition-all cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{t.clear || 'Clear'}</span>
+              </button>
+
+              <span className="flex-1" />
+
+              {/* theme */}
+              <label className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 bg-black/30 text-[11px] font-bold text-slate-400 cursor-pointer">
+                <Palette className="w-3.5 h-3.5 text-violet-400 shrink-0" />
+                <span className="hidden md:inline">{t.style_label || 'Theme'}</span>
+                <select
+                  value={theme}
+                  onChange={event => setTheme(event.target.value as ThemeId)}
+                  aria-label={t.style_label || 'Theme'}
+                  className="bg-transparent border-none text-[11px] text-white font-black cursor-pointer outline-none"
+                >
+                  {THEMES.map(entry => (
+                    <option key={entry.id} value={entry.id} className="bg-[#0d0718] text-white">
+                      {t[entry.labelKey] || entry.fallback}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              {/* layout */}
+              <div className="flex items-center bg-black/40 p-0.5 rounded-lg border border-white/10">
+                {paneButtons.map(button => (
+                  <button
+                    key={button.id}
+                    type="button"
+                    onClick={() => setPane(button.id)}
+                    title={t[button.labelKey] || button.fallback}
+                    aria-label={t[button.labelKey] || button.fallback}
+                    aria-pressed={pane === button.id}
+                    className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer ${
+                      pane === button.id ? 'bg-violet-600 text-white' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {button.icon}
+                    <span className="hidden lg:inline">{t[button.labelKey] || button.fallback}</span>
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {/* Right Column: Viewer render panel */}
-            <div className="w-full md:w-1/2 flex flex-col relative bg-slate-950/45 overflow-hidden">
-              <div 
-                ref={previewRef}
-                onScroll={handlePreviewScroll}
-                className="w-full flex-grow p-6 md:p-8 overflow-y-auto scrollbar-thin print-document-content preview-panel"
-              >
-                {activeTab === 'preview' ? (
-                  <div 
-                    className={`preview-body theme-${activeTheme} prose prose-invert max-w-none transition-all duration-300`}
-                    dangerouslySetInnerHTML={{ __html: compiledHtml }}
-                  />
-                ) : (
-                  <pre className="bg-transparent text-emerald-400 font-mono text-xs overflow-x-auto whitespace-pre-wrap leading-relaxed select-all">
-                    {compiledHtml}
-                  </pre>
+            {/* second row: what the right pane shows + scroll sync */}
+            {pane !== 'editor' && (
+              <div className="flex flex-wrap items-center gap-2 px-3 py-2 border-b border-white/5 bg-black/10">
+                <div className="flex items-center bg-black/40 p-0.5 rounded-lg border border-white/10">
+                  {previewButtons.map(button => (
+                    <button
+                      key={button.id}
+                      type="button"
+                      onClick={() => setPreviewMode(button.id)}
+                      aria-pressed={previewMode === button.id}
+                      className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-black transition-all cursor-pointer ${
+                        previewMode === button.id ? 'bg-violet-600/80 text-white' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {button.icon}
+                      <span>{t[button.labelKey] || button.fallback}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {pane === 'split' && (
+                  <label className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-white/10 bg-black/30 text-[11px] font-bold text-slate-400 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={syncScroll}
+                      onChange={event => setSyncScroll(event.target.checked)}
+                      className="accent-violet-500 cursor-pointer"
+                    />
+                    {t.syncScroll || 'Sync scroll'}
+                  </label>
+                )}
+
+                <span className="flex-1" />
+
+                {compiled.stale && (
+                  <span className="flex items-center gap-1.5 text-[11px] font-bold text-slate-500">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    {t.rendering || 'Rendering…'}
+                  </span>
+                )}
+                {compiled.frontMatter && (
+                  <span
+                    title={compiled.frontMatter}
+                    className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-wider text-slate-500"
+                  >
+                    {t.frontMatter || 'Front matter'}
+                  </span>
                 )}
               </div>
+            )}
+
+            {/* --- the two panes ------------------------------------------- */}
+            {/* `lg:flex-1` and never a bare `flex-1`: inside a flex-col the
+                shorthand sets flex-basis:0 on the vertical axis and collapses
+                the pane, which is exactly how the editor ended up 88 px tall on
+                a phone. Explicit heights below lg, a shared height from lg up. */}
+            <div className="flex flex-col lg:flex-row lg:h-[clamp(30rem,68vh,54rem)]">
+              {pane !== 'preview' && (
+                <Editor
+                  ref={editorRef}
+                  value={doc.text}
+                  onChange={doc.setText}
+                  onScrollRatio={onEditorScroll}
+                  onUndo={doc.undo}
+                  onRedo={doc.redo}
+                  canUndo={doc.canUndo}
+                  canRedo={doc.canRedo}
+                  t={t}
+                  className={`h-[52vh] min-h-[20rem] lg:h-auto lg:min-h-0 lg:flex-1 ${
+                    pane === 'split' ? 'border-b lg:border-b-0 lg:border-r border-white/5' : ''
+                  }`}
+                />
+              )}
+              {pane !== 'editor' && (
+                <Preview
+                  ref={previewRef}
+                  html={compiled.html}
+                  toc={compiled.toc}
+                  mode={previewMode}
+                  theme={theme}
+                  empty={isEmpty}
+                  onScrollRatio={onPreviewScroll}
+                  onCopyHtml={copyCleanHtml}
+                  copied={copied === 'copyHtml'}
+                  t={t}
+                  className="h-[52vh] min-h-[20rem] lg:h-auto lg:min-h-0 lg:flex-1 bg-black/20"
+                />
+              )}
+            </div>
+
+            {/* --- status + exports ----------------------------------------- */}
+            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 px-4 py-3 border-t border-white/5 bg-black/25">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-slate-500">
+                <span>
+                  <b className="text-white font-black">{mounted ? number.format(stats.words) : '—'}</b>{' '}
+                  {t.words || 'words'}
+                </span>
+                <span>
+                  <b className="text-white font-black">{number.format(stats.chars)}</b> {t.characters || 'characters'}
+                </span>
+                <span>
+                  <b className="text-white font-black">{mounted ? stats.readingMinutes : '—'}</b>{' '}
+                  {t.minRead || 'min read'}
+                </span>
+                <span className="hidden sm:inline">
+                  <b className="text-white font-black">{stats.headings}</b> {t.headings || 'headings'}
+                </span>
+                {stats.tasks.total > 0 && (
+                  <span className="hidden sm:inline">
+                    <b className="text-white font-black">
+                      {stats.tasks.done}/{stats.tasks.total}
+                    </b>{' '}
+                    {t.tasksDone || 'tasks'}
+                  </span>
+                )}
+                {doc.steps > 0 && (
+                  <span className="hidden lg:inline opacity-70">
+                    {(t.historySize || '{steps} undo steps · {bytes}')
+                      .replace('{steps}', String(doc.steps))
+                      .replace('{bytes}', formatBytes(doc.bytes))}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={copyMarkdown}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
+                    copied === 'copyMd'
+                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {copied === 'copyMd' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copied === 'copyMd' ? t.copied || 'Copied!' : t.btn_copy_md || 'Copy MD'}
+                </button>
+                <button
+                  type="button"
+                  onClick={copyFormatted}
+                  title={t.btn_copy_rich_hint || 'Paste into a doc or an email keeping the formatting'}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-[11px] font-bold transition-all cursor-pointer ${
+                    copied === 'copyRich'
+                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300'
+                      : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10 hover:text-white'
+                  }`}
+                >
+                  {copied === 'copyRich' ? <Check className="w-3.5 h-3.5" /> : <Link2 className="w-3.5 h-3.5" />}
+                  {copied === 'copyRich' ? t.copied || 'Copied!' : t.btn_copy_rich || 'Copy formatted'}
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadMarkdown}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-slate-200 text-[11px] font-bold transition-all cursor-pointer"
+                >
+                  {busy === 'md' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+                  {t.btn_download_md || 'Download MD'}
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadHtml}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-slate-200 text-[11px] font-bold transition-all cursor-pointer"
+                >
+                  {busy === 'html' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <FileDown className="w-3.5 h-3.5" />}
+                  {t.btn_download_html || 'Download HTML'}
+                </button>
+                <button
+                  type="button"
+                  onClick={doPrint}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-[11px] font-black transition-all cursor-pointer shadow-lg shadow-violet-900/40"
+                >
+                  {busy === 'pdf' ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Printer className="w-3.5 h-3.5" />}
+                  {t.btn_download_pdf || 'Export PDF'}
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* Workspace Footer status metrics */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-4 bg-slate-900/60 border-t border-white/5 text-xs text-slate-400 gap-4 no-print">
-            
-            {/* Word count indicators */}
-            <div className="flex items-center space-x-4">
-              <span className="flex items-center space-x-1">
-                <span className="text-white font-bold">{metrics.words}</span>
-                <span className="opacity-60">{t.words || 'words'}</span>
-              </span>
-              <span className="w-px h-3.5 bg-white/10"></span>
-              <span className="flex items-center space-x-1">
-                <span className="text-white font-bold">{metrics.chars}</span>
-                <span className="opacity-60">{t.characters || 'characters'}</span>
-              </span>
+          <NextStepBar lang={lang} t={t} getResult={getResult} disabled={isEmpty} />
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept={ACCEPTED}
+            className="hidden"
+            onChange={event => {
+              onFiles(event.target.files);
+              event.target.value = '';
+            }}
+          />
+        </section>
+
+        {/* ================================================================= */}
+        {/* How it works                                                      */}
+        {/* ================================================================= */}
+        <section className="space-y-8">
+          <div className="text-center space-y-3">
+            <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">
+              {t.howItWorksTitle || 'How it works'}
+            </h2>
+            <div className="h-1 w-16 bg-violet-500 mx-auto rounded-full" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((step, index) => {
+              const Art = step.art;
+              return (
+                <div
+                  key={index}
+                  className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-violet-500/20 transition-all group overflow-hidden"
+                >
+                  <span className="absolute top-4 right-5 text-5xl font-black text-white/5 group-hover:text-violet-500/10 transition-colors">
+                    {index + 1}
+                  </span>
+                  <Art className="w-24 h-auto text-violet-400" />
+                  <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* ================================================================= */}
+        {/* Features                                                          */}
+        {/* ================================================================= */}
+        <motion.section
+          initial={prefersReduced ? false : 'hidden'}
+          whileInView={prefersReduced ? undefined : 'visible'}
+          viewport={{ once: true, amount: 0.12 }}
+          variants={fadeInUp}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {features.map((feature: any, index: number) => {
+            const Icon = featureIcons[index] || IconLocalOnly;
+            return (
+              <div
+                key={index}
+                className="p-6 glass-card rounded-3xl border border-white/5 hover:-translate-y-1 transition-all duration-300 group"
+              >
+                <div className="w-11 h-11 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center text-violet-400 mb-4 group-hover:scale-110 group-hover:border-violet-500/40 transition-all">
+                  <Icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-white text-base font-bold mb-2 group-hover:text-violet-400 transition-colors">
+                  {feature.title}
+                </h3>
+                <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{feature.text}</p>
+              </div>
+            );
+          })}
+        </motion.section>
+
+        {/* ================================================================= */}
+        {/* SEO copy + FAQ                                                    */}
+        {/* ================================================================= */}
+        <section className="space-y-16 text-left">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div className="space-y-6">
+              {keywords[0] && (
+                <div className="inline-block px-4 py-1.5 rounded-lg bg-violet-500/10 text-violet-300 text-[11px] font-black uppercase tracking-[0.2em] border border-violet-500/20">
+                  {keywords[0]}
+                </div>
+              )}
+              <h2 className="text-2xl md:text-4xl font-black text-white leading-tight tracking-tight">
+                {t.seoBrowserSpeedTitle}
+              </h2>
+              <p className="text-slate-400 text-base leading-relaxed">{t.seoBrowserSpeedText}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {(Array.isArray(t.seoHeroList) ? t.seoHeroList : []).map((point: string, index: number) => (
+                  <div key={index} className="flex items-center gap-2.5 p-3 rounded-xl bg-white/5 border border-white/5">
+                    <span className="w-6 h-6 shrink-0 bg-violet-500/20 text-violet-300 rounded-lg flex items-center justify-center">
+                      <Check className="w-3.5 h-3.5 stroke-[3]" />
+                    </span>
+                    <span className="text-slate-300 font-bold text-[13px]">{point}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-
-            {/* Downloader & Export commands deck */}
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                onClick={downloadMarkdownFile}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-white transition-all cursor-pointer outline-none"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>{t.btn_download_md || 'Download MD'}</span>
-              </button>
-
-              <button
-                onClick={downloadHtmlFile}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-white transition-all cursor-pointer outline-none"
-              >
-                <FileCode className="w-3.5 h-3.5" />
-                <span>{t.btn_download_html || 'Download HTML'}</span>
-              </button>
-
-              <button
-                onClick={copyHtmlToClipboard}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border transition-all cursor-pointer outline-none ${
-                  copySuccess 
-                    ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400' 
-                    : 'bg-white/5 border-white/5 hover:bg-violet-500/20 hover:border-violet-500/30 text-white'
-                }`}
-              >
-                <Copy className="w-3.5 h-3.5" />
-                <span>{copySuccess ? (t.copied || 'Copied!') : (t.btn_copy_html || 'Copy HTML')}</span>
-              </button>
-
-              <button
-                onClick={printDocument}
-                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-violet-600 hover:bg-violet-500 text-white font-bold transition-all cursor-pointer outline-none shadow-lg shadow-violet-600/20"
-              >
-                <Printer className="w-3.5 h-3.5" />
-                <span>{t.btn_download_pdf || 'Export PDF'}</span>
-              </button>
+            <div className="relative glass-card rounded-[2.5rem] p-8 py-14 min-h-[340px] flex flex-col items-center justify-center gap-6 text-center overflow-hidden border border-white/5">
+              <div className="absolute -top-16 -right-16 w-56 h-56 bg-violet-500/10 rounded-full blur-3xl" />
+              <IconLocalOnly className="w-16 h-16 text-violet-400 relative" />
+              <div className="space-y-3 max-w-sm relative">
+                <h3 className="text-xl font-black text-white tracking-tight leading-tight">{t.seoPrivacyTitle}</h3>
+                <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoPrivacyText}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-markdown-live-bottom" />
+          <div className="p-7 md:p-12 rounded-3xl bg-[#0d0620] border border-white/5 space-y-8">
+            <div className="max-w-3xl space-y-3">
+              <h2 className="text-xl md:text-3xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
+              <div className="h-1.5 w-20 bg-violet-500 rounded-full" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-3">
+                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                  <span className="w-6 h-px bg-white/20" />
+                  {t.seoUseCaseTitle}
+                </div>
+                <p className="text-slate-400 text-[15px] leading-relaxed">{t.seoUseCaseText}</p>
+              </div>
+              <div className="space-y-3">
+                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                  <span className="w-6 h-px bg-white/20" />
+                  {t.seoHeroTitle}
+                </div>
+                <p className="text-slate-400 text-[15px] leading-relaxed">{t.seoHeroText}</p>
+              </div>
+            </div>
+          </div>
+
+          {faqs.length > 0 && (
+            <div className="max-w-4xl mx-auto w-full space-y-8">
+              <div className="text-center space-y-3">
+                <h2 className="text-2xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                <div className="h-1 w-16 bg-violet-500 mx-auto rounded-full" />
+              </div>
+              <div className="grid gap-3">
+                {faqs.map((faq: any, index: number) => (
+                  <details
+                    key={index}
+                    className="glass-card rounded-2xl px-5 py-4 text-left border border-white/5 hover:border-violet-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                  >
+                    <summary className="flex items-start gap-3 cursor-pointer list-none text-[15px] font-bold text-white group-hover:text-violet-400 transition-colors">
+                      <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-violet-500/10 flex items-center justify-center text-violet-400 text-[11px] font-black">
+                        Q
+                      </span>
+                      <span className="flex-1 min-w-0">{faq.question}</span>
+                      <span className="shrink-0 text-violet-400 transition-transform group-open:rotate-45 text-xl leading-none">
+                        +
+                      </span>
+                    </summary>
+                    <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {keywords.length > 0 && (
+            <div className="max-w-4xl mx-auto w-full space-y-4 opacity-55 text-center">
+              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
+              <div className="flex flex-wrap justify-center gap-2">
+                {keywords.map((keyword: string, index: number) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-violet-500/10 hover:border-violet-500/20 hover:text-violet-400 transition-all cursor-default"
+                  >
+                    {keyword}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </section>
+
+        <AdBanner id="adsense-markdown-live-bottom" />
       </main>
 
-      {/* Footer */}
-      <Footer 
-        lang={lang} 
-        t={t} 
-        onOpenModal={(modal) => setLegalModal(modal)} 
-      />
+      <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />
 
-      {/* Legal Modals */}
       <LegalModal
         isOpen={legalModal === 'privacy'}
         onClose={() => setLegalModal(null)}

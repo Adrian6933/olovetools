@@ -38,12 +38,16 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
 
             <button
               onClick={onReset}
-              className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
+              className="flex items-center min-w-0 space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
             >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-teal-500/20 group-hover:border-teal-500/50 transition-all">
                 <Palette className="w-5 h-5 text-teal-400" />
               </div>
-              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-teal-400 transition-all">
+              {/* min-w-0 + truncate: a 375px el logo y el nombre de la
+                  herramienta llegan justos (en francés quedan 16px de aire),
+                  así que un título más largo cortaría el texto en vez de
+                  recolocarse. */}
+              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-teal-400 transition-all truncate">
                 {t.title}
               </span>
             </button>

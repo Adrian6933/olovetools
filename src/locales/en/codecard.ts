@@ -47,25 +47,29 @@ export default {
   "watermarkLabel": "Made with oLoveTools.com",
   "features": [
     {
-      "title": "High-DPI Output Scaling",
-      "text": "Export images at 1x, 2x, or 4x scale to ensure your code screenshots look razor-sharp on Twitter, LinkedIn, and blog posts."
+      "title": "Real syntax, 48 languages",
+      "text": "The highlighter reads the raw Prism token stream, so JavaScript, Rust, Zig, Terraform, Dockerfiles and 43 more come out with proper colours — and only the grammar you pick is downloaded."
     },
     {
-      "title": "100% Client-Side Privacy",
-      "text": "Your code snippets are highlighted and processed entirely in your web browser. Nothing is sent to any servers."
+      "title": "Spotlight the lines that matter",
+      "text": "Click a line number to highlight it and dim the rest. Shift+click takes a range, Alt+click inverts the whole selection, right-click clears it."
     },
     {
-      "title": "Syntax Support",
-      "text": "Full support for major languages including JavaScript, TypeScript, Python, HTML, CSS, Rust, Go, SQL, and Markdown."
+      "title": "Exports nothing gets cut from",
+      "text": "The card is measured at its full width before capture, so long lines survive the export instead of being sliced off at the edge of the preview. PNG, JPEG, WebP or vector SVG, up to 4x."
+    },
+    {
+      "title": "Local, and actually offline",
+      "text": "Fonts and grammars are served from this site, not a third-party CDN. Once the page has loaded, highlighting and exporting work with the network unplugged."
     }
   ],
   "footerCredit": "Part of the oLoveTools Suite",
   "seoHeroTitle": "Create Stunning Code Screenshot Images Online",
   "seoHeroText": "Sharing raw text code snippets on social media or in presentations can be visually boring. CodeCard turns your source code into elegant designer cards instantly. With control over padding, shadows, font choices, and window styles, you can match your personal brand.",
   "seoHeroList": [
-    "High-resolution PNG, JPEG, and SVG exports",
-    "Offline-ready, secure, and privacy-focused",
-    "No registration or watermark required"
+    "PNG, JPEG, WebP and vector SVG up to 4x",
+    "Fonts and grammars self-hosted, so it works offline",
+    "No account, and the watermark is off unless you turn it on"
   ],
   "seoBrowserSpeedTitle": "Fast and Secure Local Generation",
   "seoBrowserSpeedText": "CodeCard runs fully in your web browser, utilizing client-side rendering engine features. No files or text ever leave your computer.",
@@ -86,20 +90,28 @@ export default {
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
-      "question": "How do I get the sharpest screenshot?",
-      "answer": "We recommend choosing the 2x or 4x Resolution Scale in the Export tab. This ensures the output PNG or JPEG has enough pixel density to look crisp on high-DPI retina displays."
+      "question": "Why did my long lines get cut off in other tools?",
+      "answer": "Because most code-screenshot tools capture the DOM exactly as it is laid out, and a code block with a horizontal scrollbar only lays out the part you can see. CodeCard measures the card at its full, unclipped width before the capture, so the whole line reaches the image."
+    },
+    {
+      "question": "How do I highlight specific lines?",
+      "answer": "Click a line number in the preview to spotlight it and dim the rest. Shift+click extends a range, Alt+click inverts the entire selection, and right-click clears it. You can also type ranges like 3, 7-9, 12 into the Highlighted lines box."
+    },
+    {
+      "question": "Which languages are supported?",
+      "answer": "48, including JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfiles, Bash, PowerShell, Markdown and unified diffs. Only the grammar for the language you pick is downloaded."
     },
     {
       "question": "Can I use CodeCard offline?",
-      "answer": "Yes! Because CodeCard runs 100% client-side in the browser, once the page is loaded, all conversions, highlights, and downloads work offline without internet access."
+      "answer": "Yes. The monospace fonts and the syntax grammars are served from this site rather than a third-party CDN, so once the page has loaded, highlighting and exporting keep working with no network at all."
     },
     {
       "question": "Is my code secure?",
-      "answer": "Absolutely. Your code is never transmitted over the network or saved on our servers. The entire generation process happens locally on your computer."
+      "answer": "Your code is never transmitted anywhere. Highlighting, layout and image rendering all happen in your browser, and nothing is uploaded or logged."
     },
     {
-      "question": "Does it support custom themes?",
-      "answer": "We support standard dark themes (like One Dark, Dracula, VS Code, Night Owl) and light themes (GitHub Light) to cover all modern developer preferences."
+      "question": "What is the sharpest export setting?",
+      "answer": "PNG at 3x or 4x for raster use. If the destination accepts vectors, pick SVG instead: it stays crisp at any size and usually weighs less than a 4x PNG."
     }
   ],
   "footerTagline": "Free, stylish code screenshot generator running 100% locally on your machine.",
@@ -112,5 +124,98 @@ export default {
   "privacyContent": "Your privacy is our utmost priority.\n\nAll code highlights and image creations happen on your machine. No text is collected, logged, or sent to servers.\n\nYour code is your own.",
   "termsContent": "By using CodeCard, you agree to the following terms:\n\n1. This tool is provided 'as is' without warranty.\n2. We are not liable for any rendering glitches or export errors.\n3. You are responsible for ensuring your code doesn't contain confidential credentials.\n4. We reserve the right to modify these terms at any time.",
   "cookiesContent": "We use cookies to enhance your experience.\n\n1. Necessary cookies for baseline performance.\n2. Preference cookies to remember your selected language.\n\nYou can disable cookies in your browser settings.",
-  "contact": "Contact"
+  "contact": "Contact",
+  "heroBadge": "Code screenshot studio",
+  "heroChipLanguages": "48 languages",
+  "heroChipLocal": "Runs in your browser",
+  "heroChipNoAccount": "No account, no upload",
+  "previewTitle": "Live preview",
+  "privacyNote": "Highlighted in your browser. Your code never leaves this device.",
+  "dropTitle": "Drop the file here",
+  "dropHint": "Drop a source file here, or paste the code.",
+  "dropBrowse": "Open a file",
+  "startBlank": "Start blank",
+  "pendingLines": "lines",
+  "pendingLoad": "Load into the editor",
+  "pendingLoadRaw": "Load without detecting",
+  "pendingDiscard": "Discard",
+  "pendingBig": "Large file: highlighting may feel slow while you type.",
+  "labelStartLine": "First line number",
+  "labelHighlightLines": "Highlighted lines",
+  "highlightHint": "Or click the line numbers in the preview. Shift+click for a range, Alt+click inverts, right-click clears.",
+  "highlightPlaceholder": "e.g. 3, 7-9, 12",
+  "clearHighlights": "Clear",
+  "labelDimOthers": "Dim the other lines",
+  "labelBgMode": "Background",
+  "bgModeGradient": "Gradient",
+  "bgModeSolid": "Solid",
+  "bgModeNone": "None",
+  "labelBgColor": "Background colour",
+  "labelFontFamily": "Font",
+  "fontIbmPlex": "IBM Plex Mono",
+  "fontSystem": "System monospace",
+  "labelLineHeight": "Line height",
+  "labelAspect": "Aspect ratio",
+  "aspectAuto": "Auto",
+  "aspectSquare": "Square",
+  "aspectWide": "Wide",
+  "aspectSocial": "Social",
+  "aspectPortrait": "Portrait",
+  "windowMacDesc": "Three traffic-light dots",
+  "windowWindowsDesc": "Minimise, maximise, close",
+  "windowSimpleDesc": "A single accent marker",
+  "windowNoneDesc": "No title bar at all",
+  "labelWordWrap": "Wrap long lines",
+  "wordWrapHint": "Off means the card grows as wide as the longest line.",
+  "labelLigatures": "Font ligatures",
+  "ligaturesHint": "Turns => and !== into single glyphs.",
+  "watermarkHint": "Off by default. Nothing is stamped on your image unless you ask.",
+  "labelCardWidth": "Card width",
+  "labelTabSize": "Tab size",
+  "labelFormat": "Format",
+  "labelQuality": "Quality",
+  "btnDownload": "Download",
+  "btnCopy": "Copy image",
+  "copyOk": "Copied",
+  "copyFail": "Your browser blocked the clipboard. Download it instead.",
+  "presetsTitle": "Saved looks",
+  "presetSave": "Save current",
+  "presetEmpty": "Nothing saved yet. Presets stay in this browser.",
+  "presetDelete": "Delete preset",
+  "undo": "Undo",
+  "redo": "Redo",
+  "zoomIn": "Zoom in",
+  "zoomOut": "Zoom out",
+  "zoomFit": "Reset view",
+  "compareHold": "Hold to see the raw code",
+  "backToTop": "Back to top",
+  "statusExporting": "Rendering the image...",
+  "statusGrammar": "Loading the grammar...",
+  "errorGrammar": "Could not load the syntax grammar. The code is shown as plain text.",
+  "errorTooBig": "That file is over 4 MB.",
+  "howTitle": "How it works",
+  "howStep1Title": "Paste or drop your code",
+  "howStep1Text": "Type it, paste it, or drop a source file. A dropped file waits for you: it shows its size and line count, and nothing loads until you press the button.",
+  "howStep2Title": "Style it and pick the key lines",
+  "howStep2Text": "Ten themes, nine gradients or your own colour, five window shells. Click a line number to spotlight it and dim the rest — the part reviewers actually need to see.",
+  "howStep3Title": "Export or send it onward",
+  "howStep3Text": "PNG, JPEG, WebP or vector SVG, up to 4x. Copy straight to the clipboard, or hand the image to CompressSnap, CropSnap or WatermarkSnap without downloading it first.",
+  "seoEngineTitle": "Built on the Prism token stream",
+  "seoEngineText": "Instead of asking the highlighter for finished HTML, CodeCard reads the raw token stream and rebuilds the code line by line. That is what makes exact line numbers, per-line highlighting, hanging-indent wrapping and uncropped exports possible at all.",
+  "nextStepTitle": "Keep going",
+  "nextStepHint": "Your image travels with you — no re-upload",
+  "nextCompress": "Compress it",
+  "nextCrop": "Crop it",
+  "nextFormat": "Change format",
+  "nextWatermark": "Add a watermark",
+  "nextMeme": "Make a meme",
+  "groupWeb": "Web",
+  "groupSystems": "Systems",
+  "groupApps": "Applications",
+  "groupData": "Data and config",
+  "groupOps": "Shell and ops",
+  "groupText": "Text and diffs",
+  "gradientCandy": "Candy Pink",
+  "gradientMono": "Graphite",
+  "gradientPeach": "Soft Peach",
 };

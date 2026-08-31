@@ -1,3 +1,22 @@
+// ============================================================================
+// CÓDIGO DORMIDO — NO ESTÁ CONECTADO A LA INTERFAZ (revisado 2026-08-31)
+// ----------------------------------------------------------------------------
+// Este editor de marca de agua está terminado pero NO lo importa nadie: no hay
+// ningún botón en TwitchBolt que lo abra, así que ningún usuario puede llegar a
+// él y no entra en el bundle publicado. Último trabajo real: 2026-07-28.
+//
+// No es un descuido pendiente de arreglar: Adrián decidió el 2026-08-31 dejarlo
+// dormido a propósito, ni conectarlo ni borrarlo.
+//
+// Si algún día se conecta, quedan dos deudas conocidas antes de enseñarlo:
+//   1. Los ~26 textos de la interfaz son ternarios `lang === 'es' ? … : …`, o
+//      sea que los otros siete idiomas verían inglés. Necesita el diccionario.
+//   2. El prop `lang` tiene DEFAULT 'es': sin idioma explícito sale en español.
+//   3. processVideoWithWatermark() graba con MediaRecorder sobre un canvas, o
+//      sea A VELOCIDAD REAL: un clip de 60 s tarda 60 s en procesarse. Antes de
+//      publicarlo hay que avisarlo en pantalla o pasar el encoder a WebCodecs.
+// ============================================================================
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { ClipData, WatermarkConfig, PositionPreset, FontFamily, TextTransform, FontWeight, EntryEffect, ExitEffect } from '../types';

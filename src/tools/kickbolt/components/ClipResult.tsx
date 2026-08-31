@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from '../types';
 import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2 } from 'lucide-react';
-import { downloadBlob, DOWNLOAD_PROXIES } from '../services/kickService';
+import { downloadBlob } from '../services/kickService';
 
 interface ClipResultProps {
   data: ClipData;

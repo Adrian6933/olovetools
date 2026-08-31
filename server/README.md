@@ -27,6 +27,9 @@ el mismo dominio** — no hace falta un servidor ni un worker aparte.
   WhoisBolt (ver sección propia más abajo). Usa el módulo `net` de Node para
   abrir una conexión TCP al puerto 43 (WHOIS real) — **solo funciona en Node**,
   igual que `/api/convert`, nunca en Cloudflare Workers/edge.
+- `server/socialResolve.mjs` + `src/pages/api/social.ts` → ruta `/api/social`
+  para SocialBolt (ver sección propia más abajo). Solo usa `fetch`/`URL`, como
+  `core.mjs`, así que sí podría adaptarse a un Worker.
 
 Estas rutas tienen `export const prerender = false`, así que Astro las deja
 fuera del sitio estático y Vercel las sirve como funciones serverless. El
@@ -143,3 +146,48 @@ desarrollador de Kick y Twitch antes de poner las nuevas en Vercel.
 
 - **Kick:** https://kick.com/settings/developer → crear una app → `client_id` / `client_secret`.
 - **Twitch:** https://dev.twitch.tv/console/apps → registrar una app → `client_id` / `client_secret`.
+
+## `/api/social` — resolución de enlaces sociales para SocialBolt
+
+Antes, SocialBolt resolvía los enlaces **desde el navegador** a través de
+proxies CORS públicos de terceros (`corsproxy.io`, `api.codetabs.com`), a los
+que había que entregarles la URL del usuario, y contra instancias de Cobalt que
+o no existen o exigen JWT (`api.cobalt.tools` responde
+`error.api.auth.jwt.missing`). Resultado: de las cuatro plataformas anunciadas
+solo funcionaba TikTok.
+
+Ahora todo se resuelve en esta ruta, con dos acciones:
+
+- `GET /api/social?action=resolve&url=<encoded>` → JSON con autor, estadísticas
+  y la lista de **assets** descargables (cada uno con su tipo, extensión,
+  tamaño y etiqueta de calidad).
+- `GET /api/social?action=media&url=<encoded>&name=<archivo>` → relay del medio
+  con `Content-Disposition: attachment`. Solo se usa como **fallback**: los CDN
+  de TikTok mandan `Access-Control-Allow-Origin: *`, así que el navegador
+  descarga directo y no gasta ancho de banda de la función. `video.twimg.com`
+  no manda CORS, y ahí sí entra el relay.
+
+Igual que `/proxy`, el relay tiene **allowlist de hosts** (CDNs de TikTok, X,
+YouTube e Instagram) y exige `https`, para que no se convierta en un proxy
+abierto.
+
+### Qué se puede servir gratis y qué no
+
+| Plataforma | Estado | Cómo |
+| --- | --- | --- |
+| TikTok | Completo | TikWM con `hd=1`: HD, sin marca de agua, con marca, MP3, portada, avatar y carruseles. Limita a ~1 petición/segundo por IP, por eso la cola del cliente espera 1,1 s entre enlaces. |
+| X / Twitter | Completo | `cdn.syndication.twimg.com/tweet-result` (la API que alimenta los tweets embebidos): todas las variantes de bitrate, GIF, fotos en `?name=orig`. |
+| YouTube | Parcial | oEmbed (título/canal) + miniaturas. La pista de vídeo exige descifrar la firma del `player.js`, que cambia cada pocos días: **no hay forma gratuita** desde una función serverless. |
+| Instagram | Mejor esfuerzo | Scrape del HTML del embed público. Instagram rechaza las IP de datacenter en su API interna, así que falla en la mayoría de posts y se devuelve `instagram_blocked`. |
+
+### Variables de entorno opcionales
+
+```
+COBALT_API_URL=https://tu-instancia-cobalt.example
+COBALT_API_KEY=...            # solo si tu instancia exige Api-Key
+```
+
+Sin `COBALT_API_URL` **no se hace ni una petición** a Cobalt (no tiene sentido
+machacar instancias públicas que hoy piden JWT). Con ella, YouTube e Instagram
+intentan además el túnel de Cobalt con el formato de petición de la API v10
+(la v7 que usaba el código anterior lleva años retirada).

@@ -337,13 +337,9 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
             )}
 
             {/* Sidebar Ad Slot (Visible when expanded) */}
-            {!isSidebarCollapsed && (
-              <div className="px-2.5 py-2.5 bg-white/[0.01] border border-white/[0.04] rounded-2xl text-center" id="adsense-sidebar-ad">
-                <span className="text-[8px] text-slate-500 font-mono tracking-wider mb-1.5 uppercase opacity-40 block">Publicidad</span>
-                <div className="h-20 flex flex-col items-center justify-center border border-white/[0.03] rounded-lg bg-black/10 text-[9px] text-slate-600 font-bold p-1">
-                  <span>Ad Slot</span>
-                  <span className="text-[8px] font-normal text-slate-600 opacity-75 mt-0.5">Adaptable</span>
-                </div>
+            {!isSidebarCollapsed && (ADS_ENABLED || import.meta.env.DEV) && (
+              <div className="px-2.5 py-2.5 text-center" id="adsense-sidebar-ad">
+                <AdSlot position="side" size="rectangle" />
               </div>
             )}
 
@@ -405,33 +401,25 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         </aside>
 
         {/* Fixed Skyscraper Side Banners - positioned relative to the centered 7xl content column, scrolling-free (fixed) */}
-        <div className={`fixed inset-y-0 right-0 pointer-events-none z-30 hidden transition-all duration-300 justify-center ${
-          isSidebarCollapsed 
-            ? '[@media(min-width:1800px)]:flex left-[76px]' 
-            : '[@media(min-width:2000px)]:flex left-[272px]'
-        }`}>
-          <div className="relative w-full max-w-7xl h-full flex items-center">
-            {/* Left Skyscraper (Wider, taller, and more separated) */}
-            <div className="absolute left-[-280px] pointer-events-auto w-[200px] h-[680px] bg-[#1e1f20]/30 backdrop-blur-md border border-white/[0.05] rounded-3xl flex flex-col items-center justify-center p-4 text-center shadow-2xl transition-all duration-300" id="adsense-left-skyscraper">
-              <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase opacity-60 mb-3 block">Publicidad</span>
-              <div className="w-full flex-grow flex flex-col items-center justify-center border border-white/[0.03] rounded-2xl bg-black/20 p-3 text-[11px] text-slate-400 font-bold">
-                <span className="text-white font-outfit text-xs mb-1">Rascacielos</span>
-                <span className="text-[10px] font-normal text-slate-500">Lateral Izquierdo</span>
-                <span className="text-[9px] font-mono text-blue-400/80 bg-blue-500/5 px-2 py-0.5 rounded-full border border-blue-500/10 mt-3">160 x 600</span>
+        {(ADS_ENABLED || import.meta.env.DEV) && (
+          <div className={`fixed inset-y-0 right-0 pointer-events-none z-30 hidden transition-all duration-300 justify-center ${
+            isSidebarCollapsed 
+              ? '[@media(min-width:1800px)]:flex left-[76px]' 
+              : '[@media(min-width:2000px)]:flex left-[272px]'
+          }`}>
+            <div className="relative w-full max-w-7xl h-full flex items-center">
+              {/* Left Skyscraper */}
+              <div className="absolute left-[-280px] pointer-events-auto w-[160px] h-[600px] flex items-center justify-center" id="adsense-left-skyscraper">
+                <AdSlot position="railLeft" size="skyscraper" />
               </div>
-            </div>
 
-            {/* Right Skyscraper (Wider, taller, and more separated) */}
-            <div className="absolute right-[-280px] pointer-events-auto w-[200px] h-[680px] bg-[#1e1f20]/30 backdrop-blur-md border border-white/[0.05] rounded-3xl flex flex-col items-center justify-center p-4 text-center shadow-2xl transition-all duration-300" id="adsense-right-skyscraper">
-              <span className="text-[9px] text-slate-500 font-mono tracking-widest uppercase opacity-60 mb-3 block">Publicidad</span>
-              <div className="w-full flex-grow flex flex-col items-center justify-center border border-white/[0.03] rounded-2xl bg-black/20 p-3 text-[11px] text-slate-400 font-bold">
-                <span className="text-white font-outfit text-xs mb-1">Rascacielos</span>
-                <span className="text-[10px] font-normal text-slate-500">Lateral Derecho</span>
-                <span className="text-[9px] font-mono text-blue-400/80 bg-blue-500/5 px-2 py-0.5 rounded-full border border-blue-500/10 mt-3">160 x 600</span>
+              {/* Right Skyscraper */}
+              <div className="absolute right-[-280px] pointer-events-auto w-[160px] h-[600px] flex items-center justify-center" id="adsense-right-skyscraper">
+                <AdSlot position="railRight" size="skyscraper" />
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Page Content area which adjusts spacing next to the left-fixed sidebar */}
         <div className={`relative isolate transition-all duration-300 ${

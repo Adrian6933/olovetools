@@ -1,9 +1,9 @@
 export default {
   "title": "TimeBolt",
-  "seo_title": "TimeBolt | Convierte la hora entre zonas horarias mundiales con un planificador de reuniones interactivo 100% localmente.",
-  "seo_description": "Convierte la hora entre zonas horarias mundiales con un planificador de reuniones interactivo 100% localmente.",
+  "seo_title": "Reloj mundial y planificador de reuniones entre zonas",
+  "seo_description": "Reloj mundial y planificador de reuniones gratis. Añade cualquiera de las ~400 zonas IANA que conoce tu navegador, mira las 24 horas en paralelo con el horario laboral sombreado, recibe un aviso si ese día cambia la hora y exporta la reunión como archivo .ics. Todo funciona en tu navegador y tus zonas se recuerdan.",
   "seoHeroTitle": "TimeBolt",
-  "seoHeroText": "Convierte la hora entre zonas horarias mundiales con un planificador de reuniones interactivo 100% localmente.",
+  "seoHeroText": "Añade los sitios desde donde trabaja tu equipo y mira las veinticuatro horas de golpe, con el horario laboral sombreado y un recuento de quién está despierto en cada columna. Te avisa si una zona cambia la hora ese día y te da un .ics del hueco que elijas.",
   "section_world_clocks": "Relojes Mundiales",
   "button_close": "Cerrar",
   "button_add_timezone": "Añadir zona horaria",
@@ -26,37 +26,94 @@ export default {
   "planner_yesterday": "Ayer",
   "planner_source_tag": "Origen",
   "tooltip_copy": "Copiar",
-  "seoBrowserSpeedTitle": "Procesamiento Local Instantáneo",
-  "seoBrowserSpeedText": "Todo el procesamiento se ejecuta dentro de tu navegador usando APIs nativas de JavaScript. Ningún dato se envía a un servidor.",
-  "seoUseCaseTitle": "100% del Lado del Cliente",
-  "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
+  "seoBrowserSpeedTitle": "Tu navegador ya se sabe las reglas",
+  "seoBrowserSpeedText": "Todos los navegadores llevan la base de datos IANA de zonas horarias, con las reglas históricas y las fechas en que cada país cambia la hora. Esta herramienta la lee directamente: no hay servidor al que preguntar, nada que descargar, ni una lista que se quede vieja cuando un país cambia de idea sobre el horario de verano.",
+  "seoUseCaseTitle": "Equipos repartidos, llamadas y viajes",
+  "seoUseCaseText": "Encuentra la única hora que no sea plena madrugada para nadie, comprueba a qué hora le cae la llamada a un compañero de Bogotá, o averigua si el vuelo que has reservado llega antes o después del cambio de hora.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
   "seoKeywords": [
-    "time bolt",
-    "herramienta online",
-    "gratis",
-    "local",
-    "navegador"
+    "reloj mundial",
+    "planificador de reuniones zonas horarias",
+    "solape de zonas horarias",
+    "conversor de zonas horarias",
+    "exportar reunión ics",
+    "comprobar cambio de hora"
   ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
       "question": "¿Se envían mis datos a algún servidor?",
-      "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
+      "answer": "No. Las reglas de zonas horarias salen de tu propio navegador y todo se calcula en la página. Lo único que se guarda es la lista de zonas que has añadido, en local, para que siga ahí la próxima vez."
     },
     {
-      "question": "¿Cuántas zonas horarias puedo añadir a la vez?",
-      "answer": "Puedes añadir todas las que necesites desde la lista buscable de más de 80 ciudades del mundo, y el Planificador de Reuniones mostrará la hora local correspondiente para cada una."
+      "question": "¿Cuántas zonas horarias puedo añadir?",
+      "answer": "Todas las que conozca tu navegador: unas 400 zonas IANA. Busca por ciudad, país o identificador; los acentos se ignoran, así que «bogota» encuentra Bogotá y «beijing» encuentra Asia/Shanghai."
     },
     {
-      "question": "¿TimeBolt tiene en cuenta el horario de verano?",
-      "answer": "Sí. TimeBolt usa la API Intl nativa de tu navegador, que gestiona automáticamente el horario de verano y los cambios históricos de offset para cada zona horaria."
+      "question": "¿Qué significa el número encima de cada columna?",
+      "answer": "Cuántos de tus sitios están dentro del horario laboral en ese momento. La columna con el número más alto se destaca, y suele ser justo el hueco de reunión que buscabas."
+    },
+    {
+      "question": "¿Qué pasa el día del cambio de hora?",
+      "answer": "Recibes un aviso con las zonas que cambian ese día y los desfases de antes y después. Y si eliges una hora que los relojes se saltan, la herramienta dice que esa hora no existe en vez de mover tu reunión sin decírtelo."
+    },
+    {
+      "question": "¿Puedo meter la reunión en mi calendario?",
+      "answer": "Sí. El botón .ics construye un archivo de calendario estándar en la propia página, con el inicio en UTC y todas las horas locales en la descripción, así que se abre en Google Calendar, Outlook, Calendario de Apple o cualquier cosa que lea iCalendar."
     }
   ],
-  "footerTagline": "Convierte la hora entre zonas horarias mundiales con un planificador de reuniones interactivo 100% localmente.",
+  "footerTagline": "Un reloj mundial con rejilla de solape de verdad, honesto con el cambio de hora y capaz de darte un .ics.",
   "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
-  "contactForIdeas": "Contacto para ideas y comentarios:"
+  "contactForIdeas": "Contacto para ideas y comentarios:",
+  "heroBadge": "Funciona en tu navegador",
+  "heroSecondary": "Cómo funciona",
+  "clear": "Limpiar",
+  "remove": "Quitar",
+  "isReference": "Zona de referencia",
+  "makeReference": "Usar como referencia",
+  "nextDay": "(+1 día)",
+  "prevDay": "(−1 día)",
+  "zoneCount": "{shown} de {total} zonas: escribe para acotar",
+  "workingHours": "Horario laboral",
+  "workStart": "Inicio del horario laboral",
+  "workEnd": "Fin del horario laboral",
+  "duration": "Duración (min)",
+  "legendWork": "Horario laboral {a}-{b}",
+  "legendEarly": "Temprano",
+  "legendEvening": "Tarde-noche",
+  "legendNight": "Noche",
+  "skippedHour": "Ese día las {h}:00 no existen en {z}: los relojes se las saltan.",
+  "dstWarningTitle": "Ese día cambia la hora",
+  "dstWarningLine": "{city}: {from} pasa a {to}",
+  "summaryTitle": "La reunión, en todas partes",
+  "copyTimes": "Copiar las horas",
+  "copied": "Copiado",
+  "downloadIcs": "Descargar .ics",
+  "meetingTitle": "Reunión",
+  "howTitle": "Cómo funciona",
+  "step1Title": "Añade los sitios",
+  "step1Text": "Busca cualquier ciudad o zona que conozca tu navegador: unas 400, no una lista corta escrita a mano.",
+  "step2Title": "Mira el solape",
+  "step2Text": "Veinticuatro columnas, una fila por sitio. El verde es horario laboral y el número de arriba cuenta cuántos están trabajando.",
+  "step3Title": "Vigila los cambios de hora",
+  "step3Text": "Si una zona cambia la hora ese día, o la hora que has elegido no existe, te lo dice.",
+  "step4Title": "Mándalo",
+  "step4Text": "Copia las horas como texto, o descarga un .ics que puedes soltar en cualquier calendario.",
+  "featuresTitle": "Lo que hace de verdad",
+  "feat1Title": "Una rejilla de solape de verdad",
+  "feat1Text": "Todas las horas del día contra todos los sitios a la vez, así el hueco bueno se ve en vez de calcularse a mano.",
+  "feat2Title": "Todas las zonas, no una lista corta",
+  "feat2Text": "La lista IANA completa de tu navegador, buscable por ciudad, país o identificador, sin importar los acentos.",
+  "feat3Title": "Honesta con el cambio de hora",
+  "feat3Text": "Avisa cuando ese día se cambia la hora y no finge que exista la hora que se salta.",
+  "feat4Title": "Directo al calendario",
+  "feat4Text": "Un archivo .ics generado en la propia página, con todas las horas locales en la descripción.",
+  "feat5Title": "Recuerda tus sitios",
+  "feat5Text": "La lista de zonas se guarda en tu navegador, así que mañana sigue ahí.",
+  "feat6Title": "Nunca sale de la página",
+  "feat6Text": "Los datos de zonas horarias salen de tu propio navegador. No se sube nada ni se rastrea nada.",
+  "scrollTop": "Volver arriba"
 };

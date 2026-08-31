@@ -8,6 +8,11 @@ import {
   ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge
 } from 'lucide-react';
 import { fetchClipInfo, fetchMovieBlob } from './services/kickService';
+import { getAllowThirdParty, getLastRoute, setAllowThirdParty } from './services/route';
+import {
+  HeroArt, IconBulk, IconNoLogin, IconPaste, IconQuality, IconRoute, IconZip,
+  StepFetch, StepPaste, StepPick, StepSave,
+} from './components/Illustrations';
 import { ClipData, ClipItem, LoadingState } from './types';
 import { createTranslator, type Language } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
@@ -23,6 +28,8 @@ const formatBytes = (bytes: number, decimals = 2) => {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
+
+const RELAY_KEY = 'kickbolt-allow-relays';
 
 interface KickboltProps {
   lang: Language;
@@ -46,11 +53,36 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
   
   const t = createTranslator(dictionary);
 
+  // Labels used to be hardcoded English inside the component, so the three
+  // quality choices stayed in English in all nine languages.
   const qualityOptions = [
-    { id: 'max', label: 'Max Quality', sub: 'Original Source', icon: <Diamond className="w-4 h-4 text-blue-400" /> },
-    { id: '720', label: '720p HD', sub: 'Balanced', icon: <Film className="w-4 h-4 text-kick" /> },
-    { id: '360', label: '360p Fast', sub: 'Low Data', icon: <Gauge className="w-4 h-4 text-green-400" /> }
+    { id: 'max', label: t.qMaxLabel || 'Max Quality', sub: t.qMaxSub || 'Original Source', icon: <Diamond className="w-4 h-4 text-blue-400" /> },
+    { id: '720', label: t.q720Label || '720p HD', sub: t.q720Sub || 'Balanced', icon: <Film className="w-4 h-4 text-kick" /> },
+    { id: '360', label: t.q360Label || '360p Fast', sub: t.q360Sub || 'Low Data', icon: <Gauge className="w-4 h-4 text-green-400" /> }
   ];
+
+  // Route preference: the public relays are opt-out, and the choice is
+  // remembered so nobody has to re-refuse it on every visit.
+  const [allowRelays, setAllowRelays] = useState(true);
+  const [lastRouteHost, setLastRouteHost] = useState<string | null>(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(RELAY_KEY);
+    const allow = stored === null ? true : stored === '1';
+    setAllowRelays(allow);
+    setAllowThirdParty(allow);
+  }, []);
+
+  const toggleRelays = () => {
+    const next = !allowRelays;
+    setAllowRelays(next);
+    setAllowThirdParty(next);
+    try {
+      localStorage.setItem(RELAY_KEY, next ? '1' : '0');
+    } catch {
+      // Storage refused; the choice still holds for this session.
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
@@ -69,7 +101,10 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
     };
   }, [isQualityOpen]);
 
-  const handleReset = () => {
+  // useCallback because it is in a useEffect dependency list: as a plain
+  // function it was a new value on every render, so the popstate listener was
+  // torn down and re-attached on each one.
+  const handleReset = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -79,7 +114,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
     setInputText('');
     setZipProgress(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, []);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     let val = e.target.value;
@@ -126,11 +161,10 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
     const sharedClips = urlClips || storageClips;
     
     if (sharedClips) {
+      // Pre-filled, not launched: arriving with a list used to start the whole
+      // fan-out of network requests before anyone had picked a quality or even
+      // seen what came across. The button is one click away.
       setInputText(sharedClips);
-      const urls = sharedClips.split('\n').filter(u => u.trim());
-      if (urls.length > 0) {
-        processClips(urls);
-      }
       
       // Cleanup
       if (urlClips) window.history.replaceState({ view: 'results' }, '', window.location.pathname);
@@ -250,11 +284,16 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
       const a = document.createElement('a');
       a.href = url;
       a.download = zipName;
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      a.remove();
+      // Revoked on a timer: a clip pack is large, and Safari cancels a download
+      // whose object URL is revoked in the same tick as the click.
+      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      setLastRouteHost(getLastRoute()?.host ?? null);
     } catch (error: any) {
       if (error.message !== "AbortError") {
-        alert("Error generating ZIP");
+        alert(t.zipError || "Error generating ZIP");
       }
     } finally {
       if (!signal.aborted) {
@@ -277,22 +316,27 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
       {/* Long Linear Atmospheric Glow */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-kick/[0.05] via-transparent to-transparent pointer-events-none" />
       
-      <Header onReset={handleReset} currentLang={lang} onLangChange={handleLangChange} />
+      <Header currentLang={lang} onLangChange={handleLangChange} />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-6 pt-52 pb-40">
+      {/* The max width lives on <main>: AdRail measures this element to decide
+          whether the fixed side rails fit, and at max-w-7xl the gap was 60px at
+          1400px wide, so the rails were silently suppressed on the most common
+          desktop size. */}
+      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-6 pt-56 md:pt-52 pb-40">
         {/* Bloque AdSense Horizontal — debajo del header */}
         <AdBanner id="adsense-kickbolt-top" className="mb-12" />
 
         {status !== 'success' && (
           <div className="flex flex-col items-center">
             <div className="text-center mb-16 space-y-6 animate-slide-up">
-              <h1 className="text-5xl sm:text-7xl md:text-[115px] font-[900] uppercase leading-[0.82] tracking-tight text-white pr-6 inline-block skew-x-[-15deg] drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">
+              <h1 className="text-[clamp(2.5rem,10.5vw,115px)] font-[900] uppercase leading-[0.82] tracking-tight text-white pr-6 inline-block max-w-full skew-x-[-15deg] drop-shadow-[0_0_30px_rgba(255,255,255,0.1)]">
                 <span className="block mb-2">{t.heroTitle?.split(' ')[0]}</span>
                 <span className="text-kick">{t.heroTitle?.split(' ').slice(1,2)}</span> <span className="text-white">{t.heroTitle?.split(' ').slice(2).join(' ')}</span>
               </h1>
               <h2 className="text-gray-400 text-lg md:text-xl max-w-xl mx-auto font-medium leading-relaxed opacity-60">
                 {t.heroDesc}
               </h2>
+              <HeroArt className="w-full max-w-lg mx-auto h-auto pt-4" />
             </div>
 
             <div className="w-full max-w-4xl animate-slide-up [animation-delay:150ms]">
@@ -369,11 +413,39 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                     </button>
                     {status === 'error' && (
                       <div className="text-red-400 text-sm font-bold text-center mt-2">
-                        No valid clips found. Please check your links.
+                        {t.noClipsFound}
                       </div>
                     )}
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Route disclosure. Kick's API is behind Cloudflare and its CDN sends
+                no CORS headers, so the request is always relayed; until now the
+                page said nothing about that and the legal text only promised
+                that *our* server keeps no log. */}
+            <div className="mt-6 w-full max-w-4xl animate-slide-up [animation-delay:180ms]">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-[#111114]/60 border border-white/5 rounded-2xl">
+                <div className="w-8 h-8 shrink-0"><IconRoute /></div>
+                <p className="flex-1 text-xs text-gray-400 leading-relaxed">
+                  {t.routeNotice || 'Kick blocks direct browser requests, so clips are relayed. Our own relay is tried first; public relays are the fallback.'}
+                  {lastRouteHost && (
+                    <span className="block mt-1 text-gray-500">
+                      {(t.routeLast || 'Last download handled by: {host}').replace('{host}', lastRouteHost)}
+                    </span>
+                  )}
+                </p>
+                <button
+                  onClick={toggleRelays}
+                  className={`shrink-0 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer border ${
+                    allowRelays
+                      ? 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10'
+                      : 'bg-kick/10 border-kick/30 text-kick'
+                  }`}
+                >
+                  {allowRelays ? (t.routeAllowOn || 'Public relays: on') : (t.routeAllowOff || 'Public relays: off')}
+                </button>
               </div>
             </div>
 
@@ -384,7 +456,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                >
                   <Sparkles className="w-5 h-5 text-[#7c3aed] group-hover:scale-110 transition-transform" />
                   <span className="text-sm font-medium text-gray-300">
-                    {lang === 'es' ? '¿Quieres descargar clips de Twitch?' : 'Looking to download Twitch clips?'} <span className="text-[#7c3aed] font-bold">Try TwitchBolt →</span>
+                    {t.twitchCrossSell || 'Looking to download Twitch clips?'} <span className="text-[#7c3aed] font-bold">{t.twitchCrossSellCta || 'Try TwitchBolt'} →</span>
                   </span>
                </a>
             </div>
@@ -437,6 +509,75 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                 </div>
             </section>
             </motion.div>
+
+            <AdBanner id="adsense-kickbolt-mid" className="mt-32 w-full max-w-4xl" />
+
+            {/* How it works ------------------------------------------------- */}
+            <section id="how-it-works" className="mt-32 w-full max-w-6xl space-y-10 scroll-mt-32">
+              <h2 className="text-3xl md:text-4xl font-[900] uppercase italic tracking-tighter text-white text-center">
+                {t.howTitle || 'How it works'}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {[
+                  { art: StepPaste, title: t.step1Title, text: t.step1Text },
+                  { art: StepPick, title: t.step2Title, text: t.step2Text },
+                  { art: StepFetch, title: t.step3Title, text: t.step3Text },
+                  { art: StepSave, title: t.step4Title, text: t.step4Text },
+                ].map((step, i) => (
+                  <div key={i} className="bg-[#111114] border border-white/5 rounded-[2rem] p-5 space-y-4">
+                    <step.art />
+                    <h3 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2.5">
+                      <span className="w-5 h-5 rounded-md bg-kick/15 text-kick text-[10px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
+                      {step.title}
+                    </h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{step.text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* Features ----------------------------------------------------- */}
+            <section className="mt-32 w-full max-w-6xl space-y-10">
+              <h2 className="text-3xl md:text-4xl font-[900] uppercase italic tracking-tighter text-white text-center">
+                {t.featuresTitle || 'What it actually does'}
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[
+                  { icon: IconPaste, title: t.feat1Title, text: t.feat1Text },
+                  { icon: IconBulk, title: t.feat2Title, text: t.feat2Text },
+                  { icon: IconQuality, title: t.feat3Title, text: t.feat3Text },
+                  { icon: IconZip, title: t.feat4Title, text: t.feat4Text },
+                  { icon: IconNoLogin, title: t.feat5Title, text: t.feat5Text },
+                  { icon: IconRoute, title: t.feat6Title, text: t.feat6Text },
+                ].map((f, i) => (
+                  <div key={i} className="bg-[#111114] border border-white/5 rounded-[2rem] p-8 space-y-4 hover:bg-[#18181b] transition-all">
+                    <div className="w-10 h-10"><f.icon /></div>
+                    <h3 className="font-black text-white uppercase tracking-widest text-xs">{f.title}</h3>
+                    <p className="text-gray-400 text-sm leading-relaxed">{f.text}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* FAQ ---------------------------------------------------------- */}
+            {Array.isArray(t.faq) && t.faq.length > 0 && (
+              <section className="mt-32 w-full max-w-3xl space-y-8">
+                <h2 className="text-3xl md:text-4xl font-[900] uppercase italic tracking-tighter text-white text-center">
+                  {t.faqTitle || 'Frequently Asked Questions'}
+                </h2>
+                <div className="space-y-3">
+                  {t.faq.map((item: any, i: number) => (
+                    <details key={i} className="group bg-[#111114] border border-white/5 rounded-[1.5rem] overflow-hidden">
+                      <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none text-sm font-bold text-white hover:opacity-80 transition-opacity">
+                        <span>{item.question}</span>
+                        <span className="text-xl leading-none text-kick shrink-0 transition-transform group-open:rotate-45">+</span>
+                      </summary>
+                      <p className="px-6 pb-6 text-sm text-gray-400 leading-relaxed">{item.answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         )}
 
@@ -547,7 +688,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                   if (c.status === 'error') {
                     return (
                       <div key={c.id} className="bg-[#111114]/50 backdrop-blur-3xl border border-red-500/20 rounded-[3rem] p-6 md:p-10 flex items-center justify-between">
-                        <div className="text-red-400 font-medium">Failed to load clip: <span className="text-gray-500 text-sm ml-2">{c.url}</span></div>
+                        <div className="text-red-400 font-medium">{t.failedToLoad} <span className="text-gray-500 text-sm ml-2">{c.url}</span></div>
                         <button onClick={() => setClips(prev => prev.filter(x => x.id !== c.id))} className="w-10 h-10 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center text-red-400 transition-colors cursor-pointer">
                           <X className="w-5 h-5" />
                         </button>

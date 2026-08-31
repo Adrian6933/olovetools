@@ -43,19 +43,9 @@ export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
             </div>
           </div>
         </div>
-        {Array.isArray(t.faq) && t.faq.length > 0 && (
-          <div className="w-full text-left max-w-4xl border-t border-white/5 pt-16">
-            <h2 className="text-white font-black text-2xl mb-8 tracking-tight text-center">{t.faqTitle}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {t.faq.map((item: any, i: number) => (
-                <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl hover:border-emerald-500/20 transition-colors">
-                  <h4 className="text-white font-bold text-base mb-2">{item.question}</h4>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* The FAQ is rendered as a <details> accordion in the page body; a
+            second copy here would duplicate both the heading and the answers. */}
+
         <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-gray-800 font-black text-[11px] md:text-xs tracking-widest pt-12 border-t border-white/5 w-full uppercase">
           <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
           <button onClick={() => onOpenModal('privacy')} className="w-full md:w-auto py-3 md:py-0 border-none bg-transparent hover:text-emerald-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center font-black outline-none">{legalTranslations[lang]?.nav.privacy || 'Privacy Policy'}</button>

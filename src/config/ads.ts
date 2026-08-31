@@ -17,8 +17,14 @@ export const AD_CLIENT = 'ca-pub-4601581729676999';
 export const AD_SLOTS = {
   /** Banner horizontal encima del contenido principal de la herramienta */
   top: '7309881476',
-  /** Banner horizontal en medio del flujo (poco usado, solo herramientas largas) */
-  mid: '',
+  /**
+   * Banner horizontal en medio del flujo (6 herramientas largas: audiosnap,
+   * clip-flow, favicon-bolt, graph-flow, lottie-viewer, svg-optimizer).
+   * No tiene unidad propia en AdSense: reutiliza olove-content, que es el
+   * mismo formato (display responsive in-content). Si algún día quieres
+   * separar métricas, crea "olove-mid" (Display / responsive) y pega el id.
+   */
+  mid: '1164522366',
   /** Banner horizontal al final, tras el contenido/FAQ */
   late: '6336957990',
   /** Rectángulo 300x250 sticky junto a la sección SEO/FAQ, en las 60 herramientas */

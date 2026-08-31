@@ -1,9 +1,9 @@
 export default {
   "title": "TimeBolt",
-  "seo_title": "TimeBolt | Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
-  "seo_description": "Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
+  "seo_title": "Horloge mondiale et planificateur de réunions entre fuseaux",
+  "seo_description": "Horloge mondiale et planificateur de réunions gratuits. Ajoutez n'importe lequel des ~400 fuseaux IANA que connaît votre navigateur, voyez les 24 heures côte à côte avec les heures de travail ombrées, soyez prévenu si l'heure change ce jour-là, et exportez la réunion en fichier .ics. Tout tourne dans votre navigateur et vos fuseaux sont mémorisés.",
   "seoHeroTitle": "TimeBolt",
-  "seoHeroText": "Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
+  "seoHeroText": "Ajoutez les lieux d'où travaille votre équipe et voyez les vingt-quatre heures d'un coup, heures de travail ombrées et décompte de qui est réveillé dans chaque colonne. Il vous prévient si un fuseau change d'heure ce jour-là et vous donne un .ics pour le créneau choisi.",
   "section_world_clocks": "Horloges Mondiales",
   "button_close": "Fermer",
   "button_add_timezone": "Ajouter un fuseau horaire",
@@ -26,37 +26,94 @@ export default {
   "planner_yesterday": "Hier",
   "planner_source_tag": "Source",
   "tooltip_copy": "Copier",
-  "seoBrowserSpeedTitle": "Traitement Local Instantané",
-  "seoBrowserSpeedText": "Tout le traitement est exécuté dans votre navigateur via les API JavaScript natives. Aucune donnée n'est jamais envoyée à un serveur.",
-  "seoUseCaseTitle": "100% Côté Client",
-  "seoUseCaseText": "Tout s'exécute localement dans votre navigateur. Vos données ne quittent jamais votre appareil.",
+  "seoBrowserSpeedTitle": "Votre navigateur connaît déjà les règles",
+  "seoBrowserSpeedText": "Chaque navigateur embarque la base IANA des fuseaux horaires, règles historiques et dates de changement d'heure comprises. Cet outil la lit directement : aucun serveur à interroger, rien à télécharger, et aucune liste qui se périme quand un pays change d'avis sur l'heure d'été.",
+  "seoUseCaseTitle": "Équipes réparties, appels et voyages",
+  "seoUseCaseText": "Trouvez la seule heure qui n'est le milieu de la nuit pour personne, vérifiez à quelle heure votre appel tombe pour un collègue à Bogotá, ou déterminez si le vol réservé arrive avant ou après le passage à l'heure d'été.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
   "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
   "seoKeywords": [
-    "time bolt",
-    "outil en ligne",
-    "gratuit",
-    "local",
-    "navigateur"
+    "horloge mondiale",
+    "planificateur de réunion fuseaux horaires",
+    "chevauchement de fuseaux",
+    "convertisseur de fuseau horaire",
+    "export réunion ics",
+    "vérifier heure d'été"
   ],
   "faqTitle": "Questions Fréquentes",
   "faq": [
     {
       "question": "Mes données sont-elles envoyées à un serveur ?",
-      "answer": "Non. Toutes les opérations se déroulent entièrement dans votre navigateur. Vos données ne quittent jamais votre appareil."
+      "answer": "Non. Les règles de fuseaux viennent de votre propre navigateur et tout est calculé dans la page. La seule chose conservée est la liste des fuseaux ajoutés, en local, pour la retrouver la prochaine fois."
     },
     {
-      "question": "Combien de fuseaux horaires puis-je ajouter à la fois ?",
-      "answer": "Vous pouvez ajouter autant de fuseaux horaires que nécessaire depuis la liste recherchable de plus de 80 villes dans le monde, et le Planificateur de Réunions affichera l'heure locale correspondante pour chacun."
+      "question": "Combien de fuseaux puis-je ajouter ?",
+      "answer": "Tous ceux que connaît votre navigateur : environ 400 fuseaux IANA. Cherchez par ville, pays ou identifiant ; les accents sont ignorés, donc « bogota » trouve Bogotá et « beijing » trouve Asia/Shanghai."
     },
     {
-      "question": "TimeBolt tient-il compte de l'heure d'été ?",
-      "answer": "Oui. TimeBolt utilise l'API Intl native de votre navigateur, qui gère automatiquement l'heure d'été et les changements historiques de décalage pour chaque fuseau horaire."
+      "question": "Que signifie le nombre au-dessus de chaque colonne ?",
+      "answer": "Combien de vos lieux sont dans les heures de travail à ce moment-là. La colonne au chiffre le plus élevé est mise en avant : c'est généralement le créneau que vous cherchiez."
+    },
+    {
+      "question": "Que se passe-t-il le jour du changement d'heure ?",
+      "answer": "Vous recevez un avertissement nommant les fuseaux qui changent ce jour-là, avec les décalages avant et après. Et si vous choisissez une heure que les horloges sautent, l'outil dit que cette heure n'existe pas au lieu de déplacer discrètement votre réunion."
+    },
+    {
+      "question": "Puis-je mettre la réunion dans mon agenda ?",
+      "answer": "Oui. Le bouton .ics construit un fichier d'agenda standard dans la page, avec le début en UTC et toutes les heures locales dans la description : il s'ouvre dans Google Agenda, Outlook, Calendrier d'Apple ou tout ce qui lit iCalendar."
     }
   ],
-  "footerTagline": "Convertit l'heure entre les fuseaux horaires mondiaux avec un planificateur de réunions interactif 100% localement.",
+  "footerTagline": "Une horloge mondiale avec une vraie grille de chevauchement, honnête sur l'heure d'été et capable de vous donner un .ics.",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "heroBadge": "Tourne dans votre navigateur",
+  "heroSecondary": "Voir comment ça marche",
+  "clear": "Effacer",
+  "remove": "Retirer",
+  "isReference": "Fuseau de référence",
+  "makeReference": "Utiliser comme référence",
+  "nextDay": "(+1 jour)",
+  "prevDay": "(−1 jour)",
+  "zoneCount": "{shown} sur {total} fuseaux — tapez pour affiner",
+  "workingHours": "Heures de travail",
+  "workStart": "Début des heures de travail",
+  "workEnd": "Fin des heures de travail",
+  "duration": "Durée (min)",
+  "legendWork": "Heures de travail {a}-{b}",
+  "legendEarly": "Tôt",
+  "legendEvening": "Soirée",
+  "legendNight": "Nuit",
+  "skippedHour": "Ce jour-là, {h}:00 n'existe pas à {z} : les horloges sautent directement par-dessus.",
+  "dstWarningTitle": "Changement d'heure ce jour-là",
+  "dstWarningLine": "{city} : {from} devient {to}",
+  "summaryTitle": "La réunion, partout",
+  "copyTimes": "Copier les horaires",
+  "copied": "Copié",
+  "downloadIcs": "Télécharger le .ics",
+  "meetingTitle": "Réunion",
+  "howTitle": "Comment ça marche",
+  "step1Title": "Ajoutez les lieux",
+  "step1Text": "Cherchez n'importe quelle ville ou fuseau que connaît votre navigateur — environ 400, pas une courte liste figée.",
+  "step2Title": "Lisez le chevauchement",
+  "step2Text": "Vingt-quatre colonnes, une ligne par lieu. Le vert correspond aux heures de travail, et le chiffre du haut compte qui est au bureau.",
+  "step3Title": "Surveillez les changements d'heure",
+  "step3Text": "Si un fuseau change d'heure ce jour-là, ou si l'heure choisie n'existe pas, il le signale.",
+  "step4Title": "Envoyez-le",
+  "step4Text": "Copiez les horaires en texte, ou téléchargez un .ics à glisser dans n'importe quel agenda.",
+  "featuresTitle": "Ce qu'il fait vraiment",
+  "feat1Title": "Une vraie grille de chevauchement",
+  "feat1Text": "Chaque heure de la journée face à chaque lieu d'un coup : le bon créneau se voit au lieu de se calculer à la main.",
+  "feat2Title": "Tous les fuseaux, pas une liste courte",
+  "feat2Text": "Toute la liste IANA de votre navigateur, cherchable par ville, pays ou identifiant, accents ignorés.",
+  "feat3Title": "Honnête sur l'heure d'été",
+  "feat3Text": "Prévient quand les horloges bougent ce jour-là et ne fait pas semblant que l'heure sautée existe.",
+  "feat4Title": "Directement dans un agenda",
+  "feat4Text": "Un fichier .ics construit dans la page, avec toutes les heures locales dans la description.",
+  "feat5Title": "Retient vos lieux",
+  "feat5Text": "La liste des fuseaux est conservée dans votre navigateur : elle sera encore là demain.",
+  "feat6Title": "Ne quitte jamais la page",
+  "feat6Text": "Les données de fuseaux viennent de votre propre navigateur. Rien n'est téléversé ni pisté.",
+  "scrollTop": "Retour en haut"
 };

@@ -23,16 +23,20 @@ export default {
   "pasteMore": "粘贴更多图像以添加它们",
   "features": [
     {
-      "title": "极速",
-      "text": "无需上传，无需等待。本地处理。"
+      "title": "只有你要求时才粘贴",
+      "text": "Ctrl+V、拖入，或点粘贴按钮。旧版本在页面加载时读取剪贴板，并在每次标签页重新获得焦点时再读一次；现在，在你按下之前什么都不会读。"
     },
     {
-      "title": "私密",
-      "text": "图像永远不会离开您的浏览器。"
+      "title": "真正写得出来的格式",
+      "text": "PNG、JPG、WebP 和 AVIF，每一种都先编码一个真实像素来验证：没有 AVIF 编码器的浏览器不会报错，而是返回一个标签错误的 PNG，只有这项检测能抓到它。"
     },
     {
-      "title": "高分辨率",
-      "text": "保持剪贴板的原始质量。"
+      "title": "批量转换而不卡死",
+      "text": "编码在 Web Worker 中对转移过去的位图进行，页面保持可用，进度计数也是真实的。可以只挑几张，也可以全选。"
+    },
+    {
+      "title": "读得懂你手机真正拍出的东西",
+      "text": "iPhone 的 HEIC 和 HEIF、TIFF、SVG、GIF 和 AVIF，并应用 EXIF 旋转，竖拍照片不会被转成横躺的。"
     }
   ],
   "footerCredit": "oLoveTools 系列工具",
@@ -41,9 +45,9 @@ export default {
   "seoHeroText": "只需按 Ctrl+V，即可立即下载图像。",
   "seo_description": "使用 Ctrl+V 粘贴截图，几秒内即可下载为 PNG、JPG 或 WebP。免费、私密、无需上传服务器、无需注册，全部在浏览器本地完成。",
   "seoHeroList": [
-    "无需注册",
-    "支持多图粘贴",
-    "保持原始分辨率"
+    "PNG、JPG、WebP 和 AVIF，质量由你决定",
+    "HEIC、TIFF、SVG 和 GIF 在导入时即可读取",
+    "不上传任何内容，也不会未经允许读取剪贴板"
   ],
   "seoBrowserSpeedTitle": "浏览器本地处理",
   "seoBrowserSpeedText": "所有操作都在本地完成，您的数据永不上传。",
@@ -72,20 +76,28 @@ export default {
   "faqTitle": "常见问题",
   "faq": [
     {
-      "question": "它是免费的吗？",
-      "answer": "是的，PasteSnap 完全免费。"
+      "question": "PasteSnap 会自己读取我的剪贴板吗?",
+      "answer": "现在不会了。旧版本在页面加载时调用 Clipboard API，并在每次窗口获得焦点时再调用一次，所以回到标签页就会把你复制的东西拉进来。现在只有你点击粘贴，或自己按 Ctrl+V 时才会读取。"
     },
     {
-      "question": "我的数据安全吗？",
-      "answer": "绝对安全。您的图像永远不会离开您的浏览器。"
+      "question": "我可以转换成哪些格式?",
+      "answer": "PNG、JPG、WebP，以及在浏览器支持时的 AVIF。支持与否是通过真正编码一张一像素的图片、再检查返回的类型来判定的，因为没有 AVIF 编码器的浏览器不会报错，而是返回一个标称 AVIF 的 PNG。"
     },
     {
-      "question": "支持哪些格式？",
-      "answer": "我们支持所有标准图像格式，每张图片都可以下载为 PNG、JPG 或 WebP。"
+      "question": "为什么我的 iPhone 照片以前用不了?",
+      "answer": "HEIC 能通过简单的 `image/*` 判断，但没有桌面浏览器能解码它，所以旧版本会不加说明地添加一个损坏的条目。现在 HEIC 和 HEIF 在导入时会经过转换器，TIFF 和 SVG 也一样。"
     },
     {
-      "question": "我需要注册吗？",
-      "answer": "不需要注册。"
+      "question": "我的图片会被上传到什么地方吗?",
+      "answer": "不会。解码、转换和打包 ZIP 全部在你的浏览器里完成，全程没有任何服务器请求，关闭标签页后一切都会丢弃。"
+    },
+    {
+      "question": "转换一大批会让页面卡死吗?",
+      "answer": "不会。编码在 Web Worker 中运行，每张图片以转移的位图形式传入，线程之间不复制像素，计数推进时页面依然可以操作。"
+    },
+    {
+      "question": "我该选什么质量?",
+      "answer": "对于要分享的截图，80% 左右的 WebP 通常只有同等 JPEG 的一小部分体积，而且看不出差别。需要精确像素或透明度时，请继续用 PNG。"
     }
   ],
   "footerTagline": "助力您的构建、设计与创作。",
@@ -100,5 +112,44 @@ export default {
   "privacyContent": "您的隐私对我们很重要。\n\n我们仅收集提供服务所需的信息。这包括有关您的浏览器和设备的技术数据，以确保工具正常运行。\n\n我们绝不存储、跟踪或分析您的图像。所有处理都在您的浏览器中本地完成，确保您的数据永远不会离开您的设备。",
   "termsContent": "使用 PasteSnap 即表示您同意这些条款。\n\n1. 本工具按“原样”提供，不提供任何形式的保证。\n2. 对于因使用本工具而导致的任何数据丢失或问题，我们概不负责。\n3. 您对使用本工具处理的内容负责。\n4. 我们保留随时修改这些条款的权利。",
   "cookiesContent": "我们使用 Cookie 来改善您的体验。\n\n1. 必要 Cookie：网站基本功能所必需。\n2. 首选项 Cookie：用于记住您的语言和 Cookie 同意设置。\n\n您可以随时通过浏览器设置管理或禁用 Cookie。",
-  "contact": "联系我们"
+  "contact": "联系我们",
+  "heroBadge": "从剪贴板到图像文件",
+  "acceptedHint": "PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG",
+  "clipboardUnsupported": "此浏览器无法读取剪贴板，请改用 Ctrl+V。",
+  "clipboardEmpty": "剪贴板中没有图像。",
+  "clipboardDenied": "浏览器阻止了剪贴板访问，请改用 Ctrl+V。",
+  "rejectedTitle": "未添加",
+  "rejectUnsupported": "不是图像",
+  "rejectDecode": "无法解码",
+  "rejectTooBig": "超过 40 MB",
+  "selectAll": "全选",
+  "removeBtn": "移除",
+  "expand": "放大",
+  "close": "关闭",
+  "decodedNote": "导入时已转换",
+  "copyFail": "浏览器阻止了剪贴板访问。",
+  "backToTop": "回到顶部",
+  "labelFormat": "输出格式",
+  "formatUnavailable": "你的浏览器无法编码此格式",
+  "labelQuality": "质量",
+  "qualityHint": "低于 85% 通常看不出差别，但文件小得多。",
+  "labelMaxSize": "最长边",
+  "sizeOriginal": "原始",
+  "labelFlatten": "将透明部分压平到",
+  "flattenHint": "JPEG 没有透明通道，所以透明像素需要一个底色。",
+  "convertedLabel": "已转换",
+  "howTitle": "工作原理",
+  "howStep1Title": "粘贴、拖入或选择",
+  "howStep1Text": "截图用 Ctrl+V，文件直接拖入，或点粘贴按钮。在你主动要求之前不会读取剪贴板：PasteSnap 不再在标签页重新获得焦点时自行取用。",
+  "howStep2Title": "选择格式和质量",
+  "howStep2Text": "PNG、JPG、WebP，以及在浏览器确实支持编码时的 AVIF —— 这是通过实际编码一个像素来检测的，因为没有 AVIF 编码器的浏览器不会报错，而是悄悄返回 PNG。设定质量和最长边，即可看到转换前后的体积。",
+  "howStep3Title": "下载或转给下一个工具",
+  "howStep3Text": "单张、所选，或整个图库打包成 ZIP。可直接复制到剪贴板，也可不必下载再上传，就把结果转给 CompressSnap、CropSnap 或 CleanSnap。",
+  "nextStepTitle": "继续",
+  "nextStepHint": "图像随你转移，无需重新上传",
+  "nextCompress": "压缩",
+  "nextCrop": "裁剪",
+  "nextClean": "擦除对象",
+  "nextWatermark": "添加水印",
+  "nextMeme": "做成表情包",
 };

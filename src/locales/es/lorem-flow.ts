@@ -1,52 +1,98 @@
 export default {
   "title": "LoremFlow",
-  "seo_title": "LoremFlow | Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente.",
-  "seo_description": "Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente en tu navegador.",
+  "seo_title": "Generador de texto de relleno en ocho alfabetos",
+  "seo_description": "Generador de texto de relleno gratis. El Lorem ipsum clásico más español, japonés, chino, ruso, hindi, griego y árabe, por párrafos, frases, palabras o un número exacto de caracteres. Con semilla el resultado es repetible, y puedes exportar texto plano, HTML o Markdown con títulos y listas. Todo en tu navegador.",
   "seoHeroTitle": "LoremFlow",
-  "seoHeroText": "Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente en tu navegador.",
+  "seoHeroText": "Texto de relleno en ocho alfabetos, no solo latín: prueba una maqueta con el japonés, el ruso o el árabe que de verdad va a llevar. Pide párrafos, palabras o un número exacto de caracteres, fija el resultado con una semilla para que vuelva idéntico, y expórtalo como texto, HTML o Markdown.",
   "label_unit_type": "Tipo de unidad",
   "label_count": "Cantidad",
   "label_start_lorem": "Empezar con \"Lorem ipsum\"",
   "button_generate": "Generar",
   "label_output": "Texto generado",
   "label_words": "Palabras",
-  "message_empty": "Pulsa Generar para crear texto Lorem Ipsum.",
+  "message_empty": "Pulsa Generar para crear texto de relleno.",
   "label_total_words": "Palabras totales",
   "message_copied": "¡Copiado!",
   "button_copy": "Copiar",
   "button_download": "Descargar .txt",
   "button_reset": "Restablecer",
-  "seoBrowserSpeedTitle": "Procesamiento Local Instantáneo",
-  "seoBrowserSpeedText": "Todo el procesamiento se ejecuta dentro de tu navegador usando APIs nativas de JavaScript. Ningún dato se envía a un servidor.",
-  "seoUseCaseTitle": "100% del Lado del Cliente",
-  "seoUseCaseText": "Todo se ejecuta localmente en tu navegador. Tus datos nunca salen de tu dispositivo.",
+  "seoBrowserSpeedTitle": "El relleno en latín esconde problemas reales",
+  "seoBrowserSpeedText": "El japonés y el chino cortan línea entre caracteres y no entre palabras, el árabe va de derecha a izquierda y liga sus letras, el hindi apila signos sobre la línea y las palabras rusas son simplemente más largas. Una maqueta que se ve bien llena de Lorem ipsum puede romperse con cualquiera de ellos, y por eso aquí el relleno está escrito en el alfabeto que de verdad vas a publicar.",
+  "seoUseCaseTitle": "Maquetas, pruebas y capturas",
+  "seoUseCaseText": "Rellena una tarjeta con exactamente los 240 caracteres que permite el diseño, comprueba que un titular aguanta traducido al ruso, alimenta con un fichero fijo una prueba que no debe cambiar entre ejecuciones, o pega el HTML directamente en una plantilla para ver las etiquetas reales en su sitio.",
   "seoPrivacyTitle": "100% Privado y Seguro",
   "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
   "seoKeywords": [
-    "lorem flow",
-    "herramienta online",
-    "gratis",
-    "local",
-    "navegador"
+    "generador lorem ipsum",
+    "texto de relleno",
+    "texto de prueba japonés",
+    "texto de relleno árabe",
+    "lorem ipsum con semilla",
+    "lorem ipsum html"
   ],
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
       "question": "¿Se envían mis datos a algún servidor?",
-      "answer": "No. Todas las operaciones se realizan completamente dentro de tu navegador. Tus datos nunca salen de tu dispositivo."
+      "answer": "No. Las listas de palabras vienen con la página y el texto se construye en tu navegador. No se descarga, ni se sube, ni se guarda nada."
     },
     {
-      "question": "¿Puedo elegir cuánto texto genera LoremFlow?",
-      "answer": "Sí. Puedes generar entre 1 y 100 unidades, eligiendo si cada unidad es un párrafo, una frase o una sola palabra, y opcionalmente empezar con la apertura clásica Lorem ipsum."
+      "question": "¿Por qué ofrecer alfabetos además del latino?",
+      "answer": "Porque una maqueta solo se demuestra contra el texto que va a llevar de verdad. El japonés y el chino cortan línea entre caracteres, el árabe se escribe de derecha a izquierda, el hindi pone signos sobre la línea y las palabras rusas son más largas que las inglesas. El Lorem ipsum esconde los cuatro problemas."
     },
     {
-      "question": "¿Puedo descargar el texto generado como archivo?",
-      "answer": "Sí. Tras generar texto, haz clic en Descargar .txt para guardar la salida como archivo de texto plano listo para pegar en tus diseños o maquetas."
+      "question": "¿Para qué sirve la semilla?",
+      "answer": "Hace que la salida sea repetible. Con una semilla, los mismos ajustes producen siempre exactamente el mismo texto, que es lo que quieres para una captura que quizá tengas que repetir o para datos de prueba que no deben cambiar entre ejecuciones."
+    },
+    {
+      "question": "¿De verdad obtengo el número exacto de palabras que pido?",
+      "answer": "Sí. Las palabras y los caracteres se recortan al número que has escrito, no se redondean al final de la frase, y se limpia la coma final para que el resultado siga leyéndose como una frase."
+    },
+    {
+      "question": "¿Puedo obtener HTML en vez de texto plano?",
+      "answer": "Sí: HTML con etiquetas p, h2, h3 y ul de verdad, o Markdown con la misma estructura. Activa los títulos y listas y tendrás una maqueta con forma de artículo en vez de un bloque gris. La salida en árabe lleva dir=\"rtl\" para que la dirección sobreviva al pegado."
     }
   ],
-  "footerTagline": "Genera texto de relleno Lorem Ipsum por párrafos, frases o palabras 100% localmente en tu navegador.",
+  "footerTagline": "Texto de relleno en ocho alfabetos, con cantidades exactas, semilla para resultados repetibles y exportación a HTML o Markdown.",
   "footerCredit": "Parte de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
-  "contactForIdeas": "Contacto para ideas y comentarios:"
+  "contactForIdeas": "Contacto para ideas y comentarios:",
+  "heroBadge": "Funciona en tu navegador",
+  "heroSecondary": "Cómo funciona",
+  "label_script": "Alfabeto",
+  "label_format": "Formato",
+  "label_seed": "Semilla (opcional)",
+  "seedPlaceholder": "vacío = distinto cada vez",
+  "newSeed": "Nueva semilla",
+  "label_rich": "Añadir títulos y listas",
+  "unit_paragraphs": "Párrafos",
+  "unit_sentences": "Frases",
+  "unit_words": "Palabras",
+  "unit_characters": "Caracteres",
+  "format_text": "Texto plano",
+  "statsLine": "{w} palabras · {c} caracteres · {p} párrafos",
+  "howTitle": "Cómo funciona",
+  "step1Title": "Elige el alfabeto",
+  "step1Text": "Latín, español, japonés, chino, ruso, hindi, griego o árabe: palabras de verdad, no ruido generado.",
+  "step2Title": "Di cuánto",
+  "step2Text": "Párrafos, frases, palabras o un número exacto de caracteres, que es lo que suele pedir un encargo de diseño.",
+  "step3Title": "Fíjalo con una semilla",
+  "step3Text": "Escribe cualquier semilla y el mismo texto vuelve siempre, así una captura se puede reproducir.",
+  "step4Title": "Llévatelo como lo necesites",
+  "step4Text": "Texto plano, HTML con etiquetas de verdad o Markdown: cópialo o descarga el archivo.",
+  "featuresTitle": "Lo que hace de verdad",
+  "feat1Title": "Ocho alfabetos, no uno",
+  "feat1Text": "Un bloque en latín no te dice nada de cómo aguanta una maqueta el japonés o el árabe. Aquí puedes probarlo con el texto de verdad.",
+  "feat2Title": "De derecha a izquierda incluido",
+  "feat2Text": "La salida en árabe se marca como RTL, en el cuadro y en el HTML exportado, así que la dirección forma parte de la prueba.",
+  "feat3Title": "Salida repetible",
+  "feat3Text": "La semilla hace el texto determinista: la misma semilla da exactamente los mismos párrafos.",
+  "feat4Title": "Cantidades exactas",
+  "feat4Text": "Pide 240 caracteres o 75 palabras y eso es lo que sale, cortado limpio en vez de redondeado a la frase entera.",
+  "feat5Title": "Texto, HTML, Markdown",
+  "feat5Text": "Con títulos y listas opcionales, para maquetar un artículo entero y no solo un bloque gris.",
+  "feat6Title": "Nunca sale de la página",
+  "feat6Text": "Se genera en tu navegador a partir de una lista de palabras incluida. No se descarga ni se sube nada.",
+  "scrollTop": "Volver arriba"
 };

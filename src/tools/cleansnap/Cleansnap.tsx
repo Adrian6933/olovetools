@@ -1,479 +1,142 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Eraser,
-  Paintbrush,
-  Square,
-  Circle,
-  Upload,
-  Download,
-  Undo2,
-  RotateCcw,
-  Trash2,
-  Wand2,
-  Sparkles,
-  Loader2,
+  Check, Circle, Download, Eraser, Hand, Keyboard, Loader2, Paintbrush,
+  RotateCcw, Redo2, Square, Trash2, Undo2, Wand2, X,
 } from 'lucide-react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
+import EditorStage from './components/EditorStage';
+import FillPanel from './components/FillPanel';
+import NextStepBar from './components/NextStepBar';
+import {
+  HeroArt, IconHistory, IconLocal, IconMask, IconPatch, IconStructure, IconWorker, STEP_ART,
+} from './components/Illustrations';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
-import { motion } from 'framer-motion';
-import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
+import { useHandoffIntake } from '../../lib/useHandoff';
+import { useEditor } from './lib/useEditor';
+import { DEFAULT_FILL } from './lib/types';
+import type { FillSettings, OutputFormat, Tool } from './lib/types';
 
 interface CleansnapProps {
   lang: string;
   dictionary: any;
 }
 
-type Tool = 'brush' | 'eraser' | 'rect' | 'circle';
-type Mode = 'manual' | 'ai';
-type FillMethod = 'content' | 'blur' | 'pixelate';
+const FEATURE_ICONS = [IconPatch, IconStructure, IconWorker, IconMask, IconLocal, IconHistory];
 
-const MASK_RGBA = 'rgba(139,92,246,1)';
-const MAX_DIM = 1920;
-
-// ---------------------------------------------------------------------------
-// Local inpainting helpers (100% client-side, no upload, no model download)
-// ---------------------------------------------------------------------------
-
-function boundingBox(sel: Uint8Array, W: number, H: number) {
-  let minX = W, minY = H, maxX = -1, maxY = -1, any = false;
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
-      if (sel[y * W + x]) {
-        any = true;
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-      }
-    }
-  }
-  return { any, minX, minY, maxX, maxY };
-}
-
-// Heat-diffusion (content-aware) inpainting restricted to the masked bounding box
-function diffusionInpaint(img: ImageData, sel: Uint8Array, W: number, H: number, smart: boolean) {
-  const bb = boundingBox(sel, W, H);
-  if (!bb.any) return;
-  const pad = smart ? 6 : 3;
-  const x0 = Math.max(0, bb.minX - pad);
-  const y0 = Math.max(0, bb.minY - pad);
-  const x1 = Math.min(W - 1, bb.maxX + pad);
-  const y1 = Math.min(H - 1, bb.maxY + pad);
-  const bw = x1 - x0 + 1;
-  const bh = y1 - y0 + 1;
-  const data = img.data;
-
-  const r = new Float32Array(bw * bh);
-  const g = new Float32Array(bw * bh);
-  const b = new Float32Array(bw * bh);
-  const mk = new Uint8Array(bw * bh);
-
-  for (let y = 0; y < bh; y++) {
-    for (let x = 0; x < bw; x++) {
-      const gi = (y0 + y) * W + (x0 + x);
-      const li = y * bw + x;
-      r[li] = data[gi * 4];
-      g[li] = data[gi * 4 + 1];
-      b[li] = data[gi * 4 + 2];
-      mk[li] = sel[gi];
-    }
-  }
-
-  const span = Math.max(bw, bh);
-  const iters = smart
-    ? Math.min(1200, Math.max(250, span * 3))
-    : Math.min(500, Math.max(100, span));
-
-  for (let it = 0; it < iters; it++) {
-    for (let y = 0; y < bh; y++) {
-      for (let x = 0; x < bw; x++) {
-        const li = y * bw + x;
-        if (!mk[li]) continue;
-        let sr = 0, sg = 0, sb = 0, c = 0;
-        if (x > 0) { const n = li - 1; sr += r[n]; sg += g[n]; sb += b[n]; c++; }
-        if (x < bw - 1) { const n = li + 1; sr += r[n]; sg += g[n]; sb += b[n]; c++; }
-        if (y > 0) { const n = li - bw; sr += r[n]; sg += g[n]; sb += b[n]; c++; }
-        if (y < bh - 1) { const n = li + bw; sr += r[n]; sg += g[n]; sb += b[n]; c++; }
-        if (c) { r[li] = sr / c; g[li] = sg / c; b[li] = sb / c; }
-      }
-    }
-  }
-
-  for (let y = 0; y < bh; y++) {
-    for (let x = 0; x < bw; x++) {
-      const li = y * bw + x;
-      if (!mk[li]) continue;
-      const gi = ((y0 + y) * W + (x0 + x)) * 4;
-      data[gi] = r[li];
-      data[gi + 1] = g[li];
-      data[gi + 2] = b[li];
-      data[gi + 3] = 255;
-    }
-  }
-}
-
-function blurFill(img: ImageData, sel: Uint8Array, W: number, H: number) {
-  const bb = boundingBox(sel, W, H);
-  if (!bb.any) return;
-  const data = img.data;
-  const src = new Uint8ClampedArray(data); // sample from a snapshot
-  const k = 9;
-  for (let y = bb.minY; y <= bb.maxY; y++) {
-    for (let x = bb.minX; x <= bb.maxX; x++) {
-      if (!sel[y * W + x]) continue;
-      let sr = 0, sg = 0, sb = 0, c = 0;
-      for (let dy = -k; dy <= k; dy += 2) {
-        for (let dx = -k; dx <= k; dx += 2) {
-          const nx = x + dx, ny = y + dy;
-          if (nx < 0 || ny < 0 || nx >= W || ny >= H) continue;
-          if (sel[ny * W + nx]) continue; // only sample from outside the mask
-          const ni = (ny * W + nx) * 4;
-          sr += src[ni]; sg += src[ni + 1]; sb += src[ni + 2]; c++;
-        }
-      }
-      const gi = (y * W + x) * 4;
-      if (c) { data[gi] = sr / c; data[gi + 1] = sg / c; data[gi + 2] = sb / c; data[gi + 3] = 255; }
-    }
-  }
-}
-
-function pixelateFill(img: ImageData, sel: Uint8Array, W: number, H: number) {
-  const bb = boundingBox(sel, W, H);
-  if (!bb.any) return;
-  const data = img.data;
-  const block = Math.max(8, Math.round(Math.max(bb.maxX - bb.minX, bb.maxY - bb.minY) / 14));
-  for (let by = bb.minY; by <= bb.maxY; by += block) {
-    for (let bx = bb.minX; bx <= bb.maxX; bx += block) {
-      let sr = 0, sg = 0, sb = 0, c = 0;
-      for (let y = by; y < Math.min(by + block, H); y++) {
-        for (let x = bx; x < Math.min(bx + block, W); x++) {
-          const i = (y * W + x) * 4;
-          sr += data[i]; sg += data[i + 1]; sb += data[i + 2]; c++;
-        }
-      }
-      if (!c) continue;
-      const ar = sr / c, ag = sg / c, ab = sb / c;
-      for (let y = by; y < Math.min(by + block, H); y++) {
-        for (let x = bx; x < Math.min(bx + block, W); x++) {
-          if (!sel[y * W + x]) continue;
-          const i = (y * W + x) * 4;
-          data[i] = ar; data[i + 1] = ag; data[i + 2] = ab; data[i + 3] = 255;
-        }
-      }
-    }
-  }
-}
+const FORMATS: { id: OutputFormat; label: string; ext: string }[] = [
+  { id: 'image/png', label: 'PNG', ext: 'png' },
+  { id: 'image/jpeg', label: 'JPG', ext: 'jpg' },
+  { id: 'image/webp', label: 'WEBP', ext: 'webp' },
+];
 
 export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
   const t = dictionary || {};
-  const prefersReduced = useReducedMotion();
+  const ui = t.ui || {};
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [fileName, setFileName] = useState('');
+  const editor = useEditor();
+  const {
+    work, mask, image, version, load, close, apply, cancel, clearMask, invertMask,
+    undo, redo, reset, toBlob, bump, busy, loading, progress, lastMs, error, setError,
+    canUndo, canRedo,
+  } = editor;
+
   const [tool, setTool] = useState<Tool>('brush');
-  const [mode, setMode] = useState<Mode>('manual');
-  const [fillMethod, setFillMethod] = useState<FillMethod>('content');
   const [brushSize, setBrushSize] = useState(40);
-  const [processing, setProcessing] = useState(false);
-  const [canUndo, setCanUndo] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
+  const [settings, setSettings] = useState<FillSettings>(DEFAULT_FILL);
+  const [format, setFormat] = useState<OutputFormat>('image/png');
+  const [quality, setQuality] = useState(92);
+  const [dragging, setDragging] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
 
-  const viewRef = useRef<HTMLCanvasElement>(null);
-  const workRef = useRef<HTMLCanvasElement | null>(null);
-  const maskRef = useRef<HTMLCanvasElement | null>(null);
-  const originalRef = useRef<HTMLCanvasElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const historyRef = useRef<ImageData[]>([]);
-  const drawingRef = useRef(false);
-  const startRef = useRef<{ x: number; y: number } | null>(null);
-  const previewRef = useRef<{ x0: number; y0: number; x1: number; y1: number } | null>(null);
+  useHandoffIntake(file => { void load(file); });
 
-  const L = {
-    drop: t.ui_drop || 'Drag & drop an image or click to upload',
-    formats: t.ui_formats || 'JPG · PNG · WebP — never leaves your device',
-    select: t.ui_select || 'Select image',
-    brush: t.ui_brush || 'Brush',
-    eraser: t.ui_eraser || 'Erase selection',
-    rect: t.ui_rect || 'Rectangle',
-    circle: t.ui_circle || 'Circle',
-    size: t.ui_size || 'Brush size',
-    manual: t.ui_manual || 'Manual',
-    ai: t.ui_ai || 'AI mode',
-    method: t.ui_method || 'Fill',
-    contentAware: t.ui_contentAware || 'Content-aware',
-    blur: t.ui_blur || 'Blur',
-    pixelate: t.ui_pixelate || 'Pixelate',
-    remove: t.ui_remove || 'Remove selection',
-    aiRemove: t.ui_aiRemove || 'Smart remove',
-    clearSel: t.ui_clearSel || 'Clear selection',
-    undo: t.ui_undo || 'Undo',
-    reset: t.ui_reset || 'Reset',
-    download: t.ui_download || 'Download',
-    aiNote: t.ui_aiNote || 'Smart content-aware fill — runs locally, nothing is uploaded.',
-    hint: t.ui_hint || 'Paint over the watermark, then press Remove. Use a tight selection for best results.',
-    processing: t.ui_processing || 'Processing…',
-  };
+  const pick = useCallback((files: FileList | null) => {
+    if (files && files[0]) void load(files[0]);
+  }, [load]);
 
-  const renderView = useCallback(() => {
-    const view = viewRef.current;
-    const work = workRef.current;
-    const mask = maskRef.current;
-    if (!view || !work || !mask) return;
-    const ctx = view.getContext('2d');
-    if (!ctx) return;
-    ctx.clearRect(0, 0, view.width, view.height);
-    ctx.drawImage(work, 0, 0);
-    ctx.save();
-    ctx.globalAlpha = 0.45;
-    ctx.drawImage(mask, 0, 0);
-    ctx.restore();
-    const p = previewRef.current;
-    if (p) {
-      ctx.save();
-      ctx.strokeStyle = '#a78bfa';
-      ctx.fillStyle = 'rgba(139,92,246,0.3)';
-      ctx.lineWidth = Math.max(2, view.width / 400);
-      const x = Math.min(p.x0, p.x1), y = Math.min(p.y0, p.y1);
-      const w = Math.abs(p.x1 - p.x0), h = Math.abs(p.y1 - p.y0);
-      if (tool === 'rect') {
-        ctx.fillRect(x, y, w, h);
-        ctx.strokeRect(x, y, w, h);
-      } else {
-        ctx.beginPath();
-        ctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.stroke();
+  // --- Atajos ---------------------------------------------------------------
+  useEffect(() => {
+    if (!image) return;
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (target && /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)) return;
+
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        if (event.shiftKey) redo(); else undo();
+        return;
       }
-      ctx.restore();
-    }
-  }, [tool]);
-
-  const loadFile = useCallback((file: File) => {
-    if (!file.type.startsWith('image/')) return;
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      let w = img.naturalWidth, h = img.naturalHeight;
-      if (Math.max(w, h) > MAX_DIM) {
-        const s = MAX_DIM / Math.max(w, h);
-        w = Math.round(w * s);
-        h = Math.round(h * s);
+      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'y') {
+        event.preventDefault();
+        redo();
+        return;
       }
-      const work = document.createElement('canvas');
-      work.width = w; work.height = h;
-      work.getContext('2d')!.drawImage(img, 0, 0, w, h);
-      workRef.current = work;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
 
-      const original = document.createElement('canvas');
-      original.width = w; original.height = h;
-      original.getContext('2d')!.drawImage(work, 0, 0);
-      originalRef.current = original;
-
-      const mask = document.createElement('canvas');
-      mask.width = w; mask.height = h;
-      maskRef.current = mask;
-
-      historyRef.current = [];
-      setCanUndo(false);
-      setFileName(file.name);
-      setImageLoaded(true);
-      URL.revokeObjectURL(url);
-      requestAnimationFrame(() => {
-        if (viewRef.current) {
-          viewRef.current.width = w;
-          viewRef.current.height = h;
-          renderView();
-        }
-      });
+      const key = event.key.toLowerCase();
+      if (key === 'b') setTool('brush');
+      else if (key === 'e') setTool('eraser');
+      else if (key === 'r') setTool('rect');
+      else if (key === 'c') setTool('circle');
+      else if (key === 'h') setTool('pan');
+      else if (key === '[') setBrushSize(s => Math.max(4, s - 6));
+      else if (key === ']') setBrushSize(s => Math.min(300, s + 6));
+      else if (event.key === 'Enter') { event.preventDefault(); void apply(settings); }
+      else if (event.key === 'Escape') clearMask();
     };
-    img.src = url;
-  }, [renderView]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [image, apply, settings, undo, redo, clearMask]);
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) loadFile(e.target.files[0]);
-    e.target.value = '';
-  };
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files?.[0]) loadFile(e.dataTransfer.files[0]);
-  };
+  // --- Descarga y encadenado ------------------------------------------------
 
-  const getPos = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    const view = viewRef.current!;
-    const rect = view.getBoundingClientRect();
-    return {
-      x: ((e.clientX - rect.left) / rect.width) * view.width,
-      y: ((e.clientY - rect.top) / rect.height) * view.height,
-    };
-  };
+  const baseName = useCallback(() => {
+    if (!image) return 'cleansnap';
+    return (image.name.replace(/\.[^.]+$/, '') || 'cleansnap').replace(/[^a-z0-9-_]+/gi, '_');
+  }, [image]);
 
-  const paintAt = (x: number, y: number) => {
-    const mask = maskRef.current;
-    if (!mask) return;
-    const mctx = mask.getContext('2d')!;
-    mctx.globalCompositeOperation = tool === 'eraser' ? 'destination-out' : 'source-over';
-    mctx.fillStyle = MASK_RGBA;
-    mctx.beginPath();
-    mctx.arc(x, y, brushSize / 2, 0, Math.PI * 2);
-    mctx.fill();
-    mctx.globalCompositeOperation = 'source-over';
-    renderView();
-  };
+  const download = useCallback(async () => {
+    const blob = await toBlob(format, quality);
+    if (!blob) return;
+    const entry = FORMATS.find(f => f.id === format)!;
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${baseName()}_clean.${entry.ext}`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [toBlob, format, quality, baseName]);
 
-  const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!imageLoaded) return;
-    e.currentTarget.setPointerCapture(e.pointerId);
-    drawingRef.current = true;
-    const { x, y } = getPos(e);
-    if (tool === 'brush' || tool === 'eraser') {
-      paintAt(x, y);
-    } else {
-      startRef.current = { x, y };
-      previewRef.current = { x0: x, y0: y, x1: x, y1: y };
-    }
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!drawingRef.current) return;
-    const { x, y } = getPos(e);
-    if (tool === 'brush' || tool === 'eraser') {
-      paintAt(x, y);
-    } else if (startRef.current) {
-      previewRef.current = { x0: startRef.current.x, y0: startRef.current.y, x1: x, y1: y };
-      renderView();
-    }
-  };
-  const onPointerUp = () => {
-    if (!drawingRef.current) return;
-    drawingRef.current = false;
-    const p = previewRef.current;
-    if ((tool === 'rect' || tool === 'circle') && p && maskRef.current) {
-      const mctx = maskRef.current.getContext('2d')!;
-      mctx.fillStyle = MASK_RGBA;
-      const x = Math.min(p.x0, p.x1), y = Math.min(p.y0, p.y1);
-      const w = Math.abs(p.x1 - p.x0), h = Math.abs(p.y1 - p.y0);
-      if (w > 1 && h > 1) {
-        if (tool === 'rect') {
-          mctx.fillRect(x, y, w, h);
-        } else {
-          mctx.beginPath();
-          mctx.ellipse(x + w / 2, y + h / 2, w / 2, h / 2, 0, 0, Math.PI * 2);
-          mctx.fill();
-        }
-      }
-    }
-    previewRef.current = null;
-    startRef.current = null;
-    renderView();
-  };
+  const handoffResult = useCallback(async () => {
+    const blob = await toBlob(format, quality);
+    if (!blob) return null;
+    const entry = FORMATS.find(f => f.id === format)!;
+    return { blob, name: `${baseName()}_clean.${entry.ext}` };
+  }, [toBlob, format, quality, baseName]);
 
-  const clearSelection = () => {
-    const mask = maskRef.current;
-    if (!mask) return;
-    mask.getContext('2d')!.clearRect(0, 0, mask.width, mask.height);
-    renderView();
-  };
+  // --- Datos del diccionario ------------------------------------------------
 
-  const applyRemoval = () => {
-    const work = workRef.current;
-    const mask = maskRef.current;
-    if (!work || !mask || processing) return;
-    const W = work.width, H = work.height;
-    const mctx = mask.getContext('2d')!;
-    const mdata = mctx.getImageData(0, 0, W, H).data;
-    const sel = new Uint8Array(W * H);
-    let any = false;
-    for (let i = 0; i < W * H; i++) {
-      if (mdata[i * 4 + 3] > 10) { sel[i] = 1; any = true; }
-    }
-    if (!any) return;
+  const faqs: any[] = Array.isArray(t.faq) ? t.faq : [];
+  const keywords: string[] = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
+  const steps: any[] = Array.isArray(t.how?.steps) ? t.how.steps : [];
+  const features: any[] = Array.isArray(t.features?.items) ? t.features.items : [];
 
-    setProcessing(true);
-    setTimeout(() => {
-      const wctx = work.getContext('2d')!;
-      const img = wctx.getImageData(0, 0, W, H);
-      // history snapshot (cap to 12)
-      historyRef.current.push(wctx.getImageData(0, 0, W, H));
-      if (historyRef.current.length > 12) historyRef.current.shift();
-      setCanUndo(true);
-
-      if (mode === 'ai') {
-        diffusionInpaint(img, sel, W, H, true);
-      } else if (fillMethod === 'content') {
-        diffusionInpaint(img, sel, W, H, false);
-      } else if (fillMethod === 'blur') {
-        blurFill(img, sel, W, H);
-      } else {
-        pixelateFill(img, sel, W, H);
-      }
-
-      wctx.putImageData(img, 0, 0);
-      mctx.clearRect(0, 0, W, H);
-      renderView();
-      setProcessing(false);
-    }, 30);
-  };
-
-  const undo = () => {
-    const work = workRef.current;
-    const snap = historyRef.current.pop();
-    if (!work || !snap) return;
-    work.getContext('2d')!.putImageData(snap, 0, 0);
-    setCanUndo(historyRef.current.length > 0);
-    renderView();
-  };
-
-  const resetImage = () => {
-    const work = workRef.current;
-    const original = originalRef.current;
-    const mask = maskRef.current;
-    if (!work || !original || !mask) return;
-    work.getContext('2d')!.drawImage(original, 0, 0);
-    mask.getContext('2d')!.clearRect(0, 0, mask.width, mask.height);
-    historyRef.current = [];
-    setCanUndo(false);
-    renderView();
-  };
-
-  const newImage = () => {
-    workRef.current = null;
-    maskRef.current = null;
-    originalRef.current = null;
-    historyRef.current = [];
-    setImageLoaded(false);
-    setFileName('');
-    setCanUndo(false);
-  };
-
-  const download = () => {
-    const work = workRef.current;
-    if (!work) return;
-    const base = (fileName.replace(/\.[^.]+$/, '') || 'cleansnap').replace(/[^a-z0-9-_]+/gi, '_');
-    work.toBlob((blob) => {
-      if (!blob) return;
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `${base}_clean.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(a.href);
-    }, 'image/png');
-  };
-
-  useEffect(() => () => { /* canvases are GC'd; object URLs revoked on load */ }, []);
-
-  const toolBtn = (id: Tool, icon: React.ReactNode, label: string) => (
+  const toolButton = (id: Tool, icon: React.ReactNode, label: string, shortcut: string) => (
     <button
+      key={id}
+      type="button"
       onClick={() => setTool(id)}
-      title={label}
+      title={`${label} (${shortcut})`}
       aria-label={label}
-      className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
-        tool === id ? 'bg-violet-500/20 border-violet-500/40 text-violet-300' : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
+      aria-pressed={tool === id}
+      className={`p-2.5 rounded-xl border transition-colors cursor-pointer ${
+        tool === id
+          ? 'bg-violet-500/20 border-violet-500/40 text-violet-300'
+          : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
       }`}
     >
       {icon}
@@ -487,165 +150,308 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
 
       <Header
         currentLang={lang}
-        onLanguageChange={(l) => (window.location.href = `/${l.toLowerCase()}/cleansnap`)}
-        onReset={newImage}
+        onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/cleansnap`)}
+        onReset={close}
         t={t}
       />
 
-      <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-8 py-8 relative z-10 flex flex-col space-y-8">
-        <div className="text-center md:text-left space-y-2">
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
-            <Eraser className="w-8 h-8 text-violet-400" />
-            <span>{t.seoHeroTitle || 'CleanSnap'}</span>
-          </h1>
-          <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
-            {t.seoHeroText || 'Remove watermarks and unwanted objects from images by painting over them.'}
-          </p>
-        </div>
-
-        {/* Bloque AdSense Horizontal */}
+      {/* El max-w vive en el <main> porque AdRail mide ESTE elemento para decidir
+          si los raíles fijos caben. Medido: 205 px de hueco por lado a 1440 y
+          385 a 1800, por encima de los 168/208 que pide cada raíl. */}
+      <main className="flex-grow w-full max-w-5xl mx-auto min-[1400px]:max-w-[min(64rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col gap-8">
         <AdBanner id="adsense-cleansnap-top" />
 
-        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileInput} className="hidden" />
-
-        {!imageLoaded ? (
-          <div
-            onClick={() => fileInputRef.current?.click()}
-            onDrop={handleDrop}
-            onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-            onDragLeave={(e) => { e.preventDefault(); setIsDragging(false); }}
-            className={`group relative rounded-3xl border-2 border-dashed cursor-pointer px-8 py-24 flex flex-col items-center justify-center text-center transition-all duration-300 ${
-              isDragging ? 'border-violet-400 bg-violet-500/10 scale-[1.01]' : 'border-white/10 bg-white/[0.015] hover:border-violet-500/40 hover:bg-white/[0.03]'
-            }`}
-          >
-            <div className={`w-20 h-20 rounded-3xl flex items-center justify-center mb-6 transition-all ${isDragging ? 'bg-violet-500/20 text-violet-300 scale-110' : 'bg-white/5 text-violet-400'}`}>
-              <Upload className="w-9 h-9" strokeWidth={1.5} />
-            </div>
-            <p className="text-2xl font-black text-white tracking-tight mb-2">{L.drop}</p>
-            <p className="text-slate-500 text-sm font-medium mb-6">{L.formats}</p>
-            <span className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-violet-600 hover:bg-violet-500 text-white font-bold text-sm transition-all active:scale-95 shadow-lg shadow-violet-600/30">
-              <Upload className="w-4 h-4" /> {L.select}
+        {error && (
+          <div role="status" className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3">
+            <span className="flex-1 text-sm font-medium text-amber-200 leading-relaxed">
+              {ui.errors?.[error] || error}
             </span>
-          </div>
-        ) : (
-          <div className="space-y-5">
-            {/* Mode tabs */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setMode('manual')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${
-                  mode === 'manual' ? 'bg-violet-500/20 border-violet-500/40 text-violet-200' : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
-                }`}
-              >
-                <Paintbrush className="w-4 h-4" /> {L.manual}
-              </button>
-              <button
-                onClick={() => setMode('ai')}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer border ${
-                  mode === 'ai' ? 'bg-violet-500/20 border-violet-500/40 text-violet-200' : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
-                }`}
-              >
-                <Sparkles className="w-4 h-4" /> {L.ai}
-              </button>
-            </div>
-
-            {/* Toolbar */}
-            <div className="glass-card rounded-2xl p-3 flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-1.5">
-                {toolBtn('brush', <Paintbrush className="w-5 h-5" />, L.brush)}
-                {toolBtn('rect', <Square className="w-5 h-5" />, L.rect)}
-                {toolBtn('circle', <Circle className="w-5 h-5" />, L.circle)}
-                {toolBtn('eraser', <Eraser className="w-5 h-5" />, L.eraser)}
-              </div>
-
-              {(tool === 'brush' || tool === 'eraser') && (
-                <label className="flex items-center gap-2 text-xs text-slate-400">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{L.size}</span>
-                  <input type="range" min={6} max={150} value={brushSize} onChange={(e) => setBrushSize(Number(e.target.value))} className="w-28 h-1.5 rounded bg-white/10 accent-violet-500 cursor-pointer" />
-                  <span className="font-mono text-slate-300 w-8">{brushSize}</span>
-                </label>
-              )}
-
-              {mode === 'manual' && (
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mr-1">{L.method}</span>
-                  {([['content', L.contentAware], ['blur', L.blur], ['pixelate', L.pixelate]] as [FillMethod, string][]).map(([m, label]) => (
-                    <button
-                      key={m}
-                      onClick={() => setFillMethod(m)}
-                      className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        fillMethod === m ? 'bg-violet-500/20 text-violet-300 border border-violet-500/40' : 'bg-white/5 text-slate-400 hover:text-white border border-transparent'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              <div className="flex-1" />
-
-              <button onClick={clearSelection} title={L.clearSel} className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-bold transition-all cursor-pointer">
-                <Trash2 className="w-4 h-4" /> {L.clearSel}
-              </button>
-              <button
-                onClick={applyRemoval}
-                disabled={processing}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-black text-sm transition-all active:scale-95 cursor-pointer shadow-lg shadow-violet-600/30 disabled:opacity-60"
-              >
-                {processing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
-                {mode === 'ai' ? L.aiRemove : L.remove}
-              </button>
-            </div>
-
-            {mode === 'ai' && (
-              <p className="text-xs text-violet-300/80 flex items-center gap-2">
-                <Sparkles className="w-3.5 h-3.5" /> {L.aiNote}
-              </p>
-            )}
-
-            {/* Canvas */}
-            <div className="glass-card rounded-3xl p-3 md:p-4 flex items-center justify-center overflow-auto">
-              <canvas
-                ref={viewRef}
-                onPointerDown={onPointerDown}
-                onPointerMove={onPointerMove}
-                onPointerUp={onPointerUp}
-                onPointerLeave={onPointerUp}
-                className="max-w-full h-auto rounded-xl touch-none cursor-crosshair bg-[#0c0612]"
-                style={{ maxHeight: '65vh' }}
-              />
-            </div>
-
-            <p className="text-center text-[11px] text-slate-600 font-medium">{L.hint}</p>
-
-            {/* Actions */}
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <button onClick={undo} disabled={!canUndo} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-bold text-sm transition-all cursor-pointer disabled:opacity-40">
-                <Undo2 className="w-4 h-4" /> {L.undo}
-              </button>
-              <button onClick={resetImage} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-200 font-bold text-sm transition-all cursor-pointer">
-                <RotateCcw className="w-4 h-4" /> {L.reset}
-              </button>
-              <button onClick={download} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white text-black hover:bg-violet-500 hover:text-white font-black text-sm transition-all active:scale-95 cursor-pointer shadow-lg">
-                <Download className="w-4 h-4" /> {L.download}
-              </button>
-            </div>
+            <button type="button" onClick={() => setError(null)} aria-label={ui.dismiss} className="text-amber-300/70 hover:text-amber-100 cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
           </div>
         )}
 
-        {/* Bloque AdSense Horizontal */}
-        <motion.div
-          initial={prefersReduced ? false : 'hidden'}
-          whileInView={prefersReduced ? undefined : 'visible'}
-          viewport={{ once: true, amount: 0.2 }}
-          variants={fadeInUp}
-        >
-          <AdBanner id="adsense-cleansnap-bottom" />
-        </motion.div>
+        <input ref={fileInput} type="file" accept="image/*,.heic,.heif" className="hidden"
+          onChange={e => { pick(e.target.files); e.target.value = ''; }} />
+
+        {!image ? (
+          /* ------------------------------ Portada ------------------------------ */
+          <>
+            <section className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+              <div className="space-y-6 text-center lg:text-left">
+                <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-[10px] font-black uppercase tracking-[0.2em]">
+                  {t.hero?.badge}
+                </span>
+                <h1 className="text-3xl sm:text-4xl xl:text-5xl font-black tracking-tight text-white leading-[1.1] break-words">
+                  {t.hero?.title}{' '}
+                  <span className="text-violet-400">{t.hero?.titleHighlight}</span>
+                </h1>
+                <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  {t.hero?.subtitle}
+                </p>
+                <ul className="flex flex-wrap justify-center lg:justify-start gap-x-5 gap-y-2">
+                  {[t.hero?.trust1, t.hero?.trust2, t.hero?.trust3].filter(Boolean).map((line, i) => (
+                    <li key={i} className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                      <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" /> {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <HeroArt className="w-full max-w-md mx-auto h-auto" />
+            </section>
+
+            <div
+              onClick={() => fileInput.current?.click()}
+              onDrop={e => { e.preventDefault(); setDragging(false); pick(e.dataTransfer.files); }}
+              onDragOver={e => { e.preventDefault(); setDragging(true); }}
+              onDragLeave={e => { e.preventDefault(); setDragging(false); }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') fileInput.current?.click(); }}
+              className={`group rounded-3xl border-2 border-dashed cursor-pointer px-6 py-14 sm:py-20 flex flex-col items-center justify-center text-center gap-4 transition-colors ${
+                dragging ? 'border-violet-400 bg-violet-500/10' : 'border-white/10 bg-white/[0.015] hover:border-violet-500/40'
+              }`}
+            >
+              <svg viewBox="0 0 72 56" className="w-16 h-12" fill="none" aria-hidden="true">
+                <path d="M6 34v12a4 4 0 0 0 4 4h52a4 4 0 0 0 4-4V34" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M6 34h16l4 7h20l4-7h16" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" opacity="0.5" />
+                <rect x="26" y="4" width="20" height="22" rx="3" fill="#8b5cf6" fillOpacity="0.14" stroke="#a78bfa" strokeWidth="2" />
+                <path d="M36 10v10M31.5 16l4.5 4.5 4.5-4.5" stroke="#a78bfa" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <div className="space-y-2 max-w-md">
+                <p className="text-lg sm:text-xl font-black text-white">{ui.dropTitle}</p>
+                <p className="text-sm text-slate-400 leading-relaxed">{ui.dropHint}</p>
+                <p className="text-[11px] font-mono text-slate-500">JPG · PNG · WEBP · AVIF · GIF · HEIC</p>
+              </div>
+              {loading && (
+                <span className="inline-flex items-center gap-2 text-xs font-bold text-violet-300">
+                  <Loader2 className="w-4 h-4 animate-spin" /> {ui.reading}
+                </span>
+              )}
+            </div>
+
+            {steps.length > 0 && (
+              <section className="space-y-7">
+                <div className="text-center space-y-2">
+                  <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{t.how?.title}</h2>
+                  <p className="text-sm text-slate-400 max-w-2xl mx-auto leading-relaxed">{t.how?.subtitle}</p>
+                </div>
+                <ol className="grid sm:grid-cols-3 gap-5">
+                  {steps.slice(0, 3).map((step, i) => {
+                    const Art = STEP_ART[i];
+                    return (
+                      <li key={i} className="glass-card rounded-3xl p-6 space-y-4">
+                        <Art />
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">{i + 1}</span>
+                          <h3 className="text-base font-bold text-white">{step.title}</h3>
+                          <p className="text-sm text-slate-400 leading-relaxed">{step.text}</p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ol>
+              </section>
+            )}
+
+            <AdBanner id="adsense-cleansnap-mid" />
+
+            {features.length > 0 && (
+              <section className="space-y-7">
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight text-center">{t.features?.title}</h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {features.slice(0, 6).map((feature, i) => {
+                    const Icon = FEATURE_ICONS[i];
+                    const tint = ['text-violet-400', 'text-fuchsia-400', 'text-sky-400', 'text-emerald-400', 'text-amber-400', 'text-rose-400'][i];
+                    return (
+                      <article key={i} className="glass-card rounded-3xl p-6 space-y-3">
+                        <span className={`inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-white/5 ${tint}`}>
+                          <Icon />
+                        </span>
+                        <h3 className="text-base font-bold text-white">{feature.title}</h3>
+                        <p className="text-sm text-slate-400 leading-relaxed">{feature.desc}</p>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {faqs.length > 0 && (
+              <section className="space-y-5">
+                <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight text-center">{t.faqTitle}</h2>
+                <div className="grid gap-3 max-w-3xl mx-auto w-full">
+                  {faqs.map((faq, i) => (
+                    <details key={i} className="glass-card rounded-2xl px-5 py-4 group [&_summary::-webkit-details-marker]:hidden">
+                      <summary className="flex items-start gap-3 cursor-pointer list-none text-sm sm:text-base font-bold text-white">
+                        <span className="flex-1">{faq.question}</span>
+                        <span className="shrink-0 text-violet-400 text-xl leading-none transition-transform group-open:rotate-45">+</span>
+                      </summary>
+                      <p className="text-sm text-slate-400 leading-relaxed pt-3">{faq.answer}</p>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {keywords.length > 0 && (
+              <section className="space-y-4 opacity-60 text-center">
+                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {keywords.map((keyword, i) => (
+                    <span key={i} className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400">{keyword}</span>
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
+        ) : (
+          /* ------------------------------- Editor ------------------------------- */
+          <>
+            <div className="flex flex-wrap items-center gap-3">
+              <button type="button" onClick={close}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer">
+                <RotateCcw className="w-4 h-4" /> {ui.newImage}
+              </button>
+              <span className="font-mono text-[11px] text-slate-500">
+                {image.width}×{image.height}
+              </span>
+              {image.scaled && (
+                <span className="text-[11px] font-bold text-amber-300/90">
+                  {(ui.scaledNote || '').replace('{w}', String(image.sourceWidth)).replace('{h}', String(image.sourceHeight))}
+                </span>
+              )}
+              <span className="hidden sm:flex items-center gap-1.5 text-[11px] text-slate-600 ml-auto">
+                <Keyboard className="w-3.5 h-3.5" /> {ui.shortcuts}
+              </span>
+            </div>
+
+            {/* flex-col en móvil y flex-row en escritorio: el panel lleva
+                `lg:w-[340px]`, nunca `flex-1` a secas, que sobre el eje
+                vertical pondría flex-basis:0 y aplastaría el lienzo. */}
+            <div className="flex flex-col lg:flex-row gap-6 items-start">
+              <div className="w-full lg:flex-1 min-w-0 space-y-4">
+                <div className="glass-card rounded-2xl p-3 flex flex-wrap items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    {toolButton('brush', <Paintbrush className="w-5 h-5" />, ui.brush, 'B')}
+                    {toolButton('rect', <Square className="w-5 h-5" />, ui.rect, 'R')}
+                    {toolButton('circle', <Circle className="w-5 h-5" />, ui.circle, 'C')}
+                    {toolButton('eraser', <Eraser className="w-5 h-5" />, ui.eraser, 'E')}
+                    {toolButton('pan', <Hand className="w-5 h-5" />, ui.pan, 'H')}
+                  </div>
+
+                  {(tool === 'brush' || tool === 'eraser') && (
+                    <label className="flex items-center gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">{ui.size}</span>
+                      <input type="range" min={4} max={300} value={brushSize}
+                        onChange={e => setBrushSize(Number(e.target.value))}
+                        className="w-24 sm:w-32 h-1.5 rounded bg-white/10 accent-violet-500 cursor-pointer" />
+                      <span className="font-mono text-xs text-slate-300 w-8 tabular-nums">{brushSize}</span>
+                    </label>
+                  )}
+
+                  <div className="flex items-center gap-1.5 ml-auto">
+                    <button type="button" onClick={invertMask} title={ui.invert}
+                      className="px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-bold transition-colors cursor-pointer">
+                      {ui.invert}
+                    </button>
+                    <button type="button" onClick={clearMask} title={ui.clearSel}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-bold transition-colors cursor-pointer">
+                      <Trash2 className="w-4 h-4" /> <span className="hidden sm:inline">{ui.clearSel}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <EditorStage
+                  key={`${image.name}-${image.width}x${image.height}`}
+                  work={work}
+                  mask={mask}
+                  original={editor.original}
+                  version={version}
+                  tool={tool}
+                  brushSize={brushSize}
+                  busy={busy}
+                  progress={progress}
+                  onMaskChanged={bump}
+                  t={ui}
+                />
+
+                <div className="flex flex-wrap items-center gap-3">
+                  <button type="button" onClick={() => void apply(settings)} disabled={busy}
+                    className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-violet-600 hover:bg-violet-500 text-white font-black text-sm transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                    {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
+                    {busy ? `${Math.round(progress * 100)}%` : ui.apply}
+                  </button>
+                  {busy && (
+                    <button type="button" onClick={cancel}
+                      className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-bold text-sm transition-colors cursor-pointer">
+                      <X className="w-4 h-4" /> {ui.cancel}
+                    </button>
+                  )}
+                  <button type="button" onClick={undo} disabled={!canUndo || busy}
+                    className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-bold text-sm transition-colors cursor-pointer disabled:opacity-40">
+                    <Undo2 className="w-4 h-4" /> {ui.undo}
+                  </button>
+                  <button type="button" onClick={redo} disabled={!canRedo || busy}
+                    className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-bold text-sm transition-colors cursor-pointer disabled:opacity-40">
+                    <Redo2 className="w-4 h-4" /> {ui.redo}
+                  </button>
+                  <button type="button" onClick={reset} disabled={busy}
+                    className="inline-flex items-center gap-2 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-slate-200 font-bold text-sm transition-colors cursor-pointer disabled:opacity-40">
+                    <RotateCcw className="w-4 h-4" /> {ui.reset}
+                  </button>
+                  {lastMs !== null && !busy && (
+                    <span className="font-mono text-[11px] text-emerald-400">
+                      {(ui.tookMs || '{ms} ms').replace('{ms}', String(lastMs))}
+                    </span>
+                  )}
+                </div>
+
+                <NextStepBar lang={lang} t={t.next || {}} getResult={handoffResult} />
+              </div>
+
+              <aside className="w-full lg:w-[340px] shrink-0 glass-card rounded-3xl p-6 space-y-6 lg:sticky lg:top-28">
+                <FillPanel settings={settings} onChange={setSettings} t={ui.fill || {}} />
+
+                <div className="space-y-3 pt-4 border-t border-white/10">
+                  <span className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{ui.output}</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    {FORMATS.map(entry => (
+                      <button key={entry.id} type="button" onClick={() => setFormat(entry.id)}
+                        className={`py-2 rounded-lg text-xs font-black transition-colors cursor-pointer ${
+                          format === entry.id
+                            ? 'bg-violet-500/20 border border-violet-500/40 text-violet-200'
+                            : 'bg-white/5 border border-white/10 text-slate-400 hover:text-white'
+                        }`}>
+                        {entry.label}
+                      </button>
+                    ))}
+                  </div>
+                  {format !== 'image/png' && (
+                    <label className="block space-y-1.5">
+                      <span className="flex justify-between text-xs font-bold text-slate-300">
+                        {ui.quality} <span className="font-mono text-white">{quality}%</span>
+                      </span>
+                      <input type="range" min={40} max={100} value={quality}
+                        onChange={e => setQuality(Number(e.target.value))}
+                        className="w-full h-1.5 rounded bg-white/10 accent-violet-500 cursor-pointer" />
+                    </label>
+                  )}
+                  <button type="button" onClick={() => void download()} disabled={busy}
+                    className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-black hover:bg-violet-500 hover:text-white font-black text-sm transition-colors cursor-pointer disabled:opacity-40">
+                    <Download className="w-4 h-4" /> {ui.download}
+                  </button>
+                </div>
+              </aside>
+            </div>
+          </>
+        )}
+
+        <AdBanner id="adsense-cleansnap-bottom" />
       </main>
 
-      <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />
+      <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />
       <LegalModal isOpen={legalModal === 'privacy'} onClose={() => setLegalModal(null)} title={legalTranslations[lang]?.privacy.title || 'Privacy Policy'} content={legalTranslations[lang]?.privacy.content} t={t} />
       <LegalModal isOpen={legalModal === 'terms'} onClose={() => setLegalModal(null)} title={legalTranslations[lang]?.terms.title || 'Terms of Service'} content={legalTranslations[lang]?.terms.content} t={t} />
       <LegalModal isOpen={legalModal === 'cookies'} onClose={() => setLegalModal(null)} title={legalTranslations[lang]?.cookies.title || 'Cookie Policy'} content={legalTranslations[lang]?.cookies.content} t={t} />

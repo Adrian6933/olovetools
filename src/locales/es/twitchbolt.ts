@@ -83,8 +83,66 @@ export default {
     "cookies": "Cookies",
     "contactEmail": "CONTACTO POR EMAIL",
     "gotIt": "ENTENDIDO",
-    "privacyText": "En TwitchBolt, la privacidad es fundamental. No recopilamos, almacenamos ni compartimos datos personales identificables. Al usar nuestra herramienta, los enlaces se procesan en tiempo real y no se guarda registro de los clips descargados en nuestros servidores. No utilizamos bases de datos para rastrear la actividad de los usuarios. Para cualquier consulta sobre tus datos, puedes contactarnos en adrian.contact.me.69@gmail.com.",
+    "privacyText": "TwitchBolt no lleva ninguna cuenta de ti: sin registro, sin perfil de analítica, sin base de datos de los enlaces que pegas. Lo que no puede afirmar es que nada toque un servidor: Twitch rechaza las peticiones directas del navegador, así que cada clip se retransmite. Primero lo atiende nuestro propio endpoint, que no registra nada; si falla, la petición cae en proxies CORS públicos (corsproxy.io, codetabs.com y thingproxy.freeboard.io), gestionados por terceros cuyo registro no controlamos. La URL del clip, y el propio vídeo, pasan por el que responda. Puedes desactivar ese recambio en la herramienta, y la página te dice qué host sirvió tu última descarga. Tu idioma y esa preferencia viven en tu propio navegador. Dudas: adrian.contact.me.69@gmail.com.",
     "termsText": "TwitchBolt es una herramienta técnica para el acceso a contenido público de Twitch. El usuario es el único responsable del uso que haga de los materiales descargados, debiendo respetar los derechos de autor y las licencias de los creadores de contenido. TwitchBolt no está afiliado con Twitch Interactive Inc. El servicio se proporciona 'tal cual' sin garantías de ningún tipo.",
     "cookiesText": "Nuestra web utiliza únicamente almacenamiento local (LocalStorage) estrictamente necesario para el funcionamiento técnico del sitio, como recordar tus preferencias de idioma. No utilizamos cookies de rastreo de terceros ni píxeles de publicidad. Al navegar en TwitchBolt, aceptas este uso técnico esencial para garantizar la mejor experiencia posible."
-  }
+  },
+  "qMaxLabel": "Calidad máxima",
+  "qMaxSub": "Fuente original",
+  "q720Label": "720p HD",
+  "q720Sub": "Equilibrado",
+  "q360Label": "360p rápido",
+  "q360Sub": "Poco consumo",
+  "zipError": "No se ha podido crear el ZIP. Puede que algún clip fallara al descargarse; prueba con menos a la vez.",
+  "routeNotice": "Twitch bloquea las peticiones directas del navegador, así que cada clip pasa por un relé. Primero se prueba el nuestro; los públicos son solo el recambio, y puedes desactivarlos.",
+  "routeLast": "La última descarga la sirvió: {host}",
+  "routeAllowOn": "Relés públicos: sí",
+  "routeAllowOff": "Relés públicos: no",
+  "howTitle": "Cómo funciona",
+  "featuresTitle": "Lo que hace de verdad",
+  "faqTitle": "Preguntas frecuentes",
+  "kickCrossSell": "¿Quieres descargar clips de Kick?",
+  "kickCrossSellCta": "Prueba KickBolt",
+  "step1Title": "Pega los enlaces",
+  "step1Text": "Una URL de clip por línea, o suelta una lista .txt. No se pide nada hasta que pulsas el botón.",
+  "step2Title": "Elige la calidad",
+  "step2Text": "La fuente conserva el stream original; 720p y 360p cambian detalle por un archivo mucho más pequeño.",
+  "step3Title": "Deja que busque",
+  "step3Text": "Los clips se resuelven de tres en tres para que Twitch no te limite, con una barra de progreso por archivo.",
+  "step4Title": "Guarda uno o todos",
+  "step4Text": "Descarga los clips uno a uno, o llévate el lote entero en un solo ZIP sin recomprimir nada.",
+  "feat1Title": "Cualquier URL de clip de Twitch",
+  "feat1Text": "Los enlaces de clips.twitch.tv, las rutas /clip/ de un canal y el identificador suelto llevan todos al mismo clip.",
+  "feat2Title": "Listas enteras de golpe",
+  "feat2Text": "Pega cincuenta enlaces o sube un .txt; los duplicados se descartan antes de pedir nada.",
+  "feat3Title": "La calidad la eliges tú",
+  "feat3Text": "No todos los clips merecen el bitrate de la fuente. Baja a 720p o 360p cuando importe más el tamaño que el detalle.",
+  "feat4Title": "Un ZIP, sin recodificar",
+  "feat4Text": "El paquete se almacena, no se comprime: el vídeo no encoge dentro de un zip, y saltarse ese paso ahorra la espera.",
+  "feat5Title": "Sin cuenta, nunca",
+  "feat5Text": "Sin registro, sin correo, sin extensión. Abres la página, pegas, descargas y cierras la pestaña.",
+  "feat6Title": "Honesto con la ruta",
+  "feat6Text": "Twitch no sirve directamente a un navegador, así que la herramienta dice qué relé llevó tu clip y te deja rechazar los públicos.",
+  "faq": [
+    {
+      "question": "¿El clip viene directamente de Twitch?",
+      "answer": "No, y no puede. Twitch no sirve ni su endpoint de GraphQL ni su CDN de clips con cabeceras CORS que el navegador tenga permiso de leer, así que todos los clips pasan por un relé. Primero se prueba el nuestro; si falla, unos cuantos proxies CORS públicos son el recambio. El aviso encima del campo de texto te deja desactivarlos y te dice qué host sirvió tu última descarga."
+    },
+    {
+      "question": "¿Hay un límite de clips a la vez?",
+      "answer": "No hay un límite duro, pero los clips se resuelven de tres en tres y se descargan de cinco en cinco a propósito, para que Twitch no empiece a rechazar peticiones. Cincuenta enlaces de una tacada van cómodos; varios cientos tardarán y es más fácil que topen con un límite a medio camino."
+    },
+    {
+      "question": "¿Por qué el ZIP pesa lo mismo que los clips?",
+      "answer": "Porque se almacena, no se comprime. El vídeo ya viene comprimido, así que pasarlo por el deflate del zip no ahorra casi nada y cuesta mucha espera. El paquete es un contenedor, no un apretón."
+    },
+    {
+      "question": "¿Qué descarga en realidad la \"Calidad máxima\"?",
+      "answer": "La versión más alta que Twitch publicó de ese clip, sea la que sea. No se reescala: si el streamer emitió a 720p, la fuente es 720p, y la herramienta no se va a inventar un detalle que nunca se grabó."
+    },
+    {
+      "question": "¿Guardáis mis enlaces o los clips?",
+      "answer": "Ni una cosa ni la otra. Los enlaces se resuelven según llegan y no se escribe nada en ninguna base de datos. Tu idioma y tu preferencia sobre los relés públicos se guardan en tu propio navegador y no se envían a ningún sitio. Lo que no podemos prometerte es qué hace un relé público con una URL que le piden buscar, que es justo por lo que puedes desactivarlos."
+    }
+  ]
 };

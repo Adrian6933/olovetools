@@ -1,4 +1,5 @@
 import { ClipData, Resolution } from "../types";
+import { noteRoute, usableProxies } from "./route";
 
 // Backend at the same origin (src/pages/api/kick.ts, src/pages/proxy.ts, run
 // as Vercel serverless functions): /api/kick?action=clip fetches clip info
@@ -54,7 +55,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   } catch (e) {}
 
   if (!responseData) {
-      for (const makeProxyUrl of DOWNLOAD_PROXIES.slice(1)) {
+      for (const makeProxyUrl of usableProxies(DOWNLOAD_PROXIES.slice(1))) {
           try {
               const res = await fetch(makeProxyUrl(apiUrl), {
                   method: 'GET',
@@ -89,7 +90,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
 
     let activeUrl = masterUrl;
 
-    for (const makeProxyUrl of DOWNLOAD_PROXIES) {
+    for (const makeProxyUrl of usableProxies(DOWNLOAD_PROXIES)) {
         try {
             const res = await fetch(makeProxyUrl(masterUrl));
             if (res.ok) {
@@ -104,7 +105,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
     }
 
     if (!masterPlaylistText) {
-        for (const makeProxyUrl of DOWNLOAD_PROXIES) {
+        for (const makeProxyUrl of usableProxies(DOWNLOAD_PROXIES)) {
             try {
                 const res = await fetch(makeProxyUrl(videoUrl));
                 if (res.ok) {
@@ -203,7 +204,7 @@ const fetchHLSBlob = async (url: string, onProgress: (loaded: number, total: num
     let playlistText = "";
     let baseUrl = "";
     
-    for (const makeUrl of DOWNLOAD_PROXIES) {
+    for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
         if (signal?.aborted) throw new Error("AbortError");
         try {
             const res = await fetch(makeUrl(url), { signal });
@@ -275,7 +276,7 @@ const fetchHLSBlob = async (url: string, onProgress: (loaded: number, total: num
             headers['Range'] = `bytes=${byteRange.offset}-${byteRange.offset + byteRange.length - 1}`;
         }
         
-        for (const makeUrl of DOWNLOAD_PROXIES) {
+        for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
             if (signal?.aborted) throw new Error("AbortError");
             try {
                 const res = await fetch(makeUrl(segUrl), { 
@@ -325,7 +326,7 @@ export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, t
     return fetchHLSBlob(url, onProgress, signal);
   }
 
-  for (const makeUrl of DOWNLOAD_PROXIES) {
+  for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
     if (signal?.aborted) throw new Error("AbortError");
 
     try {
@@ -368,6 +369,9 @@ export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, t
         xhr.onload = () => { 
           if (signal) signal.removeEventListener('abort', onAbort);
           if (xhr.status === 200 && xhr.response && xhr.response.size > 5000) {
+            // Noted on success only: the UI reports who actually handled the
+            // video, not who was tried and failed.
+            noteRoute(makeUrl(url));
             resolve(xhr.response); 
           } else {
             reject(new Error(`Status ${xhr.status} or small file`));
@@ -402,5 +406,8 @@ export const downloadBlob = async (url: string, filename: string, onProgress: (l
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(blobUrl);
+  // Revoked on a timer, not in the same tick as the click: Safari cancels an
+  // in-flight download when the object URL disappears underneath it, and a clip
+  // pack here is large enough for that to be the normal case, not the edge one.
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
 };

@@ -1,325 +1,299 @@
+// ============================================================================
+// Panel de ajustes
+// ----------------------------------------------------------------------------
+// Dos vías desde el primer momento: los presets deciden por ti (formato,
+// calidad y tamaño de una vez) y el modo manual no toca nada — quien quiere
+// control lo tiene sin pelearse antes con una sugerencia automática.
+//
+// Los formatos que el navegador no sabe escribir salen apagados y con el
+// motivo, en vez de ofrecerse y devolver un PNG con la extensión cambiada.
+// ============================================================================
+
 import React from 'react';
-import { ConversionSettings, ImageFormat, BatchImageItem } from '../types';
-import { Settings2, Download, Loader2, Package, Sliders, Info, ChevronRight, CheckCircle2, FileDown } from 'lucide-react';
-import { motion } from 'framer-motion';
-import type { Language } from '../../../locales/meta';
+import {
+  FlipHorizontal2, FlipVertical2, Redo2, RotateCw, Sliders, Undo2, Wand2, Zap,
+} from 'lucide-react';
+import type { FormatInfo, OutputId, ResizeMode, Settings } from '../lib/types';
+import { formatInfo } from '../lib/formats';
 
 interface ControlPanelProps {
-  settings: ConversionSettings;
-  onSettingsChange: (settings: ConversionSettings) => void;
-  onConvert: () => void;
-  onDownloadSingle?: () => void;
-  isProcessing: boolean;
-  fileCount: number;
-  progress?: { current: number; total: number };
-  activeImage?: BatchImageItem;
-  onSpecificSettingsChange: (id: string, settings: ConversionSettings | undefined) => void;
-  language: Language;
-  dictionary?: any;
+  formats: FormatInfo[];
+  settings: Settings;
+  onChange: (next: Settings) => void;
+  onUndo: () => void;
+  onRedo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  livePreview: boolean;
+  onLivePreview: (value: boolean) => void;
+  /** Dimensiones del original seleccionado, para calcular la proporción. */
+  sourceWidth: number;
+  sourceHeight: number;
+  t: any;
 }
 
-const SettingsControls: React.FC<{
-  settings: ConversionSettings;
-  onChange: (s: ConversionSettings) => void;
-  accentColor?: 'primary' | 'secondary';
-  language: Language;
-  dictionary?: any;
-}> = ({ settings, onChange, accentColor = 'primary', language, dictionary }) => {
-  const t = (dictionary || {}).controls || {};
+/** Presets. `null` en un campo = no lo toca, se respeta lo que hubiera. */
+const PRESETS: { id: string; patch: Partial<Settings> }[] = [
+  { id: 'web', patch: { format: 'image/webp', quality: 82, resizeMode: 'longEdge', longEdge: 1920, sharpen: 25, targetBytes: 0 } },
+  { id: 'social', patch: { format: 'image/jpeg', quality: 88, resizeMode: 'longEdge', longEdge: 1440, sharpen: 15, targetBytes: 0 } },
+  { id: 'archive', patch: { format: 'image/png', quality: 100, resizeMode: 'none', sharpen: 0, targetBytes: 0 } },
+  { id: 'email', patch: { format: 'image/jpeg', quality: 85, resizeMode: 'longEdge', longEdge: 1600, sharpen: 10, targetBytes: 500 * 1024 } },
+];
 
-  const handleFormatChange = (format: ImageFormat) => {
-    onChange({ ...settings, format });
+const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+  <div className="space-y-3">
+    <span className="block text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{title}</span>
+    {children}
+  </div>
+);
+
+const Slider: React.FC<{
+  value: number; min: number; max: number; step?: number;
+  onChange: (value: number) => void; suffix?: string; label: string; disabled?: boolean;
+}> = ({ value, min, max, step = 1, onChange, suffix = '', label, disabled }) => (
+  <div className={`space-y-2 ${disabled ? 'opacity-40' : ''}`}>
+    <div className="flex justify-between items-baseline">
+      <span className="text-xs font-bold text-slate-400">{label}</span>
+      <span className="font-mono text-xs font-black text-white tabular-nums">{value}{suffix}</span>
+    </div>
+    <input type="range" min={min} max={max} step={step} value={value} disabled={disabled}
+      onChange={e => onChange(parseFloat(e.target.value))}
+      className="w-full accent-indigo-500 cursor-pointer disabled:cursor-not-allowed" />
+  </div>
+);
+
+export const ControlPanel: React.FC<ControlPanelProps> = ({
+  formats, settings, onChange, onUndo, onRedo, canUndo, canRedo,
+  livePreview, onLivePreview, sourceWidth, sourceHeight, t,
+}) => {
+  const patch = (next: Partial<Settings>) => onChange({ ...settings, ...next });
+  const info = formatInfo(settings.format);
+  const current = formats.find(f => f.id === settings.format);
+  const lossy = info.lossy && (!current || current.available);
+  const alpha = info.alpha;
+
+  const pickFormat = (id: OutputId) => {
+    // Al saltar a un formato sin alfa, el fondo pasa a importar: se deja el
+    // que hubiera y se avisa en la sección de fondo, no se cambia a la fuerza.
+    patch({ format: id });
   };
 
-  const activeClass = accentColor === 'primary' 
-    ? 'bg-primary text-white border-primary shadow-[0_10px_20px_-5px_rgba(99,102,241,0.4)]'
-    : 'bg-secondary text-white border-secondary shadow-[0_10px_20px_-5px_rgba(168,85,247,0.4)]';
-
-  const textAccent = accentColor === 'primary' ? 'text-primary' : 'text-secondary';
-  const bgAccent = accentColor === 'primary' ? 'bg-primary/5 border-primary/10' : 'bg-secondary/5 border-secondary/10';
-
-  return (
-    <div className="space-y-8 animate-fade-in">
-      <div className="space-y-4">
-        <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">{t.outputFormat}</label>
-        <div className="grid grid-cols-3 gap-1 p-1.5 bg-slate-900/80 rounded-[1.25rem] border border-slate-800/80 shadow-inner">
-          {Object.values(ImageFormat).map((fmt) => {
-            let rawLabel = fmt.split('/')[1].toUpperCase();
-            if (rawLabel === 'JPEG') rawLabel = 'JPG';
-            if (rawLabel === 'SVG+XML') rawLabel = 'SVG';
-            if (rawLabel === 'X-ICON') rawLabel = 'ICO';
-            const label = rawLabel;
-            return (
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.95 }}
-                key={fmt}
-                onClick={() => handleFormatChange(fmt)}
-                className={`
-                  py-2.5 px-1 rounded-xl text-xs font-bold transition-all duration-300 truncate cursor-pointer
-                  ${settings.format === fmt
-                    ? activeClass
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
-                  }
-                `}
-              >
-                {label}
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <span className="font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">{t.quality}</span>
-        </div>
-        <div className="relative pt-2 pb-10 group">
-          <input
-            type="range"
-            min="0.1"
-            max="1"
-            step="0.05"
-            value={settings.quality}
-            onChange={(e) => onChange({ ...settings, quality: parseFloat(e.target.value) })}
-            className={`w-full h-2 bg-slate-900 rounded-full appearance-none cursor-pointer transition-all hover:bg-slate-800 accent-${accentColor} shadow-inner border border-slate-800 relative z-10 peer`}
-          />
-          <div 
-            className="absolute top-10 -translate-x-1/2 flex flex-col items-center opacity-0 peer-hover:opacity-100 peer-active:opacity-100 peer-focus:opacity-100 transition-all duration-300 pointer-events-none z-30"
-            style={{ left: `calc(${((settings.quality - 0.1) / 0.9) * 100}% + ${8 - (((settings.quality - 0.1) / 0.9) * 16)}px)` }}
-          >
-            <div className={`w-3 h-3 rotate-45 -mb-1.5 border-t-2 border-l-2 bg-slate-800 ${accentColor === 'primary' ? 'border-primary/50' : 'border-secondary/50'} z-10`}></div>
-            <div className={`relative z-20 px-3 py-1.5 rounded-lg text-xs font-black font-mono bg-slate-800 border-2 ${accentColor === 'primary' ? 'border-primary/50' : 'border-secondary/50'} text-white shadow-[0_10px_25px_rgba(0,0,0,0.5)] whitespace-nowrap`}>
-              {Math.round(settings.quality * 100)}%
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <span className="font-black text-slate-500 text-[10px] uppercase tracking-[0.2em]">{t.resize}</span>
-        </div>
-        <div className="relative pt-2 pb-10 group">
-          <input
-            type="range"
-            min="0.1"
-            max="3" 
-            step="0.1"
-            value={settings.scale}
-            onChange={(e) => onChange({ ...settings, scale: parseFloat(e.target.value) })}
-            className={`w-full h-2 bg-slate-900 rounded-full appearance-none cursor-pointer transition-all hover:bg-slate-800 accent-${accentColor} shadow-inner border border-slate-800 relative z-10 peer`}
-          />
-          <div 
-            className="absolute top-10 -translate-x-1/2 flex flex-col items-center opacity-0 peer-hover:opacity-100 peer-active:opacity-100 peer-focus:opacity-100 transition-all duration-300 pointer-events-none z-30"
-            style={{ left: `calc(${((settings.scale - 0.1) / 2.9) * 100}% + ${8 - (((settings.scale - 0.1) / 2.9) * 16)}px)` }}
-          >
-            <div className={`w-3 h-3 rotate-45 -mb-1.5 border-t-2 border-l-2 bg-slate-800 ${accentColor === 'primary' ? 'border-primary/50' : 'border-secondary/50'} z-10`}></div>
-            <div className={`relative z-20 px-3 py-1.5 rounded-lg text-xs font-black font-mono bg-slate-800 border-2 ${accentColor === 'primary' ? 'border-primary/50' : 'border-secondary/50'} text-white shadow-[0_10px_25px_rgba(0,0,0,0.5)] whitespace-nowrap`}>
-              {Math.round(settings.scale * 100)}%
-            </div>
-          </div>
-          <div className="absolute top-10 w-full h-4 text-[10px] text-slate-600 font-black tracking-tighter pointer-events-none">
-              <span className="absolute left-0">10%</span>
-              <span className="absolute left-[31%] -translate-x-1/2">100%</span>
-              <span className="absolute right-0">300%</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ControlPanel: React.FC<ControlPanelProps> = ({
-  settings,
-  onSettingsChange,
-  onConvert,
-  onDownloadSingle,
-  isProcessing,
-  fileCount,
-  progress,
-  activeImage,
-  onSpecificSettingsChange,
-  language,
-  dictionary
-}) => {
-  const t = (dictionary || {}).controls || {};
-  const appT = (dictionary || {}).app || {};
-  const hasSpecificSettings = activeImage && activeImage.settings !== undefined;
-
-  const toggleSpecificSettings = () => {
-    if (!activeImage) return;
-    if (hasSpecificSettings) {
-      onSpecificSettingsChange(activeImage.id, undefined);
+  const setWidth = (value: number) => {
+    if (settings.lockAspect && sourceWidth > 0) {
+      const ratio = sourceHeight / sourceWidth;
+      patch({ width: value, height: Math.max(1, Math.round(value * ratio)) });
     } else {
-      onSpecificSettingsChange(activeImage.id, { ...settings });
+      patch({ width: value });
+    }
+  };
+
+  const setHeight = (value: number) => {
+    if (settings.lockAspect && sourceHeight > 0) {
+      const ratio = sourceWidth / sourceHeight;
+      patch({ height: value, width: Math.max(1, Math.round(value * ratio)) });
+    } else {
+      patch({ height: value });
     }
   };
 
   return (
-    <div className="glass-card rounded-[2.5rem] border border-slate-800 flex flex-col h-full shadow-2xl overflow-hidden animate-fade-in-up">
-      <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar">
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-            <div className="p-2 bg-primary/10 rounded-xl">
-              <Settings2 className="w-5 h-5 text-primary" />
-            </div>
-            <h2 className="font-black text-xl text-white tracking-tight">{t.globalSettings}</h2>
-          </div>
-
-          {fileCount > 1 && (
-            <div className="bg-slate-900/50 rounded-2xl p-4 text-xs text-slate-400 flex items-start gap-3 border border-slate-800 shadow-inner">
-              <Package className="w-5 h-5 text-primary shrink-0 opacity-60" />
-              <p className="leading-relaxed">{t.globalInfo} <strong className="text-white">{fileCount}</strong> {t.images} {t.overrideInfo}</p>
-            </div>
-          )}
-
-          <SettingsControls settings={settings} onChange={onSettingsChange} accentColor="primary" language={language} dictionary={dictionary} />
-        </div>
-
-        {fileCount > 1 && activeImage && (
-          <div className="space-y-6 pt-4 border-t border-slate-800">
-            <div className="flex items-center gap-3 border-b border-slate-800 pb-4">
-              <div className="p-2 bg-secondary/10 rounded-xl">
-                <Sliders className="w-5 h-5 text-secondary" />
-              </div>
-              <h2 className="font-black text-xl text-white tracking-tight">{t.specificSettings}</h2>
-            </div>
-
-            <div className="bg-blue-500/5 border border-blue-500/10 p-4 rounded-2xl flex items-start gap-3">
-               <Info className="w-5 h-5 text-blue-400 shrink-0" />
-               <p className="text-xs text-blue-200/70 leading-relaxed font-medium">
-                 <strong className="text-blue-300 block mb-1 uppercase tracking-widest">{t.specificHintTitle}</strong> {t.specificHintText}
-               </p>
-            </div>
-
-            <div className={`rounded-3xl p-6 border transition-all duration-500 ${hasSpecificSettings ? 'bg-secondary/5 border-secondary/20 shadow-lg glow-secondary' : 'bg-slate-900/50 border-slate-800'}`}>
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1">{t.imageOverride}</span>
-                  <span className="text-xs font-black text-white truncate max-w-[120px]">
-                    {activeImage.file.name}
-                  </span>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input 
-                    type="checkbox" 
-                    className="sr-only peer" 
-                    checked={hasSpecificSettings}
-                    onChange={toggleSpecificSettings}
-                  />
-                  <div className="w-12 h-6 bg-slate-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-slate-400 after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-secondary peer-checked:after:bg-white after:shadow-md"></div>
-                </label>
-              </div>
-
-              {hasSpecificSettings ? (
-                <SettingsControls
-                  settings={activeImage.settings!}
-                  onChange={(s) => onSpecificSettingsChange(activeImage.id, s)}
-                  accentColor="secondary"
-                  language={language}
-                  dictionary={dictionary}
-                />
-              ) : (
-                 <div className="text-center py-4 space-y-2">
-                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-widest italic">{t.usingGlobal}</p>
-                    <ChevronRight className="w-4 h-4 text-slate-700 mx-auto" />
-                 </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="p-10 border-t border-slate-800 bg-[#060a14]/95 backdrop-blur-3xl flex flex-col gap-4">
-        {isProcessing && progress && (
-          <div className="space-y-4 mb-2 animate-fade-in">
-             <div className="flex justify-between text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                <span className="flex items-center gap-2">
-                  <Loader2 className="w-3 h-3 animate-spin text-primary" />
-                  {appT.processing}
-                </span>
-                <span className="font-mono text-primary bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
-                  {Math.round((progress.current/progress.total)*100)}%
-                </span>
-             </div>
-             <div className="w-full bg-slate-900 rounded-full h-3 overflow-hidden shadow-inner border border-slate-800">
-                <div 
-                  className="bg-gradient-to-r from-primary via-love to-secondary h-full transition-all duration-700 rounded-full relative"
-                  style={{ width: `${(progress.current / progress.total) * 100}%`}}
-                >
-                  <div className="absolute inset-0 bg-[linear-gradient(45deg,rgba(255,255,255,0.1)_25%,transparent_25%,transparent_50%,rgba(255,255,255,0.1)_50%,rgba(255,255,255,0.1)_75%,transparent_75%,transparent)] bg-[size:20px_20px] animate-[shine_2s_linear_infinite]"></div>
-                </div>
-             </div>
-          </div>
-        )}
-
-        {/* Action Buttons Stack */}
-        <div className="flex flex-col gap-3">
-          {/* Download Single Image Button - Simple Glass style */}
-          {activeImage && (
-            <motion.button
-              whileHover={{ scale: 1.01 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={onDownloadSingle}
-              disabled={isProcessing}
-              className={`
-                w-full py-4 rounded-2xl font-display font-bold text-slate-300 flex items-center justify-center gap-2.5 
-                transition-all duration-300 border border-slate-700 bg-slate-800/50 hover:bg-slate-700 hover:text-white
-                group cursor-pointer
-                ${isProcessing ? 'opacity-30 cursor-not-allowed' : ''}
-              `}
-            >
-              <FileDown className="w-5 h-5 text-secondary group-hover:scale-110 transition-transform" />
-              <span className="text-sm tracking-wide">
-                {t.downloadImage}
+    <div className="space-y-8">
+      {/* --- Presets vs manual ------------------------------------------- */}
+      <Section title={t.presetsTitle}>
+        <div className="grid grid-cols-2 gap-2">
+          {PRESETS.map(preset => (
+            <button key={preset.id} type="button" onClick={() => patch(preset.patch)}
+              className="flex items-center gap-2 px-3 py-2.5 rounded-xl border border-slate-800 bg-slate-900/60 text-left hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-colors cursor-pointer group">
+              <Wand2 className="w-3.5 h-3.5 text-indigo-400 shrink-0 group-hover:scale-110 transition-transform" />
+              <span className="text-[11px] font-bold text-slate-300 group-hover:text-white leading-tight">
+                {t.presets[preset.id]}
               </span>
-            </motion.button>
-          )}
-
-          {/* Download All Button - Simple and Elegant */}
-          <motion.button
-            whileHover={!isProcessing ? { scale: 1.02, boxShadow: "0 0 30px rgba(255,255,255,0.3)" } : {}}
-            whileTap={!isProcessing ? { scale: 0.97 } : {}}
-            onClick={onConvert}
-            disabled={isProcessing}
-            className={`
-              w-full py-5 rounded-[2rem] font-display font-black flex flex-col items-center justify-center shadow-lg
-              transition-all duration-500 relative overflow-hidden group
-              ${isProcessing
-                ? 'bg-slate-800 text-slate-500 opacity-50 cursor-not-allowed' 
-                : 'bg-white text-slate-900 hover:bg-slate-200 shadow-[0_0_20px_rgba(255,255,255,0.4)] cursor-pointer'
-              }
-            `}
-          >
-            {isProcessing ? (
-              <div className="flex items-center gap-4">
-                <Loader2 className="w-8 h-8 animate-spin" />
-                <span className="uppercase tracking-widest text-xl">{appT.processing}</span>
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-2 sm:gap-3 relative z-10 w-full px-4">
-                <Download className="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-y-1 transition-transform duration-300 shrink-0" />
-                <div className="flex flex-col items-center text-center leading-tight">
-                  <span className="uppercase tracking-wide sm:tracking-wider text-sm sm:text-base md:text-lg font-black">
-                    {fileCount > 1 ? t.downloadAll : t.downloadImage}
-                  </span>
-                  {fileCount > 1 && (
-                    <span className="text-[10px] opacity-70 uppercase tracking-[0.2em] mt-1 font-bold font-sans">
-                      {fileCount} {t.filesReady}
-                    </span>
-                  )}
-                </div>
-              </div>
-            )}
-            
-            {!isProcessing && (
-              <div className="absolute -bottom-4 -right-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <CheckCircle2 className="w-24 h-24 rotate-12" />
-              </div>
-            )}
-          </motion.button>
+            </button>
+          ))}
         </div>
+        <p className="text-[11px] text-slate-500 leading-relaxed">{t.presetsHint}</p>
+      </Section>
+
+      {/* --- Formato ------------------------------------------------------ */}
+      <Section title={t.outputFormat}>
+        <div className="grid grid-cols-4 gap-1.5">
+          {formats.map(format => {
+            const active = settings.format === format.id;
+            return (
+              <button
+                key={format.id}
+                type="button"
+                disabled={!format.available}
+                onClick={() => pickFormat(format.id)}
+                title={format.available ? undefined : t.formatUnavailable}
+                className={`py-2.5 rounded-xl text-xs font-black transition-colors cursor-pointer disabled:cursor-not-allowed ${
+                  active
+                    ? 'bg-indigo-500 text-white border border-indigo-400'
+                    : format.available
+                      ? 'bg-slate-900/70 text-slate-400 border border-slate-800 hover:text-white hover:border-slate-600'
+                      : 'bg-slate-950/60 text-slate-700 border border-slate-900 line-through'
+                }`}
+              >
+                {format.label}
+              </button>
+            );
+          })}
+        </div>
+        {formats.some(f => !f.available) && (
+          <p className="text-[11px] text-slate-500 leading-relaxed">{t.formatUnavailableHint}</p>
+        )}
+      </Section>
+
+      {/* --- Calidad y peso ---------------------------------------------- */}
+      <Section title={t.qualityTitle}>
+        <Slider label={t.quality} value={settings.quality} min={5} max={100} suffix="%"
+          disabled={!lossy} onChange={value => patch({ quality: value })} />
+        {!lossy && <p className="text-[11px] text-slate-500">{t.qualityLossless}</p>}
+
+        <label className="flex items-center gap-3 pt-1 cursor-pointer">
+          <input type="checkbox" checked={settings.targetBytes > 0} disabled={!lossy}
+            onChange={e => patch({ targetBytes: e.target.checked ? 500 * 1024 : 0 })}
+            className="w-4 h-4 accent-indigo-500 cursor-pointer" />
+          <span className="text-xs font-bold text-slate-300">{t.targetSize}</span>
+        </label>
+        {settings.targetBytes > 0 && lossy && (
+          <div className="pl-7 space-y-2">
+            <div className="flex items-center gap-2">
+              <input type="number" min={10} max={20000} value={Math.round(settings.targetBytes / 1024)}
+                onChange={e => patch({ targetBytes: Math.max(10, parseInt(e.target.value, 10) || 10) * 1024 })}
+                className="w-24 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm" />
+              <span className="text-xs font-bold text-slate-500">KB</span>
+            </div>
+            <p className="text-[11px] text-slate-500 leading-relaxed">{t.targetSizeHint}</p>
+          </div>
+        )}
+      </Section>
+
+      {/* --- Tamaño ------------------------------------------------------- */}
+      <Section title={t.resizeTitle}>
+        <div className="grid grid-cols-4 gap-1.5">
+          {(['none', 'scale', 'longEdge', 'dimensions'] as ResizeMode[]).map(mode => (
+            <button key={mode} type="button" onClick={() => patch({ resizeMode: mode })}
+              className={`py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
+                settings.resizeMode === mode
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-slate-900/70 text-slate-400 border border-slate-800 hover:text-white'
+              }`}>
+              {t.resizeModes[mode]}
+            </button>
+          ))}
+        </div>
+
+        {settings.resizeMode === 'scale' && (
+          <Slider label={t.scale} value={settings.scale} min={10} max={400} step={5} suffix="%"
+            onChange={value => patch({ scale: value })} />
+        )}
+
+        {settings.resizeMode === 'longEdge' && (
+          <div className="flex items-center gap-2">
+            <input type="number" min={16} max={16384} value={settings.longEdge}
+              onChange={e => patch({ longEdge: Math.max(16, parseInt(e.target.value, 10) || 16) })}
+              className="w-28 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm" />
+            <span className="text-xs font-bold text-slate-500">px · {t.longEdgeHint}</span>
+          </div>
+        )}
+
+        {settings.resizeMode === 'dimensions' && (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <input type="number" min={1} max={16384} value={settings.width} onChange={e => setWidth(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                className="w-24 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm" />
+              <span className="text-slate-600 font-black">×</span>
+              <input type="number" min={1} max={16384} value={settings.height} onChange={e => setHeight(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                className="w-24 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white font-mono text-sm" />
+              <span className="text-xs font-bold text-slate-500">px</span>
+            </div>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" checked={settings.lockAspect} onChange={e => patch({ lockAspect: e.target.checked })}
+                className="w-4 h-4 accent-purple-500 cursor-pointer" />
+              <span className="text-xs font-bold text-slate-300">{t.lockAspect}</span>
+            </label>
+            {settings.lockAspect && (
+              <div className="grid grid-cols-3 gap-1.5">
+                {(['contain', 'cover', 'stretch'] as const).map(fit => (
+                  <button key={fit} type="button" onClick={() => patch({ fit })}
+                    className={`py-2 rounded-lg text-[10px] font-black uppercase tracking-wider transition-colors cursor-pointer ${
+                      settings.fit === fit ? 'bg-slate-200 text-slate-900' : 'bg-slate-900/70 text-slate-400 border border-slate-800 hover:text-white'
+                    }`}>
+                    {t.fits[fit]}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        <Slider label={t.sharpen} value={settings.sharpen} min={0} max={100} suffix="%"
+          onChange={value => patch({ sharpen: value })} />
+        <p className="text-[11px] text-slate-500 leading-relaxed">{t.sharpenHint}</p>
+      </Section>
+
+      {/* --- Orientación y fondo ------------------------------------------ */}
+      <Section title={t.transformTitle}>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => patch({ rotate: (((settings.rotate + 90) % 360) as Settings['rotate']) })}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-900/70 border border-slate-800 text-xs font-bold text-slate-300 hover:text-white hover:border-slate-600 transition-colors cursor-pointer">
+            <RotateCw className="w-3.5 h-3.5" /> {settings.rotate}°
+          </button>
+          <button type="button" onClick={() => patch({ flipH: !settings.flipH })}
+            className={`p-2 rounded-lg border text-slate-300 transition-colors cursor-pointer ${settings.flipH ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-slate-900/70 border-slate-800 hover:border-slate-600'}`}
+            aria-label={t.flipH} aria-pressed={settings.flipH}>
+            <FlipHorizontal2 className="w-4 h-4" />
+          </button>
+          <button type="button" onClick={() => patch({ flipV: !settings.flipV })}
+            className={`p-2 rounded-lg border text-slate-300 transition-colors cursor-pointer ${settings.flipV ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-slate-900/70 border-slate-800 hover:border-slate-600'}`}
+            aria-label={t.flipV} aria-pressed={settings.flipV}>
+            <FlipVertical2 className="w-4 h-4" />
+          </button>
+        </div>
+
+        {!alpha && (
+          <label className="flex items-center gap-3 pt-1">
+            <input type="color" value={settings.background} onChange={e => patch({ background: e.target.value })}
+              className="w-9 h-9 rounded-lg bg-transparent border border-slate-700 cursor-pointer" />
+            <span className="text-xs font-bold text-slate-300 leading-tight">{t.background}</span>
+          </label>
+        )}
+      </Section>
+
+      {/* --- Medida y vista previa ---------------------------------------- */}
+      <Section title={t.engineTitle}>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={settings.measureQuality} onChange={e => patch({ measureQuality: e.target.checked })}
+            className="w-4 h-4 mt-0.5 accent-emerald-500 cursor-pointer" />
+          <span className="text-xs font-bold text-slate-300 leading-snug">
+            {t.measureQuality}
+            <span className="block font-medium text-slate-500 mt-0.5">{t.measureQualityHint}</span>
+          </span>
+        </label>
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input type="checkbox" checked={livePreview} onChange={e => onLivePreview(e.target.checked)}
+            className="w-4 h-4 mt-0.5 accent-amber-500 cursor-pointer" />
+          <span className="text-xs font-bold text-slate-300 leading-snug">
+            {t.livePreview}
+            <span className="block font-medium text-slate-500 mt-0.5">{t.livePreviewHint}</span>
+          </span>
+        </label>
+      </Section>
+
+      {/* --- Historial ----------------------------------------------------- */}
+      <div className="flex items-center gap-2 pt-2 border-t border-slate-800">
+        <button type="button" onClick={onUndo} disabled={!canUndo}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-900/70 border border-slate-800 text-[11px] font-bold text-slate-300 hover:text-white hover:border-slate-600 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+          <Undo2 className="w-3.5 h-3.5" /> {t.undo}
+        </button>
+        <button type="button" onClick={onRedo} disabled={!canRedo}
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-900/70 border border-slate-800 text-[11px] font-bold text-slate-300 hover:text-white hover:border-slate-600 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed">
+          <Redo2 className="w-3.5 h-3.5" /> {t.redo}
+        </button>
+        <span className="ml-auto flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-slate-600">
+          <Sliders className="w-3 h-3" /> {t.historyHint}
+        </span>
       </div>
     </div>
   );

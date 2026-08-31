@@ -9,8 +9,8 @@ interface FooterProps {
 
 export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
   return (
-    <footer className="py-24 md:py-36 border-t border-white/5 flex flex-col items-center space-y-16 relative z-10 bg-[#05050a] w-full">
-      <div className="flex flex-col items-center space-y-16 max-w-5xl px-8 text-center">
+    <footer className="py-16 md:py-24 border-t border-white/5 flex flex-col items-center space-y-12 relative z-10 bg-[#05050a] w-full">
+      <div className="flex flex-col items-center space-y-10 w-full max-w-5xl px-4 md:px-8 text-center">
         <div className="text-gray-600 text-xs font-black tracking-[0.6em] uppercase opacity-40">
           {t.footerCredit || 'Part of the oLoveTools suite'}
         </div>
@@ -32,43 +32,9 @@ export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
           {t.footerTagline}
         </p>
 
-        {/* SEO Articles / Information Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-4xl border-t border-white/5 pt-16 mt-8">
-          <div>
-            <h3 className="text-white font-bold text-lg mb-3">{t.seoBrowserSpeedTitle}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
-          </div>
-          <div>
-            <h3 className="text-white font-bold text-lg mb-3">{t.seoUseCaseTitle}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{t.seoUseCaseText}</p>
-          </div>
-          <div className="md:col-span-2">
-            <h3 className="text-white font-bold text-lg mb-3">{t.seoSecondaryTitle || t.seoPrivacyTitle}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed mb-4">{t.seoPrivacyText}</p>
-            <div className="flex flex-wrap gap-2 pt-2">
-              {Array.isArray(t.seoKeywords) && t.seoKeywords.map((kw: string) => (
-                <span key={kw} className="text-[10px] text-gray-500 bg-white/5 border border-white/10 px-2 py-1 rounded">
-                  {kw}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* FAQs */}
-        {Array.isArray(t.faq) && t.faq.length > 0 && (
-          <div className="w-full text-left max-w-4xl border-t border-white/5 pt-16">
-            <h2 className="text-white font-black text-2xl mb-8 tracking-tight text-center">{t.faqTitle}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {t.faq.map((item: any, i: number) => (
-                <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl hover:border-indigo-500/20 transition-colors">
-                  <h4 className="text-white font-bold text-base mb-2">{item.question}</h4>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* The SEO cards and the FAQ used to be duplicated here on top of the
+            copy inside <main> — same questions, same answers, twice on one
+            page. They now live only in the main content. */}
 
         <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-indigo-900/60 font-black text-[11px] md:text-xs tracking-widest pt-12 border-t border-white/5 w-full uppercase">
           <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>

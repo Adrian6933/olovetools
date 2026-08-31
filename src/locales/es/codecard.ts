@@ -47,25 +47,29 @@ export default {
   "watermarkLabel": "Creado con oLoveTools.com",
   "features": [
     {
-      "title": "Escalado de Salida en Alta Definición",
-      "text": "Exporta imágenes a escalas de 1x, 2x o 4x para garantizar que tus capturas de código se vean nítidas en Twitter, LinkedIn y blogs."
+      "title": "Sintaxis de verdad, 48 lenguajes",
+      "text": "El resaltador lee el flujo de tokens de Prism en crudo, asi que JavaScript, Rust, Zig, Terraform, Dockerfiles y 43 mas salen con sus colores — y solo se descarga la gramatica que elijas."
     },
     {
-      "title": "Privacidad 100% en el Cliente",
-      "text": "Tus fragmentos de código se procesan y colorean completamente en tu navegador web. Nada se envía a servidores externos."
+      "title": "Destaca las lineas que importan",
+      "text": "Pulsa un numero de linea para resaltarla y atenuar el resto. Mayus+clic coge un rango, Alt+clic invierte la seleccion entera, clic derecho la limpia."
     },
     {
-      "title": "Soporte de Sintaxis Completo",
-      "text": "Soporte total para los principales lenguajes de programación, incluidos JavaScript, TypeScript, Python, HTML, CSS, Rust, Go, SQL y Markdown."
+      "title": "Exportaciones a las que no se les corta nada",
+      "text": "La tarjeta se mide a su ancho completo antes de capturarla, asi que las lineas largas sobreviven a la exportacion en vez de quedarse cortadas en el borde de la vista previa. PNG, JPEG, WebP o SVG vectorial, hasta 4x."
+    },
+    {
+      "title": "Local, y sin conexion de verdad",
+      "text": "Las fuentes y las gramaticas se sirven desde este sitio, no desde un CDN ajeno. Una vez cargada la pagina, resaltar y exportar funcionan con la red desenchufada."
     }
   ],
   "footerCredit": "Parte de la suite oLoveTools",
   "seoHeroTitle": "Crea hermosas imágenes de tus capturas de código en línea",
   "seoHeroText": "Compartir código como texto simple en redes sociales o presentaciones puede ser visualmente aburrido. CodeCard convierte tu código fuente en tarjetas de diseño elegantes al instante. Controla el espaciado, las sombras, las fuentes y los estilos de ventana para adaptarlo a tu marca personal.",
   "seoHeroList": [
-    "Exportaciones en alta resolución PNG, JPEG y SVG",
-    "Preparado para uso offline, seguro y privado",
-    "Completamente gratuito y sin marcas de agua obligatorias"
+    "PNG, JPEG, WebP y SVG vectorial hasta 4x",
+    "Fuentes y gramaticas auto-alojadas: funciona sin conexion",
+    "Sin cuenta, y la marca de agua viene desactivada"
   ],
   "seoBrowserSpeedTitle": "Generación local rápida y segura",
   "seoBrowserSpeedText": "CodeCard se ejecuta completamente en tu navegador mediante renderizado del lado del cliente. Ningún archivo o texto sale de tu computadora.",
@@ -86,20 +90,28 @@ export default {
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
-      "question": "¿Cómo obtengo la captura más nítida?",
-      "answer": "Recomendamos elegir la escala de resolución 2x o 4x en la pestaña de exportar. Esto asegura que la imagen PNG o JPEG tenga la densidad de píxeles necesaria para verse nítida en pantallas Retina de alta definición."
+      "question": "Por que otras herramientas me cortaban las lineas largas?",
+      "answer": "Porque la mayoria captura el DOM tal y como esta maquetado, y un bloque de codigo con barra de desplazamiento horizontal solo maqueta la parte que se ve. CodeCard mide la tarjeta a su ancho completo, sin recortar, antes de capturarla, asi que la linea entera llega a la imagen."
     },
     {
-      "question": "¿Puedo usar CodeCard sin conexión?",
-      "answer": "¡Sí! Dado que CodeCard funciona al 100% en el cliente, una vez cargada la página, todo el procesamiento y las descargas funcionan sin necesidad de internet."
+      "question": "Como resalto lineas concretas?",
+      "answer": "Pulsa un numero de linea en la vista previa para destacarla y atenuar el resto. Mayus+clic extiende un rango, Alt+clic invierte la seleccion entera y el clic derecho la limpia. Tambien puedes escribir rangos como 3, 7-9, 12 en la casilla de lineas resaltadas."
     },
     {
-      "question": "¿Es seguro mi código?",
-      "answer": "Por supuesto. Tu código nunca se transmite por internet ni se almacena en nuestros servidores. Todo el proceso ocurre localmente en tu computadora."
+      "question": "Que lenguajes admite?",
+      "answer": "48, entre ellos JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfiles, Bash, PowerShell, Markdown y diffs unificados. Solo se descarga la gramatica del lenguaje que elijas."
     },
     {
-      "question": "¿Soporta temas personalizados?",
-      "answer": "Soportamos temas oscuros estándar (One Dark, Dracula, VS Code, Night Owl) y temas claros (GitHub Light) para cubrir los gustos de todos los desarrolladores."
+      "question": "Puedo usar CodeCard sin conexion?",
+      "answer": "Si. Las fuentes monoespaciadas y las gramaticas se sirven desde este sitio y no desde un CDN ajeno, asi que una vez cargada la pagina el resaltado y la exportacion siguen funcionando sin red."
+    },
+    {
+      "question": "Es seguro mi codigo?",
+      "answer": "Tu codigo no se transmite a ninguna parte. El resaltado, la maquetacion y el renderizado de la imagen ocurren en tu navegador, y no se sube ni se registra nada."
+    },
+    {
+      "question": "Cual es el ajuste de exportacion mas nitido?",
+      "answer": "PNG a 3x o 4x para uso rasterizado. Si el destino acepta vectores, elige SVG: se mantiene nitido a cualquier tamano y suele pesar menos que un PNG a 4x."
     }
   ],
   "footerTagline": "Generador de capturas de código elegante y gratuito que funciona 100% de forma local en tu dispositivo.",
@@ -112,5 +124,98 @@ export default {
   "privacyContent": "Tu privacidad es nuestra prioridad absoluta.\n\nTodo el procesamiento y creación de imágenes ocurre en tu dispositivo. Ningún texto es recolectado o enviado a servidores.\n\nTu código te pertenece.",
   "termsContent": "Al usar CodeCard, aceptas los siguientes términos:\n\n1. Esta herramienta se proporciona 'tal cual' sin garantías.\n2. No nos hacemos responsables de fallos de renderizado o errores de descarga.\n3. Es tu responsabilidad asegurarte de que tu código no contenga credenciales confidenciales.\n4. Nos reservamos el derecho de modificar estos términos en cualquier momento.",
   "cookiesContent": "Usamos cookies para mejorar tu experiencia.\n\n1. Cookies necesarias para el funcionamiento técnico.\n2. Cookies de preferencia para recordar tu idioma seleccionado.\n\nPuedes desactivar las cookies en la configuración de tu navegador.",
-  "contact": "Contacto"
+  "contact": "Contacto",
+  "heroBadge": "Estudio de capturas de codigo",
+  "heroChipLanguages": "48 lenguajes",
+  "heroChipLocal": "Funciona en tu navegador",
+  "heroChipNoAccount": "Sin cuenta ni subidas",
+  "previewTitle": "Vista previa",
+  "privacyNote": "Resaltado en tu navegador. Tu codigo no sale de este equipo.",
+  "dropTitle": "Suelta el archivo aqui",
+  "dropHint": "Suelta aqui un archivo de codigo, o pega el codigo.",
+  "dropBrowse": "Abrir archivo",
+  "startBlank": "Empezar en blanco",
+  "pendingLines": "lineas",
+  "pendingLoad": "Cargar en el editor",
+  "pendingLoadRaw": "Cargar sin detectar",
+  "pendingDiscard": "Descartar",
+  "pendingBig": "Archivo grande: el resaltado puede ir lento mientras escribes.",
+  "labelStartLine": "Numero de la primera linea",
+  "labelHighlightLines": "Lineas resaltadas",
+  "highlightHint": "O pulsa los numeros de linea en la vista previa. Mayus+clic para un rango, Alt+clic invierte, clic derecho limpia.",
+  "highlightPlaceholder": "ej. 3, 7-9, 12",
+  "clearHighlights": "Limpiar",
+  "labelDimOthers": "Atenuar las demas lineas",
+  "labelBgMode": "Fondo",
+  "bgModeGradient": "Degradado",
+  "bgModeSolid": "Color plano",
+  "bgModeNone": "Ninguno",
+  "labelBgColor": "Color de fondo",
+  "labelFontFamily": "Fuente",
+  "fontIbmPlex": "IBM Plex Mono",
+  "fontSystem": "Monoespaciada del sistema",
+  "labelLineHeight": "Altura de linea",
+  "labelAspect": "Relacion de aspecto",
+  "aspectAuto": "Auto",
+  "aspectSquare": "Cuadrado",
+  "aspectWide": "Panoramico",
+  "aspectSocial": "Social",
+  "aspectPortrait": "Vertical",
+  "windowMacDesc": "Los tres puntos de macOS",
+  "windowWindowsDesc": "Minimizar, maximizar, cerrar",
+  "windowSimpleDesc": "Un solo marcador de color",
+  "windowNoneDesc": "Sin barra de titulo",
+  "labelWordWrap": "Ajustar lineas largas",
+  "wordWrapHint": "Desactivado, la tarjeta crece hasta la linea mas larga.",
+  "labelLigatures": "Ligaduras tipograficas",
+  "ligaturesHint": "Convierte => y !== en un solo glifo.",
+  "watermarkHint": "Desactivada por defecto. No se estampa nada en tu imagen si no lo pides.",
+  "labelCardWidth": "Ancho de la tarjeta",
+  "labelTabSize": "Tamano del tabulador",
+  "labelFormat": "Formato",
+  "labelQuality": "Calidad",
+  "btnDownload": "Descargar",
+  "btnCopy": "Copiar imagen",
+  "copyOk": "Copiada",
+  "copyFail": "Tu navegador ha bloqueado el portapapeles. Descargala en su lugar.",
+  "presetsTitle": "Estilos guardados",
+  "presetSave": "Guardar actual",
+  "presetEmpty": "Aun no hay nada guardado. Los estilos se quedan en este navegador.",
+  "presetDelete": "Borrar estilo",
+  "undo": "Deshacer",
+  "redo": "Rehacer",
+  "zoomIn": "Acercar",
+  "zoomOut": "Alejar",
+  "zoomFit": "Restablecer vista",
+  "compareHold": "Manten pulsado para ver el codigo sin estilo",
+  "backToTop": "Volver arriba",
+  "statusExporting": "Generando la imagen...",
+  "statusGrammar": "Cargando la gramatica...",
+  "errorGrammar": "No se ha podido cargar la gramatica. El codigo se muestra sin resaltar.",
+  "errorTooBig": "Ese archivo supera los 4 MB.",
+  "howTitle": "Como funciona",
+  "howStep1Title": "Pega o suelta tu codigo",
+  "howStep1Text": "Escribelo, pegalo o suelta un archivo. El archivo queda en espera: te ensena su tamano y sus lineas, y no se carga nada hasta que pulsas el boton.",
+  "howStep2Title": "Dale estilo y elige las lineas clave",
+  "howStep2Text": "Diez temas, nueve degradados o tu propio color, cinco marcos de ventana. Pulsa un numero de linea para destacarla y atenuar el resto: justo la parte que hay que mirar.",
+  "howStep3Title": "Exporta o mandala a otra herramienta",
+  "howStep3Text": "PNG, JPEG, WebP o SVG vectorial, hasta 4x. Copiala al portapapeles, o pasala a CompressSnap, CropSnap o WatermarkSnap sin descargarla antes.",
+  "seoEngineTitle": "Construido sobre el flujo de tokens de Prism",
+  "seoEngineText": "En vez de pedirle al resaltador el HTML ya hecho, CodeCard lee el flujo de tokens en crudo y reconstruye el codigo linea a linea. Eso es lo que hace posibles los numeros de linea exactos, el resaltado por linea, el ajuste con sangria colgante y las exportaciones sin recortes.",
+  "nextStepTitle": "Sigue",
+  "nextStepHint": "Tu imagen viaja contigo, sin volver a subirla",
+  "nextCompress": "Comprimela",
+  "nextCrop": "Recortala",
+  "nextFormat": "Cambia el formato",
+  "nextWatermark": "Anade una marca de agua",
+  "nextMeme": "Haz un meme",
+  "groupWeb": "Web",
+  "groupSystems": "Sistemas",
+  "groupApps": "Aplicaciones",
+  "groupData": "Datos y configuracion",
+  "groupOps": "Shell y operaciones",
+  "groupText": "Texto y diffs",
+  "gradientCandy": "Rosa Caramelo",
+  "gradientMono": "Grafito",
+  "gradientPeach": "Melocoton Suave",
 };

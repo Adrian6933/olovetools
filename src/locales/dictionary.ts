@@ -524,15 +524,15 @@ import ru_subtitlesbolt from './ru/subtitles-bolt';
 import ja_subtitlesbolt from './ja/subtitles-bolt';
 import zh_subtitlesbolt from './zh/subtitles-bolt';
 
-import en_passbolt from './en/passbolt';
-import es_passbolt from './es/passbolt';
-import hi_passbolt from './hi/passbolt';
-import de_passbolt from './de/passbolt';
-import fr_passbolt from './fr/passbolt';
-import pt_passbolt from './pt/passbolt';
-import ru_passbolt from './ru/passbolt';
-import ja_passbolt from './ja/passbolt';
-import zh_passbolt from './zh/passbolt';
+import en_entropybolt from './en/entropy-bolt';
+import es_entropybolt from './es/entropy-bolt';
+import hi_entropybolt from './hi/entropy-bolt';
+import de_entropybolt from './de/entropy-bolt';
+import fr_entropybolt from './fr/entropy-bolt';
+import pt_entropybolt from './pt/entropy-bolt';
+import ru_entropybolt from './ru/entropy-bolt';
+import ja_entropybolt from './ja/entropy-bolt';
+import zh_entropybolt from './zh/entropy-bolt';
 
 import en_whoisbolt from './en/whois-bolt';
 import es_whoisbolt from './es/whois-bolt';
@@ -1246,16 +1246,16 @@ export const subtitlesBoltDictionary: Record<string, any> = {
   zh: zh_subtitlesbolt,
 };
 
-export const passboltDictionary: Record<string, any> = {
-  en: en_passbolt,
-  es: es_passbolt,
-  fr: fr_passbolt,
-  de: de_passbolt,
-  pt: pt_passbolt,
-  ru: ru_passbolt,
-  hi: hi_passbolt,
-  ja: ja_passbolt,
-  zh: zh_passbolt,
+export const entropyBoltDictionary: Record<string, any> = {
+  en: en_entropybolt,
+  es: es_entropybolt,
+  fr: fr_entropybolt,
+  de: de_entropybolt,
+  pt: pt_entropybolt,
+  ru: ru_entropybolt,
+  hi: hi_entropybolt,
+  ja: ja_entropybolt,
+  zh: zh_entropybolt,
 };
 
 export const whoisBoltDictionary: Record<string, any> = {
@@ -1342,7 +1342,7 @@ export const qrReaderDictionary: Record<string, any> = {
   zh: zh_qrReader,
 };
 
-export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'passbolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow' | 'jwt-bolt' | 'qr-reader') => {
+export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'entropy-bolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow' | 'jwt-bolt' | 'qr-reader') => {
   const dictionaryObj = 
     tool === 'clipy' ? clipyDictionary : 
     tool === 'twitchbolt' ? twitchboltDictionary : 
@@ -1396,7 +1396,7 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     tool === 'key-doctor' ? keyDoctorDictionary :
     tool === 'whiteboard-flow' ? whiteboardFlowDictionary :
     tool === 'subtitles-bolt' ? subtitlesBoltDictionary :
-    tool === 'passbolt' ? passboltDictionary :
+    tool === 'entropy-bolt' ? entropyBoltDictionary :
     tool === 'whois-bolt' ? whoisBoltDictionary :
     tool === 'base64-bolt' ? base64boltDictionary :
     tool === 'framesnap' ? framesnapDictionary :

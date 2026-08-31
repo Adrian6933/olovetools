@@ -1,6 +1,6 @@
 export default {
   "heroTitle": "下载 KICK 剪辑",
-  "seo_title": "下载 KICK 剪辑",
+  "seo_title": "KickBolt | 免账号批量下载 Kick 片段",
   "heroDesc": "保存 Kick 精彩瞬间的终极工具。快速、可靠且无需注册。一次性下载整个剪辑列表。",
   "seo_description": "保存 Kick 精彩瞬间的终极工具。快速、可靠且无需注册。一次性下载整个剪辑列表。",
   "uploadTxt": "上传 .TXT 列表",
@@ -18,7 +18,7 @@ export default {
   "tips2": "移动端就绪：我们的文件已准备好垂直格式。非常适合 TikTok、Reels 和 Shorts。",
   "tips3": "批量模式：使用 .txt 上传可保存多达 50 个剪辑，并在数秒内完成下载。",
   "footerDesc": "专业的 Kick 剪辑下载器。优化的引擎可即时获取高清 MP4 视频。",
-  "footerSeoPara": "Kickclip 使用先进技术解析 Kick 元数据并获取直接 MP4 流，无需损失画质。",
+  "footerSeoPara": "KickBolt 读取 Kick 的公开片段元数据，找出主播实际发布过的最高版本，把 MP4 交给你——一个一个下，或者打成一个不压缩的 ZIP。Kick 不允许浏览器直接请求 API 或视频，所以请求要经过中转：先走我们自己的端点，公共 CORS 代理只是可以关掉的备用。",
   "proTipsTitle": "给编辑者的专业提示",
   "tip1Title": "性能",
   "tip2Title": "格式",
@@ -82,9 +82,67 @@ export default {
     "cookies": "Cookies",
     "contactEmail": "邮件联系",
     "gotIt": "我明白了",
-    "privacyText": "在 Kickclip，隐私至关重要。我们不收集、存储或共享任何个人身份数据。链接是实时处理的，我们的服务器上不会保留已下载剪辑的日志。如有任何问题，请通过 adrian.contact.me.69@gmail.com 与我们联系。",
-    "termsText": "Kickclip 是一个用于访问 Kick 公共内容的辅助工具。用户对其下载材料的使用承担全部责任。Kickclip 与 Kick 无关。",
+    "privacyText": "KickBolt 不给你建任何档案：不注册、没有分析画像、不存你粘贴的链接。它不能声称的是“什么都不经过服务器”——Kick 拒绝浏览器的直接请求，所以每个片段都要中转。先由我们自己的端点处理，它不记录任何日志；失败了就退到公共 CORS 代理（corsproxy.io、allorigins.win、codetabs.com 等），这些由第三方运营，他们记不记日志我们控制不了。片段链接和视频本身会经过应答的那一个。这个备用路径可以在工具里关掉，页面也会显示上一次下载是哪个主机处理的。你的语言和这个偏好保存在你自己的浏览器里。有疑问请联系：adrian.contact.me.69@gmail.com。",
+    "termsText": "KickBolt 是一个用于访问 Kick 公共内容的辅助工具。用户对其下载材料的使用承担全部责任。KickBolt 与 Kick 无关。",
     "cookiesText": "我们的网站仅使用技术上必需的本地存储（LocalStorage）来保证网站的运行。"
   },
-  "loadingClips": "正在加载片段..."
+  "loadingClips": "正在加载片段...",
+  "qMaxLabel": "最高画质",
+  "qMaxSub": "原始源",
+  "q720Label": "720p 高清",
+  "q720Sub": "折中",
+  "q360Label": "360p 快速",
+  "q360Sub": "省流量",
+  "zipError": "ZIP 没能生成。可能有片段下载失败了，减少数量再试一次。",
+  "twitchCrossSell": "想下载 Twitch 的片段？",
+  "twitchCrossSellCta": "试试 TwitchBolt",
+  "routeNotice": "Kick 会拦截浏览器的直接请求，所以每个片段都要经过中转。先试我们自己的中转，公共中转只是备用，你可以关掉。",
+  "routeLast": "上一次下载由 {host} 处理",
+  "routeAllowOn": "公共中转：开",
+  "routeAllowOff": "公共中转：关",
+  "howTitle": "使用方法",
+  "step1Title": "粘贴链接",
+  "step1Text": "每行一个片段链接，或者丢进一个 .txt 列表。不按按钮就什么都不会去取。",
+  "step2Title": "挑一个画质",
+  "step2Text": "源画质保留原始流；720p 和 360p 用细节换来小得多的文件。",
+  "step3Title": "等它抓取",
+  "step3Text": "每次并发三个，免得被 Kick 限流，每个文件都有进度条。",
+  "step4Title": "存一个或全存",
+  "step4Text": "可以一个个下，也可以整批打成一个 ZIP，全程不重新压缩。",
+  "featuresTitle": "它到底能做什么",
+  "feat1Title": "任意 Kick 片段链接",
+  "feat1Text": "带 ?clip= 的频道链接、/clips/ 路径、短分享链接，都会解析到同一个片段。",
+  "feat2Title": "整份清单一次搞定",
+  "feat2Text": "粘五十个链接或者上传一个 .txt；重复的在发出任何请求之前就被去掉了。",
+  "feat3Title": "画质你说了算",
+  "feat3Text": "不是每个片段都值得用源码率。当体积比细节更重要时，降到 720p 或 360p。",
+  "feat4Title": "一个 ZIP，不重编码",
+  "feat4Text": "打包只存储不压缩：视频在 zip 里本来就不会变小，跳过这步省下等待。",
+  "feat5Title": "永远不用账号",
+  "feat5Text": "不注册、不留邮箱、不装扩展。打开页面、粘贴、下载、关掉标签页。",
+  "feat6Title": "对路径诚实",
+  "feat6Text": "Kick 不会直接把内容给浏览器，所以工具会告诉你片段是经哪个中转来的，也允许你拒绝公共中转。",
+  "faqTitle": "常见问题",
+  "faq": [
+    {
+      "question": "片段是直接从 Kick 来的吗？",
+      "answer": "不是，也做不到。Kick 的片段 API 在 Cloudflare 后面，它的视频 CDN 又不发 CORS 头，所以浏览器无权直接读取其中任何一个。每个片段都要经过中转。先试我们自己的中转；失败了才轮到几个公共 CORS 代理兜底。输入框上方的提示可以关掉它们，也会显示上一次下载究竟是哪个主机处理的。"
+    },
+    {
+      "question": "一次最多能下多少个片段？",
+      "answer": "没有硬上限，但片段是刻意每次并发解析三个、并发下载五个，免得 Kick 开始拒绝请求。一次五十个链接很轻松；几百个会比较久，中途撞上限流的概率也更高。"
+    },
+    {
+      "question": "为什么 ZIP 和片段一样大？",
+      "answer": "因为它是存储而非压缩。视频本身已经压过了，再走一遍 zip 的 deflate 几乎省不下什么，却要多等很久。这个包是个容器，不是压榨机。"
+    },
+    {
+      "question": "“最高画质”实际下的是什么？",
+      "answer": "是 Kick 为那个片段发布的最高版本，不管它是多少。不会拉伸到 1080p：主播如果是用 720p 播的，源就是 720p，工具不会去编造从未被录下的细节。"
+    },
+    {
+      "question": "你们会保存我的链接或片段吗？",
+      "answer": "都不会。链接来一个解析一个，不往任何数据库里写东西。你的语言选择和公共中转的偏好存在你自己的浏览器里，不会发往任何地方。我们没法替你保证的，是公共中转拿到一个被要求抓取的 URL 之后会做什么——这正是你可以把它们关掉的原因。"
+    }
+  ]
 };

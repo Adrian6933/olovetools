@@ -1,195 +1,272 @@
 export default {
   "languageName": "English",
   "header": {
-    "subtitle": "SMART IMAGE CONVERTER"
+    "subtitle": "IMAGE FORMAT CONVERTER"
+  },
+  "hero": {
+    "badge": "Runs in your browser",
+    "title": "Convert images to the format you actually need,",
+    "titleHighlight": "and see what it cost",
+    "subtitle": "Drop up to 50 photos, choose the format, size and weight, and convert when you are ready. Nothing is uploaded and nothing starts without you pressing the button.",
+    "trust1": "No upload, no account",
+    "trust2": "Measured quality (SSIM)",
+    "trust3": "Batch of 50"
   },
   "dropzone": {
-    "drop": "Drop images here!",
-    "click": "Click to Upload Images",
-    "dragInfoStart": "Drag & Drop up to",
-    "dragInfoCount": "50 images",
-    "dragInfoEnd": "at once or PASTE your image.",
-    "settingsInfo": "Supports JPG, PNG, WEBP, SVG, ICO, PDF, TIFF, HEIC, EPS, RAW...",
-    "pastePrompt": "Want to paste an image?",
-    "pasteAction": "Try PasteSnap",
-    "tooMany": "Too many files! Selecting the first 50.",
-    "invalid": "Please select valid image files."
+    "title": "Drop your images here",
+    "subtitle": "Up to {max} at a time. You can also paste from the clipboard.",
+    "waits": "Files wait here: conversion only starts when you press Convert.",
+    "tooMany": "The queue holds 50 images; the extra files were left out.",
+    "unsupported": "EPS and camera RAW cannot be decoded in a browser, so they were skipped.",
+    "decodeFailed": "That file could not be decoded as an image.",
+    "full": "The queue is full. Remove an image to add another."
   },
-  "app": {
-    "title": "Format",
-    "titleHighlight": "Flow",
-    "subtitle": "Convert up to 50 images at once. Adjust settings globally or customize individually.",
-    "liveComparison": "Live Comparison",
-    "comparing": "Comparing size and quality",
-    "clearAll": "Clear All",
-    "startOver": "Start Over",
+  "stage": {
     "original": "Original",
-    "preview": "Preview",
-    "specific": "(Specific)",
-    "global": "(Global)",
-    "dimensions": "Dimensions",
-    "newDimensions": "New Dimensions",
-    "size": "Size",
-    "estSize": "Est. Size",
-    "queue": "Queue",
-    "processing": "Processing...",
-    "footer": "Local conversion.",
-    "contactFeedback": "CONTACT FOR IDEAS AND FEEDBACK:",
-    "copiedEmail": "Copied!",
-    "privacyPolicy": "Privacy Policy",
-    "termsOfService": "Terms of Service",
-    "cookiePolicy": "Cookie Policy",
-    "privacyPolicyContent": {
-      "title": "Privacy Policy",
-      "intro": "Your privacy is important to us. It is FormatFlow's policy to respect your privacy regarding any information we may collect from you across our website, and other sites we own and operate.",
-      "section1": {
-        "title": "1. Information we collect",
-        "text": "We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used."
-      },
-      "section2": {
-        "title": "2. Use of information",
-        "text": "We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorized access, disclosure, copying, use or modification."
-      },
-      "section3": {
-        "title": "3. Local processing",
-        "text": "All image conversions are performed locally in your browser. We do not upload, store, or process your images on our servers. Your files never leave your device."
-      },
-      "contact": "For any questions or suggestions, contact us at: adrian.contact.me.69@gmail.com"
-    },
-    "termsOfServiceContent": {
-      "title": "Terms of Service",
-      "intro": "By accessing the FormatFlow website, you agree to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws.",
-      "section1": {
-        "title": "1. License of Use",
-        "text": "Permission is granted to temporarily download one copy of the materials (information or software) on FormatFlow's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title."
-      },
-      "section2": {
-        "title": "2. Disclaimer",
-        "text": "The materials on FormatFlow's website are provided on an 'as is' basis. FormatFlow makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties including, without limitation, implied warranties or conditions of merchantability, fitness for a particular purpose, or non-infringement of intellectual property or other violation of rights."
-      },
-      "section3": {
-        "title": "3. Limitations",
-        "text": "In no event shall FormatFlow or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on FormatFlow's website."
-      }
-    },
-    "cookiePolicyContent": {
-      "title": "Cookie Policy",
-      "intro": "This is the cookie policy for FormatFlow, accessible from our website.",
-      "section1": {
-        "title": "1. What are cookies?",
-        "text": "As is common practice with almost all professional websites, this site uses cookies, which are tiny files that are downloaded to your computer, to improve your experience. This page describes what information they gather, how we use it and why we sometimes need to store these cookies."
-      },
-      "section2": {
-        "title": "2. How we use cookies",
-        "text": "We use cookies for a variety of reasons detailed below. Unfortunately, in most cases there are no industry standard options for disabling cookies without completely disabling the functionality and features they add to this site."
-      },
-      "section3": {
-        "title": "3. Cookies we set",
-        "text": "Site preferences cookies: To provide you with a great experience on this site we provide the functionality to set your preferences for how this site runs when you use it. In order to remember your preferences we need to set cookies so that this information can be called whenever you interact with a page is affected by your preferences. Analytics cookies: We use third-party cookies to track and measure usage of this site so that we can continue to produce engaging content. These cookies may track things such as how you spend on the site or pages you visit which helps us to understand how we can improve the site for you."
-      }
-    }
+    "converted": "Converted",
+    "stale": "Settings changed",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "fit": "Fit",
+    "splitLabel": "Comparison divider",
+    "stageHint": "Scroll to zoom on the pointer, drag to pan. Hold Space, Alt or right-click to see the original."
   },
   "controls": {
-    "globalSettings": "Global Settings",
-    "globalInfo": "Applies to all",
-    "images": "images",
-    "overrideInfo": "unless overridden below.",
-    "outputFormat": "Output Format",
+    "presetsTitle": "Presets",
+    "presets": {
+      "web": "Web (WEBP, 1920px)",
+      "social": "Social (JPG, 1440px)",
+      "archive": "Archive (PNG, full size)",
+      "email": "Email (under 500 KB)"
+    },
+    "presetsHint": "A preset just fills in the controls below. Ignore it and set everything by hand if you prefer.",
+    "outputFormat": "Output format",
+    "formatUnavailable": "Your browser cannot write this format",
+    "formatUnavailableHint": "Crossed-out formats are the ones this browser has no encoder for. We test it instead of guessing, so you never get a PNG with the wrong extension.",
+    "qualityTitle": "Quality and weight",
     "quality": "Quality",
-    "resize": "Resize (Scale)",
-    "specificSettings": "Specific Settings",
-    "specificHintTitle": "Want this image to be different?",
-    "specificHintText": "Use specific settings to apply a different size or format just to this image, ignoring the global settings above.",
-    "customize": "Customize",
-    "usingGlobal": "Currently using global settings. Toggle switch to override.",
-    "downloadImage": "Download Image",
-    "downloadAll": "Download All",
-    "imageOverride": "IMAGE OVERRIDE",
-    "filesReady": "FILES READY"
+    "qualityLossless": "This format is lossless, so quality does nothing here.",
+    "targetSize": "Aim for a maximum file size",
+    "targetSizeHint": "The quality is found by bisection: up to 8 encodes to land just under your budget.",
+    "resizeTitle": "Size",
+    "resizeModes": {
+      "none": "Keep",
+      "scale": "Scale",
+      "longEdge": "Long edge",
+      "dimensions": "Exact"
+    },
+    "scale": "Scale",
+    "longEdgeHint": "longest side",
+    "lockAspect": "Keep the aspect ratio",
+    "fits": {
+      "contain": "Contain",
+      "cover": "Cover",
+      "stretch": "Stretch"
+    },
+    "sharpen": "Sharpen after resizing",
+    "sharpenHint": "Unsharp mask on luminance only, so edges stay crisp without colour halos.",
+    "transformTitle": "Rotation and background",
+    "flipH": "Flip horizontally",
+    "flipV": "Flip vertically",
+    "background": "Background behind the image (formats without transparency)",
+    "engineTitle": "Engine",
+    "measureQuality": "Measure the quality",
+    "measureQualityHint": "Decodes the result back and compares it with the source (SSIM). Costs a few milliseconds.",
+    "livePreview": "Live preview",
+    "livePreviewHint": "Off by default: with it on, every change re-converts the selected image.",
+    "undo": "Undo",
+    "redo": "Redo",
+    "historyHint": "Settings history"
+  },
+  "editor": {
+    "startOver": "Start over",
+    "shortcuts": "← → to move, Enter to convert, Ctrl+Z to undo",
+    "queue": "Queue",
+    "addMore": "Add more",
+    "remove": "Remove from queue",
+    "perImage": "Settings just for this image",
+    "perImageOn": "This image ignores the global settings.",
+    "perImageOff": "This image follows the global settings.",
+    "convert": "Convert",
+    "convertAll": "Convert all",
+    "converting": "Converting",
+    "reading": "Reading",
+    "download": "Download",
+    "downloadZip": "ZIP",
+    "dimensions": "Dimensions",
+    "size": "Size",
+    "vsOriginal": "vs original",
+    "quality": "Quality",
+    "attempts": "passes",
+    "ssimBands": {
+      "identical": "indistinguishable",
+      "excellent": "excellent",
+      "good": "good",
+      "fair": "visible on close look",
+      "poor": "clearly degraded"
+    },
+    "icoMultisize": "The .ico holds 16, 32, 48, 64, 128 and 256 px versions; the size shown is the largest one inside it.",
+    "missedTarget": "The size budget could not be met, even at the lowest quality. This is the smallest result.",
+    "notConverted": "Not converted yet",
+    "notConvertedHint": "Your file is loaded and waiting. Adjust whatever you need and press Convert.",
+    "engineNote": "Encoding runs in {n} background workers, so the page never freezes. Each image is decoded once and every conversion reuses it.",
+    "dismiss": "Dismiss",
+    "backToTop": "Back to top"
+  },
+  "next": {
+    "nextStepTitle": "Keep going",
+    "nextStepHint": "The result travels with you — no re-upload",
+    "nextCompress": "Compress it",
+    "nextCrop": "Crop it",
+    "nextExif": "Strip metadata",
+    "nextWatermark": "Add a watermark",
+    "nextCutout": "Remove background"
+  },
+  "how": {
+    "title": "How it works",
+    "subtitle": "Three steps, and none of them start on their own.",
+    "steps": [
+      {
+        "title": "Drop the files",
+        "text": "They are decoded once and wait in the queue. Nothing is converted and nothing leaves your device."
+      },
+      {
+        "title": "Set the output",
+        "text": "Format, quality, size, rotation, background. Or one preset and done."
+      },
+      {
+        "title": "Convert and compare",
+        "text": "You get the weight, the dimensions and an SSIM score of what the conversion cost."
+      }
+    ]
   },
   "features": {
-    "heicTitle": "Transform Any Format",
-    "heicDesc": "Switch seamlessly from any format (JPG, PNG, WEBP, etc.) to new formats like SVG, ICO, PDF, TIFF, HEIC, EPS, and RAW without losing quality.",
-    "privacyTitle": "100% Private",
-    "privacyDesc": "All conversions happen locally in your browser. No images are ever uploaded to a server.",
-    "batchTitle": "Batch Processing",
-    "batchDesc": "Convert up to 50 images simultaneously. Download individually or as a ZIP archive.",
-    "resizeTitle": "Smart Resizing",
-    "resizeDesc": "Upscale up to 300% or downscale to save space with high-quality algorithms.",
-    "formatsTitle": "Modern Formats",
-    "formatsDesc": "Support for next-gen formats like WEBP and AVIF for superior compression.",
-    "freeTitle": "Free & Fast",
-    "freeDesc": "No daily limits, no watermarks, and instant processing power."
+    "title": "What it does that a plain converter does not",
+    "items": [
+      {
+        "title": "Parallel background workers",
+        "desc": "Encoding runs off the main thread across several workers, so the page stays responsive with 50 images in the queue."
+      },
+      {
+        "title": "Formats verified, not guessed",
+        "desc": "Every encoder is tested with a real two-pixel encode at startup. A browser that cannot write AVIF will not offer it."
+      },
+      {
+        "title": "Quality you can read",
+        "desc": "An SSIM score against the source tells you what the compression actually cost, instead of only how much you saved."
+      },
+      {
+        "title": "Target file size",
+        "desc": "Say \"under 500 KB\" and the quality is found by bisection, up to 8 encodes, to land just under the limit."
+      },
+      {
+        "title": "Nothing is uploaded",
+        "desc": "Decoding, resizing and encoding all happen in your browser. No server sees your photos, and it works offline."
+      },
+      {
+        "title": "Batch with per-image overrides",
+        "desc": "Up to 50 images at once, and any of them can break away with its own format and size."
+      }
+    ]
   },
   "formats": {
-    "title": "Supported Formats",
-    "svg": {
-      "title": "SVG",
-      "desc": "Fundamental for logos and vectors."
+    "title": "Formats, and what each one really gives you",
+    "subtitle": "Input: JPG, PNG, WEBP, AVIF, GIF, BMP, SVG, TIFF and HEIC. EPS and camera RAW need a PostScript interpreter and per-camera tables, so they are not accepted rather than silently returned as a PNG.",
+    "rows": [
+      {
+        "label": "WEBP",
+        "desc": "The best size-to-quality trade-off for the web today, with transparency. Supported everywhere that matters."
+      },
+      {
+        "label": "AVIF",
+        "desc": "Smaller still at the same quality, but only some browsers can write it. If yours cannot, the button is disabled."
+      },
+      {
+        "label": "JPG",
+        "desc": "The universal photographic format. No transparency, so you pick the background colour that goes underneath."
+      },
+      {
+        "label": "PNG",
+        "desc": "Lossless with transparency. The quality slider does nothing here, and that is why it is greyed out."
+      },
+      {
+        "label": "ICO",
+        "desc": "A real multi-size icon: 16, 32, 48, 64, 128 and 256 px in a single file, centre-cropped to a square."
+      },
+      {
+        "label": "PDF",
+        "desc": "One page fitted to the image, with a JPEG inside at the quality you chose."
+      },
+      {
+        "label": "TIFF",
+        "desc": "Uncompressed RGBA for printing and archiving. Also accepted as input."
+      },
+      {
+        "label": "SVG",
+        "desc": "A wrapper: the raster is embedded inside an SVG. It does not trace vectors — no browser tool can — but it works wherever only .svg is accepted."
+      }
+    ]
+  },
+  "app": {
+    "footer": "Everything runs in your browser.",
+    "contactFeedback": "CONTACT FOR IDEAS AND FEEDBACK:",
+    "copiedEmail": "Copied!"
+  },
+  "faqTitle": "Frequently asked questions",
+  "faq": [
+    {
+      "question": "Are my images uploaded anywhere?",
+      "answer": "No. Decoding, resizing and encoding all happen inside your browser using the canvas and web workers. Nothing is sent to a server, and once the page has loaded it works with no connection at all."
     },
-    "ico": {
-      "title": "ICO",
-      "desc": "Highly sought after by developers to create favicons."
+    {
+      "question": "Why are some formats crossed out?",
+      "answer": "Because your browser has no encoder for them. Browsers do not report this: asking for a GIF or a HEIC gives you back a PNG with the type quietly changed. At startup we encode two pixels into each format and check what actually comes out, so you are only offered what works."
     },
-    "pdf": {
-      "title": "PDF",
-      "desc": "Essential for users who want to package images in documents."
+    {
+      "question": "Can it convert to HEIC, EPS or camera RAW?",
+      "answer": "No, and it no longer pretends to. No browser can write HEIC, EPS needs a PostScript interpreter and RAW is a different sensor format per camera model. HEIC and TIFF are accepted as input; EPS and RAW files are rejected with a message instead of coming back as a mislabelled PNG."
     },
-    "tiff": {
-      "title": "TIFF",
-      "desc": "For users who need high quality without loss (printing)."
+    {
+      "question": "What is the SSIM number next to the result?",
+      "answer": "It is a similarity score between the converted image and the source, from 0 to 1. Above 0.98 the difference is very hard to see; below 0.95 artefacts start to show on photographs. It exists because \"saved 68%\" only tells you the flattering half of the story."
     },
-    "heic": {
-      "title": "HEIC",
-      "desc": "The iPhone format; many people seek to convert it to JPG to view it on Windows."
+    {
+      "question": "Why does nothing happen when I drop a file?",
+      "answer": "That is deliberate. Dropping a file only decodes it and puts it in the queue. The conversion — the expensive part — waits for you to press Convert, so you set everything up first instead of racing a preview that keeps restarting."
     },
-    "eps": {
-      "title": "EPS",
-      "desc": "Vector format used for high-quality printing and graphic design."
+    {
+      "question": "Does resizing lose detail?",
+      "answer": "Any big reduction does, but how much depends on the engine. Some browsers reduce in one pass with a 2x2 kernel and throw the rest of the pixels away, which shows up as jagged edges. FormatFlow measures that at startup — it downscales a test pattern and compares it against an exact average — and only falls back to halving the image step by step when the browser needs it. Where the browser already filters properly, the extra passes would cost time and change nothing, so they are skipped. You can also add a sharpening pass on top."
     },
-    "raw": {
-      "title": "RAW",
-      "desc": "Unprocessed image data from cameras, ideal for professional editing."
+    {
+      "question": "Why are my phone photos no longer rotated wrong?",
+      "answer": "Because the image is decoded with createImageBitmap and the EXIF orientation applied there, once. The old approach loaded the file into an <img> element, where some browsers apply the orientation tag and others do not, and the canvas ended up with the unrotated frame."
+    },
+    {
+      "question": "How many images can I convert at once?",
+      "answer": "Fifty. They are encoded across several background workers at the same time, and each one can carry its own format and size if you switch on the per-image override."
     }
-  },
-  "seo": {
-    "popularHeader": "Popular Conversions",
-    "toolsHeader": "Image Tools",
-    "tags": [
-      "HEIC to JPG",
-      "PNG to JPG",
-      "JPG to PNG",
-      "WEBP to JPG",
-      "HEIC to PNG",
-      "JPG to AVIF",
-      "PNG to WEBP",
-      "RAW to JPG",
-      "GIF to JPG",
-      "SVG to PNG",
-      "TIFF to JPG",
-      "EPS to PNG",
-      "AVIF to JPG",
-      "ICO to PNG",
-      "WEBP to PNG",
-      "BMP to JPG"
-    ],
-    "actions": [
-      "Image Converter",
-      "Bulk Image Resizer",
-      "Compress Images",
-      "Free Photo Converter",
-      "Change Image Format",
-      "High Quality Export",
-      "Upscale Image",
-      "Offline Image Tool"
-    ],
-    "description": "FormatFlow is the ultimate browser-based tool to change any image format (JPG, PNG, WEBP) to HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, resize photos, and compress images securely."
-  },
-  "cookies": {
-    "message": "We use cookies to improve your experience and for analytics. By continuing to use this site, you agree to our",
-    "privacyPolicy": "Privacy Policy",
-    "accept": "Accept & Continue"
-  },
-  "seo_title": "FormatFlow | Image Converter",
-  "seo_description": "FormatFlow is the ultimate browser-based tool to change any image format (JPG, PNG, WEBP) to HEIC, SVG, ICO, PDF, TIFF, EPS, RAW, resize photos, and compress images securely."
+  ],
+  "seoKeywordsTitle": "Keywords",
+  "seoKeywords": [
+    "image converter",
+    "convert HEIC to JPG",
+    "PNG to WEBP",
+    "JPG to AVIF",
+    "WEBP to PNG",
+    "TIFF to JPG",
+    "image to ICO",
+    "favicon generator",
+    "image to PDF",
+    "batch image converter",
+    "resize images online",
+    "compress images to a target size",
+    "offline image converter",
+    "free image converter no upload"
+  ],
+  "footer_seo_title": "A converter that tells you what it did",
+  "footer_seo_paragraph1": "FormatFlow converts images between JPG, PNG, WEBP, AVIF, ICO, PDF, TIFF and SVG entirely inside your browser. It reads HEIC from iPhones and TIFF as input, resizes by scale, long edge or exact dimensions, rotates, flips, sets the background colour for formats without transparency, and can hit a maximum file size by searching for the right quality.",
+  "footer_seo_paragraph2": "What it will not do is lie to you. Formats your browser cannot encode are shown disabled instead of returning a PNG with the wrong extension, EPS and camera RAW are rejected outright, and every result comes with its weight, its dimensions and an SSIM score of the quality it cost. Nothing is uploaded: the whole pipeline runs on your machine.",
+  "seo_title": "FormatFlow | Image Converter with Measured Quality",
+  "seo_description": "Convert images to WEBP, AVIF, JPG, PNG, ICO, PDF, TIFF or SVG in your browser. Batch of 50, target file size, real multi-size ICO, HEIC and TIFF input, and an SSIM quality score. Nothing is uploaded."
 };

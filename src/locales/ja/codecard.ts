@@ -47,25 +47,29 @@ export default {
   "watermarkLabel": "oLoveTools.com で作成",
   "features": [
     {
-      "title": "高DPI出力スケーリング",
-      "text": "画像を1倍、2倍、または4倍のスケールでエクスポートでき、Twitter、LinkedIn、ブログ記事でコードスクリーンショットが非常にシャープに表示されます。"
+      "title": "本物のシンタックス、48言語",
+      "text": "ハイライトは Prism の生のトークンストリームを読むため、JavaScript・Rust・Zig・Terraform・Dockerfile ほか43言語が正しい色で表示されます。ダウンロードされるのは選んだ文法だけです。"
     },
     {
-      "title": "100%クライアントサイドのプライバシー",
-      "text": "コードスニペットのハイライトや画像処理はすべてWebブラウザ内で完結します。サーバーへのデータ送信は一切ありません。"
+      "title": "大事な行を目立たせる",
+      "text": "行番号をクリックすればその行を強調し、他を暗くできます。Shift+クリックで範囲、Alt+クリックで選択全体を反転、右クリックで解除。"
     },
     {
-      "title": "充実したシンタックスサポート",
-      "text": "JavaScript、TypeScript、Python、HTML、CSS、Rust、Go、SQL、Markdownなどの主要な言語を完全にサポート。"
+      "title": "何も切り取られない書き出し",
+      "text": "撮影前にカードを実寸の幅で測るため、長い行もプレビューの端で切れずに書き出されます。PNG・JPEG・WebP・ベクターSVG、最大4倍。"
+    },
+    {
+      "title": "ローカルで、本当にオフライン",
+      "text": "フォントも文法もこのサイトから配信され、外部CDNは使いません。ページさえ読み込めば、ネットを切ってもハイライトと書き出しが動きます。"
     }
   ],
   "footerCredit": "oLoveTools スイートの一部",
   "seoHeroTitle": "美しいコードスクリーンショット画像をオンラインで作成",
   "seoHeroText": "ソーシャルメディアやプレゼンテーションで生のテキストコードを共有するのは退屈に見えがちです。CodeCardは、ソースコードをエレガントなデザイナーカードに瞬時に変換します。余白、影、フォント、ウィンドウフレームを調整して、パーソナルブランドに合わせましょう。",
   "seoHeroList": [
-    "高解像度PNG、JPEG、SVGでのエクスポート",
-    "オフライン対応、安全、プライバシー重視",
-    "登録不要、強制的な透かしなし"
+    "PNG・JPEG・WebP・ベクターSVG、最大4倍",
+    "フォントと文法を自前配信、オフラインでも動作",
+    "アカウント不要。ウォーターマークは既定でオフ"
   ],
   "seoBrowserSpeedTitle": "高速で安全なローカル生成",
   "seoBrowserSpeedText": "CodeCardはクライアントサイドレン더リング機能を使用し、完全にWebブラウザ内で動作します。ファイルやテキストがコンピュータから送信されることはありません。",
@@ -86,20 +90,28 @@ export default {
   "faqTitle": "よくある質問",
   "faq": [
     {
-      "question": "最も鮮明なスクリーンショットを入手するにはどうすればよいですか？",
-      "answer": "エクスポートタブで2倍または4倍の解像度スケールを選択することをお勧めします。これにより、出力されるPNGまたはJPEGは、高DPI Retinaディスプレイでも鮮明に表示される十分なピクセル密度を持ちます。"
+      "question": "他のツールで長い行が切れていたのはなぜ?",
+      "answer": "多くのツールはレイアウトされたままの DOM を撮るからです。横スクロールバー付きのコードブロックは見えている部分しかレイアウトされません。CodeCard は撮影前にカードを切り取られていない実寸の幅で測ります。"
     },
     {
-      "question": "CodeCardはオフラインで使用できますか？",
-      "answer": "はい！CodeCardはブラウザで100%クライアントサイドで動作するため、一度ページを読み込めば、すべての変換、ハイライト、ダウンロードはインターネット接続なしで動作します。"
+      "question": "特定の行をハイライトするには?",
+      "answer": "プレビューの行番号をクリックすると、その行が強調され他が暗くなります。Shift+クリックで範囲を拡張、Alt+クリックで選択全体を反転、右クリックで解除。3, 7-9, 12 のような範囲を入力することもできます。"
     },
     {
-      "question": "コードは安全ですか？",
-      "answer": "はい、完全に安全です。コードがネットワーク経由で送信されたり、当社のサーバーに保存されたりすることは一切ありません。すべての生成プロセスはお使いのコンピュータ上でローカルに実行されます。"
+      "question": "対応言語は?",
+      "answer": "48言語。JavaScript、TypeScript、JSX/TSX、Python、Rust、Go、Zig、C、C++、C#、Java、Kotlin、Swift、Ruby、PHP、SQL、YAML、TOML、Terraform、Dockerfile、Bash、PowerShell、Markdown、unified diff などです。ダウンロードされるのは選んだ言語の文法だけです。"
     },
     {
-      "question": "ダークテーマ以外のテーマはありますか？",
-      "answer": "主要なダークテーマ（One Dark、Dracula、VS Code、Night Owl）とライトテーマ（GitHub Light）をサポートしており、開発者の好みに幅広く対応しています。"
+      "question": "CodeCard はオフラインで使えますか?",
+      "answer": "はい。等幅フォントも構文文法も外部CDNではなくこのサイトから配信しているので、ページさえ読み込めば、ネットがなくてもハイライトと書き出しが動きます。"
+    },
+    {
+      "question": "コードは安全ですか?",
+      "answer": "コードはどこにも送信されません。ハイライト、レイアウト、画像の描画はすべてブラウザー内で行われ、アップロードも記録もありません。"
+    },
+    {
+      "question": "いちばん鮮明な書き出し設定は?",
+      "answer": "ラスターで使うなら PNG の3倍か4倍。出力先がベクターを扱えるなら SVG を選んでください。どのサイズでも鮮明で、たいていは4倍 PNG より軽くなります。"
     }
   ],
   "footerTagline": "デバイス上で100%ローカルに動作する、無料でおしゃれなコードスクリーンショットジェネレーター。",
@@ -112,5 +124,98 @@ export default {
   "privacyContent": "プライバシーは極めて重要です。\n\nすべてのコードハイライトと画像生成はお手元のデバイス上で行われます。テキストの収集やサーバー送信は一切ありません。\n\nコードはお客様のものです。",
   "termsContent": "CodeCardのご利用にあたり、以下の規約に同意するものとします：\n\n1. 本ツールは「現状のまま」保証なしで提供されます。\n2. 描画の不具合やダウンロードのエラーについて、一切の責任を負いません。\n3. コードに機密情報や認証情報が含まれていないことを確認する責任はユーザーにあります。\n4. 当社はこれらの規約をいつでも変更する権利を留め置きます。",
   "cookiesContent": "ユーザー体験向上のためにCookieを使用しています。\n\n1. 技術的な基本動作に必要なCookie。\n2. 選択された言語を記憶するための設定Cookie。\n\nブラウザの設定でCookieを無効にすることができます。",
-  "contact": "お問い合わせ"
+  "contact": "お問い合わせ",
+  "heroBadge": "コードスクリーンショット工房",
+  "heroChipLanguages": "48言語",
+  "heroChipLocal": "ブラウザー内で動作",
+  "heroChipNoAccount": "アカウント登録も送信も不要",
+  "previewTitle": "ライブプレビュー",
+  "privacyNote": "ハイライトはブラウザー内で処理されます。コードがこの端末から出ることはありません。",
+  "dropTitle": "ここにファイルをドロップ",
+  "dropHint": "ソースファイルをドロップするか、コードを貼り付けてください。",
+  "dropBrowse": "ファイルを開く",
+  "startBlank": "空の状態から",
+  "pendingLines": "行",
+  "pendingLoad": "エディターに読み込む",
+  "pendingLoadRaw": "判別せずに読み込む",
+  "pendingDiscard": "破棄",
+  "pendingBig": "大きなファイルです。入力中はハイライトが重くなることがあります。",
+  "labelStartLine": "開始行番号",
+  "labelHighlightLines": "ハイライトする行",
+  "highlightHint": "またはプレビューの行番号をクリックします。Shift+クリックで範囲、Alt+クリックで反転、右クリックで解除。",
+  "highlightPlaceholder": "例: 3, 7-9, 12",
+  "clearHighlights": "解除",
+  "labelDimOthers": "他の行を暗くする",
+  "labelBgMode": "背景",
+  "bgModeGradient": "グラデーション",
+  "bgModeSolid": "単色",
+  "bgModeNone": "なし",
+  "labelBgColor": "背景色",
+  "labelFontFamily": "フォント",
+  "fontIbmPlex": "IBM Plex Mono",
+  "fontSystem": "システム等幅フォント",
+  "labelLineHeight": "行の高さ",
+  "labelAspect": "アスペクト比",
+  "aspectAuto": "自動",
+  "aspectSquare": "正方形",
+  "aspectWide": "ワイド",
+  "aspectSocial": "SNS向け",
+  "aspectPortrait": "縦長",
+  "windowMacDesc": "macOS 風の3つの丸",
+  "windowWindowsDesc": "最小化・最大化・閉じる",
+  "windowSimpleDesc": "アクセント色のマーカー1つ",
+  "windowNoneDesc": "タイトルバーなし",
+  "labelWordWrap": "長い行を折り返す",
+  "wordWrapHint": "オフの場合、カードは最長行の幅まで広がります。",
+  "labelLigatures": "フォントの合字",
+  "ligaturesHint": "=> や !== を1つの字形にまとめます。",
+  "watermarkHint": "既定はオフです。指定しない限り画像には何も入りません。",
+  "labelCardWidth": "カードの幅",
+  "labelTabSize": "タブ幅",
+  "labelFormat": "形式",
+  "labelQuality": "画質",
+  "btnDownload": "ダウンロード",
+  "btnCopy": "画像をコピー",
+  "copyOk": "コピーしました",
+  "copyFail": "ブラウザーがクリップボードを拒否しました。かわりにダウンロードしてください。",
+  "presetsTitle": "保存したスタイル",
+  "presetSave": "現在の設定を保存",
+  "presetEmpty": "まだ何も保存されていません。設定はこのブラウザーに残ります。",
+  "presetDelete": "この設定を削除",
+  "undo": "元に戻す",
+  "redo": "やり直す",
+  "zoomIn": "拡大",
+  "zoomOut": "縮小",
+  "zoomFit": "表示をリセット",
+  "compareHold": "押している間は素のコードを表示",
+  "backToTop": "ページ先頭へ",
+  "statusExporting": "画像を生成中...",
+  "statusGrammar": "文法を読み込み中...",
+  "errorGrammar": "文法を読み込めませんでした。コードは素のテキストで表示されます。",
+  "errorTooBig": "そのファイルは4MBを超えています。",
+  "howTitle": "使い方",
+  "howStep1Title": "コードを貼るかドロップ",
+  "howStep1Text": "入力・貼り付け・ファイルのドロップから選べます。ドロップしたファイルは待機し、サイズと行数を表示。ボタンを押すまで読み込みません。",
+  "howStep2Title": "見た目を整えて重要な行を選ぶ",
+  "howStep2Text": "10種のテーマ、9種のグラデーションまたは任意の色、5種のウィンドウ枠。行番号をクリックすればその行を強調し、他を暗くできます。",
+  "howStep3Title": "書き出すか次のツールへ送る",
+  "howStep3Text": "PNG・JPEG・WebP・ベクターSVG に最大4倍で書き出し。クリップボードへ直接コピーするか、ダウンロードせずに CompressSnap・CropSnap・WatermarkSnap へ渡せます。",
+  "seoEngineTitle": "Prism のトークンストリームを基盤に",
+  "seoEngineText": "仕上がった HTML を受け取るのではなく、CodeCard は生のトークンストリームを読み、行単位でコードを組み直します。正確な行番号、行ごとのハイライト、ぶら下げインデントの折り返し、切れない書き出しはこれによって実現しています。",
+  "nextStepTitle": "次のステップ",
+  "nextStepHint": "画像はそのまま引き継がれます — 再アップロード不要",
+  "nextCompress": "圧縮する",
+  "nextCrop": "トリミング",
+  "nextFormat": "形式を変換",
+  "nextWatermark": "ウォーターマークを追加",
+  "nextMeme": "ミームを作る",
+  "groupWeb": "Web",
+  "groupSystems": "システム系",
+  "groupApps": "アプリケーション",
+  "groupData": "データと設定",
+  "groupOps": "シェルと運用",
+  "groupText": "テキストと差分",
+  "gradientCandy": "キャンディピンク",
+  "gradientMono": "グラファイト",
+  "gradientPeach": "ソフトピーチ",
 };

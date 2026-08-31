@@ -1,1015 +1,778 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import JSZip from 'jszip';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Upload,
-  Image as ImageIcon,
-  Settings,
+  AlertTriangle,
+  Check,
+  Cpu,
   Download,
-  Trash2,
-  AlertCircle,
-  Loader2,
-  ImageDown,
-  MoveHorizontal,
   Eye,
-  Lock,
-  Zap,
-  RefreshCw,
-  Sliders,
-  Check
+  ImageDown,
+  Loader2,
+  Play,
+  RotateCcw,
+  Trash2,
+  Upload,
 } from 'lucide-react';
 
 import { Header } from './components/Header';
-import type { Language } from '../../locales/meta';
+import { Footer } from './components/Footer';
 import { AdBanner } from '../../components/shared/AdBanner';
-import { CompressSettings, CompressedImageItem } from './types';
+import type { Language } from '../../locales/meta';
 import { useHandoffIntake } from '../../lib/useHandoff';
+
+import type { CompressItem, CompressSettings } from './lib/types';
+import { DEFAULT_SETTINGS } from './lib/types';
+import { ACCEPTED_TYPES, decodeFile, isSupportedImage } from './lib/decode';
+import { ssimBand } from './lib/metrics';
+import { useCompressor } from './lib/useCompressor';
+
+import {
+  CompressHeroArt, IconBudget, IconFormats, IconLocal, IconMeasure, IconPalette, IconWorker,
+  StepChoose, StepDrop, StepRun, StepTake,
+} from './components/Illustrations';
+import { SettingsPanel } from './components/SettingsPanel';
+import { CompareStage } from './components/CompareStage';
+import { NextStepBar } from './components/NextStepBar';
 
 interface CompresssnapProps {
   lang: Language;
   dictionary?: any;
 }
 
-const DEFAULT_SETTINGS: CompressSettings = {
-  quality: 80,
-  format: 'original',
-  scale: 100,
-  resizeMode: 'none',
-  width: 1920,
-  height: 1080,
-  maintainAspectRatio: true
+const FEATURE_ICONS = [IconWorker, IconBudget, IconMeasure, IconPalette, IconFormats, IconLocal];
+const STEP_ART = [StepDrop, StepChoose, StepRun, StepTake];
+
+/**
+ * Two encodes in flight at once. More does not go faster — there is one worker
+ * and the encoder is CPU-bound — but it does keep two full-resolution bitmaps
+ * alive at the same time, which is how a batch of 48 MP photos runs a tab out
+ * of memory.
+ */
+const CONCURRENCY = 2;
+
+const EXTENSION: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/avif': 'avif',
+};
+
+const BAND_KEY: Record<string, string> = {
+  identical: 'bandIdentical',
+  excellent: 'bandExcellent',
+  good: 'bandGood',
+  fair: 'bandFair',
+  poor: 'bandPoor',
+};
+const BAND_FALLBACK: Record<string, string> = {
+  identical: 'Indistinguishable',
+  excellent: 'Excellent',
+  good: 'Good',
+  fair: 'Fair',
+  poor: 'Visible loss',
+};
+const BAND_CLASS: Record<string, string> = {
+  identical: 'text-emerald-300',
+  excellent: 'text-emerald-300',
+  good: 'text-cyan-300',
+  fair: 'text-amber-300',
+  poor: 'text-red-300',
 };
 
 export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) => {
   const t = dictionary || {};
-  
-  // App state
-  const [items, setItems] = useState<CompressedImageItem[]>([]);
-  const [globalSettings, setGlobalSettings] = useState<CompressSettings>(DEFAULT_SETTINGS);
-  const [comparedItem, setComparedItem] = useState<CompressedImageItem | null>(null);
-  const [sliderPos, setSliderPos] = useState<number>(50);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const [activeItemSettings, setActiveItemSettings] = useState<string | null>(null); // item ID for individual config
-  
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  // Guard against stale results: only the latest compression run per item may write its result
-  const runCounter = useRef(0);
-  const latestRun = useRef<Record<string, number>>({});
 
-  // Scroll to top helper
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  const [items, setItems] = useState<CompressItem[]>([]);
+  const [settings, setSettings] = useState<CompressSettings>(DEFAULT_SETTINGS);
+  const [running, setRunning] = useState(false);
+  const [compareId, setCompareId] = useState<string>(null);
+  const [dragging, setDragging] = useState(false);
+  const [rejected, setRejected] = useState(0);
 
-  useEffect(() => {
-    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const cancelled = useRef(false);
+  // Every object URL this component ever made, so unmount can free the lot.
+  // Relying on the item list alone leaks the ones removed mid-run.
+  const urls = useRef<Set<string>>(new Set());
+
+  const { run, formats, usingWorker } = useCompressor();
+
+  const track = useCallback((url: string) => {
+    urls.current.add(url);
+    return url;
   }, []);
 
-  // Format bytes helper
-  const formatBytes = (bytes: number, decimals = 2) => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  };
+  const release = useCallback((url: string) => {
+    if (!url) return;
+    urls.current.delete(url);
+    URL.revokeObjectURL(url);
+  }, []);
 
-  // Helper: Read file as Data URL
-  const readFileAsDataURL = (file: Blob): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
+  useEffect(
+    () => () => {
+      cancelled.current = true;
+      urls.current.forEach(url => URL.revokeObjectURL(url));
+      urls.current.clear();
+    },
+    []
+  );
 
-  // Helper: Load image from source URL
-  const loadImage = (src: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = src;
-    });
-  };
+  const formatBytes = useCallback((bytes: number): string => {
+    if (!bytes) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
+    return `${parseFloat((bytes / 1024 ** i).toFixed(i === 0 ? 0 : 1))} ${units[i]}`;
+  }, []);
 
-  // Main Image Compression Core Logic
-  const compressImage = useCallback(async (item: CompressedImageItem, settings: CompressSettings): Promise<{
-    blob: Blob;
-    width: number;
-    height: number;
-    compressedWidth: number;
-    compressedHeight: number;
-  }> => {
-    // Load image elements
-    const img = await loadImage(item.originalUrl);
-    const originalWidth = img.naturalWidth || img.width;
-    const originalHeight = img.naturalHeight || img.height;
+  // --------------------------------------------------------------------------
+  // Intake. Adding files never starts an encode: they queue, and the button
+  // starts the work. Dropping forty photos used to lock the tab for a minute
+  // before the user had chosen a single setting.
+  // --------------------------------------------------------------------------
+  const addFiles = useCallback(
+    (incoming: FileList | File[], from = '') => {
+      const list = Array.from(incoming);
+      const accepted = list.filter(isSupportedImage);
+      const skipped = list.length - accepted.length;
+      if (skipped > 0) setRejected(count => count + skipped);
+      if (accepted.length === 0) return;
 
-    // Determine target dimensions
-    let targetWidth = originalWidth;
-    let targetHeight = originalHeight;
+      setItems(prev => [
+        ...prev,
+        ...accepted.map(file => ({
+          id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`,
+          file,
+          name: file.name,
+          originalSize: file.size,
+          originalUrl: track(URL.createObjectURL(file)),
+          width: null,
+          height: null,
+          sourceMime: file.type || '',
+          status: 'queued' as const,
+          result: null,
+          error: null,
+          settings: null,
+          appliedSettings: null,
+          from,
+        })),
+      ]);
+    },
+    [track]
+  );
 
-    if (settings.resizeMode === 'scale') {
-      const scaleFactor = settings.scale / 100;
-      targetWidth = Math.round(originalWidth * scaleFactor);
-      targetHeight = Math.round(originalHeight * scaleFactor);
-    } else if (settings.resizeMode === 'dimensions') {
-      if (settings.maintainAspectRatio) {
-        const ratio = originalWidth / originalHeight;
-        if (settings.width / settings.height > ratio) {
-          targetHeight = settings.height;
-          targetWidth = Math.round(targetHeight * ratio);
-        } else {
-          targetWidth = settings.width;
-          targetHeight = Math.round(targetWidth / ratio);
+  useHandoffIntake((file, from) => addFiles([file], from));
+
+  useEffect(() => {
+    const onPaste = (event: ClipboardEvent) => {
+      const files = event.clipboardData && event.clipboardData.files;
+      if (files && files.length > 0) addFiles(files);
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [addFiles]);
+
+  // --------------------------------------------------------------------------
+  // The run
+  // --------------------------------------------------------------------------
+  const patch = useCallback((id: string, changes: Partial<CompressItem>) => {
+    setItems(prev => prev.map(item => (item.id === id ? { ...item, ...changes } : item)));
+  }, []);
+
+  const compressOne = useCallback(
+    async (item: CompressItem, active: CompressSettings) => {
+      patch(item.id, { status: 'decoding', error: null });
+      try {
+        // Decoding stays here: the HEIC and TIFF converters are dynamic
+        // imports, which cannot live inside a bundled worker.
+        const decoded = await decodeFile(item.file);
+        if (cancelled.current) {
+          decoded.bitmap.close();
+          return;
         }
-      } else {
-        targetWidth = settings.width;
-        targetHeight = settings.height;
-      }
-    }
+        const width = decoded.bitmap.width;
+        const height = decoded.bitmap.height;
+        patch(item.id, { status: 'working', width, height, sourceMime: decoded.mime });
 
-    // Canvas setup
-    const canvas = document.createElement('canvas');
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-    const ctx = canvas.getContext('2d');
+        const outcome = await run(decoded.bitmap, active, decoded.mime);
+        if (cancelled.current) return;
 
-    if (!ctx) {
-      throw new Error('Canvas 2D context could not be created.');
-    }
-
-    // Determine target mime type
-    let mimeType = item.file.type;
-    if (settings.format !== 'original') {
-      mimeType = settings.format;
-    }
-
-    // For JPEG outputs, fill background with white (removes alpha channels safely)
-    if (mimeType === 'image/jpeg') {
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, targetWidth, targetHeight);
-    }
-
-    // Draw image onto canvas
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-    ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
-
-    // Export blob
-    return new Promise((resolve, reject) => {
-      const qualityFactor = settings.quality / 100;
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve({
-              blob,
-              width: originalWidth,
-              height: originalHeight,
-              compressedWidth: targetWidth,
-              compressedHeight: targetHeight
-            });
-          } else {
-            reject(new Error('Canvas export to blob failed.'));
-          }
-        },
-        mimeType,
-        qualityFactor
-      );
-    });
-  }, []);
-
-  // Process a single item in queue
-  const processItem = useCallback(async (id: string, settings: CompressSettings) => {
-    const runId = ++runCounter.current;
-    latestRun.current[id] = runId;
-
-    setItems(prev => prev.map(item => item.id === id ? { ...item, status: 'compressing' } : item));
-
-    try {
-      const item = items.find(i => i.id === id);
-      if (!item) return;
-
-      const result = await compressImage(item, settings);
-
-      // A newer run started while this one was compressing — discard this stale result
-      if (latestRun.current[id] !== runId) return;
-
-      const url = URL.createObjectURL(result.blob);
-
-      // Revoke previous compressed URL if it existed
-      if (item.compressedUrl) {
-        URL.revokeObjectURL(item.compressedUrl);
-      }
-
-      setItems(prev => prev.map(i => {
-        if (i.id === id) {
-          const savings = i.originalSize > 0 
-            ? Math.max(0, Math.round(((i.originalSize - result.blob.size) / i.originalSize) * 100))
-            : 0;
-
-          return {
-            ...i,
-            status: 'done',
-            compressedSize: result.blob.size,
-            compressedUrl: url,
-            width: result.width,
-            height: result.height,
-            compressedWidth: result.compressedWidth,
-            compressedHeight: result.compressedHeight,
-            savings,
-            appliedSettings: settings
-          };
+        // Re-encoding can easily make a file bigger — a screenshot PNG pushed
+        // through JPEG at quality 95 is the classic case. Saying so and
+        // keeping the original beats silently handing back a worse file.
+        if (outcome.blob.size >= item.originalSize) {
+          patch(item.id, {
+            status: 'skipped',
+            result: null,
+            appliedSettings: active,
+            error: null,
+          });
+          return;
         }
-        return i;
-      }));
-    } catch (err) {
-      console.error('Compression error:', err);
-      if (latestRun.current[id] !== runId) return;
-      setItems(prev => prev.map(i => i.id === id ? { ...i, status: 'error', error: String(err) } : i));
-    }
-  }, [items, compressImage]);
 
-  // Trigger compression on setting changes or file additions
-  useEffect(() => {
-    items.forEach(item => {
-      // Re-compress if item is idle
-      if (item.status === 'idle') {
-        const settingsToUse = item.settings || globalSettings;
-        processItem(item.id, settingsToUse);
+        setItems(prev =>
+          prev.map(current => {
+            if (current.id !== item.id) return current;
+            if (current.result) release(current.result.url);
+            return {
+              ...current,
+              status: 'done',
+              appliedSettings: active,
+              result: {
+                blob: outcome.blob,
+                url: track(URL.createObjectURL(outcome.blob)),
+                bytes: outcome.blob.size,
+                width: outcome.width,
+                height: outcome.height,
+                mime: outcome.mime,
+                quality: outcome.quality,
+                ssim: outcome.ssim,
+                ms: outcome.ms,
+                attempts: outcome.attempts,
+              },
+            };
+          })
+        );
+      } catch (error) {
+        if (!cancelled.current) patch(item.id, { status: 'error', error: String(error) });
+      }
+    },
+    [patch, release, run, track]
+  );
+
+  const compressAll = useCallback(async () => {
+    if (running) return;
+    setRunning(true);
+    cancelled.current = false;
+
+    // Snapshot the queue: `items` changes on every result, and a loop reading
+    // it live would process the same file twice.
+    const queue = items.filter(item => item.status === 'queued' || item.status === 'error');
+    let cursor = 0;
+
+    const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+      while (cursor < queue.length && !cancelled.current) {
+        const item = queue[cursor++];
+        await compressOne(item, item.settings || settings);
       }
     });
-  }, [items, globalSettings, processItem]);
 
-  // Handle uploaded files
-  const addFiles = async (files: FileList | File[]) => {
-    const newItems: CompressedImageItem[] = [];
+    await Promise.all(workers);
+    if (!cancelled.current) setRunning(false);
+  }, [items, running, settings, compressOne]);
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (!file.type.startsWith('image/')) continue;
+  /** Any change to the settings makes the finished results stale, not wrong. */
+  const stale = useMemo(
+    () =>
+      items.some(
+        item =>
+          (item.status === 'done' || item.status === 'skipped') &&
+          item.appliedSettings &&
+          JSON.stringify(item.appliedSettings) !== JSON.stringify(item.settings || settings)
+      ),
+    [items, settings]
+  );
 
-      const originalUrl = URL.createObjectURL(file);
-      newItems.push({
-        id: Math.random().toString(36).substring(2, 9),
-        file,
-        name: file.name,
-        originalSize: file.size,
-        compressedSize: null,
-        originalUrl,
-        compressedUrl: null,
-        width: null,
-        height: null,
-        compressedWidth: null,
-        compressedHeight: null,
-        status: 'idle',
-        savings: null
-      });
-    }
+  const queued = items.filter(item => item.status === 'queued' || item.status === 'error').length;
+  const done = items.filter(item => item.status === 'done');
+  const busy = items.some(item => item.status === 'decoding' || item.status === 'working');
 
-    if (newItems.length > 0) {
-      setItems(prev => [...prev, ...newItems]);
-    }
-  };
-
-  // Accept an image handed over by another tool (e.g. a cutout from Background Remover).
-  useHandoffIntake(file => addFiles([file]));
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      addFiles(e.dataTransfer.files);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      addFiles(e.target.files);
-    }
-  };
-
-  // Keyboard paste integration
-  const handlePaste = useCallback((e: ClipboardEvent) => {
-    const files = e.clipboardData?.files;
-    if (files && files.length > 0) {
-      addFiles(files);
-    }
+  const requeueAll = useCallback(() => {
+    setItems(prev => prev.map(item => (item.status === 'done' || item.status === 'skipped' ? { ...item, status: 'queued' } : item)));
   }, []);
 
-  useEffect(() => {
-    window.addEventListener('paste', handlePaste);
-    return () => window.removeEventListener('paste', handlePaste);
-  }, [handlePaste]);
+  // --------------------------------------------------------------------------
+  // Output
+  // --------------------------------------------------------------------------
+  const nameFor = useCallback((item: CompressItem): string => {
+    const mime = item.result ? item.result.mime : item.sourceMime;
+    const ext = EXTENSION[mime] || 'jpg';
+    const dot = item.name.lastIndexOf('.');
+    const base = dot > 0 ? item.name.slice(0, dot) : item.name;
+    return `${base}-min.${ext}`;
+  }, []);
 
-  // Download single item
-  const downloadSingle = (item: CompressedImageItem) => {
-    if (!item.compressedUrl) return;
-    
-    // Determine extension (from the settings actually used to compress)
-    let ext: string = item.appliedSettings?.format || item.settings?.format || globalSettings.format;
-    if (ext === 'original') {
-      ext = item.file.type;
-    }
-    const extStr = ext.split('/')[1] === 'jpeg' ? 'jpg' : ext.split('/')[1];
-
-    // Create file base name
-    const originalName = item.name.substring(0, item.name.lastIndexOf('.')) || item.name;
-    const finalName = `${originalName}-compressed.${extStr}`;
-
+  const saveBlob = useCallback((blob: Blob, name: string) => {
+    const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = item.compressedUrl;
-    link.download = finalName;
-    document.body.appendChild(link);
+    link.href = url;
+    link.download = name;
     link.click();
-    document.body.removeChild(link);
-  };
+    // Next tick, not synchronously: Firefox cancels a download whose object
+    // URL is released in the same task as the click.
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }, []);
 
-  // Download all as ZIP
-  const downloadAll = async () => {
+  const downloadOne = useCallback(
+    (item: CompressItem) => {
+      if (!item.result) return;
+      saveBlob(item.result.blob, nameFor(item));
+    },
+    [nameFor, saveBlob]
+  );
+
+  const downloadAll = useCallback(async () => {
+    if (done.length === 0) return;
     const zip = new JSZip();
-    const doneItems = items.filter(item => item.status === 'done' && item.compressedUrl);
+    // The blobs are already in memory — the old build fetched each object URL
+    // back out of the browser to get them again.
+    done.forEach((item, index) => zip.file(`${String(index + 1).padStart(2, '0')}_${nameFor(item)}`, item.result.blob));
+    const archive = await zip.generateAsync({ type: 'blob' });
+    saveBlob(archive, 'compressed-images.zip');
+  }, [done, nameFor, saveBlob]);
 
-    for (let i = 0; i < doneItems.length; i++) {
-      const item = doneItems[i];
-      const response = await fetch(item.compressedUrl!);
-      const blob = await response.blob();
+  const removeItem = useCallback(
+    (id: string) => {
+      setItems(prev => {
+        const target = prev.find(item => item.id === id);
+        if (target) {
+          release(target.originalUrl);
+          if (target.result) release(target.result.url);
+        }
+        return prev.filter(item => item.id !== id);
+      });
+      setCompareId(current => (current === id ? null : current));
+    },
+    [release]
+  );
 
-      let ext: string = item.appliedSettings?.format || item.settings?.format || globalSettings.format;
-      if (ext === 'original') {
-        ext = item.file.type;
-      }
-      const extStr = ext.split('/')[1] === 'jpeg' ? 'jpg' : ext.split('/')[1];
-
-      const originalName = item.name.substring(0, item.name.lastIndexOf('.')) || item.name;
-      zip.file(`${i + 1}_${originalName}.${extStr}`, blob);
-    }
-
-    const content = await zip.generateAsync({ type: 'blob' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = 'compressed-images.zip';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-  };
-
-  // Remove single image
-  const removeItem = (id: string) => {
+  const resetAll = useCallback(() => {
+    cancelled.current = true;
     setItems(prev => {
-      const target = prev.find(i => i.id === id);
-      if (target) {
-        URL.revokeObjectURL(target.originalUrl);
-        if (target.compressedUrl) URL.revokeObjectURL(target.compressedUrl);
-      }
-      return prev.filter(i => i.id !== id);
+      prev.forEach(item => {
+        release(item.originalUrl);
+        if (item.result) release(item.result.url);
+      });
+      return [];
     });
-    if (activeItemSettings === id) setActiveItemSettings(null);
-    if (comparedItem?.id === id) setComparedItem(null);
-  };
+    setSettings(DEFAULT_SETTINGS);
+    setCompareId(null);
+    setRunning(false);
+    setRejected(0);
+  }, [release]);
 
-  // Reset entire workflow
-  const resetApp = () => {
-    items.forEach(i => {
-      URL.revokeObjectURL(i.originalUrl);
-      if (i.compressedUrl) URL.revokeObjectURL(i.compressedUrl);
-    });
-    setItems([]);
-    setGlobalSettings(DEFAULT_SETTINGS);
-    setComparedItem(null);
-    setActiveItemSettings(null);
-  };
+  const handoffResult = useCallback(() => {
+    const first = done[0];
+    if (!first) return null;
+    return { blob: first.result.blob, name: nameFor(first) };
+  }, [done, nameFor]);
 
-  // Apply individual settings change
-  const updateItemSettings = (id: string, settingsUpdate: Partial<CompressSettings>) => {
-    setItems(prev => prev.map(i => {
-      if (i.id === id) {
-        const currentSettings = i.settings || globalSettings;
-        return {
-          ...i,
-          status: 'idle', // Reset to idle to trigger recalculation
-          settings: { ...currentSettings, ...settingsUpdate } as CompressSettings
-        };
-      }
-      return i;
-    }));
-  };
+  // --------------------------------------------------------------------------
+  // Totals
+  // --------------------------------------------------------------------------
+  const totals = useMemo(() => {
+    const before = done.reduce((sum, item) => sum + item.originalSize, 0);
+    const after = done.reduce((sum, item) => sum + item.result.bytes, 0);
+    const measured = done.filter(item => item.result.ssim !== null);
+    return {
+      before,
+      after,
+      saved: before > 0 ? Math.round(((before - after) / before) * 100) : 0,
+      ssim: measured.length > 0 ? measured.reduce((sum, item) => sum + item.result.ssim, 0) / measured.length : null,
+    };
+  }, [done]);
 
-  const handleLanguageChange = (newLang: string) => {
-    window.location.href = `/${newLang.toLowerCase()}/compresssnap`;
-  };
+  const compared = compareId ? items.find(item => item.id === compareId) : null;
+  const sourceMime = items.length > 0 ? items[0].sourceMime : '';
+
+  const faqs = Array.isArray(t.faq) ? t.faq : [];
+  const features = Array.isArray(t.features) ? t.features : [];
+  const keywords = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
+  const steps = [1, 2, 3, 4].map((n, i) => ({
+    title: t[`step${n}Title`] || '',
+    text: t[`step${n}Text`] || '',
+    art: STEP_ART[i],
+  }));
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#05090e] text-slate-100 selection:bg-cyan-500/30 overflow-x-hidden font-sans">
-      {/* Background Orbs */}
-      
+    <div className="min-h-screen flex flex-col bg-[#060b11] text-slate-200 font-sans relative overflow-x-hidden">
+      <Header
+        currentLang={lang}
+        onLanguageChange={(l: string) => (window.location.href = `/${l.toLowerCase()}/compresssnap`)}
+        onReset={resetAll}
+        t={t}
+      />
 
-      <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
-
-      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
-        {/* Bloque AdSense Horizontal */}
+      {/* The max width lives on <main>: AdRail measures this element to decide
+          whether the fixed side rails fit. */}
+      <main className="flex-1 flex flex-col items-center pt-40 md:pt-36 pb-24 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-compresssnap-top" />
-        <div className="w-full text-center space-y-16 md:space-y-24">
-          
-          {/* Hero Header */}
-          <div className="flex flex-col items-center space-y-6 animate-fade-in">
-            <div className="inline-flex max-w-full items-center gap-2 px-5 py-2 rounded-full bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(6,182,212,0.15)]">
-              <ImageDown className="w-4 h-4 shrink-0" />
-              <span className="truncate">{t.title}</span>
+
+        <div className="w-full space-y-20 md:space-y-28">
+          {/* ================================================================ */}
+          {/* Hero                                                             */}
+          {/* ================================================================ */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(6,182,212,0.15)]">
+                <ImageDown className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{t.badge || t.title}</span>
+              </div>
+
+              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
+                {t.title}
+              </h1>
+
+              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">{t.description}</p>
+
+              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                {(t.seoHeroList || []).slice(0, 3).map((point: string, i: number) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
+                  >
+                    <Check className="w-3.5 h-3.5 text-cyan-400 stroke-[3]" />
+                    {point}
+                  </span>
+                ))}
+              </div>
             </div>
-            
-            <h1 className="text-4xl md:text-[5.5rem] font-black tracking-tight leading-[0.9] text-white bg-clip-text text-transparent bg-gradient-to-b from-white via-white to-slate-400">
-              {t.title}
-            </h1>
-            <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              {t.description}
-            </p>
-          </div>
 
-          {/* Interactive Core */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Left side: Upload area & queue */}
-            <div className="lg:col-span-8 space-y-6">
-              
+            <div className="relative">
+              <div className="absolute inset-0 bg-cyan-500/10 blur-[80px] rounded-full" />
+              <CompressHeroArt className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]" />
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* Workspace                                                        */}
+          {/* ================================================================ */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <div className="lg:col-span-7 min-w-0 space-y-5">
               {/* Dropzone */}
-              <div 
-                onDrop={handleDrop}
-                onDragOver={handleDragOver}
-                onClick={() => fileInputRef.current?.click()}
-                className="group relative border-2 border-dashed border-cyan-950 hover:border-cyan-500/40 bg-[#080d16]/30 hover:bg-[#0a1220]/40 rounded-3xl p-12 md:p-16 flex flex-col items-center justify-center space-y-6 cursor-pointer transition-premium shadow-xl shadow-black/20"
+              <div
+                onDragOver={event => {
+                  event.preventDefault();
+                  setDragging(true);
+                }}
+                onDragLeave={() => setDragging(false)}
+                onDrop={event => {
+                  event.preventDefault();
+                  setDragging(false);
+                  if (event.dataTransfer.files.length > 0) addFiles(event.dataTransfer.files);
+                }}
+                onClick={() => fileInput.current && fileInput.current.click()}
+                className={`group border-2 border-dashed rounded-3xl p-10 md:p-12 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all ${
+                  dragging
+                    ? 'border-cyan-400/70 bg-cyan-500/[0.07]'
+                    : 'border-cyan-950 hover:border-cyan-500/40 bg-[#080d16]/30'
+                }`}
               >
-                <input 
-                  type="file" 
-                  ref={fileInputRef} 
-                  onChange={handleFileInput} 
-                  multiple 
-                  accept="image/jpeg,image/png,image/webp" 
-                  className="hidden" 
+                <input
+                  ref={fileInput}
+                  type="file"
+                  multiple
+                  accept={ACCEPTED_TYPES}
+                  className="hidden"
+                  onChange={event => {
+                    if (event.target.files) addFiles(event.target.files);
+                    event.target.value = '';
+                  }}
                 />
-                
-                <div className="relative">
-                  <div className="absolute inset-0 bg-cyan-500/10 blur-xl rounded-full scale-125 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                  <div className="w-20 h-20 bg-slate-900 border border-white/5 rounded-2xl flex items-center justify-center text-cyan-400 relative z-10 transition-transform group-hover:scale-105 group-hover:-translate-y-1 shadow-lg shadow-black/40">
-                    <Upload className="w-10 h-10 animate-float" />
-                  </div>
+                <div className="w-16 h-16 bg-slate-900 border border-white/5 rounded-2xl flex items-center justify-center text-cyan-400 shadow-lg shadow-black/40 group-hover:scale-105 transition-transform">
+                  <Upload className="w-8 h-8" />
                 </div>
-
-                <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white tracking-tight">{t.dropzonePrompt}</h3>
-                  <p className="text-slate-500 text-sm font-medium">{t.dropzoneSubtitle}</p>
+                <div className="space-y-1.5 text-center">
+                  <h3 className="text-lg font-bold text-white tracking-tight">{t.dropzonePrompt}</h3>
+                  <p className="text-slate-500 text-xs font-medium">{t.dropzoneSubtitle}</p>
                 </div>
               </div>
 
-              {/* Image Queue List */}
+              {rejected > 0 && (
+                <div className="flex items-start gap-2 px-3 py-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-200 text-[11px] leading-relaxed">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>{(t.rejectedFiles || '{n} file(s) were not images and were left out.').replace('{n}', String(rejected))}</span>
+                </div>
+              )}
+
+              {/* Run bar */}
               {items.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between px-2">
-                    <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                      <ImageIcon className="w-5 h-5 text-cyan-400" />
-                      <span>{t.imagesInCollection} ({items.length})</span>
-                    </h2>
-                    
-                    <button 
-                      onClick={resetApp}
-                      className="text-xs text-red-400 hover:text-red-300 font-bold uppercase tracking-wider transition-colors flex items-center gap-1 cursor-pointer"
+                <div className="glass-card rounded-2xl p-4 flex flex-wrap items-center gap-3 border border-white/5">
+                  <button
+                    onClick={compressAll}
+                    disabled={running || busy || queued === 0}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-600 border border-cyan-500 text-white text-xs font-black hover:bg-cyan-500 transition-all cursor-pointer outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {running || busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
+                    {running || busy
+                      ? t.statusCompressing || 'Compressing…'
+                      : (t.compressBtn || 'Compress {n}').replace('{n}', String(queued))}
+                  </button>
+
+                  {stale && !running && !busy && (
+                    <button
+                      onClick={requeueAll}
+                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-200 text-[11px] font-bold hover:bg-amber-500/25 transition-all cursor-pointer outline-none"
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>{t.clearBtn}</span>
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      {t.recompressBtn || 'Settings changed — run again'}
                     </button>
+                  )}
+
+                  {done.length > 0 && (
+                    <button
+                      onClick={downloadAll}
+                      className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 text-[11px] font-bold hover:bg-white/10 transition-all cursor-pointer outline-none"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      {t.downloadAllBtn || 'Download all (ZIP)'}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={resetAll}
+                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-400 text-[11px] font-bold hover:bg-white/10 transition-all cursor-pointer outline-none"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    {t.clearBtn || 'Clear'}
+                  </button>
+
+                  <span className="ml-auto flex items-center gap-1.5 text-[10px] font-mono text-slate-600" title={t.workerHint || ''}>
+                    <Cpu className="w-3 h-3" />
+                    {usingWorker ? t.workerOn || 'off main thread' : t.workerOff || 'main thread'}
+                  </span>
+                </div>
+              )}
+
+              {/* Totals */}
+              {done.length > 0 && (
+                <div className="glass-card rounded-2xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-3 border border-white/5">
+                  <div className="text-center">
+                    <div className="text-lg font-black text-white tabular-nums">{formatBytes(totals.before)}</div>
+                    <div className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">{t.originalSize || 'before'}</div>
                   </div>
-
-                  <div className="space-y-3">
-                    <AnimatePresence initial={false}>
-                      {items.map((item) => {
-                        const isConfigActive = activeItemSettings === item.id;
-                        const itemSettings = item.settings || globalSettings;
-                        const progressPercent = item.savings;
-
-                        return (
-                          <motion.div 
-                            key={item.id}
-                            initial={{ opacity: 0, y: 15 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, x: -50 }}
-                            transition={{ duration: 0.3 }}
-                            className="glass-card rounded-2xl p-4 md:p-5 flex flex-col space-y-4 transition-all"
-                          >
-                            <div className="flex items-center justify-between gap-4">
-                              {/* Thumbnail */}
-                              <div className="w-16 h-16 bg-black/40 border border-white/5 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
-                                <img src={item.originalUrl} alt={item.name} className="w-full h-full object-contain" />
-                              </div>
-
-                              {/* Details */}
-                              <div className="flex-1 min-w-0 text-left">
-                                <h4 className="text-sm font-bold text-white truncate pr-4">{item.name}</h4>
-                                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-slate-400 font-medium">
-                                  <span>{t.originalSize}: <strong>{formatBytes(item.originalSize)}</strong></span>
-                                  {item.width && item.height && (
-                                    <span className="opacity-60">{item.width}x{item.height}</span>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Compression Results */}
-                              <div className="text-right shrink-0">
-                                {item.status === 'compressing' && (
-                                  <div className="flex items-center gap-1 text-cyan-400 text-xs font-bold animate-pulse">
-                                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                                    <span>{t.statusCompressing}</span>
-                                  </div>
-                                )}
-                                {item.status === 'done' && (
-                                  <div className="flex flex-col items-end">
-                                    <span className="text-sm font-black text-cyan-400">
-                                      {formatBytes(item.compressedSize || 0)}
-                                    </span>
-                                    {progressPercent !== null && (
-                                      <span
-                                        className={`text-[10px] px-1.5 py-0.5 rounded-full border font-bold mt-1 ${
-                                          progressPercent > 0
-                                            ? 'bg-cyan-950/80 border-cyan-800/30 text-cyan-400'
-                                            : 'bg-white/5 border-white/10 text-slate-500'
-                                        }`}
-                                      >
-                                        -{progressPercent}%
-                                      </span>
-                                    )}
-                                    {item.compressedWidth &&
-                                      item.compressedHeight &&
-                                      (item.compressedWidth !== item.width || item.compressedHeight !== item.height) && (
-                                        <span className="text-[10px] text-slate-500 font-bold mt-1">
-                                          → {item.compressedWidth}×{item.compressedHeight}px
-                                        </span>
-                                      )}
-                                  </div>
-                                )}
-                                {item.status === 'error' && (
-                                  <span className="text-xs text-red-400 font-bold flex items-center gap-1">
-                                    <AlertCircle className="w-3.5 h-3.5" />
-                                    {t.statusError}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Individual custom settings drawer */}
-                            {isConfigActive && (
-                              <div className="border-t border-white/5 pt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 text-left animate-in slide-in-from-top-4 duration-300">
-                                <div>
-                                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-2">{t.formatLabel}</label>
-                                  <select 
-                                    value={itemSettings.format}
-                                    onChange={(e) => updateItemSettings(item.id, { format: e.target.value as any })}
-                                    className="w-full bg-[#0a1019] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-500"
-                                  >
-                                    <option value="original">{t.originalFormat}</option>
-                                    <option value="image/webp">WebP</option>
-                                    <option value="image/jpeg">JPG</option>
-                                    <option value="image/png">PNG</option>
-                                  </select>
-                                </div>
-                                
-                                <div>
-                                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-2">{t.qualityLabel} ({itemSettings.quality}%)</label>
-                                  <input 
-                                    type="range" 
-                                    min="1" 
-                                    max="100" 
-                                    value={itemSettings.quality} 
-                                    onChange={(e) => updateItemSettings(item.id, { quality: Number(e.target.value) })}
-                                    className="w-full h-1.5 rounded bg-white/10 outline-none accent-cyan-500 cursor-pointer"
-                                    disabled={itemSettings.format === 'image/png'}
-                                  />
-                                </div>
-
-                                <div>
-                                  <label className="block text-xs font-black text-slate-500 uppercase tracking-wider mb-2">{t.scaleLabel} ({itemSettings.scale}%)</label>
-                                  <input 
-                                    type="range" 
-                                    min="10" 
-                                    max="100" 
-                                    value={itemSettings.scale} 
-                                    onChange={(e) => updateItemSettings(item.id, { scale: Number(e.target.value), resizeMode: 'scale' })}
-                                    className="w-full h-1.5 rounded bg-white/10 outline-none accent-cyan-500 cursor-pointer"
-                                  />
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Card Footer Actions */}
-                            <div className="flex items-center justify-between border-t border-white/5 pt-3">
-                              <div className="flex items-center gap-2">
-                                <button 
-                                  onClick={() => setActiveItemSettings(isConfigActive ? null : item.id)}
-                                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all cursor-pointer flex items-center gap-1.5
-                                    ${isConfigActive 
-                                      ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400' 
-                                      : 'bg-white/5 border-white/5 text-slate-400 hover:text-white hover:bg-white/10'}`}
-                                >
-                                  <Sliders className="w-3.5 h-3.5" />
-                                  <span>{t.individualSettings}</span>
-                                </button>
-
-                                {item.settings && (
-                                  <button
-                                    onClick={() =>
-                                      setItems(prev =>
-                                        prev.map(i =>
-                                          i.id === item.id ? { ...i, settings: undefined, status: 'idle' } : i
-                                        )
-                                      )
-                                    }
-                                    title={t.followGlobalBtn || 'Use global settings'}
-                                    className="text-[10px] font-bold px-2.5 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 transition-all cursor-pointer"
-                                  >
-                                    {t.followGlobalBtn || 'Use global settings'}
-                                  </button>
-                                )}
-
-                                {item.status === 'done' && item.compressedUrl && (
-                                  <button 
-                                    onClick={() => {
-                                      setComparedItem(item);
-                                      setSliderPos(50);
-                                    }}
-                                    className="text-xs font-bold px-3 py-1.5 rounded-lg bg-white/5 border border-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer flex items-center gap-1.5"
-                                  >
-                                    <Eye className="w-3.5 h-3.5" />
-                                    <span>{t.compareBtn}</span>
-                                  </button>
-                                )}
-                              </div>
-
-                              <div className="flex items-center gap-2">
-                                <button 
-                                  onClick={() => removeItem(item.id)}
-                                  className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-all cursor-pointer"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-
-                                {item.status === 'done' && (
-                                  <button 
-                                    onClick={() => downloadSingle(item)}
-                                    className="bg-cyan-600 hover:bg-cyan-500 text-black font-bold text-xs px-4 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer"
-                                  >
-                                    <Download className="w-3.5 h-3.5 stroke-[3]" />
-                                    <span>{t.downloadBtn}</span>
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </AnimatePresence>
+                  <div className="text-center">
+                    <div className="text-lg font-black text-cyan-300 tabular-nums">{formatBytes(totals.after)}</div>
+                    <div className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">{t.compressedSize || 'after'}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-black text-emerald-300 tabular-nums">−{totals.saved}%</div>
+                    <div className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">{t.savings || 'saved'}</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-lg font-black text-white tabular-nums">
+                      {totals.ssim === null ? '—' : totals.ssim.toFixed(3)}
+                    </div>
+                    <div className="text-[9px] uppercase tracking-wider text-slate-600 font-bold">{t.avgSsim || 'avg SSIM'}</div>
                   </div>
                 </div>
               )}
-            </div>
 
-            {/* Right side: Global control panel */}
-            <div className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
-              
-              <div className="glass-card rounded-3xl p-6 md:p-8 space-y-6 text-left shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-3xl pointer-events-none"></div>
-                
-                <h3 className="text-lg font-black text-white uppercase tracking-wider flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-cyan-400" />
-                  <span>{t.globalSettings}</span>
-                </h3>
-
-                {/* Quick presets: one click sets quality + format for everything */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">
-                    {t.presetsLabel || 'Quick presets'}
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {([
-                      { key: 'light', label: t.presetLight || 'Light', quality: 85, format: 'original' },
-                      { key: 'balanced', label: t.presetBalanced || 'Balanced', quality: 75, format: 'image/webp' },
-                      { key: 'strong', label: t.presetStrong || 'Strong', quality: 55, format: 'image/webp' },
-                      { key: 'extreme', label: t.presetExtreme || 'Extreme', quality: 35, format: 'image/webp' },
-                    ] as const).map((preset) => {
-                      const active =
-                        globalSettings.quality === preset.quality && globalSettings.format === preset.format;
-                      return (
-                        <button
-                          key={preset.key}
-                          onClick={() => {
-                            setGlobalSettings(prev => ({ ...prev, quality: preset.quality, format: preset.format as any }));
-                            // Presets clear per-image overrides so the effect applies everywhere
-                            setItems(prev => prev.map(i => ({ ...i, settings: undefined, status: 'idle' as const })));
-                          }}
-                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold text-center transition-all cursor-pointer
-                            ${active
-                              ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400 shadow-inner'
-                              : 'bg-[#0a0f18]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#0a0f18]/80'}`}
-                        >
-                          <span className="block">{preset.label}</span>
-                          <span className="block text-[9px] font-bold opacity-60 mt-0.5">
-                            {preset.format === 'original' ? 'Original' : 'WebP'} · {preset.quality}%
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Format selection */}
-                <div className="space-y-2">
-                  <label className="block text-xs font-black text-slate-500 uppercase tracking-widest">{t.formatLabel}</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {[
-                      { key: 'original', label: t.originalFormat },
-                      { key: 'image/webp', label: 'WebP' },
-                      { key: 'image/jpeg', label: 'JPG' },
-                      { key: 'image/png', label: 'PNG' }
-                    ].map((opt) => (
-                      <button
-                        key={opt.key}
-                        onClick={() => {
-                          setGlobalSettings(prev => ({ ...prev, format: opt.key as any }));
-                          // Trigger re-compression on items that don't have overrides
-                          setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                        }}
-                        className={`px-3 py-2.5 rounded-xl border text-xs font-bold text-center transition-all cursor-pointer
-                          ${globalSettings.format === opt.key 
-                            ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400 shadow-inner' 
-                            : 'bg-[#0a0f18]/40 border-white/5 text-slate-400 hover:text-white hover:bg-[#0a0f18]/80'}`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quality slider */}
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
-                    <span>{t.qualityLabel}</span>
-                    <span className="text-cyan-400 font-bold">{globalSettings.quality}%</span>
-                  </div>
-                  <input 
-                    type="range" 
-                    min="1" 
-                    max="100" 
-                    value={globalSettings.quality}
-                    onChange={(e) => {
-                      const quality = Number(e.target.value);
-                      setGlobalSettings(prev => ({ ...prev, quality }));
-                      setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                    }}
-                    className="w-full h-1.5 rounded bg-white/10 outline-none accent-cyan-500 cursor-pointer"
-                    disabled={globalSettings.format === 'image/png'}
-                  />
-                  <p className="text-[10px] text-slate-500 font-medium">
-                    {t.qualityHint || 'Lower quality = smaller file.'}
-                  </p>
-                  {globalSettings.format === 'image/png' && (
-                    <p className="text-[10px] text-slate-500 font-medium italic mt-1">
-                      * {t.pngNote || 'PNG is lossless — the quality slider applies when converting to JPG/WebP or resizing.'}
-                    </p>
-                  )}
-                </div>
-
-                {/* Resize settings */}
-                <div className="space-y-4 border-t border-white/5 pt-5">
-                  <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
-                    <span>{t.resizeModeLabel || 'Resize mode'}</span>
-                  </div>
-                  <p className="text-[10px] text-slate-500 font-medium -mt-2">
-                    {t.scaleHint || 'Shrinks the image width and height.'}
-                  </p>
-
-                  <div className="grid grid-cols-3 gap-2">
-                    {[
-                      { key: 'none', label: t.resizeNone || 'None' },
-                      { key: 'scale', label: t.resizeScale || 'Scale' },
-                      { key: 'dimensions', label: t.resizeCustom || 'Custom' }
-                    ].map((opt) => (
-                      <button
-                        key={opt.key}
-                        onClick={() => {
-                          setGlobalSettings(prev => ({ ...prev, resizeMode: opt.key as any }));
-                          setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                        }}
-                        className={`px-2 py-2 rounded-lg border text-[11px] font-bold text-center transition-all cursor-pointer
-                          ${globalSettings.resizeMode === opt.key 
-                            ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400' 
-                            : 'bg-[#0a0f18]/40 border-white/5 text-slate-400 hover:text-white'}`}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Render conditional resizing inputs */}
-                  {globalSettings.resizeMode === 'scale' && (
-                    <div className="space-y-3 pt-2">
-                      <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
-                        <span>{t.scaleLabel}</span>
-                        <span className="text-cyan-400 font-bold">{globalSettings.scale}%</span>
-                      </div>
-                      <input 
-                        type="range" 
-                        min="10" 
-                        max="100" 
-                        value={globalSettings.scale}
-                        onChange={(e) => {
-                          const scale = Number(e.target.value);
-                          setGlobalSettings(prev => ({ ...prev, scale }));
-                          setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                        }}
-                        className="w-full h-1.5 rounded bg-white/10 outline-none accent-cyan-500 cursor-pointer"
-                      />
-                    </div>
-                  )}
-
-                  {globalSettings.resizeMode === 'dimensions' && (
-                    <div className="space-y-3 pt-2">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-[10px] text-slate-500 font-black uppercase mb-1">{t.widthLabel || 'Width (px)'}</label>
-                          <input 
-                            type="number" 
-                            value={globalSettings.width}
-                            onChange={(e) => {
-                              const width = Math.max(1, Number(e.target.value));
-                              setGlobalSettings(prev => ({ ...prev, width }));
-                              setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                            }}
-                            className="w-full bg-[#0a1019] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-500"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] text-slate-500 font-black uppercase mb-1">{t.heightLabel || 'Height (px)'}</label>
-                          <input 
-                            type="number" 
-                            value={globalSettings.height}
-                            onChange={(e) => {
-                              const height = Math.max(1, Number(e.target.value));
-                              setGlobalSettings(prev => ({ ...prev, height }));
-                              setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                            }}
-                            className="w-full bg-[#0a1019] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-500"
-                          />
-                        </div>
-                      </div>
-
-                      <label className="flex items-center gap-2 text-xs text-slate-400 font-bold select-none cursor-pointer mt-2">
-                        <input 
-                          type="checkbox" 
-                          checked={globalSettings.maintainAspectRatio}
-                          onChange={(e) => {
-                            const maintainAspectRatio = e.target.checked;
-                            setGlobalSettings(prev => ({ ...prev, maintainAspectRatio }));
-                            setItems(prev => prev.map(i => i.settings ? i : { ...i, status: 'idle' }));
-                          }}
-                          className="w-4 h-4 accent-cyan-500 rounded border-gray-700 bg-gray-900"
-                        />
-                        <span>{t.keepAspectLabel || 'Keep aspect ratio'}</span>
-                      </label>
-                    </div>
-                  )}
-                </div>
-
-                {/* Live estimated result: updates as settings change */}
-                {items.length > 0 && (() => {
-                  const done = items.filter(i => i.status === 'done' && i.compressedSize != null);
-                  const working = items.some(i => i.status === 'compressing' || i.status === 'idle');
-                  const orig = done.reduce((s, i) => s + i.originalSize, 0);
-                  const comp = done.reduce((s, i) => s + (i.compressedSize || 0), 0);
-                  const pct = orig > 0 ? Math.max(0, Math.round(((orig - comp) / orig) * 100)) : 0;
+              {/* Queue */}
+              <div className="space-y-2">
+                {items.map(item => {
+                  const band = item.result && item.result.ssim !== null ? ssimBand(item.result.ssim) : null;
                   return (
-                    <div className="border-t border-white/5 pt-5 space-y-3 animate-fade-in">
-                      <div className="flex items-center justify-between text-xs font-black uppercase tracking-widest text-slate-500">
-                        <span>{t.summaryTitle || 'Estimated result'}</span>
-                        {working && <Loader2 className="w-3.5 h-3.5 animate-spin text-cyan-400" />}
-                      </div>
-                      {done.length > 0 && (
-                        <>
-                          <div className="flex items-baseline justify-between gap-2">
-                            <span className="text-sm text-slate-400 font-bold line-through decoration-slate-600">
-                              {formatBytes(orig)}
+                    <div key={item.id} className="glass-card rounded-2xl p-3 flex items-center gap-3 border border-white/5">
+                      <img
+                        src={item.originalUrl}
+                        alt=""
+                        className="w-14 h-14 rounded-xl object-cover bg-black/40 shrink-0"
+                        loading="lazy"
+                      />
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-bold text-white truncate">{item.name}</span>
+                          {item.from && (
+                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-cyan-500/15 text-cyan-300 font-bold shrink-0">
+                              {item.from}
                             </span>
-                            <span className="text-slate-600">→</span>
-                            <span className="text-xl font-black text-cyan-400">{formatBytes(comp)}</span>
-                          </div>
-                          <div className="h-2 w-full rounded-full bg-white/5 overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-gradient-to-r from-cyan-600 to-cyan-400 transition-all duration-500"
-                              style={{ width: `${Math.max(4, 100 - pct)}%` }}
-                            ></div>
-                          </div>
-                          <p className="text-xs text-slate-400 font-bold text-right">
-                            {t.savings || 'Saved'}: <span className="text-cyan-400">{formatBytes(Math.max(0, orig - comp))} (-{pct}%)</span>
-                          </p>
-                        </>
-                      )}
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[10px] font-mono text-slate-500">
+                          <span>{formatBytes(item.originalSize)}</span>
+                          {item.result && (
+                            <>
+                              <span className="text-cyan-300">→ {formatBytes(item.result.bytes)}</span>
+                              <span className="text-emerald-300">
+                                −{Math.round(((item.originalSize - item.result.bytes) / item.originalSize) * 100)}%
+                              </span>
+                              <span>
+                                {item.result.width}×{item.result.height}
+                              </span>
+                              {band && (
+                                <span className={BAND_CLASS[band]}>
+                                  {item.result.ssim.toFixed(3)} · {t[BAND_KEY[band]] || BAND_FALLBACK[band]}
+                                </span>
+                              )}
+                              {item.result.attempts > 1 && (
+                                <span title={t.attemptsHint || 'Encodes needed to fit the budget'}>
+                                  q{item.result.quality} · {item.result.attempts}×
+                                </span>
+                              )}
+                            </>
+                          )}
+                          {item.status === 'queued' && <span className="text-slate-600">{t.statusQueued || 'waiting'}</span>}
+                          {item.status === 'decoding' && <span className="text-cyan-400">{t.statusDecoding || 'decoding…'}</span>}
+                          {item.status === 'working' && <span className="text-cyan-400">{t.statusCompressing || 'compressing…'}</span>}
+                          {item.status === 'skipped' && (
+                            <span className="text-amber-300">{t.statusSkipped || 'already smaller than we could make it'}</span>
+                          )}
+                          {item.status === 'error' && <span className="text-red-300">{t.statusError || 'failed'}</span>}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-1 shrink-0">
+                        {item.result && (
+                          <>
+                            <button
+                              onClick={() => setCompareId(item.id)}
+                              title={t.compareBtn || 'Compare'}
+                              className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-white hover:border-cyan-500/40 flex items-center justify-center transition-all cursor-pointer outline-none"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => downloadOne(item)}
+                              title={t.downloadBtn || 'Download'}
+                              className="w-8 h-8 rounded-lg bg-cyan-600/20 border border-cyan-600/30 text-cyan-300 hover:bg-cyan-600/30 flex items-center justify-center transition-all cursor-pointer outline-none"
+                            >
+                              <Download className="w-4 h-4" />
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          title={t.removeBtn || 'Remove'}
+                          className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 text-slate-400 hover:text-red-300 hover:border-red-500/40 flex items-center justify-center transition-all cursor-pointer outline-none"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
                     </div>
                   );
-                })()}
+                })}
+              </div>
+            </div>
 
-                {/* Batch downloads block */}
-                {items.length > 0 && (
-                  <div className="border-t border-white/5 pt-6 space-y-3 animate-fade-in">
-                    <button
-                      onClick={downloadAll}
-                      disabled={items.filter(i => i.status === 'done').length === 0}
-                      className="w-full py-4 bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-black font-black text-base rounded-2xl flex items-center justify-center space-x-2 transition-all shadow-lg shadow-cyan-600/20 active:scale-95 cursor-pointer"
-                    >
-                      <Download className="w-5 h-5 stroke-[3]" />
-                      <span>{t.downloadAllBtn}</span>
-                    </button>
+            <div className="lg:col-span-5 min-w-0 space-y-5">
+              <div className="glass-card rounded-3xl p-5 md:p-6 border border-white/5">
+                <SettingsPanel
+                  settings={settings}
+                  onChange={changes => setSettings(current => ({ ...current, ...changes }))}
+                  available={formats}
+                  t={t}
+                  sourceMime={sourceMime}
+                />
+              </div>
+              <NextStepBar lang={lang} t={t} disabled={done.length === 0} getResult={handoffResult} />
+            </div>
+          </section>
+
+          <AdBanner id="adsense-compresssnap-mid" />
+
+          {/* ================================================================ */}
+          {/* How it works                                                     */}
+          {/* ================================================================ */}
+          <section className="space-y-10">
+            <div className="text-center space-y-3">
+              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                {t.howItWorksTitle || 'How it works'}
+              </h2>
+              <div className="h-1 w-16 bg-cyan-500 mx-auto rounded-full" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {steps.map((step, i) => {
+                const Art = step.art;
+                return (
+                  <div
+                    key={i}
+                    className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-cyan-500/20 transition-all group"
+                  >
+                    <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-cyan-500/10 transition-colors">
+                      {i + 1}
+                    </span>
+                    <Art className="w-24 h-auto" />
+                    <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                    <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* ================================================================ */}
+          {/* Features                                                         */}
+          {/* ================================================================ */}
+          {features.length > 0 && (
+            <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {features.map((feature: any, idx: number) => {
+                const Icon = FEATURE_ICONS[idx] || IconLocal;
+                return (
+                  <div
+                    key={idx}
+                    className="p-7 glass-card rounded-3xl text-left hover:-translate-y-1.5 transition-all duration-300 group border border-white/5"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5 group-hover:scale-110 group-hover:border-cyan-500/40 transition-all">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-white text-lg font-bold mb-2.5 group-hover:text-cyan-400 transition-colors">
+                      {feature.title}
+                    </h3>
+                    <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
+                  </div>
+                );
+              })}
+            </section>
+          )}
+
+          {/* ================================================================ */}
+          {/* SEO content                                                      */}
+          {/* ================================================================ */}
+          <section className="space-y-24 text-left">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+              <div className="space-y-7">
+                {keywords.length > 0 && (
+                  <div className="inline-block px-4 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 text-[11px] font-black uppercase tracking-[0.2em] border border-cyan-500/20">
+                    {keywords[0]}
                   </div>
                 )}
-              </div>
-
-            </div>
-          </div>
-
-          {/* Value Propositions / Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-16">
-            {t.features.map((feature: any, idx: number) => (
-              <div 
-                key={idx}
-                className="p-8 glass-card rounded-3xl text-left hover:-translate-y-2 hover:shadow-2xl hover:shadow-cyan-500/5 transition-all duration-300 group border border-white/5"
-              >
-                <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-all">
-                  {[<Lock className="w-6 h-6" />, <Zap className="w-6 h-6" />, <RefreshCw className="w-6 h-6" />][idx]}
-                </div>
-                <h3 className="text-white text-xl font-bold mb-3 group-hover:text-cyan-400 transition-colors">{feature.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Extra Content - SEO Text */}
-          <div className="pt-24 space-y-24 text-left">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-center">
-              <div className="space-y-8">
-                <div className="inline-block px-4 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 text-xs font-black uppercase tracking-[0.2em] border border-cyan-500/20">
-                  {t.seoKeywords[0]}
-                </div>
-                <h2 className="text-4xl md:text-6xl font-black text-white leading-[1.05] tracking-tighter">
+                <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
                   {t.seoHeroTitle}
                 </h2>
-                <p className="text-slate-400 text-lg leading-relaxed font-medium">
-                  {t.seoHeroText}
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                  {t.seoHeroList.map((item: string, i: number) => (
-                    <div key={i} className="flex items-center space-x-3 p-4 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all">
-                      <div className="w-8 h-8 shrink-0 bg-cyan-500/20 text-cyan-400 rounded-xl flex items-center justify-center text-sm group-hover:rotate-12 transition-transform">
-                        <Check className="w-4 h-4 stroke-[3]" />
-                      </div>
-                      <span className="text-slate-300 font-bold text-base">{item}</span>
+                <p className="text-slate-400 text-lg leading-relaxed font-medium">{t.seoHeroText}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(t.seoHeroList || []).map((point: string, i: number) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all"
+                    >
+                      <span className="w-7 h-7 shrink-0 bg-cyan-500/20 text-cyan-400 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </span>
+                      <span className="text-slate-300 font-bold text-sm">{point}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="relative group">
-                
-                <div className="relative glass-card rounded-[4rem] p-12 py-20 min-h-[420px] w-full flex flex-col items-center justify-center space-y-8 text-center overflow-hidden">
-                  <div className="text-[7.5rem] animate-float drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]">🖼️</div>
-                  <div className="space-y-4 max-w-sm px-4">
-                    <h3 className="text-2xl font-black text-white tracking-tight leading-tight">{t.seoBrowserSpeedTitle}</h3>
-                    <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
-                  </div>
+              <div className="relative glass-card rounded-[3rem] p-10 py-16 min-h-[400px] flex flex-col items-center justify-center gap-7 text-center overflow-hidden">
+                <div className="absolute -top-16 -right-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl" />
+                <IconMeasure className="w-20 h-20 text-cyan-400 relative" />
+                <div className="space-y-3 max-w-sm relative">
+                  <h3 className="text-2xl font-black text-white tracking-tight leading-tight">
+                    {t.seoBrowserSpeedTitle}
+                  </h3>
+                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 md:p-16 rounded-3xl md:rounded-[2.5rem] bg-[#080d16] border border-white/5 space-y-12">
+            <div className="p-8 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-[#080d16] border border-white/5 space-y-10">
               <div className="max-w-4xl space-y-4">
-                <h3 className="text-3xl md:text-5xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h3>
-                <div className="h-1.5 w-20 bg-cyan-500 rounded-full"></div>
+                <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
+                <div className="h-1.5 w-20 bg-cyan-500 rounded-full" />
               </div>
-               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                <div className="space-y-4">
-                  <div className="text-white text-xs font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
-                    <span className="w-6 h-px bg-white/20"></span>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
                     {t.seoUseCaseTitle}
                   </div>
                   <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoUseCaseText}</p>
                 </div>
-                <div className="space-y-4">
-                  <div className="text-white text-xs font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
-                    <span className="w-6 h-px bg-white/20"></span>
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
                     {t.seoPrivacyTitle}
                   </div>
                   <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoPrivacyText}</p>
@@ -1017,135 +780,67 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
               </div>
             </div>
 
-            {/* FAQs */}
-            <section className="max-w-4xl mx-auto w-full space-y-12 py-12">
-              <div className="text-center space-y-4">
-                <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
-                <div className="h-1 w-16 bg-cyan-500 mx-auto rounded-full"></div>
-              </div>
-              <div className="grid gap-4">
-                {t.faq.map((item: any, idx: number) => (
-                  <div 
-                    key={idx}
-                    className="glass-card rounded-2xl p-6 text-left space-y-3 hover:border-cyan-500/20 transition-colors group"
-                  >
-                    <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors flex items-center gap-2">
-                      <span className="flex-shrink-0 w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-xs font-black">Q</span>
-                      {item.question}
-                    </h3>
-                    <p className="text-slate-400 leading-relaxed pl-8 text-sm">
-                      {item.answer}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Keyword Tags */}
-            <section className="max-w-4xl mx-auto w-full space-y-6 opacity-55 text-center">
-              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
-              <div className="flex flex-wrap justify-center gap-2">
-                {t.seoKeywords.map((keyword: string, idx: number) => (
-                  <span key={idx} className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-cyan-500/10 hover:border-cyan-500/20 hover:text-cyan-400 transition-all cursor-default">
-                    {keyword}
-                  </span>
-                ))}
-              </div>
-            </section>
-          </div>
-
-        </div>
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-compresssnap-bottom" />
-      </main>
-
-      {/* Visual Image Comparison Slider Drawer */}
-      {comparedItem && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-10 bg-black/98 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="relative w-full max-w-4xl h-full flex flex-col justify-center space-y-6">
-            <button 
-              onClick={() => setComparedItem(null)}
-              className="absolute top-4 right-0 p-3 text-slate-400 hover:text-white transition-all scale-125 hover:rotate-90 duration-300 z-50 cursor-pointer"
-            >
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" /></svg>
-            </button>
-
-            <h3 className="text-xl md:text-2xl font-black text-white text-center tracking-tight">{t.compareTitle}</h3>
-
-            <div className="relative aspect-video w-full bg-[#0a0f18] rounded-2xl overflow-hidden border border-white/10 select-none shadow-[0_30px_100px_rgba(0,0,0,0.8)]">
-              {/* Original Layer */}
-              <img 
-                src={comparedItem.originalUrl} 
-                alt="Original" 
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none"
-              />
-              <div className="absolute top-4 left-4 px-3 py-1.5 rounded-lg bg-black/70 backdrop-blur border border-white/10 text-[10px] md:text-xs text-white font-bold pointer-events-none z-20">
-                {t.originalLabel} ({formatBytes(comparedItem.originalSize)})
-                {comparedItem.width && comparedItem.height && (
-                  <span className="opacity-60 ml-2">({comparedItem.width}x{comparedItem.height})</span>
-                )}
-              </div>
-
-              {/* Compressed Layer (clipped via clipPath) */}
-              <div 
-                className="absolute inset-0 overflow-hidden pointer-events-none"
-                style={{ clipPath: `polygon(${sliderPos}% 0, 100% 0, 100% 100%, ${sliderPos}% 100%)` }}
-              >
-                <img 
-                  src={comparedItem.compressedUrl || comparedItem.originalUrl} 
-                  alt="Compressed" 
-                  className="absolute inset-0 w-full h-full object-contain"
-                />
-              </div>
-              <div className="absolute top-4 right-4 px-3 py-1.5 rounded-lg bg-cyan-950/80 backdrop-blur border border-cyan-500/20 text-[10px] md:text-xs text-cyan-400 font-bold pointer-events-none z-20">
-                {t.compressedLabel} ({formatBytes(comparedItem.compressedSize || 0)})
-                {comparedItem.compressedWidth && comparedItem.compressedHeight && (
-                  <span className="opacity-60 ml-2">({comparedItem.compressedWidth}x{comparedItem.compressedHeight})</span>
-                )}
-              </div>
-
-              {/* Drag Handle Divider */}
-              <div 
-                className="absolute top-0 bottom-0 w-0.5 bg-cyan-400 pointer-events-none shadow-[0_0_10px_#06b6d4] z-20"
-                style={{ left: `${sliderPos}%` }}
-              >
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-cyan-500 border-2 border-white text-black flex items-center justify-center shadow-2xl">
-                  <MoveHorizontal className="w-5 h-5 stroke-[3]" />
+            {faqs.length > 0 && (
+              <div className="max-w-4xl mx-auto w-full space-y-10">
+                <div className="text-center space-y-3">
+                  <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                  <div className="h-1 w-16 bg-cyan-500 mx-auto rounded-full" />
+                </div>
+                <div className="grid gap-3">
+                  {faqs.map((faq: any, idx: number) => (
+                    <details
+                      key={idx}
+                      className="glass-card rounded-2xl px-6 py-5 text-left border border-white/5 hover:border-cyan-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                    >
+                      <summary className="flex items-start gap-3 cursor-pointer list-none text-base font-bold text-white group-hover:text-cyan-400 transition-colors">
+                        <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-[11px] font-black">
+                          Q
+                        </span>
+                        <span className="flex-1">{faq.question}</span>
+                        <span className="shrink-0 text-cyan-400 transition-transform group-open:rotate-45 text-xl leading-none">
+                          +
+                        </span>
+                      </summary>
+                      <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                    </details>
+                  ))}
                 </div>
               </div>
+            )}
 
-              {/* Overlay Input Range to catch click drags cleanly */}
-              <input 
-                type="range" 
-                min="0" 
-                max="100" 
-                value={sliderPos} 
-                onChange={(e) => setSliderPos(Number(e.target.value))}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30"
-              />
-            </div>
-
-            <div className="flex justify-center">
-              <button 
-                onClick={() => downloadSingle(comparedItem)}
-                className="px-10 py-4 bg-cyan-600 hover:bg-cyan-500 text-black font-black text-lg rounded-2xl shadow-xl flex items-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer"
-              >
-                <Download className="w-5 h-5 stroke-[3]" />
-                <span>{t.downloadBtn}</span>
-              </button>
-            </div>
-          </div>
+            {keywords.length > 0 && (
+              <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
+                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  {t.seoKeywordsTitle || 'Keywords'}
+                </h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {keywords.map((keyword: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-cyan-500/10 hover:border-cyan-500/20 hover:text-cyan-400 transition-all cursor-default"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
         </div>
-      )}
 
-      {/* Floating Scroll Top button */}
-      {showScrollTop && (
-        <button 
-          onClick={scrollToTop}
-          className="fixed bottom-10 right-10 z-[200] w-14 h-14 bg-white text-black rounded-2xl shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-90 hover:-translate-y-1 cursor-pointer group"
-        >
-          <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" strokeWidth="3.5" viewBox="0 0 24 24"><path d="M5 15l7-7 7 7" /></svg>
-        </button>
+        <AdBanner id="adsense-compresssnap-bottom" />
+      </main>
+
+      <Footer lang={lang} t={t} />
+
+      {compared && (
+        <CompareStage
+          item={compared}
+          onClose={() => setCompareId(null)}
+          onDownload={() => downloadOne(compared)}
+          formatBytes={formatBytes}
+          t={t}
+        />
       )}
 
     </div>

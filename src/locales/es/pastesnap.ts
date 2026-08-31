@@ -23,16 +23,20 @@ export default {
   "pasteMore": "Pega más imágenes para añadirlas",
   "features": [
     {
-      "title": "Instante",
-      "text": "Sin cargas ni esperas. Procesado localmente."
+      "title": "Pega solo cuando lo pides",
+      "text": "Ctrl+V, soltar o el botón Pegar. La versión anterior leía tu portapapeles al cargar y otra vez cada vez que volvías a la pestaña; ahora no se lee nada hasta que pulsas algo."
     },
     {
-      "title": "Privado",
-      "text": "Las imágenes nunca salen de tu navegador."
+      "title": "Formatos que de verdad sabe escribir",
+      "text": "PNG, JPG, WebP y AVIF, cada uno comprobado codificando un píxel real: un navegador sin codificador AVIF devuelve un PNG con la etiqueta cambiada en vez de fallar, y esa comprobación es la única forma de pillarlo."
     },
     {
-      "title": "Alta Res",
-      "text": "Mantiene la calidad original del portapapeles."
+      "title": "Convierte el lote sin congelarse",
+      "text": "La codificación va en un Web Worker sobre bitmaps transferidos, así que la página sigue respondiendo y el contador de progreso es real. Elige unas cuantas o selecciónalas todas."
+    },
+    {
+      "title": "Lee lo que de verdad hace tu móvil",
+      "text": "HEIC y HEIF de iPhone, TIFF, SVG, GIF y AVIF, con la rotación EXIF aplicada para que las fotos verticales no se conviertan tumbadas."
     }
   ],
   "footerCredit": "Parte de la suite oLoveTools",
@@ -41,9 +45,9 @@ export default {
   "seoHeroText": "¿Alguna vez has hecho una captura y necesitado el archivo al instante? Con PasteSnap, solo pulsa Ctrl+V y descarga tu imagen.",
   "seo_description": "Pega una captura con Ctrl+V y descárgala como PNG, JPG o WebP en segundos. Guarda imágenes del portapapeles online: gratis, privado y sin registro.",
   "seoHeroList": [
-    "Sin registro requerido",
-    "Soporta varias imágenes a la vez",
-    "Resolución original de alta calidad"
+    "PNG, JPG, WebP y AVIF, con la calidad que elijas",
+    "HEIC, TIFF, SVG y GIF se leen al entrar",
+    "Nada se sube, y nada se lee de tu portapapeles sin pedirlo"
   ],
   "seoBrowserSpeedTitle": "Velocidad de Navegador",
   "seoBrowserSpeedText": "Todo se procesa localmente, tus datos nunca se suben. Es seguro, rápido y gratis.",
@@ -72,20 +76,28 @@ export default {
   "faqTitle": "Preguntas Frecuentes",
   "faq": [
     {
-      "question": "¿Es gratis?",
-      "answer": "Sí, PasteSnap es completamente gratuito y sin costes ocultos."
+      "question": "¿PasteSnap lee mi portapapeles por su cuenta?",
+      "answer": "Ya no. La versión anterior llamaba a la Clipboard API al cargar y otra vez en cada focus de la ventana, así que volver a la pestaña se traía lo que hubieras copiado. Ahora el portapapeles solo se lee cuando pulsas Pegar, o cuando pulsas tú Ctrl+V."
     },
     {
-      "question": "¿Mis datos están seguros?",
-      "answer": "Absolutamente. Tus imágenes nunca salen de tu navegador. No tenemos un servidor que almacene tus archivos."
+      "question": "¿A qué formatos puedo convertir?",
+      "answer": "PNG, JPG, WebP y, donde el navegador lo admita, AVIF. El soporte se comprueba codificando de verdad una imagen de un píxel y mirando el tipo que vuelve, porque un navegador sin codificador AVIF devuelve un PNG etiquetado como AVIF en vez de dar error."
     },
     {
-      "question": "¿Qué formatos son compatibles?",
-      "answer": "Admitimos todos los formatos de imagen que se pueden copiar al portapapeles, y puedes descargar cada imagen como PNG, JPG o WebP de alta calidad."
+      "question": "¿Por qué antes no funcionaba mi foto de iPhone?",
+      "answer": "Un HEIC pasa un filtro ingenuo de `image/*` pero ningún navegador de escritorio lo decodifica, así que la versión anterior añadía una entrada rota sin explicar nada. Ahora HEIC y HEIF pasan por un conversor al importarlos, igual que TIFF y SVG."
     },
     {
-      "question": "¿Necesito registrarme?",
-      "answer": "No se requiere registro ni cuenta. Solo abre el sitio y empieza a pegar."
+      "question": "¿Se suben mis imágenes a algún sitio?",
+      "answer": "No. La decodificación, la conversión y el empaquetado en ZIP ocurren en tu navegador. No hay ninguna llamada a un servidor en ningún momento, y al cerrar la pestaña se descarta todo."
+    },
+    {
+      "question": "¿Convertir un lote grande congela la página?",
+      "answer": "No. La codificación va en un Web Worker y cada imagen se entrega como bitmap transferido, así que no se copian píxeles entre hilos y la página sigue respondiendo mientras avanza el contador."
+    },
+    {
+      "question": "¿Qué calidad elijo?",
+      "answer": "Para capturas que vas a compartir, WebP al 80% suele ocupar una fracción del JPEG equivalente sin diferencia visible. Quédate en PNG cuando necesites píxeles exactos o transparencia."
     }
   ],
   "footerTagline": "Ayudándote a construir, diseñar y crear con utilidades simples y potentes.",
@@ -100,5 +112,44 @@ export default {
   "privacyContent": "Tu privacidad es importante para nosotros.\n\nSolo recopilamos la información necesaria para proporcionar nuestro servicio. Esto incluye datos técnicos sobre tu navegador y dispositivo para asegurar que la herramienta funcione correctamente.\n\nNunca almacenamos, rastreamos ni analizamos tus imágenes. Todo el procesamiento ocurre localmente en tu navegador, asegurando que tus datos nunca salgan de tu dispositivo.",
   "termsContent": "Al usar PasteSnap, aceptas estos términos.\n\n1. Esta herramienta se proporciona \"tal cual\" sin ninguna garantía.\n2. No nos hacemos responsables de ninguna pérdida de datos o problemas derivados del uso de esta herramienta.\n3. Eres responsable del contenido que procesas usando esta herramienta.\n4. Nos reservamos el derecho de modificar estos términos en cualquier momento.",
   "cookiesContent": "Usamos cookies para mejorar tu experiencia.\n\n1. Cookies esenciales: Necesarias para la funcionalidad básica del sitio.\n2. Cookies de preferencia: Se usan para recordar tu idioma y configuraciones de consentimiento de cookies.\n\nPuedes gestionar o desactivar las cookies a través de la configuración de tu navegador en cualquier momento.",
-  "contact": "Contacto"
+  "contact": "Contacto",
+  "heroBadge": "Del portapapeles a un archivo",
+  "acceptedHint": "PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG",
+  "clipboardUnsupported": "Este navegador no puede leer el portapapeles. Usa Ctrl+V.",
+  "clipboardEmpty": "No hay ninguna imagen en el portapapeles.",
+  "clipboardDenied": "Tu navegador ha bloqueado el portapapeles. Usa Ctrl+V.",
+  "rejectedTitle": "No añadidas",
+  "rejectUnsupported": "no es una imagen",
+  "rejectDecode": "no se ha podido decodificar",
+  "rejectTooBig": "supera los 40 MB",
+  "selectAll": "Seleccionar todo",
+  "removeBtn": "Quitar",
+  "expand": "Ampliar",
+  "close": "Cerrar",
+  "decodedNote": "Convertida al importar",
+  "copyFail": "Tu navegador ha bloqueado el portapapeles.",
+  "backToTop": "Volver arriba",
+  "labelFormat": "Formato de salida",
+  "formatUnavailable": "Tu navegador no sabe codificar este formato",
+  "labelQuality": "Calidad",
+  "qualityHint": "Por debajo del 85% no suele notarse y pesa mucho menos.",
+  "labelMaxSize": "Lado mayor",
+  "sizeOriginal": "Original",
+  "labelFlatten": "Aplanar la transparencia sobre",
+  "flattenHint": "JPEG no tiene canal alfa, así que los píxeles transparentes necesitan un color.",
+  "convertedLabel": "convertidas",
+  "howTitle": "Cómo funciona",
+  "howStep1Title": "Pega, suelta o elige",
+  "howStep1Text": "Ctrl+V con una captura, suelta archivos o pulsa el botón Pegar. No se lee tu portapapeles hasta que lo pides: PasteSnap ya no se sirve solo cada vez que vuelves a la pestaña.",
+  "howStep2Title": "Elige formato y calidad",
+  "howStep2Text": "PNG, JPG, WebP y AVIF cuando tu navegador sepa codificarlo de verdad: se comprueba codificando un píxel, porque un navegador sin codificador AVIF devuelve un PNG en silencio en vez de fallar. Ajusta la calidad y el lado mayor, y mira el peso antes y después.",
+  "howStep3Title": "Descarga o mándala a otra herramienta",
+  "howStep3Text": "Una imagen, una selección o la galería entera en un ZIP. Cópiala al portapapeles, o pasa el resultado a CompressSnap, CropSnap o CleanSnap sin descargarlo y volver a subirlo.",
+  "nextStepTitle": "Sigue",
+  "nextStepHint": "La imagen viaja contigo, sin volver a subirla",
+  "nextCompress": "Comprímela",
+  "nextCrop": "Recórtala",
+  "nextClean": "Borra objetos",
+  "nextWatermark": "Añade una marca de agua",
+  "nextMeme": "Haz un meme",
 };

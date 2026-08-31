@@ -1,6 +1,6 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { Music } from 'lucide-react';
+import { Mic } from 'lucide-react';
 
 interface HeaderProps {
   currentLang: string;
@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <header className="w-full h-auto md:h-24 py-4 md:py-0 border-b border-white/10 bg-[#060405]/95 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
         <div className="max-w-7xl mx-auto h-full px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <div className="flex items-center justify-between w-full md:w-auto space-x-4 md:space-x-12">
+          <div className="flex items-center justify-between w-full md:w-auto gap-3 md:gap-12 min-w-0">
             {/* oLoveTools Branding */}
             <a 
               href={`/${currentLang.toLowerCase()}`}
@@ -37,15 +37,17 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
 
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
 
-            {/* Current App Link */}
-            <button 
+            {/* Current App Link. `min-w-0` + `truncate` because a couple of the
+                nine locales render a longer tool name than "AudioSnap", and at
+                375px it would otherwise push the row past the viewport. */}
+            <button
               onClick={onReset}
-              className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
+              className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer min-w-0"
             >
-              <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-rose-500/20 group-hover:border-rose-500/50 transition-all">
-                <Music className="w-5 h-5 text-rose-400 animate-pulse" />
+              <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-rose-500/20 group-hover:border-rose-500/50 transition-all shrink-0">
+                <Mic className="w-5 h-5 text-rose-400" />
               </div>
-              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-rose-400 transition-all">
+              <span className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-rose-400 transition-all truncate">
                 {t.title}
               </span>
             </button>

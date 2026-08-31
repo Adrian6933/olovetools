@@ -1,79 +1,39 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, ArrowUp, Check, Copy, Download, Globe, Loader2, Search, ShieldCheck } from 'lucide-react';
+
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
-import { Search, Globe, Server, Mail, FileText, RotateCcw, AlertCircle, Loader, Check } from 'lucide-react';
+import {
+  HeroArt,
+  IconDnssec,
+  IconPrivacy,
+  IconPropagation,
+  IconResolvers,
+  IconStatus,
+  IconTypes,
+  StepAsk,
+  StepCompare,
+  StepRead,
+  StepTrust,
+} from './components/Illustrations';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
+import {
+  compareResolvers,
+  lookup,
+  looksLikeDomain,
+  resolverById,
+  resolversAgree,
+  reverseName,
+  sanitizeDomain,
+} from './lib/doh';
+import { RESOLVERS, TYPE_ORDER, type LookupResults, type RecordType, type ResolverView, type Status } from './types';
 
 interface WhoisBoltProps {
   lang: string;
   dictionary: any;
 }
-
-type RecordType = 'A' | 'AAAA' | 'MX' | 'TXT' | 'NS' | 'CNAME' | 'SOA';
-
-interface DohAnswer {
-  name: string;
-  type: number;
-  TTL: number;
-  data: string;
-  preference?: number;
-  exchange?: string;
-  rname?: string;
-  mname?: string;
-  serial?: number;
-  refresh?: number;
-  retry?: number;
-  expire?: number;
-  minimum?: number;
-}
-
-interface DohResponse {
-  Status: number;
-  Answer?: DohAnswer[];
-  Authority?: DohAnswer[];
-  Comment?: string;
-}
-
-interface RecordSet {
-  type: RecordType;
-  records: DohAnswer[];
-  icon: React.ReactNode;
-}
-
-const TYPE_CODES: Record<RecordType, number> = {
-  A: 1,
-  NS: 2,
-  CNAME: 5,
-  SOA: 6,
-  MX: 15,
-  TXT: 16,
-  AAAA: 28,
-};
-
-const TYPE_ORDER: RecordType[] = ['A', 'AAAA', 'CNAME', 'MX', 'NS', 'TXT', 'SOA'];
-
-const TYPE_ICONS: Record<RecordType, React.ReactNode> = {
-  A: <Server className="w-3 h-3" />,
-  AAAA: <Server className="w-3 h-3" />,
-  CNAME: <Globe className="w-3 h-3" />,
-  MX: <Mail className="w-3 h-3" />,
-  NS: <Globe className="w-3 h-3" />,
-  TXT: <FileText className="w-3 h-3" />,
-  SOA: <FileText className="w-3 h-3" />,
-};
-
-const TYPE_CODE_TO_NAME = (code: number): RecordType | null => {
-  for (const key of Object.keys(TYPE_CODES) as RecordType[]) {
-    if (TYPE_CODES[key] === code) return key;
-  }
-  return null;
-};
-
-const sanitizeDomain = (input: string): string => {
-  return input.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
-};
 
 const formatTtl = (ttl: number, t: any): string => {
   if (ttl < 60) return `${ttl} ${t.unit_seconds || 's'}`;
@@ -82,476 +42,486 @@ const formatTtl = (ttl: number, t: any): string => {
   return `${Math.floor(ttl / 86400)} ${t.unit_days || 'd'}`;
 };
 
-const formatRecordData = (record: DohAnswer, type: RecordType): string => {
-  if (type === 'MX' && record.preference !== undefined) {
-    return `${record.preference} ${record.exchange || record.data}`;
-  }
-  if (type === 'SOA') {
-    const parts = [
-      record.mname || record.data,
-      record.rname,
-      record.serial,
-      record.refresh,
-      record.retry,
-      record.expire,
-      record.minimum,
-    ].filter((p) => p !== undefined && p !== null && p !== '');
-    if (parts.length > 1) return parts.join(' ');
-  }
-  if (type === 'TXT') {
-    return record.data.replace(/^"|"$/g, '');
-  }
-  return record.data;
-};
-
-const RecordCard: React.FC<{
-  record: DohAnswer;
-  type: RecordType;
-  t: any;
-  copied: boolean;
-  onCopy: () => void;
-}> = ({ record, type, t, copied, onCopy }) => {
-  const data = formatRecordData(record, type);
-  return (
-    <div className="bg-slate-950/40 border border-white/5 rounded-2xl p-4 space-y-2 hover:border-indigo-500/20 transition-colors group">
-      <div className="flex items-center justify-between gap-2">
-        <div className="font-mono text-sm text-white break-all min-h-[1.25rem] select-all flex-1">
-          {data || <span className="text-slate-600">â€”</span>}
-        </div>
-        <button
-          onClick={onCopy}
-          title={copied ? (t.emailCopied || 'Copied!') : (t.tooltip_copy || 'Copy')}
-          className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center transition-all cursor-pointer outline-none ${
-            copied
-              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-              : 'bg-white/5 border-white/5 hover:bg-indigo-500/20 hover:border-indigo-500/30 text-slate-400 hover:text-white'
-          }`}
-        >
-          {copied ? <Check className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
-        </button>
-      </div>
-      <div className="flex items-center justify-between text-[10px] font-mono text-indigo-400/60">
-        <span className="uppercase tracking-widest">{record.name}</span>
-        <span>TTL {formatTtl(record.TTL, t)}</span>
-      </div>
-    </div>
-  );
-};
-
-const RecordSection: React.FC<{
-  recordSet: RecordSet;
-  t: any;
-  copiedKey: string | null;
-  onCopy: (key: string, value: string) => void;
-}> = ({ recordSet, t, copiedKey, onCopy }) => {
-  if (recordSet.records.length === 0) return null;
-  return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="w-7 h-7 rounded-lg bg-indigo-500/15 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-            {recordSet.icon}
-          </span>
-          <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest">
-            {recordSet.type}
-          </h3>
-        </div>
-        <span className="text-[10px] font-mono font-bold text-indigo-400/70 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded uppercase tracking-widest">
-          {recordSet.records.length} {t.label_records || 'records'}
-        </span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        {recordSet.records.map((record, idx) => (
-          <RecordCard
-            key={`${recordSet.type}-${idx}-${record.name}`}
-            record={record}
-            type={recordSet.type}
-            t={t}
-            copied={copiedKey === `${recordSet.type}-${idx}`}
-            onCopy={() => onCopy(`${recordSet.type}-${idx}`, formatRecordData(record, recordSet.type))}
-          />
-        ))}
-      </div>
-    </div>
-  );
+const STATUS_TONE: Record<Status, string> = {
+  ok: 'text-emerald-300 border-emerald-500/30 bg-emerald-500/10',
+  empty: 'text-slate-400 border-white/10 bg-white/5',
+  nxdomain: 'text-red-300 border-red-500/30 bg-red-500/10',
+  servfail: 'text-amber-300 border-amber-500/30 bg-amber-500/10',
+  refused: 'text-amber-300 border-amber-500/30 bg-amber-500/10',
+  error: 'text-amber-300 border-amber-500/30 bg-amber-500/10',
 };
 
 export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
   const t = dictionary || {};
-  const [domainInput, setDomainInput] = useState<string>('');
-  const [queriedDomain, setQueriedDomain] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const [domainInput, setDomainInput] = useState('');
+  const [queried, setQueried] = useState('');
+  const [resolverId, setResolverId] = useState('google');
+  const [results, setResults] = useState<LookupResults | null>(null);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [results, setResults] = useState<Record<RecordType, DohAnswer[]> | null>(null);
+  const [compareType, setCompareType] = useState<RecordType>('A');
+  const [views, setViews] = useState<ResolverView[] | null>(null);
+  const [comparing, setComparing] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const fetchRecords = useCallback(async (domain: string): Promise<Record<RecordType, DohAnswer[]>> => {
-    const empty: Record<RecordType, DohAnswer[]> = { A: [], AAAA: [], MX: [], TXT: [], NS: [], CNAME: [], SOA: [] };
-    const settled = await Promise.all(
-      TYPE_ORDER.map(async (type) => {
-        try {
-          const res = await fetch(`https://dns.google/resolve?name=${encodeURIComponent(domain)}&type=${type}`, {
-            headers: { 'Accept': 'application/dns+json' },
-          });
-          if (!res.ok) return { type, records: [] as DohAnswer[] };
-          const json: DohResponse = await res.json();
-          if (json.Status !== 0 && json.Status !== 3) return { type, records: [] as DohAnswer[] };
-          const answers = (json.Answer || []).filter((a) => {
-            const name = TYPE_CODE_TO_NAME(a.type);
-            return name === type || (type === 'SOA' && a.type === TYPE_CODES.SOA);
-          });
-          return { type, records: answers };
-        } catch {
-          return { type, records: [] as DohAnswer[] };
-        }
-      })
-    );
-    for (const { type, records } of settled) {
-      empty[type] = records;
-    }
-    return empty;
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 700);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const handleLookup = useCallback(async () => {
-    const domain = sanitizeDomain(domainInput);
-    if (!domain || !domain.includes('.')) {
-      setError(t.error_invalid_domain || 'Please enter a valid domain');
+  // The old copy handler left a dangling timer behind on unmount.
+  useEffect(() => {
+    if (!copiedKey) return;
+    const id = setTimeout(() => setCopiedKey(null), 1800);
+    return () => clearTimeout(id);
+  }, [copiedKey]);
+
+  // A pending lookup is abandoned when a new one starts, so a slow resolver
+  // cannot overwrite fresher results.
+  useEffect(() => () => abortRef.current?.abort(), []);
+
+  const copy = useCallback((key: string, value: string) => {
+    if (!value) return;
+    navigator.clipboard?.writeText(value).catch(() => {});
+    setCopiedKey(key);
+  }, []);
+
+  const runLookup = useCallback(async () => {
+    const raw = domainInput.trim();
+    // An IPv4 address is turned into its reverse-lookup name, so pasting an IP
+    // does the obvious thing instead of failing validation.
+    const reverse = reverseName(raw);
+    const domain = reverse || sanitizeDomain(raw);
+    if (!domain || (!reverse && !looksLikeDomain(domain))) {
+      setError(t.error_invalid_domain || 'Please enter a valid domain or IPv4 address');
       setResults(null);
-      setQueriedDomain('');
+      setViews(null);
+      setQueried('');
       return;
     }
+
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setLoading(true);
     setError(null);
     setResults(null);
-    setQueriedDomain(domain);
-    setCopiedKey(null);
+    setViews(null);
+    setQueried(domain);
     try {
-      const records = await fetchRecords(domain);
-      setResults(records);
-      const total = Object.values(records).reduce((sum, r) => sum + r.length, 0);
-      if (total === 0) {
-        setError(t.error_no_records || 'No DNS records found for this domain');
-      }
+      const types: RecordType[] = reverse ? ['PTR'] : TYPE_ORDER;
+      const found = await lookup(domain, types, resolverById(resolverId), controller.signal);
+      if (controller.signal.aborted) return;
+      setResults(found);
+      // NXDOMAIN on the SOA lookup is the honest signal that the name itself
+      // does not exist, as opposed to simply having no records of one type.
+      const anyNx = Object.values(found).some(r => r && r.status === 'nxdomain');
+      const total = Object.values(found).reduce((n, r) => n + (r ? r.answers.length : 0), 0);
+      if (anyNx && total === 0) setError(t.error_nxdomain || 'That name does not exist in DNS.');
+      else if (total === 0) setError(t.error_no_records || 'No records found for this name.');
     } catch {
-      setError(t.error_lookup_failed || 'DNS lookup failed. Please try again.');
+      if (!controller.signal.aborted) setError(t.error_lookup_failed || 'The lookup failed. Try another resolver.');
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
-  }, [domainInput, fetchRecords, t]);
+  }, [domainInput, resolverId, t]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleLookup();
-  };
+  const runCompare = useCallback(async () => {
+    if (!queried) return;
+    setComparing(true);
+    setViews(null);
+    try {
+      const v = await compareResolvers(queried, compareType);
+      setViews(v);
+    } finally {
+      setComparing(false);
+    }
+  }, [queried, compareType]);
 
-  const copyToClipboard = (key: string, value: string) => {
-    if (!value) return;
-    navigator.clipboard.writeText(value);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-  };
+  const agree = views ? resolversAgree(views) : true;
 
-  const recordSets: RecordSet[] = useMemo(() => {
-    if (!results) return [];
-    return TYPE_ORDER.map((type) => ({
-      type,
-      records: results[type] || [],
-      icon: TYPE_ICONS[type],
-    })).filter((rs) => rs.records.length > 0);
+  const exportText = useMemo(() => {
+    if (!results || !queried) return '';
+    const lines: string[] = [`; DNS records for ${queried}`, `; resolver: ${resolverById(resolverId).label}`, ''];
+    (Object.keys(results) as RecordType[]).forEach(type => {
+      const r = results[type];
+      if (!r || r.answers.length === 0) return;
+      r.answers.forEach(a => {
+        lines.push(`${a.name}\t${a.TTL}\tIN\t${type}\t${a.data}`);
+      });
+    });
+    return lines.join('\n') + '\n';
+  }, [results, queried, resolverId]);
+
+  const downloadZone = useCallback(() => {
+    if (!exportText) return;
+    const blob = new Blob([exportText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${queried}-dns.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }, [exportText, queried]);
+
+  const statusLabel = (s: Status): string =>
+    s === 'ok'
+      ? t.status_ok || 'answered'
+      : s === 'empty'
+      ? t.status_empty || 'no records'
+      : s === 'nxdomain'
+      ? t.status_nxdomain || 'name does not exist'
+      : s === 'servfail'
+      ? t.status_servfail || 'server failure'
+      : s === 'refused'
+      ? t.status_refused || 'refused'
+      : t.status_error || 'unreachable';
+
+  const activeResolver = resolverById(resolverId);
+
+  const steps = [
+    { art: StepAsk, title: t.step1Title || 'Type a domain or an IP', text: t.step1Text || 'A URL is trimmed down to its host, and an IPv4 address is turned into a reverse lookup.' },
+    { art: StepRead, title: t.step2Title || 'Read every record type', text: t.step2Text || 'A, AAAA, CNAME, MX, NS, TXT, SOA, CAA, SRV and HTTPS, each with its TTL.' },
+    { art: StepCompare, title: t.step3Title || 'Check it has propagated', text: t.step3Text || 'Ask three resolvers the same question and see whether they still disagree.' },
+    { art: StepTrust, title: t.step4Title || 'See if it is signed', text: t.step4Text || 'The resolver says whether the answer was validated with DNSSEC, and that badge is shown.' },
+  ];
+
+  const features = [
+    { icon: IconTypes, title: t.feat1Title || 'Ten record types', text: t.feat1Text || 'Including CAA, which says who may issue certificates for the domain, and HTTPS/SVCB records.' },
+    { icon: IconStatus, title: t.feat2Title || 'Tells a typo from a gap', text: t.feat2Text || 'A name that does not exist is reported as NXDOMAIN, not quietly shown as "no records".' },
+    { icon: IconPropagation, title: t.feat3Title || 'Propagation check', text: t.feat3Text || 'Three independent resolvers, side by side, so you can see a change spreading.' },
+    { icon: IconDnssec, title: t.feat4Title || 'DNSSEC badge', text: t.feat4Text || 'Shows the resolver’s authenticated-data flag instead of throwing it away.' },
+    { icon: IconResolvers, title: t.feat5Title || 'You pick the resolver', text: t.feat5Text || 'Google, Cloudflare or DNS.SB, each named with its operator so the choice is informed.' },
+    { icon: IconPrivacy, title: t.feat6Title || 'Honest about the network', text: t.feat6Text || 'DNS cannot be answered offline. The query goes straight from your browser to the resolver you chose, with no server of ours in between.' },
+  ];
+
+  const faq: { question: string; answer: string }[] = Array.isArray(t.faq) ? t.faq : [];
+
+  /** Types actually present in the answer, in the usual order.
+   *  Derived from the result rather than from TYPE_ORDER: a reverse lookup
+   *  returns PTR, which is not in that list, and iterating the list meant the
+   *  PTR record was fetched and then silently never rendered. */
+  const presentTypes = useMemo(() => {
+    if (!results) return [] as RecordType[];
+    const keys = Object.keys(results) as RecordType[];
+    const ordered = TYPE_ORDER.filter(ty => keys.includes(ty));
+    const extras = keys.filter(ty => !TYPE_ORDER.includes(ty));
+    return [...ordered, ...extras];
   }, [results]);
-
-  const summary = useMemo(() => {
-    if (!results) return null;
-    const ips = [
-      ...(results.A || []).map((r) => r.data),
-      ...(results.AAAA || []).map((r) => r.data),
-    ];
-    const nameservers = (results.NS || []).map((r) => r.data);
-    const mailServers = (results.MX || []).map((r) => ({
-      preference: r.preference ?? 0,
-      exchange: r.exchange || r.data,
-    })).sort((a, b) => a.preference - b.preference);
-    const cname = (results.CNAME || [])[0]?.data || null;
-    const soa = (results.SOA || [])[0];
-    const txtRecords = (results.TXT || []).map((r) => r.data.replace(/^"|"$/g, ''));
-    return { ips, nameservers, mailServers, cname, soa, txtRecords };
-  }, [results]);
-
-  const totalRecords = useMemo(() => recordSets.reduce((sum, rs) => sum + rs.records.length, 0), [recordSets]);
-
-  const resetWorkspace = useCallback(() => {
-    setDomainInput('');
-    setQueriedDomain('');
-    setResults(null);
-    setError(null);
-    setCopiedKey(null);
-    setLoading(false);
-  }, []);
+  const shownTypes = presentTypes.filter(ty => results && results[ty] && results[ty]!.answers.length > 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#05050a] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      
-      
+    <div className="min-h-screen flex flex-col bg-[#05060f] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
+      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/whois-bolt`)} t={t} />
 
-      <Header
-        currentLang={lang}
-        onLanguageChange={(l) => (window.location.href = `/${l.toLowerCase()}/whois-bolt`)}
-        onReset={resetWorkspace}
-        t={t}
-      />
-
-      <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
-        {/* Bloque AdSense Horizontal */}
+      {/* The max width lives on <main>: AdRail measures this element to decide
+          whether the fixed side rails fit, so reserving 440px from 1400px up is
+          what keeps them visible instead of silently suppressed. */}
+      <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col gap-12 md:gap-20">
         <AdBanner id="adsense-whois-bolt-top" />
 
-        <div className="text-center md:text-left space-y-2">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
-            <Search className="w-8 h-8 text-indigo-400" />
-            <span>{t.seoHeroTitle || 'WhoisBolt'}</span>
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
-            {t.seoHeroText}
-          </p>
-        </div>
-
-        <div className="flex flex-col bg-slate-900/40 border border-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 md:p-8 space-y-4">
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-indigo-400" />
-            <label className="text-xs font-black text-indigo-400 uppercase tracking-widest text-left">
-              {t.label_domain_input || 'Domain Name'}
-            </label>
+        {/* Hero ------------------------------------------------------------ */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="space-y-5">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 text-[11px] font-black uppercase tracking-[0.2em] text-indigo-300">
+              <Globe className="w-3.5 h-3.5" />
+              {t.heroBadge || 'DNS over HTTPS'}
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              {t.seoHeroTitle || 'WhoisBolt'}
+            </h1>
+            <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl">{t.seoHeroText}</p>
+            <a
+              href="#how-it-works"
+              className="inline-block px-5 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:border-indigo-500/30 font-bold text-sm transition-all"
+            >
+              {t.heroSecondary || 'See how it works'}
+            </a>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="relative flex items-center flex-1">
-              <Search className="absolute left-4 w-5 h-5 text-indigo-400 pointer-events-none" />
+          <HeroArt className="w-full h-auto max-w-lg mx-auto" />
+        </section>
+
+        {/* Lookup ----------------------------------------------------------- */}
+        <section className="flex flex-col bg-slate-900/40 border border-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl p-5 md:p-8 space-y-5">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-indigo-400 pointer-events-none" />
               <input
                 type="text"
                 value={domainInput}
-                onChange={(e) => setDomainInput(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="example.com"
+                onChange={e => setDomainInput(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') runLookup();
+                }}
+                placeholder={t.placeholder_domain || 'example.com or 93.184.216.34'}
                 spellCheck={false}
                 autoCapitalize="none"
                 autoCorrect="off"
-                className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-950/50 border border-white/5 focus:border-indigo-500/50 font-mono text-sm text-white placeholder-slate-600 focus:ring-0 transition-colors outline-none"
+                aria-label={t.placeholder_domain || 'Domain or IP'}
+                className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-slate-950/50 border border-white/5 focus:border-indigo-500/50 font-mono text-sm text-white outline-none transition-colors placeholder-slate-600"
               />
             </div>
             <button
-              onClick={handleLookup}
-              disabled={loading || !domainInput.trim()}
-              className="flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-indigo-500/20 border border-indigo-500/40 hover:bg-indigo-500/30 hover:border-indigo-500/60 text-indigo-300 hover:text-white text-sm font-bold transition-all cursor-pointer outline-none disabled:opacity-40 disabled:cursor-not-allowed whitespace-nowrap"
+              onClick={runLookup}
+              disabled={loading}
+              className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-indigo-500 text-white text-sm font-black hover:bg-indigo-400 active:scale-95 transition-all shadow-lg shadow-indigo-500/25 cursor-pointer disabled:opacity-50 disabled:cursor-wait"
             >
-              {loading ? <Loader className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-              {loading ? (t.button_searching || 'Searching...') : (t.button_lookup || 'Lookup')}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+              {t.button_lookup || 'Look up'}
             </button>
           </div>
-          {error && (
-            <div className="flex items-start gap-2 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
-              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
-              <span>{error}</span>
-            </div>
-          )}
-          <p className="text-[11px] text-slate-500 leading-relaxed">
-            {t.note_doh_privacy || 'Queries are sent directly to Google DNS over HTTPS. No data is stored on our servers.'}
-          </p>
-        </div>
 
-        {loading && (
-          <div className="flex flex-col items-center justify-center gap-3 py-16 text-slate-400">
-            <Loader className="w-8 h-8 text-indigo-400 animate-spin" />
-            <span className="text-sm font-mono">
-              {t.status_resolving || 'Resolving'} {queriedDomain}...
+          {/* resolver choice, with the operator named */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
+              {t.label_resolver || 'Resolver'}
             </span>
-          </div>
-        )}
-
-        {!loading && results && totalRecords > 0 && (
-          <div className="flex flex-col bg-slate-900/40 border border-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 md:p-8 space-y-6">
-            <div className="flex items-center justify-between flex-wrap gap-3 pb-4 border-b border-white/5">
-              <div className="flex items-center gap-2">
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="font-mono text-sm text-white">
-                  {queriedDomain}
-                </span>
-              </div>
-              <span className="text-[10px] font-mono font-bold text-indigo-400/80 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded uppercase tracking-widest">
-                {totalRecords} {t.label_records || 'records'}
-              </span>
-            </div>
-            <div className="space-y-6">
-              {recordSets.map((rs) => (
-                <RecordSection
-                  key={rs.type}
-                  recordSet={rs}
-                  t={t}
-                  copiedKey={copiedKey}
-                  onCopy={copyToClipboard}
-                />
+            <div className="inline-flex flex-wrap rounded-xl bg-slate-950/60 border border-white/5 p-1">
+              {RESOLVERS.map(r => (
+                <button
+                  key={r.id}
+                  onClick={() => setResolverId(r.id)}
+                  className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    resolverId === r.id ? 'bg-indigo-500/20 text-indigo-200' : 'text-slate-400 hover:text-white'
+                  }`}
+                >
+                  {r.label}
+                </button>
               ))}
             </div>
+            <span className="text-[11px] text-slate-500">
+              {(t.resolverNote || 'Your query goes straight to {op}. Nothing passes through our servers.').replace(
+                '{op}',
+                activeResolver.operator
+              )}
+            </span>
           </div>
-        )}
 
-        {!loading && summary && (summary.ips.length > 0 || summary.nameservers.length > 0 || summary.mailServers.length > 0) && (
-          <div className="flex flex-col bg-slate-900/40 border border-white/5 backdrop-blur-2xl rounded-3xl shadow-2xl p-6 md:p-8 space-y-6">
-            <div className="flex items-center gap-2 pb-4 border-b border-white/5">
-              <Globe className="w-4 h-4 text-indigo-400" />
-              <h3 className="text-xs font-black text-indigo-400 uppercase tracking-widest">
-                {t.label_domain_summary || 'Domain Summary'}
-              </h3>
-            </div>
+          {error && (
+            <p className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-200">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+              {error}
+            </p>
+          )}
 
-            {summary.ips.length > 0 && (
-              <div className="space-y-3">
+          {/* results */}
+          {results && queried && (
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-mono text-sm text-white">{queried}</span>
                 <div className="flex items-center gap-2">
-                  <Server className="w-4 h-4 text-indigo-400/80" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
-                    {t.label_resolved_ips || 'Resolved IP Addresses'}
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {summary.ips.map((ip, idx) => (
-                    <div
-                      key={`ip-${idx}`}
-                      className="bg-slate-950/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-white break-all"
-                    >
-                      {ip}
-                    </div>
-                  ))}
+                  {Object.values(results).some(r => r && r.authenticated) && (
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-[11px] font-bold text-emerald-300">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      {t.dnssecOn || 'DNSSEC validated'}
+                    </span>
+                  )}
+                  <button
+                    onClick={downloadZone}
+                    disabled={!exportText}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:border-indigo-500/30 text-xs font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    {t.downloadZone || 'Download'}
+                  </button>
                 </div>
               </div>
-            )}
 
-            {summary.nameservers.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-indigo-400/80" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
-                    {t.label_nameservers || 'Nameservers'}
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {summary.nameservers.map((ns, idx) => (
-                    <div
-                      key={`ns-${idx}`}
-                      className="bg-slate-950/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-white break-all"
-                    >
-                      {ns}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {summary.mailServers.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-indigo-400/80" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
-                    {t.label_mail_servers || 'Mail Servers'}
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {summary.mailServers.map((mx, idx) => (
-                    <div
-                      key={`mx-${idx}`}
-                      className="bg-slate-950/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-white break-all flex items-center gap-3"
-                    >
-                      <span className="text-[10px] font-bold text-indigo-400/70 bg-indigo-500/10 border border-indigo-500/20 px-2 py-0.5 rounded shrink-0">
-                        {mx.preference}
+              {/* one block per type that answered */}
+              {shownTypes.map(type => {
+                const r = results[type]!;
+                return (
+                  <div key={type} className="rounded-2xl border border-white/5 bg-slate-950/40 overflow-hidden">
+                    <div className="flex items-center justify-between gap-2 px-4 py-2.5 border-b border-white/5">
+                      <span className="inline-flex items-center gap-2">
+                        <span className="px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-200 text-[11px] font-black">
+                          {type}
+                        </span>
+                        <span className="text-[11px] text-slate-500">
+                          {(t.recordCount || '{n} records').replace('{n}', String(r.answers.length))}
+                        </span>
                       </span>
-                      <span className="break-all">{mx.exchange}</span>
+                      {r.authenticated && <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                    <div className="divide-y divide-white/5">
+                      {r.answers.map((a, i) => (
+                        <div key={i} className="flex items-center gap-3 px-4 py-2.5">
+                          <span className="font-mono text-sm text-white break-all flex-1 select-all">{a.data}</span>
+                          <span className="font-mono text-[10px] text-slate-500 shrink-0">
+                            TTL {formatTtl(a.TTL, t)}
+                          </span>
+                          <button
+                            onClick={() => copy(`${type}-${i}`, a.data)}
+                            aria-label={`${t.tooltip_copy || 'Copy'} ${type}`}
+                            className={`w-7 h-7 shrink-0 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
+                              copiedKey === `${type}-${i}`
+                                ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
+                                : 'bg-white/5 border-white/5 hover:bg-indigo-500/20 text-slate-400 hover:text-white'
+                            }`}
+                          >
+                            {copiedKey === `${type}-${i}` ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
 
-            {summary.cname && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-indigo-400/80" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
-                    {t.label_cname || 'Canonical Name'}
-                  </span>
-                </div>
-                <div className="bg-slate-950/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-sm text-white break-all">
-                  {summary.cname}
-                </div>
-              </div>
-            )}
-
-            {summary.txtRecords.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-indigo-400/80" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
-                    {t.label_txt_records || 'TXT Records'}
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {summary.txtRecords.map((txt, idx) => (
-                    <div
-                      key={`txt-${idx}`}
-                      className="bg-slate-950/40 border border-white/5 rounded-xl px-4 py-3 font-mono text-xs text-white break-all"
+              {/* what every type answered, including the ones with nothing */}
+              <div className="flex flex-wrap gap-1.5">
+                {presentTypes.map(ty => {
+                  const r = results[ty]!;
+                  return (
+                    <span
+                      key={ty}
+                      className={`px-2 py-1 rounded-lg border text-[10px] font-bold ${STATUS_TONE[r.status]}`}
+                      title={statusLabel(r.status)}
                     >
-                      {txt}
-                    </div>
-                  ))}
-                </div>
+                      {ty} · {r.status === 'ok' ? r.answers.length : statusLabel(r.status)}
+                    </span>
+                  );
+                })}
               </div>
-            )}
 
-            {summary.soa && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-indigo-400/80" />
+              {/* propagation */}
+              <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4 space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-indigo-400/80">
-                    {t.label_soa || 'Start of Authority'}
+                    {t.compareTitle || 'Compare resolvers'}
                   </span>
+                  <select
+                    value={compareType}
+                    onChange={e => setCompareType(e.target.value as RecordType)}
+                    aria-label={t.compareType || 'Record type to compare'}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-950/70 border border-white/10 text-xs font-mono text-white outline-none focus:border-indigo-500/50 [color-scheme:dark]"
+                  >
+                    {TYPE_ORDER.map(ty => (
+                      <option key={ty} value={ty}>
+                        {ty}
+                      </option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={runCompare}
+                    disabled={comparing}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/20 border border-indigo-500/40 text-indigo-200 hover:bg-indigo-500/30 text-xs font-bold transition-all cursor-pointer disabled:opacity-50 disabled:cursor-wait"
+                  >
+                    {comparing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+                    {t.compareRun || 'Ask all three'}
+                  </button>
                 </div>
-                <div className="bg-slate-950/40 border border-white/5 rounded-xl px-4 py-3 space-y-1 font-mono text-xs text-white break-all">
-                  <div><span className="text-indigo-400/60">mname:</span> {summary.soa.mname || summary.soa.data}</div>
-                  {summary.soa.rname && <div><span className="text-indigo-400/60">rname:</span> {summary.soa.rname}</div>}
-                  {summary.soa.serial !== undefined && <div><span className="text-indigo-400/60">serial:</span> {summary.soa.serial}</div>}
-                  {summary.soa.refresh !== undefined && <div><span className="text-indigo-400/60">refresh:</span> {summary.soa.refresh}</div>}
-                  {summary.soa.retry !== undefined && <div><span className="text-indigo-400/60">retry:</span> {summary.soa.retry}</div>}
-                  {summary.soa.expire !== undefined && <div><span className="text-indigo-400/60">expire:</span> {summary.soa.expire}</div>}
-                  {summary.soa.minimum !== undefined && <div><span className="text-indigo-400/60">minimum:</span> {summary.soa.minimum}</div>}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
-        {!loading && !results && !error && (
-          <div className="flex flex-col items-center justify-center gap-4 py-16 text-slate-500 text-center">
-            <Globe className="w-12 h-12 text-indigo-400/30" />
-            <div className="space-y-1">
-              <div className="text-sm font-bold text-slate-400">
-                {t.placeholder_enter_domain || 'Enter a domain to begin DNS inspection'}
-              </div>
-              <div className="text-xs text-slate-600">
-                {t.placeholder_supported_types || 'A, AAAA, MX, TXT, NS, CNAME, SOA records supported'}
+                {views && (
+                  <>
+                    <div className="space-y-1.5">
+                      {views.map(v => {
+                        const r = resolverById(v.resolverId);
+                        return (
+                          <div key={v.resolverId} className="flex items-start gap-3 text-xs">
+                            <span className="w-24 shrink-0 font-bold text-slate-300">{r.label}</span>
+                            <span className="font-mono text-slate-400 break-all flex-1">
+                              {v.values.length ? v.values.join(', ') : statusLabel(v.status)}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <p className={`text-[11px] font-bold ${agree ? 'text-emerald-300' : 'text-amber-300'}`}>
+                      {agree ? t.compareAgree || 'All resolvers agree.' : t.compareDisagree || 'Resolvers disagree — the change has not fully propagated.'}
+                    </p>
+                  </>
+                )}
               </div>
             </div>
+          )}
+        </section>
+
+        <AdBanner id="adsense-whois-bolt-mid" />
+
+        {/* How it works ---------------------------------------------------- */}
+        <section id="how-it-works" className="space-y-8 scroll-mt-28">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t.howTitle || 'How it works'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((s, i) => (
+              <div key={i} className="glass-card rounded-2xl p-4 space-y-3">
+                <s.art />
+                <div className="space-y-1.5">
+                  <h3 className="text-sm font-black text-white flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-md bg-indigo-500/15 text-indigo-300 text-[11px] font-black flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    {s.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">{s.text}</p>
+                </div>
+              </div>
+            ))}
           </div>
+        </section>
+
+        {/* Features -------------------------------------------------------- */}
+        <section className="space-y-8">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t.featuresTitle || 'What it actually does'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map((f, i) => (
+              <div key={i} className="glass-card rounded-2xl p-5 space-y-3">
+                <div className="w-10 h-10">
+                  <f.icon />
+                </div>
+                <h3 className="text-sm font-black text-white">{f.title}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{f.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ ------------------------------------------------------------- */}
+        {faq.length > 0 && (
+          <section className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+              {t.faqTitle || 'Frequently Asked Questions'}
+            </h2>
+            <div className="space-y-3 max-w-3xl mx-auto w-full">
+              {faq.map((item, i) => (
+                <details key={i} className="group glass-card rounded-2xl overflow-hidden">
+                  <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-sm font-bold text-white hover:text-indigo-300 transition-colors">
+                    <span>{item.question}</span>
+                    <span className="text-indigo-400 text-lg leading-none shrink-0 transition-transform group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-400 leading-relaxed">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
         )}
 
-        <div className="flex justify-end">
-          <button
-            onClick={resetWorkspace}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-indigo-500/20 hover:border-indigo-500/30 text-slate-300 hover:text-indigo-400 text-xs font-bold transition-all cursor-pointer outline-none"
-          >
-            <RotateCcw className="w-4 h-4" />
-            {t.button_reset || 'Reset'}
-          </button>
-        </div>
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-whois-bolt-bottom" />
+        <AdBanner id="adsense-whois-bolt-bottom" />
       </main>
 
-      <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />
+      <Footer lang={lang} t={t} onOpenModal={m => setLegalModal(m)} />
+
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label={t.scrollTop || 'Back to top'}
+          className="fixed bottom-6 right-6 z-[190] w-11 h-11 rounded-full bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-500/30 hover:bg-indigo-400 transition-all cursor-pointer"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
 
       <LegalModal
         isOpen={legalModal === 'privacy'}

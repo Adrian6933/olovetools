@@ -43,9 +43,11 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
               className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
             >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/50 transition-all">
-                <Shield className="w-5 h-5 text-emerald-400 animate-pulse" />
+                <Shield className="w-5 h-5 text-emerald-400" />
               </div>
-              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-emerald-400 transition-all">
+              {/* Below sm the icon carries it on its own: "oLoveTools" plus the
+                  tool name does not fit a 375px viewport and gets clipped. */}
+              <span className="hidden sm:inline text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-emerald-400 transition-all">
                 {t.title}
               </span>
             </button>

@@ -45,7 +45,9 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all">
                 <FolderArchive className="w-5 h-5 text-amber-500" />
               </div>
-              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-amber-500 transition-all">
+              {/* Below sm the icon alone carries it: "oLoveTools" plus the tool
+                  name overflows a 375px viewport and gets clipped. */}
+              <span className="hidden sm:inline text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-amber-500 transition-all">
                 {t.title}
               </span>
             </button>

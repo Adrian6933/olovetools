@@ -1,690 +1,626 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle, ArrowUp, CalendarPlus, Check, Copy, Globe, Plus, Search, Trash2, X } from 'lucide-react';
+
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { AdBanner } from '../../components/shared/AdBanner';
 import { LegalModal } from './components/LegalModal';
-import { Globe, Plus, Trash2, Clock, Copy, Check, Sun, Moon, Search, RotateCcw } from 'lucide-react';
+import { OverlapGrid } from './components/OverlapGrid';
+import {
+  HeroArt,
+  IconCalendar,
+  IconDst,
+  IconGrid,
+  IconOffline,
+  IconSave,
+  IconZones,
+  StepAdd,
+  StepGrid,
+  StepShare,
+  StepWarn,
+} from './components/Illustrations';
+import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
+import { allZones, entryFor, localZone, searchZones } from './lib/zones';
+import {
+  dateKey,
+  formatClock,
+  instantFrom,
+  skippedHourOfDay,
+  nextTransition,
+  offsetLabel,
+  zoneNow,
+} from './lib/time';
+import { buildIcs, buildSummary } from './lib/ics';
+import { DEFAULT_WORKING, STORAGE_KEY, type ZoneEntry } from './types';
 
 interface TimeBoltProps {
   lang: string;
   dictionary: any;
 }
 
-interface ZoneEntry {
-  city: string;
-  tz: string;
-  country: string;
+const pad = (n: number) => String(n).padStart(2, '0');
+
+function download(text: string, name: string, type: string) {
+  const blob = new Blob([text], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  // Revoked on a timer: Safari cancels an in-flight download if the URL goes
+  // away in the same tick.
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
 }
 
-const TIMEZONE_LIST: ZoneEntry[] = [
-  { city: 'New York', tz: 'America/New_York', country: 'USA' },
-  { city: 'Los Angeles', tz: 'America/Los_Angeles', country: 'USA' },
-  { city: 'Chicago', tz: 'America/Chicago', country: 'USA' },
-  { city: 'Denver', tz: 'America/Denver', country: 'USA' },
-  { city: 'Anchorage', tz: 'America/Anchorage', country: 'USA' },
-  { city: 'Honolulu', tz: 'Pacific/Honolulu', country: 'USA' },
-  { city: 'Toronto', tz: 'America/Toronto', country: 'Canada' },
-  { city: 'Vancouver', tz: 'America/Vancouver', country: 'Canada' },
-  { city: 'Mexico City', tz: 'America/Mexico_City', country: 'Mexico' },
-  { city: 'BogotÃ¡', tz: 'America/Bogota', country: 'Colombia' },
-  { city: 'Lima', tz: 'America/Lima', country: 'Peru' },
-  { city: 'Caracas', tz: 'America/Caracas', country: 'Venezuela' },
-  { city: 'Santiago', tz: 'America/Santiago', country: 'Chile' },
-  { city: 'Buenos Aires', tz: 'America/Argentina/Buenos_Aires', country: 'Argentina' },
-  { city: 'SÃ£o Paulo', tz: 'America/Sao_Paulo', country: 'Brazil' },
-  { city: 'Rio de Janeiro', tz: 'America/Sao_Paulo', country: 'Brazil' },
-  { city: 'BrasÃ­lia', tz: 'America/Sao_Paulo', country: 'Brazil' },
-  { city: 'Reykjavik', tz: 'Atlantic/Reykjavik', country: 'Iceland' },
-  { city: 'Casablanca', tz: 'Africa/Casablanca', country: 'Morocco' },
-  { city: 'Lisbon', tz: 'Europe/Lisbon', country: 'Portugal' },
-  { city: 'London', tz: 'Europe/London', country: 'UK' },
-  { city: 'Dublin', tz: 'Europe/Dublin', country: 'Ireland' },
-  { city: 'Paris', tz: 'Europe/Paris', country: 'France' },
-  { city: 'Brussels', tz: 'Europe/Brussels', country: 'Belgium' },
-  { city: 'Amsterdam', tz: 'Europe/Amsterdam', country: 'Netherlands' },
-  { city: 'Berlin', tz: 'Europe/Berlin', country: 'Germany' },
-  { city: 'Zurich', tz: 'Europe/Zurich', country: 'Switzerland' },
-  { city: 'Vienna', tz: 'Europe/Vienna', country: 'Austria' },
-  { city: 'Prague', tz: 'Europe/Prague', country: 'Czechia' },
-  { city: 'Warsaw', tz: 'Europe/Warsaw', country: 'Poland' },
-  { city: 'Stockholm', tz: 'Europe/Stockholm', country: 'Sweden' },
-  { city: 'Oslo', tz: 'Europe/Oslo', country: 'Norway' },
-  { city: 'Copenhagen', tz: 'Europe/Copenhagen', country: 'Denmark' },
-  { city: 'Helsinki', tz: 'Europe/Helsinki', country: 'Finland' },
-  { city: 'Madrid', tz: 'Europe/Madrid', country: 'Spain' },
-  { city: 'Rome', tz: 'Europe/Rome', country: 'Italy' },
-  { city: 'Athens', tz: 'Europe/Athens', country: 'Greece' },
-  { city: 'Lisbon', tz: 'Atlantic/Madeira', country: 'Portugal' },
-  { city: 'Kyiv', tz: 'Europe/Kyiv', country: 'Ukraine' },
-  { city: 'Bucharest', tz: 'Europe/Bucharest', country: 'Romania' },
-  { city: 'Istanbul', tz: 'Europe/Istanbul', country: 'Turkey' },
-  { city: 'Moscow', tz: 'Europe/Moscow', country: 'Russia' },
-  { city: 'Cairo', tz: 'Africa/Cairo', country: 'Egypt' },
-  { city: 'Lagos', tz: 'Africa/Lagos', country: 'Nigeria' },
-  { city: 'Accra', tz: 'Africa/Accra', country: 'Ghana' },
-  { city: 'Nairobi', tz: 'Africa/Nairobi', country: 'Kenya' },
-  { city: 'Addis Ababa', tz: 'Africa/Addis_Ababa', country: 'Ethiopia' },
-  { city: 'Johannesburg', tz: 'Africa/Johannesburg', country: 'South Africa' },
-  { city: 'Dubai', tz: 'Asia/Dubai', country: 'UAE' },
-  { city: 'Tehran', tz: 'Asia/Tehran', country: 'Iran' },
-  { city: 'Baku', tz: 'Asia/Baku', country: 'Azerbaijan' },
-  { city: 'Tbilisi', tz: 'Asia/Tbilisi', country: 'Georgia' },
-  { city: 'Karachi', tz: 'Asia/Karachi', country: 'Pakistan' },
-  { city: 'Delhi', tz: 'Asia/Kolkata', country: 'India' },
-  { city: 'Mumbai', tz: 'Asia/Kolkata', country: 'India' },
-  { city: 'Bengaluru', tz: 'Asia/Kolkata', country: 'India' },
-  { city: 'Kathmandu', tz: 'Asia/Kathmandu', country: 'Nepal' },
-  { city: 'Colombo', tz: 'Asia/Colombo', country: 'Sri Lanka' },
-  { city: 'Dhaka', tz: 'Asia/Dhaka', country: 'Bangladesh' },
-  { city: 'Yangon', tz: 'Asia/Yangon', country: 'Myanmar' },
-  { city: 'Bangkok', tz: 'Asia/Bangkok', country: 'Thailand' },
-  { city: 'Hanoi', tz: 'Asia/Ho_Chi_Minh', country: 'Vietnam' },
-  { city: 'Jakarta', tz: 'Asia/Jakarta', country: 'Indonesia' },
-  { city: 'Singapore', tz: 'Asia/Singapore', country: 'Singapore' },
-  { city: 'Kuala Lumpur', tz: 'Asia/Kuala_Lumpur', country: 'Malaysia' },
-  { city: 'Manila', tz: 'Asia/Manila', country: 'Philippines' },
-  { city: 'Hong Kong', tz: 'Asia/Hong_Kong', country: 'Hong Kong' },
-  { city: 'Shanghai', tz: 'Asia/Shanghai', country: 'China' },
-  { city: 'Beijing', tz: 'Asia/Shanghai', country: 'China' },
-  { city: 'Taipei', tz: 'Asia/Taipei', country: 'Taiwan' },
-  { city: 'Seoul', tz: 'Asia/Seoul', country: 'South Korea' },
-  { city: 'Tokyo', tz: 'Asia/Tokyo', country: 'Japan' },
-  { city: 'Perth', tz: 'Australia/Perth', country: 'Australia' },
-  { city: 'Darwin', tz: 'Australia/Darwin', country: 'Australia' },
-  { city: 'Brisbane', tz: 'Australia/Brisbane', country: 'Australia' },
-  { city: 'Adelaide', tz: 'Australia/Adelaide', country: 'Australia' },
-  { city: 'Sydney', tz: 'Australia/Sydney', country: 'Australia' },
-  { city: 'Melbourne', tz: 'Australia/Melbourne', country: 'Australia' },
-  { city: 'Auckland', tz: 'Pacific/Auckland', country: 'New Zealand' },
-  { city: 'Fiji', tz: 'Pacific/Fiji', country: 'Fiji' },
-];
-
-const pad = (n: number): string => String(n).padStart(2, '0');
-
-const safeLocale = (lang: string): string => (lang && lang.length >= 2 ? lang : 'en');
-
-const getZoneParts = (tz: string, date: Date) => {
-  try {
-    const fmt = new Intl.DateTimeFormat('en-US', {
-      timeZone: tz,
-      hour12: false,
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      weekday: 'short',
-    });
-    const map: Record<string, string> = {};
-    for (const p of fmt.formatToParts(date)) {
-      if (p.type !== 'literal') map[p.type] = p.value;
-    }
-    const hour = map.hour === '24' ? 0 : parseInt(map.hour, 10);
-    return {
-      year: parseInt(map.year, 10),
-      month: parseInt(map.month, 10),
-      day: parseInt(map.day, 10),
-      hour,
-      minute: parseInt(map.minute, 10),
-      second: parseInt(map.second, 10),
-      weekday: map.weekday,
-    };
-  } catch {
-    return { year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, weekday: 'â€”' };
-  }
-};
-
-const getUtcOffsetMinutes = (tz: string, date: Date): number => {
-  const p = getZoneParts(tz, date);
-  const asUtcMs = Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute, p.second);
-  return Math.round((asUtcMs - date.getTime()) / 60000);
-};
-
-const formatOffset = (minutes: number): string => {
-  const sign = minutes >= 0 ? '+' : '-';
-  const abs = Math.abs(minutes);
-  const h = Math.floor(abs / 60);
-  const m = abs % 60;
-  return `UTC${sign}${pad(h)}:${pad(m)}`;
-};
-
-const formatDateShort = (tz: string, date: Date, lang: string): string => {
-  const locale = safeLocale(lang);
-  try {
-    return new Intl.DateTimeFormat(locale, {
-      timeZone: tz,
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    }).format(date);
-  } catch {
-    try {
-      return new Intl.DateTimeFormat('en', { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric' }).format(date);
-    } catch {
-      const p = getZoneParts(tz, date);
-      return `${p.weekday}, ${p.month}/${p.day}`;
-    }
-  }
-};
-
-const isDaytime = (hour: number): boolean => hour >= 6 && hour < 18;
-
-const instantFromZonedTime = (tz: string, year: number, month: number, day: number, hour: number, minute: number): number => {
-  const guessUtc = Date.UTC(year, month - 1, day, hour, minute, 0);
-  const offset1 = getUtcOffsetMinutes(tz, new Date(guessUtc));
-  const realUtc = guessUtc - offset1 * 60000;
-  const offset2 = getUtcOffsetMinutes(tz, new Date(realUtc));
-  return guessUtc - offset2 * 60000;
-};
-
-const todayInTz = (tz: string, date: Date): string => {
-  const p = getZoneParts(tz, date);
-  return `${p.year}-${pad(p.month)}-${pad(p.day)}`;
-};
-
-const cityForTz = (tz: string): string => {
-  const found = TIMEZONE_LIST.find((z) => z.tz === tz);
-  if (found) return found.city;
-  const last = tz.split('/').pop() || tz;
-  return last.replace(/_/g, ' ');
-};
-
-const countryForTz = (tz: string): string => {
-  const found = TIMEZONE_LIST.find((z) => z.tz === tz);
-  return found ? found.country : '';
-};
-
-const detectLocalTz = (): string => {
-  try {
-    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-  } catch {
-    return 'UTC';
-  }
-};
-
-const buildInitialAdded = (): ZoneEntry[] => {
-  const localTz = detectLocalTz();
-  const base: ZoneEntry[] = [
-    { city: cityForTz(localTz), tz: localTz, country: countryForTz(localTz) },
-    { city: 'New York', tz: 'America/New_York', country: 'USA' },
-    { city: 'London', tz: 'Europe/London', country: 'UK' },
-    { city: 'Tokyo', tz: 'Asia/Tokyo', country: 'Japan' },
-    { city: 'Sydney', tz: 'Australia/Sydney', country: 'Australia' },
-  ];
-  const seen = new Set<string>();
-  const out: ZoneEntry[] = [];
-  for (const z of base) {
-    const key = `${z.city}|${z.tz}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    out.push(z);
-  }
-  return out;
-};
+const DEFAULT_TZS = ['America/New_York', 'Europe/London', 'Asia/Tokyo', 'Australia/Sydney'];
 
 export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
   const t = dictionary || {};
+
+  // Nothing time- or locale-dependent may render before hydration: this island
+  // is server-rendered, and `new Date()` or the visitor's own zone would differ
+  // between the two passes.
+  const [mounted, setMounted] = useState(false);
+  const [tick, setTick] = useState(0);
+
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
-  const [added, setAdded] = useState<ZoneEntry[]>(buildInitialAdded);
-  const [showSearch, setShowSearch] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [now, setNow] = useState<Date>(new Date());
-  const [plannerTz, setPlannerTz] = useState<string>(() => buildInitialAdded()[0]?.tz || 'UTC');
-  const [plannerDate, setPlannerDate] = useState<string>(() => todayInTz(buildInitialAdded()[0]?.tz || 'UTC', new Date()));
-  const [plannerTime, setPlannerTime] = useState<string>('09:00');
-  const searchRef = useRef<HTMLDivElement>(null);
+  const [catalogue, setCatalogue] = useState<ZoneEntry[]>([]);
+  const [zones, setZones] = useState<ZoneEntry[]>([]);
+  const [refTz, setRefTz] = useState('UTC');
+  const [dayKeyState, setDayKeyState] = useState('');
+  const [selectedHour, setSelectedHour] = useState(9);
+  const [working, setWorking] = useState(DEFAULT_WORKING);
+  const [use24, setUse24] = useState(true);
+  const [duration, setDuration] = useState(60);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [copied, setCopied] = useState<string | null>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const searchRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
+    setMounted(true);
+    setTick(Date.now());
+    const id = setInterval(() => setTick(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
 
+  // Catalogue, saved zones and the visitor's own zone can only be read in the
+  // browser, so they are all filled in after mount.
   useEffect(() => {
-    if (!added.some((a) => a.tz === plannerTz)) {
-      setPlannerTz(added[0]?.tz || '');
-    }
-  }, [added, plannerTz]);
+    const list = allZones();
+    setCatalogue(list);
+    const home = localZone();
+    setRefTz(home);
 
-  useEffect(() => {
-    if (!showSearch) return;
-    const handler = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
-        setShowSearch(false);
+    let restored: ZoneEntry[] | null = null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          restored = parsed
+            .filter((z: any) => z && typeof z.tz === 'string')
+            .map((z: any) => entryFor(z.tz, list));
+        }
       }
+    } catch {
+      // Private mode or a corrupted value; falling back to the defaults.
+    }
+
+    const base = restored || [home, ...DEFAULT_TZS.filter(z => z !== home)].map(tz => entryFor(tz, list));
+    setZones(base);
+    setDayKeyState(dateKey(home, new Date()));
+  }, []);
+
+  // The old version kept nothing: every added zone was lost on reload.
+  useEffect(() => {
+    if (!mounted || zones.length === 0) return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(zones.map(z => ({ tz: z.tz }))));
+    } catch {
+      // Storage refused; the session still works, it just will not come back.
+    }
+  }, [zones, mounted]);
+
+  useEffect(() => {
+    const onScroll = () => setShowScrollTop(window.scrollY > 700);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // The old copy handler left a dangling timer behind on unmount.
+  useEffect(() => {
+    if (!copied) return;
+    const id = setTimeout(() => setCopied(null), 1800);
+    return () => clearTimeout(id);
+  }, [copied]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const close = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setSearchOpen(false);
     };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [showSearch]);
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [searchOpen]);
 
-  const filtered = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return TIMEZONE_LIST;
-    return TIMEZONE_LIST.filter(
-      (z) =>
-        z.city.toLowerCase().includes(q) ||
-        z.tz.toLowerCase().includes(q) ||
-        z.country.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
+  const copyText = useCallback((key: string, value: string) => {
+    if (!value) return;
+    navigator.clipboard?.writeText(value).catch(() => {});
+    setCopied(key);
+  }, []);
 
-  const isAdded = useCallback(
-    (z: ZoneEntry) => added.some((a) => a.city === z.city && a.tz === z.tz),
-    [added]
+  // --- clocks ---------------------------------------------------------------
+
+  const now = useMemo(() => (tick ? new Date(tick) : null), [tick]);
+  const refKey = useMemo(() => (now ? dateKey(refTz, now) : ''), [refTz, now]);
+
+  const clocks = useMemo(() => {
+    if (!now) return [];
+    return zones.map(z => ({ zone: z, info: zoneNow(z.tz, now, refKey, lang) }));
+  }, [zones, now, refKey, lang]);
+
+  // --- planner --------------------------------------------------------------
+
+  const dayStartMs = useMemo(() => {
+    if (!dayKeyState) return 0;
+    const [y, mo, d] = dayKeyState.split('-').map(Number);
+    if (!y || !mo || !d) return 0;
+    return instantFrom(refTz, y, mo, d, 0, 0);
+  }, [dayKeyState, refTz]);
+
+  const meetingMs = dayStartMs + selectedHour * 3600000;
+
+  /** The hour the reference zone skips that day, if it skips one at all. */
+  const skippedHour = useMemo(
+    () => (dayStartMs ? skippedHourOfDay(refTz, dayStartMs) : null),
+    [refTz, dayStartMs]
   );
 
-  const addTimezone = useCallback((z: ZoneEntry) => {
-    setAdded((prev) => (prev.some((a) => a.city === z.city && a.tz === z.tz) ? prev : [...prev, z]));
+  /** Zones whose clocks change on the chosen day: the classic planning trap. */
+  const dstWarnings = useMemo(() => {
+    if (!dayStartMs) return [];
+    const dayEnd = dayStartMs + 86400000;
+    return zones
+      .map(z => {
+        const tr = nextTransition(z.tz, new Date(dayStartMs - 1), 2);
+        if (!tr || tr.at >= dayEnd) return null;
+        return { zone: z, transition: tr };
+      })
+      .filter(Boolean) as { zone: ZoneEntry; transition: { at: number; beforeMinutes: number; afterMinutes: number } }[];
+  }, [zones, dayStartMs]);
+
+  const summary = useMemo(
+    () => (mounted && dayStartMs ? buildSummary(meetingMs, zones, lang) : ''),
+    [meetingMs, zones, lang, mounted, dayStartMs]
+  );
+
+  const exportIcs = useCallback(() => {
+    const title = (t.meetingTitle || 'Meeting').toString();
+    download(
+      buildIcs({
+        startMs: meetingMs,
+        durationMinutes: duration,
+        title,
+        zones,
+        lines: summary.split('\n'),
+      }),
+      'meeting.ics',
+      'text/calendar'
+    );
+  }, [meetingMs, duration, zones, summary, t]);
+
+  // --- zone list ------------------------------------------------------------
+
+  const results = useMemo(() => searchZones(catalogue, query), [catalogue, query]);
+
+  const addZone = useCallback((z: ZoneEntry) => {
+    setZones(prev => (prev.some(a => a.tz === z.tz) ? prev : [...prev, z]));
   }, []);
 
-  const removeTimezone = useCallback((z: ZoneEntry) => {
-    setAdded((prev) => prev.filter((a) => !(a.city === z.city && a.tz === z.tz)));
-  }, []);
+  const removeZone = useCallback(
+    (z: ZoneEntry) => {
+      setZones(prev => prev.filter(a => a.tz !== z.tz));
+      if (refTz === z.tz) setRefTz(prev => (zones.find(a => a.tz !== z.tz)?.tz ?? prev));
+    },
+    [refTz, zones]
+  );
 
-  const copy = useCallback((key: string, value: string) => {
-    if (!value) return;
-    navigator.clipboard.writeText(value);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(null), 2000);
-  }, []);
+  const steps = [
+    { art: StepAdd, title: t.step1Title || 'Add the places', text: t.step1Text || 'Search any city or zone your browser knows — around 400 of them, not a short hard-coded list.' },
+    { art: StepGrid, title: t.step2Title || 'Read the overlap', text: t.step2Text || 'Twenty-four columns, one row per place. Green is working hours, and the number on top counts who is at work.' },
+    { art: StepWarn, title: t.step3Title || 'Watch the clock changes', text: t.step3Text || 'If a zone shifts its clocks that day, or the hour you picked does not exist, it says so.' },
+    { art: StepShare, title: t.step4Title || 'Send it out', text: t.step4Text || 'Copy the times as text, or download an .ics you can drop into any calendar.' },
+  ];
 
-  const plannerInstant = useMemo<number | null>(() => {
-    if (!plannerTz) return null;
-    const [y, mo, d] = plannerDate.split('-').map(Number);
-    const [h, mi] = plannerTime.split(':').map(Number);
-    if (!y || !mo || !d || isNaN(h) || isNaN(mi)) return null;
-    return instantFromZonedTime(plannerTz, y, mo, d, h, mi);
-  }, [plannerTz, plannerDate, plannerTime]);
+  const features = [
+    { icon: IconGrid, title: t.feat1Title || 'A real overlap grid', text: t.feat1Text || 'Every hour of the day against every place at once, so the good slot is visible instead of calculated by hand.' },
+    { icon: IconZones, title: t.feat2Title || 'Every zone, not a shortlist', text: t.feat2Text || 'The whole IANA list from your browser, searchable by city, country or identifier, accents ignored.' },
+    { icon: IconDst, title: t.feat3Title || 'Honest about DST', text: t.feat3Text || 'Warns when clocks move that day and refuses to pretend the skipped hour exists.' },
+    { icon: IconCalendar, title: t.feat4Title || 'Straight into a calendar', text: t.feat4Text || 'An .ics file built in the page, with every local time listed in the description.' },
+    { icon: IconSave, title: t.feat5Title || 'Remembers your places', text: t.feat5Text || 'The list of zones is kept in your browser, so it is still there tomorrow.' },
+    { icon: IconOffline, title: t.feat6Title || 'Never leaves the page', text: t.feat6Text || 'Time-zone data comes from your own browser. Nothing is uploaded and nothing is tracked.' },
+  ];
 
-  const handleToday = useCallback(() => {
-    if (!plannerTz) return;
-    setPlannerDate(todayInTz(plannerTz, now));
-  }, [plannerTz, now]);
-
-  const handleNow = useCallback(() => {
-    if (!plannerTz) return;
-    const p = getZoneParts(plannerTz, now);
-    setPlannerDate(`${p.year}-${pad(p.month)}-${pad(p.day)}`);
-    setPlannerTime(`${pad(p.hour)}:${pad(p.minute)}`);
-  }, [plannerTz, now]);
-
-  const resetWorkspace = useCallback(() => {
-    const fresh = buildInitialAdded();
-    setAdded(fresh);
-    setPlannerTz(fresh[0]?.tz || 'UTC');
-    setPlannerDate(todayInTz(fresh[0]?.tz || 'UTC', new Date()));
-    setPlannerTime('09:00');
-    setShowSearch(false);
-    setSearchQuery('');
-    setCopiedKey(null);
-  }, []);
+  const faq: { question: string; answer: string }[] = Array.isArray(t.faq) ? t.faq : [];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#020a08] text-slate-200 font-sans relative overflow-x-hidden pt-24">
-      
-      
+    <div className="min-h-screen flex flex-col bg-[#020a08] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
+      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/time-bolt`)} t={t} />
 
-      <Header
-        currentLang={lang}
-        onLanguageChange={(l) => (window.location.href = `/${l.toLowerCase()}/time-bolt`)}
-        onReset={resetWorkspace}
-        t={t}
-      />
-
-      <main className="flex-grow max-w-5xl w-full mx-auto px-4 md:px-12 py-8 relative z-10 flex flex-col space-y-8">
-        {/* Bloque AdSense Horizontal */}
+      {/* The max width lives on <main>: AdRail measures this element to decide
+          whether the fixed side rails fit, so reserving 440px from 1400px up is
+          what keeps them visible instead of silently suppressed. */}
+      <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col gap-12 md:gap-20">
         <AdBanner id="adsense-time-bolt-top" />
-        <div className="text-center md:text-left space-y-2">
-          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
-            <Globe className="w-8 h-8 text-teal-400" />
-            <span>{t.seoHeroTitle || 'TimeBolt'}</span>
-          </h2>
-          <p className="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
-            {t.seoHeroText}
-          </p>
-        </div>
 
-        <div ref={searchRef} className="relative">
-          <div className="flex items-center justify-between flex-wrap gap-3 bg-teal-500/5 border border-teal-500/20 rounded-2xl px-5 py-4 backdrop-blur-xl">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-teal-500/20 border border-teal-500/30 flex items-center justify-center">
-                <Globe className="w-5 h-5 text-teal-400" />
-              </div>
-              <div className="text-left">
-                <div className="text-[10px] font-black uppercase tracking-widest text-teal-400/80">
-                  {t.section_world_clocks || 'World Clocks'}
-                </div>
-                <div className="text-sm text-slate-300">
-                  {added.length} {added.length === 1 ? 'timezone' : 'timezones'}
-                </div>
-              </div>
-            </div>
-            <button
-              onClick={() => setShowSearch((v) => !v)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer outline-none whitespace-nowrap ${
-                showSearch
-                  ? 'bg-teal-500/30 border-teal-400 text-white'
-                  : 'bg-teal-500/20 border-teal-500/40 hover:bg-teal-500/30 hover:border-teal-500/60 text-teal-300 hover:text-white'
-              }`}
+        {/* Hero ------------------------------------------------------------ */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="space-y-5">
+            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 text-[11px] font-black uppercase tracking-[0.2em] text-emerald-300">
+              <Globe className="w-3.5 h-3.5" />
+              {t.heroBadge || 'Runs in your browser'}
+            </span>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-[1.1]">
+              {t.seoHeroTitle || 'TimeBolt'}
+            </h1>
+            <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl">{t.seoHeroText}</p>
+            <a
+              href="#how-it-works"
+              className="inline-block px-5 py-3 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:border-emerald-500/30 font-bold text-sm transition-all"
             >
-              <Plus className={`w-4 h-4 transition-transform ${showSearch ? 'rotate-45' : ''}`} />
-              {showSearch ? (t.button_close || 'Close') : (t.button_add_timezone || 'Add Timezone')}
-            </button>
+              {t.heroSecondary || 'See how it works'}
+            </a>
           </div>
+          <HeroArt className="w-full h-auto max-w-lg mx-auto" />
+        </section>
 
-          {showSearch && (
-            <div className="absolute top-full left-0 right-0 mt-2 z-30 bg-[#020a08] border border-teal-500/25 rounded-2xl shadow-2xl shadow-black/50 backdrop-blur-2xl p-4 space-y-3 max-h-[420px] flex flex-col">
-              <div className="relative flex items-center">
-                <Search className="absolute left-3.5 w-4 h-4 text-teal-400 pointer-events-none" />
-                <input
-                  autoFocus
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder={t.search_timezones || 'Search city, country or timezoneâ€¦'}
-                  spellCheck={false}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-teal-500/5 border border-teal-500/20 focus:border-teal-400 focus:bg-teal-500/10 text-sm text-white placeholder-slate-500 focus:ring-0 transition-colors outline-none"
-                />
-              </div>
-              <div className="overflow-y-auto space-y-1 -mr-2 pr-2">
-                {filtered.length === 0 && (
-                  <div className="text-center text-slate-500 text-sm py-6">
-                    {t.search_no_results || 'No timezones match your search.'}
-                  </div>
-                )}
-                {filtered.map((z) => {
-                  const addedAlready = isAdded(z);
-                  return (
-                    <button
-                      key={`${z.city}|${z.tz}`}
-                      onClick={() => addTimezone(z)}
-                      disabled={addedAlready}
-                      className={`w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl text-left transition-all ${
-                        addedAlready
-                          ? 'bg-teal-500/5 border border-teal-500/10 cursor-not-allowed opacity-60'
-                          : 'bg-transparent border border-transparent hover:bg-teal-500/10 hover:border-teal-500/25 cursor-pointer'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Clock className="w-4 h-4 text-teal-400/70 shrink-0" />
-                        <div className="min-w-0">
-                          <div className="text-sm text-white font-bold truncate">{z.city}</div>
-                          <div className="text-[11px] text-slate-500 font-mono truncate">{z.tz}</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="text-[10px] text-slate-500 uppercase tracking-wider hidden sm:inline">{z.country}</span>
-                        {addedAlready ? (
-                          <Check className="w-4 h-4 text-teal-400" />
-                        ) : (
-                          <Plus className="w-4 h-4 text-teal-400/80" />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {added.length === 0 ? (
-          <div className="bg-teal-500/[0.03] border border-dashed border-teal-500/20 rounded-3xl p-12 text-center">
-            <Globe className="w-10 h-10 text-teal-400/50 mx-auto mb-3" />
-            <p className="text-slate-400 text-sm">
-              {t.empty_clocks || 'No timezones yet. Add one above.'}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {added.map((z) => {
-              const p = getZoneParts(z.tz, now);
-              const offset = getUtcOffsetMinutes(z.tz, now);
-              const day = isDaytime(p.hour);
-              const timeStr = `${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}`;
-              const copyValue = `${z.city}: ${timeStr} (${formatOffset(offset)})`;
-              const cardKey = `live|${z.city}|${z.tz}`;
-              return (
-                <div
-                  key={cardKey}
-                  className="group relative bg-teal-500/[0.03] border border-teal-500/15 rounded-2xl p-5 hover:border-teal-500/40 transition-colors overflow-hidden"
+        {/* Clocks ----------------------------------------------------------- */}
+        <section className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-sm font-black uppercase tracking-widest text-emerald-400/80">
+              {t.section_world_clocks || 'World Clocks'}
+            </h2>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setUse24(v => !v)}
+                className="px-3 py-2 rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white hover:border-emerald-500/30 text-xs font-bold transition-all cursor-pointer"
+              >
+                {use24 ? '24h' : '12h'}
+              </button>
+              <div ref={searchRef} className="relative">
+                <button
+                  onClick={() => setSearchOpen(o => !o)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 hover:text-white hover:bg-emerald-500/30 text-xs font-bold transition-all cursor-pointer"
                 >
-                  <div
-                    className={`absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl pointer-events-none transition-opacity ${
-                      day ? 'bg-amber-500/10' : 'bg-indigo-500/10'
-                    }`}
-                  />
-                  <div className="flex items-start justify-between gap-3 relative">
-                    <div className="min-w-0">
-                      <div className="text-white font-black text-base truncate">{z.city}</div>
-                      {z.country && (
-                        <div className="text-[10px] text-slate-500 uppercase tracking-wider truncate">{z.country}</div>
+                  <Plus className="w-4 h-4" />
+                  {t.button_add_timezone || 'Add timezone'}
+                </button>
+
+                {searchOpen && (
+                  <div className="absolute right-0 z-40 mt-2 w-[min(24rem,calc(100vw-3rem))] rounded-2xl border border-emerald-500/25 bg-[#020a08] shadow-2xl shadow-black/60 overflow-hidden">
+                    <div className="flex items-center gap-2 px-3 py-2.5 border-b border-white/10">
+                      <Search className="w-4 h-4 text-slate-500 shrink-0" />
+                      <input
+                        autoFocus
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
+                        placeholder={t.search_timezones || 'Search city, country or timezone…'}
+                        className="flex-1 bg-transparent text-sm text-white outline-none placeholder-slate-600"
+                      />
+                      {query && (
+                        <button
+                          onClick={() => setQuery('')}
+                          aria-label={t.clear || 'Clear'}
+                          className="p-1 rounded text-slate-500 hover:text-white cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
                       )}
                     </div>
-                    <div className="flex items-center gap-1.5 shrink-0">
-                      <div
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center border ${
-                          day
-                            ? 'bg-amber-500/15 border-amber-500/30 text-amber-400'
-                            : 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300'
-                        }`}
-                        title={day ? (t.label_day || 'Day') : (t.label_night || 'Night')}
-                      >
-                        {day ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                      </div>
-                      <button
-                        onClick={() => removeTimezone(z)}
-                        title={t.button_remove || 'Remove'}
-                        className="w-8 h-8 rounded-lg bg-white/5 border border-white/5 hover:bg-red-500/20 hover:border-red-500/40 text-slate-400 hover:text-red-300 flex items-center justify-center transition-all cursor-pointer outline-none"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                    <div className="max-h-72 overflow-y-auto">
+                      {results.length === 0 && (
+                        <p className="px-4 py-6 text-center text-xs text-slate-600">
+                          {t.search_no_results || 'No timezones match your search.'}
+                        </p>
+                      )}
+                      {results.map(z => {
+                        const already = zones.some(a => a.tz === z.tz);
+                        return (
+                          <button
+                            key={z.tz}
+                            onClick={() => addZone(z)}
+                            disabled={already}
+                            className={`w-full flex items-center justify-between gap-3 px-4 py-2 text-left text-xs transition-colors ${
+                              already ? 'text-slate-600 cursor-not-allowed' : 'text-slate-300 hover:bg-white/5 cursor-pointer'
+                            }`}
+                          >
+                            <span className="truncate">
+                              <span className="font-bold text-white">{z.city}</span>
+                              {z.country ? <span className="text-slate-500"> · {z.country}</span> : null}
+                            </span>
+                            <span className="font-mono text-[10px] text-slate-600 shrink-0">{z.tz}</span>
+                          </button>
+                        );
+                      })}
                     </div>
+                    {catalogue.length > 0 && (
+                      <p className="px-4 py-2 text-[10px] text-slate-600 border-t border-white/5">
+                        {(t.zoneCount || '{shown} of {total} zones — type to narrow')
+                          .replace('{shown}', String(results.length))
+                          .replace('{total}', String(catalogue.length))}
+                      </p>
+                    )}
                   </div>
+                )}
+              </div>
+            </div>
+          </div>
 
-                  <div className="mt-4 relative">
-                    <div className="font-mono text-3xl font-black text-white tabular-nums tracking-tight">
-                      {timeStr}
+          {clocks.length === 0 ? (
+            <p className="rounded-2xl border border-white/5 bg-slate-950/40 px-5 py-8 text-center text-xs text-slate-600">
+              {t.empty_clocks || 'No timezones yet. Add one above.'}
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {clocks.map(({ zone, info }) => (
+                <div
+                  key={zone.tz}
+                  className={`rounded-2xl border p-4 space-y-2 transition-colors ${
+                    zone.tz === refTz ? 'border-emerald-500/40 bg-emerald-500/[0.07]' : 'border-white/5 bg-slate-950/40'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-black text-white truncate">{zone.city}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{zone.country || zone.tz}</p>
                     </div>
-                    <div className="mt-1 text-xs text-slate-400">
-                      {formatDateShort(z.tz, now, lang)}
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between relative">
-                    <span className="text-[10px] font-mono font-bold text-teal-400 bg-teal-500/10 border border-teal-500/20 px-2 py-1 rounded uppercase tracking-widest">
-                      {formatOffset(offset)}
-                    </span>
                     <button
-                      onClick={() => copy(cardKey, copyValue)}
-                      title={copiedKey === cardKey ? (t.emailCopied || 'Copied!') : (t.tooltip_copy || 'Copy')}
-                      className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all cursor-pointer outline-none ${
-                        copiedKey === cardKey
-                          ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                          : 'bg-white/5 border-white/5 hover:bg-teal-500/20 hover:border-teal-500/30 text-slate-400 hover:text-white'
-                      }`}
+                      onClick={() => removeZone(zone)}
+                      aria-label={`${t.remove || 'Remove'} ${zone.city}`}
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-red-300 hover:bg-red-500/10 transition-colors cursor-pointer shrink-0"
                     >
-                      {copiedKey === cardKey ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
+                  <p className="font-mono text-2xl font-bold text-white tabular-nums">
+                    {formatClock(info.hour, info.minute, use24)}
+                    <span className="text-sm text-slate-500">:{pad(info.second)}</span>
+                  </p>
+                  <div className="flex items-center justify-between gap-2 text-[11px]">
+                    <span className="text-slate-400">
+                      {info.weekday}
+                      {info.dayShift !== 0 && (
+                        <span className="text-emerald-400 font-bold">
+                          {' '}
+                          {info.dayShift > 0 ? t.nextDay || '(+1 day)' : t.prevDay || '(−1 day)'}
+                        </span>
+                      )}
+                    </span>
+                    <span className="font-mono text-slate-500">{offsetLabel(info.offsetMinutes)}</span>
+                  </div>
+                  <button
+                    onClick={() => setRefTz(zone.tz)}
+                    disabled={zone.tz === refTz}
+                    className="w-full mt-1 py-1.5 rounded-lg border border-white/10 text-[11px] font-bold text-slate-400 hover:text-emerald-300 hover:border-emerald-500/30 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {zone.tz === refTz ? t.isReference || 'Reference zone' : t.makeReference || 'Use as reference'}
+                  </button>
                 </div>
-              );
-            })}
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Planner ---------------------------------------------------------- */}
+        <section className="space-y-4">
+          <h2 className="text-sm font-black uppercase tracking-widest text-emerald-400/80">
+            {t.section_meeting_planner || 'Meeting Planner'}
+          </h2>
+
+          <div className="flex flex-wrap items-end gap-3">
+            <label className="space-y-1.5">
+              <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500">
+                {t.planner_date || 'Date'}
+              </span>
+              <input
+                type="date"
+                value={dayKeyState}
+                onChange={e => setDayKeyState(e.target.value)}
+                className="px-3 py-2.5 rounded-xl bg-slate-950/70 border border-white/10 focus:border-emerald-500/50 font-mono text-sm text-white outline-none transition-colors [color-scheme:dark]"
+              />
+            </label>
+            <label className="space-y-1.5">
+              <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500">
+                {t.workingHours || 'Working hours'}
+              </span>
+              <span className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min={0}
+                  max={23}
+                  value={working.start}
+                  onChange={e => setWorking(w => ({ ...w, start: Math.min(23, Math.max(0, Number(e.target.value))) }))}
+                  aria-label={t.workStart || 'Start of working hours'}
+                  className="w-16 px-2 py-2.5 rounded-xl bg-slate-950/70 border border-white/10 font-mono text-sm text-white outline-none focus:border-emerald-500/50"
+                />
+                <span className="text-slate-600">–</span>
+                <input
+                  type="number"
+                  min={1}
+                  max={24}
+                  value={working.end}
+                  onChange={e => setWorking(w => ({ ...w, end: Math.min(24, Math.max(1, Number(e.target.value))) }))}
+                  aria-label={t.workEnd || 'End of working hours'}
+                  className="w-16 px-2 py-2.5 rounded-xl bg-slate-950/70 border border-white/10 font-mono text-sm text-white outline-none focus:border-emerald-500/50"
+                />
+              </span>
+            </label>
+            <label className="space-y-1.5">
+              <span className="block text-[10px] font-black uppercase tracking-widest text-slate-500">
+                {t.duration || 'Length (min)'}
+              </span>
+              <input
+                type="number"
+                min={15}
+                step={15}
+                value={duration}
+                onChange={e => setDuration(Math.max(15, Number(e.target.value)))}
+                className="w-24 px-3 py-2.5 rounded-xl bg-slate-950/70 border border-white/10 font-mono text-sm text-white outline-none focus:border-emerald-500/50"
+              />
+            </label>
           </div>
+
+          {mounted && zones.length > 0 && dayStartMs > 0 && (
+            <OverlapGrid
+              zones={zones}
+              dayStartMs={dayStartMs}
+              selected={selectedHour}
+              onSelect={setSelectedHour}
+              working={working}
+              locale={lang}
+              t={t}
+            />
+          )}
+
+          {skippedHour !== null && (
+            <p className="flex items-start gap-2 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-xs font-bold text-amber-200">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+              {(t.skippedHour || '{h}:00 does not exist in {z} that day: the clocks jump straight over it.')
+                .replace('{h}', String(skippedHour).padStart(2, '0'))
+                .replace('{z}', entryFor(refTz, catalogue).city)}
+            </p>
+          )}
+
+          {dstWarnings.length > 0 && (
+            <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.07] px-4 py-3 space-y-1.5">
+              <p className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-amber-300">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                {t.dstWarningTitle || 'Clocks change that day'}
+              </p>
+              {dstWarnings.map(w => (
+                <p key={w.zone.tz} className="text-[11px] text-amber-100/80">
+                  {(t.dstWarningLine || '{city}: {from} becomes {to}')
+                    .replace('{city}', w.zone.city)
+                    .replace('{from}', offsetLabel(w.transition.beforeMinutes))
+                    .replace('{to}', offsetLabel(w.transition.afterMinutes))}
+                </p>
+              ))}
+            </div>
+          )}
+
+          {mounted && summary && (
+            <div className="rounded-2xl border border-white/5 bg-slate-950/40 p-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-400/80">
+                  {t.summaryTitle || 'The meeting, everywhere'}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => copyText('summary', summary)}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-bold transition-all cursor-pointer ${
+                      copied === 'summary'
+                        ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-300'
+                        : 'border-white/10 bg-white/5 text-slate-300 hover:text-white hover:border-emerald-500/30'
+                    }`}
+                  >
+                    {copied === 'summary' ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied === 'summary' ? t.copied || 'Copied' : t.copyTimes || 'Copy the times'}
+                  </button>
+                  <button
+                    onClick={exportIcs}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-emerald-500 text-[#020a08] text-xs font-black hover:bg-emerald-400 transition-all cursor-pointer"
+                  >
+                    <CalendarPlus className="w-3.5 h-3.5" />
+                    {t.downloadIcs || 'Download .ics'}
+                  </button>
+                </div>
+              </div>
+              <pre className="font-mono text-xs text-slate-300 whitespace-pre-wrap break-words">{summary}</pre>
+            </div>
+          )}
+        </section>
+
+        <AdBanner id="adsense-time-bolt-mid" />
+
+        {/* How it works ---------------------------------------------------- */}
+        <section id="how-it-works" className="space-y-8 scroll-mt-28">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t.howTitle || 'How it works'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {steps.map((s, i) => (
+              <div key={i} className="glass-card rounded-2xl p-4 space-y-3">
+                <s.art />
+                <div className="space-y-1.5">
+                  <h3 className="text-sm font-black text-white flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-md bg-emerald-500/15 text-emerald-300 text-[11px] font-black flex items-center justify-center shrink-0">
+                      {i + 1}
+                    </span>
+                    {s.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">{s.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Features -------------------------------------------------------- */}
+        <section className="space-y-8">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t.featuresTitle || 'What it actually does'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {features.map((f, i) => (
+              <div key={i} className="glass-card rounded-2xl p-5 space-y-3">
+                <div className="w-10 h-10">
+                  <f.icon />
+                </div>
+                <h3 className="text-sm font-black text-white">{f.title}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{f.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ ------------------------------------------------------------- */}
+        {faq.length > 0 && (
+          <section className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+              {t.faqTitle || 'Frequently Asked Questions'}
+            </h2>
+            <div className="space-y-3 max-w-3xl mx-auto w-full">
+              {faq.map((item, i) => (
+                <details key={i} className="group glass-card rounded-2xl overflow-hidden">
+                  <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-sm font-bold text-white hover:text-emerald-300 transition-colors">
+                    <span>{item.question}</span>
+                    <span className="text-emerald-400 text-lg leading-none shrink-0 transition-transform group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-400 leading-relaxed">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
         )}
 
-        <div className="flex justify-end">
-          <button
-            onClick={resetWorkspace}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/5 hover:bg-teal-500/20 hover:border-teal-500/30 text-slate-300 hover:text-teal-400 text-xs font-bold transition-all cursor-pointer outline-none"
-          >
-            <RotateCcw className="w-4 h-4" />
-            {t.button_reset || 'Reset'}
-          </button>
-        </div>
-
-        <div className="bg-teal-500/[0.03] border border-teal-500/20 rounded-3xl p-6 md:p-8 space-y-6 backdrop-blur-sm">
-          <div className="flex items-center gap-2 text-teal-400 text-xs font-black uppercase tracking-[0.3em]">
-            <Clock className="w-4 h-4" />
-            <span>{t.section_meeting_planner || 'Meeting Planner'}</span>
-          </div>
-
-          {added.length === 0 || !plannerTz ? (
-            <div className="text-center text-slate-500 text-sm py-8">
-              {t.empty_planner || 'Add timezones to plan a meeting.'}
-            </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-teal-400/80">
-                    {t.planner_source || 'Reference Timezone'}
-                  </label>
-                  <select
-                    value={plannerTz}
-                    onChange={(e) => setPlannerTz(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-teal-500/5 border border-teal-500/20 focus:border-teal-400 focus:bg-teal-500/10 text-sm text-white focus:ring-0 transition-colors outline-none [color-scheme:dark] cursor-pointer"
-                  >
-                    {added.map((a) => (
-                      <option key={`${a.city}|${a.tz}`} value={a.tz}>
-                        {a.city} â€” {a.tz}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-teal-400/80">
-                    {t.planner_date || 'Date'}
-                  </label>
-                  <input
-                    type="date"
-                    value={plannerDate}
-                    onChange={(e) => setPlannerDate(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-teal-500/5 border border-teal-500/20 focus:border-teal-400 focus:bg-teal-500/10 text-sm text-white focus:ring-0 transition-colors outline-none [color-scheme:dark]"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-teal-400/80">
-                    {t.planner_time || 'Time'}
-                  </label>
-                  <input
-                    type="time"
-                    value={plannerTime}
-                    onChange={(e) => setPlannerTime(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-teal-500/5 border border-teal-500/20 focus:border-teal-400 focus:bg-teal-500/10 text-sm text-white focus:ring-0 transition-colors outline-none [color-scheme:dark]"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={handleToday}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal-500/10 border border-teal-500/25 hover:bg-teal-500/20 hover:border-teal-400/50 text-teal-300 text-xs font-bold transition-all cursor-pointer outline-none"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  {t.button_today || 'Today'}
-                </button>
-                <button
-                  onClick={handleNow}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-teal-500/10 border border-teal-500/25 hover:bg-teal-500/20 hover:border-teal-400/50 text-teal-300 text-xs font-bold transition-all cursor-pointer outline-none"
-                >
-                  <Clock className="w-3.5 h-3.5" />
-                  {t.button_now || 'Now'}
-                </button>
-              </div>
-
-              {plannerInstant !== null && (
-                <div className="space-y-2">
-                  {added.map((a) => {
-                    const p = getZoneParts(a.tz, new Date(plannerInstant));
-                    const np = getZoneParts(a.tz, now);
-                    const diff = Math.round(
-                      (Date.UTC(p.year, p.month - 1, p.day) - Date.UTC(np.year, np.month - 1, np.day)) / 86400000
-                    );
-                    const relTag =
-                      diff === 0
-                        ? t.planner_today || 'Today'
-                        : diff === 1
-                        ? t.planner_tomorrow || 'Tomorrow'
-                        : diff === -1
-                        ? t.planner_yesterday || 'Yesterday'
-                        : '';
-                    const day = isDaytime(p.hour);
-                    const timeStr = `${pad(p.hour)}:${pad(p.minute)}`;
-                    const offset = getUtcOffsetMinutes(a.tz, new Date(plannerInstant));
-                    const dateStr = formatDateShort(a.tz, new Date(plannerInstant), lang);
-                    const isSource = a.tz === plannerTz;
-                    const rowKey = `plan|${a.city}|${a.tz}`;
-                    const copyValue = `${a.city}: ${dateStr}, ${timeStr} (${formatOffset(offset)})`;
-                    return (
-                      <div
-                        key={rowKey}
-                        className={`flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all ${
-                          isSource
-                            ? 'bg-teal-500/10 border-teal-400/50'
-                            : 'bg-[#020a08] border-teal-500/10 hover:border-teal-500/30'
-                        }`}
-                      >
-                        <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center border shrink-0 ${
-                            day
-                              ? 'bg-amber-500/15 border-amber-500/30 text-amber-400'
-                              : 'bg-indigo-500/15 border-indigo-500/30 text-indigo-300'
-                          }`}
-                        >
-                          {day ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="text-white font-bold text-sm truncate">{a.city}</span>
-                            {isSource && (
-                              <span className="text-[9px] font-black uppercase tracking-widest text-teal-400 bg-teal-500/15 border border-teal-500/30 px-1.5 py-0.5 rounded shrink-0">
-                                {t.planner_source_tag || 'Source'}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[11px] text-slate-500 truncate">
-                            {dateStr}
-                            {relTag && (
-                              <span className="ml-2 text-teal-400/80 font-bold">Â· {relTag}</span>
-                            )}
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-mono font-bold text-teal-400 bg-teal-500/10 border border-teal-500/20 px-2 py-1 rounded uppercase tracking-widest shrink-0 hidden sm:inline">
-                          {formatOffset(offset)}
-                        </span>
-                        <span className="font-mono text-lg font-black text-white tabular-nums shrink-0">
-                          {timeStr}
-                        </span>
-                        <button
-                          onClick={() => copy(rowKey, copyValue)}
-                          title={copiedKey === rowKey ? (t.emailCopied || 'Copied!') : (t.tooltip_copy || 'Copy')}
-                          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all cursor-pointer outline-none shrink-0 ${
-                            copiedKey === rowKey
-                              ? 'bg-emerald-500/20 border-emerald-500/50 text-emerald-400'
-                              : 'bg-white/5 border-white/5 hover:bg-teal-500/20 hover:border-teal-500/30 text-slate-400 hover:text-white'
-                          }`}
-                        >
-                          {copiedKey === rowKey ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-time-bolt-bottom" />
+        <AdBanner id="adsense-time-bolt-bottom" />
       </main>
 
-      <Footer
-        lang={lang}
-        t={t}
-        onOpenModal={(modal) => setLegalModal(modal)}
-      />
+      <Footer lang={lang} t={t} onOpenModal={m => setLegalModal(m)} />
+
+      {showScrollTop && (
+        <button
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label={t.scrollTop || 'Back to top'}
+          className="fixed bottom-6 right-6 z-[190] w-11 h-11 rounded-full bg-emerald-500 text-[#020a08] flex items-center justify-center shadow-lg shadow-emerald-500/30 hover:bg-emerald-400 transition-all cursor-pointer"
+        >
+          <ArrowUp className="w-5 h-5" />
+        </button>
+      )}
 
       <LegalModal
         isOpen={legalModal === 'privacy'}

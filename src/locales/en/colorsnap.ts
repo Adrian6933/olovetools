@@ -1,50 +1,228 @@
 export default {
   "title": "ColorSnap",
-  "seo_title": "ColorSnap | Extract Dominant Colors & Palettes From Any Image 100% Locally",
-  "seo_description": "Upload an image and instantly extract its dominant colors as a reusable palette. Copy HEX codes or export a CSS palette. 100% local and private.",
-  "seoHeroTitle": "Image Color Lab",
-  "seoHeroText": "Upload an image and instantly extract its dominant colors as a reusable palette. Click any swatch to copy its HEX code.",
-  "extractError": "Could not read pixel data from this image.",
-  "loadError": "Failed to load image.",
+  "badge": "Image palette lab",
+  "description": "Pull a real palette out of any image, then fix it by hand. Clustering runs in a perceptual colour space, the eyedropper works at pixel level, and nothing ever leaves your browser.",
+  "seo_title": "ColorSnap | Extract Colour Palettes From Any Image, Locally In Your Browser",
+  "seo_description": "Extract dominant colours from an image with perceptual OKLab clustering, refine them by hand with an eyedropper, check WCAG contrast, and export CSS, SCSS, Tailwind, JSON, GIMP or a PNG sheet. Runs entirely in your browser.",
+
   "dropzonePrompt": "Drop an image here or click to upload",
-  "dropzoneSubtitle": "PNG, JPG, WebP, GIF — processed locally in your browser",
-  "changeImage": "Change",
-  "resetBtn": "Reset",
-  "extracting": "Extracting colors…",
-  "colorsFound": "colors",
-  "paletteTitle": "Extracted Palette",
-  "paletteEmpty": "Upload an image to reveal its dominant colors.",
-  "copyHint": "Click to copy HEX",
-  "copied": "Copied",
+  "dropzoneSubtitle": "PNG, JPG, WebP, AVIF, GIF, BMP, HEIC, TIFF and SVG — up to 80 MB, read in your browser",
+  "changeImage": "Change image",
+  "resetBtn": "Start over",
+
+  "error_size": "That file is over 80 MB. Try a smaller export of it.",
+  "error_format": "That file is not an image.",
+  "error_heic": "This HEIC could not be converted in the browser. Export it as JPG and try again.",
+  "error_tiff": "This TIFF could not be decoded — it may use a compression the browser cannot read.",
+  "error_decode": "The browser could not decode this image.",
+
+  "settingsTitle": "Extraction settings",
+  "sizeLabel": "Colours",
+  "qualityLabel": "Sampling depth",
+  "quality_fast": "Fast",
+  "quality_balanced": "Balanced",
+  "quality_precise": "Precise",
+  "minChromaLabel": "Minimum saturation",
+  "minChromaHint": "Raise it to skip the greys and keep only the colours that carry the image.",
+  "skipWhites": "Skip near-white",
+  "skipBlacks": "Skip near-black",
+  "extractBtn": "Extract the palette",
+  "extracting": "Extracting…",
+  "manualBtn": "Skip it — I'll pick by hand",
+  "reextractBtn": "Re-extract, ignoring my edits",
+
+  "paletteTitle": "Palette",
+  "paletteEmpty": "Load an image to build a palette from it.",
+  "paletteReady": "Your image is loaded. Set it up and press the button when you're ready.",
+  "paletteManualEmpty": "Eyedropper is on. Click anywhere on the image to start the palette.",
+
+  "modePan": "Pan",
+  "modePick": "Eyedropper",
+  "undo": "Undo",
+  "redo": "Redo",
+  "zoomIn": "Zoom in",
+  "zoomOut": "Zoom out",
+  "zoomFit": "Fit to view",
+  "toggleRecolored": "Rebuild image from palette",
+  "holdCompare": "Hold to compare",
+  "stageHint": "Scroll to zoom · drag to pan · Alt-click removes the nearest swatch",
+  "viewRecolored": "Palette render",
+  "viewOriginal": "Original",
+
+  "editColor": "Edit this colour",
+  "editShort": "Edit",
   "copy": "Copy",
-  "paletteCopied": "Palette Copied!",
-  "copyPalette": "Copy Palette as CSS",
-  "downloadPalette": "Download Palette",
-  "tipTitle": "Quick Tip",
-  "tipText": "Click any swatch above to copy its HEX code. Use \"Copy Palette as CSS\" to grab all colors as ready-to-paste CSS custom properties.",
-  "seoBrowserSpeedTitle": "Instant Local Processing",
-  "seoBrowserSpeedText": "All color extraction is executed inside your browser using native canvas and JavaScript APIs. No image is ever sent to a server.",
-  "seoUseCaseTitle": "100% Client-Side",
-  "seoUseCaseText": "Everything runs locally in your browser. Your images never leave your device and nothing is uploaded.",
-  "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your image resides strictly in local memory and disappears when you close the tab.",
-  "seoKeywords": ["colorsnap", "image color picker", "extract palette from image", "dominant colors", "hex color extractor", "css palette generator", "online tool", "free"],
-  "faqTitle": "Frequently Asked Questions",
+  "copied": "Copied",
+  "lock": "Pin this colour",
+  "unlock": "Unpin",
+  "moveUp": "Move up",
+  "moveDown": "Move down",
+  "removeColor": "Remove",
+
+  "fidelityLabel": "Deviation",
+  "fidelityHigh": "Faithful",
+  "fidelityMid": "Close",
+  "fidelityLow": "Loose",
+  "sampledLabel": "Pixels read",
+  "timeLabel": "Time",
+
+  "copyPalette": "Copy",
+  "paletteCopied": "Copied",
+  "downloadPalette": "Download the file",
+  "downloadSheet": "Download the palette as a PNG",
+
+  "contrastTitle": "Contrast check",
+  "contrastHint": "WCAG 2.1 ratio of the selected colour against white, black and every other swatch.",
+  "onWhite": "on white",
+  "onBlack": "on black",
+  "gradeFail": "Fail",
+
+  "cvdTitle": "Colour vision",
+  "cvdNormal": "Normal",
+  "cvd_protanopia": "Protanopia",
+  "cvd_deuteranopia": "Deuteranopia",
+  "cvd_tritanopia": "Tritanopia",
+
+  "harmonyTitle": "Harmonies",
+  "harmony_complementary": "Complementary",
+  "harmony_analogous": "Analogous",
+  "harmony_triadic": "Triadic",
+  "harmony_splitComplementary": "Split complementary",
+  "harmony_tetradic": "Tetradic",
+  "harmony_monochrome": "Monochrome",
+  "addToPalette": "Add to the palette",
+
+  "colorNames": {
+    "black": "black",
+    "white": "white",
+    "gray": "grey",
+    "red": "red",
+    "orange": "orange",
+    "brown": "brown",
+    "yellow": "yellow",
+    "olive": "olive",
+    "green": "green",
+    "teal": "teal",
+    "cyan": "cyan",
+    "blue": "blue",
+    "indigo": "indigo",
+    "violet": "violet",
+    "magenta": "magenta",
+    "pink": "pink"
+  },
+  "colorTones": {
+    "deep": "deep",
+    "muted": "muted",
+    "vivid": "vivid",
+    "soft": "soft",
+    "pale": "pale"
+  },
+
+  "nextStepTitle": "Keep going",
+  "nextStepHint": "The palette sheet travels with you — no re-upload",
+  "nextCompress": "Compress it",
+  "nextCrop": "Crop it",
+  "nextFormat": "Change format",
+  "nextWatermark": "Add a watermark",
+  "nextMeme": "Caption it",
+
+  "howItWorksTitle": "How it works",
+  "step1Title": "Bring an image in",
+  "step1Text": "Drop it, pick it, paste it, or send it over from another oLoveTools tool. Nothing runs yet.",
+  "step2Title": "Set it up first",
+  "step2Text": "Choose how many colours you want, how deeply to sample, and which tones to ignore.",
+  "step3Title": "Extract when you say so",
+  "step3Text": "Median cut narrows the field, then k-means refines it in OKLab, where distance matches what you see.",
+  "step4Title": "Fix it by hand",
+  "step4Text": "Pin what works, drop what doesn't, and pick anything the maths missed with the eyedropper.",
+
+  "features": [
+    {
+      "title": "Sees colour the way you do",
+      "text": "Clustering happens in OKLab, so two blues that look identical never both make the cut while the one orange in the shot gets dropped."
+    },
+    {
+      "title": "Eyedropper with a loupe",
+      "text": "Zoom to the pixel, hover for the value, click to keep it. Alt-click removes the swatch closest to what you're pointing at."
+    },
+    {
+      "title": "Pin what already works",
+      "text": "Lock a swatch and the rest of the palette rebuilds around it, instead of starting from scratch and losing your keeper."
+    },
+    {
+      "title": "Readability, checked",
+      "text": "Real WCAG 2.1 contrast ratios against white, black and every other swatch, plus protan, deutan and tritan simulation."
+    },
+    {
+      "title": "100% in your browser",
+      "text": "No upload, no model downloaded from a CDN, no network call at all. The image stays in the tab and disappears when you close it."
+    },
+    {
+      "title": "Exports people actually use",
+      "text": "CSS custom properties, SCSS, a Tailwind v4 theme block, JSON, a GIMP .gpl palette, SVG swatches and a PNG sheet."
+    }
+  ],
+
+  "seoHeroTitle": "A palette that matches the image, not a blurred average of it",
+  "seoHeroText": "Most extractors shrink your photo to a thumbnail and count pixels in a fixed grid, which blends neighbouring colours together and invents shades that were never there. ColorSnap samples the image at full resolution, keeps the exact average of every colour bin it fills, and clusters those bins in OKLab — a space where numeric distance matches perceived difference. The result is the difference between a palette of four near-identical blues and one that actually contains the orange in the corner.",
+  "seoHeroList": [
+    "Nothing runs until you press the button",
+    "Perceptual OKLab clustering",
+    "Eyedropper, pinning and undo",
+    "WCAG contrast and colour-blindness checks",
+    "Seven export formats",
+    "HEIC, AVIF and TIFF are read too"
+  ],
+  "seoKeywordsTitle": "Related searches",
+  "seoKeywords": [
+    "colorsnap",
+    "image colour picker",
+    "extract palette from image",
+    "dominant colours",
+    "hex colour extractor",
+    "css palette generator",
+    "oklab palette",
+    "wcag contrast checker",
+    "tailwind palette",
+    "colour blindness simulator"
+  ],
+
+  "seoBrowserSpeedTitle": "The heavy pass runs off the main thread",
+  "seoBrowserSpeedText": "The pixel scan happens in a Web Worker on an OffscreenCanvas, so the interface stays responsive on a 50 MP photo. What comes back is a compact histogram, and every later change — palette size, saturation floor, pinned swatches — is re-solved from it in milliseconds without touching the image again.",
+  "seoUseCaseTitle": "Automatic first, manual whenever you want",
+  "seoUseCaseText": "Dropping a file does not start anything: the image waits while you choose the settings. You can also skip the automatic pass entirely and build the palette by hand from the first click, with zoom, a loupe, pinning and undo. Every colour is editable afterwards, and re-extraction keeps whatever you pinned.",
+  "seoPrivacyTitle": "100% private, and that is literal",
+  "seoPrivacyText": "There is no upload, no API, no model fetched from a CDN and no analytics on your image. Everything — decoding, sampling, clustering, exporting — happens with browser APIs inside your tab. Your image lives in memory only, and it is gone the moment you close the page.",
+
+  "faqTitle": "Frequently asked questions",
   "faq": [
     {
       "question": "Is my image sent to any server?",
-      "answer": "No. All color extraction happens entirely inside your browser using a canvas. Your image never leaves your device."
+      "answer": "No. Decoding, sampling and clustering all happen with canvas and Web Worker APIs inside your browser. There is no upload and no network request involving your image at any point."
     },
     {
-      "question": "What image formats are supported?",
-      "answer": "PNG, JPG, WebP, GIF and BMP files are supported. You can upload by clicking, dragging and dropping, or pasting from your clipboard."
+      "question": "Which formats can I open?",
+      "answer": "PNG, JPG, WebP, AVIF, GIF, BMP and SVG open natively. HEIC and HEIF from an iPhone are converted in the browser, and TIFF is decoded locally too. The limit is 80 MB per file. You can drop, browse, paste from the clipboard, or receive an image from another oLoveTools tool."
     },
     {
-      "question": "How many colors are extracted?",
-      "answer": "ColorSnap extracts up to 7 dominant colors, intelligently filtering out near-duplicates so each swatch is visually distinct."
+      "question": "Why doesn't it extract the palette as soon as I drop the file?",
+      "answer": "Because the settings change the answer. Palette size, sampling depth and the saturation floor all shape what you get, and running before you have set them just wastes a pass. The image waits; you press the button. If you would rather not use the automatic pass at all, there is a button that goes straight to the eyedropper."
+    },
+    {
+      "question": "What does the deviation number mean?",
+      "answer": "It is the average perceptual distance, in OKLab, between the colours in your image and the palette colour each one was assigned to. Below about 3 the palette is a faithful description of the image; above 6 you are looking at a loose impression of it. Adding colours lowers it, and it is the honest way to tell whether five swatches were enough."
+    },
+    {
+      "question": "What does pinning a colour do?",
+      "answer": "A pinned swatch is treated as fixed. When you change the palette size or re-run the extraction, the pinned colours stay exactly as they are and the remaining slots are recomputed around them, so you never lose the one swatch you already liked."
+    },
+    {
+      "question": "Can I export straight into my project?",
+      "answer": "Yes. CSS custom properties, SCSS variables plus a map, a Tailwind v4 @theme block, JSON with HEX/RGB/HSL/OKLCH and coverage, a GIMP .gpl palette for GIMP, Inkscape and Krita, SVG swatches, plain text, and a PNG sheet. Variable names come from the colours themselves, so you get --deep-teal rather than --color-4."
     }
   ],
-  "footerTagline": "Extract dominant colors and palettes from any image 100% locally in your browser.",
+
+  "footerTagline": "Extract colour palettes from any image, refine them by hand, and export them — entirely in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",

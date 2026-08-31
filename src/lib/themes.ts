@@ -961,9 +961,9 @@ export const themes: Record<string, ToolTheme> = {
     motion: 'subtle',
     grain: 'soft',
   },
-  passbolt: {
-    slug: 'passbolt',
-    name: 'PassBolt',
+  entropybolt: {
+    slug: 'entropy-bolt',
+    name: 'EntropyBolt',
     world: 'Password',
     emoji: '🔒',
     primary: 'emerald-500',

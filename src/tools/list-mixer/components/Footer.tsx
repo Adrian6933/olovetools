@@ -32,41 +32,8 @@ export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
           {t.footerTagline}
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-4xl border-t border-white/5 pt-16 mt-8">
-          <div>
-            <h3 className="text-white font-bold text-lg mb-3">{t.seoBrowserSpeedTitle}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
-          </div>
-          <div>
-            <h3 className="text-white font-bold text-lg mb-3">{t.seoUseCaseTitle}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{t.seoUseCaseText}</p>
-          </div>
-          <div className="md:col-span-2">
-            <h3 className="text-white font-bold text-lg mb-3">{t.seoPrivacyTitle}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed mb-4">{t.seoPrivacyText}</p>
-            <div className="flex flex-wrap gap-2 pt-2">
-              {Array.isArray(t.seoKeywords) && t.seoKeywords.map((kw: string) => (
-                <span key={kw} className="text-[10px] text-gray-500 bg-white/5 border border-white/10 px-2 py-1 rounded">
-                  {kw}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {Array.isArray(t.faq) && t.faq.length > 0 && (
-          <div className="w-full text-left max-w-4xl border-t border-white/5 pt-16">
-            <h2 className="text-white font-black text-2xl mb-8 tracking-tight text-center">{t.faqTitle}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {t.faq.map((item: any, i: number) => (
-                <div key={i} className="bg-white/[0.02] border border-white/5 p-6 rounded-2xl hover:border-orange-500/20 transition-colors">
-                  <h4 className="text-white font-bold text-base mb-2">{item.question}</h4>
-                  <p className="text-gray-400 text-sm leading-relaxed">{item.answer}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* The SEO copy and the FAQ live inside <main>, in the accordion.
+            Repeating them here duplicated every paragraph against itself. */}
 
         <div className="flex flex-col md:flex-row flex-wrap items-center justify-center gap-y-2 md:gap-y-6 gap-x-4 md:gap-x-8 text-gray-800 font-black text-[11px] md:text-xs tracking-widest pt-12 border-t border-white/5 w-full uppercase">
           <span className="w-full md:w-auto mb-4 md:mb-0 opacity-40">&copy; {new Date().getFullYear()} oLoveTools</span>
@@ -94,7 +61,7 @@ export const Footer: React.FC<FooterProps> = ({ lang, t, onOpenModal }) => {
 
           <a
             href={`/${lang.toLowerCase()}/about`}
-            className="w-full md:w-auto py-3 md:py-0 hover:text-orange-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center font-black"
+            className="w-full md:w-auto py-3 md:py-0 hover:text-orange-400 active:bg-white/5 active:scale-95 transition-all cursor-pointer whitespace-nowrap rounded-xl text-center"
           >
             {legalTranslations[lang]?.nav.about || 'About'}
           </a>

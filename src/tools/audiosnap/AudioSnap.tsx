@@ -1,925 +1,2051 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Mic, Square, Play, Pause, Download, History, Sparkles, Trash2, Music, Scissors, Volume2, RefreshCw } from 'lucide-react';
-import { createTranslator, type Language } from '../../locales/meta';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  AlertTriangle,
+  Check,
+  Download,
+  FileAudio,
+  Gauge,
+  History,
+  Keyboard,
+  Loader2,
+  Mic,
+  Pause,
+  Play,
+  Redo2,
+  Repeat,
+  RotateCcw,
+  Scissors,
+  Settings2,
+  Sliders,
+  Square,
+  Trash2,
+  Undo2,
+  Upload,
+  Wand2,
+  X,
+} from 'lucide-react';
+
+import { createTranslator } from '../../locales/meta';
 import { AdBanner } from '../../components/shared/AdBanner';
+import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
+import { useHandoffIntake } from '../../lib/useHandoff';
+import { createTicker, type Ticker } from '../../lib/ticker';
+import { legalTranslations } from '../../locales/legal';
+
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import { legalTranslations } from '../../locales/legal';
+import { NextStepBar } from './components/NextStepBar';
+import { Waveform } from './components/Waveform';
+import {
+  IconCapture,
+  IconExport,
+  IconLocalAudio,
+  IconMeter,
+  IconNonDestructive,
+  IconTrim,
+  StepCapture,
+  StepExport,
+  StepPolish,
+  StepShape,
+  StudioHeroArt,
+  WaveIdleArt,
+} from './components/Illustrations';
+import {
+  buildPeakMip,
+  dbToGain,
+  decodeAudioFile,
+  decodeRecording,
+  encodeCompressed,
+  encodeWav,
+  estimateWavBytes,
+  findSpeechBounds,
+  formatBytes,
+  formatClock,
+  formatDb,
+  measure,
+  pickCompressedType,
+  renderEdit,
+  renderedDuration,
+} from './lib/audio';
+import type { CaptureSettings, EditState, ExportItem, PeakMip, SourceInfo } from './types';
 
 interface AudioSnapProps {
   lang: string;
   dictionary: any;
 }
 
-interface AudioHistoryItem {
-  id: string;
-  name: string;
-  url: string;
-  size: string;
-  date: string;
-  duration: string;
-}
+type Tab = 'record' | 'file';
+type ExportFormat = 'wav16' | 'wav24' | 'wav32' | 'compressed';
+
+const NEUTRAL_EDIT: EditState = {
+  inSec: 0,
+  outSec: 0,
+  gainDb: 0,
+  normalize: false,
+  normalizeTargetDb: -1,
+  fadeInSec: 0,
+  fadeOutSec: 0,
+  speed: 1,
+  channelMode: 'source',
+  sampleRate: 0,
+  removeDc: false,
+};
+
+const DEFAULT_CAPTURE: CaptureSettings = {
+  deviceId: '',
+  echoCancellation: true,
+  noiseSuppression: true,
+  autoGainControl: true,
+  channelCount: 1,
+  bitrate: 128000,
+};
+
+const MAX_HISTORY = 100;
+/** Anything quieter than this counts as room tone for the auto-trim. */
+const SILENCE_DB = -45;
+
+const AudioCtx: typeof AudioContext =
+  typeof window !== 'undefined' ? (window.AudioContext || (window as any).webkitAudioContext) : (undefined as any);
 
 export const AudioSnap: React.FC<AudioSnapProps> = ({ lang, dictionary }) => {
-  const t = createTranslator(dictionary);
+  // Memoised because the translator is a fresh Proxy on every call, and a new
+  // identity would re-create every callback that reads a label — including the
+  // one behind the `devicechange` listener, which would then be torn down and
+  // re-attached on each render.
+  const t = useMemo(() => createTranslator(dictionary), [dictionary]);
+  const prefersReduced = useReducedMotion();
 
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [isPaused, setIsPaused] = useState<boolean>(false);
-  const [recordingTime, setRecordingTime] = useState<number>(0);
-  
-  const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
-  const [peaks, setPeaks] = useState<number[]>([]);
-  const [startTime, setStartTime] = useState<number>(0);
-  const [endTime, setEndTime] = useState<number>(0);
-  const [audioDuration, setAudioDuration] = useState<number>(0);
-  
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [playbackProgress, setPlaybackProgress] = useState<number>(0);
-  const [originalBlob, setOriginalBlob] = useState<Blob | null>(null);
-  const [mimeType, setMimeType] = useState<string>('audio/webm');
-  
-  const [isProcessing, setIsProcessing] = useState<boolean>(false);
-  const [history, setHistory] = useState<AudioHistoryItem[]>([]);
-  
-  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  // --------------------------------------------------------------- chrome
+  const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<'privacy' | 'terms' | 'cookies'>('privacy');
 
-  // Refs for Web Audio API & MediaRecorder
+  // --------------------------------------------------------------- source
+  const [tab, setTab] = useState<Tab>('record');
+  const [buffer, setBuffer] = useState<AudioBuffer | null>(null);
+  const [mip, setMip] = useState<PeakMip | null>(null);
+  const [info, setInfo] = useState<SourceInfo | null>(null);
+  const [originalBlob, setOriginalBlob] = useState<Blob | null>(null);
+  const [originalName, setOriginalName] = useState('audiosnap');
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  // -------------------------------------------------------------- capture
+  const [capture, setCapture] = useState<CaptureSettings>(DEFAULT_CAPTURE);
+  const [devices, setDevices] = useState<{ deviceId: string; label: string }[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [recordingTime, setRecordingTime] = useState(0);
+  const [inputLevel, setInputLevel] = useState(0);
+  const [inputClipped, setInputClipped] = useState(false);
+
+  // ----------------------------------------------------------------- edit
+  const [edit, setEdit] = useState<EditState>(NEUTRAL_EDIT);
+  /** Entries plus cursor in one object: two separate states would need one to be
+   *  updated from inside the other's updater, which React runs twice in dev. */
+  const [history, setHistory] = useState<{ entries: EditState[]; index: number }>({
+    entries: [NEUTRAL_EDIT],
+    index: 0,
+  });
+  const [view, setView] = useState({ from: 0, to: 0 });
+
+  // ------------------------------------------------------------- playback
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playhead, setPlayhead] = useState(0);
+  const [loop, setLoop] = useState(false);
+  const [compare, setCompare] = useState(false);
+
+  // --------------------------------------------------------------- export
+  const [format, setFormat] = useState<ExportFormat>('wav16');
+  const [bitrate, setBitrate] = useState(128000);
+  const [exporting, setExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState(0);
+  const [exports, setExports] = useState<ExportItem[]>([]);
+
+  // ------------------------------------------------------------------ refs
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
+  const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
-  const timerIntervalRef = useRef<any>(null);
-  const audioContextRef = useRef<AudioContext | null>(null);
+  const meterCtxRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const animationFrameRef = useRef<number | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  
-  const elapsedRef = useRef<number>(0);
-  const startTimestampRef = useRef<number>(0);
+  const meterTickerRef = useRef<Ticker | null>(null);
+  const timerTickerRef = useRef<Ticker | null>(null);
+  const elapsedRef = useRef(0);
+  const startedAtRef = useRef(0);
 
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const playCtxRef = useRef<AudioContext | null>(null);
+  const playRef = useRef<{ source: AudioBufferSourceNode; gain: GainNode; startedAt: number; offset: number; speed: number } | null>(null);
+  const playTickerRef = useRef<Ticker | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const exportsRef = useRef<ExportItem[]>([]);
+  exportsRef.current = exports;
 
-  // Set up audio URL for the trimmer audio tag
-  useEffect(() => {
-    if (originalBlob) {
-      const url = URL.createObjectURL(originalBlob);
-      setAudioUrl(url);
-      return () => {
-        URL.revokeObjectURL(url);
-      };
-    } else {
-      setAudioUrl(null);
+  const hasSource = !!buffer && !!mip;
+  const selectionLength = Math.max(0, edit.outSec - edit.inSec);
+  const outputLength = renderedDuration(edit);
+
+  // =========================================================================
+  // Measurements — recomputed only when the selection actually moves.
+  // =========================================================================
+  const sourceStats = useMemo(() => {
+    if (!buffer || selectionLength <= 0) return null;
+    return measure(buffer, edit.inSec, edit.outSec);
+  }, [buffer, edit.inSec, edit.outSec, selectionLength]);
+
+  /** Gain the render will apply, in dB, once the normaliser has had its say. */
+  const appliedGainDb = useMemo(() => {
+    let db = edit.gainDb;
+    if (edit.normalize && sourceStats && Number.isFinite(sourceStats.peakDb)) {
+      db += edit.normalizeTargetDb - sourceStats.peakDb;
     }
-  }, [originalBlob]);
+    return db;
+  }, [edit.gainDb, edit.normalize, edit.normalizeTargetDb, sourceStats]);
 
-  // Clean up on unmount
+  const outputPeakDb = sourceStats && Number.isFinite(sourceStats.peakDb) ? sourceStats.peakDb + appliedGainDb : -Infinity;
+
+  const estimatedBytes = useMemo(() => {
+    if (!buffer) return 0;
+    if (format === 'compressed') return Math.round((outputLength * bitrate) / 8);
+    const depth = format === 'wav16' ? 16 : format === 'wav24' ? 24 : 32;
+    return estimateWavBytes(edit, buffer.numberOfChannels, buffer.sampleRate, depth);
+  }, [buffer, edit, format, bitrate, outputLength]);
+
+  // =========================================================================
+  // Edit history — only the EditState object is stored, never the samples.
+  // =========================================================================
+  // These mirror the state, and every setter below writes them *eagerly* rather
+  // than waiting for the next render. Two edits inside one tick (a shortcut that
+  // moves the selection and flips a toggle, a redo followed by a click) would
+  // otherwise both read the pre-render value and the first one would be lost.
+  const editRef = useRef(edit);
+  const historyRef = useRef(history);
+
+  const setEditNow = useCallback((next: EditState) => {
+    editRef.current = next;
+    setEdit(next);
+  }, []);
+
+  const setHistoryNow = useCallback((next: { entries: EditState[]; index: number }) => {
+    historyRef.current = next;
+    setHistory(next);
+  }, []);
+
+  const commit = useCallback(
+    (next: EditState) => {
+      const prev = historyRef.current;
+      const base = prev.entries.slice(0, prev.index + 1);
+      const last = base[base.length - 1];
+      if (last && JSON.stringify(last) === JSON.stringify(next)) return;
+      const grown = [...base, next];
+      const entries = grown.length > MAX_HISTORY ? grown.slice(grown.length - MAX_HISTORY) : grown;
+      setHistoryNow({ entries, index: entries.length - 1 });
+    },
+    [setHistoryNow]
+  );
+
+  /** Applies a change and records it as one undo step. */
+  const applyEdit = useCallback(
+    (patch: Partial<EditState>) => {
+      const next = { ...editRef.current, ...patch };
+      setEditNow(next);
+      commit(next);
+    },
+    [commit, setEditNow]
+  );
+
+  /** Live change with no history entry — paired with `commitLive` on release,
+   *  so dragging a slider leaves one undo step and not two hundred. */
+  const previewEdit = useCallback(
+    (patch: Partial<EditState>) => {
+      setEditNow({ ...editRef.current, ...patch });
+    },
+    [setEditNow]
+  );
+
+  const commitLive = useCallback(() => {
+    commit(editRef.current);
+  }, [commit]);
+
+  const undo = useCallback(() => {
+    const { entries, index } = historyRef.current;
+    if (index <= 0) return;
+    setHistoryNow({ entries, index: index - 1 });
+    setEditNow(entries[index - 1]);
+  }, [setEditNow, setHistoryNow]);
+
+  const redo = useCallback(() => {
+    const { entries, index } = historyRef.current;
+    if (index >= entries.length - 1) return;
+    setHistoryNow({ entries, index: index + 1 });
+    setEditNow(entries[index + 1]);
+  }, [setEditNow, setHistoryNow]);
+
+  // =========================================================================
+  // Playback
+  // =========================================================================
+  const stopPlayback = useCallback((resetHead = false) => {
+    playTickerRef.current?.stop();
+    playTickerRef.current = null;
+    const current = playRef.current;
+    if (current) {
+      current.source.onended = null;
+      try {
+        current.source.stop();
+      } catch {
+        /* already stopped */
+      }
+      current.source.disconnect();
+      current.gain.disconnect();
+      playRef.current = null;
+    }
+    setIsPlaying(false);
+    if (resetHead) setPlayhead(edit.inSec);
+  }, [edit.inSec]);
+
+  const startPlayback = useCallback(
+    (fromSec: number, bypass: boolean) => {
+      if (!buffer) return;
+      stopPlayback();
+
+      if (!playCtxRef.current || playCtxRef.current.state === 'closed') {
+        playCtxRef.current = new AudioCtx();
+      }
+      const ctx = playCtxRef.current;
+      ctx.resume().catch(() => {});
+
+      const end = edit.outSec;
+      const from = Math.min(Math.max(fromSec, edit.inSec), Math.max(edit.inSec, end - 0.02));
+      if (end - from <= 0.01) return;
+
+      const speed = bypass ? 1 : edit.speed;
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.playbackRate.value = speed;
+
+      const gain = ctx.createGain();
+      const now = ctx.currentTime;
+
+      if (bypass) {
+        // The comparison has to be the untouched file, so no trim, no
+        // normaliser, no fades — only then does A/B mean anything.
+        gain.gain.setValueAtTime(1, now);
+      } else {
+        const linear = dbToGain(appliedGainDb);
+        const total = (end - edit.inSec) / speed;
+        const elapsed = (from - edit.inSec) / speed;
+        const fadeIn = Math.min(edit.fadeInSec, total / 2);
+        const fadeOut = Math.min(edit.fadeOutSec, total / 2);
+
+        if (fadeIn > 0 && elapsed < fadeIn) {
+          gain.gain.setValueAtTime(Math.max(0.0001, linear * (elapsed / fadeIn)), now);
+          gain.gain.linearRampToValueAtTime(linear, now + (fadeIn - elapsed));
+        } else {
+          gain.gain.setValueAtTime(linear, now);
+        }
+        if (fadeOut > 0) {
+          const fadeStart = Math.max(0, total - fadeOut - elapsed);
+          gain.gain.setValueAtTime(linear, now + fadeStart);
+          gain.gain.linearRampToValueAtTime(0.0001, now + Math.max(fadeStart + 0.01, total - elapsed));
+        }
+      }
+
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(0, from, end - from);
+
+      playRef.current = { source, gain, startedAt: ctx.currentTime, offset: from, speed };
+      setIsPlaying(true);
+
+      source.onended = () => {
+        if (playRef.current?.source !== source) return;
+        playTickerRef.current?.stop();
+        playTickerRef.current = null;
+        playRef.current = null;
+        setIsPlaying(false);
+        setPlayhead(edit.inSec);
+        if (loop) {
+          // Re-entering through the same path keeps the fades correct on every pass.
+          setTimeout(() => startPlayback(edit.inSec, bypass), 0);
+        }
+      };
+
+      // A worker ticker, not rAF: the playhead has to keep moving when the tab
+      // is in the background, which is exactly when people leave audio playing.
+      playTickerRef.current = createTicker(40, () => {
+        const active = playRef.current;
+        if (!active) return;
+        const position = active.offset + (ctx.currentTime - active.startedAt) * active.speed;
+        setPlayhead(Math.min(end, position));
+      });
+    },
+    [buffer, edit.inSec, edit.outSec, edit.speed, edit.fadeInSec, edit.fadeOutSec, appliedGainDb, loop, stopPlayback]
+  );
+
+  const togglePlay = useCallback(() => {
+    if (isPlaying) stopPlayback();
+    else startPlayback(playhead >= edit.outSec - 0.02 ? edit.inSec : playhead, compare);
+  }, [isPlaying, stopPlayback, startPlayback, playhead, edit.inSec, edit.outSec, compare]);
+
+  // Holding the compare key/button swaps the monitoring chain in place, without
+  // losing the position you were listening to.
+  useEffect(() => {
+    if (!isPlaying) return;
+    startPlayback(playhead, compare);
+    // Deliberately keyed on `compare` alone: re-running on every playhead tick
+    // would restart playback forty times a second.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [compare]);
+
+  // =========================================================================
+  // Recording
+  // =========================================================================
+  const stopMeter = useCallback(() => {
+    meterTickerRef.current?.stop();
+    meterTickerRef.current = null;
+    analyserRef.current = null;
+    if (meterCtxRef.current) {
+      meterCtxRef.current.close().catch(() => {});
+      meterCtxRef.current = null;
+    }
+    setInputLevel(0);
+  }, []);
+
+  const startMeter = useCallback((stream: MediaStream) => {
+    try {
+      const ctx = new AudioCtx();
+      meterCtxRef.current = ctx;
+      const source = ctx.createMediaStreamSource(stream);
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 1024;
+      source.connect(analyser);
+      analyserRef.current = analyser;
+
+      const samples = new Float32Array(analyser.fftSize);
+      meterTickerRef.current = createTicker(60, () => {
+        const node = analyserRef.current;
+        if (!node) return;
+        node.getFloatTimeDomainData(samples);
+        let peak = 0;
+        for (let i = 0; i < samples.length; i++) {
+          const value = Math.abs(samples[i]);
+          if (value > peak) peak = value;
+        }
+        setInputLevel(peak);
+        if (peak >= 0.99) setInputClipped(true);
+      });
+    } catch {
+      /* metering is a nicety; recording still works without it */
+    }
+  }, []);
+
+  const refreshDevices = useCallback(async () => {
+    try {
+      const list = await navigator.mediaDevices.enumerateDevices();
+      setDevices(
+        list
+          .filter(device => device.kind === 'audioinput')
+          .map((device, index) => ({
+            deviceId: device.deviceId,
+            label: device.label || `${t.micDefault || 'Microphone'} ${index + 1}`,
+          }))
+      );
+    } catch {
+      /* enumeration needs permission on some browsers; the default mic still works */
+    }
+  }, [t]);
+
+  useEffect(() => {
+    if (typeof navigator === 'undefined' || !navigator.mediaDevices) return;
+    refreshDevices();
+    navigator.mediaDevices.addEventListener?.('devicechange', refreshDevices);
+    return () => navigator.mediaDevices.removeEventListener?.('devicechange', refreshDevices);
+  }, [refreshDevices]);
+
+  const loadDecoded = useCallback(
+    (decoded: AudioBuffer, sourceInfo: SourceInfo, blob: Blob | null, name: string) => {
+      const nextMip = buildPeakMip(decoded);
+      setBuffer(decoded);
+      setMip(nextMip);
+      setInfo(sourceInfo);
+      setOriginalBlob(blob);
+      setOriginalName(name);
+
+      // Nothing clever happens here on purpose: the clip loads untouched, the
+      // whole thing selected, and every automatic helper stays behind a button.
+      const fresh: EditState = { ...NEUTRAL_EDIT, inSec: 0, outSec: decoded.duration };
+      setEditNow(fresh);
+      setHistoryNow({ entries: [fresh], index: 0 });
+      setView({ from: 0, to: decoded.duration });
+      setPlayhead(0);
+      setError(null);
+    },
+    [setEditNow, setHistoryNow]
+  );
+
+  const startRecording = useCallback(async () => {
+    setError(null);
+    setNotice(null);
+    chunksRef.current = [];
+    elapsedRef.current = 0;
+    setRecordingTime(0);
+    setInputClipped(false);
+
+    try {
+      const constraints: MediaTrackConstraints = {
+        echoCancellation: capture.echoCancellation,
+        noiseSuppression: capture.noiseSuppression,
+        autoGainControl: capture.autoGainControl,
+        channelCount: capture.channelCount,
+      };
+      if (capture.deviceId) constraints.deviceId = { exact: capture.deviceId };
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints });
+      streamRef.current = stream;
+      refreshDevices();
+
+      const types = ['audio/webm;codecs=opus', 'audio/webm', 'audio/ogg;codecs=opus', 'audio/mp4'];
+      const mime = types.find(type => typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(type));
+      const recorder = new MediaRecorder(stream, {
+        ...(mime ? { mimeType: mime } : {}),
+        audioBitsPerSecond: capture.bitrate,
+      });
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = event => {
+        if (event.data && event.data.size > 0) chunksRef.current.push(event.data);
+      };
+
+      recorder.onstop = async () => {
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' });
+        setLoading(true);
+        try {
+          const name = `audiosnap-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}`;
+          const { buffer: decoded, info: decodedInfo } = await decodeRecording(blob, `${name}.webm`);
+          loadDecoded(decoded, { ...decodedInfo, sizeBytes: blob.size }, blob, name);
+        } catch {
+          setError(t.errorDecode || 'That audio could not be decoded in this browser.');
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      recorder.start(200);
+      startedAtRef.current = Date.now();
+      setIsRecording(true);
+      setIsPaused(false);
+      startMeter(stream);
+
+      timerTickerRef.current = createTicker(100, () => {
+        setRecordingTime(elapsedRef.current + (Date.now() - startedAtRef.current) / 1000);
+      });
+    } catch {
+      setError(t.error_mic || 'Microphone access denied or not available.');
+    }
+  }, [capture, loadDecoded, refreshDevices, startMeter, t]);
+
+  const pauseRecording = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || !isRecording || isPaused) return;
+    recorder.pause();
+    timerTickerRef.current?.stop();
+    timerTickerRef.current = null;
+    elapsedRef.current += (Date.now() - startedAtRef.current) / 1000;
+    setIsPaused(true);
+  }, [isRecording, isPaused]);
+
+  const resumeRecording = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || !isRecording || !isPaused) return;
+    recorder.resume();
+    startedAtRef.current = Date.now();
+    setIsPaused(false);
+    timerTickerRef.current = createTicker(100, () => {
+      setRecordingTime(elapsedRef.current + (Date.now() - startedAtRef.current) / 1000);
+    });
+  }, [isRecording, isPaused]);
+
+  const stopRecording = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || !isRecording) return;
+    recorder.stop();
+    setIsRecording(false);
+    setIsPaused(false);
+    timerTickerRef.current?.stop();
+    timerTickerRef.current = null;
+    stopMeter();
+    streamRef.current?.getTracks().forEach(track => track.stop());
+    streamRef.current = null;
+  }, [isRecording, stopMeter]);
+
+  // =========================================================================
+  // File intake — the file waits, the decode happens on a click.
+  // =========================================================================
+  const acceptFile = useCallback((file: File) => {
+    setError(null);
+    setNotice(null);
+    setPendingFile(file);
+    setTab('file');
+  }, []);
+
+  // A clip handed over by another tool lands in the same queue as a dropped
+  // file: parked, never decoded behind the user's back.
+  useHandoffIntake(file => acceptFile(file));
+
+  const loadPendingFile = useCallback(async () => {
+    if (!pendingFile) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const { buffer: decoded, info: decodedInfo } = await decodeAudioFile(pendingFile);
+      if (decoded.duration < 0.05) throw new Error('too-short');
+      const name = pendingFile.name.replace(/\.[^.]+$/, '') || 'audiosnap';
+      loadDecoded(decoded, decodedInfo, pendingFile, name);
+      setPendingFile(null);
+    } catch {
+      setError(t.errorDecode || 'That audio could not be decoded in this browser.');
+    } finally {
+      setLoading(false);
+    }
+  }, [pendingFile, loadDecoded, t]);
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragging(false);
+    const file = event.dataTransfer.files?.[0];
+    if (file) acceptFile(file);
+  };
+
+  // =========================================================================
+  // Selection helpers
+  // =========================================================================
+  const setSelection = useCallback(
+    (inSec: number, outSec: number) => {
+      previewEdit({ inSec, outSec });
+    },
+    [previewEdit]
+  );
+
+  const zoomTo = useCallback(
+    (from: number, to: number) => {
+      if (!buffer) return;
+      const minSpan = Math.max(0.01, buffer.duration / 5000);
+      const span = Math.min(buffer.duration, Math.max(minSpan, to - from));
+      const start = Math.min(Math.max(0, from), buffer.duration - span);
+      setView({ from: start, to: start + span });
+    },
+    [buffer]
+  );
+
+  const zoomBy = useCallback(
+    (factor: number) => {
+      const centre = (view.from + view.to) / 2;
+      const span = (view.to - view.from) * factor;
+      zoomTo(centre - span / 2, centre + span / 2);
+    },
+    [view, zoomTo]
+  );
+
+  const autoTrim = useCallback(() => {
+    if (!mip) return;
+    const bounds = findSpeechBounds(mip, SILENCE_DB, 0.12);
+    if (!bounds) {
+      setNotice(t.autoTrimNone || 'No audible section stood out — the selection was left alone.');
+      return;
+    }
+    applyEdit({ inSec: bounds.inSec, outSec: bounds.outSec });
+    setNotice(
+      (t.autoTrimDone || 'Trimmed to {d}s of audible sound.').replace('{d}', (bounds.outSec - bounds.inSec).toFixed(2))
+    );
+  }, [mip, applyEdit, t]);
+
+  const resetProcessing = useCallback(() => {
+    applyEdit({
+      gainDb: 0,
+      normalize: false,
+      normalizeTargetDb: -1,
+      fadeInSec: 0,
+      fadeOutSec: 0,
+      speed: 1,
+      channelMode: 'source',
+      sampleRate: 0,
+      removeDc: false,
+    });
+  }, [applyEdit]);
+
+  // =========================================================================
+  // Export
+  // =========================================================================
+  const buildResult = useCallback(async (): Promise<{ blob: Blob; name: string; format: string } | null> => {
+    if (!buffer || outputLength <= 0) return null;
+    const rendered = await renderEdit(buffer, edit, setExportProgress);
+
+    if (format === 'compressed') {
+      const encoded = await encodeCompressed(rendered, bitrate, setExportProgress);
+      return { blob: encoded.blob, name: `${originalName}-cut.${encoded.ext}`, format: encoded.mime };
+    }
+
+    const depth = format === 'wav16' ? 16 : format === 'wav24' ? 24 : 32;
+    return {
+      blob: encodeWav(rendered, depth),
+      name: `${originalName}-cut.wav`,
+      format: `WAV ${depth}${depth === 32 ? ' float' : '-bit'}`,
+    };
+  }, [buffer, edit, format, bitrate, originalName, outputLength]);
+
+  const runExport = useCallback(async () => {
+    if (!buffer || exporting) return;
+    if (outputLength < 0.02) {
+      setError(t.errorTooShort || 'The selection is too short to export.');
+      return;
+    }
+    setExporting(true);
+    setExportProgress(0);
+    setError(null);
+    try {
+      const result = await buildResult();
+      if (!result) return;
+
+      const url = URL.createObjectURL(result.blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = result.name;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+
+      setExports(prev => [
+        {
+          id: `${Date.now()}`,
+          name: result.name,
+          url,
+          blob: result.blob,
+          sizeBytes: result.blob.size,
+          durationSec: outputLength,
+          format: result.format,
+          at: Date.now(),
+        },
+        ...prev,
+      ]);
+    } catch (err) {
+      setError(
+        (err as Error)?.message === 'no-encoder'
+          ? t.errorEncoder || 'This browser cannot encode compressed audio. Use WAV instead.'
+          : t.errorExport || 'The export failed. Try a shorter selection or the WAV format.'
+      );
+    } finally {
+      setExporting(false);
+      setExportProgress(0);
+    }
+  }, [buffer, exporting, outputLength, buildResult, t]);
+
+  const downloadOriginal = useCallback(() => {
+    if (!originalBlob) return;
+    const url = URL.createObjectURL(originalBlob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    const extension = originalBlob.type.includes('mp4')
+      ? 'm4a'
+      : originalBlob.type.includes('ogg')
+        ? 'ogg'
+        : originalBlob.type.includes('wav')
+          ? 'wav'
+          : 'webm';
+    anchor.download = originalName.includes('.') ? originalName : `${originalName}.${extension}`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    // Nothing keeps a reference to this URL, so it can go right away — unlike
+    // the session list below, whose entries stay downloadable.
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  }, [originalBlob, originalName]);
+
+  const removeExport = useCallback((id: string) => {
+    setExports(prev => {
+      const target = prev.find(item => item.id === id);
+      if (target) URL.revokeObjectURL(target.url);
+      return prev.filter(item => item.id !== id);
+    });
+  }, []);
+
+  const clearExports = useCallback(() => {
+    setExports(prev => {
+      prev.forEach(item => URL.revokeObjectURL(item.url));
+      return [];
+    });
+  }, []);
+
+  // =========================================================================
+  // Reset & teardown
+  // =========================================================================
+  const resetAll = useCallback(() => {
+    stopRecording();
+    stopPlayback(true);
+    setBuffer(null);
+    setMip(null);
+    setInfo(null);
+    setOriginalBlob(null);
+    setPendingFile(null);
+    setEditNow(NEUTRAL_EDIT);
+    setHistoryNow({ entries: [NEUTRAL_EDIT], index: 0 });
+    setView({ from: 0, to: 0 });
+    setPlayhead(0);
+    setRecordingTime(0);
+    setError(null);
+    setNotice(null);
+    setInputClipped(false);
+  }, [stopRecording, stopPlayback, setEditNow, setHistoryNow]);
+
   useEffect(() => {
     return () => {
-      stopVisualizer();
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-      }
+      meterTickerRef.current?.stop();
+      timerTickerRef.current?.stop();
+      playTickerRef.current?.stop();
+      streamRef.current?.getTracks().forEach(track => track.stop());
+      meterCtxRef.current?.close().catch(() => {});
+      playCtxRef.current?.close().catch(() => {});
+      // Blob URLs outlive the component otherwise, and a session of exports is
+      // easily hundreds of megabytes of WAV held by the browser.
+      exportsRef.current.forEach(item => URL.revokeObjectURL(item.url));
     };
   }, []);
 
-  // Determine media support
-  const getSupportedMimeType = () => {
-    const types = [
-      'audio/webm;codecs=opus',
-      'audio/webm',
-      'audio/ogg;codecs=opus',
-      'audio/mp4',
-      'audio/aac'
-    ];
-    for (const t of types) {
-      if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported(t)) {
-        return t;
-      }
-    }
-    return '';
-  };
+  // =========================================================================
+  // Keyboard
+  // =========================================================================
+  useEffect(() => {
+    if (!hasSource) return;
 
-  // Live Canvas Visualizer Loop
-  const draw = () => {
-    if (!analyserRef.current || !canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const bufferLength = analyserRef.current.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    analyserRef.current.getByteFrequencyData(dataArray);
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const barWidth = (canvas.width / bufferLength) * 2.5;
-    let barHeight;
-    let x = 0;
-
-    for (let i = 0; i < bufferLength; i++) {
-      barHeight = dataArray[i] / 1.5;
-
-      // Dynamic rose gradient visualizer
-      const gradient = ctx.createLinearGradient(0, canvas.height, 0, canvas.height - barHeight);
-      gradient.addColorStop(0, '#f43f5e'); // rose-500
-      gradient.addColorStop(1, '#fda4af'); // rose-300
-
-      ctx.fillStyle = gradient;
-      ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
-
-      x += barWidth;
-    }
-
-    animationFrameRef.current = requestAnimationFrame(draw);
-  };
-
-  const startVisualizer = (stream: MediaStream) => {
-    try {
-      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-      const audioCtx = new AudioContextClass();
-      audioContextRef.current = audioCtx;
-      
-      const source = audioCtx.createMediaStreamSource(stream);
-      const analyser = audioCtx.createAnalyser();
-      analyser.fftSize = 64; 
-      source.connect(analyser);
-      analyserRef.current = analyser;
-      
-      draw();
-    } catch (e) {
-      console.error('Failed to initialize AudioContext visualizer:', e);
-    }
-  };
-
-  const stopVisualizer = () => {
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-      animationFrameRef.current = null;
-    }
-    if (audioContextRef.current) {
-      audioContextRef.current.close().catch(() => {});
-      audioContextRef.current = null;
-    }
-    analyserRef.current = null;
-  };
-
-  // Begin Capturing Audio
-  const startRecording = async () => {
-    audioChunksRef.current = [];
-    setAudioBuffer(null);
-    setPeaks([]);
-    setOriginalBlob(null);
-    setRecordingTime(0);
-    elapsedRef.current = 0;
-
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      streamRef.current = stream;
-
-      const mime = getSupportedMimeType();
-      const options = mime ? { mimeType: mime } : undefined;
-      const mediaRecorder = new MediaRecorder(stream, options);
-      mediaRecorderRef.current = mediaRecorder;
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data && e.data.size > 0) {
-          audioChunksRef.current.push(e.data);
-        }
-      };
-
-      mediaRecorder.onstop = async () => {
-        const recordedBlob = new Blob(audioChunksRef.current, { type: mediaRecorder.mimeType || 'audio/webm' });
-        setOriginalBlob(recordedBlob);
-        setMimeType(mediaRecorder.mimeType || 'audio/webm');
-
-        setIsProcessing(true);
-        try {
-          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-          const decodeCtx = new AudioContextClass();
-          const arrayBuf = await recordedBlob.arrayBuffer();
-          const decodedBuffer = await decodeCtx.decodeAudioData(arrayBuf);
-          await decodeCtx.close();
-
-          setAudioBuffer(decodedBuffer);
-          const duration = decodedBuffer.duration;
-          setAudioDuration(duration);
-          setStartTime(0);
-          setEndTime(duration);
-          
-          const extractedPeaks = getPeaks(decodedBuffer, 100);
-          setPeaks(extractedPeaks);
-        } catch (err) {
-          console.error("Decoding recording failed:", err);
-          alert("Could not decode audio recording client-side.");
-        } finally {
-          setIsProcessing(false);
-        }
-      };
-
-      // Start recording
-      mediaRecorder.start(100);
-      startTimestampRef.current = Date.now();
-      setIsRecording(true);
-      setIsPaused(false);
-
-      timerIntervalRef.current = setInterval(() => {
-        setRecordingTime(elapsedRef.current + (Date.now() - startTimestampRef.current) / 1000);
-      }, 100);
-
-      startVisualizer(stream);
-    } catch (err) {
-      console.error('Microphone capture error:', err);
-      alert(t.error_mic || 'Microphone access denied or not available.');
-    }
-  };
-
-  // Pause Mic Capture
-  const pauseRecording = () => {
-    if (mediaRecorderRef.current && isRecording && !isPaused) {
-      mediaRecorderRef.current.pause();
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-      elapsedRef.current += (Date.now() - startTimestampRef.current) / 1000;
-      setIsPaused(true);
-      
-      // Stop rendering visualizer bars
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = null;
-      }
-    }
-  };
-
-  // Resume Mic Capture
-  const resumeRecording = () => {
-    if (mediaRecorderRef.current && isRecording && isPaused) {
-      mediaRecorderRef.current.resume();
-      startTimestampRef.current = Date.now();
-      setIsPaused(false);
-
-      timerIntervalRef.current = setInterval(() => {
-        setRecordingTime(elapsedRef.current + (Date.now() - startTimestampRef.current) / 1000);
-      }, 100);
-
-      draw();
-    }
-  };
-
-  // Terminate Mic Capture
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      setIsPaused(false);
-
-      if (timerIntervalRef.current) {
-        clearInterval(timerIntervalRef.current);
-        timerIntervalRef.current = null;
-      }
-
-      stopVisualizer();
-
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach(track => track.stop());
-        streamRef.current = null;
-      }
-    }
-  };
-
-  // Get Normalised Audio peaks
-  const getPeaks = (buffer: AudioBuffer, numPeaks = 100) => {
-    const channelData = buffer.getChannelData(0);
-    const step = Math.floor(channelData.length / numPeaks);
-    const result: number[] = [];
-    
-    for (let i = 0; i < numPeaks; i++) {
-      let max = 0;
-      const start = i * step;
-      const end = Math.min(start + step, channelData.length);
-      for (let j = start; j < end; j++) {
-        const val = Math.abs(channelData[j]);
-        if (val > max) max = val;
-      }
-      result.push(max);
-    }
-
-    // Normalise peaks between 0.1 and 1.0 for better render density
-    const maxPeak = Math.max(...result);
-    if (maxPeak > 0) {
-      return result.map(p => p / maxPeak);
-    }
-    return result;
-  };
-
-  // Trimmer playback handlers
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      const current = audioRef.current.currentTime;
-      setPlaybackProgress(current);
-      if (current >= endTime) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = startTime;
-        setIsPlaying(false);
-      }
-    }
-  };
-
-  const handleEnded = () => {
-    setIsPlaying(false);
-    if (audioRef.current) {
-      audioRef.current.currentTime = startTime;
-    }
-  };
-
-  const playTrimmed = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        if (audioRef.current.currentTime < startTime || audioRef.current.currentTime >= endTime) {
-          audioRef.current.currentTime = startTime;
-        }
-        audioRef.current.play().catch(e => console.error("Trimmer audio play failed:", e));
-        setIsPlaying(true);
-      }
-    }
-  };
-
-  const stopTrimmed = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = startTime;
-      setIsPlaying(false);
-      setPlaybackProgress(startTime);
-    }
-  };
-
-  // Exporter Functions
-  const exportWAV = () => {
-    if (!audioBuffer) return;
-
-    setIsProcessing(true);
-    setTimeout(() => {
-      try {
-        const wavBlob = bufferToWav(audioBuffer, startTime, endTime);
-        const url = URL.createObjectURL(wavBlob);
-        const filename = `audiosnap-${Date.now()}.wav`;
-
-        // Trigger download
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        // Add to history
-        const sizeInMB = (wavBlob.size / (1024 * 1024)).toFixed(2);
-        const durationStr = `${(endTime - startTime).toFixed(1)}s`;
-        const newItem: AudioHistoryItem = {
-          id: Date.now().toString(),
-          name: filename,
-          url: url,
-          size: `${sizeInMB} MB`,
-          date: new Date().toLocaleDateString(),
-          duration: durationStr
-        };
-        setHistory(prev => [newItem, ...prev]);
-      } catch (err) {
-        console.error("WAV Export error:", err);
-        alert("Failed to export WAV.");
-      } finally {
-        setIsProcessing(false);
-      }
-    }, 100);
-  };
-
-  const downloadNative = () => {
-    if (!originalBlob) return;
-    
-    const extension = mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm';
-    const filename = `audiosnap-recording-${Date.now()}.${extension}`;
-    const url = URL.createObjectURL(originalBlob);
-
-    // Trigger download
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-
-    // Add to history
-    const sizeInMB = (originalBlob.size / (1024 * 1024)).toFixed(2);
-    const durationStr = `${audioDuration.toFixed(1)}s`;
-    const newItem: AudioHistoryItem = {
-      id: Date.now().toString(),
-      name: filename,
-      url: url,
-      size: `${sizeInMB} MB`,
-      date: new Date().toLocaleDateString(),
-      duration: durationStr
+    const isTyping = (target: EventTarget | null) => {
+      const element = target as HTMLElement | null;
+      if (!element) return false;
+      const tag = element.tagName;
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || element.isContentEditable;
     };
-    setHistory(prev => [newItem, ...prev]);
-  };
 
-  // Custom 44-byte WAV PCM header writer
-  const bufferToWav = (buffer: AudioBuffer, startOffset: number, endOffset: number) => {
-    const sampleRate = buffer.sampleRate;
-    const numChannels = buffer.numberOfChannels;
-    
-    const startSample = Math.floor(startOffset * sampleRate);
-    const endSample = Math.min(buffer.length, Math.floor(endOffset * sampleRate));
-    const numSamples = Math.max(0, endSample - startSample);
-    
-    const blockAlign = numChannels * 2;
-    const byteRate = sampleRate * blockAlign;
-    const dataSize = numSamples * blockAlign;
-    const bufferLength = 44 + dataSize;
-    const arrayBuffer = new ArrayBuffer(bufferLength);
-    const view = new DataView(arrayBuffer);
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (isTyping(event.target)) return;
 
-    // RIFF identifier
-    writeString(view, 0, 'RIFF');
-    // file length
-    view.setUint32(4, 36 + dataSize, true);
-    // RIFF type
-    writeString(view, 8, 'WAVE');
-    // format chunk identifier
-    writeString(view, 12, 'fmt ');
-    // format chunk length
-    view.setUint32(16, 16, true);
-    // sample format (PCM = 1)
-    view.setUint16(20, 1, true);
-    // channel count
-    view.setUint16(22, numChannels, true);
-    // sample rate
-    view.setUint32(24, sampleRate, true);
-    // byte rate
-    view.setUint32(28, byteRate, true);
-    // block align
-    view.setUint16(32, blockAlign, true);
-    // bits per sample
-    view.setUint16(34, 16, true);
-    // data chunk identifier
-    writeString(view, 36, 'data');
-    // data chunk length
-    view.setUint32(40, dataSize, true);
-
-    // Write audio samples
-    let offset = 44;
-    const channels = [];
-    for (let c = 0; c < numChannels; c++) {
-      channels.push(buffer.getChannelData(c));
-    }
-
-    for (let i = startSample; i < endSample; i++) {
-      for (let c = 0; c < numChannels; c++) {
-        let sample = channels[c][i];
-        if (sample > 1) sample = 1;
-        else if (sample < -1) sample = -1;
-        
-        // Convert to 16-bit PCM sample
-        const pcmSample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
-        view.setInt16(offset, pcmSample, true);
-        offset += 2;
+      if (event.key === 'Alt' && !compare) {
+        setCompare(true);
+        return;
       }
-    }
 
-    return new Blob([arrayBuffer], { type: 'audio/wav' });
-  };
+      const meta = event.ctrlKey || event.metaKey;
+      if (meta && event.key.toLowerCase() === 'z') {
+        event.preventDefault();
+        event.shiftKey ? redo() : undo();
+        return;
+      }
+      if (meta && event.key.toLowerCase() === 'y') {
+        event.preventDefault();
+        redo();
+        return;
+      }
+      if (meta) return;
 
-  const writeString = (view: DataView, offset: number, string: string) => {
-    for (let i = 0; i < string.length; i++) {
-      view.setUint8(offset + i, string.charCodeAt(i));
-    }
-  };
+      switch (event.key.toLowerCase()) {
+        case ' ':
+          event.preventDefault();
+          togglePlay();
+          break;
+        case 'i':
+          applyEdit({ inSec: Math.min(playhead, edit.outSec - 0.02) });
+          break;
+        case 'o':
+          applyEdit({ outSec: Math.max(playhead, edit.inSec + 0.02) });
+          break;
+        case 'a':
+          if (buffer) applyEdit({ inSec: 0, outSec: buffer.duration });
+          break;
+        case '+':
+        case '=':
+          zoomBy(1 / 1.5);
+          break;
+        case '-':
+          zoomBy(1.5);
+          break;
+        case 'f':
+          if (buffer) zoomTo(0, buffer.duration);
+          break;
+        case 's':
+          zoomTo(edit.inSec, edit.outSec);
+          break;
+        case 'home':
+          setPlayhead(edit.inSec);
+          break;
+        case 'end':
+          setPlayhead(edit.outSec);
+          break;
+        default:
+          break;
+      }
+    };
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    const tenths = Math.floor((seconds % 1) * 10);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${tenths}`;
-  };
+    const onKeyUp = (event: KeyboardEvent) => {
+      if (event.key === 'Alt') setCompare(false);
+    };
+    // Losing focus mid-hold would otherwise leave the monitor stuck on bypass.
+    const onBlur = () => setCompare(false);
 
-  const resetAll = () => {
-    stopRecording();
-    stopTrimmed();
-    setAudioBuffer(null);
-    setPeaks([]);
-    setOriginalBlob(null);
-    setRecordingTime(0);
-    setAudioDuration(0);
-    setStartTime(0);
-    setEndTime(0);
-  };
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, [hasSource, compare, redo, undo, togglePlay, applyEdit, playhead, edit.inSec, edit.outSec, buffer, zoomBy, zoomTo]);
 
+  // Keep the playhead honest when the selection moves under it.
+  useEffect(() => {
+    setPlayhead(current => Math.min(Math.max(current, edit.inSec), edit.outSec || 0));
+  }, [edit.inSec, edit.outSec]);
+
+  // =========================================================================
+  // Content
+  // =========================================================================
+  const faqs = Array.isArray(t.faq) ? t.faq : [];
+  const keywords = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
+  const steps = Array.isArray(t.howItWorks) ? t.howItWorks : [];
+  const features = Array.isArray(t.features) ? t.features : [];
+  const stepArt = [StepCapture, StepShape, StepPolish, StepExport];
+  const featureIcons = [IconTrim, IconCapture, IconNonDestructive, IconMeter, IconExport, IconLocalAudio];
+  const compressedAvailable = useMemo(() => typeof window !== 'undefined' && !!pickCompressedType(), []);
+
+  const canUndo = history.index > 0;
+  const canRedo = history.index < history.entries.length - 1;
+
+  const levelPercent = Math.min(100, Math.round(inputLevel * 100));
+
+  // =========================================================================
+  // Render
+  // =========================================================================
   return (
-    <div className="min-h-screen bg-[#060405] text-slate-200 font-sans flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#060405] text-slate-200 font-sans relative overflow-x-hidden">
       <Header
         currentLang={lang}
-        onLanguageChange={(newLang) => {
+        onLanguageChange={newLang => {
           window.location.href = `/${newLang.toLowerCase()}/audiosnap`;
         }}
         onReset={resetAll}
         t={t}
       />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-12 pt-36 pb-24 relative z-10 flex flex-col justify-center">
-        {/* Bloque AdSense Horizontal */}
+      {/* The max width lives on <main> because AdRail measures this element to
+          decide whether the fixed side rails fit; a full-bleed <main> silently
+          kills both rails at every viewport width. */}
+      <main className="flex-1 flex flex-col items-center pt-36 pb-28 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-audiosnap-top" />
-        {/* SEO Header Title */}
-        <div className="text-center mb-12 animate-in fade-in slide-in-from-top-4 duration-500">
-          <h1 className="text-4xl md:text-6xl font-black font-outfit tracking-tight text-white mb-4">
-            {t.seoHeroTitle || 'Record, Trim and Export Audio 100% Locally'}
-          </h1>
-          <p className="text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed font-medium">
-            {t.seoHeroText || 'High-fidelity mic recording and precise waveform trimming with absolute privacy.'}
-          </p>
-        </div>
 
-        {/* Core Layout Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full">
-          
-          {/* Left Column: Recording Visualiser or Trimming Workspace */}
-          <div className="lg:col-span-7 bg-white/[0.02] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
-            
-            {/* 1. Mic Inactive & No Recording Zone */}
-            {!isRecording && !audioBuffer && (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <button
-                  onClick={startRecording}
-                  className="w-24 h-24 rounded-full bg-rose-500 hover:bg-rose-600 text-black flex items-center justify-center hover:scale-105 active:scale-95 duration-300 shadow-xl shadow-rose-500/20 group cursor-pointer border-none outline-none mb-6 animate-pulse"
-                >
-                  <Mic className="w-10 h-10 group-hover:rotate-6 transition-transform" />
-                </button>
-                <h3 className="text-xl font-black text-white uppercase tracking-wider mb-2">
-                  {t.btn_record || 'Record Audio'}
-                </h3>
-                <p className="text-sm text-slate-500 max-w-sm font-medium">
-                  {t.description || 'Record voice memos or capture microphone clips. Operations are fully client-side.'}
-                </p>
+        <div className="w-full space-y-20 md:space-y-28">
+          {/* ================================================================ */}
+          {/* Hero                                                             */}
+          {/* ================================================================ */}
+          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
+            <div className="space-y-6 text-center lg:text-left">
+              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-rose-950/40 border border-rose-800/30 text-rose-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(244,63,94,0.15)]">
+                <Mic className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{t.badge || t.title}</span>
               </div>
-            )}
 
-            {/* 2. Recording Active Screen */}
-            {isRecording && (
-              <div className="flex flex-col gap-6">
-                {/* Visualiser Canvas */}
-                <div className="relative h-36 bg-black/40 border border-white/10 rounded-2xl overflow-hidden flex items-end">
-                  <canvas
-                    ref={(el) => {
-                      canvasRef.current = el;
-                      if (el && isRecording && !isPaused && !animationFrameRef.current) {
-                        draw();
-                      }
-                    }}
-                    width={400}
-                    height={150}
-                    className="w-full h-full"
-                  />
-                  
-                  {/* Glowing Recording States */}
-                  <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 bg-black/50 border border-white/10 rounded-full">
-                    <span className={`w-2.5 h-2.5 rounded-full ${isPaused ? 'bg-amber-400' : 'bg-rose-500 animate-ping'}`} />
-                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-300">
-                      {isPaused ? (t.label_paused || 'Paused') : (t.label_recording || 'Recording')}
-                    </span>
-                  </div>
+              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
+                {t.title}
+              </h1>
 
-                  {/* Stopwatch */}
-                  <div className="absolute top-4 right-4 text-rose-400 font-mono font-bold text-lg tracking-widest bg-black/50 border border-white/10 px-3 py-1 rounded-xl">
-                    {formatTime(recordingTime)}
-                  </div>
-                </div>
+              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">{t.description}</p>
 
-                {/* Recorder controls */}
-                <div className="grid grid-cols-2 gap-4">
-                  {isPaused ? (
-                    <button
-                      onClick={resumeRecording}
-                      className="py-4 bg-rose-500 hover:bg-rose-600 text-black font-black text-sm uppercase rounded-2xl transition-all cursor-pointer border-none outline-none"
-                    >
-                      {t.btn_record || 'Resume'}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={pauseRecording}
-                      className="py-4 bg-white/10 hover:bg-white/20 text-white font-black text-sm uppercase rounded-2xl transition-all cursor-pointer border-none outline-none"
-                    >
-                      {t.btn_pause_record || 'Pause'}
-                    </button>
-                  )}
-
-                  <button
-                    onClick={stopRecording}
-                    className="py-4 bg-rose-500 hover:bg-rose-600 text-black font-black text-sm uppercase rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-2 border-none outline-none shadow-lg shadow-rose-500/25"
+              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+                {(t.seoHeroList || []).slice(0, 3).map((point: string, i: number) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
                   >
-                    <Square className="w-4 h-4" />
-                    <span>{t.btn_stop_record || 'Stop'}</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* 3. Waveform Trimming Screen */}
-            {audioBuffer && !isRecording && (
-              <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-black uppercase text-slate-400 tracking-widest flex items-center gap-1.5">
-                    <Scissors className="w-4 h-4 text-rose-500" />
-                    {t.label_trim || 'Waveform Trimmer'}
-                  </h3>
-                  <button
-                    onClick={resetAll}
-                    className="text-xs font-bold text-rose-400 hover:text-rose-300 border-none bg-transparent cursor-pointer outline-none uppercase tracking-wider"
-                  >
-                    {t.btn_record ? `← ${t.btn_record} Nueva` : '← Record New'}
-                  </button>
-                </div>
-
-                {/* Waveform renderer */}
-                <div className="relative">
-                  {/* Waveform peaks */}
-                  <div className="relative w-full h-32 bg-black/40 border border-white/10 rounded-2xl p-4 flex items-end gap-[3px] overflow-hidden">
-                    {peaks.map((peak, index) => {
-                      const percentage = (index / peaks.length) * 100;
-                      const startPercentage = (startTime / audioDuration) * 100;
-                      const endPercentage = (endTime / audioDuration) * 100;
-                      const inTrimRange = percentage >= startPercentage && percentage <= endPercentage;
-
-                      // Map normalised peaks heights
-                      const heightPercent = Math.max(8, Math.round(peak * 100));
-
-                      return (
-                        <div
-                          key={index}
-                          className={`flex-1 rounded-full transition-all duration-300 ${
-                            inTrimRange 
-                              ? 'bg-rose-500' 
-                              : 'bg-white/10'
-                          }`}
-                          style={{ height: `${heightPercent}%` }}
-                        />
-                      );
-                    })}
-                    
-                    {/* Playhead pointer */}
-                    {isPlaying && (
-                      <div 
-                        className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_8px_rgba(255,255,255,1)] pointer-events-none transition-all duration-100"
-                        style={{ left: `${(playbackProgress / audioDuration) * 100}%` }}
-                      />
-                    )}
-                  </div>
-                </div>
-
-                {/* Slider ranges */}
-                <div className="flex flex-col gap-4 border-t border-white/5 pt-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="flex flex-col gap-2">
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wide flex justify-between">
-                        <span>{t.label_start || 'Start Offset'}</span>
-                        <span className="text-rose-400 font-mono">{startTime.toFixed(2)}s</span>
-                      </span>
-                      <input
-                        type="range"
-                        min="0"
-                        max={audioDuration}
-                        step="0.01"
-                        value={startTime}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value);
-                          setStartTime(Math.min(val, endTime - 0.1));
-                          if (audioRef.current) {
-                            audioRef.current.currentTime = val;
-                          }
-                        }}
-                        className="w-full accent-rose-500 cursor-pointer"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-wide flex justify-between">
-                        <span>{t.label_end || 'End Offset'}</span>
-                        <span className="text-rose-400 font-mono">{endTime.toFixed(2)}s</span>
-                      </span>
-                      <input
-                        type="range"
-                        min="0"
-                        max={audioDuration}
-                        step="0.01"
-                        value={endTime}
-                        onChange={(e) => {
-                          const val = parseFloat(e.target.value);
-                          setEndTime(Math.max(val, startTime + 0.1));
-                          if (audioRef.current) {
-                            audioRef.current.currentTime = startTime;
-                          }
-                        }}
-                        className="w-full accent-rose-500 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="text-[10px] text-rose-400 font-bold uppercase tracking-wider flex justify-between items-center">
-                    <span>{t.label_duration || 'Duration'}: {(endTime - startTime).toFixed(2)}s</span>
-                    <span className="text-slate-500">Total: {audioDuration.toFixed(2)}s</span>
-                  </div>
-                </div>
-
-                {/* Trimmer player controls */}
-                <div className="flex items-center gap-4 bg-black/20 p-4 border border-white/5 rounded-2xl">
-                  <button
-                    onClick={playTrimmed}
-                    className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 text-white flex items-center justify-center cursor-pointer border-none outline-none transition-colors"
-                  >
-                    {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 text-rose-400" />}
-                  </button>
-                  <button
-                    onClick={stopTrimmed}
-                    className="w-12 h-12 rounded-xl bg-white/5 hover:bg-white/10 text-white flex items-center justify-center cursor-pointer border-none outline-none transition-colors"
-                  >
-                    <Square className="w-5 h-5" />
-                  </button>
-                  <div className="flex-1 text-xs font-mono text-slate-400 text-right">
-                    {formatTime(playbackProgress)} / {formatTime(audioDuration)}
-                  </div>
-                </div>
-
-                {/* Trimmer elements hidden audio tag */}
-                {audioUrl && (
-                  <audio
-                    ref={audioRef}
-                    src={audioUrl}
-                    onTimeUpdate={handleTimeUpdate}
-                    onEnded={handleEnded}
-                    className="hidden"
-                  />
-                )}
-
-              </div>
-            )}
-
-          </div>
-
-          {/* Right Column: Downloads, processing spinner & local session history */}
-          <div className="lg:col-span-5 flex flex-col gap-8 w-full">
-            
-            {/* 1. Download & Export Card */}
-            <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-md flex flex-col gap-6 relative overflow-hidden">
-              <div className="flex flex-col items-center gap-4">
-                <div className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4 text-rose-500" />
-                  Audio Exporter
-                </div>
-
-                {!isProcessing && !audioBuffer && (
-                  <div className="text-slate-500 text-sm font-medium py-6 text-center">
-                    Record voice on the left to activate WAV and compressed download outputs.
-                  </div>
-                )}
-
-                {/* Processing Spinner */}
-                {isProcessing && (
-                  <div className="w-full flex flex-col items-center gap-4 py-8">
-                    <RefreshCw className="w-8 h-8 text-rose-400 animate-spin" />
-                    <span className="text-xs font-black uppercase tracking-wider text-slate-400">
-                      Processing Audio Buffer...
-                    </span>
-                  </div>
-                )}
-
-                {/* Download Buttons */}
-                {audioBuffer && !isProcessing && (
-                  <div className="w-full flex flex-col gap-4">
-                    {/* Lossless WAV */}
-                    <button
-                      onClick={exportWAV}
-                      className="w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-black text-sm uppercase rounded-2xl transition-all cursor-pointer active:scale-95 duration-200 border-none outline-none shadow-lg shadow-rose-500/20"
-                    >
-                      <Download className="w-5 h-5" />
-                      <span>{t.btn_download_wav || 'Download WAV (Lossless)'}</span>
-                    </button>
-
-                    {/* Compressed Original */}
-                    {originalBlob && (
-                      <button
-                        onClick={downloadNative}
-                        className="w-full flex items-center justify-center gap-3 py-3 bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white font-black text-xs uppercase rounded-2xl transition-all cursor-pointer border border-white/5 outline-none"
-                      >
-                        <Volume2 className="w-4 h-4 text-rose-400" />
-                        <span>{t.btn_download_native || 'Download Compressed'}</span>
-                      </button>
-                    )}
-
-                    <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center mt-2 leading-relaxed">
-                      * WAV encodes the selected trim segment client-side. Compressed saves the original full audio in its native format.
-                    </div>
-                  </div>
-                )}
+                    <Check className="w-3.5 h-3.5 text-rose-400 stroke-[3]" />
+                    {point}
+                  </span>
+                ))}
               </div>
             </div>
 
-            {/* 2. Session History Card */}
-            {history.length > 0 && (
-              <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-6 shadow-2xl backdrop-blur-md flex flex-col gap-4">
-                <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                  <div className="text-xs font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                    <History className="w-4 h-4 text-rose-500" />
-                    {t.history_title || 'Recent History'}
-                  </div>
-                  <button
-                    onClick={() => setHistory([])}
-                    className="text-xs font-bold text-red-400 hover:text-red-300 border-none bg-transparent cursor-pointer outline-none flex items-center gap-1"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>{t.clear_history || 'Clear'}</span>
-                  </button>
-                </div>
+            <div className="relative">
+              <div className="absolute inset-0 bg-rose-500/10 blur-[80px] rounded-full" />
+              <StudioHeroArt
+                className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
+                animated={!prefersReduced}
+              />
+            </div>
+          </section>
 
-                <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
-                  {history.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 p-3 bg-white/[0.01] border border-white/5 rounded-xl text-left"
-                    >
-                      <div className="w-10 h-10 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center shrink-0">
-                        <Music className="w-5 h-5 text-rose-400" />
-                      </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <div className="text-slate-300 text-sm font-medium truncate">
-                          {item.name}
-                        </div>
-                        <div className="flex items-center justify-between text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">
-                          <span className="text-rose-400 font-mono">
-                            {item.size} ({item.duration})
-                          </span>
-                          <span>{item.date}</span>
-                        </div>
-                      </div>
-
-                      <a
-                        href={item.url}
-                        download={item.name}
-                        className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+          {/* ================================================================ */}
+          {/* Workspace                                                        */}
+          {/* ================================================================ */}
+          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* -------------------------------------------------- main panel */}
+            <div className="lg:col-span-8 space-y-5 min-w-0">
+              {!hasSource && (
+                <div className="flex p-1 rounded-2xl bg-[#130a0f]/80 border border-white/5 gap-1 w-full">
+                  {[
+                    { id: 'record' as Tab, label: t.tabRecord || 'Record', icon: Mic },
+                    { id: 'file' as Tab, label: t.tabFile || 'Open a file', icon: FileAudio },
+                  ].map(item => {
+                    const Icon = item.icon;
+                    const active = tab === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setTab(item.id)}
+                        disabled={isRecording}
+                        className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                          active
+                            ? 'bg-rose-600 text-white shadow-[0_0_25px_rgba(244,63,94,0.35)]'
+                            : 'text-slate-400 hover:text-white hover:bg-white/5'
+                        }`}
                       >
-                        <Download className="w-4 h-4" />
-                      </a>
+                        <Icon className="w-4 h-4 shrink-0" />
+                        <span className="truncate">{item.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="glass-card rounded-3xl p-5 md:p-7 space-y-5 min-h-[380px]">
+                {/* ------------------------------------------------ recorder */}
+                {!hasSource && tab === 'record' && (
+                  <div className="space-y-6">
+                    {!isRecording && !loading && (
+                      <div className="flex flex-col items-center justify-center py-8 text-center gap-5">
+                        <WaveIdleArt className="w-40 h-24 text-rose-400/70" animated={!prefersReduced} />
+                        <button
+                          onClick={startRecording}
+                          aria-label={t.btn_record || 'Record'}
+                          className="w-24 h-24 rounded-full bg-rose-500 hover:bg-rose-400 text-black flex items-center justify-center hover:scale-105 active:scale-95 duration-300 shadow-xl shadow-rose-500/20 cursor-pointer border-none outline-none"
+                        >
+                          <Mic className="w-10 h-10" />
+                        </button>
+                        <div className="space-y-1.5">
+                          <h2 className="text-lg font-black text-white uppercase tracking-wider">
+                            {t.recordTitle || 'Record from your microphone'}
+                          </h2>
+                          <p className="text-sm text-slate-500 max-w-sm font-medium mx-auto">
+                            {t.recordHint || 'The mic only opens while you record, and the audio never leaves this tab.'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
+                    {isRecording && (
+                      <div className="space-y-5">
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <div className="flex items-center gap-2 px-3 py-1.5 bg-black/50 border border-white/10 rounded-full">
+                            <span
+                              className={`w-2.5 h-2.5 rounded-full ${isPaused ? 'bg-amber-400' : 'bg-rose-500 animate-pulse'}`}
+                            />
+                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-300">
+                              {isPaused ? t.label_paused || 'Paused' : t.label_recording || 'Recording'}
+                            </span>
+                          </div>
+                          <div className="text-rose-400 font-mono font-bold text-2xl tracking-widest tabular-nums">
+                            {formatClock(recordingTime)}
+                          </div>
+                        </div>
+
+                        {/* Live level meter, driven by a worker ticker so it
+                            keeps updating in a background tab. */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500">
+                            <span>{t.levelLabel || 'Input level'}</span>
+                            <span className={inputClipped ? 'text-amber-400' : 'text-slate-500'}>
+                              {formatDb(inputLevel > 0 ? 20 * Math.log10(inputLevel) : -Infinity)}
+                            </span>
+                          </div>
+                          <div className="h-3 rounded-full bg-black/50 border border-white/10 overflow-hidden">
+                            <div
+                              className={`h-full transition-[width] duration-75 ${
+                                levelPercent > 92 ? 'bg-amber-400' : 'bg-gradient-to-r from-rose-600 to-rose-300'
+                              }`}
+                              style={{ width: `${levelPercent}%` }}
+                            />
+                          </div>
+                          {inputClipped && (
+                            <p className="flex items-center gap-1.5 text-[11px] font-bold text-amber-400">
+                              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                              {t.clipWarn || 'The input hit full scale — move back from the mic or lower its gain.'}
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="flex flex-wrap gap-3">
+                          <button
+                            onClick={isPaused ? resumeRecording : pauseRecording}
+                            className="flex-1 min-w-[130px] py-4 bg-white/10 hover:bg-white/20 text-white font-black text-sm uppercase rounded-2xl transition-all cursor-pointer border-none outline-none"
+                          >
+                            {isPaused ? t.btn_resume_record || 'Resume' : t.btn_pause_record || 'Pause'}
+                          </button>
+                          <button
+                            onClick={stopRecording}
+                            className="flex-1 min-w-[130px] py-4 bg-rose-500 hover:bg-rose-400 text-black font-black text-sm uppercase rounded-2xl transition-all cursor-pointer flex items-center justify-center gap-2 border-none outline-none shadow-lg shadow-rose-500/25"
+                          >
+                            <Square className="w-4 h-4" />
+                            <span>{t.btn_stop_record || 'Stop'}</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {loading && (
+                      <div className="flex flex-col items-center gap-4 py-16">
+                        <Loader2 className="w-8 h-8 text-rose-400 animate-spin" />
+                        <span className="text-xs font-black uppercase tracking-wider text-slate-400">
+                          {t.decodingLabel || 'Reading the audio…'}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ---------------------------------------------------- file */}
+                {!hasSource && tab === 'file' && (
+                  <div className="space-y-4">
+                    {!pendingFile && !loading && (
+                      <div
+                        onDragOver={event => {
+                          event.preventDefault();
+                          setDragging(true);
+                        }}
+                        onDragLeave={() => setDragging(false)}
+                        onDrop={handleDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                        className={`rounded-2xl border-2 border-dashed p-10 text-center flex flex-col items-center gap-4 cursor-pointer transition-all ${
+                          dragging
+                            ? 'border-rose-500/60 bg-rose-500/5'
+                            : 'border-white/10 hover:border-rose-500/40 bg-black/20 hover:bg-black/40'
+                        }`}
+                      >
+                        <WaveIdleArt className="w-32 h-20 text-rose-400/70" animated={!prefersReduced} />
+                        <div className="space-y-1.5">
+                          <h2 className="text-base font-black text-white">{t.dropTitle || 'Drop an audio file'}</h2>
+                          <p className="text-xs text-slate-500 font-medium max-w-sm leading-relaxed">
+                            {t.dropHint || 'MP3, WAV, M4A, OGG, Opus, FLAC, WebM — and the audio track of a video.'}
+                          </p>
+                        </div>
+                        <span className="px-4 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black uppercase tracking-wider transition-colors">
+                          {t.browseBtn || 'Choose a file'}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Parked file. Decoding a long recording is the expensive
+                        step, so it waits for an explicit click. */}
+                    {pendingFile && !loading && (
+                      <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-5 space-y-4">
+                        <div className="flex items-start gap-3">
+                          <span className="w-10 h-10 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
+                            <FileAudio className="w-5 h-5" />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-white truncate">{pendingFile.name}</p>
+                            <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500 mt-0.5">
+                              {formatBytes(pendingFile.size)} · {pendingFile.type || 'audio'}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => setPendingFile(null)}
+                            className="text-slate-500 hover:text-white transition-colors bg-transparent border-none cursor-pointer p-1"
+                            aria-label={t.discardBtn || 'Discard'}
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500 leading-relaxed">
+                          {t.pendingHint || 'Nothing has been decoded yet. Press the button when you are ready.'}
+                        </p>
+                        <button
+                          onClick={loadPendingFile}
+                          className="w-full py-3.5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-black text-xs uppercase tracking-wider transition-colors cursor-pointer border-none"
+                        >
+                          {t.loadBtn || 'Load it into the editor'}
+                        </button>
+                      </div>
+                    )}
+
+                    {loading && (
+                      <div className="flex flex-col items-center gap-4 py-16">
+                        <Loader2 className="w-8 h-8 text-rose-400 animate-spin" />
+                        <span className="text-xs font-black uppercase tracking-wider text-slate-400">
+                          {t.decodingLabel || 'Reading the audio…'}
+                        </span>
+                      </div>
+                    )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="audio/*,video/*,.mp3,.wav,.m4a,.aac,.ogg,.opus,.flac,.webm"
+                      className="hidden"
+                      onChange={event => {
+                        const file = event.target.files?.[0];
+                        if (file) acceptFile(file);
+                        event.target.value = '';
+                      }}
+                    />
+                  </div>
+                )}
+
+                {/* -------------------------------------------------- editor */}
+                {hasSource && buffer && mip && (
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <h2 className="text-xs font-black uppercase text-slate-400 tracking-widest flex items-center gap-1.5">
+                        <Scissors className="w-4 h-4 text-rose-500" />
+                        {t.label_trim || 'Waveform editor'}
+                      </h2>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          onClick={undo}
+                          disabled={!canUndo}
+                          title={t.undoBtn || 'Undo'}
+                          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        >
+                          <Undo2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={redo}
+                          disabled={!canRedo}
+                          title={t.redoBtn || 'Redo'}
+                          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-slate-300 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                        >
+                          <Redo2 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={resetAll}
+                          title={t.newSourceBtn || 'Start over'}
+                          className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wider text-slate-300 cursor-pointer transition-colors"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span className="hidden sm:inline">{t.newSourceBtn || 'Start over'}</span>
+                        </button>
+                      </div>
                     </div>
+
+                    <Waveform
+                      mip={mip}
+                      duration={buffer.duration}
+                      inSec={edit.inSec}
+                      outSec={edit.outSec}
+                      playhead={playhead}
+                      view={view.to > view.from ? view : { from: 0, to: buffer.duration }}
+                      bypassed={compare}
+                      onViewChange={setView}
+                      onSelectionChange={setSelection}
+                      onCommit={commitLive}
+                      onSeek={sec => {
+                        setPlayhead(sec);
+                        if (isPlaying) startPlayback(sec, compare);
+                      }}
+                    />
+
+                    {/* Transport */}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={togglePlay}
+                        className="w-12 h-12 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white flex items-center justify-center cursor-pointer border-none outline-none transition-colors shrink-0"
+                        title={t.transportPlay || 'Play / pause (Space)'}
+                      >
+                        {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+                      </button>
+                      <button
+                        onClick={() => stopPlayback(true)}
+                        className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white flex items-center justify-center cursor-pointer outline-none transition-colors shrink-0"
+                        title={t.transportStop || 'Stop'}
+                      >
+                        <Square className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => setLoop(value => !value)}
+                        className={`w-12 h-12 rounded-2xl border flex items-center justify-center cursor-pointer outline-none transition-colors shrink-0 ${
+                          loop
+                            ? 'bg-rose-500/20 border-rose-500/40 text-rose-300'
+                            : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                        }`}
+                        title={t.transportLoop || 'Loop the selection'}
+                      >
+                        <Repeat className="w-4 h-4" />
+                      </button>
+
+                      <button
+                        onPointerDown={() => setCompare(true)}
+                        onPointerUp={() => setCompare(false)}
+                        onPointerLeave={() => setCompare(false)}
+                        className={`h-12 px-4 rounded-2xl border text-[11px] font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer outline-none transition-colors select-none ${
+                          compare
+                            ? 'bg-slate-200 border-slate-200 text-black'
+                            : 'bg-white/5 border-white/10 text-slate-300 hover:bg-white/10'
+                        }`}
+                        title={t.compareHint || 'Hold to hear the untouched original (or hold Alt)'}
+                      >
+                        <Gauge className="w-4 h-4" />
+                        <span className="hidden sm:inline">{t.compareBtn || 'Hold: original'}</span>
+                      </button>
+
+                      <div className="flex-1 min-w-[120px] text-right font-mono text-xs text-slate-400 tabular-nums">
+                        {formatClock(playhead)} / {formatClock(edit.outSec)}
+                      </div>
+                    </div>
+
+                    {/* Zoom row */}
+                    <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-4">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-600 mr-1">
+                        {t.zoomLabel || 'Zoom'}
+                      </span>
+                      {[
+                        { label: '−', title: t.zoomOut || 'Zoom out', action: () => zoomBy(1.5) },
+                        { label: '+', title: t.zoomIn || 'Zoom in', action: () => zoomBy(1 / 1.5) },
+                      ].map(item => (
+                        <button
+                          key={item.label}
+                          onClick={item.action}
+                          title={item.title}
+                          className="w-9 h-9 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 font-black cursor-pointer transition-colors"
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => zoomTo(edit.inSec, edit.outSec)}
+                        className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-slate-300 cursor-pointer transition-colors"
+                      >
+                        {t.zoomSelection || 'Fit selection'}
+                      </button>
+                      <button
+                        onClick={() => zoomTo(0, buffer.duration)}
+                        className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-slate-300 cursor-pointer transition-colors"
+                      >
+                        {t.zoomFit || 'Whole clip'}
+                      </button>
+                      <span className="text-[10px] font-mono text-slate-600 ml-auto">
+                        {t.zoomHint || 'Wheel = zoom · Shift+wheel = pan · drag = select'}
+                      </span>
+                    </div>
+
+                    {/* Selection numbers */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        { label: t.label_start || 'In', value: formatClock(edit.inSec) },
+                        { label: t.label_end || 'Out', value: formatClock(edit.outSec) },
+                        { label: t.label_duration || 'Selection', value: `${selectionLength.toFixed(2)}s` },
+                        { label: t.outputLabel || 'Output', value: `${outputLength.toFixed(2)}s` },
+                      ].map(item => (
+                        <div key={item.label} className="rounded-xl bg-black/30 border border-white/5 px-3 py-2">
+                          <div className="text-[9px] font-black uppercase tracking-wider text-slate-600">{item.label}</div>
+                          <div className="text-sm font-mono font-bold text-rose-300 tabular-nums">{item.value}</div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => applyEdit({ inSec: Math.min(playhead, edit.outSec - 0.02) })}
+                        className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-slate-300 cursor-pointer transition-colors"
+                      >
+                        {t.setInBtn || 'Set in (I)'}
+                      </button>
+                      <button
+                        onClick={() => applyEdit({ outSec: Math.max(playhead, edit.inSec + 0.02) })}
+                        className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-slate-300 cursor-pointer transition-colors"
+                      >
+                        {t.setOutBtn || 'Set out (O)'}
+                      </button>
+                      <button
+                        onClick={() => applyEdit({ inSec: 0, outSec: buffer.duration })}
+                        className="h-9 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] font-bold text-slate-300 cursor-pointer transition-colors"
+                      >
+                        {t.selectAll || 'Select all (A)'}
+                      </button>
+                      <button
+                        onClick={autoTrim}
+                        className="h-9 px-3 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-[11px] font-bold text-rose-300 cursor-pointer transition-colors flex items-center gap-1.5"
+                      >
+                        <Wand2 className="w-3.5 h-3.5" />
+                        {t.autoTrimBtn || 'Trim the silence'}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {(error || notice) && (
+                  <div
+                    className={`flex items-start gap-2.5 rounded-2xl px-4 py-3 text-sm font-medium ${
+                      error
+                        ? 'bg-red-500/10 border border-red-500/25 text-red-300'
+                        : 'bg-rose-500/10 border border-rose-500/25 text-rose-200'
+                    }`}
+                  >
+                    {error ? (
+                      <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
+                    ) : (
+                      <Check className="w-4 h-4 mt-0.5 shrink-0" />
+                    )}
+                    <span className="flex-1">{error || notice}</span>
+                    <button
+                      onClick={() => (error ? setError(null) : setNotice(null))}
+                      className="text-current opacity-60 hover:opacity-100 bg-transparent border-none cursor-pointer"
+                      aria-label="Close"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {hasSource && (
+                <div className="glass-card rounded-3xl p-5 md:p-6 space-y-3">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <Keyboard className="w-4 h-4 text-rose-500" />
+                    {t.shortcutsTitle || 'Keyboard'}
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5 text-[11px] text-slate-500 font-medium">
+                    {[
+                      ['Space', t.shortcutPlay || 'Play / pause'],
+                      ['I / O', t.shortcutInOut || 'Set in / out at the playhead'],
+                      ['A', t.shortcutAll || 'Select the whole clip'],
+                      ['Alt', t.shortcutAlt || 'Hold to hear the untouched original'],
+                      ['+ / − / F / S', t.shortcutZoom || 'Zoom in, out, whole clip, selection'],
+                      ['Ctrl+Z / Ctrl+Shift+Z', t.shortcutUndo || 'Undo / redo'],
+                    ].map(([key, description]) => (
+                      <div key={key} className="flex items-center gap-2">
+                        <kbd className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10 font-mono text-[10px] text-slate-300 shrink-0">
+                          {key}
+                        </kbd>
+                        <span className="truncate">{description}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ------------------------------------------------- side panels */}
+            <div className="lg:col-span-4 space-y-5 min-w-0">
+              {/* Capture settings */}
+              {!hasSource && tab === 'record' && (
+                <div className="glass-card rounded-3xl p-5 md:p-6 space-y-4">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <Settings2 className="w-4 h-4 text-rose-500" />
+                    {t.captureTitle || 'Microphone settings'}
+                  </h3>
+
+                  <label className="block space-y-1.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      {t.micLabel || 'Input device'}
+                    </span>
+                    <select
+                      value={capture.deviceId}
+                      onChange={event => setCapture(prev => ({ ...prev, deviceId: event.target.value }))}
+                      disabled={isRecording}
+                      className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer disabled:opacity-40"
+                    >
+                      <option value="">{t.micDefault || 'System default'}</option>
+                      {devices.map(device => (
+                        <option key={device.deviceId} value={device.deviceId}>
+                          {device.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <div className="space-y-2">
+                    {[
+                      { key: 'echoCancellation' as const, label: t.micEcho || 'Echo cancellation' },
+                      { key: 'noiseSuppression' as const, label: t.micNoise || 'Noise suppression' },
+                      { key: 'autoGainControl' as const, label: t.micAgc || 'Automatic gain' },
+                    ].map(item => (
+                      <label
+                        key={item.key}
+                        className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-black/25 border border-white/5 cursor-pointer"
+                      >
+                        <span className="text-xs font-bold text-slate-300">{item.label}</span>
+                        <input
+                          type="checkbox"
+                          checked={capture[item.key]}
+                          disabled={isRecording}
+                          onChange={event => setCapture(prev => ({ ...prev, [item.key]: event.target.checked }))}
+                          className="w-4 h-4 accent-rose-500 cursor-pointer"
+                        />
+                      </label>
+                    ))}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="block space-y-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                        {t.micChannels || 'Channels'}
+                      </span>
+                      <select
+                        value={capture.channelCount}
+                        onChange={event => setCapture(prev => ({ ...prev, channelCount: Number(event.target.value) }))}
+                        disabled={isRecording}
+                        className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer disabled:opacity-40"
+                      >
+                        <option value={1}>{t.micMono || 'Mono'}</option>
+                        <option value={2}>{t.micStereo || 'Stereo'}</option>
+                      </select>
+                    </label>
+                    <label className="block space-y-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                        {t.micBitrate || 'Quality'}
+                      </span>
+                      <select
+                        value={capture.bitrate}
+                        onChange={event => setCapture(prev => ({ ...prev, bitrate: Number(event.target.value) }))}
+                        disabled={isRecording}
+                        className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer disabled:opacity-40"
+                      >
+                        <option value={64000}>64 kbps</option>
+                        <option value={128000}>128 kbps</option>
+                        <option value={192000}>192 kbps</option>
+                        <option value={256000}>256 kbps</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 leading-relaxed">
+                    {t.captureHint ||
+                      'Turn the three processors off for music or room tone; leave them on for speech in a noisy place.'}
+                  </p>
+                </div>
+              )}
+
+              {/* Processing */}
+              {hasSource && buffer && (
+                <div className="glass-card rounded-3xl p-5 md:p-6 space-y-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                      <Sliders className="w-4 h-4 text-rose-500" />
+                      {t.processTitle || 'Processing'}
+                    </h3>
+                    <button
+                      onClick={resetProcessing}
+                      className="text-[10px] font-black uppercase tracking-wider text-slate-500 hover:text-rose-400 bg-transparent border-none cursor-pointer transition-colors"
+                    >
+                      {t.resetProcessing || 'Neutral'}
+                    </button>
+                  </div>
+
+                  {/* Gain */}
+                  <label className="block space-y-2">
+                    <span className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      <span>{t.gainLabel || 'Gain'}</span>
+                      <span className="text-rose-400 font-mono">{formatDb(edit.gainDb)}</span>
+                    </span>
+                    <input
+                      type="range"
+                      min={-24}
+                      max={24}
+                      step={0.5}
+                      value={edit.gainDb}
+                      onChange={event => previewEdit({ gainDb: Number(event.target.value) })}
+                      onPointerUp={commitLive}
+                      onKeyUp={commitLive}
+                      className="w-full accent-rose-500 cursor-pointer"
+                    />
+                  </label>
+
+                  <label className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-black/25 border border-white/5 cursor-pointer">
+                    <span className="text-xs font-bold text-slate-300">
+                      {t.normalizeLabel || 'Normalise peak to'} {edit.normalizeTargetDb} dB
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={edit.normalize}
+                      onChange={event => applyEdit({ normalize: event.target.checked })}
+                      className="w-4 h-4 accent-rose-500 cursor-pointer"
+                    />
+                  </label>
+
+                  <label className="flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl bg-black/25 border border-white/5 cursor-pointer">
+                    <span className="text-xs font-bold text-slate-300">{t.dcLabel || 'Remove DC offset'}</span>
+                    <input
+                      type="checkbox"
+                      checked={edit.removeDc}
+                      onChange={event => applyEdit({ removeDc: event.target.checked })}
+                      className="w-4 h-4 accent-rose-500 cursor-pointer"
+                    />
+                  </label>
+
+                  {/* Fades */}
+                  <div className="grid grid-cols-2 gap-3">
+                    {[
+                      { key: 'fadeInSec' as const, label: t.fadeInLabel || 'Fade in' },
+                      { key: 'fadeOutSec' as const, label: t.fadeOutLabel || 'Fade out' },
+                    ].map(item => (
+                      <label key={item.key} className="block space-y-2">
+                        <span className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500">
+                          <span className="truncate">{item.label}</span>
+                          <span className="text-rose-400 font-mono shrink-0">{edit[item.key].toFixed(1)}s</span>
+                        </span>
+                        <input
+                          type="range"
+                          min={0}
+                          max={Math.max(0.5, Math.min(10, selectionLength / 2))}
+                          step={0.1}
+                          value={edit[item.key]}
+                          onChange={event => previewEdit({ [item.key]: Number(event.target.value) } as Partial<EditState>)}
+                          onPointerUp={commitLive}
+                          onKeyUp={commitLive}
+                          className="w-full accent-rose-500 cursor-pointer"
+                        />
+                      </label>
+                    ))}
+                  </div>
+
+                  {/* Speed */}
+                  <label className="block space-y-2">
+                    <span className="flex items-center justify-between text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      <span>{t.speedLabel || 'Speed'}</span>
+                      <span className="text-rose-400 font-mono">{edit.speed.toFixed(2)}×</span>
+                    </span>
+                    <input
+                      type="range"
+                      min={0.5}
+                      max={2}
+                      step={0.05}
+                      value={edit.speed}
+                      onChange={event => previewEdit({ speed: Number(event.target.value) })}
+                      onPointerUp={commitLive}
+                      onKeyUp={commitLive}
+                      className="w-full accent-rose-500 cursor-pointer"
+                    />
+                  </label>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <label className="block space-y-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                        {t.channelsLabel || 'Channels'}
+                      </span>
+                      <select
+                        value={edit.channelMode}
+                        onChange={event => applyEdit({ channelMode: event.target.value as EditState['channelMode'] })}
+                        className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer"
+                      >
+                        <option value="source">
+                          {t.channelSource || 'Keep'} ({buffer.numberOfChannels})
+                        </option>
+                        <option value="mono">{t.micMono || 'Mono'}</option>
+                        <option value="stereo">{t.micStereo || 'Stereo'}</option>
+                      </select>
+                    </label>
+                    <label className="block space-y-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                        {t.rateLabel || 'Sample rate'}
+                      </span>
+                      <select
+                        value={edit.sampleRate}
+                        onChange={event => applyEdit({ sampleRate: Number(event.target.value) })}
+                        className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer"
+                      >
+                        <option value={0}>
+                          {t.rateSource || 'Keep'} ({(buffer.sampleRate / 1000).toFixed(1)}k)
+                        </option>
+                        {[8000, 16000, 22050, 32000, 44100, 48000].map(rate => (
+                          <option key={rate} value={rate}>
+                            {rate / 1000} kHz
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                </div>
+              )}
+
+              {/* Measurements */}
+              {hasSource && sourceStats && (
+                <div className="glass-card rounded-3xl p-5 md:p-6 space-y-3">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <Gauge className="w-4 h-4 text-rose-500" />
+                    {t.statsTitle || 'Measured'}
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { label: t.statPeak || 'Source peak', value: formatDb(sourceStats.peakDb) },
+                      { label: t.statRms || 'Source RMS', value: formatDb(sourceStats.rmsDb) },
+                      { label: t.statOutPeak || 'Output peak', value: formatDb(outputPeakDb) },
+                      { label: t.statGain || 'Applied gain', value: formatDb(appliedGainDb) },
+                    ].map(item => (
+                      <div key={item.label} className="rounded-xl bg-black/30 border border-white/5 px-3 py-2">
+                        <div className="text-[9px] font-black uppercase tracking-wider text-slate-600 truncate">
+                          {item.label}
+                        </div>
+                        <div className="text-sm font-mono font-bold text-rose-300 tabular-nums">{item.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                  {outputPeakDb > 0 && (
+                    <p className="flex items-start gap-1.5 text-[11px] font-bold text-amber-400">
+                      <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                      {t.statClipWarn || 'The output would clip. Lower the gain or turn the normaliser on.'}
+                    </p>
+                  )}
+                  {info && (
+                    <p className="text-[11px] text-slate-600 leading-relaxed border-t border-white/5 pt-3">
+                      {info.channels === 1 ? t.micMono || 'Mono' : `${info.channels}ch`} ·{' '}
+                      {(info.sampleRate / 1000).toFixed(1)} kHz · {formatBytes(info.sizeBytes)}
+                      {info.resampled ? ` · ${t.infoResampled || 'resampled on decode'}` : ''}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Export */}
+              {hasSource && (
+                <div className="glass-card rounded-3xl p-5 md:p-6 space-y-4">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <Download className="w-4 h-4 text-rose-500" />
+                    {t.exportTitle || 'Export'}
+                  </h3>
+
+                  <label className="block space-y-1.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      {t.formatLabel || 'Format'}
+                    </span>
+                    <select
+                      value={format}
+                      onChange={event => setFormat(event.target.value as ExportFormat)}
+                      className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer"
+                    >
+                      <option value="wav16">{t.fmtWav16 || 'WAV · 16-bit (dithered)'}</option>
+                      <option value="wav24">{t.fmtWav24 || 'WAV · 24-bit'}</option>
+                      <option value="wav32">{t.fmtWav32 || 'WAV · 32-bit float'}</option>
+                      {compressedAvailable && <option value="compressed">{t.fmtCompressed || 'Compressed · Opus'}</option>}
+                    </select>
+                  </label>
+
+                  {format === 'compressed' && (
+                    <>
+                      <label className="block space-y-1.5">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                          {t.bitrateLabel || 'Bitrate'}
+                        </span>
+                        <select
+                          value={bitrate}
+                          onChange={event => setBitrate(Number(event.target.value))}
+                          className="w-full bg-[#130a0f] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-rose-500 cursor-pointer"
+                        >
+                          {[48000, 64000, 96000, 128000, 192000, 256000].map(rate => (
+                            <option key={rate} value={rate}>
+                              {rate / 1000} kbps
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <p className="flex items-start gap-1.5 text-[11px] text-amber-400/90 font-medium leading-relaxed">
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                        {(t.realtimeWarn ||
+                          'The browser has no offline audio encoder, so this one runs in real time: about {s}s.').replace(
+                          '{s}',
+                          Math.ceil(outputLength).toString()
+                        )}
+                      </p>
+                    </>
+                  )}
+
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-500 px-1">
+                    <span>{t.statSize || 'Estimated size'}</span>
+                    <span className="font-mono text-slate-300">{formatBytes(estimatedBytes)}</span>
+                  </div>
+
+                  <button
+                    onClick={runExport}
+                    disabled={exporting || outputLength < 0.02}
+                    className="w-full flex items-center justify-center gap-2.5 py-4 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-400 hover:to-red-500 text-white font-black text-sm uppercase rounded-2xl transition-all cursor-pointer active:scale-[0.98] duration-200 border-none outline-none shadow-lg shadow-rose-500/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100"
+                  >
+                    {exporting ? <Loader2 className="w-5 h-5 animate-spin" /> : <Download className="w-5 h-5" />}
+                    <span>
+                      {exporting
+                        ? `${t.exportingLabel || 'Rendering'} ${Math.round(exportProgress * 100)}%`
+                        : t.exportBtn || 'Render & download'}
+                    </span>
+                  </button>
+
+                  {exporting && (
+                    <div className="h-1.5 rounded-full bg-black/50 overflow-hidden">
+                      <div
+                        className="h-full bg-rose-500 transition-[width] duration-200"
+                        style={{ width: `${Math.round(exportProgress * 100)}%` }}
+                      />
+                    </div>
+                  )}
+
+                  {originalBlob && (
+                    <button
+                      onClick={downloadOriginal}
+                      className="w-full flex items-center justify-center gap-2 py-3 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white font-black text-[11px] uppercase tracking-wider rounded-2xl transition-all cursor-pointer border border-white/10 outline-none"
+                    >
+                      <Upload className="w-3.5 h-3.5 rotate-180" />
+                      <span className="truncate">{t.downloadOriginalBtn || 'Download the untouched source'}</span>
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {hasSource && (
+                <NextStepBar
+                  lang={lang}
+                  t={t}
+                  disabled={exporting || outputLength < 0.02}
+                  getResult={async () => {
+                    const result = await buildResult();
+                    return result ? { blob: result.blob, name: result.name } : null;
+                  }}
+                />
+              )}
+
+              {/* Session exports */}
+              {exports.length > 0 && (
+                <div className="glass-card rounded-3xl p-5 md:p-6 space-y-3">
+                  <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                    <h3 className="text-[11px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                      <History className="w-4 h-4 text-rose-500" />
+                      {t.history_title || 'This session'}
+                    </h3>
+                    <button
+                      onClick={clearExports}
+                      className="text-[11px] font-bold text-red-400 hover:text-red-300 border-none bg-transparent cursor-pointer outline-none flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>{t.clear_history || 'Clear'}</span>
+                    </button>
+                  </div>
+                  <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
+                    {exports.map(item => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-3 p-3 bg-white/[0.02] border border-white/5 rounded-xl"
+                      >
+                        <span className="w-9 h-9 bg-white/5 rounded-lg border border-white/10 flex items-center justify-center shrink-0 text-rose-400">
+                          <FileAudio className="w-4 h-4" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-slate-300 text-xs font-bold truncate">{item.name}</div>
+                          <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-0.5 truncate">
+                            {formatBytes(item.sizeBytes)} · {item.durationSec.toFixed(1)}s · {item.format}
+                          </div>
+                        </div>
+                        <a
+                          href={item.url}
+                          download={item.name}
+                          className="text-slate-400 hover:text-white transition-colors shrink-0"
+                          aria-label={t.exportBtn || 'Download'}
+                        >
+                          <Download className="w-4 h-4" />
+                        </a>
+                        <button
+                          onClick={() => removeExport(item.id)}
+                          className="text-slate-600 hover:text-red-400 transition-colors bg-transparent border-none cursor-pointer shrink-0 p-0"
+                          aria-label={t.discardBtn || 'Remove'}
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <AdBanner id="adsense-audiosnap-mid" />
+
+          {/* ================================================================ */}
+          {/* How it works                                                     */}
+          {/* ================================================================ */}
+          {steps.length > 0 && (
+            <section className="space-y-10">
+              <div className="text-center space-y-3">
+                <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+                  {t.howItWorksTitle || 'How it works'}
+                </h2>
+                <div className="h-1 w-16 bg-rose-500 mx-auto rounded-full" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                {steps.map((step: any, i: number) => {
+                  const Art = stepArt[i] || StepCapture;
+                  return (
+                    <div
+                      key={i}
+                      className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-rose-500/20 transition-all group"
+                    >
+                      <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-rose-500/10 transition-colors">
+                        {i + 1}
+                      </span>
+                      <Art className="w-24 h-auto text-rose-400" />
+                      <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
+                      <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {/* ================================================================ */}
+          {/* Features                                                         */}
+          {/* ================================================================ */}
+          {features.length > 0 && (
+            <motion.section
+              initial={prefersReduced ? false : 'hidden'}
+              whileInView={prefersReduced ? undefined : 'visible'}
+              viewport={{ once: true, amount: 0.15 }}
+              variants={fadeInUp}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {features.map((feature: any, idx: number) => {
+                const Icon = featureIcons[idx] || IconTrim;
+                return (
+                  <div
+                    key={idx}
+                    className="p-7 glass-card rounded-3xl text-left hover:-translate-y-1.5 transition-all duration-300 group border border-white/5"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400 mb-5 group-hover:scale-110 group-hover:border-rose-500/40 transition-all">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-white text-lg font-bold mb-2.5 group-hover:text-rose-400 transition-colors">
+                      {feature.title}
+                    </h3>
+                    <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
+                  </div>
+                );
+              })}
+            </motion.section>
+          )}
+
+          {/* ================================================================ */}
+          {/* SEO content                                                      */}
+          {/* ================================================================ */}
+          <section className="space-y-24 text-left">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
+              <div className="space-y-7">
+                {keywords[0] && (
+                  <div className="inline-block px-4 py-1.5 rounded-lg bg-rose-500/10 text-rose-400 text-[11px] font-black uppercase tracking-[0.2em] border border-rose-500/20">
+                    {keywords[0]}
+                  </div>
+                )}
+                <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
+                  {t.seoHeroTitle}
+                </h2>
+                <p className="text-slate-400 text-lg leading-relaxed font-medium">{t.seoHeroText}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {(t.seoHeroList || []).map((point: string, i: number) => (
+                    <div
+                      key={i}
+                      className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all"
+                    >
+                      <span className="w-7 h-7 shrink-0 bg-rose-500/20 text-rose-400 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </span>
+                      <span className="text-slate-300 font-bold text-sm">{point}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative glass-card rounded-[3rem] p-10 py-16 min-h-[400px] flex flex-col items-center justify-center gap-7 text-center overflow-hidden">
+                <div className="absolute -top-16 -right-16 w-56 h-56 bg-rose-500/10 rounded-full blur-3xl" />
+                <IconLocalAudio className="w-20 h-20 text-rose-400 relative" />
+                <div className="space-y-3 max-w-sm relative">
+                  <h3 className="text-2xl font-black text-white tracking-tight leading-tight">
+                    {t.seoBrowserSpeedTitle}
+                  </h3>
+                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-8 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-[#12080c] border border-white/5 space-y-10">
+              <div className="max-w-4xl space-y-4">
+                <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">
+                  {t.seoSecondaryTitle || t.seoUseCaseTitle}
+                </h2>
+                <div className="h-1.5 w-20 bg-rose-500 rounded-full" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
+                    {t.seoUseCaseTitle}
+                  </div>
+                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoUseCaseText}</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
+                    <span className="w-6 h-px bg-white/20" />
+                    {t.seoPrivacyTitle}
+                  </div>
+                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoPrivacyText}</p>
+                </div>
+              </div>
+            </div>
+
+            {faqs.length > 0 && (
+              <div className="max-w-4xl mx-auto w-full space-y-10">
+                <div className="text-center space-y-3">
+                  <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
+                  <div className="h-1 w-16 bg-rose-500 mx-auto rounded-full" />
+                </div>
+                <div className="grid gap-3">
+                  {faqs.map((faq: any, idx: number) => (
+                    <details
+                      key={idx}
+                      className="glass-card rounded-2xl px-6 py-5 text-left border border-white/5 hover:border-rose-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
+                    >
+                      <summary className="flex items-start gap-3 cursor-pointer list-none text-base font-bold text-white group-hover:text-rose-400 transition-colors">
+                        <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400 text-[11px] font-black">
+                          Q
+                        </span>
+                        <span className="flex-1">{faq.question}</span>
+                        <span className="shrink-0 text-rose-400 transition-transform group-open:rotate-45 text-xl leading-none">
+                          +
+                        </span>
+                      </summary>
+                      <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
+                    </details>
                   ))}
                 </div>
               </div>
             )}
 
-          </div>
-
+            {keywords.length > 0 && (
+              <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
+                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
+                  {t.seoKeywordsTitle}
+                </h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {keywords.map((keyword: string, idx: number) => (
+                    <span
+                      key={idx}
+                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-rose-500/10 hover:border-rose-500/20 hover:text-rose-400 transition-all cursor-default"
+                    >
+                      {keyword}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </section>
         </div>
 
-        {/* SEO Text Sections */}
-        <div className="max-w-5xl mx-auto w-full mt-24 border-t border-white/5 pt-16">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6">
-              <h3 className="text-white font-bold text-lg mb-3">
-                {t.seoBrowserSpeedTitle || 'Client-Side Sandbox'}
-              </h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t.seoBrowserSpeedText || 'PCM sample channel mapping and WAV generation occurs on the fly inside browser RAM.'}
-              </p>
-            </div>
-            
-            <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6">
-              <h3 className="text-white font-bold text-lg mb-3">
-                {t.seoUseCaseTitle || 'Podcasts, Memos & Voicework'}
-              </h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t.seoUseCaseText || 'Cut high fidelity snippets without bulky downloads. Perfect for sound designers, content producers or voice notes.'}
-              </p>
-            </div>
-
-            <div className="bg-white/[0.01] border border-white/5 rounded-2xl p-6">
-              <h3 className="text-white font-bold text-lg mb-3">
-                {t.seoPrivacyTitle || '100% Secure & Local'}
-              </h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t.seoPrivacyText || 'We do not host or capture any voice signals. Microphone inputs are strictly local and process within memory.'}
-              </p>
-            </div>
-          </div>
-        </div>
-
-      {/* Bloque AdSense Horizontal */}
-      <AdBanner id="adsense-audiosnap-bottom" />
+        <AdBanner id="adsense-audiosnap-bottom" />
       </main>
 
       <Footer
         lang={lang}
         t={t}
-        onOpenModal={(type) => {
+        onOpenModal={type => {
           setModalType(type);
           setModalOpen(true);
         }}
@@ -929,18 +2055,18 @@ export const AudioSnap: React.FC<AudioSnapProps> = ({ lang, dictionary }) => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         title={
-          modalType === 'privacy' 
-            ? (legalTranslations[lang]?.privacy.title || 'Privacy Policy')
+          modalType === 'privacy'
+            ? legalTranslations[lang]?.privacy.title || 'Privacy Policy'
             : modalType === 'terms'
-            ? (legalTranslations[lang]?.terms.title || 'Terms of Service')
-            : (legalTranslations[lang]?.cookies.title || 'Cookie Policy')
+              ? legalTranslations[lang]?.terms.title || 'Terms of Service'
+              : legalTranslations[lang]?.cookies.title || 'Cookie Policy'
         }
         content={
           modalType === 'privacy'
-            ? (legalTranslations[lang]?.privacy.content || '')
+            ? legalTranslations[lang]?.privacy.content || ''
             : modalType === 'terms'
-            ? (legalTranslations[lang]?.terms.content || '')
-            : (legalTranslations[lang]?.cookies.content || '')
+              ? legalTranslations[lang]?.terms.content || ''
+              : legalTranslations[lang]?.cookies.content || ''
         }
         t={t}
       />

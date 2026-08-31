@@ -1,4 +1,5 @@
 import { ClipData, Resolution } from "../types";
+import { noteRoute, usableProxies } from "./route";
 
 const CLIENT_IDS = [
     "ue6666qo983sx6so1c0vnaz41db287",
@@ -61,7 +62,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   const query = `query GetClip($slug: ID!) { clip(slug: $slug) { id slug title createdAt viewCount durationSeconds thumbnailURL broadcaster { displayName profileImageURL(width: 50) } playbackAccessToken(params: { platform: "web", playerBackend: "mediaplayer", playerType: "site" }) { signature value } videoQualities { frameRate quality sourceURL } } }`;
 
   let responseData: any = null;
-  for (const makeProxyUrl of GQL_PROXIES) {
+  for (const makeProxyUrl of usableProxies(GQL_PROXIES)) {
       for (const clientId of CLIENT_IDS) {
           try {
               const res = await fetch(makeProxyUrl(GQL_ENDPOINT), {
@@ -107,7 +108,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
 };
 
 export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, total: number) => void, signal?: AbortSignal): Promise<Blob> => {
-  for (const makeUrl of DOWNLOAD_PROXIES) {
+  for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
     if (signal?.aborted) throw new Error("AbortError");
 
     try {
@@ -146,6 +147,9 @@ export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, t
         xhr.onload = () => { 
           if (signal) signal.removeEventListener('abort', onAbort);
           if (xhr.status === 200 && xhr.response && xhr.response.size > 5000) {
+            // Noted on success only: the UI reports who actually handled
+            // the video, not who was tried and failed.
+            noteRoute(makeUrl(url));
             resolve(xhr.response); 
           } else {
             reject(new Error(`Status ${xhr.status} or small file`));
@@ -180,5 +184,8 @@ export const downloadBlob = async (url: string, filename: string, onProgress: (l
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(blobUrl);
+  // Revoked on a timer, not in the same tick as the click: Safari cancels an
+  // in-flight download when the object URL disappears underneath it, and a clip
+  // here is large enough for that to be the normal case, not the edge one.
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
 };

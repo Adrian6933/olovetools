@@ -43,16 +43,106 @@ export default {
   "views": "Views",
   "ready": "READY",
   "preparing": "PREPARING...",
-  "quickLinks": ["Twitch to MP4", "Download Clips", "Bulk Downloader", "Clip Saver", "1080p Download", "Stream Tools", "Twitch to TikTok", "Mobile Downloader", "Fast Clip Converter", "Offline Twitch Viewer"],
-  "seoTags": ["TWITCH DOWNLOADER", "MP4 HD", "BULK DOWNLOAD", "NO LOGIN", "FREE TOOL", "1080P", "TWITCH CLIPS", "EDITOR KIT", "TIKTOK CONVERTER", "GAMING VIDEO", "REELS MAKER", "STREAMING KIT", "HIGH DEFINITION", "DIRECT DOWNLOAD", "FAST DOWNLOAD", "MOBILE READY", "TWITCH SAVER", "CLIP CONVERTER", "NO WATERMARK", "BEST TWITCH TOOL"],
+  "quickLinks": [
+    "Twitch to MP4",
+    "Download Clips",
+    "Bulk Downloader",
+    "Clip Saver",
+    "1080p Download",
+    "Stream Tools",
+    "Twitch to TikTok",
+    "Mobile Downloader",
+    "Fast Clip Converter",
+    "Offline Twitch Viewer"
+  ],
+  "seoTags": [
+    "TWITCH DOWNLOADER",
+    "MP4 HD",
+    "BULK DOWNLOAD",
+    "NO LOGIN",
+    "FREE TOOL",
+    "1080P",
+    "TWITCH CLIPS",
+    "EDITOR KIT",
+    "TIKTOK CONVERTER",
+    "GAMING VIDEO",
+    "REELS MAKER",
+    "STREAMING KIT",
+    "HIGH DEFINITION",
+    "DIRECT DOWNLOAD",
+    "FAST DOWNLOAD",
+    "MOBILE READY",
+    "TWITCH SAVER",
+    "CLIP CONVERTER",
+    "NO WATERMARK",
+    "BEST TWITCH TOOL"
+  ],
   "legal": {
     "privacy": "Privacy",
     "terms": "Terms",
     "cookies": "Cookies",
     "contactEmail": "CONTACT BY EMAIL",
     "gotIt": "I UNDERSTAND",
-    "privacyText": "At TwitchBolt, privacy is paramount. We do not collect, store, or share any personally identifiable data. When using our tool, links are processed in real-time and no log of downloaded clips is kept on our servers. We do not use databases to track user activity. For any questions regarding your data, you can reach us at adrian.contact.me.69@gmail.com.",
+    "privacyText": "TwitchBolt keeps no account of you: no sign-up, no analytics profile, no database of the links you paste. What it cannot claim is that nothing touches a server — Twitch refuses direct browser requests, so every clip is relayed. Our own endpoint handles it first and logs nothing; if it fails, the request falls back to public CORS proxies (corsproxy.io, codetabs.com and thingproxy.freeboard.io), which are run by third parties whose logging we do not control. The clip URL, and the video itself, pass through whichever one answers. You can switch that fallback off in the tool, and the page tells you which host served your last download. Your language and that preference live in your own browser. Questions: adrian.contact.me.69@gmail.com.",
     "termsText": "TwitchBolt is a technical tool for accessing public Twitch content. The user is solely responsible for their use of downloaded materials and must respect copyrights and licenses of content creators. TwitchBolt is not affiliated with Twitch Interactive Inc. The service is provided 'as is' without warranties of any kind.",
     "cookiesText": "Our website uses only strictly necessary LocalStorage for the technical operation of the site, such as remembering your language preferences. We do not use third-party tracking cookies or advertising pixels. By browsing TwitchBolt, you accept this essential technical usage to ensure the best possible experience."
-  }
+  },
+  "qMaxLabel": "Max Quality",
+  "qMaxSub": "Original source",
+  "q720Label": "720p HD",
+  "q720Sub": "Balanced",
+  "q360Label": "360p Fast",
+  "q360Sub": "Low data",
+  "zipError": "The ZIP could not be built. Some clips may have failed to download; try again with fewer at a time.",
+  "routeNotice": "Twitch blocks direct browser requests, so every clip is relayed. Our own relay is tried first; the public ones are only a fallback, and you can turn them off.",
+  "routeLast": "Last download handled by: {host}",
+  "routeAllowOn": "Public relays: on",
+  "routeAllowOff": "Public relays: off",
+  "howTitle": "How it works",
+  "featuresTitle": "What it actually does",
+  "faqTitle": "Frequently Asked Questions",
+  "kickCrossSell": "Looking to download Kick clips?",
+  "kickCrossSellCta": "Try KickBolt",
+  "step1Title": "Paste the links",
+  "step1Text": "One clip URL per line, or drop in a .txt list. Nothing is fetched until you press the button.",
+  "step2Title": "Pick a quality",
+  "step2Text": "Source keeps the original stream; 720p and 360p trade detail for a much smaller file.",
+  "step3Title": "Let it fetch",
+  "step3Text": "Clips are resolved three at a time so Twitch does not rate-limit you, with a progress bar per file.",
+  "step4Title": "Save one or all",
+  "step4Text": "Download clips one by one, or take the whole batch as a single ZIP without recompressing anything.",
+  "feat1Title": "Any Twitch clip URL",
+  "feat1Text": "clips.twitch.tv links, channel /clip/ paths and the slug on its own all resolve to the same clip.",
+  "feat2Title": "Whole lists at once",
+  "feat2Text": "Paste fifty links or upload a .txt file; duplicates are dropped before anything is requested.",
+  "feat3Title": "You choose the quality",
+  "feat3Text": "Not every clip is worth the source bitrate. Drop to 720p or 360p when size matters more than detail.",
+  "feat4Title": "One ZIP, no re-encode",
+  "feat4Text": "The pack is stored, not compressed: video does not shrink under zip, and skipping it saves the wait.",
+  "feat5Title": "No account, ever",
+  "feat5Text": "No sign-up, no email, no extension. Open the page, paste, download, close the tab.",
+  "feat6Title": "Honest about the route",
+  "feat6Text": "Twitch will not serve a browser directly, so the tool says which relay carried your clip and lets you refuse the public ones.",
+  "faq": [
+    {
+      "question": "Does the clip come straight from Twitch?",
+      "answer": "No, and it cannot. Twitch serves neither its GraphQL endpoint nor its clip CDN with CORS headers a browser is allowed to read, so every clip is relayed. Our own relay is tried first; if it fails, a few public CORS proxies are the fallback. The notice above the input lets you switch those off and shows which host actually served your last download."
+    },
+    {
+      "question": "Is there a limit on how many clips at once?",
+      "answer": "No hard limit, but clips are resolved three at a time and downloaded five at a time on purpose, so Twitch does not start refusing requests. Fifty links in one go is comfortable; several hundred will take a while and is more likely to hit a rate limit partway through."
+    },
+    {
+      "question": "Why is the ZIP the same size as the clips?",
+      "answer": "Because it is stored, not compressed. Video is already compressed, so running it through zip's deflate saves almost nothing and costs a lot of waiting. The pack is a container, not a squeeze."
+    },
+    {
+      "question": "What does \"Max Quality\" actually download?",
+      "answer": "The highest rendition Twitch published for that clip, whatever that happens to be. It is not upscaled: if the streamer broadcast at 720p, the source is 720p, and the tool will not invent detail that was never recorded."
+    },
+    {
+      "question": "Do you keep my links or the clips?",
+      "answer": "We keep neither. Links are resolved as they arrive and nothing is written to a database. Your language choice and your public-relay preference are stored in your own browser and never sent anywhere. What we cannot promise for you is what a public relay does with a URL it is asked to fetch, which is exactly why you can turn them off."
+    }
+  ]
 };

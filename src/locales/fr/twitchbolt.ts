@@ -82,9 +82,67 @@ export default {
     "cookies": "Cookies",
     "contactEmail": "CONTACT PAR EMAIL",
     "gotIt": "COMPRIS",
-    "privacyText": "Chez TwitchBolt, la confidentialité est primordiale. Nous ne collectons, ne stockons ni ne partageons aucune donnée personnelle identifiable. Les liens sont traités en temps réel et aucun journal des clips téléchargés n'est conservé sur nos serveurs. Pour toute question, contactez-nous à adrian.contact.me.69@gmail.com.",
+    "privacyText": "TwitchBolt ne tient aucun compte de vous : pas d'inscription, pas de profil analytique, pas de base de données des liens que vous collez. Ce qu'il ne peut pas prétendre, c'est que rien ne touche un serveur : Twitch refuse les requêtes directes du navigateur, donc chaque clip est relayé. Notre propre point d'accès s'en charge d'abord et ne journalise rien ; en cas d'échec, la requête bascule vers des proxys CORS publics (corsproxy.io, codetabs.com et thingproxy.freeboard.io), tenus par des tiers dont nous ne contrôlons pas la journalisation. L'URL du clip, et la vidéo elle-même, passent par celui qui répond. Vous pouvez désactiver ce recours dans l'outil, et la page indique quel hôte a servi votre dernier téléchargement. Votre langue et cette préférence restent dans votre propre navigateur. Questions : adrian.contact.me.69@gmail.com.",
     "termsText": "TwitchBolt est un outil technique permettant d'accéder au contenu public de Twitch. L'utilisateur est seul responsable de son utilisation des contenus téléchargés. TwitchBolt n'est pas affilié à Twitch.",
     "cookiesText": "Notre site Web utilise uniquement le LocalStorage strictement nécessaire au fonctionnement technique du site."
   },
-  "loadingClips": "CHARGEMENT DES CLIPS..."
+  "loadingClips": "CHARGEMENT DES CLIPS...",
+  "qMaxLabel": "Qualité maximale",
+  "qMaxSub": "Source d'origine",
+  "q720Label": "720p HD",
+  "q720Sub": "Équilibré",
+  "q360Label": "360p rapide",
+  "q360Sub": "Peu de données",
+  "zipError": "Le ZIP n'a pas pu être créé. Certains clips n'ont peut-être pas pu être téléchargés ; réessayez avec moins à la fois.",
+  "routeNotice": "Twitch bloque les requêtes directes du navigateur, donc chaque clip passe par un relais. Le nôtre est essayé en premier ; les relais publics ne sont qu'un recours, et vous pouvez les désactiver.",
+  "routeLast": "Dernier téléchargement servi par : {host}",
+  "routeAllowOn": "Relais publics : activés",
+  "routeAllowOff": "Relais publics : désactivés",
+  "howTitle": "Comment ça marche",
+  "featuresTitle": "Ce qu'il fait vraiment",
+  "faqTitle": "Questions fréquentes",
+  "kickCrossSell": "Vous cherchez à télécharger des clips Kick ?",
+  "kickCrossSellCta": "Essayez KickBolt",
+  "step1Title": "Collez les liens",
+  "step1Text": "Une URL de clip par ligne, ou déposez une liste .txt. Rien n'est récupéré tant que vous n'appuyez pas sur le bouton.",
+  "step2Title": "Choisissez la qualité",
+  "step2Text": "La source conserve le flux d'origine ; 720p et 360p échangent du détail contre un fichier bien plus léger.",
+  "step3Title": "Laissez-le récupérer",
+  "step3Text": "Les clips sont résolus trois par trois pour que Twitch ne vous limite pas, avec une barre de progression par fichier.",
+  "step4Title": "Enregistrez un ou tous",
+  "step4Text": "Téléchargez les clips un par un, ou prenez tout le lot en un seul ZIP sans rien recompresser.",
+  "feat1Title": "N'importe quelle URL de clip Twitch",
+  "feat1Text": "Les liens clips.twitch.tv, les chemins /clip/ d'une chaîne et l'identifiant seul renvoient tous au même clip.",
+  "feat2Title": "Des listes entières d'un coup",
+  "feat2Text": "Collez cinquante liens ou envoyez un fichier .txt ; les doublons sont écartés avant toute requête.",
+  "feat3Title": "C'est vous qui choisissez la qualité",
+  "feat3Text": "Tous les clips ne méritent pas le débit de la source. Descendez en 720p ou 360p quand la taille compte plus que le détail.",
+  "feat4Title": "Un ZIP, sans réencodage",
+  "feat4Text": "Le pack est stocké, pas compressé : la vidéo ne rétrécit pas dans un zip, et sauter cette étape évite l'attente.",
+  "feat5Title": "Jamais de compte",
+  "feat5Text": "Pas d'inscription, pas d'e-mail, pas d'extension. Ouvrez la page, collez, téléchargez, fermez l'onglet.",
+  "feat6Title": "Honnête sur le trajet",
+  "feat6Text": "Twitch ne sert pas directement un navigateur : l'outil indique quel relais a transporté votre clip et vous laisse refuser les relais publics.",
+  "faq": [
+    {
+      "question": "Le clip vient-il directement de Twitch ?",
+      "answer": "Non, et c'est impossible. Twitch ne sert ni son point d'accès GraphQL ni son CDN de clips avec des en-têtes CORS que le navigateur a le droit de lire : chaque clip passe donc par un relais. Le nôtre est essayé en premier ; s'il échoue, quelques proxys CORS publics prennent le relais. L'avis au-dessus du champ vous permet de les désactiver et indique quel hôte a servi votre dernier téléchargement."
+    },
+    {
+      "question": "Y a-t-il une limite au nombre de clips à la fois ?",
+      "answer": "Pas de limite stricte, mais les clips sont résolus trois par trois et téléchargés cinq par cinq volontairement, pour que Twitch ne se mette pas à refuser les requêtes. Cinquante liens d'un coup passent sans souci ; plusieurs centaines prendront du temps et risquent davantage de heurter une limitation en cours de route."
+    },
+    {
+      "question": "Pourquoi le ZIP fait-il la même taille que les clips ?",
+      "answer": "Parce qu'il est stocké, pas compressé. La vidéo est déjà compressée : la passer dans le deflate du zip ne gagne presque rien et coûte beaucoup d'attente. Le pack est un conteneur, pas une presse."
+    },
+    {
+      "question": "Que télécharge réellement la « qualité maximale » ?",
+      "answer": "La meilleure version que Twitch a publiée pour ce clip, quelle qu'elle soit. Il n'y a pas de mise à l'échelle : si le streamer a diffusé en 720p, la source est en 720p, et l'outil n'inventera pas un détail qui n'a jamais été enregistré."
+    },
+    {
+      "question": "Conservez-vous mes liens ou les clips ?",
+      "answer": "Ni l'un ni l'autre. Les liens sont résolus au fil de l'eau et rien n'est écrit dans une base de données. Votre langue et votre préférence sur les relais publics sont stockées dans votre propre navigateur et ne partent nulle part. Ce que nous ne pouvons pas promettre à votre place, c'est ce qu'un relais public fait d'une URL qu'on lui demande d'aller chercher — c'est précisément pour cela que vous pouvez les désactiver."
+    }
+  ]
 };

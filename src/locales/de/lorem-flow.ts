@@ -1,52 +1,98 @@
 export default {
   "title": "LoremFlow",
-  "seo_title": "LoremFlow | Lorem-Ipsum-Platzhaltertext nach Absätzen, Sätzen oder Wörtern generieren 100% lokal.",
-  "seo_description": "Lorem-Ipsum-Platzhaltertext nach Absätzen, Sätzen oder Wörtern generieren 100% lokal in Ihrem Browser.",
+  "seo_title": "Blindtext-Generator in acht Schriften",
+  "seo_description": "Kostenloser Blindtext-Generator. Klassisches Lorem ipsum plus Spanisch, Japanisch, Chinesisch, Russisch, Hindi, Griechisch und Arabisch, nach Absätzen, Sätzen, Wörtern oder exakter Zeichenzahl. Mit Startwert ist die Ausgabe wiederholbar, und exportiert wird als reiner Text, HTML oder Markdown mit Überschriften und Listen. Läuft komplett im Browser.",
   "seoHeroTitle": "LoremFlow",
-  "seoHeroText": "Lorem-Ipsum-Platzhaltertext nach Absätzen, Sätzen oder Wörtern generieren 100% lokal in Ihrem Browser.",
+  "seoHeroText": "Blindtext in acht Schriften statt nur Latein: teste ein Layout mit dem Japanisch, Russisch oder Arabisch, das es später wirklich trägt. Verlang Absätze, Wörter oder eine exakte Zeichenzahl, halte das Ergebnis mit einem Startwert fest, damit es identisch wiederkommt, und exportiere als Text, HTML oder Markdown.",
   "label_unit_type": "Einheitstyp",
   "label_count": "Anzahl",
   "label_start_lorem": "Mit „Lorem ipsum\" beginnen",
   "button_generate": "Generieren",
   "label_output": "Generierter Text",
   "label_words": "Wörter",
-  "message_empty": "Auf Generieren klicken, um Lorem-Ipsum-Text zu erzeugen.",
+  "message_empty": "Auf Generieren drücken, um Blindtext zu erzeugen.",
   "label_total_words": "Wörter gesamt",
   "message_copied": "Kopiert!",
   "button_copy": "Kopieren",
   "button_download": ".txt herunterladen",
   "button_reset": "Zurücksetzen",
-  "seoBrowserSpeedTitle": "Sofortige Lokale Verarbeitung",
-  "seoBrowserSpeedText": "Die gesamte Verarbeitung erfolgt in Ihrem Browser über native JavaScript-APIs. Es werden keine Daten an einen Server gesendet.",
-  "seoUseCaseTitle": "100% Clientseitig",
-  "seoUseCaseText": "Alles läuft lokal in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät.",
+  "seoBrowserSpeedTitle": "Lateinischer Blindtext versteckt echte Probleme",
+  "seoBrowserSpeedText": "Japanisch und Chinesisch brechen Zeilen zwischen Zeichen statt zwischen Wörtern, Arabisch läuft von rechts nach links und verbindet seine Buchstaben, Hindi stapelt Zeichen über der Linie, und russische Wörter sind schlicht länger. Ein Layout, das voller Lorem ipsum gut aussieht, kann an jedem davon scheitern — deshalb ist der Blindtext hier in der Schrift geschrieben, die du wirklich ausspielst.",
+  "seoUseCaseTitle": "Entwürfe, Tests und Screenshots",
+  "seoUseCaseText": "Füll eine Karte mit genau den 240 Zeichen, die das Design zulässt, prüfe, ob eine Überschrift die Übersetzung ins Russische überlebt, gib einem Test eine Fixture-Datei, die sich zwischen Läufen nicht ändern darf, oder füg das HTML direkt in ein Template ein, um die echten Tags an Ort und Stelle zu sehen.",
   "seoPrivacyTitle": "100% Privat & Sicher",
   "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
   "seoKeywords": [
-    "lorem flow",
-    "online-tool",
-    "kostenlos",
-    "lokal",
-    "Browser"
+    "lorem ipsum generator",
+    "blindtext",
+    "blindtext japanisch",
+    "blindtext arabisch",
+    "lorem ipsum mit startwert",
+    "lorem ipsum html"
   ],
   "faqTitle": "Häufig Gestellte Fragen",
   "faq": [
     {
       "question": "Werden meine Daten an einen Server gesendet?",
-      "answer": "Nein. Alle Vorgänge erfolgen vollständig in Ihrem Browser. Ihre Daten verlassen niemals Ihr Gerät."
+      "answer": "Nein. Die Wortlisten kommen mit der Seite, und der Text wird in deinem Browser gebaut. Es wird nichts geladen, hochgeladen oder gespeichert."
     },
     {
-      "question": "Kann ich wählen, wie viel Text LoremFlow generiert?",
-      "answer": "Ja. Sie können zwischen 1 und 100 Einheiten generieren und wählen, ob jede Einheit ein Absatz, ein Satz oder ein einzelnes Wort ist, und optional mit dem klassischen Lorem-ipsum-Einstieg beginnen."
+      "question": "Warum andere Schriften als Latein?",
+      "answer": "Weil sich ein Layout nur an dem Text beweist, den es wirklich tragen wird. Japanisch und Chinesisch brechen zwischen Zeichen, Arabisch läuft von rechts nach links, Hindi setzt Zeichen über die Linie, und russische Wörter sind länger als englische. Lorem ipsum versteckt alle vier Probleme."
     },
     {
-      "question": "Kann ich den generierten Text als Datei herunterladen?",
-      "answer": "Ja. Klicken Sie nach dem Generieren auf .txt herunterladen, um die Ausgabe als Klartextdatei zu speichern, die Sie in Ihre Designs oder Mockups einfügen können."
+      "question": "Wofür ist der Startwert?",
+      "answer": "Er macht die Ausgabe wiederholbar. Mit einem Startwert liefern dieselben Einstellungen immer exakt denselben Text — genau das, was man für einen eventuell zu wiederholenden Screenshot oder eine Testfixture braucht, die zwischen Läufen nicht driften darf."
+    },
+    {
+      "question": "Bekomme ich wirklich die exakte Wortzahl?",
+      "answer": "Ja. Wörter und Zeichen werden auf die eingegebene Zahl gekürzt statt auf das Satzende aufgerundet, und das abschließende Komma wird entfernt, damit das Ergebnis weiterhin als Satz lesbar bleibt."
+    },
+    {
+      "question": "Geht auch HTML statt reinem Text?",
+      "answer": "Ja — HTML mit echten p-, h2-, h3- und ul-Tags oder Markdown mit derselben Struktur. Schalte Überschriften und Listen ein, und du bekommst einen artikelförmigen Entwurf statt eines grauen Blocks. Arabische Ausgabe trägt dir=\"rtl\", damit die Richtung das Einfügen überlebt."
     }
   ],
-  "footerTagline": "Lorem-Ipsum-Platzhaltertext nach Absätzen, Sätzen oder Wörtern generieren 100% lokal in Ihrem Browser.",
+  "footerTagline": "Blindtext in acht Schriften, mit exakten Mengen, einem Startwert für wiederholbare Ausgabe und HTML- oder Markdown-Export.",
   "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
-  "contactForIdeas": "Kontakt für Ideen und Kommentare:"
+  "contactForIdeas": "Kontakt für Ideen und Kommentare:",
+  "heroBadge": "Läuft in deinem Browser",
+  "heroSecondary": "So funktioniert es",
+  "label_script": "Schrift",
+  "label_format": "Format",
+  "label_seed": "Startwert (optional)",
+  "seedPlaceholder": "leer = jedes Mal neu",
+  "newSeed": "Neuer Startwert",
+  "label_rich": "Überschriften und Listen einfügen",
+  "unit_paragraphs": "Absätze",
+  "unit_sentences": "Sätze",
+  "unit_words": "Wörter",
+  "unit_characters": "Zeichen",
+  "format_text": "Reiner Text",
+  "statsLine": "{w} Wörter · {c} Zeichen · {p} Absätze",
+  "howTitle": "So funktioniert es",
+  "step1Title": "Schrift wählen",
+  "step1Text": "Latein, Spanisch, Japanisch, Chinesisch, Russisch, Hindi, Griechisch oder Arabisch — echte Wörter, kein Maschinenrauschen.",
+  "step2Title": "Sag wie viel",
+  "step2Text": "Absätze, Sätze, Wörter oder eine exakte Zeichenzahl — genau das, was ein Design-Briefing meist vorgibt.",
+  "step3Title": "Mit einem Startwert festhalten",
+  "step3Text": "Tipp einen beliebigen Startwert und derselbe Text kommt jedes Mal zurück, damit ein Screenshot reproduzierbar wird.",
+  "step4Title": "Nimm es so, wie du es brauchst",
+  "step4Text": "Reiner Text, HTML mit echten Tags oder Markdown — kopieren oder als Datei herunterladen.",
+  "featuresTitle": "Was es wirklich kann",
+  "feat1Title": "Acht Schriften, nicht eine",
+  "feat1Text": "Ein lateinischer Block sagt nichts darüber, wie ein Layout mit Japanisch oder Arabisch zurechtkommt. Hier testest du mit dem echten Material.",
+  "feat2Title": "Rechts-nach-links inklusive",
+  "feat2Text": "Arabische Ausgabe wird als RTL markiert, im Feld und im exportierten HTML, damit die Leserichtung Teil des Tests ist.",
+  "feat3Title": "Wiederholbare Ausgabe",
+  "feat3Text": "Ein Startwert macht den Text deterministisch: derselbe Startwert liefert Byte für Byte dieselben Absätze.",
+  "feat4Title": "Exakte Mengen",
+  "feat4Text": "Verlang 240 Zeichen oder 75 Wörter, und genau das kommt heraus — sauber gekürzt statt auf den nächsten Satz aufgerundet.",
+  "feat5Title": "Text, HTML, Markdown",
+  "feat5Text": "Mit optionalen Überschriften und Listen, damit du einen ganzen Artikel entwerfen kannst, nicht nur einen grauen Block.",
+  "feat6Title": "Verlässt die Seite nie",
+  "feat6Text": "Im Browser aus einer eingebauten Wortliste erzeugt. Es wird nichts geladen und nichts hochgeladen.",
+  "scrollTop": "Nach oben"
 };

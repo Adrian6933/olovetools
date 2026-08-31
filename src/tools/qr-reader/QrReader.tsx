@@ -44,7 +44,7 @@ import { legalTranslations } from '../../locales/legal';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 import { useHandoffIntake } from '../../lib/useHandoff';
-import { createTicker, type Ticker } from './lib/ticker';
+import { createTicker, type Ticker } from '../../lib/ticker';
 import {
   decodeFile,
   decodeImageData,

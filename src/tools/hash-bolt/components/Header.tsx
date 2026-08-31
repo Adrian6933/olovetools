@@ -1,6 +1,6 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { Lock } from 'lucide-react';
+import { Hash } from 'lucide-react';
 
 interface HeaderProps {
   currentLang: string;
@@ -20,7 +20,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <header className="w-full h-auto md:h-24 py-4 md:py-0 border-b border-white/10 bg-[#020813]/95 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
         <div className="max-w-7xl mx-auto h-full px-4 md:px-12 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <div className="flex items-center justify-between w-full md:w-auto space-x-4 md:space-x-12">
+          <div className="flex min-w-0 items-center justify-between w-full md:w-auto space-x-3 md:space-x-12">
             {/* oLoveTools Branding */}
             <a 
               href={`/${currentLang.toLowerCase()}`}
@@ -40,12 +40,12 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             {/* Current App Link */}
             <button 
               onClick={onReset}
-              className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
+              className="flex min-w-0 items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
             >
-              <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-sky-500/20 group-hover:border-sky-500/50 transition-all">
-                <Lock className="w-5 h-5 text-sky-500" />
+              <div className="w-8 h-8 md:w-9 md:h-9 shrink-0 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-sky-500/20 group-hover:border-sky-500/50 transition-all">
+                <Hash className="w-5 h-5 text-sky-400" />
               </div>
-              <span className="text-xl md:text-2xl font-black text-white tracking-tight group-hover:text-sky-500 transition-all">
+              <span className="text-xl md:text-2xl font-black text-white tracking-tight truncate group-hover:text-sky-400 transition-all">
                 {t.title}
               </span>
             </button>

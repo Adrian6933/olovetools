@@ -47,25 +47,29 @@ export default {
   "watermarkLabel": "基于 oLoveTools.com 制作",
   "features": [
     {
-      "title": "高 DPI 输出缩放",
-      "text": "支持导出 1x、2x 或 4x 比例的图片，确保您的代码截图在 Twitter、LinkedIn 和博客中看起来极其清晰。"
+      "title": "真正的语法高亮，48 种语言",
+      "text": "高亮读取 Prism 的原始词法流，因此 JavaScript、Rust、Zig、Terraform、Dockerfile 以及另外 43 种语言都能得到正确配色 — 而且只下载你选中的那套语法。"
     },
     {
-      "title": "100% 浏览器本地隐私保护",
-      "text": "您的代码片段完全在您的浏览器中进行高亮和渲染处理。没有任何内容会被发送到任何服务器。"
+      "title": "突出真正重要的行",
+      "text": "点击行号即可高亮该行并让其余变暗。Shift+点击选择范围，Alt+点击反转整个选区，右键清除。"
     },
     {
-      "title": "主流语言语法支持",
-      "text": "全面支持主流编程语言，包括 JavaScript, TypeScript, Python, HTML, CSS, Rust, Go, SQL 和 Markdown。"
+      "title": "不会被裁掉任何内容的导出",
+      "text": "截图前会按完整宽度测量卡片，所以长行能完整保留，而不是在预览边缘被切断。支持 PNG、JPEG、WebP 或矢量 SVG，最高 4 倍。"
+    },
+    {
+      "title": "本地运行，而且真的能离线",
+      "text": "字体和语法都由本站提供，不走第三方 CDN。页面加载完成后，断网也能高亮和导出。"
     }
   ],
   "footerCredit": "oLoveTools 系列工具之一",
   "seoHeroTitle": "在线创建精美的代码屏幕截图图片",
   "seoHeroText": "在社交媒体或演示文稿中分享纯文本代码片段通常比较枯燥。CodeCard 可以立即将您的源代码转换为高颜值的卡片。通过控制边距、阴影、字体和窗口样式，让图片完美契合您的个人品牌。",
   "seoHeroList": [
-    "支持高分辨率 PNG, JPEG 和 SVG 格式导出",
-    "支持离线使用，安全且高度保护隐私",
-    "完全免费，无强制性水印"
+    "PNG、JPEG、WebP 和矢量 SVG，最高 4 倍",
+    "字体与语法自托管，可离线使用",
+    "无需账号，水印默认关闭"
   ],
   "seoBrowserSpeedTitle": "快速安全的本地渲染",
   "seoBrowserSpeedText": "CodeCard 完全运行在您的浏览器中，使用客户端渲染技术，代码和图片绝不会离开您的计算机。",
@@ -86,20 +90,28 @@ export default {
   "faqTitle": "常见问题解答",
   "faq": [
     {
-      "question": "如何获取最清晰的代码截图？",
-      "answer": "我们建议在“导出”选项卡中选择 2x 或 4x 分辨率缩放。这可以确保生成的 PNG 或 JPEG 图片拥有足够的像素密度，在 Retina 高分屏上也能保持细腻。"
+      "question": "为什么在别的工具里我的长行会被截断?",
+      "answer": "因为大多数工具是按当前排版原样截取 DOM 的，而带横向滚动条的代码块只会排版可见的那一段。CodeCard 在截图前会按完整的、未被裁切的宽度测量卡片。"
     },
     {
-      "question": "我可以离线使用 CodeCard 吗？",
-      "answer": "可以！因为 CodeCard 是 100% 客户端运行的，网页加载完毕后，即使断开网络连接，所有的转换、高亮和下载也能正常工作。"
+      "question": "怎么高亮指定的行?",
+      "answer": "在预览中点击行号即可高亮该行并让其余变暗。Shift+点击扩展范围，Alt+点击反转整个选区，右键清除。你也可以直接输入 3, 7-9, 12 这样的范围。"
     },
     {
-      "question": "我的代码安全吗？",
-      "answer": "绝对安全。您的代码永远不会通过网络传输或保存在我们的服务器上。整个生成过程完全在您的本地电脑上运行。"
+      "question": "支持哪些语言?",
+      "answer": "48 种，包括 JavaScript、TypeScript、JSX/TSX、Python、Rust、Go、Zig、C、C++、C#、Java、Kotlin、Swift、Ruby、PHP、SQL、YAML、TOML、Terraform、Dockerfile、Bash、PowerShell、Markdown 和 unified diff。只会下载你选中语言的那套语法。"
     },
     {
-      "question": "它支持哪些代码主题？",
-      "answer": "我们支持标准暗黑主题（例如 One Dark, Dracula, VS Code, Night Owl）以及亮色主题（GitHub Light），满足不同开发者的审美习惯。"
+      "question": "CodeCard 可以离线使用吗?",
+      "answer": "可以。等宽字体和语法都由本站提供，而不是第三方 CDN，所以页面加载完成后，即使断网也能继续高亮和导出。"
+    },
+    {
+      "question": "我的代码安全吗?",
+      "answer": "你的代码不会被传输到任何地方。高亮、排版和图像渲染全部在你的浏览器里完成，不上传也不记录。"
+    },
+    {
+      "question": "哪个导出设置最清晰?",
+      "answer": "位图用途选 PNG 的 3 倍或 4 倍。如果目标支持矢量，请选 SVG：任意尺寸都清晰，而且通常比 4 倍 PNG 更小。"
     }
   ],
   "footerTagline": "免费、时尚的代码截图生成器，100% 本地在您的设备上运行。",
@@ -112,5 +124,98 @@ export default {
   "privacyContent": "您的隐私对我们至关重要。\n\n所有的代码高亮与图片生成均在本地进行。我们绝不收集、记录或上传任何文本数据。\n\n您的代码完全属于您。",
   "termsContent": "使用 CodeCard 即代表您同意以下条款：\n\n1. 本工具按“原样”提供，不作任何保证。\n2. 我们不对任何渲染问题或下载错误负责。\n3. 您应自行负责确保代码中不包含敏感凭证。\n4. 我们保留随时修改这些条款的权利。",
   "cookiesContent": "我们使用 Cookie 来提升您的体验。\n\n1. 维持基础性能所必需的 Cookie。\n2. 记住您所选语言的偏好 Cookie。\n\n您可以在浏览器设置中禁用 Cookie。",
-  "contact": "联系我们"
+  "contact": "联系我们",
+  "heroBadge": "代码截图工作室",
+  "heroChipLanguages": "48 种语言",
+  "heroChipLocal": "在你的浏览器中运行",
+  "heroChipNoAccount": "无需账号，无需上传",
+  "previewTitle": "实时预览",
+  "privacyNote": "高亮在你的浏览器内完成，代码不会离开本设备。",
+  "dropTitle": "将文件拖到这里",
+  "dropHint": "把源码文件拖到这里，或直接粘贴代码。",
+  "dropBrowse": "打开文件",
+  "startBlank": "从空白开始",
+  "pendingLines": "行",
+  "pendingLoad": "载入编辑器",
+  "pendingLoadRaw": "载入但不自动判别",
+  "pendingDiscard": "丢弃",
+  "pendingBig": "文件较大：输入时高亮可能会变慢。",
+  "labelStartLine": "起始行号",
+  "labelHighlightLines": "高亮的行",
+  "highlightHint": "也可以点击预览中的行号。Shift+点击选择范围，Alt+点击反选，右键清除。",
+  "highlightPlaceholder": "例如 3, 7-9, 12",
+  "clearHighlights": "清除",
+  "labelDimOthers": "让其他行变暗",
+  "labelBgMode": "背景",
+  "bgModeGradient": "渐变",
+  "bgModeSolid": "纯色",
+  "bgModeNone": "无",
+  "labelBgColor": "背景颜色",
+  "labelFontFamily": "字体",
+  "fontIbmPlex": "IBM Plex Mono",
+  "fontSystem": "系统等宽字体",
+  "labelLineHeight": "行高",
+  "labelAspect": "宽高比",
+  "aspectAuto": "自动",
+  "aspectSquare": "正方形",
+  "aspectWide": "宽屏",
+  "aspectSocial": "社交媒体",
+  "aspectPortrait": "竖版",
+  "windowMacDesc": "macOS 的三个圆点",
+  "windowWindowsDesc": "最小化、最大化、关闭",
+  "windowSimpleDesc": "单个高亮标记",
+  "windowNoneDesc": "完全不要标题栏",
+  "labelWordWrap": "长行自动换行",
+  "wordWrapHint": "关闭时，卡片宽度会扩展到最长的一行。",
+  "labelLigatures": "字体连字",
+  "ligaturesHint": "把 => 和 !== 合并为单个字形。",
+  "watermarkHint": "默认关闭。除非你选择，否则不会在图像上添加任何标记。",
+  "labelCardWidth": "卡片宽度",
+  "labelTabSize": "制表符宽度",
+  "labelFormat": "格式",
+  "labelQuality": "质量",
+  "btnDownload": "下载",
+  "btnCopy": "复制图像",
+  "copyOk": "已复制",
+  "copyFail": "浏览器阻止了剪贴板访问，请改为下载。",
+  "presetsTitle": "已保存的样式",
+  "presetSave": "保存当前",
+  "presetEmpty": "还没有保存任何样式。预设只留在这个浏览器里。",
+  "presetDelete": "删除预设",
+  "undo": "撤销",
+  "redo": "重做",
+  "zoomIn": "放大",
+  "zoomOut": "缩小",
+  "zoomFit": "重置视图",
+  "compareHold": "按住可查看未着色的代码",
+  "backToTop": "回到顶部",
+  "statusExporting": "正在生成图像...",
+  "statusGrammar": "正在加载语法...",
+  "errorGrammar": "无法加载语法，代码将以纯文本显示。",
+  "errorTooBig": "该文件超过 4 MB。",
+  "howTitle": "工作原理",
+  "howStep1Title": "粘贴或拖入代码",
+  "howStep1Text": "直接输入、粘贴，或拖入源码文件。拖入的文件会先等待：显示大小和行数，按下按钮前不会加载。",
+  "howStep2Title": "设置样式并选出关键行",
+  "howStep2Text": "十种主题、九种渐变或自定义颜色、五种窗口外框。点击行号即可突出该行并让其余变暗。",
+  "howStep3Title": "导出或转给下一个工具",
+  "howStep3Text": "支持 PNG、JPEG、WebP 和矢量 SVG，最高 4 倍。可直接复制到剪贴板，也可不下载就转给 CompressSnap、CropSnap 或 WatermarkSnap。",
+  "seoEngineTitle": "基于 Prism 的词法流构建",
+  "seoEngineText": "CodeCard 不索取现成的 HTML，而是读取原始词法流并逐行重建代码。正因如此才能做到精确行号、逐行高亮、悬挂缩进换行，以及不被裁切的导出。",
+  "nextStepTitle": "继续",
+  "nextStepHint": "图像随你转移，无需重新上传",
+  "nextCompress": "压缩",
+  "nextCrop": "裁剪",
+  "nextFormat": "转换格式",
+  "nextWatermark": "添加水印",
+  "nextMeme": "做成表情包",
+  "groupWeb": "Web",
+  "groupSystems": "系统",
+  "groupApps": "应用",
+  "groupData": "数据与配置",
+  "groupOps": "Shell 与运维",
+  "groupText": "文本与差异",
+  "gradientCandy": "糖果粉",
+  "gradientMono": "石墨灰",
+  "gradientPeach": "柔和蜜桃",
 };

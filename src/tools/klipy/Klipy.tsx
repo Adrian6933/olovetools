@@ -7,6 +7,11 @@ import {
   Download, ChevronRight, CloudDownload, Trash2,
 } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
+import { AdBanner } from '../../components/shared/AdBanner';
+import {
+  HeroArt, IconBrowse, IconHandoff, IconLive, IconNetwork, IconRemembered, IconStar,
+  StepSearch, StepSend, StepStar, StepWatch,
+} from './components/Illustrations';
 import { searchCategories, getClips, getLivestreams, KCategory, KItem } from './services/kickService';
 import { motion } from 'framer-motion';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
@@ -17,6 +22,7 @@ interface KlipyProps {
 }
 
 const KICK = '#53fc18';
+const SAVED_KEY = 'klipy-saved-v1';
 const TIMES = ['day', 'week', 'month'] as const;
 
 const formatViews = (n: number) => {
@@ -39,7 +45,32 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
   const [loading, setLoading] = useState(true);
   const [liveFallback, setLiveFallback] = useState(false);
   const [playing, setPlaying] = useState<KItem | null>(null);
+  // Starred clips used to live only in component state, so a reload threw the
+  // whole list away. They are kept in this browser now.
   const [saved, setSaved] = useState<KItem[]>([]);
+  const [savedLoaded, setSavedLoaded] = useState(false);
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SAVED_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) setSaved(parsed.filter((x: any) => x && typeof x.id === 'string'));
+      }
+    } catch {
+      // Private mode or a corrupted value; starting empty is fine.
+    }
+    setSavedLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!savedLoaded) return;
+    try {
+      localStorage.setItem(SAVED_KEY, JSON.stringify(saved));
+    } catch {
+      // Storage refused; the session still works, it just will not come back.
+    }
+  }, [saved, savedLoaded]);
   const searchTimer = useRef<number | null>(null);
 
   const L = {
@@ -114,32 +145,41 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
   const exportTxt = () => {
     if (saved.length === 0) return;
     const blob = new Blob([saved.map((s) => s.url).join('\n')], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
+    a.href = url;
     a.download = 'klipy-clips.txt';
+    document.body.appendChild(a);
     a.click();
-    URL.revokeObjectURL(a.href);
+    a.remove();
+    // Revoked on a timer: Safari cancels an in-flight download when the URL
+    // disappears in the same tick, which is what the old code did.
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
   };
 
   const sendToKickbolt = () => {
     const clipUrls = saved.filter((s) => s.kind === 'clip').map((s) => s.url);
     if (clipUrls.length === 0) return;
     localStorage.setItem('kickbolt_shared_clips', clipUrls.join('\n'));
-    window.location.href = `/${lang}/kickbolt`;
+    window.location.href = `/${lang.toLowerCase()}/kickbolt`;
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#070908] text-slate-100 font-sans relative overflow-x-hidden pt-24">
+    <div className="min-h-screen flex flex-col bg-[#070908] text-slate-100 font-sans relative overflow-x-hidden pt-36 md:pt-24">
       <div className="absolute top-[-10%] left-[15%] w-[600px] h-[600px] rounded-full blur-[150px] pointer-events-none z-0" style={{ background: 'rgba(83,252,24,0.08)' }} />
 
       <Header
         currentLang={lang}
         onLanguageChange={(l) => (window.location.href = `/${l.toLowerCase()}/klipy`)}
-        onReset={backToCategories}
         t={t}
       />
 
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 md:px-8 py-8 relative z-10 flex flex-col space-y-8">
+      {/* The max width lives on <main>: AdRail measures this element to decide
+          whether the fixed side rails fit. At max-w-7xl the gap was 60px at
+          1400px wide, so the rails were silently suppressed on the most common
+          desktop size. */}
+      <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col space-y-8">
+        <AdBanner id="adsense-klipy-top" />
         {/* Hero + search */}
         <div className="text-center space-y-5">
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white flex items-center justify-center gap-3">
@@ -147,6 +187,7 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
             <span>{L.title}</span>
           </h1>
           <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto">{L.subtitle}</p>
+          <HeroArt className="w-full max-w-md mx-auto h-auto" />
           <div className="relative max-w-xl mx-auto">
             <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
             <input
@@ -281,7 +322,82 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
             )}
           </section>
         )}
+        <AdBanner id="adsense-klipy-mid" />
+
+        {/* How it works ---------------------------------------------------- */}
+        <section id="how-it-works" className="space-y-8 pt-4 scroll-mt-28">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t.howTitle || 'How it works'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { art: StepSearch, title: t.step1Title || 'Find a category', text: t.step1Text || 'Search any Kick category, or browse the ones with the most going on right now.' },
+              { art: StepWatch, title: t.step2Title || 'Watch without leaving', text: t.step2Text || 'Clips play inline and live channels open in an embedded player.' },
+              { art: StepStar, title: t.step3Title || 'Star what you like', text: t.step3Text || 'Your starred list is kept in this browser, so it is still there tomorrow.' },
+              { art: StepSend, title: t.step4Title || 'Send it to Kickbolt', text: t.step4Text || 'Hand the whole list over to the downloader in one click, or export it as a text file.' },
+            ].map((step, i) => (
+              <div key={i} className="glass-card rounded-2xl p-4 space-y-3">
+                <step.art />
+                <div className="space-y-1.5">
+                  <h3 className="text-sm font-black text-white flex items-center gap-2">
+                    <span className="w-5 h-5 rounded-md text-[11px] font-black flex items-center justify-center shrink-0" style={{ background: 'rgba(83,252,24,0.15)', color: KICK }}>
+                      {i + 1}
+                    </span>
+                    {step.title}
+                  </h3>
+                  <p className="text-xs text-slate-400 leading-relaxed">{step.text}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Features -------------------------------------------------------- */}
+        <section className="space-y-8">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t.featuresTitle || 'What it actually does'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: IconBrowse, title: t.feat1Title || 'Browse by category', text: t.feat1Text || 'Every Kick category, searchable, with the clips and channels underneath each one.' },
+              { icon: IconLive, title: t.feat2Title || 'Clips and live, together', text: t.feat2Text || 'Recorded clips and channels that are streaming right now, in the same grid.' },
+              { icon: IconStar, title: t.feat3Title || 'A shortlist you build', text: t.feat3Text || 'Star anything worth keeping and the list follows you around the tool.' },
+              { icon: IconRemembered, title: t.feat4Title || 'Remembered on reload', text: t.feat4Text || 'The starred list is stored in your browser instead of vanishing when the page reloads.' },
+              { icon: IconHandoff, title: t.feat5Title || 'Straight into Kickbolt', text: t.feat5Text || 'Send every starred clip to the downloader at once, without copying links by hand.' },
+              { icon: IconNetwork, title: t.feat6Title || 'Honest about the network', text: t.feat6Text || 'Browsing Kick needs Kick. The queries go through this site to Kick and nothing about you is stored.' },
+            ].map((f, i) => (
+              <div key={i} className="glass-card rounded-2xl p-5 space-y-3">
+                <div className="w-10 h-10"><f.icon /></div>
+                <h3 className="text-sm font-black text-white">{f.title}</h3>
+                <p className="text-xs text-slate-400 leading-relaxed">{f.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ ------------------------------------------------------------- */}
+        {Array.isArray(t.faq) && t.faq.length > 0 && (
+          <section className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+              {t.faqTitle || 'Frequently Asked Questions'}
+            </h2>
+            <div className="space-y-3 max-w-3xl mx-auto w-full">
+              {t.faq.map((item: any, i: number) => (
+                <details key={i} className="group glass-card rounded-2xl overflow-hidden">
+                  <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-sm font-bold text-white transition-colors hover:opacity-80">
+                    <span>{item.question}</span>
+                    <span className="text-lg leading-none shrink-0 transition-transform group-open:rotate-45" style={{ color: KICK }}>+</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-slate-400 leading-relaxed">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <AdBanner id="adsense-klipy-bottom" />
       </main>
+
 
       {/* Player modal */}
       {playing && (

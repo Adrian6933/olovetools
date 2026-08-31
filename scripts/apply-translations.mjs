@@ -9,7 +9,7 @@
  * Formato del JSON de entrada:
  * {
  *   "es": {
- *     "passbolt":  { "footerCredit": "Parte de la suite oLoveTools" },
+ *     "entropy-bolt":  { "footerCredit": "Parte de la suite oLoveTools" },
  *     "*":         { "footerCredit": "Parte de la suite oLoveTools" }
  *   },
  *   "fr": { ... }

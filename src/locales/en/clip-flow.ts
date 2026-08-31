@@ -4,28 +4,49 @@ export default {
   "seo_description": "Paste a Twitch VOD or live channel, mark as many cuts as you want on a full timeline, and export each one — or all of them joined — as MP4. No 60-second limit, 100% in your browser.",
   "seoHeroTitle": "Cut Twitch VODs Into Multi-Part MP4 Clips",
   "seoHeroText": "Paste a Twitch VOD or live channel link, scrub a full-length timeline, and mark as many cuts as you want — minute 1 to 2, then skip ahead to minute 5 to 7. Download each cut separately or join them all into a single MP4. No 60-second Twitch clip limit.",
-  "seoBrowserSpeedTitle": "Instant Local Processing",
-  "seoBrowserSpeedText": "Cutting and joining happen with a video engine running inside your browser tab. Nothing is uploaded to any server — your clips never leave your device.",
+  "seoBrowserSpeedTitle": "Cutting is local, downloading is not",
+  "seoBrowserSpeedText": "A video engine runs inside your browser tab and does all the cutting and joining there, with a stream copy rather than a re-encode. Getting the video in is the part that cannot be local: Twitch's segment CDN sends no CORS headers, so the browser is not allowed to fetch it directly and the segments come through a relay instead.",
   "seoUseCaseTitle": "Multi-Cut Highlight Reels",
   "seoUseCaseText": "Perfect for building highlight reels from long VODs: mark every good moment across a multi-hour broadcast and export them as one continuous MP4, or grab each moment on its own.",
-  "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "Video data is streamed directly from Twitch's own servers to your browser. All cutting, trimming and joining happens locally on your device — nothing is ever uploaded anywhere.",
-  "seoKeywords": ["twitch clip maker", "twitch vod cutter", "twitch clip longer than 60 seconds", "vod to mp4", "twitch highlight maker", "cut twitch vod", "twitch video editor online"],
+  "seoPrivacyTitle": "What leaves your machine, and what does not",
+  "seoPrivacyText": "Be aware that the video segments are relayed rather than fetched straight from Twitch, because its CDN refuses cross-origin requests. By default they pass through this site's own endpoint; if that fails, the tool falls back to public third-party proxies, and those operators can see which video is being requested. You can switch that fallback off in the tool. What never leaves your device is the result: cutting, trimming and joining all run in the browser, and the exported file is written straight to your downloads.",
+  "seoKeywords": [
+    "twitch clip maker",
+    "twitch vod cutter",
+    "twitch clip longer than 60 seconds",
+    "vod to mp4",
+    "twitch highlight maker",
+    "cut twitch vod",
+    "twitch video editor online"
+  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
-    { "question": "Can I make clips longer than Twitch's 60-second limit?", "answer": "Yes. ClipFlow has no length limit — mark cuts of any duration, from a few seconds to a full hour." },
-    { "question": "Is my data sent to any server?", "answer": "No. Video data streams straight from Twitch to your browser, and all cutting and exporting happens locally on your device." },
-    { "question": "Why are cuts not frame-perfect?", "answer": "To keep exports fast and lossless, ClipFlow trims to the nearest keyframe (about 2 seconds of accuracy) instead of re-encoding the whole video." },
-    { "question": "Does this work on live streams?", "answer": "Yes. Paste a live channel and ClipFlow loads its currently-recording broadcast, which keeps growing while the streamer is live." },
-    { "question": "Why did my export fail?", "answer": "This is usually a temporary network hiccup while downloading video data, or the video engine failing to load. Try again, or use the raw .ts fallback download." },
-    { "question": "Can I download multiple cuts at once?", "answer": "Yes. Download each cut individually, or use 'Download all joined' to get every cut combined into a single MP4, in the order you arranged them." }
+    {
+      "question": "Does my video get uploaded anywhere?",
+      "answer": "The file you export never leaves your device: cutting and joining run in the browser and the result is written straight to your downloads. Getting the video in is different — Twitch's segment CDN refuses cross-origin requests, so the segments are relayed, by default through this site's own endpoint and otherwise through public proxies. The tool names the relay it used and lets you switch the third-party fallback off."
+    },
+    {
+      "question": "Why is there no 60-second limit?",
+      "answer": "That limit belongs to Twitch's own clip feature. This tool reads the VOD's own segments and cuts the range you mark, so the length is whatever you choose."
+    },
+    {
+      "question": "Does exporting lose quality?",
+      "answer": "No. ffmpeg runs with -c copy, which copies the existing video and audio streams instead of re-encoding them. That also makes the export much faster than a re-encode would be."
+    },
+    {
+      "question": "Why does a VOD sometimes fail to load?",
+      "answer": "Subscriber-only VODs are refused by Twitch itself and cannot be opened without being logged in. Otherwise it is usually the relay: if you have turned off third-party proxies and this site's own endpoint is unavailable, there is no route left. Turning the fallback back on normally fixes it."
+    },
+    {
+      "question": "Do I need to install anything?",
+      "answer": "No, but the video engine is a WebAssembly build of ffmpeg that the page downloads from a public CDN the first time you export. It is fetched once and then cached by the browser; after that everything runs locally."
+    }
   ],
   "footerTagline": "Cut multiple clips of any length from Twitch VODs and live streams and export them as MP4, 100% in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
   "contactForIdeas": "Contact for ideas and comments:",
-
   "inputTitle": "Paste a Twitch VOD or channel",
   "inputPlaceholder": "twitch.tv/videos/123456789 or channel name",
   "inputButton": "Load video",
@@ -36,23 +57,18 @@ export default {
   "featureCutText": "Mark as many ranges as you want, any length.",
   "featureExportTitle": "3. Export",
   "featureExportText": "Download separately or joined as one MP4.",
-
   "loadingVod": "Fetching VOD info…",
   "loadingPlaylist": "Loading video streams…",
-
   "errorInvalidUrl": "That link doesn't look like a valid Twitch VOD or channel.",
   "errorVodNotFound": "This VOD could not be found. It may have been deleted.",
   "errorChannelNotFound": "Channel not found. Check the spelling and try again.",
   "errorVodsDisabled": "This channel has no VODs available — past broadcasts may be disabled.",
   "errorPlaylist": "Could not load the video stream. Please try again.",
   "errorVodRestricted": "This VOD is subscriber-only or otherwise restricted on Twitch and can't be played without logging in there — not something any downloader tool can bypass.",
-
   "liveBadge": "LIVE — recording still growing",
   "qualityLabel": "Quality",
-
   "timelineTitle": "Timeline",
   "addCut": "Add cut at playhead",
-
   "cutLabel": "Cut",
   "cutsLabel": "cuts",
   "startLabel": "Start",
@@ -64,12 +80,10 @@ export default {
   "moveUp": "Move up",
   "moveDown": "Move down",
   "noCutsYet": "No cuts yet — press \"Add cut\" to mark your first range.",
-
   "downloadCut": "Download MP4",
   "downloadAllJoined": "Download all joined (MP4)",
   "totalLabel": "total",
   "estimatedSize": "est. size",
-
   "loadingEngine": "Loading video engine ({pct}%) — first time only…",
   "downloadingSegments": "Downloading video ({pct}%)…",
   "processingCut": "Converting to MP4…",
@@ -81,5 +95,31 @@ export default {
   "tsFallbackNote": "The .ts file plays in VLC and can be converted later.",
   "precisionNote": "Cuts snap to the nearest keyframe (~2s) to stay lossless.",
   "memoryWarning": "Very long cuts at source quality can exceed browser memory. Consider 720p or shorter cuts.",
-  "overlapHint": "Cuts may overlap; the joined video follows the list order."
+  "overlapHint": "Cuts may overlap; the joined video follows the list order.",
+  "relayTitle": "How the video reaches you",
+  "relayUsed": "last segment via {host}",
+  "relayExplain": "The Twitch video CDN sends no CORS headers, so the browser cannot fetch the segments directly. They are relayed — first through this site's own endpoint, then through public proxies if that fails. The cutting and joining still happen entirely on your device, and nothing you export is uploaded anywhere.",
+  "relayAllowThird": "Allow public third-party proxies as a fallback. Turn this off to use only this site's own relay — more private, but some VODs will fail to load.",
+  "howTitle": "How it works",
+  "step1Title": "Paste a VOD link",
+  "step1Text": "A video URL or a channel name. Pick the quality you want to cut from.",
+  "step2Title": "Mark every cut",
+  "step2Text": "Scrub the full timeline and mark as many pieces as you like.",
+  "step3Title": "The segments are relayed",
+  "step3Text": "Only the download hop leaves your machine, and the tool shows which relay served it.",
+  "step4Title": "Export separately or joined",
+  "step4Text": "Cut with a stream copy, so it is fast and the quality is untouched.",
+  "featuresTitle": "What it actually does",
+  "feat1Title": "Many cuts, one pass",
+  "feat1Text": "Mark minute 1 to 2 and minute 40 to 43 in the same session and export both.",
+  "feat2Title": "No 60-second ceiling",
+  "feat2Text": "Twitch caps its own clips at a minute. Cutting from the VOD does not.",
+  "feat3Title": "Join into one file",
+  "feat3Text": "Every marked piece concatenated into a single MP4, in the order you set.",
+  "feat4Title": "Stream copy, not re-encode",
+  "feat4Text": "ffmpeg runs with -c copy, so the export is quick and the picture matches the source.",
+  "feat5Title": "Honest about the relay",
+  "feat5Text": "The download hop is named in the interface, and the third-party fallback can be switched off.",
+  "feat6Title": "Cutting stays on your device",
+  "feat6Text": "The video engine runs in the tab. What you export is never uploaded anywhere."
 };

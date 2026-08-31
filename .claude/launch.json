@@ -4,22 +4,239 @@
     {
       "name": "olovetools-dev",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "port": 4321,
       "autoPort": true
     },
     {
+      "//": "Segundo servidor de dev en un puerto fijo, para cuando 4321 ya lo ocupa otra sesión: astro elige 4322 por su cuenta y deja de coincidir con el puerto que espera el preview.",
+      "name": "olovetools-dev-alt",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4399"
+      ],
+      "port": 4399
+    },
+    {
+      "//": "Tercer puerto fijo: 4321 y 4399 se ocupan en cuanto hay dos sesiones abiertas a la vez.",
+      "name": "olovetools-dev-alt2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4455"
+      ],
+      "port": 4455
+    },
+    {
+      "//": "Cuarto puerto fijo: con tres sesiones abiertas 4321, 4399 y 4455 ya están cogidos.",
+      "name": "olovetools-dev-alt3",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4477"
+      ],
+      "port": 4477
+    },
+    {
+      "//": "Quinto puerto fijo: con cuatro sesiones abiertas 4321, 4399, 4455 y 4477 ya estan cogidos.",
+      "name": "olovetools-dev-alt4",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4488"
+      ],
+      "port": 4488
+    },
+    {
       "name": "api-server",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "server"],
+      "runtimeArgs": [
+        "run",
+        "server"
+      ],
       "port": 8787
     },
     {
       "name": "olovetools-prod-preview",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "preview"],
+      "runtimeArgs": [
+        "run",
+        "preview"
+      ],
       "port": 4321,
       "autoPort": true
+    },
+    {
+      "//": "Puerto libre para la sesion de html-sanitizer: 4321, 4399, 4455 y 4477 ya estaban ocupados por otras sesiones.",
+      "name": "olovetools-dev-hs",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4491"
+      ],
+      "port": 4491
+    },
+    {
+      "//": "Puerto libre para la sesion de xml-json: 4321, 4399, 4455, 4477, 4488 y 4491 ya estaban asignados.",
+      "name": "olovetools-dev-xj",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4493"
+      ],
+      "port": 4493
+    },
+    {
+      "//": "Puerto libre para la sesion de sql-flow: 4321, 4399, 4455, 4477, 4488, 4491 y 4493 ya estaban asignados.",
+      "name": "olovetools-dev-sf",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4495"
+      ],
+      "port": 4495
+    },
+    {
+      "//": "Puerto libre para la sesion de cron-flow: 4321, 4399, 4455, 4477, 4488, 4491, 4493 y 4495 ya estaban asignados.",
+      "name": "olovetools-dev-cf",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4497"
+      ],
+      "port": 4497
+    },
+    {
+      "//": "Puerto libre para la sesion de unitflow: 4321 estaba caido y 4493 pertenece a otra sesion.",
+      "name": "olovetools-dev-unitflow",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4494"
+      ],
+      "port": 4494
+    },
+    {
+      "//": "Puerto libre para la sesion de formatflow.",
+      "name": "olovetools-dev-ff",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4496"
+      ],
+      "port": 4496
+    },
+    {
+      "//": "Puerto libre para la sesion de codecard.",
+      "name": "olovetools-dev-codecard",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4498"
+      ],
+      "port": 4498
+    },
+    {
+      "//": "Puerto libre para la sesion de whiteboard-flow.",
+      "name": "olovetools-dev-wb",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4499"
+      ],
+      "port": 4499
+    },
+    {
+      "//": "Puerto libre para esta sesion de whiteboard-flow: 4499 lo ocupa otra sesion.",
+      "name": "olovetools-dev-wb2",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4501"
+      ],
+      "port": 4501
+    },
+    {
+      "//": "Puerto libre para esta sesion de whiteboard-flow: 4499 lo ocupa otra sesion.",
+      "name": "olovetools-dev-klipy",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4503"
+      ],
+      "port": 4503
+    },
+    {
+      "//": "Puerto libre para esta sesion de whiteboard-flow: 4499 lo ocupa otra sesion.",
+      "name": "olovetools-dev-kb",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4505"
+      ],
+      "port": 4505
+    },
+    {
+      "//": "Puerto libre para esta sesion de whiteboard-flow: 4499 lo ocupa otra sesion.",
+      "name": "olovetools-dev-eb",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "4507"
+      ],
+      "port": 4507
     }
   ]
 }

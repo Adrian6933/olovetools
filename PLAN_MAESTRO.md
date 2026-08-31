@@ -106,7 +106,7 @@ Herramientas ya disponibles:
   NO cubre `src/locales/dictionary.ts` (1.408 líneas, textos de navegación por idioma) — se
   revisa a mano una vez en la sesión 1.A.
 - **`node scripts/apply-translations.mjs <archivo.json> [--dry]`** — aplica traducciones en masa.
-  Formato `{"es": {"passbolt": {"clave": "valor"}}}`. Herramienta `"*"` = aplicar a todos los archivos
+  Formato `{"es": {"entropy-bolt": {"clave": "valor"}}}`. Herramienta `"*"` = aplicar a todos los archivos
   del idioma donde la clave siga idéntica al inglés (ideal para `footerCredit` y similares).
   Crea claves faltantes (rutas anidadas con puntos: `faq.1.question`). Los typos generan "claves
   sobrantes" que el checker detecta después — esa es la red de seguridad.
@@ -143,7 +143,7 @@ Lee la sección "PRÓXIMA ACCIÓN" de AUDIT_PROGRESS.md. Ejecuta
 `node scripts/check-translations.mjs --lang es --json .tmp-es.json` (y lo mismo para fr).
 El JSON contiene, por herramienta: claves sin traducir (con el texto inglés) y claves faltantes
 (con el texto inglés de origen). Traduce SOLO esas claves con calidad nativa, respetando nombres
-de marca (oLoveTools, PassBolt...), tecnicismos y placeholders. Los seoKeywords tradúcelos como
+de marca (oLoveTools, EntropyBolt...), tecnicismos y placeholders. Los seoKeywords tradúcelos como
 palabras clave de búsqueda reales de ese idioma (no traducción literal). Genera el JSON de
 traducciones y aplícalo con `node scripts/apply-translations.mjs` (--dry primero). Re-ejecuta el
 checker hasta 0 hallazgos en esos idiomas. Borra los .tmp-*.json. NO abras locales a mano.
