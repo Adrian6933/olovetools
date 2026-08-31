@@ -4,6 +4,7 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
+import vercelHeaders from './integrations/vercel-headers.mjs';
 
 // output: 'server' + the Vercel adapter turns src/pages/proxy.ts and
 // src/pages/api/** into real serverless functions (same origin as the site —
@@ -17,6 +18,7 @@ export default defineConfig({
 
   integrations: [
     react(),
+    vercelHeaders(),
     sitemap({
       // La raíz "/" es una página noindex de redirección por idioma: fuera del
       // sitemap (además duplicaba hreflang="en" en los clusters de los hubs).
