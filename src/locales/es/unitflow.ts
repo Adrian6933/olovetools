@@ -1,7 +1,7 @@
 export default {
   "title": "UnitFlow",
   "badge": "Conversor de unidades exacto",
-  "seo_title": "Conversor de unidades | 18 familias, 156 unidades, aritmética exacta, 100% local",
+  "seo_title": "UnitFlow | Conversor de unidades con aritmética exacta",
   "seo_description": "Convierte longitud, masa, temperatura, presión, energía, datos, consumo y once familias más con fracciones exactas en vez de coma flotante. Entrada en texto libre, modo lote y resultados compuestos. Nada sale de tu navegador.",
   "seoHeroTitle": "El conversor que no redondea a tus espaldas",
   "seoHeroText": "Convierte 156 unidades de 18 familias con aritmética exacta, en tu navegador.",

@@ -2,7 +2,7 @@ export default {
   "title": "CronFlow",
   "badge": "Expressões cron",
   "description": "Escreva uma expressão cron, leia-a em palavras normais, veja exatamente quando dispara em qualquer fuso horário e leve consigo a linha de crontab, o workflow ou o manifesto.",
-  "seo_title": "CronFlow | Editor, tradutor e pré-visualização de expressões cron — com fusos horários, 100% no navegador",
+  "seo_title": "CronFlow | Editor de expressões cron e pré-visualização",
   "seo_description": "Monte e leia expressões cron em palavras normais, pré-visualize as próximas e anteriores execuções em qualquer fuso horário, verifique a compatibilidade com crontab, Quartz, Kubernetes, GitHub Actions e EventBridge, e exporte o trecho de que precisa. Nada sai do seu navegador.",
   "stamp_format": "{wd} {d} {mo} {y} · {t}",
   "label_expression": "Expressão",

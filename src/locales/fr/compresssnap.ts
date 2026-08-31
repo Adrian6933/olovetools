@@ -2,7 +2,7 @@ export default {
   "title": "CompressSnap",
   "badge": "Compression d'images",
   "description": "Compressez JPEG, PNG, WebP, AVIF et HEIC dans votre navigateur — à la qualité de votre choix ou à la taille que vous devez respecter — et voyez exactement ce que ça a coûté.",
-  "seo_title": "CompressSnap | Compressez des images à une taille cible, avec la perte de qualité mesurée — 100% dans votre navigateur",
+  "seo_title": "CompressSnap | Compressez vos images à une taille cible",
   "seo_description": "Compressez et redimensionnez des images JPEG, PNG, WebP, AVIF, HEIC et TIFF. Visez un budget en kilo-octets, réduisez la palette d'un PNG, convertissez entre formats et lisez la perte de qualité SSIM mesurée sur chaque fichier. Tourne hors du fil principal et n'envoie rien.",
   "dropzonePrompt": "Déposez des images ici, ou cliquez pour les choisir",
   "dropzoneSubtitle": "JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF et le HEIC de l'iPhone. Les images très grandes sont plafonnées à ce qu'un canvas de navigateur peut contenir.",

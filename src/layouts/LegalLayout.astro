@@ -1,10 +1,14 @@
 ---
+
 import { useTranslation, Language } from '../locales/dictionary';
 import { legalTranslations } from '../locales/legal/index';
 import { CookieBanner } from '../components/CookieBanner';
 import { ClientRouter } from 'astro:transitions';
 import Analytics from '../components/Analytics.astro';
 import '../styles/global.css';
+import { resolveOgImage } from '../lib/ogImage';
+const og = resolveOgImage();
+
 
 interface Props {
   title: string;
@@ -70,7 +74,9 @@ const breadcrumbSchema = {
     <meta property="og:title" content={`${title} | oLoveTools`} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
-    <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+    <meta property="og:image" content={`${baseUrl}/${og.file}`} />
+    {og.width && <meta property="og:image:width" content={String(og.width)} />}
+    {og.height && <meta property="og:image:height" content={String(og.height)} />}
     <meta property="og:locale" content={currentOgLocale} />
     {langs.filter(l => l !== lang).map(l => (
       <meta property="og:locale:alternate" content={ogLocaleMap[l] || l} />

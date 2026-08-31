@@ -2,7 +2,7 @@ export default {
   "title": "CronFlow",
   "badge": "Cron-Ausdrücke",
   "description": "Schreib einen Cron-Ausdruck, lies ihn im Klartext zurück, sieh genau, wann er in jeder Zeitzone feuert, und nimm die crontab-Zeile, den Workflow oder das Manifest gleich mit.",
-  "seo_title": "CronFlow | Editor, Übersetzer und Vorschau für Cron-Ausdrücke — mit Zeitzonen, 100% im Browser",
+  "seo_title": "CronFlow | Cron-Ausdrücke bearbeiten und Plan ansehen",
   "seo_description": "Cron-Ausdrücke bauen und im Klartext lesen, die nächsten und vorherigen Ausführungen in jeder Zeitzone vorschauen, die Kompatibilität mit crontab, Quartz, Kubernetes, GitHub Actions und EventBridge prüfen und das passende Snippet exportieren. Nichts verlässt deinen Browser.",
   "stamp_format": "{wd} {d} {mo} {y} · {t}",
   "label_expression": "Ausdruck",

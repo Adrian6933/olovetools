@@ -45,6 +45,7 @@
 - [EntropyBolt](https://olovetools.com/en/entropy-bolt): Generate strong passwords and test password strength with entropy analysis 100% locally in your browser.
 - [PasteSnap](https://olovetools.com/en/pastesnap): Ever taken a screenshot and needed the image file instantly? With PasteSnap, just hit Ctrl+V and get your image ready for download.
 - [PDFFlow](https://olovetools.com/en/pdf-flow): Merge, split, rotate, and convert JPG/PNG to PDF 100% locally. No registration or server uploads required. Secure, fast, and completely free.
+- [QR Reader](https://olovetools.com/en/qr-reader): Read QR codes and barcodes from an image, a PDF or the camera, and get the decoded content back as structured fields you can copy. Runs entirely in your browser.
 - [QRBolt](https://olovetools.com/en/qr-bolt): Create custom QR codes with custom logos, gradient colors, and unique shapes. 100% client-side, free, and secure. Download in high-quality PNG or SVG.
 - [RecordSnap](https://olovetools.com/en/recordsnap): Record screen, window, or webcam directly in your browser. 100% local, safe, no server uploads or registration. Download high-quality recordings instantly.
 - [RegexFlow](https://olovetools.com/en/regex-flow): Interactive client-side regular expression builder and tester with real-time highlighting, syntax explanations, and replacements 100% locally.

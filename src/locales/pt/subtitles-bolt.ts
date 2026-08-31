@@ -2,7 +2,7 @@ export default {
   "title": "Estúdio de Legendas",
   "badge": "Legendas",
   "description": "Converta entre nove formatos de legenda, corrija atraso e desvio de taxa de quadros, verifique a velocidade de leitura contra uma norma de exibição e edite cada legenda à mão, sem enviar nada.",
-  "seo_title": "SubtitlesBolt | Converta SRT, VTT, ASS e TTML, corrija tempos e meça a velocidade de leitura — 100% no navegador",
+  "seo_title": "SubtitlesBolt | Converte legendas SRT, VTT, ASS e TTML",
   "seo_description": "Converta legendas entre SRT, WebVTT, SBV, ASS/SSA, TTML, LRC, JSON, CSV e texto simples. Desloque tempos, corrija o desvio de taxa de quadros, ressincronize por dois pontos, verifique velocidade de leitura e comprimento de linha contra as normas da Netflix ou da BBC, e edite cada legenda. Nada é enviado.",
   "label_input": "Legendas de entrada",
   "label_inputFormat": "Formato de entrada",

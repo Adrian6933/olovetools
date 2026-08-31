@@ -137,7 +137,7 @@ export default {
   "issue_json-root": "Várias chaves de topo envolvidas numa raiz",
   "issue_json-empty": "Não há nada para converter",
   "issue_bad-key": "A chave não é um nome XML válido e foi reparada",
-  "seo_title": "XML to JSON | Converta XML para JSON e de volta, com fidelidade medível.",
+  "seo_title": "XML para JSON | Converte XML em JSON e vice-versa",
   "seo_description": "Converta XML para JSON e JSON para XML no seu navegador. Erros com linha e coluna, convenções de atributos e arrays configuráveis, pesquisa XPath nativa e um medidor de fidelidade de ida e volta. Nada é enviado.",
   "seoHeroText": "Um conversor que mostra as contas: a linha exata de cada erro, as convenções que dão forma ao JSON e quanto do documento sobrevive à viagem de volta.",
   "hero_text": "Cole XML ou JSON, escolha como a forma deve ser mapeada e converta com um clique. O parser conserva comentários, CDATA e conteúdo misto, aponta a linha exata de cada problema e mede o que a conversão lhe custa.",

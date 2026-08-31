@@ -1,7 +1,7 @@
 export default {
   "title": "Aspect Ratio",
   "badge": "Werkzeugkasten für Seitenverhältnisse",
-  "seo_title": "Seitenverhältnis-Rechner | Verhältnisse, proportional skalieren, zuschneiden und Letterbox",
+  "seo_title": "Seitenverhältnis-Rechner | Skalieren und zuschneiden",
   "seo_description": "Ermittle das Seitenverhältnis jeder Größe, skaliere mit codec-sicheren Vielfachen und sieh genau, wie viel ein 9:16-Zuschnitt wegwirft. Rahme ein echtes Bild und exportiere es. Alles im Browser.",
   "seoHeroTitle": "Jedes Verhältnis – und was es dich kostet",
   "seoHeroText": "Gib zwei Zahlen ein und erhalte das Verhältnis, den Dezimalwert, die Megapixel und den Namen, unter dem es verkauft wird. Dann weiter: Eine Seite festhalten und mit encoder-sicheren Vielfachen skalieren, oder ein Bild ablegen und genau sehen, wie viel davon ein 9:16-Rahmen frisst.",

@@ -1,18 +1,21 @@
 export default {
   "title": "UnitFlow",
   "badge": "Exact unit converter",
-  "seo_title": "Unit Converter | 18 Families, 156 Units, Exact Arithmetic, 100% Local",
+  "seo_title": "UnitFlow | Unit converter with exact arithmetic",
   "seo_description": "Convert length, mass, temperature, pressure, energy, data, fuel economy and eleven more families of units with exact fraction arithmetic instead of floating point. Free-text input, batch mode, compound results. Nothing leaves your browser.",
   "seoHeroTitle": "The converter that does not round behind your back",
   "seoHeroText": "Convert 156 units across 18 families with exact arithmetic, in your browser.",
   "description": "Every factor is stored as an exact fraction and the rounding happens once, when the number reaches the screen. That is why a tebibyte here is 1 099 511 627 776 bytes and not 1 099 511 628 000.",
-  "seoHeroList": ["Exact fractions, not floating point", "Free-text input", "Batch mode", "Nothing is uploaded"],
-
+  "seoHeroList": [
+    "Exact fractions, not floating point",
+    "Free-text input",
+    "Batch mode",
+    "Nothing is uploaded"
+  ],
   "label_categories": "Categories",
   "search_title": "Find a unit",
   "search_placeholder": "Search units…",
   "search_empty": "No unit matches that.",
-
   "cat_length": "Length",
   "cat_mass": "Mass",
   "cat_temperature": "Temperature",
@@ -31,7 +34,6 @@ export default {
   "cat_fuel": "Fuel economy",
   "cat_density": "Density",
   "cat_typography": "Typography",
-
   "u_kilometer": "Kilometer",
   "u_meter": "Meter",
   "u_decimeter": "Decimeter",
@@ -188,7 +190,6 @@ export default {
   "u_typo_cm": "Centimeter",
   "u_em": "Em (16 px root)",
   "u_rem": "Rem (16 px root)",
-
   "label_input": "Input",
   "label_output": "Output",
   "placeholder_input": "1  ·  3/4  ·  5'11\"  ·  2 ft 3 in",
@@ -202,7 +203,6 @@ export default {
   "tooltip_redo": "Redo",
   "button_reset": "Reset",
   "close": "Close",
-
   "label_notation": "Notation",
   "notation_auto": "Automatic",
   "notation_fixed": "Fixed decimals",
@@ -219,16 +219,13 @@ export default {
   "compound_hms": "Hours + minutes + seconds",
   "compound_dhms": "Days + hours + minutes + seconds",
   "compound_dms": "Degrees + minutes + seconds",
-
   "approx_note": "One of these units is not exact even on paper — π for radians, an average calendar year, air at sea level — so this result is the closest value, not an identity.",
   "exact_hint": "Hold Alt to replace every rounded figure with its exact value.",
   "error_clipboard": "Your browser blocked the clipboard. Select the value and copy it by hand.",
   "error_too_big": "That file is larger than {n} MB.",
   "error_read": "That file could not be read as text.",
-
   "label_conversion_table": "Every unit at once",
   "message_invalid_number": "Type a quantity to see every unit in this family.",
-
   "batch_title": "A whole column at once",
   "batch_intro": "Paste a column of values — or open a text file — and convert every line in one go. Nothing is read until you press the button.",
   "batch_placeholder": "1\n2.5\n3/4\n12 km",
@@ -239,13 +236,11 @@ export default {
   "batch_errors": "{n} unreadable",
   "batch_clear": "Clear the results",
   "batch_unreadable": "unreadable",
-
   "chooseFile": "Open a .txt or .csv",
   "waiting": "waiting — nothing has been read yet",
   "fromTool": "from {tool}",
   "readNumbers": "Read its numbers",
   "removeFile": "Remove the file",
-
   "nextStepTitle": "Keep going",
   "nextStepHint": "The table travels with you — no download, no re-upload",
   "nextList": "Sort and clean the list",
@@ -253,7 +248,6 @@ export default {
   "nextMarkdown": "Preview the Markdown table",
   "nextDiff": "Compare two runs",
   "nextText": "Analyse it as text",
-
   "howItWorksTitle": "How it works",
   "steps": [
     {
@@ -273,7 +267,6 @@ export default {
       "text": "Copy a single figure, download the whole table as CSV, or send it straight to another oLoveTools tool without a trip through your downloads folder."
     }
   ],
-
   "features": [
     {
       "title": "Exact fractions, not floats",
@@ -308,14 +301,12 @@ export default {
       "text": "No upload, no API call, no account. Every figure is computed by your own browser, and closing the tab discards all of it."
     }
   ],
-
   "seoBrowserSpeedTitle": "Instant local processing",
   "seoBrowserSpeedText": "A conversion here is a multiplication of two fractions of big integers, which your browser finishes in microseconds — there is nothing to wait for and nothing to send anywhere. The cost that other converters pay is not speed but accuracy: multiplying by a floating-point factor introduces an error at the seventeenth digit that grows with every step, and rounding a result to ten significant digits turns 1 099 511 627 776 bytes into 1 099 511 628 000. Keeping the value as a fraction until the very last moment removes both problems at once, and it costs nothing, because the numbers involved fit in a handful of machine words even for a light year measured in nanometres.",
   "seoUseCaseTitle": "Built for the awkward conversions",
   "seoUseCaseText": "Simple conversions are easy anywhere. The ones that go wrong are the reciprocal ones — miles per gallon against litres per 100 km, where more of one is less of the other — the affine ones, where Fahrenheit needs an offset of exactly minus one hundred and sixty ninths and not minus 17.7778, and the ones where two units that look identical are not: an atmosphere is 760 torr exactly but 759.99989 millimetres of mercury, because the conventional millimetre of mercury was redefined and the torr was not. All three cases are handled here as first-class citizens rather than approximated away, and the units whose definitions really are inexact — radians, an average month, Mach at sea level — are marked as such instead of pretending otherwise.",
   "seoPrivacyTitle": "Private by construction",
   "seoPrivacyText": "There is no server side to this tool. The numbers you type, the lists you paste and the files you open stay in the tab: a file is read with the browser's own file reader and never uploaded, and closing the tab discards everything. The only thing that travels is what you choose to put in the address bar — the category, the two units and the value are encoded there so you can share or bookmark a specific conversion, and nothing else about your session is recorded anywhere.",
-
   "faqTitle": "Frequently asked questions",
   "faq": [
     {
@@ -343,10 +334,20 @@ export default {
       "answer": "No. There is no server component and no network request at any point in a conversion. Files you open are read locally by the browser and never sent anywhere. The current conversion is written into the page URL so you can share or bookmark it — that is the only place your numbers are stored, and it stays on your machine unless you send the link yourself."
     }
   ],
-
   "seoKeywordsTitle": "Keywords",
-  "seoKeywords": ["unit converter", "metric to imperial", "length converter", "temperature converter", "pressure converter", "data storage converter", "fuel economy converter", "mpg to l/100km", "feet and inches", "online tool", "free"],
-
+  "seoKeywords": [
+    "unit converter",
+    "metric to imperial",
+    "length converter",
+    "temperature converter",
+    "pressure converter",
+    "data storage converter",
+    "fuel economy converter",
+    "mpg to l/100km",
+    "feet and inches",
+    "online tool",
+    "free"
+  ],
   "footerTagline": "Convert 156 units across 18 families with exact arithmetic — length, mass, temperature, pressure, energy, data and more, all in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",

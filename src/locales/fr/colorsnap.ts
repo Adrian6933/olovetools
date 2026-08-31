@@ -2,7 +2,7 @@ export default {
   "title": "ColorSnap",
   "badge": "Labo de palettes",
   "description": "Tirez une vraie palette de n'importe quelle image, puis corrigez-la à la main. Le regroupement se fait dans un espace colorimétrique perceptuel, la pipette descend au pixel, et rien ne quitte jamais votre navigateur.",
-  "seo_title": "ColorSnap | Extraire des palettes de couleurs d'une image, en local dans votre navigateur",
+  "seo_title": "ColorSnap | Extraire des palettes de toute image",
   "seo_description": "Extrayez les couleurs dominantes d'une image par regroupement perceptuel OKLab, affinez-les à la pipette, vérifiez le contraste WCAG et exportez en CSS, SCSS, Tailwind, JSON, GIMP ou planche PNG. Tout se passe dans votre navigateur.",
   "dropzonePrompt": "Déposez une image ici ou cliquez pour l'envoyer",
   "dropzoneSubtitle": "PNG, JPG, WebP, AVIF, GIF, BMP, HEIC, TIFF et SVG — jusqu'à 80 Mo, lus dans votre navigateur",

@@ -2,7 +2,7 @@ export default {
   "title": "CompressSnap",
   "badge": "Image compression",
   "description": "Compress JPEG, PNG, WebP, AVIF and HEIC in your browser — to a quality you choose or to a size you have to hit — and see exactly what the compression cost.",
-  "seo_title": "CompressSnap | Compress images to a target size, with the quality loss measured — 100% in your browser",
+  "seo_title": "CompressSnap | Compress images to an exact target size",
   "seo_description": "Compress and resize JPEG, PNG, WebP, AVIF, HEIC and TIFF images. Hit a size budget in kilobytes, reduce a PNG palette, convert between formats and see the measured SSIM quality loss on every file. Runs off the main thread, uploads nothing.",
   "dropzonePrompt": "Drop images here, or click to choose",
   "dropzoneSubtitle": "JPEG, PNG, WebP, AVIF, GIF, BMP, TIFF and iPhone HEIC. Very large images are capped to what a browser canvas can hold.",

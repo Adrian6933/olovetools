@@ -1,7 +1,7 @@
 export default {
   "title": "Aspect Ratio",
   "badge": "Kit de proporciones",
-  "seo_title": "Calculadora de proporción de aspecto | Ratios, redimensionado proporcional, recorte y letterbox",
+  "seo_title": "Calculadora de relación de aspecto | Redimensiona y recorta",
   "seo_description": "Averigua la proporción de cualquier tamaño, redimensiona con múltiplos seguros para códecs y comprueba cuánto se pierde en un recorte 9:16. Encuadra una imagen real y expórtala. Todo en tu navegador.",
   "seoHeroTitle": "Cada proporción, y lo que te cuesta",
   "seoHeroText": "Escribe dos números y obtén la proporción, el decimal, los megapíxeles y el nombre con el que se vende. Después ve más lejos: fija una dimensión y redimensiona con múltiplos seguros para el codificador, o suelta una imagen y comprueba exactamente cuánto se come de ella un marco 9:16.",

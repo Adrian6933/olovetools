@@ -2,7 +2,7 @@ export default {
   "title": "Estudio de Subtítulos",
   "badge": "Subtítulos",
   "description": "Convierte entre nueve formatos de subtítulos, arregla el desfase y la deriva de framerate, comprueba la velocidad de lectura contra una norma de emisión y edita cada línea a mano, sin subir nada.",
-  "seo_title": "SubtitlesBolt | Convierte SRT, VTT, ASS y TTML, corrige tiempos y mide la velocidad de lectura — 100% en tu navegador",
+  "seo_title": "SubtitlesBolt | Convierte subtítulos SRT, VTT, ASS y TTML",
   "seo_description": "Convierte subtítulos entre SRT, WebVTT, SBV, ASS/SSA, TTML, LRC, JSON, CSV y texto plano. Desplaza tiempos, corrige la deriva de framerate, resincroniza por dos puntos, comprueba velocidad de lectura y longitud de línea contra las normas de Netflix o la BBC, y edita cada línea. No se sube nada.",
   "label_input": "Subtítulos de entrada",
   "label_inputFormat": "Formato de entrada",

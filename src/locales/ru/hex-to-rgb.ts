@@ -1,7 +1,7 @@
 export default {
   "title": "Hex в RGB",
   "badge": "Преобразование цвета",
-  "seo_title": "Конвертер HEX в RGB | RGB, HSL, HWB, OKLCH и CMYK с проверкой контраста и палитрами",
+  "seo_title": "Конвертер HEX в RGB | RGB, HSL, OKLCH и CMYK",
   "seo_description": "Вставьте любой цвет CSS — hex, ключевое слово, oklch(), color-mix() — и получите RGB, HSL, HWB, OKLCH, OKLab и CMYK. Стройте шкалы и гармонии, проверяйте контраст по WCAG и APCA, моделируйте дальтонизм и экспортируйте палитру. Всё работает в браузере.",
   "seoHeroTitle": "Студия преобразования цвета",
   "seoHeroText": "Переведите любой цвет CSS в RGB, HSL, HWB, OKLCH, OKLab и CMYK, постройте шкалы и гармонии и проверьте контраст — всё локально.",

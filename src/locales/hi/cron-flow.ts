@@ -2,7 +2,7 @@ export default {
   "title": "CronFlow",
   "badge": "Cron एक्सप्रेशन",
   "description": "cron एक्सप्रेशन लिखिए, उसे सीधी भाषा में पढ़िए, देखिए कि किसी भी टाइमज़ोन में वह ठीक कब चलेगा, और crontab लाइन, workflow या manifest साथ ले जाइए।",
-  "seo_title": "CronFlow | cron एक्सप्रेशन एडिटर, अनुवादक और शेड्यूल पूर्वावलोकन — टाइमज़ोन सहित, 100% आपके ब्राउज़र में",
+  "seo_title": "CronFlow | क्रॉन एक्सप्रेशन एडिटर और शेड्यूल पूर्वावलोकन",
   "seo_description": "cron एक्सप्रेशन बनाइए और सीधी भाषा में पढ़िए, किसी भी टाइमज़ोन में अगले और पिछले रन देखिए, crontab, Quartz, Kubernetes, GitHub Actions और EventBridge के साथ अनुकूलता जाँचिए, और ज़रूरी स्निपेट निर्यात कीजिए। कुछ भी आपके ब्राउज़र से बाहर नहीं जाता।",
   "stamp_format": "{wd}, {d} {mo} {y} · {t}",
   "label_expression": "एक्सप्रेशन",

@@ -2,7 +2,7 @@ export default {
   "title": "Studio de Sous-titres",
   "badge": "Sous-titres",
   "description": "Convertissez entre neuf formats de sous-titres, corrigez le décalage et la dérive de fréquence d'images, vérifiez la vitesse de lecture face à une norme de diffusion et modifiez chaque réplique à la main, sans rien envoyer.",
-  "seo_title": "SubtitlesBolt | Convertir SRT, VTT, ASS et TTML, corriger le minutage et mesurer la vitesse de lecture — 100% dans votre navigateur",
+  "seo_title": "SubtitlesBolt | Convertir des sous-titres SRT, VTT, ASS",
   "seo_description": "Convertissez des sous-titres entre SRT, WebVTT, SBV, ASS/SSA, TTML, LRC, JSON, CSV et texte brut. Décalez le minutage, corrigez la dérive de fréquence d'images, resynchronisez à partir de deux points, vérifiez vitesse de lecture et longueur de ligne selon les normes Netflix ou BBC, et modifiez chaque réplique. Rien n'est envoyé.",
   "label_input": "Sous-titres en entrée",
   "label_inputFormat": "Format d'entrée",

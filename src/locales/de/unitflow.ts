@@ -1,7 +1,7 @@
 export default {
   "title": "UnitFlow",
   "badge": "Exakter Einheitenrechner",
-  "seo_title": "Einheitenrechner | 18 Familien, 156 Einheiten, exakte Arithmetik, 100% lokal",
+  "seo_title": "UnitFlow | Einheitenrechner mit exakter Arithmetik",
   "seo_description": "Rechne Länge, Masse, Temperatur, Druck, Energie, Daten, Verbrauch und elf weitere Einheitenfamilien mit exakter Bruchrechnung statt Gleitkomma um. Freitexteingabe, Stapelmodus, zusammengesetzte Ergebnisse. Nichts verlässt deinen Browser.",
   "seoHeroTitle": "Der Rechner, der nicht hinter deinem Rücken rundet",
   "seoHeroText": "Rechne 156 Einheiten aus 18 Familien mit exakter Arithmetik um, direkt im Browser.",

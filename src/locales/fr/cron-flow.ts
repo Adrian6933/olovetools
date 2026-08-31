@@ -2,7 +2,7 @@ export default {
   "title": "CronFlow",
   "badge": "Expressions cron",
   "description": "Écrivez une expression cron, relisez-la en clair, voyez exactement quand elle se déclenche dans n'importe quel fuseau, et repartez avec la ligne de crontab, le workflow ou le manifeste.",
-  "seo_title": "CronFlow | Éditeur, traducteur et aperçu d'expressions cron — fuseaux horaires gérés, 100% dans votre navigateur",
+  "seo_title": "CronFlow | Éditeur d'expressions cron et aperçu du planning",
   "seo_description": "Composez et lisez des expressions cron en clair, prévisualisez les prochaines et précédentes exécutions dans n'importe quel fuseau, vérifiez la compatibilité avec crontab, Quartz, Kubernetes, GitHub Actions et EventBridge, et exportez l'extrait dont vous avez besoin. Rien ne quitte votre navigateur.",
   "stamp_format": "{wd} {d} {mo} {y} · {t}",
   "label_expression": "Expression",

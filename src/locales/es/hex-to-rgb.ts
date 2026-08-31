@@ -1,7 +1,7 @@
 export default {
   "title": "Hex a RGB",
   "badge": "Conversión de color",
-  "seo_title": "Conversor HEX a RGB | RGB, HSL, HWB, OKLCH y CMYK con contraste y paletas",
+  "seo_title": "Conversor HEX a RGB | RGB, HSL, OKLCH y CMYK",
   "seo_description": "Pega cualquier color CSS —hex, una palabra clave, oklch(), color-mix()— y obtén RGB, HSL, HWB, OKLCH, OKLab y CMYK. Crea rampas y armonías, comprueba el contraste WCAG y APCA, simula el daltonismo y exporta la paleta. Todo se ejecuta en tu navegador.",
   "seoHeroTitle": "Estudio de conversión de color",
   "seoHeroText": "Convierte cualquier color CSS a RGB, HSL, HWB, OKLCH, OKLab y CMYK, crea rampas y armonías y comprueba el contraste, todo en local.",

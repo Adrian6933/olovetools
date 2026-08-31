@@ -2,7 +2,7 @@ export default {
   "title": "Untertitel-Studio",
   "badge": "Untertitel",
   "description": "Zwischen neun Untertitelformaten umwandeln, Versatz und Bildraten-Drift korrigieren, die Lesegeschwindigkeit gegen eine Sendenorm prüfen und jeden Untertitel von Hand bearbeiten — ohne irgendetwas hochzuladen.",
-  "seo_title": "SubtitlesBolt | SRT, VTT, ASS und TTML umwandeln, Timing korrigieren und Lesegeschwindigkeit prüfen — 100% im Browser",
+  "seo_title": "SubtitlesBolt | SRT, VTT, ASS und TTML umwandeln",
   "seo_description": "Untertitel zwischen SRT, WebVTT, SBV, ASS/SSA, TTML, LRC, JSON, CSV und reinem Text umwandeln. Zeiten verschieben, Bildraten-Drift korrigieren, über zwei Punkte neu synchronisieren, Lesegeschwindigkeit und Zeilenlänge gegen Netflix- oder BBC-Vorgaben prüfen und jeden Untertitel bearbeiten. Nichts wird hochgeladen.",
   "label_input": "Untertitel rein",
   "label_inputFormat": "Eingabeformat",

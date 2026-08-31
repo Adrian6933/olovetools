@@ -1,7 +1,7 @@
 export default {
   "title": "हेक्स से RGB",
   "badge": "रंग रूपांतरण",
-  "seo_title": "HEX से RGB कन्वर्टर | RGB, HSL, HWB, OKLCH और CMYK, कंट्रास्ट और पैलेट के साथ",
+  "seo_title": "HEX से RGB कन्वर्टर | RGB, HSL, OKLCH और CMYK",
   "seo_description": "कोई भी CSS रंग चिपकाइए — हेक्स, कोई कीवर्ड, oklch(), color-mix() — और RGB, HSL, HWB, OKLCH, OKLab तथा CMYK पाइए। शेड की सीढ़ियाँ और सामंजस्य बनाइए, WCAG और APCA कंट्रास्ट जाँचिए, वर्णांधता का अनुकरण कीजिए और पैलेट निर्यात कीजिए। सब कुछ आपके ब्राउज़र में चलता है।",
   "seoHeroTitle": "रंग रूपांतरण स्टूडियो",
   "seoHeroText": "किसी भी CSS रंग को RGB, HSL, HWB, OKLCH, OKLab और CMYK में बदलिए, शेड की सीढ़ियाँ और सामंजस्य बनाइए और कंट्रास्ट जाँचिए — सब कुछ स्थानीय रूप से।",

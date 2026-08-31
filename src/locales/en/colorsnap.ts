@@ -2,20 +2,17 @@ export default {
   "title": "ColorSnap",
   "badge": "Image palette lab",
   "description": "Pull a real palette out of any image, then fix it by hand. Clustering runs in a perceptual colour space, the eyedropper works at pixel level, and nothing ever leaves your browser.",
-  "seo_title": "ColorSnap | Extract Colour Palettes From Any Image, Locally In Your Browser",
+  "seo_title": "ColorSnap | Extract colour palettes from any image",
   "seo_description": "Extract dominant colours from an image with perceptual OKLab clustering, refine them by hand with an eyedropper, check WCAG contrast, and export CSS, SCSS, Tailwind, JSON, GIMP or a PNG sheet. Runs entirely in your browser.",
-
   "dropzonePrompt": "Drop an image here or click to upload",
   "dropzoneSubtitle": "PNG, JPG, WebP, AVIF, GIF, BMP, HEIC, TIFF and SVG — up to 80 MB, read in your browser",
   "changeImage": "Change image",
   "resetBtn": "Start over",
-
   "error_size": "That file is over 80 MB. Try a smaller export of it.",
   "error_format": "That file is not an image.",
   "error_heic": "This HEIC could not be converted in the browser. Export it as JPG and try again.",
   "error_tiff": "This TIFF could not be decoded — it may use a compression the browser cannot read.",
   "error_decode": "The browser could not decode this image.",
-
   "settingsTitle": "Extraction settings",
   "sizeLabel": "Colours",
   "qualityLabel": "Sampling depth",
@@ -30,12 +27,10 @@ export default {
   "extracting": "Extracting…",
   "manualBtn": "Skip it — I'll pick by hand",
   "reextractBtn": "Re-extract, ignoring my edits",
-
   "paletteTitle": "Palette",
   "paletteEmpty": "Load an image to build a palette from it.",
   "paletteReady": "Your image is loaded. Set it up and press the button when you're ready.",
   "paletteManualEmpty": "Eyedropper is on. Click anywhere on the image to start the palette.",
-
   "modePan": "Pan",
   "modePick": "Eyedropper",
   "undo": "Undo",
@@ -48,7 +43,6 @@ export default {
   "stageHint": "Scroll to zoom · drag to pan · Alt-click removes the nearest swatch",
   "viewRecolored": "Palette render",
   "viewOriginal": "Original",
-
   "editColor": "Edit this colour",
   "editShort": "Edit",
   "copy": "Copy",
@@ -58,31 +52,26 @@ export default {
   "moveUp": "Move up",
   "moveDown": "Move down",
   "removeColor": "Remove",
-
   "fidelityLabel": "Deviation",
   "fidelityHigh": "Faithful",
   "fidelityMid": "Close",
   "fidelityLow": "Loose",
   "sampledLabel": "Pixels read",
   "timeLabel": "Time",
-
   "copyPalette": "Copy",
   "paletteCopied": "Copied",
   "downloadPalette": "Download the file",
   "downloadSheet": "Download the palette as a PNG",
-
   "contrastTitle": "Contrast check",
   "contrastHint": "WCAG 2.1 ratio of the selected colour against white, black and every other swatch.",
   "onWhite": "on white",
   "onBlack": "on black",
   "gradeFail": "Fail",
-
   "cvdTitle": "Colour vision",
   "cvdNormal": "Normal",
   "cvd_protanopia": "Protanopia",
   "cvd_deuteranopia": "Deuteranopia",
   "cvd_tritanopia": "Tritanopia",
-
   "harmonyTitle": "Harmonies",
   "harmony_complementary": "Complementary",
   "harmony_analogous": "Analogous",
@@ -91,7 +80,6 @@ export default {
   "harmony_tetradic": "Tetradic",
   "harmony_monochrome": "Monochrome",
   "addToPalette": "Add to the palette",
-
   "colorNames": {
     "black": "black",
     "white": "white",
@@ -117,7 +105,6 @@ export default {
     "soft": "soft",
     "pale": "pale"
   },
-
   "nextStepTitle": "Keep going",
   "nextStepHint": "The palette sheet travels with you — no re-upload",
   "nextCompress": "Compress it",
@@ -125,7 +112,6 @@ export default {
   "nextFormat": "Change format",
   "nextWatermark": "Add a watermark",
   "nextMeme": "Caption it",
-
   "howItWorksTitle": "How it works",
   "step1Title": "Bring an image in",
   "step1Text": "Drop it, pick it, paste it, or send it over from another oLoveTools tool. Nothing runs yet.",
@@ -135,7 +121,6 @@ export default {
   "step3Text": "Median cut narrows the field, then k-means refines it in OKLab, where distance matches what you see.",
   "step4Title": "Fix it by hand",
   "step4Text": "Pin what works, drop what doesn't, and pick anything the maths missed with the eyedropper.",
-
   "features": [
     {
       "title": "Sees colour the way you do",
@@ -162,7 +147,6 @@ export default {
       "text": "CSS custom properties, SCSS, a Tailwind v4 theme block, JSON, a GIMP .gpl palette, SVG swatches and a PNG sheet."
     }
   ],
-
   "seoHeroTitle": "A palette that matches the image, not a blurred average of it",
   "seoHeroText": "Most extractors shrink your photo to a thumbnail and count pixels in a fixed grid, which blends neighbouring colours together and invents shades that were never there. ColorSnap samples the image at full resolution, keeps the exact average of every colour bin it fills, and clusters those bins in OKLab — a space where numeric distance matches perceived difference. The result is the difference between a palette of four near-identical blues and one that actually contains the orange in the corner.",
   "seoHeroList": [
@@ -186,14 +170,12 @@ export default {
     "tailwind palette",
     "colour blindness simulator"
   ],
-
   "seoBrowserSpeedTitle": "The heavy pass runs off the main thread",
   "seoBrowserSpeedText": "The pixel scan happens in a Web Worker on an OffscreenCanvas, so the interface stays responsive on a 50 MP photo. What comes back is a compact histogram, and every later change — palette size, saturation floor, pinned swatches — is re-solved from it in milliseconds without touching the image again.",
   "seoUseCaseTitle": "Automatic first, manual whenever you want",
   "seoUseCaseText": "Dropping a file does not start anything: the image waits while you choose the settings. You can also skip the automatic pass entirely and build the palette by hand from the first click, with zoom, a loupe, pinning and undo. Every colour is editable afterwards, and re-extraction keeps whatever you pinned.",
   "seoPrivacyTitle": "100% private, and that is literal",
   "seoPrivacyText": "There is no upload, no API, no model fetched from a CDN and no analytics on your image. Everything — decoding, sampling, clustering, exporting — happens with browser APIs inside your tab. Your image lives in memory only, and it is gone the moment you close the page.",
-
   "faqTitle": "Frequently asked questions",
   "faq": [
     {
@@ -221,7 +203,6 @@ export default {
       "answer": "Yes. CSS custom properties, SCSS variables plus a map, a Tailwind v4 @theme block, JSON with HEX/RGB/HSL/OKLCH and coverage, a GIMP .gpl palette for GIMP, Inkscape and Krita, SVG swatches, plain text, and a PNG sheet. Variable names come from the colours themselves, so you get --deep-teal rather than --color-4."
     }
   ],
-
   "footerTagline": "Extract colour palettes from any image, refine them by hand, and export them — entirely in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",

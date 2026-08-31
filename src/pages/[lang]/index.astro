@@ -1,10 +1,14 @@
 ---
+
 import { Home } from '../../components/Home';
 import { CookieBanner } from '../../components/CookieBanner';
 import { useTranslation, Language } from '../../locales/dictionary';
 import { ClientRouter } from 'astro:transitions';
 import Analytics from '../../components/Analytics.astro';
 import '../../styles/global.css';
+import { resolveOgImage } from '../../lib/ogImage';
+const og = resolveOgImage();
+
 
 export const prerender = true;
 
@@ -59,7 +63,9 @@ const organizationSchema = {
     <meta property="og:description" content={t('seo_description')} />
     <meta property="og:url" content={hubUrl} />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content={`${baseUrl}/og-image.png`} />
+    <meta property="og:image" content={`${baseUrl}/${og.file}`} />
+    {og.width && <meta property="og:image:width" content={String(og.width)} />}
+    {og.height && <meta property="og:image:height" content={String(og.height)} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={t('seo_title')} />
     <meta name="twitter:description" content={t('seo_description')} />

@@ -1,7 +1,7 @@
 export default {
   "title": "Aspect Ratio",
   "badge": "Boîte à outils des ratios",
-  "seo_title": "Calculateur de rapport d'aspect | Ratios, redimensionnement proportionnel, recadrage et letterbox",
+  "seo_title": "Calculateur de format d'image | Redimensionner et recadrer",
   "seo_description": "Trouvez le rapport d'aspect de n'importe quelle taille, redimensionnez avec des multiples compatibles codec et voyez exactement ce qu'un recadrage 9:16 supprime. Cadrez une vraie image et exportez-la. Tout dans votre navigateur.",
   "seoHeroTitle": "Chaque ratio, et ce qu’il vous coûte",
   "seoHeroText": "Saisissez deux nombres et obtenez le ratio, la décimale, les mégapixels et le nom sous lequel il est vendu. Allez ensuite plus loin : fixez une dimension et redimensionnez avec des multiples sûrs pour l'encodeur, ou déposez une image et voyez précisément ce qu'un cadre 9:16 lui prend.",

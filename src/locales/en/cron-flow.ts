@@ -2,7 +2,7 @@ export default {
   "title": "CronFlow",
   "badge": "Cron expressions",
   "description": "Write a cron expression, read it back in plain words, see exactly when it fires in any timezone, and take the crontab line, workflow or manifest with you.",
-  "seo_title": "CronFlow | Cron expression editor, translator and schedule preview — timezone aware, 100% in your browser",
+  "seo_title": "CronFlow | Cron expression editor and schedule preview",
   "seo_description": "Build and read cron expressions in plain words, preview the next and previous runs in any timezone, check compatibility with crontab, Quartz, Kubernetes, GitHub Actions and EventBridge, and export the snippet you need. Nothing leaves your browser.",
   "stamp_format": "{wd} {d} {mo} {y} · {t}",
   "label_expression": "Expression",

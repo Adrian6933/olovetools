@@ -2,7 +2,7 @@ export default {
   "title": "Subtitle Studio",
   "badge": "Subtitles",
   "description": "Convert between nine subtitle formats, fix timing and frame-rate drift, check reading speed against a broadcast spec, and edit every cue by hand — without uploading anything.",
-  "seo_title": "SubtitlesBolt | Convert SRT, VTT, ASS and TTML, fix timing and check reading speed — 100% in your browser",
+  "seo_title": "SubtitlesBolt | Convert SRT, VTT, ASS and TTML subtitles",
   "seo_description": "Convert subtitles between SRT, WebVTT, SBV, ASS/SSA, TTML, LRC, JSON, CSV and plain text. Shift timings, fix frame-rate drift, resync from two points, check reading speed and line length against Netflix or BBC specs, and edit every cue. Nothing is uploaded.",
   "label_input": "Subtitles in",
   "label_inputFormat": "Input format",

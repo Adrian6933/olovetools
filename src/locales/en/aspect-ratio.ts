@@ -1,7 +1,7 @@
 export default {
   "title": "Aspect Ratio",
   "badge": "Aspect ratio toolkit",
-  "seo_title": "Aspect Ratio Calculator | Ratios, Proportional Resize, Crop & Letterbox",
+  "seo_title": "Aspect Ratio Calculator | Resize, crop and letterbox",
   "seo_description": "Work out the aspect ratio of any size, resize proportionally with codec-safe multiples, and see exactly how much a 9:16 crop throws away. Frame a real image and export it. Runs in your browser.",
   "seoHeroTitle": "Every ratio, and what it costs you",
   "seoHeroText": "Type two numbers and get the ratio, the decimal, the megapixels and the name it is sold under. Then take it further: pin a dimension and resize with encoder-safe multiples, or drop an image in and see precisely how much of it a 9:16 frame eats.",
@@ -11,13 +11,11 @@ export default {
     "Tells you what a crop throws away",
     "No upload, no account"
   ],
-
   "tab_calculate": "Ratio",
   "tab_resize": "Resize",
   "tab_fit": "Fit & crop",
   "tab_presets": "Presets",
   "tabsLabel": "Workspace",
-
   "sourceTitle": "Source (optional)",
   "sourceIntro": "The calculator works on typed numbers alone — you never need a file. Add one only if you want to see the frame on a real image.",
   "chooseFile": "Choose an image or video",
@@ -27,7 +25,6 @@ export default {
   "removeFile": "Remove the file",
   "errorDecode": "Your browser could not decode this file ({format}). Convert it first — HEIC and some AVIF files are not supported everywhere.",
   "errorClipboard": "Your browser blocked clipboard access.",
-
   "label_dimensions": "Dimensions",
   "label_width": "Width",
   "label_height": "Height",
@@ -46,7 +43,6 @@ export default {
   "orient_portrait": "Portrait",
   "orient_square": "Square",
   "placeholder_enter_dims": "Enter a width and a height to get the ratio.",
-
   "label_original": "Original size",
   "label_lock_target": "Pin this dimension",
   "target_width": "Width",
@@ -61,7 +57,6 @@ export default {
   "label_scale": "Scale",
   "label_multiple_short": "Multiple",
   "placeholder_resize": "Enter the original size and the dimension you want to pin.",
-
   "label_editor": "Frame editor",
   "canvasEmpty": "Load an image to place it inside the frame. Nothing is uploaded, and nothing runs until you ask.",
   "canvasHint": "Drag to reposition · wheel to zoom · Alt or right-click flips cover/contain",
@@ -74,7 +69,6 @@ export default {
   "bar_transparent": "transparent",
   "undo": "Undo",
   "redo": "Redo",
-
   "label_output": "Output",
   "label_frame": "Frame",
   "label_cropped": "Cropped away",
@@ -91,7 +85,6 @@ export default {
   "sc_mode": "flip cover / contain",
   "sc_reset": "recentre and reset zoom",
   "sc_alt": "preview the other mode",
-
   "group_screen": "Screens",
   "group_cinema": "Cinema",
   "group_social": "Social",
@@ -115,11 +108,9 @@ export default {
   "ratio_a_series": "A4, A3 and the whole A series",
   "ratio_5_4": "8×10 print",
   "ratio_7_5": "5×7 print",
-
   "label_snippets": "Ready to paste",
   "button_reset": "Reset everything",
   "tooltip_copy": "Copy",
-
   "nextStepTitle": "Keep going",
   "nextStepHint": "The framed image travels with you — no re-upload",
   "nextCrop": "Fine-tune the crop",
@@ -127,7 +118,6 @@ export default {
   "nextFormat": "Change format",
   "nextWatermark": "Add a watermark",
   "nextSocial": "Size it for social",
-
   "howItWorksTitle": "How it works",
   "step1Title": "Pick the ratio",
   "step1Text": "Type two dimensions, or choose one of the presets — screens, cinema, social feeds and paper sizes.",
@@ -137,7 +127,6 @@ export default {
   "step3Text": "Drag to reposition, wheel to zoom, hold to compare with the original, Alt to flip between crop and letterbox.",
   "step4Title": "Take the result with you",
   "step4Text": "Copy the CSS, Tailwind or FFmpeg line, download the framed image, or send it straight to another tool.",
-
   "features": [
     {
       "title": "Cinema ratios, not just 16:9",
@@ -164,7 +153,6 @@ export default {
       "text": "Send the framed image to CropSnap, CompressSnap, FormatFlow, WatermarkSnap or SocialBolt without downloading and uploading it again."
     }
   ],
-
   "seoBrowserSpeedTitle": "It runs where your file already is",
   "seoBrowserSpeedText": "The arithmetic is a handful of pure functions and the framing is a canvas in your own tab. Images are decoded by the browser, drawn locally and exported with canvas.toBlob. No image, no dimension and no filename is ever transmitted, and the tool keeps working with the network off.",
   "seoUseCaseTitle": "The moments this actually saves you",
@@ -182,7 +170,6 @@ export default {
     "image dimensions calculator",
     "aspect ratio from image"
   ],
-
   "faqTitle": "Frequently asked questions",
   "faq": [
     {
@@ -222,7 +209,6 @@ export default {
       "answer": "Straight into another tool, if you want. The buttons under the editor hand the framed image over to CropSnap, CompressSnap, FormatFlow, WatermarkSnap or SocialBolt through your browser's own storage, so it never touches your Downloads folder on the way."
     }
   ],
-
   "footerTagline": "Aspect ratios, proportional resizing and honest crop maths, entirely in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
   "scrollTopLabel": "Back to top",

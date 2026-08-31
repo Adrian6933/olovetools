@@ -2,7 +2,7 @@ export default {
   "title": "ColorSnap",
   "badge": "Paletten-Labor",
   "description": "Hol eine echte Palette aus jedem Bild und korrigiere sie danach von Hand. Die Gruppierung läuft in einem wahrnehmungsgetreuen Farbraum, die Pipette arbeitet pixelgenau, und nichts verlässt jemals deinen Browser.",
-  "seo_title": "ColorSnap | Farbpaletten aus jedem Bild extrahieren, lokal im Browser",
+  "seo_title": "ColorSnap | Farbpaletten aus jedem Bild extrahieren",
   "seo_description": "Extrahiere die dominanten Farben eines Bildes mit wahrnehmungsgetreuem OKLab-Clustering, verfeinere sie von Hand mit der Pipette, prüfe den WCAG-Kontrast und exportiere nach CSS, SCSS, Tailwind, JSON, GIMP oder als PNG-Bogen. Läuft vollständig im Browser.",
   "dropzonePrompt": "Bild hierher ziehen oder zum Hochladen klicken",
   "dropzoneSubtitle": "PNG, JPG, WebP, AVIF, GIF, BMP, HEIC, TIFF und SVG — bis 80 MB, im Browser gelesen",
