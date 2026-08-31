@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Clock, Trash2 } from 'lucide-react';
-import { fetchTwitchSuggestions } from '../services/geminiService';
+import { fetchTwitchSuggestions } from '../services/twitchService';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;

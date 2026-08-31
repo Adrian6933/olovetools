@@ -148,5 +148,50 @@ export default {
   "import_success": "Lista importada con éxito",
   "import_error": "Error al importar el archivo",
   "import_invalid_format": "Formato de archivo no válido",
-  "download": "Descargar"
+  "download": "Descargar",
+  "how_title": "Cómo funciona",
+  "features_title": "Lo que hace de verdad",
+  "step1_title": "Busca una categoría",
+  "step1_text": "Busca cualquier categoría de Twitch, o mira las que tienen más movimiento ahora mismo.",
+  "step4_title": "Mándalo a TwitchBolt",
+  "step4_text": "Pasa la lista entera al descargador de un clic, o expórtala como archivo de texto.",
+  "step2_title": "Afina la búsqueda",
+  "step2_text": "Filtra por fecha, visitas, idioma o duración, y esconde a los streamers que no quieres volver a ver.",
+  "step3_title": "Míralo aquí",
+  "step3_text": "Los clips se abren en un reproductor flotante que puedes mover y redimensionar, así la rejilla se queda donde estaba.",
+  "feat1_title": "Busca en todo Twitch",
+  "feat1_text": "Escribe una categoría, un juego o un canal y obtén sus clips, con sugerencias mientras escribes.",
+  "feat2_title": "Filtros que importan",
+  "feat2_text": "Rango de fechas, visitas, duración e idioma — incluida una lista de \"solo estos idiomas\", no solo de exclusión.",
+  "feat3_title": "Un reproductor que te acompaña",
+  "feat3_text": "El reproductor flotante sigue sonando mientras tú sigues mirando, con velocidad ajustable y el botón de guardar ahí mismo.",
+  "feat4_title": "Colecciones que se quedan",
+  "feat4_text": "Marca clips, agrúpalos en colecciones con nombre y vuelve a encontrarlos mañana — todo guardado en tu propio navegador.",
+  "feat5_title": "Silencia a un streamer para siempre",
+  "feat5_text": "Bloquea un canal y sus clips dejan de aparecer en ningún sitio. La lista es tuya, exportable, y vive solo aquí.",
+  "feat6_title": "Directo a TwitchBolt",
+  "feat6_text": "Pasa una colección entera al descargador de un clic, o expórtala como archivo de texto con los enlaces.",
+  "faq_title": "Preguntas frecuentes",
+  "faq": [
+    {
+      "question": "¿Se envía algo a un servidor?",
+      "answer": "Para navegar por Twitch hay que hablar con Twitch. Tus búsquedas pasan por este sitio hacia la API oficial de Twitch para que el navegador pueda leer la respuesta, y las miniaturas y el vídeo vienen de los servidores de Twitch. No se guarda nada sobre ti: ni cuenta, ni perfil, ni registro de lo que has mirado. Tus clips guardados, tus colecciones y tus streamers bloqueados son otra cosa: eso no sale nunca de tu navegador."
+    },
+    {
+      "question": "¿Dónde se guardan mis colecciones?",
+      "answer": "En este navegador, bajo claves que empiezan por clipy_. Sobreviven a las recargas y siguen ahí cuando vuelves, pero están atadas a este navegador en este dispositivo. No se sincroniza nada, y borrar los datos del sitio las elimina."
+    },
+    {
+      "question": "¿Puedo descargar los clips aquí?",
+      "answer": "No. Clipy sirve para encontrar; descargar es trabajo de TwitchBolt. Manda una colección entera allí de un clic, o expórtala como archivo de texto con los enlaces y pégalo donde quieras."
+    },
+    {
+      "question": "¿Por qué algunas búsquedas salen vacías?",
+      "answer": "Los resultados son lo que Twitch esté sirviendo en ese momento. Una categoría tranquila de verdad tiene pocos clips recientes, y tus propios filtros pueden esconder el resto: un rango de fechas estrecho o una lista de idiomas vacían una página enseguida. Twitch además limita las peticiones de vez en cuando; suele bastar con esperar unos segundos y buscar otra vez."
+    },
+    {
+      "question": "¿Qué hace exactamente bloquear a un streamer?",
+      "answer": "Esconde todos los clips de ese canal en toda la herramienta, al momento y en cualquier búsqueda futura. Es un filtro local, no una denuncia: a Twitch no se le dice nada, el streamer no se entera, y puedes exportar la lista o deshacerlo cuando quieras."
+    }
+  ]
 };

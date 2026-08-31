@@ -148,5 +148,50 @@ export default {
   "group_by_channel": "Kanäle gruppieren",
   "group_by_channel_desc": "Clips nach ihren Kanälen gruppieren",
   "block_confirm_title": "Diesen Kanal ausblenden?",
-  "block_confirm_desc": "Möchtest du die Clips von {name} wirklich ausblenden? Du kannst sie jederzeit aus der Liste der ausgeblendeten Kanäle wiederherstellen."
+  "block_confirm_desc": "Möchtest du die Clips von {name} wirklich ausblenden? Du kannst sie jederzeit aus der Liste der ausgeblendeten Kanäle wiederherstellen.",
+  "how_title": "So funktioniert es",
+  "features_title": "Was es wirklich kann",
+  "step1_title": "Kategorie finden",
+  "step1_text": "Such eine beliebige Twitch-Kategorie, oder stöbere in denen, wo gerade am meisten los ist.",
+  "step4_title": "Schick es an TwitchBolt",
+  "step4_text": "Gib die ganze Liste mit einem Klick an den Downloader weiter, oder exportier sie als Textdatei.",
+  "step2_title": "Grenz es ein",
+  "step2_text": "Filter nach Datum, Aufrufen, Sprache oder Länge, und blende die Streamer aus, die du nie wieder sehen willst.",
+  "step3_title": "Hier ansehen",
+  "step3_text": "Clips öffnen sich in einem schwebenden Player, den du verschieben und skalieren kannst — das Raster bleibt, wo es war.",
+  "feat1_title": "Ganz Twitch durchsuchen",
+  "feat1_text": "Tipp eine Kategorie, ein Spiel oder einen Kanal und bekomm die Clips dazu, mit Vorschlägen beim Tippen.",
+  "feat2_title": "Filter, die zählen",
+  "feat2_text": "Zeitraum, Aufrufe, Länge und Sprache — inklusive einer „nur diese Sprachen\"-Liste, nicht bloß einer Ausschlussliste.",
+  "feat3_title": "Ein Player, der mitgeht",
+  "feat3_text": "Der schwebende Player läuft weiter, während du weiterstöberst — mit einstellbarer Geschwindigkeit und Speichern-Knopf direkt daneben.",
+  "feat4_title": "Sammlungen, die bleiben",
+  "feat4_text": "Markier Clips, gruppier sie in benannte Sammlungen und find sie morgen wieder — alles in deinem eigenen Browser gespeichert.",
+  "feat5_title": "Einen Streamer dauerhaft ausblenden",
+  "feat5_text": "Blockier einen Kanal, und seine Clips tauchen nirgends mehr auf. Die Liste gehört dir, ist exportierbar und lebt nur hier.",
+  "feat6_title": "Direkt nach TwitchBolt",
+  "feat6_text": "Gib eine ganze Sammlung mit einem Klick an den Downloader weiter, oder exportier sie als Textdatei mit den Links.",
+  "faq_title": "Häufige Fragen",
+  "faq": [
+    {
+      "question": "Wird irgendetwas an einen Server geschickt?",
+      "answer": "Twitch zu durchstöbern heißt, mit Twitch zu sprechen. Deine Suchen laufen über diese Seite zur offiziellen Twitch-API, damit der Browser die Antwort lesen darf, und Vorschaubilder wie Video kommen von Twitchs eigenen Servern. Über dich wird nichts gespeichert: kein Konto, kein Profil, keine Aufzeichnung dessen, was du angesehen hast. Deine gespeicherten Clips, Sammlungen und blockierten Streamer sind etwas anderes — die verlassen deinen Browser nie."
+    },
+    {
+      "question": "Wo bleiben meine Sammlungen?",
+      "answer": "In diesem Browser, unter Schlüsseln, die mit clipy_ beginnen. Sie überstehen das Neuladen und sind bei deiner Rückkehr noch da, hängen aber an diesem Browser auf diesem Gerät. Es wird nichts synchronisiert, und das Löschen der Websitedaten entfernt sie."
+    },
+    {
+      "question": "Kann ich die Clips hier herunterladen?",
+      "answer": "Nein. Clipy ist zum Finden da; das Herunterladen ist TwitchBolts Aufgabe. Schick eine ganze Sammlung mit einem Klick dorthin, oder exportier sie als Textdatei mit den Links und füg sie ein, wo du willst."
+    },
+    {
+      "question": "Warum kommen manche Suchen leer zurück?",
+      "answer": "Die Ergebnisse sind das, was Twitch gerade ausliefert. Eine ruhige Kategorie hat wirklich wenige neue Clips, und deine eigenen Filter können den Rest verstecken: ein enger Zeitraum oder eine Sprachliste leert eine Seite schnell. Twitch drosselt außerdem gelegentlich; ein paar Sekunden warten und erneut suchen hilft meistens."
+    },
+    {
+      "question": "Was macht das Blockieren eines Streamers genau?",
+      "answer": "Es blendet jeden Clip dieses Kanals im ganzen Tool aus, sofort und bei jeder künftigen Suche. Das ist ein lokaler Filter, keine Meldung: Twitch erfährt nichts davon, der Streamer auch nicht, und du kannst die Liste exportieren oder es jederzeit rückgängig machen."
+    }
+  ]
 };

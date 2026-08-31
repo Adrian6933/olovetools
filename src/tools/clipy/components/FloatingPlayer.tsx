@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff, Gauge, Loader2, ChevronDown } from 'lucide-react';
 import { Clip } from '../types';
-import { getClipVideoSource } from '../services/geminiService';
+import { getClipVideoSource } from '../services/twitchService';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
 // así que velocidades altas (x3/x4) siguen siendo perfectamente reproducibles

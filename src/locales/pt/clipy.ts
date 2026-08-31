@@ -148,5 +148,50 @@ export default {
   "group_by_channel": "Agrupar canais",
   "group_by_channel_desc": "Agrupar clipes pelo seu canal de transmissão",
   "block_confirm_title": "Ocultar este canal?",
-  "block_confirm_desc": "Tem certeza de que deseja ocultar os clipes de {name}? Você pode restaurá-los a qualquer momento no painel de ocultados."
+  "block_confirm_desc": "Tem certeza de que deseja ocultar os clipes de {name}? Você pode restaurá-los a qualquer momento no painel de ocultados.",
+  "how_title": "Como funciona",
+  "features_title": "O que faz mesmo",
+  "step1_title": "Encontra uma categoria",
+  "step1_text": "Procura qualquer categoria do Twitch, ou vê as que têm mais movimento neste momento.",
+  "step4_title": "Envia-o para o TwitchBolt",
+  "step4_text": "Passa a lista toda ao descarregador num clique, ou exporta-a como ficheiro de texto.",
+  "step2_title": "Afina a procura",
+  "step2_text": "Filtra por data, visualizações, idioma ou duração, e esconde os streamers que não queres voltar a ver.",
+  "step3_title": "Vê aqui",
+  "step3_text": "Os clipes abrem num leitor flutuante que podes mover e redimensionar, por isso a grelha fica onde estava.",
+  "feat1_title": "Procura em todo o Twitch",
+  "feat1_text": "Escreve uma categoria, um jogo ou um canal e recebe os seus clipes, com sugestões enquanto escreves.",
+  "feat2_title": "Filtros que importam",
+  "feat2_text": "Intervalo de datas, visualizações, duração e idioma — incluindo uma lista de \"só estes idiomas\", não apenas de exclusão.",
+  "feat3_title": "Um leitor que te acompanha",
+  "feat3_text": "O leitor flutuante continua a tocar enquanto continuas a navegar, com velocidade ajustável e o botão de guardar ali mesmo.",
+  "feat4_title": "Coleções que ficam",
+  "feat4_text": "Marca clipes, agrupa-os em coleções com nome e volta a encontrá-los amanhã — tudo guardado no teu próprio navegador.",
+  "feat5_title": "Silencia um streamer para sempre",
+  "feat5_text": "Bloqueia um canal e os seus clipes deixam de aparecer em lado nenhum. A lista é tua, exportável, e vive só aqui.",
+  "feat6_title": "Direto para o TwitchBolt",
+  "feat6_text": "Passa uma coleção inteira ao descarregador num clique, ou exporta-a como ficheiro de texto com os links.",
+  "faq_title": "Perguntas frequentes",
+  "faq": [
+    {
+      "question": "É enviado alguma coisa para um servidor?",
+      "answer": "Navegar pelo Twitch implica falar com o Twitch. As tuas pesquisas passam por este site até à API oficial do Twitch, para que o navegador possa ler a resposta, e as miniaturas e o vídeo vêm dos servidores do Twitch. Nada é guardado sobre ti: sem conta, sem perfil, sem registo do que viste. Os teus clipes guardados, coleções e streamers bloqueados são outra coisa — esses nunca saem do teu navegador."
+    },
+    {
+      "question": "Onde ficam guardadas as minhas coleções?",
+      "answer": "Neste navegador, sob chaves começadas por clipy_. Sobrevivem às recargas e continuam lá quando voltas, mas estão presas a este navegador neste dispositivo. Nada é sincronizado, e limpar os dados do site apaga-as."
+    },
+    {
+      "question": "Posso descarregar os clipes aqui?",
+      "answer": "Não. O Clipy serve para encontrar; descarregar é trabalho do TwitchBolt. Envia uma coleção inteira para lá num clique, ou exporta-a como ficheiro de texto com os links e cola-o onde quiseres."
+    },
+    {
+      "question": "Porque é que algumas pesquisas vêm vazias?",
+      "answer": "Os resultados são o que o Twitch está a servir naquele momento. Uma categoria calma tem mesmo poucos clipes recentes, e os teus próprios filtros podem esconder o resto: um intervalo de datas apertado ou uma lista de idiomas esvaziam uma página depressa. O Twitch também limita os pedidos de vez em quando; esperar uns segundos e pesquisar outra vez costuma resolver."
+    },
+    {
+      "question": "O que faz exatamente bloquear um streamer?",
+      "answer": "Esconde todos os clipes desse canal em toda a ferramenta, de imediato e em todas as pesquisas futuras. É um filtro local, não uma denúncia: o Twitch não fica a saber, o streamer também não, e podes exportar a lista ou desfazer quando quiseres."
+    }
+  ]
 };

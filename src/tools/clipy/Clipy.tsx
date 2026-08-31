@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from './types';
-import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition } from './services/geminiService';
+import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition } from './services/twitchService';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
 import SearchBar from './components/SearchBar';
@@ -12,6 +12,11 @@ import LegalModal from './components/LegalModal';
 import BlocklistManager from './components/BlocklistManager';
 import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { AdBanner } from '../../components/shared/AdBanner';
+import {
+  IconBlock, IconCollection, IconFilter, IconHandoff, IconPlayer, IconSearch,
+  StepFilter, StepSearch, StepSend, StepWatch,
+} from './components/Illustrations';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 const STORAGE_KEY = 'clipy_saved_session';
@@ -46,6 +51,13 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   // la memoización no serviría de nada y se repintarían las 50-500 tarjetas
   // cada vez que cambia cualquier cosa del padre (toast, spinner, el crawl...).
   const t = useMemo(() => createTranslator(dictionary), [dictionary]);
+
+  // La FAQ es un array de objetos: createTranslator convierte a String, asi que
+  // t('faq') devolveria "[object Object],...". Se lee del diccionario directamente.
+  const faqItems = useMemo(() => {
+    const raw = (dictionary as any)?.faq;
+    return Array.isArray(raw) ? raw : [];
+  }, [dictionary]);
   const prefersReduced = useReducedMotion();
 
   const [state, setState] = useState<SearchState>({
@@ -370,7 +382,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Revocado con retardo, no en el mismo tick que el click: Safari cancela la
+    // descarga en curso cuando la object URL desaparece bajo sus pies.
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
   };
 
   const handleToggleSave = useCallback((clip: Clip) => {
@@ -436,7 +450,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    // Revocado con retardo, no en el mismo tick que el click: Safari cancela la
+    // descarga en curso cuando la object URL desaparece bajo sus pies.
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
   };
 
   const openExternalDownload = useCallback(async (content: string) => {
@@ -1380,8 +1396,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           se llegan a pintar. Restarlo siempre era lo que rompía el móvil:
           calc(100vw-440px) da negativo por debajo de 440px de pantalla, el
           max-width se queda en 0 y todo el contenido se salía de la caja. */}
-      <main className="w-full mx-auto px-4 sm:px-6 pt-44 md:pt-40 flex-grow max-w-[1800px] min-[1400px]:max-w-[min(1800px,calc(100vw-440px))] relative z-10" key={state.mode}>
-        <div className="mb-8 md:mb-14">
+      <main className="w-full mx-auto px-4 sm:px-6 pt-44 md:pt-40 flex-grow max-w-[1800px] min-[1400px]:max-w-[min(1800px,calc(100vw-440px))] relative z-10">
+        <AdBanner id="adsense-clipy-top" className="mb-8" />
+        <div className="mb-8 md:mb-14" key={state.mode}>
           {state.mode === 'categories' && (
             <div className="relative mb-10">
               <div
@@ -1558,6 +1575,77 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
             )}
           </div>
         )}
+
+        <AdBanner id="adsense-clipy-mid" className="mt-24" />
+
+        {/* Como funciona ------------------------------------------------- */}
+        <section id="how-it-works" className="mt-24 space-y-8 scroll-mt-32">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t('how_title')}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+            {[
+              { art: StepSearch, title: t('step1_title'), text: t('step1_text') },
+              { art: StepFilter, title: t('step2_title'), text: t('step2_text') },
+              { art: StepWatch, title: t('step3_title'), text: t('step3_text') },
+              { art: StepSend, title: t('step4_title'), text: t('step4_text') },
+            ].map((step, i) => (
+              <div key={i} className="bg-[#16121f] border border-white/5 rounded-2xl p-4 space-y-3">
+                <step.art />
+                <h3 className="text-sm font-black text-white flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-md bg-twitch-base/20 text-twitch-base text-[11px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
+                  {step.title}
+                </h3>
+                <p className="text-xs text-gray-400 leading-relaxed">{step.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Caracteristicas ----------------------------------------------- */}
+        <section className="mt-24 space-y-8">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+            {t('features_title')}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+            {[
+              { icon: IconSearch, title: t('feat1_title'), text: t('feat1_text') },
+              { icon: IconFilter, title: t('feat2_title'), text: t('feat2_text') },
+              { icon: IconPlayer, title: t('feat3_title'), text: t('feat3_text') },
+              { icon: IconCollection, title: t('feat4_title'), text: t('feat4_text') },
+              { icon: IconBlock, title: t('feat5_title'), text: t('feat5_text') },
+              { icon: IconHandoff, title: t('feat6_title'), text: t('feat6_text') },
+            ].map((f, i) => (
+              <div key={i} className="bg-[#16121f] border border-white/5 rounded-2xl p-5 space-y-3">
+                <div className="w-10 h-10"><f.icon /></div>
+                <h3 className="text-sm font-black text-white">{f.title}</h3>
+                <p className="text-xs text-gray-400 leading-relaxed">{f.text}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ ------------------------------------------------------------ */}
+        {Array.isArray(faqItems) && faqItems.length > 0 && (
+          <section className="mt-24 space-y-6">
+            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
+              {t('faq_title')}
+            </h2>
+            <div className="space-y-3 max-w-3xl mx-auto w-full">
+              {faqItems.map((item: any, i: number) => (
+                <details key={i} className="group bg-[#16121f] border border-white/5 rounded-2xl overflow-hidden">
+                  <summary className="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer list-none text-sm font-bold text-white hover:opacity-80 transition-opacity">
+                    <span>{item.question}</span>
+                    <span className="text-lg leading-none text-twitch-base shrink-0 transition-transform group-open:rotate-45">+</span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-gray-400 leading-relaxed">{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <AdBanner id="adsense-clipy-bottom" className="mt-24" />
       </main>
 
       {playingClip && <FloatingPlayer clip={playingClip} onClose={() => {

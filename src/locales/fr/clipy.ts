@@ -148,5 +148,50 @@ export default {
   "group_by_channel": "Grouper les chaînes",
   "group_by_channel_desc": "Grouper les clips par leur chaîne d'origine",
   "block_confirm_title": "Masquer cette chaîne ?",
-  "block_confirm_desc": "Voulez-vous vraiment masquer les clips de {name} ? Vous pouvez les restaurer à tout moment depuis la liste des éléments masqués."
+  "block_confirm_desc": "Voulez-vous vraiment masquer les clips de {name} ? Vous pouvez les restaurer à tout moment depuis la liste des éléments masqués.",
+  "how_title": "Comment ça marche",
+  "features_title": "Ce qu'il fait vraiment",
+  "step1_title": "Trouvez une catégorie",
+  "step1_text": "Cherchez n'importe quelle catégorie Twitch, ou parcourez celles où il se passe le plus de choses en ce moment.",
+  "step4_title": "Envoyez-le vers TwitchBolt",
+  "step4_text": "Transmettez toute la liste au téléchargeur en un clic, ou exportez-la en fichier texte.",
+  "step2_title": "Affinez la recherche",
+  "step2_text": "Filtrez par date, vues, langue ou durée, et masquez les streamers que vous ne voulez plus voir.",
+  "step3_title": "Regardez ici",
+  "step3_text": "Les clips s'ouvrent dans un lecteur flottant déplaçable et redimensionnable : la grille reste où elle était.",
+  "feat1_title": "Cherchez dans tout Twitch",
+  "feat1_text": "Tapez une catégorie, un jeu ou une chaîne et obtenez ses clips, avec des suggestions au fil de la frappe.",
+  "feat2_title": "Des filtres utiles",
+  "feat2_text": "Plage de dates, nombre de vues, durée et langue — y compris une liste « uniquement ces langues », pas seulement d'exclusion.",
+  "feat3_title": "Un lecteur qui vous suit",
+  "feat3_text": "Le lecteur flottant continue pendant que vous continuez à parcourir, avec vitesse réglable et bouton d'enregistrement à portée.",
+  "feat4_title": "Des collections qui restent",
+  "feat4_text": "Mettez des clips en favori, groupez-les en collections nommées et retrouvez-les demain — le tout stocké dans votre propre navigateur.",
+  "feat5_title": "Masquez un streamer pour de bon",
+  "feat5_text": "Bloquez une chaîne et ses clips cessent d'apparaître partout. La liste est la vôtre, exportable, et ne vit qu'ici.",
+  "feat6_title": "Directement dans TwitchBolt",
+  "feat6_text": "Transmettez toute une collection au téléchargeur en un clic, ou exportez-la en fichier texte de liens.",
+  "faq_title": "Questions fréquentes",
+  "faq": [
+    {
+      "question": "Quelque chose est-il envoyé à un serveur ?",
+      "answer": "Parcourir Twitch suppose de parler à Twitch. Vos recherches passent par ce site vers l'API officielle de Twitch pour que le navigateur puisse lire la réponse, et les vignettes comme la vidéo viennent des serveurs de Twitch. Rien n'est conservé à votre sujet : pas de compte, pas de profil, aucune trace de ce que vous avez regardé. Vos clips enregistrés, vos collections et vos streamers bloqués, eux, ne quittent jamais votre navigateur."
+    },
+    {
+      "question": "Où mes collections sont-elles conservées ?",
+      "answer": "Dans ce navigateur, sous des clés commençant par clipy_. Elles survivent aux rechargements et sont encore là à votre retour, mais elles sont liées à ce navigateur sur cet appareil. Rien n'est synchronisé, et effacer les données du site les supprime."
+    },
+    {
+      "question": "Puis-je télécharger les clips ici ?",
+      "answer": "Non. Clipy sert à trouver ; le téléchargement est le travail de TwitchBolt. Envoyez-y une collection entière en un clic, ou exportez-la en fichier texte de liens et collez-le où vous voulez."
+    },
+    {
+      "question": "Pourquoi certaines recherches ne donnent-elles rien ?",
+      "answer": "Les résultats sont ce que Twitch sert à cet instant. Une catégorie calme a réellement peu de clips récents, et vos propres filtres peuvent masquer le reste : une plage de dates étroite ou une liste de langues vide une page très vite. Twitch limite aussi parfois les requêtes ; attendre quelques secondes et relancer suffit en général."
+    },
+    {
+      "question": "Que fait exactement le blocage d'un streamer ?",
+      "answer": "Il masque tous les clips de cette chaîne dans tout l'outil, immédiatement et dans toutes les recherches suivantes. C'est un filtre local, pas un signalement : Twitch n'en sait rien, le streamer non plus, et vous pouvez exporter la liste ou annuler quand vous voulez."
+    }
+  ]
 };

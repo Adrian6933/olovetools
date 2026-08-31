@@ -148,5 +148,50 @@ export default {
   "import_success": "List imported successfully",
   "import_error": "Error importing file",
   "import_invalid_format": "Invalid file format",
-  "download": "Download"
+  "download": "Download",
+  "how_title": "How it works",
+  "features_title": "What it actually does",
+  "step1_title": "Find a category",
+  "step1_text": "Search any Twitch category, or browse the ones with the most going on right now.",
+  "step4_title": "Send it to TwitchBolt",
+  "step4_text": "Hand the whole list over to the downloader in one click, or export it as a text file.",
+  "step2_title": "Narrow it down",
+  "step2_text": "Filter by date, views, language or duration, and hide the streamers you never want to see again.",
+  "step3_title": "Watch it here",
+  "step3_text": "Clips open in a floating player you can move and resize, so the grid stays where it was.",
+  "feat1_title": "Search all of Twitch",
+  "feat1_text": "Type a category, a game or a channel and get its clips, with suggestions as you type.",
+  "feat2_title": "Filters that matter",
+  "feat2_text": "Date range, view count, duration and language — including an \"only these languages\" list, not just an exclusion one.",
+  "feat3_title": "A player that follows you",
+  "feat3_text": "The floating player keeps playing while you keep browsing, with adjustable speed and a save button right there.",
+  "feat4_title": "Collections you keep",
+  "feat4_text": "Star clips, group them into named collections, and find them again tomorrow — all stored in your own browser.",
+  "feat5_title": "Mute a streamer for good",
+  "feat5_text": "Block a channel and its clips stop appearing anywhere. The list is yours, exportable, and lives only here.",
+  "feat6_title": "Straight into TwitchBolt",
+  "feat6_text": "Hand a whole collection to the downloader in one click, or export it as a plain text file of links.",
+  "faq_title": "Frequently Asked Questions",
+  "faq": [
+    {
+      "question": "Is anything sent to a server?",
+      "answer": "Browsing Twitch requires talking to Twitch. Your searches go through this site to Twitch's official API so the browser is allowed to read the answer, and clip thumbnails and video come from Twitch's own servers. Nothing about you is stored: no account, no profile, no record of what you looked at. Your saved clips, collections and blocked streamers are a different matter — those never leave your browser."
+    },
+    {
+      "question": "Where are my collections kept?",
+      "answer": "In this browser, under keys starting with clipy_. They survive reloads and are still there when you come back, but they are tied to this browser on this device. Nothing is synced anywhere, and clearing your site data deletes them."
+    },
+    {
+      "question": "Can I download the clips here?",
+      "answer": "No. Clipy is for finding things; downloading is TwitchBolt's job. Send a whole collection there in one click, or export it as a text file of links and paste it wherever you like."
+    },
+    {
+      "question": "Why do some searches come back empty?",
+      "answer": "The results are whatever Twitch is serving right now. A quiet category genuinely has few recent clips, and your own filters can hide the rest — a narrow date range or a language list will empty a page fast. Twitch also rate-limits occasionally; waiting a few seconds and searching again usually works."
+    },
+    {
+      "question": "What does blocking a streamer actually do?",
+      "answer": "It hides every clip from that channel across the whole tool, immediately and on every future search. It is a local filter, not a report: Twitch is never told, the streamer never knows, and you can export the list or undo it whenever you like."
+    }
+  ]
 };
