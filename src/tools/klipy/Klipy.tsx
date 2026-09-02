@@ -1192,6 +1192,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
         // que va encima del acento con esta variable, asi que basta con
         // declararla aqui.
         ['--color-accent-ink' as any]: '#0a1206',
+        // Los canales del verde, para las sombras y brillos.
+        ['--color-accent-rgb' as any]: '83, 252, 24',
       }}
     >
 
@@ -1961,7 +1963,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       <div className="fixed bottom-4 right-4 z-[200]">
         <button
           onClick={scrollToTop}
-          className={`bg-[#1a1a24] text-gray-400 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all hover:text-white hover:bg-twitch-base hover:shadow-[0_20px_40px_rgba(145,70,255,0.3)] hover:-translate-y-3 active:scale-90 cursor-pointer group ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
+          className={`bg-[#1a1a24] text-gray-400 p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-white/5 transition-all hover:text-white hover:bg-twitch-base hover:shadow-[0_20px_40px_rgba(var(--color-accent-rgb),0.3)] hover:-translate-y-3 active:scale-90 cursor-pointer group ${showScrollTop ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}`}
           aria-label="Scroll to top"
         >
           <ArrowUp className="w-6 h-6 md:w-8 md:h-8 group-hover:scale-110 transition-transform" />
@@ -2017,7 +2019,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       >
       <footer className="mt-32 py-20 bg-transparent border-t border-white/5 relative z-10 px-8">
         <style>{`
-          footer b { color: #fff; font-weight: 800; text-shadow: 0 0 10px rgba(145, 70, 255, 0.2); }
+          footer b { color: #fff; font-weight: 800; text-shadow: 0 0 10px rgba(var(--color-accent-rgb),0.2); }
           footer .keyword-accent { color: #53fc18; font-weight: 800; }
         `}</style>
         <div className="max-w-7xl mx-auto flex flex-col items-center">

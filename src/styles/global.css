@@ -9,6 +9,10 @@
      y pasa el minimo, pero sobre el verde de Kick da 1,37:1 y es ilegible.
      Cada herramienta la redefine junto con su acento. */
   --color-accent-ink: #ffffff;
+  /* Los canales del acento sueltos, para las sombras y brillos: rgba() necesita
+     numeros separados por comas, no un color ya formado, asi que una variable
+     con el hexadecimal no sirve ahi. Cada herramienta la redefine con su color. */
+  --color-accent-rgb: 145, 70, 255;
   --color-twitch-black: #050507;
   --color-twitch-surface: rgba(18, 18, 23, 1);
   --color-twitch-surfaceAlt: rgba(30, 30, 35, 1);
@@ -58,12 +62,12 @@
     0%, 100% { 
       opacity: 1; 
       transform: scale(1);
-      border-color: rgba(145, 70, 255, 0.3);
+      border-color: rgba(var(--color-accent-rgb), 0.3);
     }
     50% { 
       opacity: 0.6; 
       transform: scale(0.99);
-      border-color: rgba(145, 70, 255, 0.1);
+      border-color: rgba(var(--color-accent-rgb), 0.1);
     }
   }
 
@@ -282,7 +286,7 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(145, 70, 255, 0.5);
+  background: rgba(var(--color-accent-rgb), 0.5);
 }
 
 .custom-scrollbar {

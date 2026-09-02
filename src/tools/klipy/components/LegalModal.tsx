@@ -39,8 +39,8 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
         </button>
         
         <div className="flex items-center gap-5 mb-10">
-            <div className="p-4 bg-twitch-base/10 rounded-3xl shadow-[0_0_20px_rgba(145,70,255,0.2)]">
-                <Icon className="w-8 h-8 text-twitch-base drop-shadow-[0_0_8px_rgba(145,70,255,0.8)]" />
+            <div className="p-4 bg-twitch-base/10 rounded-3xl shadow-[0_0_20px_rgba(var(--color-accent-rgb),0.2)]">
+                <Icon className="w-8 h-8 text-twitch-base drop-shadow-[0_0_8px_rgba(var(--color-accent-rgb),0.8)]" />
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter">
                 {t(title)}
@@ -72,7 +72,7 @@ const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }
         <div className="mt-14 flex justify-end">
             <button 
                 onClick={onClose}
-                className="px-10 py-4 bg-twitch-base text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all hover:bg-twitch-dark hover:shadow-[0_0_30px_rgba(145,70,255,0.4)] active:scale-95 cursor-pointer"
+                className="px-10 py-4 bg-twitch-base text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all hover:bg-twitch-dark hover:shadow-[0_0_30px_rgba(var(--color-accent-rgb),0.4)] active:scale-95 cursor-pointer"
             >
                 {t('got_it')}
             </button>

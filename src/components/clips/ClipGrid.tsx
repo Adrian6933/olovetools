@@ -132,7 +132,7 @@ const ClipCard: React.FC<{
       <div className="group flex flex-col gap-4 cursor-pointer" onClick={() => onClick(clip)}>
         <div
           style={{ isolation: 'isolate', transform: 'translateZ(0)' }}
-          className="relative aspect-video bg-[#0a0a0f] overflow-hidden rounded-[2rem] border border-white/5 transition-[transform,border-color,box-shadow] duration-[450ms] ease-expo group-hover:border-twitch-base/30 group-hover:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(145,70,255,0.15)] group-hover:-translate-y-2"
+          className="relative aspect-video bg-[#0a0a0f] overflow-hidden rounded-[2rem] border border-white/5 transition-[transform,border-color,box-shadow] duration-[450ms] ease-expo group-hover:border-twitch-base/30 group-hover:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.7),0_0_0_1px_rgba(var(--color-accent-rgb),0.15)] group-hover:-translate-y-2"
         >
 
           {!imgError ? (
@@ -213,7 +213,7 @@ const ClipCard: React.FC<{
 
           {/* El muelle del final de la curva (1.56) da el rebotito al aparecer. */}
           <div className="absolute inset-0 flex items-center justify-center z-20 pointer-events-none">
-            <div className="flex items-center justify-center w-[4.5rem] h-[4.5rem] rounded-full bg-twitch-base/90 shadow-[0_10px_35px_rgba(145,70,255,0.5)] transition-[transform,opacity] duration-[420ms] ease-spring scale-100 opacity-100 lg:scale-50 lg:opacity-0 lg:group-hover:scale-100 lg:group-hover:opacity-100 lg:group-hover:delay-[80ms]">
+            <div className="flex items-center justify-center w-[4.5rem] h-[4.5rem] rounded-full bg-twitch-base/90 shadow-[0_10px_35px_rgba(var(--color-accent-rgb),0.5)] transition-[transform,opacity] duration-[420ms] ease-spring scale-100 opacity-100 lg:scale-50 lg:opacity-0 lg:group-hover:scale-100 lg:group-hover:opacity-100 lg:group-hover:delay-[80ms]">
               <Play className="w-7 h-7 text-white fill-current ml-1" />
             </div>
           </div>
