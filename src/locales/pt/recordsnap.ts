@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "RecordSnap",
   "badge": "Gravador de ecrã local",
   "description": "Grave o seu ecrã, a sua webcam ou ambos ao mesmo tempo, inteiramente no navegador. Nada é enviado para a nuvem e o bitrate é escolhido por si.",

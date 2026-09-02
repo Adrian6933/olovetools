@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "QR Reader",
   "badge": "二维码读取器",
   "description": "用摄像头、图片或剪贴板扫描二维码，直接看清里面到底是什么。它把目的地展示给你，从不替你打开。",

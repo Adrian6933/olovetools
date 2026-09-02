@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "UUID ジェネレーター",
   "badge": "一意な識別子",
   "description": "UUID v1・v3・v4・v5・v6・v7 に加えて ULID、NanoID、MongoDB の ObjectId を生成します。まとめて、コードが求める形そのままで、ネットワーク通信は一切ありません。",

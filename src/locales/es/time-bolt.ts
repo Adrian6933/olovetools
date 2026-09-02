@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "TimeBolt",
   "seo_title": "Reloj mundial y planificador de reuniones entre zonas",
   "seo_description": "Reloj mundial y planificador de reuniones gratis. Añade cualquiera de las ~400 zonas IANA que conoce tu navegador, mira las 24 horas en paralelo con el horario laboral sombreado, recibe un aviso si ese día cambia la hora y exporta la reunión como archivo .ics. Todo funciona en tu navegador y tus zonas se recuerdan.",

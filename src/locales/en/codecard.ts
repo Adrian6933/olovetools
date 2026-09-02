@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "CodeCard",
   "description": "Convert your code snippets into beautiful, sharing-ready screenshot cards with custom styles 100% locally.",
   "seo_title": "CodeCard | Beautiful Code Snippet Image & Screenshot Generator",

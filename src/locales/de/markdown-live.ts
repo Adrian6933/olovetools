@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "MarkdownLive",
   "description": "Links Markdown schreiben und rechts zusehen, wie das fertige Dokument entsteht — verschachtelte Listen, Aufgabenlisten, Tabellen, Fußnoten und hervorgehobener Code, alles im eigenen Browser-Tab ausgewertet.",
   "badge": "Markdown, gerendert in deinem Tab",

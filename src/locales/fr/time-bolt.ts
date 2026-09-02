@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "TimeBolt",
   "seo_title": "Horloge mondiale et planificateur de réunions entre fuseaux",
   "seo_description": "Horloge mondiale et planificateur de réunions gratuits. Ajoutez n'importe lequel des ~400 fuseaux IANA que connaît votre navigateur, voyez les 24 heures côte à côte avec les heures de travail ombrées, soyez prévenu si l'heure change ce jour-là, et exportez la réunion en fichier .ics. Tout tourne dans votre navigateur et vos fuseaux sont mémorisés.",

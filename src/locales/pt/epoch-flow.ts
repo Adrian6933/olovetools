@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "EpochFlow",
   "seo_title": "Conversor de timestamps Unix com fusos horários",
   "seo_description": "Conversor de timestamps Unix gratuito. Segundos, milissegundos, microssegundos e nanossegundos, qualquer fuso IANA com o desvio que se aplicava nesse instante, deteção de horário de verão e o mesmo momento como FILETIME do Windows, ticks do .NET, serial do Excel ou dia juliano. Corre no teu navegador, com BigInt, sem arredondar nanossegundos.",

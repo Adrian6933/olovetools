@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "MorseFlow",
   "label_text": "Texto",
   "label_morse": "Morse",

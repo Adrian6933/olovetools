@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "TTSBolt",
   "badge": "Text to speech",
   "description": "Turn a script into a narrated MP3 with neural voices, and get subtitles that line up with it to the millisecond.",

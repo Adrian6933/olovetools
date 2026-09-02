@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Base64Bolt",
   "seo_title": "Base64Bolt | Base64-Encoder, -Decoder und Byte-Inspektor",
   "seo_description": "Kodiere Text oder beliebige Dateien nach Base64, dekodiere eine Nutzlast zurück in die echte Datei, lies die Bytes in Hexadezimal, wechsle zum URL-sicheren Alphabet, lass das Padding weg und brich bei 76 Spalten um. Kostenlos und vollständig im Browser.",

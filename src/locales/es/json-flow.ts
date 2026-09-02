@@ -1,4 +1,8 @@
 export default {
+  "copyPath": "Copiar la ruta",
+  "copyValue": "Copiar el valor",
+  "copyBranch": "Copiar la rama entera",
+  "resetHint": "Empezar de nuevo",
   "title": "JSONFlow",
   "description": "Valida, explora y convierte JSON en el navegador: posición exacta del error, un árbol plegable que aguanta archivos enormes, consultas JSONPath y exportación a CSV, XML, YAML, JSON Schema o TypeScript.",
 

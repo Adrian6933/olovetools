@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "TimeBolt",
   "seo_title": "World clock and meeting planner across time zones",
   "seo_description": "Free world clock and meeting planner. Add any of the ~400 IANA time zones your browser knows, see all 24 hours side by side with working hours shaded, get warned when the clocks change that day, and export the meeting as an .ics file. Everything runs in your browser and your zones are remembered.",

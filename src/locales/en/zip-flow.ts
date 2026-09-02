@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "ZipFlow",
   "description": "Pack files and whole folders into a ZIP, or open an archive and browse it like a file manager — entirely inside your browser.",
   "badge": "Local ZIP workshop",

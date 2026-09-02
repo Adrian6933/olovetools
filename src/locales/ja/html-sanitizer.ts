@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "整形済み HTML のプレビュー",
+  "resetHint": "最初からやり直す",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | 削除レポート付きの無料HTMLクリーナー",
   "seo_description": "本物の許可リストで HTML を洗浄。スクリプト、イベントハンドラ、javascript: URL、不要タグを除去し、何が消えたかを正確に確認して必要な分だけ戻せます。すべてブラウザ内で完結。",

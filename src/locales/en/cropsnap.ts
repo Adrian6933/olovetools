@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "CropSnap",
   "badge": "Image cropper",
   "description": "Crop, straighten and resize an image in your browser — and get it back at the original resolution, not at the size of the preview.",

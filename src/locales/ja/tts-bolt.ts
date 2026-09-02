@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "TTSBolt",
   "badge": "テキスト読み上げ",
   "description": "原稿をニューラル音声のMP3に変換し、ミリ秒単位で合う字幕まで一緒に受け取れます。",

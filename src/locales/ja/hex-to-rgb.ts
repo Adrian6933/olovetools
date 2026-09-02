@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "HEX から RGB",
   "badge": "色の変換",
   "seo_title": "HEX→RGB 変換ツール | RGB・HSL・HWB・OKLCH・CMYK、コントラスト検査とパレット付き",

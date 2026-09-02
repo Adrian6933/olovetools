@@ -2,7 +2,8 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Search, Globe, Sparkles, Github, Twitter, ArrowUp, Menu, X,
   Video, Image as ImageIcon, FileText, Code, Type, Database, Shield, LayoutGrid, CloudDownload,
-  PanelLeftClose, PanelLeft, ChevronDown, Activity, Heart, Star
+  PanelLeftClose, PanelLeft, ChevronDown, Activity, Heart, Star,
+  TrendingUp, History, ArrowDownAZ, Wand2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ProjectCard } from './ProjectCard';
@@ -116,10 +117,32 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   // navegador de quien mira y sirven desde la primera visita; las globales
   // vienen del servidor y necesitan tráfico para significar algo.
   type Orden = 'default' | 'global' | 'mine' | 'az';
+  const ORDEN_GUARDADO = 'olovetools_sort';
+  const ORDENES_VALIDOS: Orden[] = ['default', 'global', 'mine', 'az'];
+
+  // Arranca siempre en 'default' y el orden guardado se aplica tras montar. Si
+  // se leyera localStorage aquí, el servidor y el navegador pintarían listas
+  // distintas y React se quejaría de la hidratación.
   const [orden, setOrden] = useState<Orden>('default');
+
+  useEffect(() => {
+    try {
+      const guardado = localStorage.getItem(ORDEN_GUARDADO) as Orden | null;
+      if (guardado && ORDENES_VALIDOS.includes(guardado)) setOrden(guardado);
+    } catch { /* modo privado: se queda en el orden por defecto */ }
+  }, []);
+
+  const elegirOrden = (nuevo: Orden) => {
+    setOrden(nuevo);
+    try { localStorage.setItem(ORDEN_GUARDADO, nuevo); } catch { /* ignore */ }
+  };
   const [visitasPropias, setVisitasPropias] = useState<Record<string, number>>({});
   const [visitasGlobales, setVisitasGlobales] = useState<Record<string, number>>({});
   const [hayContadorGlobal, setHayContadorGlobal] = useState(false);
+  // Hasta que /api/stats conteste no se sabe si hay contador global. Sin este
+  // testigo, la guardia de más abajo tumbaba el orden recién restaurado del
+  // navegador porque en ese instante todavía creía que no había contador.
+  const [statsListo, setStatsListo] = useState(false);
 
   useEffect(() => {
     setVisitasPropias(leerVisitasPropias());
@@ -137,7 +160,8 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         setHayContadorGlobal(Boolean(d.enabled));
         setVisitasGlobales(d.visits || {});
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => { if (vivo) setStatsListo(true); });
     return () => { vivo = false; };
   }, []);
 
@@ -176,6 +200,14 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
 
   const tieneVisitasPropias = Object.keys(visitasPropias).length > 0;
 
+  // Alguien pudo dejar elegido "las que más usas" y luego limpiar los datos del
+  // navegador, o el contador global pudo apagarse. Sin esto quedaría un orden
+  // activo cuyo botón ya no existe, y la lista parecería desordenada sin motivo.
+  useEffect(() => {
+    if (orden === 'mine' && !tieneVisitasPropias) setOrden('default');
+    if (statsListo && orden === 'global' && !hayContadorGlobal) setOrden('default');
+  }, [orden, tieneVisitasPropias, hayContadorGlobal, statsListo]);
+
   // Compute counts dynamically
   const categoryCounts = useMemo(() => {
     const counts: Record<string, number> = { All: MOCK_PROJECTS.length };
@@ -194,7 +226,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   const mobileCategories = ['All', 'Favorites', ...Object.values(ProjectCategory)];
 
   const catLabel = (c: string) =>
-    c === 'Favorites' ? 'Favoritos' : t(`categories.${c}`);
+    c === 'Favorites' ? t('favorites') : t(`categories.${c}`);
   const catIcon = (c: string): React.ComponentType<any> =>
     c === 'Favorites' ? Star : (categoryIconMap[c] || Sparkles);
   const catCount = (c: string) =>
@@ -219,8 +251,8 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
         <button
           onClick={() => setIsMobileMenuOpen(true)}
           className="lg:hidden fixed top-4 left-4 z-[110] w-11 h-11 rounded-full bg-[#1e1f20]/90 backdrop-blur-md border border-white/10 text-white flex items-center justify-center shadow-2xl hover:bg-[#282a2c] active:scale-95 transition-all cursor-pointer"
-          aria-label="Abrir menú de categorías"
-          title="Categorías"
+          aria-label={t('openCategories')}
+          title={t('categoriesTitle')}
         >
           <Menu className="w-5 h-5" />
         </button>
@@ -251,7 +283,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               className={`p-2 hover:bg-[#282a2c] rounded-full text-slate-300 hover:text-white transition-colors cursor-pointer ${
                 isSidebarCollapsed ? 'mx-auto' : ''
               }`}
-              title={isSidebarCollapsed ? 'Expandir menú' : 'Colapsar menú'}
+              title={isSidebarCollapsed ? t('expandMenu') : t('collapseMenu')}
             >
               {isSidebarCollapsed ? <PanelLeft className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
             </button>
@@ -286,11 +318,11 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                     ? 'bg-[#2f3032] text-white'
                     : 'text-slate-300 hover:bg-[#282a2c] hover:text-white'
                 }`}
-                title="Favoritos"
+                title={t('favorites')}
               >
                 <div className="flex items-center gap-3.5">
                   <Star className={`w-4.5 h-4.5 shrink-0 transition-colors ${selectedCategory === 'Favorites' ? 'fill-yellow-400 text-yellow-400' : 'text-yellow-400'}`} />
-                  {!isSidebarCollapsed && <span className="truncate">Favoritos</span>}
+                  {!isSidebarCollapsed && <span className="truncate">{t('favorites')}</span>}
                 </div>
                 {!isSidebarCollapsed && <span className="text-[10px] text-slate-500 font-mono">{favorites.length}</span>}
               </button>
@@ -300,7 +332,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
             <div className="px-1 space-y-1">
               {!isSidebarCollapsed && (
                 <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-slate-400 uppercase">
-                  Categorías
+                  {t('categoriesTitle')}
                 </div>
               )}
               <div className="flex flex-col gap-0.5">
@@ -346,7 +378,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               <div className="space-y-1">
                 <div className="px-3 py-1.5 text-[11px] font-bold tracking-wider text-slate-400 uppercase flex items-center gap-2">
                   <Activity className="w-3.5 h-3.5 shrink-0" />
-                  <span>Actividad</span>
+                  <span>{t('activity')}</span>
                 </div>
                 {recentProjects.length > 0 ? (
                   <div className="flex flex-col gap-0.5">
@@ -368,7 +400,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   </div>
                 ) : (
                   <p className="px-3 py-1 text-[11px] text-slate-600 leading-relaxed">
-                    Tus herramientas usadas aparecerán aquí.
+                    {t('activityEmpty')}
                   </p>
                 )}
               </div>
@@ -376,7 +408,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="w-full flex items-center justify-center p-3 rounded-full text-slate-400 hover:bg-[#282a2c] hover:text-white transition-colors"
-                title="Actividad"
+                title={t('activity')}
               >
                 <Activity className="w-4 h-4" />
               </button>
@@ -565,35 +597,48 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               <div className="flex-grow w-full">
                 <div className="flex items-center justify-between mb-6 text-slate-400 text-xs font-semibold uppercase tracking-widest px-1">
                   <span>{t('showing')} {filteredProjects.length} {t('projectsText')}</span>
-                  <div className="flex items-center gap-2">
-                    {/* Sólo se ofrecen los órdenes que tienen dato detrás: el
-                        global si hay contador configurado, el propio si esta
-                        persona ya ha abierto algo. Un botón que ordena por un
-                        criterio vacío no ordena nada y confunde. */}
-                    <div className="flex items-center gap-1 bg-white/[0.03] border border-white/[0.06] rounded-xl p-1">
+                  <div className="flex items-center gap-3 min-w-0">
+                    {/* Control segmentado. Sólo se ofrecen los órdenes que tienen
+                        dato detrás: el global si hay contador configurado, el
+                        propio si esta persona ya ha abierto algo. Un botón que
+                        ordena por un criterio vacío no ordena nada y confunde. */}
+                    <div
+                      role="group"
+                      aria-label={t('sortBy')}
+                      className="flex items-center gap-0.5 bg-black/30 border border-white/[0.07] rounded-2xl p-1 shadow-lg shadow-black/30 overflow-x-auto scrollbar-none max-w-full"
+                    >
                       {([
-                        ['default', t('sortDefault')],
-                        ...(hayContadorGlobal ? [['global', t('sortGlobal')] as const] : []),
-                        ...(tieneVisitasPropias ? [['mine', t('sortMine')] as const] : []),
-                        ['az', t('sortAz')],
-                      ] as [Orden, string][]).map(([clave, etiqueta]) => (
-                        <button
-                          key={clave}
-                          type="button"
-                          onClick={() => setOrden(clave)}
-                          aria-pressed={orden === clave}
-                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide transition-colors cursor-pointer ${
-                            orden === clave
-                              ? 'bg-blue-600 text-white'
-                              : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
-                        >
-                          {etiqueta}
-                        </button>
-                      ))}
+                        ['default', t('sortDefault'), Wand2],
+                        ...(hayContadorGlobal ? [['global', t('sortGlobal'), TrendingUp] as const] : []),
+                        ...(tieneVisitasPropias ? [['mine', t('sortMine'), History] as const] : []),
+                        ['az', t('sortAz'), ArrowDownAZ],
+                      ] as [Orden, string, React.ElementType][]).map(([clave, etiqueta, Icono]) => {
+                        const activo = orden === clave;
+                        return (
+                          <button
+                            key={clave}
+                            type="button"
+                            onClick={() => elegirOrden(clave)}
+                            aria-pressed={activo}
+                            title={etiqueta}
+                            className={`group/sort relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all duration-200 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/60 ${
+                              activo
+                                ? 'bg-gradient-to-b from-blue-500 to-blue-600 text-white shadow-md shadow-blue-950/50'
+                                : 'text-slate-400 hover:text-white hover:bg-white/[0.06]'
+                            }`}
+                          >
+                            <Icono className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${activo ? '' : 'group-hover/sort:scale-110'}`} />
+                            {/* El texto se oculta en pantallas estrechas: cuatro
+                                etiquetas completas no caben en un móvil y
+                                empujarían la fila fuera de la pantalla. El icono
+                                y el title siguen identificando cada opción. */}
+                            <span className={activo ? 'inline' : 'hidden lg:inline'}>{etiqueta}</span>
+                          </button>
+                        );
+                      })}
                     </div>
-                    <span className="hidden sm:inline bg-blue-500/10 text-blue-300 px-3 py-1 rounded-full border border-blue-500/20 text-[10px] font-bold">
-                      {selectedCategory === 'All' ? 'All Categories' : catLabel(selectedCategory)}
+                    <span className="hidden xl:inline bg-blue-500/10 text-blue-300 px-3 py-1 rounded-full border border-blue-500/20 text-[10px] font-bold whitespace-nowrap">
+                      {selectedCategory === 'All' ? t('allCategories') : catLabel(selectedCategory)}
                     </span>
                   </div>
                 </div>
@@ -650,10 +695,10 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   <div className="text-center py-24 bg-white/[0.02] backdrop-blur-sm rounded-3xl border border-white/10 border-dashed">
                     <Star className="w-16 h-16 text-yellow-400/50 mx-auto mb-4" />
                     <h2 className="text-xl font-bold text-white mb-2 tracking-tight">
-                      {lang === 'es' ? 'Aún no tienes favoritos' : 'No favorites yet'}
+                      {t('noFavorites')}
                     </h2>
                     <p className="text-slate-400 text-sm">
-                      {lang === 'es' ? 'Pulsa la estrella ★ en cualquier herramienta para guardarla aquí.' : 'Tap the ★ star on any tool to save it here.'}
+                      {t('noFavoritesHint')}
                     </p>
                   </div>
                 ) : (
@@ -716,7 +761,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   <div className="flex flex-col">
                     <span className="font-bold text-white font-outfit text-lg tracking-wide uppercase">oLoveTools</span>
                     <span className="text-slate-400 text-[10px] font-medium tracking-wide">
-                      {lang === 'es' ? 'Navegación de Categorías' : 'Category Navigation'}
+                      {t('categoryNav')}
                     </span>
                   </div>
                   <button

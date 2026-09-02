@@ -8,7 +8,7 @@ import React from 'react';
 
 const INK = '#a78bfa';
 
-export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
+export const HeroArt: React.FC<{ className?: string; nota1?: string; nota2?: string }> = ({ className, nota1, nota2 }) => (
   <svg viewBox="0 0 420 250" className={className} role="img" aria-hidden="true" fill="none">
     <style>{`
       @keyframes cf-play { 0% { transform: translateX(0) } 100% { transform: translateX(316px) } }
@@ -69,8 +69,8 @@ export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
     <rect x="14" y="182" width="392" height="52" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.08)" />
     <circle cx="46" cy="208" r="9" stroke={INK} strokeWidth="1.8" />
     <path d="M42 208 l3 3 l6 -7" stroke={INK} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-    <text x="66" y="204" fill="#94a3b8" fontSize="9.5" fontFamily="sans-serif">Twitch CDN sends no CORS headers,</text>
-    <text x="66" y="218" fill="#64748b" fontSize="9.5" fontFamily="sans-serif">so segments come through a relay. Cutting stays here.</text>
+    <text x="66" y="204" fill="#94a3b8" fontSize="9.5" fontFamily="sans-serif">{nota1 || 'Twitch CDN sends no CORS headers,'}</text>
+    <text x="66" y="218" fill="#64748b" fontSize="9.5" fontFamily="sans-serif">{nota2 || 'so segments come through a relay. Cutting stays here.'}</text>
   </svg>
 );
 
@@ -148,7 +148,7 @@ export const StepPaste: React.FC = () =>
     </>
   );
 
-export const StepMark: React.FC = () =>
+export const StepMark: React.FC<{ caption?: string }> = ({ caption }) =>
   frame(
     <>
       <rect x="16" y="34" width="168" height="30" rx="6" fill="rgba(255,255,255,0.04)" />
@@ -157,11 +157,11 @@ export const StepMark: React.FC = () =>
       ))}
       <rect x="40" y="32" width="34" height="34" rx="5" fill="rgba(167,139,250,0.25)" stroke={INK} strokeWidth="1.4" />
       <rect x="116" y="32" width="42" height="34" rx="5" fill="rgba(167,139,250,0.25)" stroke={INK} strokeWidth="1.4" />
-      <text x="100" y="88" textAnchor="middle" fill="#64748b" fontSize="8.5" fontFamily="sans-serif">as many cuts as you want</text>
+      <text x="100" y="88" textAnchor="middle" fill="#64748b" fontSize="8.5" fontFamily="sans-serif">{caption || 'as many cuts as you want'}</text>
     </>
   );
 
-export const StepRelay: React.FC = () =>
+export const StepRelay: React.FC<{ caption?: string }> = ({ caption }) =>
   frame(
     <>
       <rect x="16" y="42" width="42" height="26" rx="6" stroke={INK} strokeWidth="1.6" />
@@ -174,11 +174,11 @@ export const StepRelay: React.FC = () =>
       <path d="M140 50 l 6 5 l -6 5" stroke={INK} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       <rect x="148" y="42" width="36" height="26" rx="6" stroke={INK} strokeWidth="1.6" />
       <text x="166" y="58" textAnchor="middle" fill="#64748b" fontSize="8" fontWeight="700" fontFamily="sans-serif">you</text>
-      <text x="100" y="90" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="sans-serif">shown, not hidden</text>
+      <text x="100" y="90" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="sans-serif">{caption || 'shown, not hidden'}</text>
     </>
   );
 
-export const StepExport: React.FC = () =>
+export const StepExport: React.FC<{ caption?: string }> = ({ caption }) =>
   frame(
     <>
       <rect x="22" y="30" width="60" height="22" rx="5" fill="rgba(167,139,250,0.2)" />
@@ -189,6 +189,6 @@ export const StepExport: React.FC = () =>
       <path d="M106 49 l 6 6 l -6 6" stroke={INK} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       <rect x="118" y="38" width="62" height="34" rx="7" stroke={INK} strokeWidth="1.8" strokeDasharray="5 4" />
       <text x="149" y="59" textAnchor="middle" fill={INK} fontSize="10" fontWeight="800" fontFamily="monospace">MP4</text>
-      <text x="100" y="97" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="sans-serif">stream copy, no re-encode</text>
+      <text x="100" y="97" textAnchor="middle" fill="#64748b" fontSize="8" fontFamily="sans-serif">{caption || 'stream copy, no re-encode'}</text>
     </>
   );

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — générateur de mots de passe et de phrases secrètes à entropie exacte",
   "seo_description": "Générez des mots de passe ou des phrases secrètes dans votre navigateur, voyez l'entropie exacte de vos réglages et testez un mot de passe existant pour savoir quels motifs l'affaiblissent. Rien n'est envoyé nulle part.",

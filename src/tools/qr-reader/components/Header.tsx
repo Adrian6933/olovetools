@@ -32,7 +32,10 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
               </div>
             </a>
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
-            <button onClick={withScrollToTop(onReset)} className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer">
+            <button onClick={withScrollToTop(onReset)} className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer"
+              title={t.resetHint || 'Start over'}
+              aria-label={t.resetHint || 'Start over'}
+            >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/50 transition-all">
                 <ScanLine className="w-5 h-5 text-cyan-400" />
               </div>

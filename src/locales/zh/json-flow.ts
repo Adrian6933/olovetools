@@ -1,4 +1,8 @@
 export default {
+  "copyPath": "复制路径",
+  "copyValue": "复制值",
+  "copyBranch": "复制整个分支",
+  "resetHint": "重新开始",
   "title": "JSONFlow",
   "description": "在浏览器里校验、浏览并转换 JSON：精确到行列的报错、面对超大文件依然流畅的可折叠树、JSONPath 查询，以及导出为 CSV、XML、YAML、JSON Schema 或 TypeScript。",
 

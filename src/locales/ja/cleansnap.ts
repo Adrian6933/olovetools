@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "CleanSnap",
   "seo_title": "CleanSnap | 写真から透かしや不要物を消す",
   "seo_description": "透かしやロゴ、写り込んだ不要物の上を塗ると、CleanSnap がその裏にあったものを写真自身の断片を写して組み立て直します。ブラウザーの中で動き、進捗バーと中止ボタン付き。アップロードは一切ありません。",

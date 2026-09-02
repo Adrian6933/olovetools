@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "pasteBtn": "粘贴",
   "selectImage": "选择图片",
   "dropPrompt": "拖放、粘贴或选择图片",

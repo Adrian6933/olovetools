@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "FrameSnap",
   "seo_title": "FrameSnap | 動画からフレームを抽出 オンライン",
   "seoHeroTitle": "どんな動画からも完璧なフレームを抽出",

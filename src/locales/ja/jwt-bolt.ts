@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "JWTBolt",
   "faqTitle": "よくある質問",
   "footerCredit": "oLoveTools スイートの一部",

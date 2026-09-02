@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "ZipFlow",
   "description": "Packe Dateien und ganze Ordner in ein ZIP oder öffne ein Archiv und durchsuche es wie einen Dateimanager — vollständig im Browser.",
   "badge": "Lokale ZIP-Werkstatt",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "UUID जेनरेटर",
   "badge": "विशिष्ट पहचानकर्ता",
   "description": "UUID v1, v3, v4, v5, v6 और v7 के साथ ULID, NanoID और MongoDB ObjectId बनाएँ — बैच में, ठीक उसी रूप में जो आपका कोड चाहता है, और एक भी नेटवर्क अनुरोध के बिना।",

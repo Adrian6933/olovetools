@@ -117,8 +117,95 @@ export default {
     "31": {
       "description": "一个强大的 SVG 矢量文件在线压缩与代码净化器，支持小数点精度四舍五入、标签清理及自适应布局调整，100% 本地运行。"
     },
+    "32": {
+      "description": "用 CSV 或手动输入的数据生成图表，导出为 PNG、SVG 或 PDF，全部在浏览器内完成。"
+    },
+    "33": {
+      "description": "编码、解码和解析 URL，把查询字符串拆开并整齐排版。全部在浏览器内完成。"
+    },
+    "34": {
+      "description": "把文本编码或解码为 Base64，并把图片转成 DataURL。全部在浏览器内完成。"
+    },
+    "35": {
+      "description": "生成随机 (v4) 和命名 (v5) UUID，一次最多 500 个。全部在浏览器内完成。"
+    },
+    "36": {
+      "description": "对文本列表排序、反转、打乱、去重和清理。全部在浏览器内完成。"
+    },
+    "37": {
+      "description": "清理 HTML 代码，移除脚本、样式、iframe 和不需要的标签。全部在浏览器内完成。"
+    },
+    "38": {
+      "description": "从任意图片中提取主色和配色板。全部在浏览器内完成。"
+    },
+    "39": {
+      "description": "在 HEX、RGB、HSL 和 CMYK 之间转换，带不透明度和对比度检查。全部在浏览器内完成。"
+    },
+    "40": {
+      "description": "为视频、图片和屏幕计算宽高比与等比分辨率。全部在浏览器内完成。"
+    },
+    "41": {
+      "description": "换算长度、重量、温度、速度、体积等多种单位。全部在浏览器内完成。"
+    },
+    "42": {
+      "description": "格式化、美化并校验 SQL 查询，带语法高亮。全部在浏览器内完成。"
+    },
+    "43": {
+      "description": "生成、翻译并可视化 cron 表达式，用大白话解释含义。全部在浏览器内完成。"
+    },
+    "44": {
+      "description": "在 XML 与 JSON 之间即时互转。全部在浏览器内完成。"
+    },
+    "45": {
+      "description": "在二进制、十六进制、十进制和八进制之间转换数字与文本。全部在浏览器内完成。"
+    },
+    "46": {
+      "description": "编码和解码摩尔斯电码，并可播放声音。全部在浏览器内完成。"
+    },
+    "47": {
+      "description": "把 Unix 时间戳转成可读日期，也可反向转换。全部在浏览器内完成。"
+    },
+    "48": {
+      "description": "在世界各时区之间换算时间，附带会议时间安排器。全部在浏览器内完成。"
+    },
+    "49": {
+      "description": "测试你的摄像头、麦克风和扬声器，并查看系统信息。全部在浏览器内完成。"
+    },
+    "50": {
+      "description": "按段落、句子或词数生成 Lorem Ipsum 占位文本。全部在浏览器内完成。"
+    },
+    "51": {
+      "description": "查看键盘在 JavaScript 中返回的值：每个按键的 key、code 和 keyCode。全部在浏览器内完成。"
+    },
+    "52": {
+      "description": "用拖放把便签整理到看板上。全部在浏览器内完成。"
+    },
+    "53": {
+      "description": "在 SRT、VTT 和 SBV 字幕格式之间转换。全部在浏览器内完成。"
+    },
+    "54": {
+      "description": "生成安全密码，并用熵分析衡量它真正的强度。全部在浏览器内完成。"
+    },
+    "55": {
+      "description": "通过 DNS over HTTPS 查询 DNS 记录（A、AAAA、MX、TXT、NS、CNAME、SOA）。"
+    },
+    "56": {
+      "description": "逐帧浏览视频，用不同速度快进，并把选中的那一帧以高质量导出。全部在浏览器内完成。"
+    },
+    "57": {
+      "description": "用画笔、矩形或圆形涂掉水印、logo 和多余物体，空缺会按周围内容自动填补。全部在浏览器内完成。"
+    },
+    "58": {
+      "description": "按分类发现并观看 Kick 上最好的切片和直播频道，收藏并导出你喜欢的片段。"
+    },
+    "59": {
+      "description": "从 Twitch 的录播和直播中剪出任意长度的多段片段并导出为 MP4：没有 60 秒限制，全部在浏览器内完成。"
+    },
+    "60": {
+      "description": "解码并查看 JWT：头部、载荷和签名，过期时间实时校验。全部在浏览器内完成。"
+    },
     "61": {
-      "description": "用摄像头、图片或剪贴板读取任何二维码，在打开任何东西之前先看清里面到底是什么。100% 本地。"
+      "description": "用摄像头、图片或剪贴板读取任意二维码，在打开之前先看清里面是什么。全部在浏览器内完成。"
     }
   },
   "tags": {
@@ -206,6 +293,7 @@ export default {
     "SVG": "SVG",
     "Optimizer": "优化"
   },
+  "sortBy": "排序方式",
   "sortDefault": "推荐",
   "sortGlobal": "访问最多",
   "sortMine": "你最常用",
@@ -213,5 +301,19 @@ export default {
   "visitsGlobalShort": "次访问",
   "visitsMineShort": "你的",
   "visitsGlobalHint": "这个工具总共被打开过多少次。只是一个计数：没有 Cookie、没有标识符、不与任何人关联。",
-  "visitsMineHint": "你打开过多少次。只存在这个浏览器里，不会发往任何地方。"
+  "visitsMineHint": "你打开过多少次。只存在这个浏览器里，不会发往任何地方。",
+  "visitsGlobalForms": {
+    "other": "次访问"
+  },
+  "favorites": "收藏",
+  "categoriesTitle": "分类",
+  "allCategories": "全部分类",
+  "openCategories": "打开分类菜单",
+  "activity": "动态",
+  "activityEmpty": "你用过的工具会出现在这里。",
+  "expandMenu": "展开菜单",
+  "collapseMenu": "收起菜单",
+  "categoryNav": "按分类浏览",
+  "noFavorites": "还没有收藏",
+  "noFavoritesHint": "点任意工具上的 ★ 就会留在这里。"
 };

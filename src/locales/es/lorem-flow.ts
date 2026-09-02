@@ -1,4 +1,7 @@
 export default {
+  "artSameSeed": "misma semilla",
+  "artSameText": "mismo texto",
+  "resetHint": "Empezar de nuevo",
   "title": "LoremFlow",
   "seo_title": "Generador de texto de relleno en ocho alfabetos",
   "seo_description": "Generador de texto de relleno gratis. El Lorem ipsum clásico más español, japonés, chino, ruso, hindi, griego y árabe, por párrafos, frases, palabras o un número exacto de caracteres. Con semilla el resultado es repetible, y puedes exportar texto plano, HTML o Markdown con títulos y listas. Todo en tu navegador.",

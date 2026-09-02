@@ -1,4 +1,10 @@
 export default {
+  "artRelayNote1": "Twitch 的 CDN 不发送 CORS 头，",
+  "artRelayNote2": "因此片段经由中继传来。剪辑仍在本地完成。",
+  "artCuts": "想剪多少段都行",
+  "artShown": "明示，不隐藏",
+  "artStreamCopy": "直接复制，不重新编码",
+  "resetHint": "重新开始",
   "title": "ClipFlow",
   "seo_title": "ClipFlow | 从VOD和直播中剪辑多段Twitch片段",
   "seo_description": "粘贴Twitch VOD或直播频道链接，在完整时间轴上标记任意数量的剪辑片段，然后将每段——或全部合并——导出为MP4。没有60秒限制，100%在你的浏览器中完成。",

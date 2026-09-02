@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "DrawSnap",
   "badge": "Zeichenbrett & Nachzeichner",
   "description": "Ein Zeichenbrett mit drucksensitiver Tinte, echtem Vektor-Export und einem Nachzeichner, der jedes Bild in bearbeitbare Striche verwandelt. Alles läuft in Ihrem Browser.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "List Mixer",
   "seo_title": "List Mixer | 免费在线列表排序、去重与打乱工具",
   "seo_description": "在浏览器里对列表排序、去重、打乱、筛选与重新排版。十九种可叠加操作，两份列表之间的集合运算，支持 CSV/JSON/SQL 输出。免费，无需上传。",

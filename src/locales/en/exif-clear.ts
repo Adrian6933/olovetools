@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "EXIF Cleaner",
   "badge": "Image metadata cleaner",
   "description": "See every tag hidden inside a photo — coordinates, serial numbers, edit history — then remove exactly the ones you want. The pixels are never re-encoded.",

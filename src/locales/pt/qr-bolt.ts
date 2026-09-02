@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "QRBolt",
   "badge": "Gerador de códigos QR",
   "description": "Desenhe códigos QR com gradientes, formas próprias e o seu logótipo, e comprove que são mesmo legíveis antes de os imprimir. Nada sai do seu navegador.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Начать заново",
   "title": "UnitFlow",
   "badge": "Точный конвертер единиц",
   "seo_title": "UnitFlow | Конвертер единиц с точной арифметикой",

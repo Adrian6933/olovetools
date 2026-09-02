@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "CronFlow",
   "badge": "Expressions cron",
   "description": "Écrivez une expression cron, relisez-la en clair, voyez exactement quand elle se déclenche dans n'importe quel fuseau, et repartez avec la ligne de crontab, le workflow ou le manifeste.",

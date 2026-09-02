@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "DiffSnap",
   "description": "Compare two texts or two versions of a file and see exactly what changed: aligned columns, the rewritten words picked out inside each line, and a unified patch you can apply.",
 

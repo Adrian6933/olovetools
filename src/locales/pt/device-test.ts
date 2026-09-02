@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "Device Test",
   "seo_title": "Device Test | Testa a câmara, o micro, as colunas e o ecrã",
   "seo_description": "Verifica se a tua webcam, o microfone, as colunas, o ecrã, o teclado e o ponteiro funcionam mesmo, com os números reais: resolução de captura, imagens por segundo, nível de entrada em dBFS e as resoluções que a câmara aguenta. Não é enviado nada.",

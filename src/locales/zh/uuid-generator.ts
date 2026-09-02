@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "UUID 生成器",
   "badge": "唯一标识符",
   "description": "生成 UUID v1、v3、v4、v5、v6 与 v7，以及 ULID、NanoID 和 MongoDB ObjectId——批量生成，输出格式与你的代码要求完全一致，且没有任何网络请求。",

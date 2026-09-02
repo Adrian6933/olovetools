@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "AudioSnap",
   "badge": "录音机与音频剪辑",
   "description": "用麦克风录音，或打开一个音频文件，在波形上剪切、调平电平，导出无损 WAV 或压缩片段。一切都在这个标签页里完成。",

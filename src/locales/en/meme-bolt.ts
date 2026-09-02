@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "MemeBolt",
   "badge": "Meme studio",
   "description": "Build a meme from a vector template or your own picture. Captions, stickers, outlines and export all happen inside your browser — nothing is uploaded.",

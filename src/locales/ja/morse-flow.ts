@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "MorseFlow",
   "label_text": "テキスト",
   "label_morse": "モールス",

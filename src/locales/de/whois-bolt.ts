@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "WhoisBolt",
   "seo_title": "DNS-Abfrage mit Propagations-Check",
   "seo_description": "Kostenlose DNS-Abfrage über HTTPS. Zehn Eintragstypen inklusive CAA und HTTPS/SVCB, mit TTLs, dem DNSSEC-Validierungsflag, Reverse-Lookup für IPv4 und einem Propagations-Check, der Google, Cloudflare und DNS.SB dieselbe Frage stellt, damit du siehst, ob eine Änderung angekommen ist. Die Anfrage geht direkt von deinem Browser an den gewählten Resolver.",

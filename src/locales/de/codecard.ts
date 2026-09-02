@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "CodeCard",
   "description": "Konvertieren Sie Ihre Code-Snippets in wunderschöne, teilbare Screenshot-Karten mit individuellen Stilen zu 100% lokal im Browser.",
   "seo_title": "CodeCard | Wunderschöne Code-Snippet-Bilder & Screenshot-Generator",

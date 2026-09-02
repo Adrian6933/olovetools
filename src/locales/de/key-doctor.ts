@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Key Inspector",
   "seo_title": "Tastatur-Test: jede Taste online prüfen",
   "seo_description": "Kostenloser Online-Tastaturtest. Drücke Tasten und sieh sie auf einem gezeichneten ANSI-, ISO- oder JIS-Board aufleuchten: finde tote und klemmende Tasten, lies event.key, event.code und keyCode, miss Rollover und Wiederholrate und speichere das Ergebnis als Bild, Text oder JSON. Läuft komplett im Browser.",

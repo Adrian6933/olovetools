@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "languageName": "Deutsch",
   "header": {
     "subtitle": "BILDFORMAT-KONVERTER"

@@ -1,4 +1,10 @@
 export default {
+  "artRelayNote1": "Le CDN de Twitch n'envoie pas d'en-têtes CORS,",
+  "artRelayNote2": "les segments passent donc par un relais. La découpe reste ici.",
+  "artCuts": "autant de coupes que vous voulez",
+  "artShown": "affiché, pas caché",
+  "artStreamCopy": "copie directe, sans réencodage",
+  "resetHint": "Recommencer",
   "title": "ClipFlow",
   "seo_title": "ClipFlow | Découpez des Clips Twitch Multi-Segments depuis VODs et Directs",
   "seo_description": "Collez un VOD ou un direct Twitch, marquez autant de découpes que vous voulez sur une timeline complète, et exportez chacune — ou toutes réunies — en MP4. Sans limite de 60 secondes, 100% dans votre navigateur.",

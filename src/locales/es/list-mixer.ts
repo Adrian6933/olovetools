@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "List Mixer",
   "seo_title": "List Mixer | Ordenar listas, quitar duplicados y barajar en línea gratis",
   "seo_description": "Ordena, deduplica, baraja, filtra y transforma listas en tu navegador. Diecinueve operaciones apilables, operaciones de conjuntos entre dos listas y salida CSV/JSON/SQL. Gratis y sin subidas.",

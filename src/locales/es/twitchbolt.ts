@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "heroTitle": "DESCARGA CLIPS DE TWITCH",
   "seo_title": "TwitchBolt | Descargar Clips de Twitch",
   "heroDesc": "La herramienta definitiva para guardar momentos de Twitch. Rápida, fiable y sin registros. Descarga listas enteras de clips a la vez.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "TTSBolt",
   "badge": "Texto para voz",
   "description": "Transforma um roteiro num MP3 narrado com vozes neurais e devolve legendas que encaixam ao milissegundo.",

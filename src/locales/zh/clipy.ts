@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "无需离开页面",
+  "resetHint": "重新开始",
   "seo_title": "Clipy | Twitch 剪辑搜索与发现工具",
   "seo_description": "根据游戏、主播或关键词搜索并查找最佳 Twitch 剪辑。保存您最喜欢的时刻并轻松下载。",
   "app_title": "CLIPY",

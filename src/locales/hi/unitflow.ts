@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "UnitFlow",
   "badge": "सटीक इकाई परिवर्तक",
   "seo_title": "UnitFlow | सटीक अंकगणित वाला यूनिट कन्वर्टर",

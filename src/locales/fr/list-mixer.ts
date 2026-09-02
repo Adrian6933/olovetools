@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "List Mixer",
   "seo_title": "List Mixer | Trier une liste, retirer les doublons et mélanger en ligne",
   "seo_description": "Triez, dédupliquez, mélangez, filtrez et reformatez des listes dans votre navigateur. Dix-neuf opérations empilables, opérations d'ensembles entre deux listes, sortie CSV/JSON/SQL. Gratuit, sans envoi.",

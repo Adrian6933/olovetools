@@ -1,4 +1,8 @@
 export default {
+  "copyPath": "पथ कॉपी करें",
+  "copyValue": "मान कॉपी करें",
+  "copyBranch": "पूरी शाखा कॉपी करें",
+  "resetHint": "फिर से शुरू करें",
   "title": "JSONFlow",
   "description": "ब्राउज़र में ही JSON जाँचें, खंगालें और बदलें: त्रुटि की ठीक-ठीक जगह, बड़ी फ़ाइलों पर भी तेज़ रहने वाला मोड़ने लायक ट्री, JSONPath क्वेरी, और CSV, XML, YAML, JSON Schema या TypeScript में निर्यात।",
 

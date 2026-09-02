@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "Vorschau des bereinigten HTML",
+  "resetHint": "Neu anfangen",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | Kostenloser HTML-Cleaner mit Entfernungsbericht",
   "seo_description": "HTML mit einer echten Whitelist-Richtlinie säubern: Skripte, Event-Handler, javascript:-URLs und unerwünschte Tags entfernen, genau sehen was wegfiel und Einzelnes zurückholen. Läuft vollständig im Browser.",

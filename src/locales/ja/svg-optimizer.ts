@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "SVG Optimizer",
   "description": "SVGベクトルファイルをブラウザ上で100%ローカルに最適化、クリーンアップ、圧縮し、ファイルサイズを削減して読み込みパフォーマンスを向上させます。",
   "label_svg_file": "SVGベクトルファイル",

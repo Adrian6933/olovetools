@@ -1,4 +1,10 @@
 export default {
+  "artRelayNote1": "Twitch CDN sends no CORS headers,",
+  "artRelayNote2": "so segments come through a relay. Cutting stays here.",
+  "artCuts": "as many cuts as you want",
+  "artShown": "shown, not hidden",
+  "artStreamCopy": "stream copy, no re-encode",
+  "resetHint": "Start over",
   "title": "ClipFlow",
   "seo_title": "ClipFlow | Cut Multi-Part Twitch Clips from VODs & Live Streams",
   "seo_description": "Paste a Twitch VOD or live channel, mark as many cuts as you want on a full timeline, and export each one — or all of them joined — as MP4. No 60-second limit, 100% in your browser.",

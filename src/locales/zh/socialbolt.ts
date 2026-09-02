@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "SocialBolt",
   "description": "粘贴 TikTok 或 X 的链接，自己挑要带走的东西：无水印视频、HD 版本、MP3 音轨、封面，或轮播里的全部照片。",
   "heroKicker": "社交媒体下载工具",

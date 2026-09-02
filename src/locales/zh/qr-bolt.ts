@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "QRBolt",
   "badge": "二维码生成器",
   "description": "用渐变、自定义形状和你自己的标志设计二维码，并在打印之前验证它确实能被扫出来。所有内容都不会离开你的浏览器。",

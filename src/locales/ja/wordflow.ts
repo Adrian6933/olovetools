@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "WordFlow",
   "description": "文字数を数え、読みやすさを測り、弱い文を見つけ、テキストを整える。すべてブラウザーの中で、9言語に対応。",
   "badge": "ローカルのテキスト解析",

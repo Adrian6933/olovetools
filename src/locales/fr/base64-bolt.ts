@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "Base64Bolt",
   "seo_title": "Base64Bolt | Encodeur et décodeur Base64 avec inspecteur d'octets",
   "seo_description": "Encodez du texte ou n'importe quel fichier en Base64, décodez une charge utile pour récupérer le vrai fichier, lisez les octets en hexadécimal, passez à l'alphabet compatible URL, retirez le remplissage et coupez à 76 colonnes. Gratuit et entièrement dans votre navigateur.",

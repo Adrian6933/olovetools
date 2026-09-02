@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Начать заново",
   "title": "Background Remover",
   "description": "Удаляйте фон с изображений локально и автоматически с помощью искусственного интеллекта.",
   "seo_title": "Background Remover | Бесплатное удаление фона онлайн с ИИ",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — 付箋キャンバスとカンバンボード",
   "seo_description": "指で動かせるホワイトボード。付箋を好きな場所へドラッグしても、レーンに収めてもかまいません。付箋どうしをつなぎ、200手まで取り消し、PNG・SVG・JSON・Markdown に書き出せます。すべてブラウザの中で完結します。",

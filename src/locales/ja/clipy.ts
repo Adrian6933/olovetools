@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "ページを離れずに",
+  "resetHint": "最初からやり直す",
   "seo_title": "Clipy | Twitchクリップ検索 & ハイライトツール",
   "seo_description": "ゲーム、配信者、キーワードから最高のTwitchクリップを検索。お気に入りの瞬間を保存して簡単にダウンロード。",
   "app_title": "CLIPY",

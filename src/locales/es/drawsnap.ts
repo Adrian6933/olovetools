@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "DrawSnap",
   "badge": "Pizarra y calcador",
   "description": "Una pizarra de dibujo con trazo sensible a la presión, exportación vectorial de verdad y un calcador que convierte cualquier imagen en trazos editables. Todo se ejecuta en tu navegador.",

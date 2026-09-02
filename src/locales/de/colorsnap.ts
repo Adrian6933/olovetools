@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "ColorSnap",
   "badge": "Paletten-Labor",
   "description": "Hol eine echte Palette aus jedem Bild und korrigiere sie danach von Hand. Die Gruppierung läuft in einem wahrnehmungsgetreuen Farbraum, die Pipette arbeitet pixelgenau, und nichts verlässt jemals deinen Browser.",

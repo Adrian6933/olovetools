@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "Key Inspector",
   "seo_title": "Probador de teclado: comprueba cada tecla online",
   "seo_description": "Probador de teclado online y gratis. Pulsa teclas y míralas encenderse en un teclado ANSI, ISO o JIS dibujado: encuentra teclas muertas y atascadas, consulta event.key, event.code y keyCode, mide el rollover y la repetición, y guarda el resultado como imagen, texto o JSON. Todo en tu navegador.",

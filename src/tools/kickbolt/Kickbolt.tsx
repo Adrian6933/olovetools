@@ -326,7 +326,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-kick/[0.05] via-transparent to-transparent pointer-events-none" />
       
       <Header
-        onReset={handleSoftReset} currentLang={lang} onLangChange={handleLangChange} />
+        onReset={handleSoftReset} resetHint={t('resetHint')} currentLang={lang} onLangChange={handleLangChange} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, and at max-w-7xl the gap was 60px at

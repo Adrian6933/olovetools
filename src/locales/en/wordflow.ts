@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "WordFlow",
   "description": "Count words, grade readability, spot weak sentences and clean up text — entirely inside your browser, in nine languages.",
   "badge": "Local text analytics",

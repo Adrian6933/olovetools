@@ -117,8 +117,95 @@ export default {
     "31": {
       "description": "Optimieren, bereinigen und komprimieren Sie SVG-Dateien zu 100% lokal im Browser mit Echtzeit-Vorschau und Formatierung."
     },
+    "32": {
+      "description": "Erstelle Diagramme aus einer CSV oder von Hand eingegebenen Daten. Export als PNG, SVG oder PDF, alles im Browser."
+    },
+    "33": {
+      "description": "URLs kodieren, dekodieren und zerlegen — mit aufgeschlüsseltem Query-String und sauberer Formatierung. Alles im Browser."
+    },
+    "34": {
+      "description": "Text in Base64 kodieren und dekodieren, Bilder in DataURL umwandeln. Alles im Browser."
+    },
+    "35": {
+      "description": "Zufällige (v4) und namensbasierte (v5) UUIDs erzeugen, bis zu 500 auf einmal. Alles im Browser."
+    },
+    "36": {
+      "description": "Textlisten sortieren, umkehren, mischen, entdoppeln und säubern. Alles im Browser."
+    },
+    "37": {
+      "description": "HTML säubern: Skripte, Styles, iframes und unerwünschte Tags fliegen raus. Alles im Browser."
+    },
+    "38": {
+      "description": "Dominante Farben und Paletten aus jedem Bild herausziehen. Alles im Browser."
+    },
+    "39": {
+      "description": "Zwischen HEX, RGB, HSL und CMYK umrechnen, mit Deckkraft und Kontrastprüfung. Alles im Browser."
+    },
+    "40": {
+      "description": "Seitenverhältnisse und passende Auflösungen für Video, Bilder und Bildschirme berechnen. Alles im Browser."
+    },
+    "41": {
+      "description": "Einheiten umrechnen: Länge, Gewicht, Temperatur, Geschwindigkeit, Volumen und vieles mehr. Alles im Browser."
+    },
+    "42": {
+      "description": "SQL-Abfragen formatieren, verschönern und prüfen — mit Syntaxhervorhebung. Alles im Browser."
+    },
+    "43": {
+      "description": "Cron-Ausdrücke bauen, übersetzen und sichtbar machen — in verständlicher Sprache erklärt. Alles im Browser."
+    },
+    "44": {
+      "description": "XML in JSON und JSON in XML umwandeln, sofort. Alles im Browser."
+    },
+    "45": {
+      "description": "Zahlen und Text zwischen Binär, Hexadezimal, Dezimal und Oktal umrechnen. Alles im Browser."
+    },
+    "46": {
+      "description": "Morsecode kodieren und dekodieren, mit Tonwiedergabe. Alles im Browser."
+    },
+    "47": {
+      "description": "Unix-Zeitstempel in lesbare Daten verwandeln — und zurück. Alles im Browser."
+    },
+    "48": {
+      "description": "Uhrzeiten zwischen Zeitzonen umrechnen, mit Terminplaner für Besprechungen. Alles im Browser."
+    },
+    "49": {
+      "description": "Kamera, Mikrofon und Lautsprecher testen und Systeminfos einsehen. Alles im Browser."
+    },
+    "50": {
+      "description": "Blindtext im Lorem-Ipsum-Stil nach Absätzen, Sätzen oder Wörtern erzeugen. Alles im Browser."
+    },
+    "51": {
+      "description": "Sieh, was die Tastatur in JavaScript liefert: key, code und keyCode jeder Taste. Alles im Browser."
+    },
+    "52": {
+      "description": "Notizen auf einem Kanban-Board per Ziehen und Ablegen ordnen. Alles im Browser."
+    },
+    "53": {
+      "description": "Untertitel zwischen den Formaten SRT, VTT und SBV umwandeln. Alles im Browser."
+    },
+    "54": {
+      "description": "Sichere Passwörter erzeugen und ihre wirkliche Stärke per Entropie-Analyse messen. Alles im Browser."
+    },
+    "55": {
+      "description": "DNS-Einträge (A, AAAA, MX, TXT, NS, CNAME, SOA) über DNS over HTTPS abfragen."
+    },
+    "56": {
+      "description": "Ein Video Bild für Bild durchgehen, in verschiedenen Geschwindigkeiten spulen und genau das eine Bild in hoher Qualität exportieren. Alles im Browser."
+    },
+    "57": {
+      "description": "Wasserzeichen, Logos und störende Objekte übermalen — mit Pinsel, Rechteck oder Kreis; die Lücke füllt sich aus der Umgebung. Alles im Browser."
+    },
+    "58": {
+      "description": "Die besten Kick-Clips und Live-Kanäle nach Kategorie entdecken und ansehen. Lieblingsmomente sichern und exportieren."
+    },
+    "59": {
+      "description": "Mehrere Ausschnitte beliebiger Länge aus Twitch-VODs und Livestreams schneiden und als MP4 speichern — ohne 60-Sekunden-Grenze, alles im Browser."
+    },
+    "60": {
+      "description": "JWT-Token dekodieren und prüfen: Header, Payload und Signatur, mit laufender Ablaufkontrolle. Alles im Browser."
+    },
     "61": {
-      "description": "Lies jeden QR-Code von der Kamera, einem Bild oder der Zwischenablage und sieh genau, was drinsteht, bevor du etwas öffnest. 100 % lokal."
+      "description": "Jeden QR-Code mit der Kamera, aus einem Bild oder aus der Zwischenablage lesen — und sehen, was drinsteht, bevor du etwas öffnest. Alles im Browser."
     }
   },
   "tags": {
@@ -206,6 +293,7 @@ export default {
     "SVG": "SVG",
     "Optimizer": "Optimierer"
   },
+  "sortBy": "Sortieren nach",
   "sortDefault": "Empfohlen",
   "sortGlobal": "Meistbesucht",
   "sortMine": "Deine meistgenutzten",
@@ -213,5 +301,20 @@ export default {
   "visitsGlobalShort": "Aufrufe",
   "visitsMineShort": "von dir",
   "visitsGlobalHint": "Wie oft dieses Werkzeug insgesamt geöffnet wurde. Nur eine Zahl: kein Cookie, keine Kennung, nichts, was das jemandem zuordnet.",
-  "visitsMineHint": "Wie oft du es geöffnet hast. Bleibt nur in diesem Browser und wird nirgendwohin gesendet."
+  "visitsMineHint": "Wie oft du es geöffnet hast. Bleibt nur in diesem Browser und wird nirgendwohin gesendet.",
+  "visitsGlobalForms": {
+    "one": "Aufruf",
+    "other": "Aufrufe"
+  },
+  "favorites": "Favoriten",
+  "categoriesTitle": "Kategorien",
+  "allCategories": "Alle Kategorien",
+  "openCategories": "Kategoriemenü öffnen",
+  "activity": "Aktivität",
+  "activityEmpty": "Die Werkzeuge, die du benutzt, erscheinen hier.",
+  "expandMenu": "Menü ausklappen",
+  "collapseMenu": "Menü einklappen",
+  "categoryNav": "Navigation nach Kategorien",
+  "noFavorites": "Noch keine Favoriten",
+  "noFavoritesHint": "Tippe auf den ★ eines Werkzeugs, um es hier zu behalten."
 };

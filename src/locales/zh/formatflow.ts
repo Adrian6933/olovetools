@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "languageName": "中文",
   "header": {
     "subtitle": "图片格式转换器"

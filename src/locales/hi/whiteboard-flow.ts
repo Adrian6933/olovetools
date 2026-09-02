@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — स्टिकी नोट कैनवास और कानबान बोर्ड",
   "seo_description": "ऐसा व्हाइटबोर्ड जो उंगली से चलता है: स्टिकी नोट कहीं भी खींचें या कॉलम में जमाएँ, उन्हें जोड़ें, 200 कदम पीछे लौटें और PNG, SVG, JSON या Markdown में निर्यात करें। सब कुछ आपके ब्राउज़र में।",

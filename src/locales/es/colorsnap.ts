@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "ColorSnap",
   "badge": "Laboratorio de paletas",
   "description": "Saca una paleta de verdad de cualquier imagen y corrígela a mano. El agrupamiento trabaja en un espacio de color perceptual, el cuentagotas llega al píxel, y nada sale nunca de tu navegador.",

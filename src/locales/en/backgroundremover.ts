@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Background Remover",
   "description": "Remove backgrounds from images locally and automatically with AI.",
   "seo_title": "Background Remover | Free AI Background Removal Online",

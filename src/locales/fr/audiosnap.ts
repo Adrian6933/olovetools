@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "AudioSnap",
   "badge": "Enregistreur vocal et découpeur audio",
   "description": "Enregistrez au micro ou ouvrez un fichier audio, coupez-le sur la forme d'onde, réglez son niveau et exportez en WAV sans perte ou en clip compressé. Tout se passe dans cet onglet.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — canevas de pense-bêtes et tableau Kanban",
   "seo_description": "Un tableau blanc qui marche au doigt : déplacez des pense-bêtes où vous voulez ou rangez-les en colonnes, reliez-les, annulez 200 étapes et exportez en PNG, SVG, JSON ou Markdown. Tout dans votre navigateur.",

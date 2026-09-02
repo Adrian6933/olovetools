@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "Estúdio de Legendas",
   "badge": "Legendas",
   "description": "Converta entre nove formatos de legenda, corrija atraso e desvio de taxa de quadros, verifique a velocidade de leitura contra uma norma de exibição e edite cada legenda à mão, sem enviar nada.",

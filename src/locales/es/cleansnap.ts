@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "CleanSnap",
   "seo_title": "CleanSnap | Quita marcas de agua y objetos de tus fotos",
   "seo_description": "Pinta encima de una marca de agua, un logo o un objeto que sobra y CleanSnap reconstruye lo que había detrás copiando trozos de la propia foto. Funciona en tu navegador, con barra de progreso y botón de cancelar. No se sube nada.",

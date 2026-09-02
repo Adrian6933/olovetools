@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "ファイルを外す",
+  "resetHint": "最初からやり直す",
   "title": "PDFFlow",
   "description": "ブラウザ上でドキュメントや画像をローカルに結合、分割、回転、PDF変換できるツールです。",
   "seo_title": "PDFFlow | ローカル動作の無料PDF編集・作成ツール",

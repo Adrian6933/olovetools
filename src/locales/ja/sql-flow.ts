@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "SQLFlow",
   "dialect": "方言",
   "dialect_detected": "{0} のようです。切り替えますか？",

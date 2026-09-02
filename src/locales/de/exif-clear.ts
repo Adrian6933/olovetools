@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "EXIF Cleaner",
   "badge": "Metadaten-Reiniger für Bilder",
   "description": "Sieh jedes Feld, das in einem Foto steckt — Koordinaten, Seriennummern, Bearbeitungsverlauf — und lösche genau die, die du loswerden willst. Die Pixel werden nie neu komprimiert.",

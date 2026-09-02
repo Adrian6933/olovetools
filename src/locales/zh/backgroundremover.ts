@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "Background Remover",
   "description": "在浏览器中本地自动且利用人工智能（AI）删除图像背景。",
   "seo_title": "Background Remover | 免费在线 AI 智能抠图/去除背景",

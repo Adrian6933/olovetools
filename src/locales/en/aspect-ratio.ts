@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Aspect Ratio",
   "badge": "Aspect ratio toolkit",
   "seo_title": "Aspect Ratio Calculator | Resize, crop and letterbox",

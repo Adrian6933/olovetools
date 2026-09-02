@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "UnitFlow",
   "badge": "正確な単位変換ツール",
   "seo_title": "単位変換 | 18分野・156単位、誤差のない厳密計算、100%ローカル",

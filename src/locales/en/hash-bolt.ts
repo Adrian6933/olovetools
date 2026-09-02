@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "HashBolt",
   "badge": "Checksums & file integrity",
   "description": "Compute MD5, SHA-1, SHA-256, SHA-512, SHA-3, BLAKE3 or CRC-32 for files of any size, or for plain text, and check the result against the checksum a vendor published. The file is streamed inside your browser and never uploaded.",

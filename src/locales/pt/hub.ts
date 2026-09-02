@@ -117,8 +117,95 @@ export default {
     "31": {
       "description": "Otimize, limpe e comprima arquivos SVG 100% localmente no seu navegador com pré-visualizações em tempo real."
     },
+    "32": {
+      "description": "Cria gráficos a partir de um CSV ou de dados escritos à mão. Exporta em PNG, SVG ou PDF sem sair do navegador."
+    },
+    "33": {
+      "description": "Codifica, descodifica e analisa URLs, com a query string desmontada e bem formatada. Tudo no navegador."
+    },
+    "34": {
+      "description": "Codifica e descodifica texto em Base64 e converte imagens para DataURL. Tudo no navegador."
+    },
+    "35": {
+      "description": "Gera UUID aleatórios (v4) e com nome (v5), até 500 de uma vez. Tudo no navegador."
+    },
+    "36": {
+      "description": "Ordena, inverte, baralha, remove repetidos e limpa listas de texto. Tudo no navegador."
+    },
+    "37": {
+      "description": "Limpa código HTML removendo scripts, estilos, iframes e etiquetas indesejadas. Tudo no navegador."
+    },
+    "38": {
+      "description": "Extrai as cores dominantes e a paleta de qualquer imagem. Tudo no navegador."
+    },
+    "39": {
+      "description": "Converte entre HEX, RGB, HSL e CMYK, com opacidade e verificação de contraste. Tudo no navegador."
+    },
+    "40": {
+      "description": "Calcula proporções e resoluções equivalentes para vídeo, imagens e ecrãs. Tudo no navegador."
+    },
+    "41": {
+      "description": "Converte unidades de comprimento, peso, temperatura, velocidade, volume e muitas mais. Tudo no navegador."
+    },
+    "42": {
+      "description": "Formata, embeleza e valida consultas SQL com realce de sintaxe. Tudo no navegador."
+    },
+    "43": {
+      "description": "Cria, traduz e visualiza expressões cron, explicadas em linguagem simples. Tudo no navegador."
+    },
+    "44": {
+      "description": "Converte XML para JSON e JSON para XML num instante. Tudo no navegador."
+    },
+    "45": {
+      "description": "Converte números e texto entre binário, hexadecimal, decimal e octal. Tudo no navegador."
+    },
+    "46": {
+      "description": "Codifica e descodifica código morse, com reprodução de áudio. Tudo no navegador."
+    },
+    "47": {
+      "description": "Converte marcas de tempo Unix em datas legíveis, e vice-versa. Tudo no navegador."
+    },
+    "48": {
+      "description": "Converte horas entre fusos horários do mundo, com um planeador de reuniões. Tudo no navegador."
+    },
+    "49": {
+      "description": "Testa a tua câmara, microfone e altifalantes, e vê os dados do sistema. Tudo no navegador."
+    },
+    "50": {
+      "description": "Gera texto de enchimento Lorem Ipsum por parágrafos, frases ou palavras. Tudo no navegador."
+    },
+    "51": {
+      "description": "Descobre o que o teclado devolve em JavaScript: key, code e keyCode de cada tecla. Tudo no navegador."
+    },
+    "52": {
+      "description": "Organiza notas num quadro kanban, arrastando e largando. Tudo no navegador."
+    },
+    "53": {
+      "description": "Converte legendas entre os formatos SRT, VTT e SBV. Tudo no navegador."
+    },
+    "54": {
+      "description": "Gera palavras-passe seguras e mede a sua força real com uma análise de entropia. Tudo no navegador."
+    },
+    "55": {
+      "description": "Consulta registos DNS (A, AAAA, MX, TXT, NS, CNAME, SOA) através de DNS over HTTPS."
+    },
+    "56": {
+      "description": "Percorre um vídeo fotograma a fotograma, avança a várias velocidades e exporta o fotograma exato em alta qualidade. Tudo no navegador."
+    },
+    "57": {
+      "description": "Apaga marcas de água, logótipos e objetos a mais pintando por cima com pincel, retângulo ou círculo: o buraco preenche-se com o que está à volta. Tudo no navegador."
+    },
+    "58": {
+      "description": "Descobre e vê os melhores clipes e canais em direto do Kick por categoria. Guarda e exporta os teus momentos preferidos."
+    },
+    "59": {
+      "description": "Corta vários clipes com a duração que quiseres de VOD e diretos da Twitch e exporta-os em MP4: sem o limite de 60 segundos e sem sair do navegador."
+    },
+    "60": {
+      "description": "Descodifica e inspeciona tokens JWT: cabeçalho, conteúdo e assinatura, com a validade verificada em tempo real. Tudo no navegador."
+    },
     "61": {
-      "description": "Leia qualquer QR a partir da câmara, de uma imagem ou da área de transferência e veja exatamente o que contém antes de abrir seja o que for. 100 % local."
+      "description": "Lê qualquer código QR com a câmara, a partir de uma imagem ou da área de transferência, e vê o que contém antes de abrires seja o que for. Tudo no navegador."
     }
   },
   "tags": {
@@ -206,6 +293,7 @@ export default {
     "SVG": "SVG",
     "Optimizer": "Otimizador"
   },
+  "sortBy": "Ordenar por",
   "sortDefault": "Recomendado",
   "sortGlobal": "Mais visitadas",
   "sortMine": "As que mais usas",
@@ -213,5 +301,20 @@ export default {
   "visitsGlobalShort": "visitas",
   "visitsMineShort": "tuas",
   "visitsGlobalHint": "Quantas vezes esta ferramenta foi aberta no total. É só um número: sem cookie, sem identificador, sem nada que o ligue a alguém.",
-  "visitsMineHint": "Quantas vezes a abriste. Guardado só neste navegador e nunca enviado para lado nenhum."
+  "visitsMineHint": "Quantas vezes a abriste. Guardado só neste navegador e nunca enviado para lado nenhum.",
+  "visitsGlobalForms": {
+    "one": "visita",
+    "other": "visitas"
+  },
+  "favorites": "Favoritos",
+  "categoriesTitle": "Categorias",
+  "allCategories": "Todas as categorias",
+  "openCategories": "Abrir o menu de categorias",
+  "activity": "Atividade",
+  "activityEmpty": "As ferramentas que usares aparecerão aqui.",
+  "expandMenu": "Expandir o menu",
+  "collapseMenu": "Recolher o menu",
+  "categoryNav": "Navegação por categorias",
+  "noFavorites": "Ainda não tens favoritos",
+  "noFavoritesHint": "Toca na ★ de qualquer ferramenta para a guardares aqui."
 };

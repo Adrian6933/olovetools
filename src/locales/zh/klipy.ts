@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "无需离开页面",
+  "resetHint": "重新开始",
   "title": "Klipy",
   "seo_title": "Klipy | 按分区浏览 Kick 片段和直播频道",
   "seo_description": "按类别发现并观看最佳Kick片段和直播频道。浏览、保存并导出您喜爱的Kick精彩瞬间，免费又快速。",

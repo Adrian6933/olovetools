@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "List Mixer",
   "seo_title": "List Mixer | Free Online List Sorter, Deduplicator & Shuffler",
   "seo_description": "Sort, deduplicate, shuffle, filter and reshape lists in your browser. Nineteen stackable operations, set operations between two lists, CSV/JSON/SQL output. Free, no upload.",

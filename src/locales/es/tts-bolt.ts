@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "TTSBolt",
   "badge": "Texto a voz",
   "description": "Convierte un guion en un MP3 narrado con voces neuronales y consigue subtítulos que encajan al milisegundo.",

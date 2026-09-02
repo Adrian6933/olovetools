@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "SocialBolt",
   "description": "Pega un enlace de TikTok o de X y elige exactamente qué te llevas: vídeo sin marca de agua, pista en HD, audio en MP3, portada o todas las fotos del carrusel.",
   "heroKicker": "Descargador de redes sociales",

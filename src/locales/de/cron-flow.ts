@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "CronFlow",
   "badge": "Cron-Ausdrücke",
   "description": "Schreib einen Cron-Ausdruck, lies ihn im Klartext zurück, sieh genau, wann er in jeder Zeitzone feuert, und nimm die crontab-Zeile, den Workflow oder das Manifest gleich mit.",

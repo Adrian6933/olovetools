@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "EXIF Cleaner",
   "badge": "Limpiador de metadatos de imagen",
   "description": "Mira todas las etiquetas escondidas dentro de una foto —coordenadas, números de serie, historial de edición— y borra exactamente las que quieras. Los píxeles nunca se vuelven a comprimir.",

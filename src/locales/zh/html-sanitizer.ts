@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "清理后 HTML 的预览",
+  "resetHint": "重新开始",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | 免费在线 HTML 清理工具，附移除报告",
   "seo_description": "用真正的白名单策略清理 HTML：移除脚本、事件处理器、javascript: 链接和多余标签，并准确看到移除了什么、把需要的放回来。全部在浏览器内完成。",

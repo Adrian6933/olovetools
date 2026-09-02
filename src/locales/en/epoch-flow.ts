@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "EpochFlow",
   "seo_title": "Unix timestamp converter with time zones",
   "seo_description": "Free Unix timestamp converter. Seconds, milliseconds, microseconds and nanoseconds, any IANA time zone with the offset that applied at that instant, daylight-saving detection, and the same moment as a Windows FILETIME, .NET ticks, an Excel serial or a Julian day. Runs in your browser, with BigInt so nanoseconds are not rounded away.",

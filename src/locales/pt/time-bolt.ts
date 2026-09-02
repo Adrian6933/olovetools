@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "TimeBolt",
   "seo_title": "Relógio mundial e planeador de reuniões entre fusos",
   "seo_description": "Relógio mundial e planeador de reuniões grátis. Adiciona qualquer um dos ~400 fusos IANA que o teu navegador conhece, vê as 24 horas lado a lado com o horário de trabalho sombreado, recebe um aviso se nesse dia mudar a hora, e exporta a reunião como ficheiro .ics. Tudo corre no teu navegador e os teus fusos ficam guardados.",

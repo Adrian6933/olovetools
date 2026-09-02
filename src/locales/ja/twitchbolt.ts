@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "heroTitle": "TWITCHクリップをダウンロード",
   "seo_title": "TWITCHクリップをダウンロード",
   "heroDesc": "Twitchの瞬間を保存するための究極のツール。高速、高信頼、登録不要。クリップのリストを一括でダウンロードできます。",

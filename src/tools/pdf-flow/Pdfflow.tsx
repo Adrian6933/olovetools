@@ -894,7 +894,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                                 className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white transition-all disabled:opacity-30 disabled:pointer-events-none cursor-pointer">
                                 <ArrowDown className="w-4 h-4" />
                               </button>
-                              <button onClick={() => removeFile(item.id)} aria-label="Remove"
+                              <button onClick={() => removeFile(item.id)} aria-label={t.removeFile || 'Remove file'}
                                 className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-500 hover:text-red-400 transition-all cursor-pointer">
                                 <Trash2 className="w-4 h-4" />
                               </button>

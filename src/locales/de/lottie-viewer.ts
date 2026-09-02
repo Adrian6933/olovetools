@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Lottie Viewer",
   "description": "Öffne .lottie-, .tgs- und .json-Animationen, färbe jede Füllung, Kontur und jeden Verlaufsstopp neu ein, prüfe, was in anderen Playern kaputtgeht, und exportiere als JSON, SVG, PNG, Bildsequenz oder WebM — alles im Browser.",
   "drop_active": "Hier ablegen",

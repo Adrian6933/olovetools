@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "HashBolt",
   "badge": "Sommes de contrôle et intégrité",
   "description": "Calculez MD5, SHA-1, SHA-256, SHA-512, SHA-3, BLAKE3 ou CRC-32 pour des fichiers de n'importe quelle taille ou pour du texte, puis comparez au condensé publié par l'éditeur. Le fichier est traité par morceaux dans votre navigateur et n'est jamais envoyé.",

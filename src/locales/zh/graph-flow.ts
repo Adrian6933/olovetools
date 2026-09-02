@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "GraphFlow",
   "description": "用 CSV 或手动输入的数字生成图表，手动修正数据，导出清晰的 PNG 或真正的矢量 SVG——全部在你的浏览器本地完成。",
   "label_data_source": "数据源",

@@ -79,6 +79,13 @@ import Analytics from '../../../components/Analytics.astro';
 import '../../../styles/global.css';
 import { resolveOgImage } from '../../../lib/ogImage';
 
+// Rotulo accesible del carril de anuncios. Los componentes de anuncio leen el
+// idioma de <html lang>, pero este <aside> lo pinta la pagina, que ya lo sabe.
+const ANUNCIO: Record<string, string> = {
+  en: 'Advertisement', es: 'Anuncio', fr: 'Publicité', de: 'Anzeige',
+  pt: 'Publicidade', ru: 'Реклама', hi: 'विज्ञापन', ja: '広告', zh: '广告',
+};
+
 export const prerender = true;
 
 export function getStaticPaths() {
@@ -2265,7 +2272,7 @@ const appSchema = {
 
       <!-- Rail sticky del slot "side": comparte columna con el contenido SEO/FAQ real de
            arriba (mismo texto en todas las herramientas), así no requiere copy nueva por tool. -->
-      <aside class="hidden lg:block" aria-label="Advertisement">
+      <aside class="hidden lg:block" aria-label={ANUNCIO[castLang] || ANUNCIO.en}>
         <div class="sticky top-20">
           <AdSlot position="side" size="rectangle" client:idle={{ timeout: 2000 }} />
         </div>

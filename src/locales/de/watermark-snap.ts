@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "WatermarkSnap",
   "badge": "Stapel-Wasserzeichen",
   "description": "Versieh einen ganzen Ordner voller Fotos mit Text oder Logo, ohne ein einziges Byte hochzuladen. Ebenen, Konturen, diagonale Kachelung und Export in voller Auflösung, alles im eigenen Browser.",

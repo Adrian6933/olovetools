@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "sem sair da página",
+  "resetHint": "Começar de novo",
   "seo_title": "Clipy | Ferramenta de busca e descoberta de clipes do Twitch",
   "seo_description": "Pesquise e encontre os melhores clipes do Twitch por jogo, streamer ou palavra-chave. Salve seus momentos favoritos e baixe-os facilmente.",
   "app_title": "CLIPY",

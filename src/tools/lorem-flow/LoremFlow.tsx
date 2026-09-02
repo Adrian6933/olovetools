@@ -134,10 +134,10 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
     f === 'text' ? t.format_text || 'Plain text' : f === 'html' ? 'HTML' : 'Markdown';
 
   const steps = [
-    { art: StepScript, title: t.step1Title || 'Pick the script', text: t.step1Text || 'Latin, Spanish, Japanese, Chinese, Russian, Hindi, Greek or Arabic — real words, not machine noise.' },
-    { art: StepAmount, title: t.step2Title || 'Say how much', text: t.step2Text || 'Paragraphs, sentences, words or an exact character count, which is what a design brief usually gives you.' },
-    { art: StepSeed, title: t.step3Title || 'Lock it with a seed', text: t.step3Text || 'Type any seed and the same text comes back every time, so a screenshot can be reproduced.' },
-    { art: StepFormat, title: t.step4Title || 'Take it as you need it', text: t.step4Text || 'Plain text, HTML with real tags, or Markdown — copy it or download the file.' },
+    { art: StepScript, artProps: {}, title: t.step1Title || 'Pick the script', text: t.step1Text || 'Latin, Spanish, Japanese, Chinese, Russian, Hindi, Greek or Arabic — real words, not machine noise.' },
+    { art: StepAmount, artProps: {}, title: t.step2Title || 'Say how much', text: t.step2Text || 'Paragraphs, sentences, words or an exact character count, which is what a design brief usually gives you.' },
+    { art: StepSeed, artProps: { semilla: t.artSameSeed, texto: t.artSameText }, title: t.step3Title || 'Lock it with a seed', text: t.step3Text || 'Type any seed and the same text comes back every time, so a screenshot can be reproduced.' },
+    { art: StepFormat, artProps: {}, title: t.step4Title || 'Take it as you need it', text: t.step4Text || 'Plain text, HTML with real tags, or Markdown — copy it or download the file.' },
   ];
 
   const features = [
@@ -401,7 +401,7 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {steps.map((s, i) => (
               <div key={i} className="glass-card rounded-2xl p-4 space-y-3">
-                <s.art />
+                <s.art {...s.artProps} />
                 <div className="space-y-1.5">
                   <h3 className="text-sm font-black text-white flex items-center gap-2">
                     <span className="w-5 h-5 rounded-md bg-violet-500/15 text-violet-300 text-[11px] font-black flex items-center justify-center shrink-0">

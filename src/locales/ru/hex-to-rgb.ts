@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Начать заново",
   "title": "Hex в RGB",
   "badge": "Преобразование цвета",
   "seo_title": "Конвертер HEX в RGB | RGB, HSL, OKLCH и CMYK",

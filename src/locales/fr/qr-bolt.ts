@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "QRBolt",
   "badge": "Générateur de QR codes",
   "description": "Créez des QR codes avec des dégradés, des formes sur mesure et votre logo, puis vérifiez qu'ils se scannent vraiment avant de les imprimer. Rien ne quitte votre navigateur.",

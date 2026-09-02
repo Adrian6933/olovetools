@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "Aspect Ratio",
   "badge": "アスペクト比ツールキット",
   "seo_title": "アスペクト比計算ツール | 比率・比例リサイズ・切り抜き・レターボックス",

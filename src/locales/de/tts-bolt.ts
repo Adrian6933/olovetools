@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "TTSBolt",
   "badge": "Text zu Sprache",
   "description": "Verwandelt ein Skript in ein vertontes MP3 mit neuronalen Stimmen – samt Untertiteln, die auf die Millisekunde passen.",

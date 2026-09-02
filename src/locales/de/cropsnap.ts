@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "CropSnap",
   "badge": "Bildzuschnitt",
   "description": "Schneide, richte und skaliere ein Bild im Browser – und bekomm es in der Originalauflösung zurück, nicht in der Größe der Vorschau.",

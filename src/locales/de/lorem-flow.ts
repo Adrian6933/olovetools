@@ -1,4 +1,7 @@
 export default {
+  "artSameSeed": "gleicher Startwert",
+  "artSameText": "gleicher Text",
+  "resetHint": "Neu anfangen",
   "title": "LoremFlow",
   "seo_title": "Blindtext-Generator in acht Schriften",
   "seo_description": "Kostenloser Blindtext-Generator. Klassisches Lorem ipsum plus Spanisch, Japanisch, Chinesisch, Russisch, Hindi, Griechisch und Arabisch, nach Absätzen, Sätzen, Wörtern oder exakter Zeichenzahl. Mit Startwert ist die Ausgabe wiederholbar, und exportiert wird als reiner Text, HTML oder Markdown mit Überschriften und Listen. Läuft komplett im Browser.",

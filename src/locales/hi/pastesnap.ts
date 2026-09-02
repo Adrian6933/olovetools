@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "pasteBtn": "पेस्ट करें",
   "selectImage": "छवि चुनें",
   "dropPrompt": "खींचें और छोड़ें, पेस्ट करें या छवि चुनें",

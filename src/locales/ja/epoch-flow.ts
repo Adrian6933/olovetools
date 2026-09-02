@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "EpochFlow",
   "seo_title": "タイムゾーン対応の Unix タイムスタンプ変換",
   "seo_description": "無料の Unix タイムスタンプ変換ツール。秒・ミリ秒・マイクロ秒・ナノ秒、その時点で有効だったオフセット付きの任意の IANA タイムゾーン、夏時間の判定、そして同じ時刻の Windows FILETIME・.NET ティック・Excel シリアル値・ユリウス日への変換に対応。BigInt で動くので、ブラウザー内でもナノ秒が丸められません。",

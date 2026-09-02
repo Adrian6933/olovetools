@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "SQLFlow",
   "dialect": "डायलेक्ट",
   "dialect_detected": "यह {0} लग रहा है — बदलें?",

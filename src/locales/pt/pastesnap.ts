@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "pasteBtn": "Colar",
   "selectImage": "Selecionar imagem",
   "dropPrompt": "Arraste e solte, cole ou selecione uma imagem",

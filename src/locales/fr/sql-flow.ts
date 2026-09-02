@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "SQLFlow",
   "dialect": "Dialecte",
   "dialect_detected": "On dirait du {0} — basculer ?",

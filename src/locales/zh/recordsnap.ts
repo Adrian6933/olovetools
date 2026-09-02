@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "RecordSnap",
   "badge": "本地屏幕录制器",
   "description": "在浏览器里录制屏幕、摄像头，或两者同时录。任何内容都不会上传，码率也由你来定。",

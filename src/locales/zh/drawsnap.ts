@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "DrawSnap",
   "badge": "画板与描摹器",
   "description": "一块支持压感笔迹的画板，具备真正的矢量导出，并配有把任意图片变成可编辑线条的描摹器。全部在你的浏览器里运行。",

@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "Quitar el archivo",
+  "resetHint": "Empezar de nuevo",
   "title": "PDFFlow",
   "description": "Une, divide, rota y convierte documentos o imágenes a PDF localmente en tu navegador.",
   "seo_title": "PDFFlow | Editor y Herramientas PDF en el Navegador",

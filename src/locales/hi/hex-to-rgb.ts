@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "हेक्स से RGB",
   "badge": "रंग रूपांतरण",
   "seo_title": "HEX से RGB कन्वर्टर | RGB, HSL, OKLCH और CMYK",

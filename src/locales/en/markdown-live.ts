@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "MarkdownLive",
   "description": "Write Markdown on the left and watch the finished document build itself on the right — nested lists, task lists, tables, footnotes and highlighted code, all parsed inside your own tab.",
   "badge": "Markdown, rendered in your tab",

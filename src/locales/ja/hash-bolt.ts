@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "HashBolt",
   "badge": "チェックサムとファイル整合性",
   "description": "サイズを問わないファイルやテキストから MD5・SHA-1・SHA-256・SHA-512・SHA-3・BLAKE3・CRC-32 を計算し、配布元が公開しているチェックサムと照合します。ファイルはブラウザ内で分割して読み込まれ、アップロードされることはありません。",

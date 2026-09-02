@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "Aperçu du HTML nettoyé",
+  "resetHint": "Recommencer",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | Nettoyeur et assainisseur HTML en ligne avec rapport de suppressions",
   "seo_description": "Nettoyez le HTML avec une véritable politique de liste blanche : supprimez scripts, gestionnaires d’événements, URL javascript: et balises indésirables, puis voyez exactement ce qui a été retiré et remettez ce que vous voulez. Tout dans votre navigateur.",

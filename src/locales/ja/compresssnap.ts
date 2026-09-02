@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "CompressSnap",
   "badge": "画像圧縮",
   "description": "JPEG、PNG、WebP、AVIF、HEIC をブラウザ内で圧縮します。好きな画質でも、守らなければならないファイルサイズでも指定でき、その代償が数値で分かります。",

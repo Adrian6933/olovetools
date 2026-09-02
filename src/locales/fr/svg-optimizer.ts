@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "SVG Optimizer",
   "description": "Optimisez, nettoyez et minifiez les fichiers vectoriels SVG 100% localement dans votre navigateur pour réduire la taille du fichier et améliorer les temps de chargement.",
   "label_svg_file": "Fichier Vectoriel SVG",

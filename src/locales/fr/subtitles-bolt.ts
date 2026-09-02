@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "Studio de Sous-titres",
   "badge": "Sous-titres",
   "description": "Convertissez entre neuf formats de sous-titres, corrigez le décalage et la dérive de fréquence d'images, vérifiez la vitesse de lecture face à une norme de diffusion et modifiez chaque réplique à la main, sans rien envoyer.",

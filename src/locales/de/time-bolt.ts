@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "TimeBolt",
   "seo_title": "Weltuhr und Besprechungsplaner über Zeitzonen",
   "seo_description": "Kostenlose Weltuhr und Besprechungsplaner. Füge jede der ~400 IANA-Zeitzonen hinzu, die dein Browser kennt, sieh alle 24 Stunden nebeneinander mit hinterlegter Arbeitszeit, werde gewarnt, wenn an dem Tag die Uhr umgestellt wird, und exportiere das Treffen als .ics-Datei. Alles läuft im Browser, und deine Zonen bleiben gespeichert.",

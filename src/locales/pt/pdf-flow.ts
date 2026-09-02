@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "Remover o ficheiro",
+  "resetHint": "Começar de novo",
   "title": "PDFFlow",
   "description": "Mescle, divida, rotacione e converta documentos ou imagens para PDF localmente no seu navegador.",
   "seo_title": "PDFFlow | Editor e Ferramentas PDF 100% Local",

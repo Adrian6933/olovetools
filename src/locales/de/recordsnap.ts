@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "RecordSnap",
   "badge": "Lokaler Bildschirmrekorder",
   "description": "Nimm deinen Bildschirm, deine Webcam oder beides gleichzeitig auf – vollständig im Browser. Nichts wird hochgeladen, und die Bitrate bestimmst du.",

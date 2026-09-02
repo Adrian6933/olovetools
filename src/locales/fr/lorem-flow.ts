@@ -1,4 +1,7 @@
 export default {
+  "artSameSeed": "même graine",
+  "artSameText": "même texte",
+  "resetHint": "Recommencer",
   "title": "LoremFlow",
   "seo_title": "Générateur de faux texte en huit écritures",
   "seo_description": "Générateur de faux texte gratuit. Le Lorem ipsum classique plus l'espagnol, le japonais, le chinois, le russe, l'hindi, le grec et l'arabe, par paragraphes, phrases, mots ou nombre exact de caractères. Avec une graine le résultat est reproductible, et l'export se fait en texte brut, HTML ou Markdown avec titres et listes. Tout dans votre navigateur.",

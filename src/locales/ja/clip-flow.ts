@@ -1,4 +1,10 @@
 export default {
+  "artRelayNote1": "Twitch の CDN は CORS ヘッダーを送りません。",
+  "artRelayNote2": "そのため区間はリレー経由で届きます。切り出しはここで行います。",
+  "artCuts": "好きなだけ切り出せます",
+  "artShown": "隠さず表示します",
+  "artStreamCopy": "再エンコードなしの直接コピー",
+  "resetHint": "最初からやり直す",
   "title": "ClipFlow",
   "seo_title": "ClipFlow | VODとライブ配信からマルチパートのTwitchクリップを作成",
   "seo_description": "TwitchのVODまたはライブチャンネルを貼り付け、フルタイムラインで好きなだけカットをマークし、それぞれ — またはすべてを結合して — MP4としてエクスポートできます。60秒制限なし、ブラウザ内で100%完結。",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "SQLFlow",
 
   // --- barra de opciones ---------------------------------------------------

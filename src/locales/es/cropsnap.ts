@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "CropSnap",
   "badge": "Recortador de imágenes",
   "description": "Recorta, endereza y redimensiona una imagen en tu navegador, y recupérala a la resolución original, no al tamaño de la vista previa.",

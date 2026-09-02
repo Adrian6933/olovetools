@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "XML to JSON",
   "seoHeroTitle": "XML to JSON",
   "label_xml_to_json": "XML → JSON",

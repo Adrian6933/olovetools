@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "Key Inspector",
   "seo_title": "キーボードテスター：すべてのキーをオンラインで確認",
   "seo_description": "無料のオンライン キーボードテスター。キーを押すと、描画された ANSI・ISO・JIS のボード上で点灯します。反応しないキーや戻らないキーを見つけ、event.key・event.code・keyCode を確認し、ロールオーバーやリピート間隔を測って、結果を画像・テキスト・JSON で保存できます。すべてブラウザー内で動きます。",

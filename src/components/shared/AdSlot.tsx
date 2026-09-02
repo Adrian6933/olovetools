@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ToolTheme } from '../../lib/themes';
-import { ADS_ENABLED, AD_CLIENT, AD_SLOTS, AD_INFEED_LAYOUT_KEY } from '../../config/ads';
+import { ADS_ENABLED, AD_CLIENT, AD_SLOTS, AD_INFEED_LAYOUT_KEY, textosAnuncio } from '../../config/ads';
 
 export type AdSlotPosition = 'top' | 'mid' | 'side' | 'late' | 'anchor' | 'content' | 'infeed' | 'railLeft' | 'railRight';
 export type AdSlotSize = 'leaderboard' | 'rectangle' | 'mobile-banner' | 'skyscraper';
@@ -32,17 +32,6 @@ const SIZE_CLASSES: Record<AdSlotSize, string> = {
   skyscraper: 'w-[160px] min-h-[600px]',
 };
 
-const POSITION_LABELS: Record<AdSlotPosition, string> = {
-  top: 'Top Banner',
-  mid: 'In-content',
-  side: 'Sidebar',
-  late: 'Bottom',
-  anchor: 'Sticky',
-  content: 'In-content',
-  infeed: 'In-feed',
-  railLeft: 'Left Rail',
-  railRight: 'Right Rail',
-};
 
 /** Tema neutro para contextos sin ToolTheme (hub, slot central de index.astro). */
 const NEUTRAL_THEME = {
@@ -138,10 +127,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
   ) : (
     <div className="text-center space-y-1">
       <p className="text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: theme.textMuted }}>
-        Advertisement
-      </p>
-      <p className="text-[9px] font-bold uppercase tracking-widest opacity-60" style={{ color: theme.textMuted }}>
-        {POSITION_LABELS[position]} · {size}
+        {textosAnuncio().anuncio}
       </p>
     </div>
   );
@@ -157,7 +143,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
         className="fixed bottom-0 left-0 right-0 z-40 flex items-center justify-center gap-3 border-t border-white/10 bg-[#0b0b10]/95 backdrop-blur px-3 py-2"
         style={{ paddingBottom: 'max(0.5rem, env(safe-area-inset-bottom))' }}
         role="complementary"
-        aria-label={`Advertisement slot: ${POSITION_LABELS[position]}`}
+        aria-label={textosAnuncio().anuncio}
       >
         <div
           className={`relative flex items-center justify-center ${SIZE_CLASSES[size]} w-full`}
@@ -171,7 +157,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
         </div>
         <button
           type="button"
-          aria-label="Close ad"
+          aria-label={textosAnuncio().cerrar}
           onClick={() => {
             sessionStorage.setItem(ANCHOR_DISMISS_KEY, 'true');
             setDismissed(true);
@@ -189,7 +175,7 @@ export const AdSlot: React.FC<AdSlotProps> = ({
       ref={ref}
       className={`flex flex-col items-center justify-center mx-auto ${SIZE_CLASSES[size]} w-full`}
       role="complementary"
-      aria-label={`Advertisement slot: ${POSITION_LABELS[position]}`}
+      aria-label={textosAnuncio().anuncio}
     >
       <div
         className="relative w-full flex-1 flex items-center justify-center"

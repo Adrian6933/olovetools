@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — sticky-note canvas and Kanban board",
   "seo_description": "A whiteboard that works with a finger: drag sticky notes anywhere or snap them into lanes, connect them, undo 200 steps, and export to PNG, SVG, JSON or Markdown. Runs entirely in your browser.",

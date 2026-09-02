@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "CompressSnap",
   "badge": "图片压缩",
   "description": "在浏览器里压缩 JPEG、PNG、WebP、AVIF 和 HEIC —— 按你选的画质，或按你必须达到的体积 —— 并且看清代价是多少。",

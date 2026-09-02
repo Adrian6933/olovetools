@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { ADS_ENABLED, AD_CLIENT, AD_SLOTS } from '../../config/ads';
+import { ADS_ENABLED, AD_CLIENT, AD_SLOTS, textosAnuncio } from '../../config/ads';
 
 interface AdBannerProps {
   /** Unique id, e.g. "adsense-kickbolt-top" — the trailing -top/-mid/-bottom segment picks the slot */
@@ -57,7 +57,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({ id, className = '' }) => {
     <div
       id={id}
       role="complementary"
-      aria-label="Advertisement"
+      aria-label={textosAnuncio().anuncio}
       className={`w-full max-w-5xl mx-auto my-6 ${className}`}
     >
       <div className="w-full min-h-[90px] flex flex-col items-center justify-center bg-white/[0.015] border border-dashed border-white/10 rounded-2xl px-4 py-3 text-center">
@@ -77,7 +77,7 @@ export const AdBanner: React.FC<AdBannerProps> = ({ id, className = '' }) => {
         ) : (
           <>
             <span className="text-[10px] text-gray-600 font-bold uppercase tracking-[0.3em] opacity-50">
-              Advertisement
+              {textosAnuncio().anuncio}
             </span>
             <div className="w-full max-w-[728px] h-[90px] mt-2 flex items-center justify-center" />
           </>

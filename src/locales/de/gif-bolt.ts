@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "GIFBolt",
   "description": "Hol dir Einzelbilder aus einem Video oder reihe Fotos aneinander, bearbeite die Zeitleiste und kodiere ein GIF mit globaler Palette und Zwischenbildkompression – alles im Browser.",
   "tab_video": "Video zu GIF",

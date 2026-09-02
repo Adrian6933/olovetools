@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "sin salir de la página",
+  "resetHint": "Empezar de nuevo",
   "seo_title": "Clipy | Descargar Clips de Twitch",
   "seo_description": "Busca y encuentra los mejores clips de Twitch por juego, streamer o palabra clave. Guarda tus momentos favoritos y descárgalos fácilmente.",
   "app_title": "CLIPY",

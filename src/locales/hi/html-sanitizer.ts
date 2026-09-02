@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "साफ़ किए गए HTML का पूर्वावलोकन",
+  "resetHint": "फिर से शुरू करें",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | हटाई गई चीज़ों की रिपोर्ट के साथ मुफ़्त HTML क्लीनर",
   "seo_description": "असली अनुमति-सूची नीति से HTML साफ़ करें: स्क्रिप्ट, इवेंट हैंडलर, javascript: URL और अनचाहे टैग हटाएँ, फिर देखें कि ठीक क्या हटा और जो चाहें वापस लाएँ। पूरी तरह आपके ब्राउज़र में।",

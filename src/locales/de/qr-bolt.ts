@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "QRBolt",
   "badge": "QR-Code-Generator",
   "description": "Gestalte QR-Codes mit Verläufen, eigenen Formen und deinem Logo – und weise nach, dass sie sich wirklich scannen lassen, bevor du sie druckst. Nichts verlässt deinen Browser.",

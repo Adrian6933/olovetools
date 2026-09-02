@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "CleanSnap",
   "seo_title": "CleanSnap | 去除照片里的水印和杂物",
   "seo_description": "在水印、logo 或碍事的东西上涂一笔，CleanSnap 就会从照片自身复制碎片，把它背后原本的样子重建出来。全程在浏览器里运行，带进度条和取消按钮。什么都不上传。",

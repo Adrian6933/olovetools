@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "CleanSnap",
   "seo_title": "CleanSnap | Remove watermarks and objects from photos",
   "seo_description": "Paint over a watermark, a logo or an unwanted object and CleanSnap rebuilds what was behind it by copying patches from the photo itself. Runs in your browser, with a progress bar you can cancel. Nothing is uploaded.",

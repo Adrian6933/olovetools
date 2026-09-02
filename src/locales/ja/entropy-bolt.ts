@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — エントロピーを正確に示すパスワード・パスフレーズ生成",
   "seo_description": "ブラウザの中でパスワードやパスフレーズを作り、設定どおりの正確なエントロピーを確認し、いま使っているパスワードのどこが弱いのかを調べられます。どこにも送信しません。",

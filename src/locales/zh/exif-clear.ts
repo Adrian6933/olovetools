@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "EXIF Cleaner",
   "badge": "图片元数据清理器",
   "description": "看清一张照片里藏着的每一个标签——坐标、序列号、修图历史——然后精确删掉你想删的那些。像素永远不会被重新压缩。",

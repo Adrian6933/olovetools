@@ -1,4 +1,7 @@
 export default {
+  "artSameSeed": "mesma semente",
+  "artSameText": "mesmo texto",
+  "resetHint": "Começar de novo",
   "title": "LoremFlow",
   "seo_title": "Gerador de texto de exemplo em oito alfabetos",
   "seo_description": "Gerador de texto de exemplo grátis. O Lorem ipsum clássico mais espanhol, japonês, chinês, russo, hindi, grego e árabe, por parágrafos, frases, palavras ou um número exato de caracteres. Com semente o resultado é repetível, e podes exportar texto simples, HTML ou Markdown com títulos e listas. Corre todo no teu navegador.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "EpochFlow",
   "seo_title": "带时区的 Unix 时间戳转换器",
   "seo_description": "免费的 Unix 时间戳转换器。支持秒、毫秒、微秒和纳秒，任意 IANA 时区并使用那一刻生效的偏移，自动判断夏令时，还能把同一时刻表示为 Windows FILETIME、.NET ticks、Excel 序列值或儒略日。全部在浏览器中用 BigInt 完成，纳秒不会被舍掉。",

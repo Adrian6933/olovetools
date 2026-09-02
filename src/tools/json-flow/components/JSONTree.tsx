@@ -157,14 +157,14 @@ const JSONNode: React.FC<JSONNodeProps> = ({
         <div className="opacity-0 group-hover:opacity-100 flex items-center space-x-1.5 ml-2 transition-opacity duration-200 bg-[#050807] px-2 py-0.5 rounded border border-white/10 shrink-0">
           <button
             onClick={handleCopyPath}
-            title="Copy path"
+            title={t.copyPath || 'Copy path'}
             className="p-1 hover:text-emerald-400 text-slate-400 bg-transparent border-none cursor-pointer outline-none transition-colors"
           >
             {copiedPath ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={handleCopyValue}
-            title="Copy value"
+            title={t.copyValue || 'Copy value'}
             className="p-1 hover:text-emerald-400 text-slate-400 bg-transparent border-none cursor-pointer outline-none transition-colors text-[10px] font-bold uppercase flex items-center"
           >
             {copiedVal ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <span className="text-[10px] px-0.5">Val</span>}
@@ -212,14 +212,14 @@ const JSONNode: React.FC<JSONNodeProps> = ({
         <div className="opacity-0 group-hover:opacity-100 flex items-center space-x-1.5 ml-2 transition-opacity duration-200 bg-[#050807] px-2 py-0.5 rounded border border-white/10 shrink-0">
           <button
             onClick={handleCopyPath}
-            title="Copy path"
+            title={t.copyPath || 'Copy path'}
             className="p-1 hover:text-emerald-400 text-slate-400 bg-transparent border-none cursor-pointer outline-none transition-colors"
           >
             {copiedPath ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
           <button
             onClick={handleCopyValue}
-            title="Copy whole branch"
+            title={t.copyBranch || 'Copy whole branch'}
             className="p-1 hover:text-emerald-400 text-slate-400 bg-transparent border-none cursor-pointer outline-none transition-colors text-[10px] font-bold uppercase flex items-center"
           >
             {copiedVal ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <span className="text-[10px] px-0.5">Obj</span>}

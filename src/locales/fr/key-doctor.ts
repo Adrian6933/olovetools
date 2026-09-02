@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "Key Inspector",
   "seo_title": "Testeur de clavier : vérifiez chaque touche en ligne",
   "seo_description": "Testeur de clavier en ligne et gratuit. Appuyez sur les touches et voyez-les s'allumer sur un clavier ANSI, ISO ou JIS dessiné : repérez les touches mortes et bloquées, lisez event.key, event.code et keyCode, mesurez le rollover et la répétition, puis enregistrez le résultat en image, texte ou JSON. Tout dans votre navigateur.",

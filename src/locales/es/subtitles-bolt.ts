@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "Estudio de Subtítulos",
   "badge": "Subtítulos",
   "description": "Convierte entre nueve formatos de subtítulos, arregla el desfase y la deriva de framerate, comprueba la velocidad de lectura contra una norma de emisión y edita cada línea a mano, sin subir nada.",

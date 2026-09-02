@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "GIFBolt",
   "description": "从视频里抽帧，或把一组图片排成序列，编辑时间轴，再用全局调色板和帧间压缩导出 GIF——全部在浏览器里完成。",
   "tab_video": "视频转 GIF",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "heroTitle": "下载 KICK 剪辑",
   "seo_title": "KickBolt | 免账号批量下载 Kick 片段",
   "heroDesc": "保存 Kick 精彩瞬间的终极工具。快速、可靠且无需注册。一次性下载整个剪辑列表。",

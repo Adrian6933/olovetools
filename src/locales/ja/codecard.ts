@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "CodeCard",
   "description": "コードスニペットを、ブラウザ上で100%ローカルに、美しい共有用のスクリーンショット画像に変換します。",
   "seo_title": "CodeCard | 美しいコードスニペット画像＆スクリーンショットジェネレーター",

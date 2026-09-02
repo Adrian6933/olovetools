@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — 便利贴画布与看板",
   "seo_description": "一块能用手指操作的白板：把便利贴拖到任意位置，或让它们归入泳道；相互连线，可回退 200 步，并导出为 PNG、SVG、JSON 或 Markdown。全部在浏览器中完成。",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "BinaryFlow",
   "seo_title": "带位编辑器的二进制、十六进制与十进制转换器",
   "seo_description": "免费的进制转换器，带可点击的位网格。2 到 36 的任意进制，8/16/32/64 位下的二补数有符号值，拆成符号、指数与尾数的 IEEE-754 浮点数，AND/OR/XOR 与移位运算，四种文本编码，以及任意文件的十六进制转储。全部在浏览器中用 BigInt 完成，不会截断。",

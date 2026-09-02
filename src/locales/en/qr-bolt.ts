@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "QRBolt",
   "badge": "QR code generator",
   "description": "Design QR codes with gradients, custom shapes and your own logo, then prove they actually scan before you print them. Nothing leaves your browser.",

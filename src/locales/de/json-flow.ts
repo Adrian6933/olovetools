@@ -1,4 +1,8 @@
 export default {
+  "copyPath": "Pfad kopieren",
+  "copyValue": "Wert kopieren",
+  "copyBranch": "Ganzen Zweig kopieren",
+  "resetHint": "Neu anfangen",
   "title": "JSONFlow",
   "description": "JSON im Browser prüfen, durchsuchen und umwandeln: exakte Fehlerposition, ein Baum, der auch bei riesigen Dateien flüssig bleibt, JSONPath-Abfragen und Export nach CSV, XML, YAML, JSON Schema oder TypeScript.",
 

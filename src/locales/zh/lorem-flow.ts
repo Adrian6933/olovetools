@@ -1,4 +1,7 @@
 export default {
+  "artSameSeed": "同一种子",
+  "artSameText": "同样的文本",
+  "resetHint": "重新开始",
   "title": "LoremFlow",
   "seo_title": "支持八种文字的占位文本生成器",
   "seo_description": "免费的占位文本生成器。除了经典的 Lorem ipsum，还支持西班牙语、日语、中文、俄语、印地语、希腊语和阿拉伯语，可按段落、句子、词或精确字符数生成。设定种子后输出可复现，并能导出纯文本、HTML 或带标题与列表的 Markdown。全部在浏览器中完成。",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "BinaryFlow",
   "seo_title": "Binary, hex and decimal converter with a bit editor",
   "seo_description": "Free number base converter with a clickable bit grid. Any base from 2 to 36, signed values in two's complement at 8, 16, 32 or 64 bits, IEEE-754 floats broken into sign, exponent and mantissa, bitwise AND/OR/XOR/shifts, text in four encodings and a hex dump of any file. All in your browser, with BigInt so nothing is truncated.",

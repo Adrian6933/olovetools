@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "SQLFlow",
   "dialect": "Dialekt",
   "dialect_detected": "Sieht nach {0} aus — wechseln?",

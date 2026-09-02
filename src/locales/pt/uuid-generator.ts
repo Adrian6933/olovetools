@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "Gerador de UUID",
   "badge": "Identificadores únicos",
   "description": "Gera UUID v1, v3, v4, v5, v6 e v7, além de ULID, NanoID e ObjectId do MongoDB — em lotes, no formato exato que o teu código espera e sem um único pedido de rede.",

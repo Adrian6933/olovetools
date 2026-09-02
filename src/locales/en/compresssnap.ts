@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "CompressSnap",
   "badge": "Image compression",
   "description": "Compress JPEG, PNG, WebP, AVIF and HEIC in your browser — to a quality you choose or to a size you have to hit — and see exactly what the compression cost.",

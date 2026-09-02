@@ -37,7 +37,6 @@ export const TrustBar: React.FC<TrustBarProps> = ({
         border: `1px solid ${theme.border}`,
       }}
       role="note"
-      aria-label="Privacy and trust indicators"
     >
       <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5">
         {items.map((b, i) => {

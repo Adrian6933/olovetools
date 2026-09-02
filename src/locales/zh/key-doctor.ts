@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "Key Inspector",
   "seo_title": "键盘测试器：在线检查每一个按键",
   "seo_description": "免费在线键盘测试器。按下按键，就能在画出的 ANSI、ISO 或 JIS 键盘上看到它们亮起：找出失灵和卡住的键，查看 event.key、event.code 与 keyCode，测量 rollover 与重复速率，并把结果保存为图片、文本或 JSON。全部在你的浏览器中完成。",

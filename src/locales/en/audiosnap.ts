@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "AudioSnap",
   "badge": "Voice recorder & audio trimmer",
   "description": "Record from your microphone or open an audio file, cut it on the waveform, level it, and export lossless WAV or a compressed clip. Everything runs inside this tab.",

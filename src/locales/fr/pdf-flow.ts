@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "Retirer le fichier",
+  "resetHint": "Recommencer",
   "title": "PDFFlow",
   "description": "Fusionnez, divisez, faites pivoter et convertissez des documents ou des images en PDF localement dans votre navigateur.",
   "seo_title": "PDFFlow | Éditeur PDF local et boîte à outils gratuite",

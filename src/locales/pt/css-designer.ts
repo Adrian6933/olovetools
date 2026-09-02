@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "CSS Designer",
   "description": "Laboratório interativo de CSS moderno: glassmorphism, sombras em camadas, gradientes com interpolação OKLab, cantos orgânicos e filtros, com o código gerado sempre à vista.",
   "tab_glassmorphism": "Efeito vidro",

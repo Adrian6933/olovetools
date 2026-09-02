@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "languageName": "हिन्दी",
   "header": {
     "subtitle": "इमेज फ़ॉर्मेट कन्वर्टर"

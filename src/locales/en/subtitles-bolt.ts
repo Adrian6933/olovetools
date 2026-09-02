@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Subtitle Studio",
   "badge": "Subtitles",
   "description": "Convert between nine subtitle formats, fix timing and frame-rate drift, check reading speed against a broadcast spec, and edit every cue by hand — without uploading anything.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — Haftnotiz-Leinwand und Kanban-Board",
   "seo_description": "Ein Whiteboard, das mit dem Finger funktioniert: Haftnotizen frei verschieben oder in Spalten einrasten, verbinden, 200 Schritte rückgängig machen und als PNG, SVG, JSON oder Markdown exportieren. Alles im Browser.",

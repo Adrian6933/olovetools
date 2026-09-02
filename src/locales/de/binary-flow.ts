@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "BinaryFlow",
   "seo_title": "Binär-, Hex- und Dezimalrechner mit Bit-Editor",
   "seo_description": "Kostenloser Basisumrechner mit anklickbarem Bit-Raster. Jede Basis von 2 bis 36, vorzeichenbehaftete Werte im Zweierkomplement bei 8, 16, 32 oder 64 Bit, IEEE-754-Floats aufgeteilt in Vorzeichen, Exponent und Mantisse, AND/OR/XOR und Verschiebungen, Text in vier Kodierungen und ein Hexdump jeder Datei. Alles im Browser, mit BigInt, damit nichts abgeschnitten wird.",

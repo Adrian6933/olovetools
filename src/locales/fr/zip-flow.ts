@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "ZipFlow",
   "description": "Empaquetez des fichiers et des dossiers entiers dans un ZIP, ou ouvrez une archive et parcourez-la comme un gestionnaire de fichiers, entièrement dans le navigateur.",
   "badge": "Atelier ZIP local",

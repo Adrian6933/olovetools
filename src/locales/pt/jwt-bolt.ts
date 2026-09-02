@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "JWTBolt",
   "faqTitle": "Perguntas frequentes",
   "footerCredit": "Parte da suíte oLoveTools",

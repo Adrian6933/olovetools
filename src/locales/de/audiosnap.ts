@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "AudioSnap",
   "badge": "Sprachrekorder & Audio-Schnitt",
   "description": "Nimm mit dem Mikrofon auf oder öffne eine Audiodatei, schneide sie an der Wellenform, pegle sie aus und exportiere verlustfreies WAV oder einen komprimierten Clip. Alles passiert in diesem Tab.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "CronFlow",
   "badge": "cron 式",
   "description": "cron 式を書いて、平易な言葉で読み返し、どのタイムゾーンでいつ発火するかを正確に確認し、crontab の行やワークフロー、マニフェストをそのまま持ち帰れます。",

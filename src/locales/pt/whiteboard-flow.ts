@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — tela de notas adesivas e quadro Kanban",
   "seo_description": "Um quadro branco que funciona com o dedo: arraste notas adesivas para onde quiser ou encaixe-as em colunas, ligue-as, desfaça 200 passos e exporte para PNG, SVG, JSON ou Markdown. Tudo no seu navegador.",

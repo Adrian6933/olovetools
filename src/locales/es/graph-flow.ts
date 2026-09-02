@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "GraphFlow",
   "description": "Crea gráficos desde un CSV o desde números que escribas, corrige los datos a mano y exporta un PNG nítido o un SVG vectorial de verdad, todo localmente en tu navegador.",
   "label_data_source": "Fuente de Datos",

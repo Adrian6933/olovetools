@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "URLBolt",
   "seo_title": "URLBolt | URL 编码、解码与解析工具",
   "seo_description": "用八种字符集配置编码和解码 URL，拆开任意链接，手动编辑查询字符串，去掉跟踪参数，一次清理整份列表。免费，全部在浏览器中完成。",

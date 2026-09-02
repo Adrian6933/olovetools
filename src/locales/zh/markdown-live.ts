@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "MarkdownLive",
   "description": "左边写 Markdown，右边看着文档自己成形——嵌套列表、任务清单、表格、脚注和高亮代码，全部在你自己的标签页里解析。",
   "badge": "Markdown，在你的标签页里渲染",

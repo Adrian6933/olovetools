@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "languageName": "日本語",
   "header": {
     "subtitle": "画像フォーマット変換ツール"

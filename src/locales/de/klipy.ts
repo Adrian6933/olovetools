@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "ohne die Seite zu verlassen",
+  "resetHint": "Neu anfangen",
   "title": "Klipy",
   "seo_title": "Klipy | Kick-Clips und Live-Kanäle nach Kategorie durchstöbern",
   "seo_description": "Entdecke und schau dir die besten Kick-Clips und Live-Kanäle nach Kategorie an. Durchsuche, speichere und exportiere deine liebsten Kick-Momente, kostenlos und schnell.",

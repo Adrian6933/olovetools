@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "URLBolt",
   "seo_title": "URLBolt | Encodeur, décodeur et inspecteur d'URL",
   "seo_description": "Encodez et décodez des URL avec huit profils de jeux de caractères, démontez n'importe quel lien, modifiez sa chaîne de requête à la main, supprimez les paramètres de suivi et nettoyez des listes entières d'un coup. Gratuit et entièrement dans votre navigateur.",

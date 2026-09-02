@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "Background Remover",
   "description": "Remova fundos de imagens localmente e automaticamente com Inteligência Artificial.",
   "seo_title": "Background Remover | Removedor de Fundo com IA Grátis Online",

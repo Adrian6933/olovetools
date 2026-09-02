@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "DrawSnap",
   "badge": "Tableau de dessin et calque",
   "description": "Un tableau de dessin avec une encre sensible à la pression, un véritable export vectoriel et un calqueur qui transforme n'importe quelle image en tracés modifiables. Tout s'exécute dans votre navigateur.",

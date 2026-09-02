@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "CropSnap",
   "badge": "Recadrage d'images",
   "description": "Recadrez, redressez et redimensionnez une image dans votre navigateur, et récupérez-la à la résolution d'origine, pas à la taille de l'aperçu.",

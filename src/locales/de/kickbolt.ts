@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "heroTitle": "KICK CLIPS DOWNLOADEN",
   "seo_title": "KickBolt | Kick-Clips im Stapel laden, ohne Konto",
   "heroDesc": "Das ultimative Tool zum Speichern von Kick-Momenten. Schnell, zuverlässig und ohne Anmeldung. Lade ganze Listen auf einmal herunter.",

@@ -574,13 +574,13 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { art: StepPaste, title: t.step1Title || 'Paste a VOD link', text: t.step1Text || 'A video URL or a channel name. Pick the quality you want to cut from.' },
-              { art: StepMark, title: t.step2Title || 'Mark every cut', text: t.step2Text || 'Scrub the full timeline and mark as many pieces as you like.' },
-              { art: StepRelay, title: t.step3Title || 'The segments are relayed', text: t.step3Text || 'Only the download hop leaves your machine, and the tool shows which relay served it.' },
-              { art: StepExport, title: t.step4Title || 'Export separately or joined', text: t.step4Text || 'Cut with a stream copy, so it is fast and the quality is untouched.' },
+              { art: StepPaste, artProps: {}, title: t.step1Title || 'Paste a VOD link', text: t.step1Text || 'A video URL or a channel name. Pick the quality you want to cut from.' },
+              { art: StepMark, artProps: { caption: t.artCuts }, title: t.step2Title || 'Mark every cut', text: t.step2Text || 'Scrub the full timeline and mark as many pieces as you like.' },
+              { art: StepRelay, artProps: { caption: t.artShown }, title: t.step3Title || 'The segments are relayed', text: t.step3Text || 'Only the download hop leaves your machine, and the tool shows which relay served it.' },
+              { art: StepExport, artProps: { caption: t.artStreamCopy }, title: t.step4Title || 'Export separately or joined', text: t.step4Text || 'Cut with a stream copy, so it is fast and the quality is untouched.' },
             ].map((step, i) => (
               <div key={i} className="glass-card rounded-2xl p-4 space-y-3">
-                <step.art />
+                <step.art {...step.artProps} />
                 <div className="space-y-1.5">
                   <h3 className="text-sm font-black text-white flex items-center gap-2">
                     <span className="w-5 h-5 rounded-md bg-violet-500/15 text-violet-300 text-[11px] font-black flex items-center justify-center shrink-0">

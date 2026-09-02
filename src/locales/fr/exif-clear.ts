@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "EXIF Cleaner",
   "badge": "Nettoyeur de métadonnées d'image",
   "description": "Voyez toutes les balises cachées dans une photo — coordonnées, numéros de série, historique de retouche — puis supprimez exactement celles que vous voulez. Les pixels ne sont jamais recompressés.",

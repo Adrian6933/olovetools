@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "CompressSnap",
   "badge": "छवि संपीड़न",
   "description": "JPEG, PNG, WebP, AVIF और HEIC को अपने ब्राउज़र में दबाइए — अपनी चुनी हुई गुणवत्ता पर या उस आकार पर जो आपको पूरा करना है — और देखिए कि इसकी कीमत कितनी पड़ी।",

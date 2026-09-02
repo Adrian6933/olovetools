@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "CronFlow",
   "badge": "Cron एक्सप्रेशन",
   "description": "cron एक्सप्रेशन लिखिए, उसे सीधी भाषा में पढ़िए, देखिए कि किसी भी टाइमज़ोन में वह ठीक कब चलेगा, और crontab लाइन, workflow या manifest साथ ले जाइए।",

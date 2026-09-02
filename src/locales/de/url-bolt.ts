@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "URLBolt",
   "seo_title": "URLBolt | URL-Encoder, -Decoder und -Inspektor",
   "seo_description": "URLs mit acht Zeichensatz-Profilen kodieren und dekodieren, jeden Link zerlegen, seinen Query-String von Hand bearbeiten, Tracking-Parameter entfernen und ganze Listen auf einmal säubern. Kostenlos und vollständig im Browser.",

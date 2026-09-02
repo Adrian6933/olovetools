@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Lottie Viewer",
   "description": "Open .lottie, .tgs and .json animations, recolour every fill, stroke and gradient stop, check what will break on other players, and export to JSON, SVG, PNG, a frame sequence or WebM — all inside your browser.",
   "badge_local": "100% in your browser",

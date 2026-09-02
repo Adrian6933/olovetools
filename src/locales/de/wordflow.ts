@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "WordFlow",
   "description": "Wörter zählen, Lesbarkeit messen, schwache Sätze finden und Text säubern — vollständig im Browser, in neun Sprachen.",
   "badge": "Lokale Textanalyse",

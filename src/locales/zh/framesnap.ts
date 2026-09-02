@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "FrameSnap",
   "seo_title": "FrameSnap | 在线从视频提取帧",
   "seoHeroTitle": "从任何视频中提取完美的一帧",

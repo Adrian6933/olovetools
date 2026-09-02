@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "Pré-visualização do HTML limpo",
+  "resetHint": "Começar de novo",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | Sanitizador e limpador de HTML online com relatório de remoções",
   "seo_description": "Limpe HTML com uma política de lista branca real: remova scripts, manipuladores de eventos, URLs javascript: e etiquetas indesejadas, veja exatamente o que saiu e devolva o que quiser. Tudo no seu navegador.",

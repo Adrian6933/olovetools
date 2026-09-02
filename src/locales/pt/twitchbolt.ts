@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "heroTitle": "BAIXAR CLIPES DA TWITCH",
   "seo_title": "BAIXAR CLIPES DA TWITCH",
   "heroDesc": "A ferramenta definitiva para salvar momentos da Twitch. Rápido, confiável e sem registro. Baixe listas completas de uma vez.",

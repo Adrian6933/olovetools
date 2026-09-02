@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "sem sair da página",
+  "resetHint": "Começar de novo",
   "title": "Klipy",
   "seo_title": "Klipy | Explora clipes e canais em direto do Kick por categoria",
   "seo_description": "Descubra e assista aos melhores clipes e canais ao vivo da Kick por categoria. Explore, salve e exporte seus momentos favoritos da Kick, grátis e rápido.",

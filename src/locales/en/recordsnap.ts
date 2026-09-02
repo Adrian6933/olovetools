@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "RecordSnap",
   "badge": "Local screen recorder",
   "description": "Record your screen, your webcam or both at once, entirely inside your browser. Nothing is uploaded, and you choose the bitrate.",

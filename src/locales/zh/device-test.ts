@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "Device Test",
   "seo_title": "Device Test | 检测摄像头、麦克风、扬声器和屏幕",
   "seo_description": "用真实的数字确认你的摄像头、麦克风、扬声器、屏幕、键盘和指针是否真的能用：采集分辨率、帧率、以 dBFS 计的输入电平，以及摄像头实际支持的分辨率。什么都不上传。",

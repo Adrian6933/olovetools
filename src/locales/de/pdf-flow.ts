@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "Datei entfernen",
+  "resetHint": "Neu anfangen",
   "title": "PDFFlow",
   "description": "Fügen Sie Dokumente oder Bilder lokal in Ihrem Browser zusammen, teilen Sie sie, drehen Sie sie oder konvertieren Sie sie in PDF.",
   "seo_title": "PDFFlow | Lokaler PDF-Editor & Kostenloses Toolkit",

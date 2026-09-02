@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Начать заново",
   "title": "FrameSnap",
   "seo_title": "FrameSnap | Извлечь Кадры из Видео Онлайн",
   "seoHeroTitle": "Извлеките идеальный кадр из любого видео",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "CSS Designer",
   "description": "Laboratoire interactif de CSS moderne : glassmorphisme, ombres en calques, dégradés interpolés en OKLab, arrondis organiques et filtres, avec le code généré toujours sous les yeux.",
   "tab_glassmorphism": "Glassmorphisme",

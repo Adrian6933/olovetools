@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "FaviconBolt",
   "description": "絵文字、数文字のテキスト、あるいは自分のロゴから、ファビコン一式をまとめて作成します。すべてブラウザの中で生成されます。",
   "badge": "ファビコン・アプリアイコン生成ツール",

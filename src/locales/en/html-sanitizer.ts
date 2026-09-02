@@ -1,4 +1,6 @@
 export default {
+  "previewTitle": "Preview of the cleaned HTML",
+  "resetHint": "Start over",
   "title": "HTML Sanitizer",
   "seo_title": "HTML Sanitizer | Free Online HTML Cleaner with Removal Report",
   "seo_description": "Clean HTML with a real allow-list policy: strip scripts, event handlers, javascript: URLs and unwanted tags, then see exactly what was removed and put any of it back. Runs entirely in your browser.",

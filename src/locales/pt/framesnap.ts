@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "FrameSnap",
   "seo_title": "FrameSnap | Extrair Frames de um Vídeo Online",
   "seoHeroTitle": "Extraia o frame perfeito de qualquer vídeo",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "List Mixer",
   "seo_title": "List Mixer｜無料のリスト並べ替え・重複削除・シャッフルツール",
   "seo_description": "ブラウザー内でリストを並べ替え、重複を削除し、シャッフル・絞り込み・整形。19種類の積み重ね可能な操作、2つのリストの集合演算、CSV/JSON/SQL出力。無料、アップロード不要。",

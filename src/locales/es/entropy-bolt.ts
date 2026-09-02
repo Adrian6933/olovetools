@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — generador de contraseñas y frases con entropía exacta",
   "seo_description": "Genera contraseñas o frases de contraseña en tu navegador, mira la entropía exacta de tus ajustes y comprueba una contraseña existente para saber qué patrones la debilitan. No se envía nada a ninguna parte.",

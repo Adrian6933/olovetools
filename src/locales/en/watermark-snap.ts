@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "WatermarkSnap",
   "badge": "Batch watermarking",
   "description": "Stamp text or a logo onto a whole folder of photos without uploading a single byte. Layers, outlines, diagonal tiling and full-resolution export, all inside your own browser.",

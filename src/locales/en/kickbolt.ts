@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "heroTitle": "DOWNLOAD KICK CLIPS",
   "seo_title": "KickBolt | Download Kick clips in bulk, no account",
   "heroDesc": "The ultimate tool to save Kick moments. Fast, reliable and zero registration. Download entire lists of clips at once.",

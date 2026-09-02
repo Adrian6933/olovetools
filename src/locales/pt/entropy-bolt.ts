@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — gerador de senhas e frases-senha com entropia exata",
   "seo_description": "Gere senhas ou frases-senha no seu navegador, veja a entropia exata das suas definições e teste uma senha existente para descobrir quais padrões a enfraquecem. Nada é enviado para lugar nenhum.",

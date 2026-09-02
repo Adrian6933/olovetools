@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "Device Test",
   "seo_title": "Device Test | Testez caméra, micro, haut-parleurs et écran",
   "seo_description": "Vérifiez que votre webcam, votre micro, vos haut-parleurs, votre écran, votre clavier et votre pointeur fonctionnent vraiment, avec les vrais chiffres : résolution de capture, images par seconde, niveau d'entrée en dBFS et résolutions réellement gérées. Rien n'est envoyé.",

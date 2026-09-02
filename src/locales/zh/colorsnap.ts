@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "ColorSnap",
   "badge": "调色板实验室",
   "description": "从任何图片里取出一份真正的调色板，再用手动方式修正它。聚类在感知均匀的色彩空间中进行，取色器精确到像素，而且没有任何数据离开过你的浏览器。",

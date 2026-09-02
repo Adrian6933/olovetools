@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "CropSnap",
   "badge": "图片裁剪",
   "description": "在浏览器里裁剪、校正和缩放图片——而且拿回来的是原始分辨率，不是预览的大小。",

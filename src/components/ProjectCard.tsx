@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors } from 'lucide-react';
+import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors, UserRound } from 'lucide-react';
 import { Project } from '../types';
 
 interface ProjectCardProps {
@@ -48,6 +48,16 @@ const IconMap: Record<string, React.ElementType> = {
 const formatoCorto = (n: number): string =>
   n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
 
+// "1 visitas" estaba mal en todos los idiomas, y en ruso no basta con distinguir
+// singular de plural: 2 pide "визита" y 5 pide "визитов". Se delega en las
+// reglas del propio navegador y el diccionario aporta la palabra de cada forma.
+const palabraVisitas = (n: number, lang: string, formas: any): string => {
+  const dic = formas && typeof formas === 'object' ? formas : {};
+  let cat = 'other';
+  try { cat = new Intl.PluralRules(lang).select(n); } catch { /* locale raro */ }
+  return dic[cat] || dic.other || '';
+};
+
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang, t, onOpen, isFavorite, onToggleFavorite, visitasGlobales, visitasPropias }) => {
   const IconComponent = IconMap[project.icon] || Box;
 
@@ -73,12 +83,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel
             <div className="flex items-center gap-2 text-[10px] font-bold tabular-nums">
               {!!visitasGlobales && (
                 <span className="text-slate-400" title={t('visitsGlobalHint')}>
-                  {formatoCorto(visitasGlobales)} {t('visitsGlobalShort')}
+                  {formatoCorto(visitasGlobales)} {palabraVisitas(visitasGlobales, lang, (t as any).visitsGlobalForms)}
                 </span>
               )}
+              {/* El contador propio va como icono y numero: cualquier palabra
+                  ahi ("tuyas", "ваших") tendria que concordar en genero y
+                  numero en nueve idiomas, y el icono se entiende en todos. */}
               {!!visitasPropias && (
-                <span className="text-indigo-300" title={t('visitsMineHint')}>
-                  {formatoCorto(visitasPropias)} {t('visitsMineShort')}
+                <span className="text-indigo-300 flex items-center gap-1" title={t('visitsMineHint')}>
+                  <UserRound className="w-3 h-3" strokeWidth={2.5} />
+                  {formatoCorto(visitasPropias)}
                 </span>
               )}
             </div>

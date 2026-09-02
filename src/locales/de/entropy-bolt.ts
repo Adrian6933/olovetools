@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — Passwort- und Passphrasen-Generator mit exakter Entropie",
   "seo_description": "Erzeuge Passwörter oder Passphrasen im Browser, sieh die exakte Entropie deiner Einstellungen und prüfe ein vorhandenes Passwort darauf, welche Muster es schwächen. Nichts wird irgendwohin gesendet.",

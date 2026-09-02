@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "WhoisBolt",
   "seo_title": "Requête DNS avec contrôle de propagation",
   "seo_description": "Requête DNS gratuite via HTTPS. Dix types d'enregistrement, dont CAA et HTTPS/SVCB, leurs TTL, le drapeau de validation DNSSEC, la requête inverse pour IPv4, et un contrôle de propagation qui pose la même question à Google, Cloudflare et DNS.SB pour voir si un changement est arrivé. La requête part directement de votre navigateur vers le résolveur choisi.",

@@ -63,3 +63,26 @@ export type AdSlotName = keyof typeof AD_SLOTS;
  * pasa el umbral en monitores ultra anchos, y ahí sí tiene sentido mostrarlos).
  */
 export const RAIL_BLOCKLIST: string[] = [];
+
+/**
+ * Los dos únicos textos de anuncios que llega a leer un visitante: el rótulo
+ * "Anuncio" y el botón de cerrar el anuncio ancla. Los componentes de anuncio
+ * no reciben diccionario de herramienta —los monta la página, no la isla— así
+ * que el idioma sale del que el layout ya declara en <html lang>.
+ */
+const TEXTOS_ANUNCIO: Record<string, { anuncio: string; cerrar: string }> = {
+  en: { anuncio: 'Advertisement', cerrar: 'Close ad' },
+  es: { anuncio: 'Anuncio', cerrar: 'Cerrar el anuncio' },
+  fr: { anuncio: 'Publicité', cerrar: "Fermer l'annonce" },
+  de: { anuncio: 'Anzeige', cerrar: 'Anzeige schließen' },
+  pt: { anuncio: 'Publicidade', cerrar: 'Fechar o anúncio' },
+  ru: { anuncio: 'Реклама', cerrar: 'Закрыть объявление' },
+  hi: { anuncio: 'विज्ञापन', cerrar: 'विज्ञापन बंद करें' },
+  ja: { anuncio: '広告', cerrar: '広告を閉じる' },
+  zh: { anuncio: '广告', cerrar: '关闭广告' },
+};
+
+export const textosAnuncio = () => {
+  const l = (typeof document !== 'undefined' ? document.documentElement.lang : 'en').slice(0, 2);
+  return TEXTOS_ANUNCIO[l] || TEXTOS_ANUNCIO.en;
+};

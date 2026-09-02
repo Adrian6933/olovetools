@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "MemeBolt",
   "badge": "Estudio de memes",
   "description": "Crea un meme desde una plantilla vectorial o desde tu propia foto. Textos, pegatinas, contornos y exportación ocurren dentro de tu navegador: no se sube nada.",

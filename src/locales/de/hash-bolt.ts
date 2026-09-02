@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "HashBolt",
   "badge": "Prüfsummen und Dateiintegrität",
   "description": "Berechne MD5, SHA-1, SHA-256, SHA-512, SHA-3, BLAKE3 oder CRC-32 für Dateien beliebiger Größe oder für reinen Text und vergleiche das Ergebnis mit der veröffentlichten Prüfsumme. Die Datei wird stückweise im Browser verarbeitet und niemals hochgeladen.",

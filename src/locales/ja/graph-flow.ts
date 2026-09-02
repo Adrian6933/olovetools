@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "GraphFlow",
   "description": "CSV や手入力の数値からグラフを作り、データを手で直して、鮮明な PNG や本物のベクター SVG として書き出せます。すべてブラウザー内で完結します。",
   "label_data_source": "データソース",

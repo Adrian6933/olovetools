@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Key Inspector",
   "seo_title": "Keyboard tester: check every key online",
   "seo_description": "Free online keyboard tester. Press keys and watch them light up on a drawn ANSI, ISO or JIS board: find dead and stuck keys, read event.key, event.code and keyCode, measure rollover and repeat rate, then save the result as an image, text or JSON. Runs entirely in your browser.",

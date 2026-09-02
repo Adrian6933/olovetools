@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "QR Reader",
   "badge": "QR-Code-Leser",
   "description": "Scanne einen QR-Code mit der Kamera, einem Bild oder der Zwischenablage und sieh genau, was drinsteht. Er zeigt dir das Ziel – er öffnet es nie für dich.",

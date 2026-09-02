@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "CleanSnap",
   "seo_title": "CleanSnap | Effacez filigranes et objets de vos photos",
   "seo_description": "Peignez sur un filigrane, un logo ou un objet de trop : CleanSnap reconstruit ce qu'il y avait derrière en copiant des morceaux de la photo elle-même. Tout dans votre navigateur, avec barre de progression et bouton d'annulation. Rien n'est envoyé.",

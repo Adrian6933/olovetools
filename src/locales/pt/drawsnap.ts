@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "DrawSnap",
   "badge": "Quadro de desenho e vetorizador",
   "description": "Um quadro de desenho com traço sensível à pressão, exportação vetorial de verdade e um vetorizador que transforma qualquer imagem em traços editáveis. Tudo roda no seu navegador.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "Background Remover",
   "description": "AIによりブラウザ上でローカルかつ自動的に画像の背景を消去します。",
   "seo_title": "Background Remover | 無料オンラインAI背景透過・切り抜き",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Untertitel-Studio",
   "badge": "Untertitel",
   "description": "Zwischen neun Untertitelformaten umwandeln, Versatz und Bildraten-Drift korrigieren, die Lesegeschwindigkeit gegen eine Sendenorm prüfen und jeden Untertitel von Hand bearbeiten — ohne irgendetwas hochzuladen.",

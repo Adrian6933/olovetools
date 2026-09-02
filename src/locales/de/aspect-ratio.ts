@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Aspect Ratio",
   "badge": "Werkzeugkasten für Seitenverhältnisse",
   "seo_title": "Seitenverhältnis-Rechner | Skalieren und zuschneiden",

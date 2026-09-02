@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "QR Reader",
   "badge": "QR コードリーダー",
   "description": "カメラ、画像、クリップボードから QR コードを読み取り、中身をそのまま確認できます。行き先を表示するだけで、代わりに開くことはありません。",

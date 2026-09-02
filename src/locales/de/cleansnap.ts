@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "CleanSnap",
   "seo_title": "CleanSnap | Wasserzeichen und Objekte aus Fotos entfernen",
   "seo_description": "Male über ein Wasserzeichen, ein Logo oder ein störendes Objekt, und CleanSnap baut wieder auf, was dahinter war — indem es Stücke aus dem Foto selbst kopiert. Läuft im Browser, mit Fortschrittsbalken und Abbrechen-Knopf. Nichts wird hochgeladen.",

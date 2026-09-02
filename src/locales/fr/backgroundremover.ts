@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "Background Remover",
   "description": "Supprimez les arrière-plans des images localement et automatiquement grâce à l'IA.",
   "seo_title": "Background Remover | Suppression d'arrière-plan IA gratuite en ligne",

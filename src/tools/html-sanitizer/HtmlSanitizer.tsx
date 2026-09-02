@@ -769,7 +769,7 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
                         </pre>
                       ) : output ? (
                         <iframe
-                          title="sanitized-preview"
+                          title={t.previewTitle || 'Preview of the cleaned HTML'}
                           srcDoc={previewDoc}
                           sandbox=""
                           referrerPolicy="no-referrer"

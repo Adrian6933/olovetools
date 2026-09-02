@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "HEX 转 RGB",
   "badge": "颜色转换",
   "seo_title": "HEX 转 RGB 转换器 | RGB、HSL、HWB、OKLCH 与 CMYK，含对比度检查与调色板",

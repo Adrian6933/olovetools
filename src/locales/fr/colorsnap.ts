@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "ColorSnap",
   "badge": "Labo de palettes",
   "description": "Tirez une vraie palette de n'importe quelle image, puis corrigez-la à la main. Le regroupement se fait dans un espace colorimétrique perceptuel, la pipette descend au pixel, et rien ne quitte jamais votre navigateur.",

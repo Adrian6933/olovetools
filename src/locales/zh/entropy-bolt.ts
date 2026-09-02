@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — 熵值精确的密码与密码短语生成器",
   "seo_description": "在浏览器里生成密码或密码短语，查看当前设置对应的精确熵值，并检测现有密码、找出哪些模式在削弱它。任何内容都不会外发。",

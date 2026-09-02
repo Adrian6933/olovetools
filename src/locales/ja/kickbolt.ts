@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "heroTitle": "KICKクリップをダウンロード",
   "seo_title": "KickBolt | Kick のクリップをアカウントなしでまとめて保存",
   "heroDesc": "Kickの瞬間を保存するための究極のツール。高速、高信頼、登録不要。クリップのリストを一括でダウンロードできます。",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "MarkdownLive",
   "description": "左に Markdown を書けば、右で文書が組み上がっていきます。入れ子のリスト、タスクリスト、表、脚注、色付きのコードまで、すべてブラウザーのタブの中だけで解析します。",
   "badge": "Markdown を、あなたのタブで描画",

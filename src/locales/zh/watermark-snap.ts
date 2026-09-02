@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "WatermarkSnap",
   "badge": "批量水印",
   "description": "不上传任何一个字节，就能给整个文件夹的照片打上文字或标志。图层、描边、斜向平铺和原始分辨率导出，全部在你自己的浏览器里完成。",

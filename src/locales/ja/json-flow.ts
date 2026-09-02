@@ -1,4 +1,8 @@
 export default {
+  "copyPath": "パスをコピー",
+  "copyValue": "値をコピー",
+  "copyBranch": "ブランチ全体をコピー",
+  "resetHint": "最初からやり直す",
   "title": "JSONFlow",
   "description": "ブラウザだけで JSON を検証・閲覧・変換。エラー位置を正確に示し、巨大なファイルでも軽い折りたたみツリー、JSONPath クエリ、CSV・XML・YAML・JSON Schema・TypeScript への書き出しに対応します。",
 

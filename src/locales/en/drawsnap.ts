@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "DrawSnap",
   "badge": "Drawing board & tracer",
   "description": "A drawing board with pressure-aware ink, real vector export and a tracer that turns any picture into strokes you can edit. Everything runs in your browser.",

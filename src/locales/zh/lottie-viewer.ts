@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "Lottie Viewer",
   "description": "打开 .lottie、.tgs 和 .json 动画，重新配置每个填充、描边和渐变色标，检查在其他播放器上会出问题的地方，并导出为 JSON、SVG、PNG、序列帧或 WebM——全部在浏览器中完成。",
   "drop_active": "拖到这里松开",

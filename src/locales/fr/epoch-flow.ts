@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "EpochFlow",
   "seo_title": "Convertisseur d'horodatage Unix avec fuseaux horaires",
   "seo_description": "Convertisseur d'horodatage Unix gratuit. Secondes, millisecondes, microsecondes et nanosecondes, n'importe quel fuseau IANA avec le décalage en vigueur à cet instant, détection de l'heure d'été, et le même moment en FILETIME Windows, ticks .NET, série Excel ou jour julien. Tourne dans votre navigateur, en BigInt, sans arrondir les nanosecondes.",

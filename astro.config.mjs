@@ -1,4 +1,17 @@
 import { defineConfig } from 'astro/config';
+import { loadEnv } from 'vite';
+
+// `astro dev` carga el .env en import.meta.env, no en process.env, así que el
+// contador de visitas quedaba inerte en local y no había forma de probarlo. Se
+// copia aquí, en la configuración, que corre en Node y fuera del bundle: nada
+// de esto llega a incrustarse en el código compilado. En Vercel estas variables
+// ya vienen puestas y este bloque no las pisa.
+{
+  const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
+  for (const clave of ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']) {
+    if (!process.env[clave] && env[clave]) process.env[clave] = env[clave];
+  }
+}
 
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';

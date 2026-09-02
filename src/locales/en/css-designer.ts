@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "CSS Designer",
   "description": "Interactive playground for modern CSS: glassmorphism, multi-layer box shadows, gradients with OKLab interpolation, organic border radius and filters — with the generated code always in view.",
   "tab_glassmorphism": "Glassmorphism",

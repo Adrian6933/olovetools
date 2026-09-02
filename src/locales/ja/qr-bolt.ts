@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "QRBolt",
   "badge": "QR コード生成",
   "description": "グラデーション、独自の形、自分のロゴを入れた QR コードを作り、印刷する前に本当に読み取れるかを確かめられます。データはブラウザから出ません。",

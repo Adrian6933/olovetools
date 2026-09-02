@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "WhoisBolt",
   "seo_title": "Consulta DNS com verificação de propagação",
   "seo_description": "Consulta DNS gratuita sobre HTTPS. Dez tipos de registo, incluindo CAA e HTTPS/SVCB, com os seus TTL, a flag de validação DNSSEC, consulta inversa para IPv4, e uma verificação de propagação que faz a mesma pergunta ao Google, à Cloudflare e ao DNS.SB para veres se uma alteração já chegou. A consulta vai diretamente do teu navegador para o resolvedor que escolheres.",

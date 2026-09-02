@@ -1593,13 +1593,13 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
             {[
-              { art: StepSearch, title: t('step1_title'), text: t('step1_text') },
-              { art: StepFilter, title: t('step2_title'), text: t('step2_text') },
-              { art: StepWatch, title: t('step3_title'), text: t('step3_text') },
-              { art: StepSend, title: t('step4_title'), text: t('step4_text') },
+              { art: StepSearch, artProps: {}, title: t('step1_title'), text: t('step1_text') },
+              { art: StepFilter, artProps: {}, title: t('step2_title'), text: t('step2_text') },
+              { art: StepWatch, artProps: { caption: t('artNoLeave') }, title: t('step3_title'), text: t('step3_text') },
+              { art: StepSend, artProps: {}, title: t('step4_title'), text: t('step4_text') },
             ].map((step, i) => (
               <div key={i} className="bg-[#16121f] border border-white/5 rounded-2xl p-4 space-y-3">
-                <step.art />
+                <step.art {...step.artProps} />
                 <h3 className="text-sm font-black text-white flex items-center gap-2">
                   <span className="w-5 h-5 rounded-md bg-twitch-base/20 text-twitch-base text-[11px] font-black flex items-center justify-center shrink-0">{i + 1}</span>
                   {step.title}

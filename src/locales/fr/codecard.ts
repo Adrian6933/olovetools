@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "CodeCard",
   "description": "Convertissez vos extraits de code en magnifiques images de capture prêtes à être partagées, 100% localement dans votre navigateur.",
   "seo_title": "CodeCard | Générateur de superbes captures d'écran et d'images de code",

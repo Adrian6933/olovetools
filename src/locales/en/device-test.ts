@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Device Test",
   "seo_title": "Device Test | Check your camera, mic, speakers and screen",
   "seo_description": "Check that your webcam, microphone, speakers, screen, keyboard and pointer actually work — with the real numbers: capture resolution, frame rate, input level in dBFS and the resolutions your camera really supports. Nothing is uploaded.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "SQLFlow",
   "dialect": "方言",
   "dialect_detected": "看起来是 {0}，要切换吗？",

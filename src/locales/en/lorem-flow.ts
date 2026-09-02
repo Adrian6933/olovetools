@@ -1,4 +1,7 @@
 export default {
+  "artSameSeed": "same seed",
+  "artSameText": "same text",
+  "resetHint": "Start over",
   "title": "LoremFlow",
   "seo_title": "Placeholder text generator in eight scripts",
   "seo_description": "Free placeholder text generator. Classic Lorem ipsum plus Spanish, Japanese, Chinese, Russian, Hindi, Greek and Arabic, by paragraphs, sentences, words or an exact character count. Seeded output is repeatable, and you can export plain text, HTML or Markdown with headings and lists. Runs entirely in your browser.",

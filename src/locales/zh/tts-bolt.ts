@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "TTSBolt",
   "badge": "文字转语音",
   "description": "把稿子变成神经网络配音的 MP3，还附带与音频严丝合缝到毫秒的字幕。",

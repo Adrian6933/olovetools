@@ -105,14 +105,14 @@ export const StepFilter: React.FC = () =>
     </>
   );
 
-export const StepWatch: React.FC = () =>
+export const StepWatch: React.FC<{ caption?: string }> = ({ caption }) =>
   frame(
     <>
       <rect x="30" y="24" width="140" height="66" rx="8" fill="rgba(83,252,24,0.09)" stroke="rgba(83,252,24,0.28)" />
       <path d="M92 45 l 22 12 l -22 12 z" fill={TW} />
       <rect x="38" y="32" width="26" height="12" rx="6" fill="#ef4444" />
       <text x="51" y="41" textAnchor="middle" fill="#fff" fontSize="7" fontWeight="800" fontFamily="sans-serif">LIVE</text>
-      <text x="100" y="107" textAnchor="middle" fill="#7c7490" fontSize="8.5" fontFamily="sans-serif">without leaving the page</text>
+      <text x="100" y="107" textAnchor="middle" fill="#7c7490" fontSize="8.5" fontFamily="sans-serif">{caption || 'without leaving the page'}</text>
     </>
   );
 

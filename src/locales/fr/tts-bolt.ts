@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "TTSBolt",
   "badge": "Synthèse vocale",
   "description": "Transformez un script en MP3 narré avec des voix neuronales et récupérez des sous-titres calés à la milliseconde.",

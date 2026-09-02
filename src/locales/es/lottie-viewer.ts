@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "Lottie Viewer",
   "description": "Abre animaciones .lottie, .tgs y .json, recolorea cada relleno, trazo y parada de degradado, comprueba qué se va a romper en otros reproductores y exporta a JSON, SVG, PNG, secuencia de fotogramas o WebM, todo dentro de tu navegador.",
   "drop_active": "Suéltalo aquí",

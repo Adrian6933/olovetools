@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "Aspect Ratio",
   "badge": "आस्पेक्ट रेशियो टूलकिट",
   "seo_title": "आस्पेक्ट रेशियो कैलकुलेटर | आकार बदलें और क्रॉप करें",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "EpochFlow",
   "seo_title": "Conversor de timestamps Unix con zonas horarias",
   "seo_description": "Conversor de timestamps Unix gratuito. Segundos, milisegundos, microsegundos y nanosegundos, cualquier zona horaria IANA con el desfase que se aplicaba en ese instante, detección de horario de verano y el mismo momento como FILETIME de Windows, ticks de .NET, serial de Excel o día juliano. Funciona en tu navegador y con BigInt, así que los nanosegundos no se redondean.",

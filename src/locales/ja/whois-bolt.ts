@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "WhoisBolt",
   "seo_title": "反映チェックつき DNS 参照",
   "seo_description": "HTTPS 経由の無料 DNS 参照ツール。CAA や HTTPS/SVCB を含む 10 種類のレコードを TTL つきで表示し、DNSSEC の検証フラグ、IPv4 の逆引き、そして Google・Cloudflare・DNS.SB に同じ問い合わせを行って変更が行き渡ったかを確かめる反映チェックにも対応します。問い合わせはブラウザーから選んだリゾルバーへ直接送られます。",

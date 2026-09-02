@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "ColorSnap",
   "badge": "Image palette lab",
   "description": "Pull a real palette out of any image, then fix it by hand. Clustering runs in a perceptual colour space, the eyedropper works at pixel level, and nothing ever leaves your browser.",

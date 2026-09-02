@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "ZipFlow",
   "description": "把文件和整个文件夹打包成 ZIP，或者打开一个压缩包，像文件管理器一样浏览它——全部在浏览器内完成。",
   "badge": "本地 ZIP 工作台",

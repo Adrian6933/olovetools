@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "WordFlow",
   "description": "Comptez les mots, mesurez la lisibilité, repérez les phrases faibles et nettoyez le texte — entièrement dans votre navigateur, en neuf langues.",
   "badge": "Analyse de texte locale",

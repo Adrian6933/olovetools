@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "WhoisBolt",
   "seo_title": "प्रसार जाँच के साथ DNS लुकअप",
   "seo_description": "HTTPS पर मुफ़्त DNS लुकअप। CAA और HTTPS/SVCB सहित दस रिकॉर्ड प्रकार, उनके TTL, DNSSEC सत्यापन फ़्लैग, IPv4 के लिए उलटी क्वेरी, और एक प्रसार जाँच जो Google, Cloudflare और DNS.SB से वही सवाल पूछती है ताकि पता चले कि बदलाव पहुँचा या नहीं। क्वेरी सीधे आपके ब्राउज़र से आपके चुने रिज़ॉल्वर को जाती है।",

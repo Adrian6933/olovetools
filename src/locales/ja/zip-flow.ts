@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "ZipFlow",
   "description": "ファイルやフォルダーごとZIPにまとめたり、アーカイブを開いてファイルマネージャーのように中身をたどったり。すべてブラウザーの中で完結します。",
   "badge": "ローカルZIP工房",

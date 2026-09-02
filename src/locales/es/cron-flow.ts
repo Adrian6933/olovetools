@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "CronFlow",
   "badge": "Expresiones cron",
   "description": "Escribe una expresión cron, léela en palabras normales, mira exactamente cuándo se dispara en cualquier zona horaria y llévate la línea de crontab, el workflow o el manifiesto.",

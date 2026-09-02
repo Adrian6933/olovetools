@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "BinaryFlow",
   "seo_title": "Convertisseur binaire, hexadécimal et décimal avec éditeur de bits",
   "seo_description": "Convertisseur de bases gratuit avec une grille de bits cliquable. Toutes les bases de 2 à 36, valeurs signées en complément à deux sur 8, 16, 32 ou 64 bits, flottants IEEE-754 décomposés en signe, exposant et mantisse, opérations AND/OR/XOR et décalages, texte en quatre encodages et dump hexadécimal de n'importe quel fichier. Le tout dans votre navigateur, en BigInt, sans rien tronquer.",

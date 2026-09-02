@@ -9,9 +9,10 @@ interface HeaderProps {
   onLangChange: (code: string) => void;
   /** Deja la herramienta como recien abierta. */
   onReset?: () => void;
+  resetHint?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ currentLang, onLangChange, onReset }) => {
+const Header: React.FC<HeaderProps> = ({ currentLang, onLangChange, onReset, resetHint }) => {
   const [isLangOpen, setIsLangOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -53,8 +54,8 @@ const Header: React.FC<HeaderProps> = ({ currentLang, onLangChange, onReset }) =
             <button
               type="button"
               onClick={withScrollToTop(onReset)}
-              title="Start over"
-              aria-label="Start over"
+              title={resetHint || 'Start over'}
+              aria-label={resetHint || 'Start over'}
               className="flex items-center gap-3 shrink-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
             >
                 <div className="w-11 h-11 md:w-12 md:h-12 bg-kick rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(83,252,24,0.25)] group-hover:scale-105 transition-all duration-300">

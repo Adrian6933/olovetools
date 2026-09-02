@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "GIFBolt",
   "description": "Extrayez les images d’une vidéo ou enchaînez des photos, modifiez la timeline et encodez un GIF avec palette globale et compression inter-images, le tout dans votre navigateur.",
   "tab_video": "Vidéo en GIF",

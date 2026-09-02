@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "MorseFlow",
   "label_text": "文本",
   "label_morse": "摩尔斯电码",

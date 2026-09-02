@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "heroTitle": "下载 TWITCH 剪辑",
   "seo_title": "下载 TWITCH 剪辑",
   "heroDesc": "保存 Twitch 精彩瞬间的终极工具。快速、可靠且无需注册。一次性下载整个剪辑列表。",

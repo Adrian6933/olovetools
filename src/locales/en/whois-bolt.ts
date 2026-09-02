@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "WhoisBolt",
   "seo_title": "DNS lookup with propagation check",
   "seo_description": "Free DNS lookup over HTTPS. Ten record types including CAA and HTTPS/SVCB, TTLs, the DNSSEC validation flag, reverse lookup for IPv4, and a propagation check that asks Google, Cloudflare and DNS.SB the same question so you can see whether a change has landed. The query goes straight from your browser to the resolver you choose.",

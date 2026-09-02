@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "SVG Optimizer",
   "description": "100% 在线本地优化、清理并压缩 SVG 矢量图文件，有效减小文件体积并提升网页加载性能。",
   "label_svg_file": "SVG 矢量文件",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "heroTitle": "DOWNLOAD TWITCH CLIPS",
   "seo_title": "TwitchBolt | Download Twitch Clips",
   "heroDesc": "The ultimate tool to save Twitch moments. Fast, reliable and zero registration. Download entire lists of clips at once.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "GIFBolt",
   "description": "Extrae fotogramas de un vídeo o encadena imágenes, edita la línea de tiempo y codifica un GIF con paleta global y compresión entre fotogramas, todo en tu navegador.",
   "tab_video": "Vídeo a GIF",

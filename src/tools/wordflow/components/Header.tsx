@@ -44,6 +44,9 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             <button
               onClick={withScrollToTop(onReset)}
               className="flex items-center gap-1.5 sm:gap-2 md:gap-3 group border-none bg-transparent outline-none transition-all md:hover:translate-x-1 cursor-pointer animate-fade-in min-w-0"
+            
+              title={t.resetHint || 'Start over'}
+              aria-label={t.resetHint || 'Start over'}
             >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-teal-500/20 group-hover:border-teal-500/50 transition-all shrink-0">
                 <FileText className="w-4 h-4 md:w-5 md:h-5 text-teal-400" />

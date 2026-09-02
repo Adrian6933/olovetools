@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "FaviconBolt",
   "description": "用一个表情符号、几个字母或你自己的标志，生成一整套网站图标。所有内容都在浏览器里完成。",
   "badge": "网站图标与应用图标生成器",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "Aspect Ratio",
   "badge": "Kit de proporciones",
   "seo_title": "Calculadora de relación de aspecto | Redimensiona y recorta",

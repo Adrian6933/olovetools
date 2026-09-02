@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "pasteBtn": "Paste",
   "selectImage": "Select image",
   "dropPrompt": "Drag & drop, paste or select an image",

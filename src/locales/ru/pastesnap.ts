@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Начать заново",
   "pasteBtn": "Вставить",
   "selectImage": "Выбрать изображение",
   "dropPrompt": "Перетащите, вставьте или выберите изображение",

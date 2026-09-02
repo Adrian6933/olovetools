@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "FaviconBolt",
   "description": "Créez un pack complet de favicons à partir d'un emoji, de quelques lettres ou de votre propre logo. Tout est généré dans votre navigateur.",
   "badge": "Générateur de favicons et d'icônes d'app",

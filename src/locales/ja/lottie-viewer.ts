@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "Lottie Viewer",
   "description": ".lottie・.tgs・.json のアニメーションを開き、塗り・線・グラデーションの各ストップを配色し直し、他のプレイヤーで壊れる箇所を確認して、JSON・SVG・PNG・連番画像・WebM に書き出せます。すべてブラウザ内で完結します。",
   "drop_active": "ここにドロップ",

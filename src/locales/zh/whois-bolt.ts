@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "WhoisBolt",
   "seo_title": "带传播检查的 DNS 查询",
   "seo_description": "基于 HTTPS 的免费 DNS 查询。十种记录类型（含 CAA 与 HTTPS/SVCB）及其 TTL、DNSSEC 验证标志、IPv4 反向查询，还有向 Google、Cloudflare 和 DNS.SB 问同一个问题的传播检查，好让你知道变更有没有生效。查询直接从你的浏览器发往你选定的解析服务器。",

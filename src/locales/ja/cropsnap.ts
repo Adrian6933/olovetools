@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "最初からやり直す",
   "title": "CropSnap",
   "badge": "画像の切り抜き",
   "description": "ブラウザ内で画像を切り抜き、傾きを直し、サイズを変更できます。しかも戻ってくるのはプレビューの大きさではなく、元の解像度です。",

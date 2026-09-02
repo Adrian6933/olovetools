@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "QR Reader",
   "badge": "Leitor de códigos QR",
   "description": "Leia um QR com a câmara, uma imagem ou a área de transferência e veja exatamente o que traz dentro. Mostra-lhe o destino: nunca o abre por si.",

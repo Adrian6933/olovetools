@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "List Mixer",
   "seo_title": "List Mixer | Listen sortieren, Duplikate entfernen und mischen — kostenlos",
   "seo_description": "Listen im Browser sortieren, entdoppeln, mischen, filtern und umformen. Neunzehn stapelbare Operationen, Mengenoperationen zwischen zwei Listen, Ausgabe als CSV/JSON/SQL. Kostenlos, ohne Upload.",

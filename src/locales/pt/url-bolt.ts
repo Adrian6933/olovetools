@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "URLBolt",
   "seo_title": "URLBolt | Codificador, descodificador e inspetor de URLs",
   "seo_description": "Codifique e descodifique URLs com oito perfis de conjunto de caracteres, desmonte qualquer ligação, edite a query string à mão, remova parâmetros de rastreio e limpe listas inteiras de uma só vez. Grátis e totalmente no seu navegador.",

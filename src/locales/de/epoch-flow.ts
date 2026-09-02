@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "EpochFlow",
   "seo_title": "Unix-Zeitstempel-Rechner mit Zeitzonen",
   "seo_description": "Kostenloser Unix-Zeitstempel-Rechner. Sekunden, Millisekunden, Mikrosekunden und Nanosekunden, jede IANA-Zeitzone mit der damals gültigen Verschiebung, Sommerzeit-Erkennung und derselbe Moment als Windows-FILETIME, .NET-Ticks, Excel-Serial oder Julianischer Tag. Läuft im Browser, mit BigInt, damit Nanosekunden nicht wegfallen.",

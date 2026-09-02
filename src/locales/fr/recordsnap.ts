@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "RecordSnap",
   "badge": "Enregistreur d'écran local",
   "description": "Enregistrez votre écran, votre webcam ou les deux à la fois, entièrement dans votre navigateur. Rien n'est envoyé en ligne et vous choisissez le débit.",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "WatermarkSnap",
   "badge": "Filigranes par lots",
   "description": "Apposez un texte ou un logo sur un dossier entier de photos sans envoyer le moindre octet. Calques, contours, mosaïque diagonale et export en pleine résolution, le tout dans votre navigateur.",

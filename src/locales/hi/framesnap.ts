@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "FrameSnap",
   "seo_title": "FrameSnap | वीडियो से फ्रेम निकालें ऑनलाइन",
   "seoHeroTitle": "किसी भी वीडियो से सटीक फ्रेम निकालें",

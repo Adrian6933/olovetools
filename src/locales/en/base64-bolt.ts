@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "Base64Bolt",
   "seo_title": "Base64Bolt | Base64 Encoder, Decoder & Payload Inspector",
   "seo_description": "Encode text or any file to Base64, decode a payload back to the real file, read the bytes in hex, switch to the URL-safe alphabet, drop the padding and wrap at 76 columns. Free and entirely in your browser.",

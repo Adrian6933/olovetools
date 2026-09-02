@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "AudioSnap",
   "badge": "Grabadora de voz y recortador de audio",
   "description": "Graba con tu micrófono o abre un archivo de audio, córtalo sobre la onda, nivélalo y exporta WAV sin pérdida o un clip comprimido. Todo ocurre dentro de esta pestaña.",

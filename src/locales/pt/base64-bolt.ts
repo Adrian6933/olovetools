@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "Base64Bolt",
   "seo_title": "Base64Bolt | Codificador e decodificador Base64 com inspetor de bytes",
   "seo_description": "Codifique texto ou qualquer ficheiro para Base64, decodifique um payload e recupere o ficheiro real, leia os bytes em hexadecimal, use o alfabeto seguro para URL, retire o padding e quebre as linhas às 76 colunas. Grátis e inteiramente no seu navegador.",

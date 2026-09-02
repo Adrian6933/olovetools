@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "heroTitle": "TWITCH CLIPS DOWNLOADEN",
   "seo_title": "TWITCH CLIPS DOWNLOADEN",
   "heroDesc": "Das ultimative Tool zum Speichern von Twitch-Momenten. Schnell, zuverlässig und ohne Anmeldung. Lade ganze Listen auf einmal herunter.",

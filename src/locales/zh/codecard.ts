@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "CodeCard",
   "description": "在浏览器中 100% 本地将您的代码片段转换为精美、易于分享的屏幕截图卡片。",
   "seo_title": "CodeCard | 精美的代码片段图片与屏幕截图生成器",

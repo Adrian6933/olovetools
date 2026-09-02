@@ -173,7 +173,7 @@ export const StepAmount: React.FC = () =>
     </>
   );
 
-export const StepSeed: React.FC = () =>
+export const StepSeed: React.FC<{ semilla?: string; texto?: string }> = ({ semilla, texto }) =>
   frame(
     <>
       <rect x="24" y="30" width="70" height="22" rx="6" stroke={INK} strokeWidth="1.6" />
@@ -184,8 +184,8 @@ export const StepSeed: React.FC = () =>
         <rect key={i} x={128} y={30 + i * 9} width={52 - i * 10} height="5" rx="2.5" fill={INK} opacity="0.45" />
       ))}
       <path d="M24 66 h70" stroke="rgba(255,255,255,0.1)" strokeWidth="1.5" />
-      <text x="24" y="86" fill="#64748b" fontSize="8.5" fontFamily="sans-serif">same seed</text>
-      <text x="128" y="86" fill="#64748b" fontSize="8.5" fontFamily="sans-serif">same text</text>
+      <text x="24" y="86" fill="#64748b" fontSize="8.5" fontFamily="sans-serif">{semilla || 'same seed'}</text>
+      <text x="128" y="86" fill="#64748b" fontSize="8.5" fontFamily="sans-serif">{texto || 'same text'}</text>
     </>
   );
 

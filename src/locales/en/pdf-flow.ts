@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "Remove file",
+  "resetHint": "Start over",
   "title": "PDFFlow",
   "description": "Merge, split, rotate, and convert documents or images to PDF locally in your browser.",
   "seo_title": "PDFFlow | Client-Side PDF Editor & Toolkit",

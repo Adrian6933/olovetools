@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Background Remover",
   "description": "Entfernen Sie Hintergründe von Bildern lokal und automatisch mit KI.",
   "seo_title": "Background Remover | Kostenloser KI-Hintergrundentferner Online",

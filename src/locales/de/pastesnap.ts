@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "pasteBtn": "Einfügen",
   "selectImage": "Bild auswählen",
   "dropPrompt": "Ziehen & ablegen, einfügen oder Bild auswählen",

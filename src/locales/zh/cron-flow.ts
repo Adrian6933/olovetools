@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "CronFlow",
   "badge": "cron 表达式",
   "description": "写一条 cron 表达式，用日常语言读回来，看清它在任意时区究竟何时触发，并直接带走 crontab 行、workflow 或清单文件。",

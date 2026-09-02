@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Начать заново",
   "languageName": "Русский",
   "header": {
     "subtitle": "КОНВЕРТЕР ФОРМАТОВ ИЗОБРАЖЕНИЙ"

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "Base64Bolt",
   "seo_title": "Base64Bolt | Base64 编码器、解码器与字节检查器",
   "seo_description": "把文本或任意文件编码为 Base64，把载荷解码还原成真正的文件，用十六进制查看字节，切换到 URL 安全字母表，去掉填充，并在 76 列处换行。免费，全部在你的浏览器里完成。",

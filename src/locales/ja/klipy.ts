@@ -1,4 +1,6 @@
 export default {
+  "artNoLeave": "ページを離れずに",
+  "resetHint": "最初からやり直す",
   "title": "Klipy",
   "seo_title": "Klipy | Kick のクリップとライブ配信をカテゴリー別に探す",
   "seo_description": "カテゴリー別に最高のKickクリップとライブチャンネルを発見・視聴。お気に入りのKickの瞬間を閲覧、保存、エクスポート、無料で高速。",

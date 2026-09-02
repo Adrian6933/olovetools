@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "languageName": "Français",
   "header": {
     "subtitle": "CONVERTISSEUR DE FORMATS D'IMAGE"

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "SocialBolt",
   "description": "Collez un lien TikTok ou X et choisissez exactement ce que vous emportez : vidéo sans filigrane, piste HD, audio MP3, couverture ou toutes les photos du carrousel.",
   "heroKicker": "Téléchargeur pour réseaux sociaux",

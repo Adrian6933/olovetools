@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "Aspect Ratio",
   "badge": "宽高比工具箱",
   "seo_title": "宽高比计算器 | 比例、等比缩放、裁剪与黑边",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "CronFlow",
   "badge": "Cron expressions",
   "description": "Write a cron expression, read it back in plain words, see exactly when it fires in any timezone, and take the crontab line, workflow or manifest with you.",

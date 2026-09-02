@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "MemeBolt",
   "badge": "梗图工作室",
   "description": "用矢量模板或你自己的照片做梗图。文字、贴纸、描边和导出全部在浏览器里完成，图片不会被上传到任何地方。",

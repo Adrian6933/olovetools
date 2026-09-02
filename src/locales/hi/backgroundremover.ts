@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "फिर से शुरू करें",
   "title": "Background Remover",
   "description": "एआई (AI) के साथ स्थानीय रूप से और स्वचालित रूप से छवियों से पृष्ठभूमि (background) हटाएं।",
   "seo_title": "Background Remover | मुफ़्त ऑनलाइन एआई बैकग्राउंड रिमूवर",

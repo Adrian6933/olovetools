@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "WatermarkSnap",
   "badge": "Marcas de agua por lotes",
   "description": "Estampa un texto o un logotipo sobre una carpeta entera de fotos sin subir un solo byte. Capas, contornos, mosaico diagonal y exportación a resolución completa, todo dentro de tu navegador.",

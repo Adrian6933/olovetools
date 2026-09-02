@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "Aspect Ratio",
   "badge": "Boîte à outils des ratios",
   "seo_title": "Calculateur de format d'image | Redimensionner et recadrer",

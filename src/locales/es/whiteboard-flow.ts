@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Empezar de nuevo",
   "title": "WhiteboardFlow",
   "seo_title": "WhiteboardFlow — lienzo de notas adhesivas y tablero Kanban",
   "seo_description": "Una pizarra que funciona con el dedo: arrastra notas adhesivas donde quieras o encájalas en carriles, conéctalas, deshaz 200 pasos y exporta a PNG, SVG, JSON o Markdown. Todo dentro de tu navegador.",

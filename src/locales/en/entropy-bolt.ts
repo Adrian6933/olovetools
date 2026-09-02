@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "EntropyBolt",
   "seo_title": "EntropyBolt — password and passphrase generator with exact entropy",
   "seo_description": "Generate passwords or passphrases in your browser, see the exact entropy for your settings, and test an existing password to find out which patterns weaken it. Nothing is sent anywhere.",

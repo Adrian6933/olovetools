@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "SocialBolt",
   "description": "Paste a TikTok or X link and pick exactly what you take: video without watermark, HD track, MP3 audio, cover art or every photo in the carousel.",
   "heroKicker": "Social media downloader",

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "UnitFlow",
   "badge": "Convertisseur d’unités exact",
   "seo_title": "UnitFlow | Convertisseur d'unités à arithmétique exacte",

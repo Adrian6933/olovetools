@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Começar de novo",
   "title": "WatermarkSnap",
   "badge": "Marcas d'água em lote",
   "description": "Carimbe um texto ou um logotipo numa pasta inteira de fotos sem enviar um único byte. Camadas, contornos, mosaico diagonal e exportação em resolução completa, tudo dentro do seu navegador.",

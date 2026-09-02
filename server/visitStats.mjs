@@ -15,11 +15,19 @@
 // desplegar sin haber creado la cuenta todavía.
 // ============================================================================
 
-const URL_BASE = process.env.UPSTASH_REDIS_REST_URL || '';
-const TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN || '';
+// Se leen en cada llamada, no al importar el módulo: congelarlas obligaría a
+// reconstruir para cualquier cambio de credencial en vez de sólo redesplegar.
+//
+// Y se leen de process.env a secas, nunca de import.meta.env: Vite sustituye
+// import.meta.env en tiempo de compilación, así que el token acabaría escrito
+// dentro del bundle. Para desarrollo, astro.config.mjs copia el .env a
+// process.env, que es donde Vercel ya las pone en producción.
+const cfg = (nombre) => process.env[nombre] || '';
+const urlBase = () => cfg('UPSTASH_REDIS_REST_URL');
+const token = () => cfg('UPSTASH_REDIS_REST_TOKEN');
 
 /** El contador global sólo existe si hay dónde guardarlo. */
-export const statsEnabled = () => Boolean(URL_BASE && TOKEN);
+export const statsEnabled = () => Boolean(urlBase() && token());
 
 /** Clave del hash donde viven todos los contadores. */
 const CLAVE = 'tool_visits';
@@ -28,10 +36,10 @@ const CLAVE = 'tool_visits';
 const slugValido = (s) => typeof s === 'string' && /^[a-z0-9-]{1,40}$/.test(s);
 
 async function redis(comando) {
-  const res = await fetch(URL_BASE, {
+  const res = await fetch(urlBase(), {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${TOKEN}`,
+      Authorization: `Bearer ${token()}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(comando),

@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "UnitFlow",
   "badge": "精确单位换算器",
   "seo_title": "单位换算 | 18 大类、156 个单位、精确算术、100% 本地",

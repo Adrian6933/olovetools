@@ -1,4 +1,6 @@
 export default {
+  "removeFile": "移除文件",
+  "resetHint": "重新开始",
   "title": "PDFFlow",
   "description": "在浏览器中本地合并、拆分、旋转文档或图像，并将其转换为 PDF。",
   "seo_title": "PDFFlow | 本地安全的 PDF 编辑器与免费工具箱",

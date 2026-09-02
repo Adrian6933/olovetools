@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "重新开始",
   "title": "HashBolt",
   "badge": "校验和与文件完整性",
   "description": "对任意大小的文件或纯文本计算 MD5、SHA-1、SHA-256、SHA-512、SHA-3、BLAKE3 或 CRC-32，并与官方公布的校验和比对。文件在浏览器内分块读取，绝不上传。",

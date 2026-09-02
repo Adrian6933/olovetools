@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Neu anfangen",
   "title": "Device Test",
   "seo_title": "Device Test | Kamera, Mikrofon, Lautsprecher und Bildschirm prüfen",
   "seo_description": "Prüfe, ob Webcam, Mikrofon, Lautsprecher, Bildschirm, Tastatur und Zeiger wirklich funktionieren — mit den echten Zahlen: Aufnahmeauflösung, Bildrate, Eingangspegel in dBFS und die Auflösungen, die deine Kamera tatsächlich liefert. Es wird nichts hochgeladen.",

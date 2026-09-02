@@ -76,8 +76,8 @@ const Header: React.FC<HeaderProps> = ({ language, dictionary: propDictionary, o
             <button
               type="button"
               onClick={withScrollToTop(onHomeClick)}
-              title="Start over"
-              aria-label="Start over"
+              title={dictionary.resetHint || 'Start over'}
+              aria-label={dictionary.resetHint || 'Start over'}
               className="flex items-center gap-2 opacity-90 hover:opacity-100 transition-opacity focus:outline-none min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
             >
               <div className="bg-secondary/20 p-1 sm:p-1.5 rounded-lg border border-secondary/30 flex-shrink-0">

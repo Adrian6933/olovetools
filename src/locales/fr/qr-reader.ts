@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "QR Reader",
   "badge": "Lecteur de QR codes",
   "description": "Scannez un QR code avec la caméra, une image ou le presse-papiers et voyez exactement ce qu'il contient. Il vous montre la destination : il ne l'ouvre jamais à votre place.",

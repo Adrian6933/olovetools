@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Start over",
   "title": "GraphFlow",
   "description": "Create charts from a CSV or from numbers you type in, correct the data by hand, and export a sharp PNG or a true vector SVG — all locally in your browser.",
   "label_data_source": "Data Source",

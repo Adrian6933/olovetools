@@ -1,4 +1,5 @@
 export default {
+  "resetHint": "Recommencer",
   "title": "MemeBolt",
   "badge": "Studio de mèmes",
   "description": "Créez un mème à partir d'un modèle vectoriel ou de votre propre photo. Textes, autocollants, contours et export se font dans votre navigateur : rien n'est envoyé.",
