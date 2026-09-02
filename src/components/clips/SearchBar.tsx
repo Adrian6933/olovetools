@@ -1,17 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, X, Clock, Trash2 } from 'lucide-react';
-import { fetchTwitchSuggestions } from '../services/twitchService';
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
   query?: string;
   isLoading: boolean;
+  /** Sugerencias del buscador. Inyectadas: Clipy pregunta a Twitch, Klipy a Kick. */
+  fetchSuggestions: (term: string) => Promise<string[]>;
   t: (key: string) => string;
 }
 
 const STORAGE_KEY_HISTORY = 'clipy_search_history';
 
-const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) => {
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t, fetchSuggestions }) => {
   const [term, setTerm] = useState('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [history, setHistory] = useState<string[]>([]);
@@ -44,8 +45,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch, query, isLoading, t }) 
     if (term.trim().length > 0) {
       // Debounce Twitch fetch
       const timer = setTimeout(async () => {
-        const twitchResults = await fetchTwitchSuggestions(term);
-        setSuggestions(twitchResults);
+        const results = await fetchSuggestions(term);
+        setSuggestions(results);
       }, 300);
 
       return () => clearTimeout(timer);

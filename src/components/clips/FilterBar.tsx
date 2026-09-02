@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { TimeFilter, SortType } from '../types';
+import { TimeFilter, SortType } from './types';
 import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward } from 'lucide-react';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,

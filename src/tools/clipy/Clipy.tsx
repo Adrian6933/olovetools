@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from './types';
-import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition } from './services/twitchService';
+import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
+import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition, getClipVideoSource, fetchTwitchSuggestions } from './services/twitchService';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
-import SearchBar from './components/SearchBar';
-import FilterBar from './components/FilterBar';
-import ClipGrid, { type ClipGridHandle } from './components/ClipGrid';
-import CategoryGrid from './components/CategoryGrid';
-import FloatingPlayer from './components/FloatingPlayer';
+import SearchBar from '../../components/clips/SearchBar';
+import FilterBar from '../../components/clips/FilterBar';
+import ClipGrid, { type ClipGridHandle } from '../../components/clips/ClipGrid';
+import CategoryGrid from '../../components/clips/CategoryGrid';
+import FloatingPlayer from '../../components/clips/FloatingPlayer';
 import LegalModal from './components/LegalModal';
-import BlocklistManager from './components/BlocklistManager';
+import BlocklistManager from '../../components/clips/BlocklistManager';
 import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AdBanner } from '../../components/shared/AdBanner';
@@ -1225,7 +1225,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           </div>
 
           <div className="w-full px-4 sm:px-4 md:px-0 md:mx-4 xl:ml-14 xl:mr-64 2xl:mx-4 max-w-[800px] order-3 md:order-2 mt-2 md:mt-0">
-            <SearchBar onSearch={handleSearch} query={state.query} isLoading={state.isLoading && state.mode === 'categories'} t={t} />
+            <SearchBar fetchSuggestions={fetchTwitchSuggestions} onSearch={handleSearch} query={state.query} isLoading={state.isLoading && state.mode === 'categories'} t={t} />
           </div>
 
           <div className="flex items-center gap-2 md:gap-4 md:flex-1 justify-end order-2 md:order-3">
@@ -1648,7 +1648,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         <AdBanner id="adsense-clipy-bottom" className="mt-24" />
       </main>
 
-      {playingClip && <FloatingPlayer clip={playingClip} onClose={() => {
+      {playingClip && <FloatingPlayer getVideoSource={getClipVideoSource} clip={playingClip} onClose={() => {
         setPlayingClip(null);
         playingClipRef.current = null;
       }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} onBlockStreamer={handleBlockStreamer} t={t} playbackSpeed={playbackSpeed} onPlaybackSpeedChange={handlePlaybackSpeedChange} />}

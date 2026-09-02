@@ -2,8 +2,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff, Gauge, Loader2, ChevronDown } from 'lucide-react';
-import { Clip } from '../types';
-import { getClipVideoSource } from '../services/twitchService';
+import { Clip } from './types';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
 // así que velocidades altas (x3/x4) siguen siendo perfectamente reproducibles
@@ -19,6 +18,12 @@ interface FloatingPlayerProps {
   onBlockStreamer?: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
   /** Velocidad de reproducción elegida en el filtro; 1 = normal. */
+  /**
+   * De donde sale el mp4 reproducible del clip. Se inyecta en vez de importarse
+   * porque este componente lo comparten Clipy (Twitch) y Klipy (Kick), y cada
+   * una lo resuelve contra su propia API.
+   */
+  getVideoSource: (clipId: string) => Promise<string | null>;
   playbackSpeed: number;
   onPlaybackSpeedChange: (speed: number) => void;
 }
@@ -44,7 +49,7 @@ const readStoredVolume = (): { volume: number; muted: boolean } | null => {
   }
 };
 
-const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange }) => {
+const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange, getVideoSource }) => {
   // 480px fijos no caben en un móvil: el reproductor arrancaba saliéndose por
   // la derecha (x se topaba en 20 y el ancho seguía siendo 480 en una pantalla
   // de 375). Se ajusta al viewport manteniendo el 16:9.
@@ -123,7 +128,7 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
     setVideoResolveFailed(false);
     if (isMockClip) return;
     let cancelled = false;
-    getClipVideoSource(clip.id).then(url => {
+    getVideoSource(clip.id).then(url => {
       if (cancelled) return;
       if (url) setVideoSrc(url);
       else setVideoResolveFailed(true);

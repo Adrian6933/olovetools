@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Clip } from '../types';
+import { Clip } from './types';
 import { Trash2, Search, X, ShieldAlert, Plus, Download, Upload } from 'lucide-react';
 
 interface BlocklistManagerProps {

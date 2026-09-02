@@ -82,7 +82,12 @@ async function api(params: Record<string, string>): Promise<any> {
 
 export async function searchCategories(q: string): Promise<KCategory[]> {
   try {
-    const data = await api({ action: 'categories', q: q.trim() });
+    // "popular" es el valor con el que la interfaz compartida pide el catalogo
+    // de entrada: en Twitch significaba "los juegos mas vistos", pero la API de
+    // Kick lo buscaria como palabra literal y devolveria casi nada. Se traduce
+    // a una busqueda amplia, que es lo que el backend hace con q vacia.
+    const termino = q.trim().toLowerCase() === 'popular' ? '' : q.trim();
+    const data = await api({ action: 'categories', q: termino });
     const arr: any[] = Array.isArray(data?.data) ? data.data : [];
     return arr.map((c) => ({ id: String(c.id), slug: categorySlug(c.name || ''), name: c.name, thumbnail: c.thumbnail || '' }));
   } catch {
@@ -190,5 +195,122 @@ export async function getLivestreams(categoryId: string): Promise<KItem[]> {
     }));
   } catch {
     return [];
+  }
+}
+
+// ============================================================================
+// Superficie que esperan los componentes compartidos (src/components/clips)
+// ----------------------------------------------------------------------------
+// Clipy y Klipy usan la misma interfaz, y esos componentes reciben por props lo
+// que cada tool resuelve contra su API. Esto es la mitad de Kick.
+// ============================================================================
+
+/**
+ * Sugerencias del buscador: nombres de categoria que empiezan por lo tecleado.
+ * Kick no tiene endpoint de autocompletado, asi que se reutiliza la busqueda de
+ * categorias, que es lo mismo que se va a mostrar despues.
+ */
+export async function fetchKickSuggestions(query: string): Promise<string[]> {
+  const q = query.trim();
+  if (q.length < 2) return [];
+  const cats = await searchCategories(q);
+  return cats.slice(0, 8).map((c) => c.name);
+}
+
+/**
+ * MP4 reproducible de un clip. Kick lo devuelve ya en el propio listado
+ * (`clip_url` / `video_url`), asi que en la practica el reproductor no necesita
+ * pedir nada: se le pasa el que ya venia. Esta funcion cubre el caso de entrar
+ * por enlace directo, cuando no hay listado del que sacarlo.
+ */
+export async function getClipVideoSource(clipId: string): Promise<string | null> {
+  try {
+    const data = await api({ action: 'clip', slug: clipId });
+    const c = data?.clip ?? data;
+    return c?.clip_url || c?.video_url || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Un clip suelto por su id, para entrar directamente por enlace. */
+export async function getClipById(clipId: string): Promise<KItem | null> {
+  try {
+    const data = await api({ action: 'clip', slug: clipId });
+    const c = data?.clip ?? data;
+    return c ? mapClip(c) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Barrido completo de una categoria, entregando los clips segun llegan.
+ *
+ * Clipy necesita trocear la ventana temporal en franjas porque la API de Twitch
+ * corta la paginacion a cierta profundidad. Kick no tiene ese problema: pagina
+ * por `nextCursor` hasta agotarlo, asi que aqui basta con seguirlo e ir
+ * emitiendo cada pagina.
+ */
+export async function searchAllKickClips(
+  categorySlug: string,
+  time: string,
+  onClips: (items: KItem[]) => void,
+  shouldContinue?: () => boolean,
+  maxPages?: number,
+): Promise<{ completed: boolean }> {
+  if (!categorySlug) return { completed: true };
+  const seen = new Set<string>();
+  let cursor: string | undefined;
+  const tope = maxPages ?? 25;
+
+  for (let page = 0; page < tope; page++) {
+    if (shouldContinue && !shouldContinue()) return { completed: false };
+    try {
+      const qs = new URLSearchParams({ sort: 'view', time });
+      if (cursor) qs.set('cursor', cursor);
+      const res = await fetch(`${KICK_V2}/categories/${encodeURIComponent(categorySlug)}/clips?${qs}`, {
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) break;
+      const data = await res.json();
+      const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
+      const nuevos = arr.map(mapClip).filter((c) => c.thumbnail && !seen.has(c.id));
+      for (const c of nuevos) seen.add(c.id);
+      if (nuevos.length) onClips(nuevos);
+
+      const next = typeof data?.nextCursor === 'string' ? data.nextCursor : undefined;
+      if (!next || next === cursor || arr.length === 0) return { completed: true };
+      cursor = next;
+    } catch {
+      break;
+    }
+  }
+  return { completed: false };
+}
+
+/**
+ * Una pagina de clips de una categoria, con su cursor — la forma que espera la
+ * orquestacion compartida (cargar mas al hacer scroll).
+ */
+export async function searchKickClips(
+  categorySlug: string,
+  time: string,
+  cursor?: string | null,
+): Promise<{ clips: KItem[]; cursor: string | null }> {
+  if (!categorySlug) return { clips: [], cursor: null };
+  try {
+    const qs = new URLSearchParams({ sort: 'view', time });
+    if (cursor) qs.set('cursor', cursor);
+    const res = await fetch(`${KICK_V2}/categories/${encodeURIComponent(categorySlug)}/clips?${qs}`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return { clips: [], cursor: null };
+    const data = await res.json();
+    const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
+    const next = typeof data?.nextCursor === 'string' ? data.nextCursor : null;
+    return { clips: arr.map(mapClip).filter((c) => c.thumbnail), cursor: next };
+  } catch {
+    return { clips: [], cursor: null };
   }
 }

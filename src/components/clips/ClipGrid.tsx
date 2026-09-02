@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
-import { Clip } from '../types';
+import { Clip } from './types';
 import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download, EyeOff, CheckCircle2, ListPlus } from 'lucide-react';
 import ProgressiveImage from './ProgressiveImage';
-import { AdSlot } from '../../../components/shared/AdSlot';
+import { AdSlot } from '../shared/AdSlot';
 
 // Tres columnas es el tope, también en monitores grandes: la 4ª estrechaba
 // demasiado la portada y es la rejilla la que crece, no el número de columnas.

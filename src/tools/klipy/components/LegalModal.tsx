@@ -1,52 +1,85 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState } from 'react';
+import { X, Shield, FileText, Info, Copy, Check } from 'lucide-react';
 
 interface LegalModalProps {
-  isOpen: boolean;
+  type: 'privacy' | 'terms' | 'cookies';
   onClose: () => void;
-  title: string;
-  content: React.ReactNode;
-  t: any;
+  onShowToast: (message: string) => void;
+  t: (key: string) => string;
 }
 
-export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose, title, content, t }) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+const LegalModal: React.FC<LegalModalProps> = ({ type, onClose, onShowToast, t }) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const supportEmail = 'adrian.contact.me.69@gmail.com';
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) onClose();
-    };
-    if (isOpen) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isOpen, onClose]);
+  const contentMap = {
+    privacy: { title: 'privacy_policy', icon: Shield, text: 'legal_privacy_text' },
+    terms: { title: 'terms_of_service', icon: FileText, text: 'legal_terms_text' },
+    cookies: { title: 'cookie_policy', icon: Info, text: 'legal_cookies_text' }
+  };
 
-  if (!isOpen) return null;
+  const { title, icon: Icon, text } = contentMap[type];
 
-  const copyEmail = () => {
-    navigator.clipboard.writeText(t.emailAddress || 'adrian.contact.me.69@gmail.com');
-    const button = document.getElementById('copy-email-modal-btn');
-    if (button) {
-      const originalText = button.innerText;
-      button.innerText = t.emailCopied || 'Copied!';
-      setTimeout(() => { button.innerText = originalText; }, 2000);
-    }
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText(supportEmail);
+    setIsCopied(true);
+    onShowToast(t('email_copied'));
+    setTimeout(() => setIsCopied(false), 2000);
   };
 
   return (
-    <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div ref={modalRef} className="bg-[#020a08] border border-white/10 p-8 rounded-3xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-y-auto animate-in zoom-in-95 duration-200 relative">
-        <button onClick={onClose} className="absolute top-6 right-6 text-gray-400 hover:text-white cursor-pointer border-none bg-transparent outline-none">
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300">
+      <div className="bg-[#0c0c10] border border-white/20 ring-1 ring-twitch-base/20 rounded-3xl md:rounded-[3rem] p-6 md:p-12 max-w-2xl w-full max-h-[90vh] flex flex-col shadow-[0_40px_100px_rgba(0,0,0,0.8)] relative animate-in zoom-in-95 duration-500 overflow-hidden">
+        
+        <button 
+          onClick={onClose} 
+          className="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors p-2 hover:bg-white/5 rounded-full cursor-pointer"
+        >
+          <X className="w-6 h-6" />
         </button>
-        <h2 className="text-2xl font-black text-white mb-6">{title}</h2>
-        <div className="text-gray-300 mb-8 space-y-4 whitespace-pre-line text-sm leading-relaxed">{content}</div>
-        <div className="border-t border-white/10 pt-6">
-          <p className="text-xs font-black text-gray-500 uppercase tracking-widest mb-3">{t.contactForIdeas || 'Contact for ideas and comments:'}</p>
-          <button id="copy-email-modal-btn" onClick={copyEmail} className="flex items-center space-x-3 text-emerald-400 hover:opacity-80 border-none bg-transparent outline-none transition-colors font-mono cursor-pointer">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z" /></svg>
-            <span>{t.emailAddress || 'adrian.contact.me.69@gmail.com'}</span>
-          </button>
+        
+        <div className="flex items-center gap-5 mb-10">
+            <div className="p-4 bg-twitch-base/10 rounded-3xl shadow-[0_0_20px_rgba(145,70,255,0.2)]">
+                <Icon className="w-8 h-8 text-twitch-base drop-shadow-[0_0_8px_rgba(145,70,255,0.8)]" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tighter">
+                {t(title)}
+            </h2>
+        </div>
+
+        <div className="space-y-8 overflow-y-auto custom-scrollbar pr-2 flex-grow">
+            <div 
+              className="text-gray-300 text-base md:text-lg leading-relaxed font-medium" 
+              dangerouslySetInnerHTML={{ __html: t(text) }} 
+            />
+            
+            <div className="pt-6 border-t border-white/5">
+                <p className="text-gray-500 text-sm mb-4 font-bold uppercase tracking-widest">{t('contact_us_at')}</p>
+                <button 
+                  onClick={handleCopyEmail}
+                  className="flex flex-col sm:flex-row items-start sm:items-center gap-4 group p-1 transition-all w-full overflow-hidden cursor-pointer"
+                >
+                    <span className="text-twitch-base font-black text-xs sm:text-lg md:text-xl group-hover:text-white group-hover:underline underline-offset-8 transition-all break-all text-left">
+                        {supportEmail}
+                    </span>
+                    <div className={`p-2 rounded-xl border transition-all flex-shrink-0 ${isCopied ? 'bg-green-500 border-green-500 text-white' : 'bg-white/5 border-white/10 text-twitch-base group-hover:bg-twitch-base group-hover:text-white'}`}>
+                        {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    </div>
+                </button>
+            </div>
+        </div>
+        
+        <div className="mt-14 flex justify-end">
+            <button 
+                onClick={onClose}
+                className="px-10 py-4 bg-twitch-base text-white rounded-2xl text-sm font-black uppercase tracking-widest transition-all hover:bg-twitch-dark hover:shadow-[0_0_30px_rgba(145,70,255,0.4)] active:scale-95 cursor-pointer"
+            >
+                {t('got_it')}
+            </button>
         </div>
       </div>
     </div>
   );
 };
+
+export default LegalModal;

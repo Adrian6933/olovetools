@@ -1,4 +1,4 @@
-import { Category, Clip, TimeFilter, SortType } from "../types";
+import { Category, Clip, TimeFilter, SortType } from '../../../components/clips/types';
 
 // The Twitch app token is issued by /api/twitch/token (src/pages/api/twitch/
 // token.ts, same origin — Vercel serverless function) so the client_secret

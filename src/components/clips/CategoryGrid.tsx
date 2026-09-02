@@ -1,9 +1,9 @@
 import React from 'react';
-import { Category } from '../types';
+import { Category } from './types';
 import { Sparkles } from 'lucide-react';
 
 import ProgressiveImage from './ProgressiveImage';
-import { AdSlot } from '../../../components/shared/AdSlot';
+import { AdSlot } from '../shared/AdSlot';
 
 /** Cada cuántas categorías se cuela una franja de anuncio (6 columnas x 2 filas). */
 const CATEGORY_AD_EVERY = 12;
