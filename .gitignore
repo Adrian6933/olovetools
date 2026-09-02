@@ -58,3 +58,7 @@ dist-ssr/
 
 # Vercel (CLI project link / local build output)
 .vercel/
+
+# Artefactos de empaquetado (el zip de 17 MB estuvo commiteado hasta 2026-08-31)
+*.zip
+.vercel

@@ -29,22 +29,32 @@ sitemap y en las etiquetas canonical/hreflang.
 
 ## Borrador de respuesta (revísalo y envíalo tú)
 
+Responde **al hilo original**, con Clayton en copia.
+
 > Subject: Re: Trademark — tool renamed and URL removed
 >
 > Hi Vivien,
 >
 > Thanks for reaching out, and for doing it directly rather than formally.
 >
-> The change is done. The tool has been renamed to **EntropyBolt** and now lives
-> at https://olovetools.com/en/entropy-bolt/ (and the equivalent path in the
-> other eight languages).
+> The change is live. The tool has been renamed to **EntropyBolt** and now sits
+> at https://olovetools.com/en/entropy-bolt/ — and at the equivalent path in the
+> other eight languages.
 >
-> The Passbolt name no longer appears anywhere on the site — not as a tool name,
-> a URL, a page title, a meta description, in structured data, or in the
-> sitemap. I did not even leave a redirect at the old address: those URLs simply
-> no longer exist, so nothing of ours resolves under your name.
+> The Passbolt name no longer appears anywhere on the site: not as a tool name, a
+> URL, a page title, a meta description, in structured data, or in the sitemap. I
+> did not even leave a redirect at the old address — /en/passbolt/ and its eight
+> translations return 404, so nothing of ours resolves under your name.
 >
-> For the record: there was never any intent to trade on your name or to suggest
+> One thing that is outside my control: search engines cache their index, so for
+> a few weeks a Google search may still surface the old URL. Those pages return
+> 404 now and will drop out on their own. I have resubmitted the sitemap and
+> requested re-indexing of the new URLs to speed that up, but the timing is
+> Google's, not mine. If you come across a stale result, that is the index
+> catching up rather than the site still using the name — the URL itself will
+> already be dead if you click it.
+>
+> For the record, there was never any intent to trade on your name or to suggest
 > an association. The tool is a small browser-based password and passphrase
 > generator, part of a suite where most tools share a "-bolt" suffix, and the
 > collision was not deliberate.

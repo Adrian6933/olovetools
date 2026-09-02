@@ -32,7 +32,7 @@
 | 18 | Deuda Técnica | Código duplicado, archivos faltantes, bugs conocidos |
 | 19 | ✅ Checklist Rápido | Lista comprimida para nuevas herramientas |
 | 20 | ⚠️ Errores Frecuentes | Problemas comunes y cómo evitarlos |
-| 21 | Archivos Misceláneos | metadata.json, robots.txt, manifest, ads.txt |
+| 21 | Archivos Misceláneos | robots.txt, llms.txt, manifest, ads.txt |
 
 ---
 
@@ -524,7 +524,7 @@ Clipy permite guardar listas de clips favoritos en `localStorage` y exportarlas 
 
 | Archivo | Qué es |
 | :--- | :--- |
-| `metadata.json` (raíz) | Metadatos del proyecto para hosting. |
+| `.env.example` (raíz) | Las cuatro variables que necesita el backend. |
 | `log.txt` (raíz) | Logs de desarrollo local. |
 | `public/ads.txt` | Verificación Google AdSense. |
 | `public/manifest.json` | PWA manifest. |
