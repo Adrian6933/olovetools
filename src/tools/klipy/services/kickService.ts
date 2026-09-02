@@ -224,10 +224,26 @@ export async function fetchKickSuggestions(query: string): Promise<string[]> {
  * por enlace directo, cuando no hay listado del que sacarlo.
  */
 export async function getClipVideoSource(clipId: string): Promise<string | null> {
+  const c = await fetchClipRaw(clipId);
+  return c?.clip_url || c?.video_url || null;
+}
+
+/**
+ * Un clip suelto, pedido DIRECTO desde el navegador.
+ *
+ * No pasa por /api/kick a proposito: ese endpoint es el mismo v2 no oficial que
+ * bloquea las IP de centro de datos, asi que desde la funcion de Vercel devolvia
+ * 403 y el reproductor mostraba "clip no disponible" en todos los clips. Desde
+ * el navegador del visitante si pasa, igual que el listado.
+ */
+async function fetchClipRaw(clipId: string): Promise<any | null> {
   try {
-    const data = await api({ action: 'clip', slug: clipId });
-    const c = data?.clip ?? data;
-    return c?.clip_url || c?.video_url || null;
+    const res = await fetch(`${KICK_V2}/clips/${encodeURIComponent(clipId)}`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data?.clip ?? data ?? null;
   } catch {
     return null;
   }
@@ -235,13 +251,8 @@ export async function getClipVideoSource(clipId: string): Promise<string | null>
 
 /** Un clip suelto por su id, para entrar directamente por enlace. */
 export async function getClipById(clipId: string): Promise<KItem | null> {
-  try {
-    const data = await api({ action: 'clip', slug: clipId });
-    const c = data?.clip ?? data;
-    return c ? mapClip(c) : null;
-  } catch {
-    return null;
-  }
+  const c = await fetchClipRaw(clipId);
+  return c ? mapClip(c) : null;
 }
 
 /**

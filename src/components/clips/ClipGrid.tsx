@@ -186,14 +186,14 @@ const ClipCard: React.FC<{
             <button
               onClick={(e) => { e.stopPropagation(); onToggleSave(clip); }}
               title={t('save')}
-              className={`flex items-center justify-center w-9 h-9 rounded-xl transition-[background-color,color,transform] duration-200 hover:scale-110 active:scale-95 cursor-pointer ${isSaved ? 'bg-twitch-base text-white' : 'text-white/80 hover:bg-twitch-base hover:text-white'}`}
+              className={`flex items-center justify-center w-9 h-9 rounded-xl transition-[background-color,color,transform] duration-200 hover:scale-110 active:scale-95 cursor-pointer ${isSaved ? 'bg-twitch-base text-[var(--color-accent-ink)]' : 'text-white/80 hover:bg-twitch-base hover:text-[var(--color-accent-ink)]'}`}
             >
               {isSaved ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); onAddToLists(clip); }}
               title={t('add_to_lists')}
-              className="flex items-center justify-center w-9 h-9 rounded-xl text-white/80 transition-[background-color,color,transform] duration-200 hover:bg-twitch-base hover:text-white hover:scale-110 active:scale-95 cursor-pointer"
+              className="flex items-center justify-center w-9 h-9 rounded-xl text-white/80 transition-[background-color,color,transform] duration-200 hover:bg-twitch-base hover:text-[var(--color-accent-ink)] hover:scale-110 active:scale-95 cursor-pointer"
             >
               <ListPlus className="w-4 h-4" />
             </button>
@@ -318,7 +318,7 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
             <button onClick={onLoadMore} className="flex-1 min-w-0 bg-[#1a1a24] hover:bg-[#2c2c36] text-white font-black text-sm md:text-base py-4 md:py-6 px-5 md:px-10 rounded-3xl md:rounded-[2rem] border border-white/5 transition-premium active:scale-95 flex items-center justify-center gap-3 shadow-2xl cursor-pointer">
               <ArrowDownCircle className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 text-twitch-base/30" /> <span className="truncate">{t('load_more')}</span>
             </button>
-            <button onClick={onLoadAll} className="flex-1 min-w-0 bg-twitch-base/60 hover:bg-twitch-base/80 text-white font-black text-sm md:text-base py-4 md:py-6 px-5 md:px-10 rounded-3xl md:rounded-[2rem] transition-premium shadow-xl shadow-twitch-base/5 active:scale-95 flex items-center justify-center gap-3 cursor-pointer">
+            <button onClick={onLoadAll} className="flex-1 min-w-0 bg-twitch-base/60 hover:bg-twitch-base/80 text-[var(--color-accent-ink)] font-black text-sm md:text-base py-4 md:py-6 px-5 md:px-10 rounded-3xl md:rounded-[2rem] transition-premium shadow-xl shadow-twitch-base/5 active:scale-95 flex items-center justify-center gap-3 cursor-pointer">
               <FastForward className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0" /> <span className="truncate">{t('load_all')}</span>
             </button>
           </div>

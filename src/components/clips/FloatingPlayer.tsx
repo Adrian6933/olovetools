@@ -49,6 +49,24 @@ const readStoredVolume = (): { volume: number; muted: boolean } | null => {
   }
 };
 
+/** Una fuente HLS es un playlist .m3u8, no un fichero de video suelto. */
+const esHls = (url: string | null): boolean => !!url && /\.m3u8(\?|$)/i.test(url);
+
+/**
+ * hls.js bajo demanda, desde CDN. Solo se pide cuando la fuente es un .m3u8 y
+ * el navegador no sabe reproducirlo por su cuenta, asi que en Safari (que si
+ * sabe) y con fuentes mp4 no se descarga nada.
+ */
+const loadHls = (): Promise<any> =>
+  new Promise((resolve, reject) => {
+    if ((window as any).Hls) { resolve((window as any).Hls); return; }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5.8/dist/hls.min.js';
+    script.onload = () => (window as any).Hls ? resolve((window as any).Hls) : reject(new Error('Hls no aparecio en window'));
+    script.onerror = () => reject(new Error('no se pudo cargar hls.js'));
+    document.head.appendChild(script);
+  });
+
 const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange, getVideoSource }) => {
   // 480px fijos no caben en un móvil: el reproductor arrancaba saliéndose por
   // la derecha (x se topaba en 20 y el ancho seguía siendo 480 en una pantalla
@@ -127,6 +145,11 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
     setVideoSrc(null);
     setVideoResolveFailed(false);
     if (isMockClip) return;
+    // Si el listado ya trajo la fuente, no hace falta preguntar por ella.
+    if (clip.playback_url) {
+      setVideoSrc(clip.playback_url);
+      return;
+    }
     let cancelled = false;
     getVideoSource(clip.id).then(url => {
       if (cancelled) return;
@@ -134,7 +157,47 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
       else setVideoResolveFailed(true);
     });
     return () => { cancelled = true; };
-  }, [clip.id, isMockClip]);
+  }, [clip.id, clip.playback_url, isMockClip]);
+
+
+  // Fuentes HLS (.m3u8): las sirve Kick. Chrome y Firefox no las reproducen de
+  // forma nativa, asi que hace falta hls.js. Safari si puede y ahi se usa el
+  // camino directo.
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !videoSrc || !esHls(videoSrc)) return;
+
+    // Se intenta hls.js PRIMERO y el soporte nativo despues, no al reves.
+    // canPlayType('application/vnd.apple.mpegurl') devuelve "maybe" en Chrome
+    // aunque no sepa reproducir HLS, y "maybe" es truthy: preguntando primero
+    // por lo nativo se tomaba esa rama, se asignaba el src y el elemento moria
+    // con error 4 sin que hls.js llegase a cargarse. Comprobado en Chrome.
+    let hls: any = null;
+    let cancelado = false;
+    loadHls()
+      .then((Hls) => {
+        if (cancelado || !videoRef.current) return;
+        if (Hls.isSupported()) {
+          hls = new Hls({ maxMaxBufferLength: 30 });
+          hls.loadSource(videoSrc);
+          hls.attachMedia(videoRef.current);
+          return;
+        }
+        // Safari: reproduce HLS por su cuenta y no necesita la libreria.
+        videoRef.current.src = videoSrc;
+      })
+      .catch(() => {
+        // Sin hls.js no hay nada que hacer con un .m3u8: se marca como no
+        // resuelto para que la tarjeta lo diga, en vez de dejar un reproductor
+        // negro y mudo.
+        if (!cancelado) setVideoResolveFailed(true);
+      });
+
+    return () => {
+      cancelado = true;
+      if (hls) hls.destroy();
+    };
+  }, [videoSrc]);
 
   // Si se cambia la velocidad en el filtro mientras ya hay un clip
   // reproduciéndose, se aplica al momento en vez de esperar al siguiente clip.
@@ -454,7 +517,7 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                                 <button
                                     key={speed}
                                     onClick={() => { onPlaybackSpeedChange(speed); setShowSpeedMenu(false); }}
-                                    className="w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold text-gray-200 hover:bg-twitch-base hover:text-white transition-colors cursor-pointer"
+                                    className="w-full flex items-center justify-between px-3 py-1.5 text-xs font-bold text-gray-200 hover:bg-twitch-base hover:text-[var(--color-accent-ink)] transition-colors cursor-pointer"
                                 >
                                     <span>{speed}x</span>
                                     {playbackSpeed === speed && <Check className="w-3.5 h-3.5" />}
@@ -572,8 +635,8 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                     onClick={() => onToggleSave(clip)}
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer ${
                         isSaved 
-                        ? 'bg-[#9146FF] text-white border-[#9146FF] hover:bg-red-600 hover:border-red-600' 
-                        : 'bg-white/10 text-white border-white/10 hover:bg-[#9146FF] hover:border-[#9146FF]'
+                        ? 'bg-twitch-base text-[var(--color-accent-ink)] border-twitch-base hover:bg-red-600 hover:border-red-600' 
+                        : 'bg-white/10 text-white border-white/10 hover:bg-twitch-base hover:border-twitch-base'
                     }`}
                 >
                     {isSaved ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
@@ -625,7 +688,7 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                 <div className="mt-4 flex flex-col gap-2">
                     <button 
                         onClick={() => window.open(clip.url, '_blank')}
-                        className="text-xs bg-[#9146FF] hover:bg-[#772ce8] text-white py-2 px-4 rounded font-bold transition-colors"
+                        className="text-xs bg-twitch-base hover:bg-twitch-dark text-[var(--color-accent-ink)] py-2 px-4 rounded font-bold transition-colors"
                     >
                         {t('open_twitch')}
                     </button>
@@ -633,7 +696,7 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
              </div>
         ) : isMockClip ? (
             <div className="w-full h-full flex flex-col items-center justify-center text-center p-4 bg-[#1f1f23]/50">
-                <MonitorPlay className="w-12 h-12 text-[#9146FF] mb-2 opacity-80" />
+                <MonitorPlay className="w-12 h-12 text-twitch-base mb-2 opacity-80" />
                 <h3 className="text-white font-bold">{t('demo_mode')}</h3>
                 <p className="text-xs text-gray-400 mt-1 max-w-[250px]">{t('demo_desc')}</p>
             </div>
@@ -644,7 +707,11 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
             <video
                 ref={videoRef}
                 key={videoSrc}
-                src={videoSrc}
+                /* Sin `src` cuando la fuente es HLS: en ese caso la adjunta
+                   hls.js en el efecto de abajo. Ponerla aqui haria que el
+                   navegador intentase decodificar el .m3u8 el solo y fallase
+                   con error 4 antes de que hls.js llegue a engancharse. */
+                src={esHls(videoSrc) ? undefined : videoSrc}
                 autoPlay
                 controls
                 playsInline

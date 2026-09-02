@@ -1187,6 +1187,11 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
         ['--color-twitch' as any]: '#53fc18',
         ['--color-twitch-base' as any]: '#53fc18',
         ['--color-twitch-dark' as any]: '#3fd40f',
+        // Sobre el verde de Kick el texto blanco da 1,37:1 y es ilegible; este
+        // casi negro da 13,89:1. Los componentes compartidos pintan el texto
+        // que va encima del acento con esta variable, asi que basta con
+        // declararla aqui.
+        ['--color-accent-ink' as any]: '#0a1206',
       }}
     >
 
@@ -1221,7 +1226,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
               <div className="bg-[#1c1c24] p-2.5 rounded-xl border border-white/5 group-hover:rotate-6 transition-transform group-hover:bg-[#2c2c36]">
                 <Clapperboard className="w-5 h-5 text-white" />
               </div>
-              <span className="hidden xl:block font-black text-2xl tracking-tighter text-white">Clipy</span>
+              <span className="hidden xl:block font-black text-2xl tracking-tighter text-white">Klipy</span>
             </div>
           </div>
 
@@ -2013,7 +2018,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       <footer className="mt-32 py-20 bg-transparent border-t border-white/5 relative z-10 px-8">
         <style>{`
           footer b { color: #fff; font-weight: 800; text-shadow: 0 0 10px rgba(145, 70, 255, 0.2); }
-          footer .keyword-accent { color: #9146ff; font-weight: 800; }
+          footer .keyword-accent { color: #53fc18; font-weight: 800; }
         `}</style>
         <div className="max-w-7xl mx-auto flex flex-col items-center">
 
@@ -2107,7 +2112,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
             </div>
 
             <p className="text-[10px] text-gray-800 font-bold tracking-[0.2em] uppercase">
-              Clipy | Professional Video Aggregator
+              Klipy | Kick clip browser
             </p>
           </div>
         </div>

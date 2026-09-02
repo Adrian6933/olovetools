@@ -175,7 +175,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 disabled={disabled}
                 className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none cursor-pointer hover:scale-105 active:scale-95 ${
                   currentTime === filter
-                    ? 'bg-twitch-base text-white shadow-md'
+                    ? 'bg-twitch-base text-[var(--color-accent-ink)] shadow-md'
                     : 'text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
                 }`}
               >
@@ -233,7 +233,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                                   onSortChange(sort);
                                   setIsSortOpen(false);
                               }}
-                              className="w-full text-left px-3 py-2.5 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                              className="w-full text-left px-3 py-2.5 text-sm hover:bg-twitch-base hover:text-[var(--color-accent-ink)] transition-colors flex items-center justify-between group cursor-pointer"
                           >
                               <span>{t(`sort_${sort}`)}</span>
                               {currentSort === sort && <Check className="w-4 h-4 text-twitch-base group-hover:text-white" />}
@@ -325,7 +325,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             title={t('group_by_channel_desc') || 'Agrupar clips por canal'}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
               groupByChannel
-                ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                ? 'bg-twitch-base border-twitch-base text-[var(--color-accent-ink)] shadow-md'
                 : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
@@ -341,7 +341,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             title={t('perf_mode_desc')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
               perfMode
-                ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                ? 'bg-twitch-base border-twitch-base text-[var(--color-accent-ink)] shadow-md'
                 : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
             } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
@@ -358,7 +358,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               title={t('playback_speed_desc')}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
                 playbackSpeed !== 1
-                  ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                  ? 'bg-twitch-base border-twitch-base text-[var(--color-accent-ink)] shadow-md'
                   : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
@@ -375,7 +375,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                     <button
                       key={speed}
                       onClick={() => { onPlaybackSpeedChange(speed); setIsSpeedOpen(false); }}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                      className="w-full text-left px-3 py-2 text-sm hover:bg-twitch-base hover:text-[var(--color-accent-ink)] transition-colors flex items-center justify-between group cursor-pointer"
                     >
                       <span>{speed}x{speed === 1 ? ` (${t('playback_speed_normal')})` : ''}</span>
                       {active && <Check className="w-4 h-4 text-twitch-base group-hover:text-white flex-shrink-0" />}
@@ -395,7 +395,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               title={t('only_languages_desc')}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap cursor-pointer hover:scale-105 active:scale-95 border ${
                 onlyLanguages.length > 0
-                  ? 'bg-twitch-base border-twitch-base text-white shadow-md'
+                  ? 'bg-twitch-base border-twitch-base text-[var(--color-accent-ink)] shadow-md'
                   : 'border-twitch-surfaceAlt bg-twitch-black text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
               } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
@@ -412,7 +412,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                       <button
                         key={code}
                         onClick={() => onOnlyLanguagesChange(toggleLanguageIn(onlyLanguages, code))}
-                        className="w-full text-left px-3 py-2 text-sm hover:bg-twitch-base hover:text-white transition-colors flex items-center justify-between group cursor-pointer"
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-twitch-base hover:text-[var(--color-accent-ink)] transition-colors flex items-center justify-between group cursor-pointer"
                       >
                         <span>{label}</span>
                         {active && <Check className="w-4 h-4 text-twitch-base group-hover:text-white flex-shrink-0" />}

@@ -33,6 +33,9 @@ export function toClip(item: KItem): Clip {
     // proposito: los filtros de idioma leen este campo y, sin dato, no filtran
     // nada en vez de inventarse un idioma y esconder clips buenos.
     language: undefined,
+    // Kick manda el mp4 en el propio listado. Guardarlo evita que el
+    // reproductor tenga que pedirlo a un endpoint que nos bloquea.
+    playback_url: item.playbackUrl,
   };
 }
 

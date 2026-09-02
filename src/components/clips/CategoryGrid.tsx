@@ -47,7 +47,7 @@ const CategoryCard: React.FC<{
         {/* Ranking Badge - Only shown on initial load/popular categories */}
         {showRank && rank && (
           <div className="absolute top-2 left-1/2 -translate-x-1/2 md:left-6 md:translate-x-0 md:top-6 z-20 whitespace-nowrap">
-              <div className="bg-twitch-base text-white px-2 py-1 md:px-4 md:py-1.5 rounded-lg md:rounded-xl text-[10px] md:text-[11px] font-black shadow-[0_4px_20px_rgba(145,70,255,0.5)] border border-white/20 flex items-center gap-1 md:gap-1.5 animate-in slide-in-from-top-4 duration-500">
+              <div className="bg-twitch-base text-[var(--color-accent-ink)] px-2 py-1 md:px-4 md:py-1.5 rounded-lg md:rounded-xl text-[10px] md:text-[11px] font-black shadow-[0_4px_20px_rgba(145,70,255,0.5)] border border-white/20 flex items-center gap-1 md:gap-1.5 animate-in slide-in-from-top-4 duration-500">
                   <span>{t('trending_rank')}</span>
                   <span className="text-xs md:text-sm">#{rank}</span>
               </div>

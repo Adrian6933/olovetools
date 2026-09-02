@@ -36,6 +36,13 @@ export interface Clip {
   // el campo más cercano disponible, y es lo que usan los filtros de
   // exclusión/inclusión por idioma.
   language?: string;
+  /**
+   * MP4 reproducible, cuando la API ya lo devuelve en el propio listado (Kick
+   * lo hace; Twitch no). Si viene, el reproductor lo usa tal cual y se ahorra
+   * una peticion — y en el caso de Kick es ademas la unica via que funciona,
+   * porque su endpoint de clip suelto bloquea las IP de centro de datos.
+   */
+  playback_url?: string;
 }
 
 export interface SavedCollection {

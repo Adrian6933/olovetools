@@ -4,6 +4,11 @@
   --color-twitch: #9146FF;
   --color-twitch-base: #9146FF;
   --color-twitch-dark: #772CE8;
+  /* La tinta que va ENCIMA del color de acento. Existe porque no todos los
+     acentos admiten texto blanco: sobre el morado de Twitch el blanco da 4,64:1
+     y pasa el minimo, pero sobre el verde de Kick da 1,37:1 y es ilegible.
+     Cada herramienta la redefine junto con su acento. */
+  --color-accent-ink: #ffffff;
   --color-twitch-black: #050507;
   --color-twitch-surface: rgba(18, 18, 23, 1);
   --color-twitch-surfaceAlt: rgba(30, 30, 35, 1);
