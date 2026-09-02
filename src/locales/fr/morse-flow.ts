@@ -10,7 +10,7 @@ export default {
   "tooltip_mute": "Couper le son",
   "tooltip_unmute": "Activer le son",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
-  "seoPrivacyText": "Aucune base de données, suivi ou envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
+  "seoPrivacyText": "Votre contenu ne quitte pas cet onglet : il n'est ni envoyé, ni stocké, ni journalisé. Le site compte en revanche combien de fois chaque outil est ouvert, sous forme d'un simple total sans cookie ni identifiant — rien qui puisse relier une visite à vous.",
   "faqTitle": "Questions Fréquentes",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",

@@ -31,7 +31,7 @@ export default {
   "seoUseCaseTitle": "Équipes réparties, appels et voyages",
   "seoUseCaseText": "Trouvez la seule heure qui n'est le milieu de la nuit pour personne, vérifiez à quelle heure votre appel tombe pour un collègue à Bogotá, ou déterminez si le vol réservé arrive avant ou après le passage à l'heure d'été.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
-  "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
+  "seoPrivacyText": "Votre contenu ne quitte pas cet onglet : il n'est ni envoyé, ni stocké, ni journalisé. Le site compte en revanche combien de fois chaque outil est ouvert, sous forme d'un simple total sans cookie ni identifiant — rien qui puisse relier une visite à vous.",
   "seoKeywords": [
     "horloge mondiale",
     "planificateur de réunion fuseaux horaires",

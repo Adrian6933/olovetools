@@ -16,7 +16,7 @@ export default {
   "seoUseCaseTitle": "Kaufen, zurückgeben oder debuggen",
   "seoUseCaseText": "Prüfe eine gebrauchte Tastatur, bevor du bezahlst, belege vor einem Garantiefall, dass eine Laptop-Taste tot ist, oder schlag den exakten event.code nach, den du in einem Spiel oder Shortcut belegen willst. Dasselbe Board deckt alle drei ab.",
   "seoPrivacyTitle": "100% Privat & Sicher",
-  "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
+  "seoPrivacyText": "Dein Inhalt verlässt diesen Tab nicht: nichts wird hochgeladen, gespeichert oder protokolliert. Die Seite zählt allerdings, wie oft jedes Werkzeug geöffnet wird — als schlichte Summe ohne Cookie und ohne Kennung, nichts, was einen Besuch dir zuordnen könnte.",
   "seoKeywords": [
     "tastatur test",
     "tasten online testen",

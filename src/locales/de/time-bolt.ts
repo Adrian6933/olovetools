@@ -31,7 +31,7 @@ export default {
   "seoUseCaseTitle": "Verteilte Teams, Calls und Reisen",
   "seoUseCaseText": "Finde die eine Stunde, die für niemanden mitten in der Nacht liegt, prüfe, wann dein Call bei der Kollegin in Bogotá ankommt, oder klär, ob dein gebuchter Flug vor oder nach der Zeitumstellung landet.",
   "seoPrivacyTitle": "100% Privat & Sicher",
-  "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
+  "seoPrivacyText": "Dein Inhalt verlässt diesen Tab nicht: nichts wird hochgeladen, gespeichert oder protokolliert. Die Seite zählt allerdings, wie oft jedes Werkzeug geöffnet wird — als schlichte Summe ohne Cookie und ohne Kennung, nichts, was einen Besuch dir zuordnen könnte.",
   "seoKeywords": [
     "weltuhr",
     "besprechungsplaner zeitzonen",

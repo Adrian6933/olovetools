@@ -23,7 +23,7 @@ export default {
   "seoUseCaseTitle": "Firmware, protocolos e enigmas de vírgula flutuante",
   "seoUseCaseText": "Descobre porque é que um registo mostra 0xD6 quando escreveste −42, verifica a ordem dos bytes de um pacote antes de o enviares, ou vê o valor exato por trás de 0.1 + 0.2 em vez de discutires sobre ele. A grelha de bits responde nos três casos.",
   "seoPrivacyTitle": "100% Privado e Seguro",
-  "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
+  "seoPrivacyText": "O teu conteúdo não sai deste separador: não é enviado, guardado nem registado em lado nenhum. O site conta, isso sim, quantas vezes cada ferramenta é aberta, como um total sem cookie nem identificador — nada que ligue uma visita a ti.",
   "seoKeywords": [
     "conversor binário",
     "hexadecimal para decimal",

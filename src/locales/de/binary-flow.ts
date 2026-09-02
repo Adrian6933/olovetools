@@ -23,7 +23,7 @@ export default {
   "seoUseCaseTitle": "Firmware, Protokolle und Gleitkomma-Rätsel",
   "seoUseCaseText": "Finde heraus, warum ein Register 0xD6 zeigt, obwohl du −42 geschrieben hast, prüfe die Byte-Reihenfolge eines Pakets vor dem Senden, oder sieh den exakten Wert hinter 0.1 + 0.2, statt darüber zu streiten. Das Bit-Raster beantwortet alle drei Fragen.",
   "seoPrivacyTitle": "100% Privat & Sicher",
-  "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
+  "seoPrivacyText": "Dein Inhalt verlässt diesen Tab nicht: nichts wird hochgeladen, gespeichert oder protokolliert. Die Seite zählt allerdings, wie oft jedes Werkzeug geöffnet wird — als schlichte Summe ohne Cookie und ohne Kennung, nichts, was einen Besuch dir zuordnen könnte.",
   "seoKeywords": [
     "binär umrechner",
     "hex in dezimal",

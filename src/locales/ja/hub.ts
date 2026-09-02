@@ -205,5 +205,13 @@ export default {
     "Animation": "アニメーション",
     "SVG": "SVG",
     "Optimizer": "最適化"
-  }
+  },
+  "sortDefault": "おすすめ",
+  "sortGlobal": "アクセスの多い順",
+  "sortMine": "よく使う順",
+  "sortAz": "A–Z",
+  "visitsGlobalShort": "回",
+  "visitsMineShort": "あなた",
+  "visitsGlobalHint": "このツールが開かれた合計回数です。ただの数値で、Cookie も識別子も、誰かに結びつく情報もありません。",
+  "visitsMineHint": "あなたが開いた回数です。このブラウザーにだけ保存され、どこにも送信されません。"
 };

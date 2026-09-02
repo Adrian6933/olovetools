@@ -42,7 +42,7 @@ export default {
   "seoUseCaseTitle": "Registos, bases de dados e dumps do registo",
   "seoUseCaseText": "Descodifica os timestamps em nanossegundos que o Go e o InfluxDB escrevem, descobre quando um ficheiro do Windows foi mesmo criado a partir do seu FILETIME, converte um serial do Excel de volta a data, ou verifica se um incidente às 02:30 aconteceu antes ou depois da mudança da hora.",
   "seoPrivacyTitle": "100% Privado e Seguro",
-  "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
+  "seoPrivacyText": "O teu conteúdo não sai deste separador: não é enviado, guardado nem registado em lado nenhum. O site conta, isso sim, quantas vezes cada ferramenta é aberta, como um total sem cookie nem identificador — nada que ligue uma visita a ti.",
   "seoKeywords": [
     "conversor timestamp unix",
     "epoch para data",

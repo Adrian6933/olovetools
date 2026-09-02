@@ -21,7 +21,7 @@ export default {
   "seoUseCaseTitle": "Maquetas, pruebas y capturas",
   "seoUseCaseText": "Rellena una tarjeta con exactamente los 240 caracteres que permite el diseño, comprueba que un titular aguanta traducido al ruso, alimenta con un fichero fijo una prueba que no debe cambiar entre ejecuciones, o pega el HTML directamente en una plantilla para ver las etiquetas reales en su sitio.",
   "seoPrivacyTitle": "100% Privado y Seguro",
-  "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
+  "seoPrivacyText": "Tu contenido no sale de esta pestaña: no se sube, ni se guarda, ni queda registrado en ningún sitio. El sitio sí cuenta cuántas veces se abre cada herramienta, como un total sin cookie ni identificador: nada que pueda atar una visita a ti.",
   "seoKeywords": [
     "generador lorem ipsum",
     "texto de relleno",

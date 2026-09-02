@@ -10,7 +10,7 @@ export default {
   "tooltip_mute": "Mute",
   "tooltip_unmute": "Unmute",
   "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoPrivacyText": "Your content never leaves this tab: it is not uploaded, stored or logged anywhere. The site does count how many times each tool is opened, as a plain total with no cookie and no identifier — nothing that could tie a visit to you.",
   "faqTitle": "Frequently Asked Questions",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",

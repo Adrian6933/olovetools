@@ -205,5 +205,13 @@ export default {
     "Animation": "Animation",
     "SVG": "SVG",
     "Optimizer": "Optimierer"
-  }
+  },
+  "sortDefault": "Empfohlen",
+  "sortGlobal": "Meistbesucht",
+  "sortMine": "Deine meistgenutzten",
+  "sortAz": "A–Z",
+  "visitsGlobalShort": "Aufrufe",
+  "visitsMineShort": "von dir",
+  "visitsGlobalHint": "Wie oft dieses Werkzeug insgesamt geöffnet wurde. Nur eine Zahl: kein Cookie, keine Kennung, nichts, was das jemandem zuordnet.",
+  "visitsMineHint": "Wie oft du es geöffnet hast. Bleibt nur in diesem Browser und wird nirgendwohin gesendet."
 };

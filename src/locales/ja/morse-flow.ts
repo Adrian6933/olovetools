@@ -10,7 +10,7 @@ export default {
   "tooltip_mute": "ミュート",
   "tooltip_unmute": "ミュート解除",
   "seoPrivacyTitle": "100%プライベート＆セキュア",
-  "seoPrivacyText": "データベース、トラッキング、ネットワークアップロードなし。データは厳密にローカルメモリに留まり、タブを閉じると消滅します。",
+  "seoPrivacyText": "あなたの内容はこのタブから出ません。アップロードも保存も記録もされません。ただし、各ツールが何回開かれたかは集計しています。Cookie も識別子もない単なる合計で、訪問をあなたに結びつけるものは何もありません。",
   "faqTitle": "よくある質問",
   "footerCredit": "oLoveTools スイートの一部",
   "emailAddress": "adrian.contact.me.69@gmail.com",

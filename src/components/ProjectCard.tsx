@@ -11,6 +11,10 @@ interface ProjectCardProps {
   onOpen?: () => void;
   isFavorite?: boolean;
   onToggleFavorite?: () => void;
+  /** Veces que la ha abierto todo el mundo. undefined = no hay contador global. */
+  visitasGlobales?: number;
+  /** Veces que la ha abierto quien esta mirando. 0 = nunca. */
+  visitasPropias?: number;
 }
 
 const IconMap: Record<string, React.ElementType> = {
@@ -40,7 +44,11 @@ const IconMap: Record<string, React.ElementType> = {
   'Scissors': Scissors
 };
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang, t, onOpen, isFavorite, onToggleFavorite }) => {
+/** 1.204 -> "1,2k". Los numeros largos descuadran la tarjeta. */
+const formatoCorto = (n: number): string =>
+  n >= 1000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(n);
+
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel, buttonLabel, lang, t, onOpen, isFavorite, onToggleFavorite, visitasGlobales, visitasPropias }) => {
   const IconComponent = IconMap[project.icon] || Box;
 
   return (
@@ -55,9 +63,27 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel
         <div className={`p-4 rounded-2xl ${project.color} text-white shadow-lg shadow-black/50 group-hover:scale-110 transition-transform duration-500`}>
           <IconComponent size={28} strokeWidth={2} />
         </div>
-        <span className="px-4 py-1.5 bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider rounded-full border border-white/15 backdrop-blur-sm">
-          {categoryLabel}
-        </span>
+        <div className="flex flex-col items-end gap-1.5">
+          <span className="px-4 py-1.5 bg-white/10 text-slate-200 text-xs font-bold uppercase tracking-wider rounded-full border border-white/15 backdrop-blur-sm">
+            {categoryLabel}
+          </span>
+          {/* Los contadores solo aparecen cuando hay algo que contar: una tarjeta
+              con "0 visitas" ocupa sitio y no dice nada. */}
+          {(!!visitasGlobales || !!visitasPropias) && (
+            <div className="flex items-center gap-2 text-[10px] font-bold tabular-nums">
+              {!!visitasGlobales && (
+                <span className="text-slate-400" title={t('visitsGlobalHint')}>
+                  {formatoCorto(visitasGlobales)} {t('visitsGlobalShort')}
+                </span>
+              )}
+              {!!visitasPropias && (
+                <span className="text-indigo-300" title={t('visitsMineHint')}>
+                  {formatoCorto(visitasPropias)} {t('visitsMineShort')}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="flex-1 relative z-10">

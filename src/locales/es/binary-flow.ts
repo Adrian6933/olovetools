@@ -23,7 +23,7 @@ export default {
   "seoUseCaseTitle": "Firmware, protocolos y rarezas de coma flotante",
   "seoUseCaseText": "Averigua por qué un registro marca 0xD6 cuando escribiste −42, comprueba el orden de bytes de un paquete antes de enviarlo, o mira el valor exacto detrás de 0.1 + 0.2 en vez de discutirlo. La rejilla de bits responde en los tres casos.",
   "seoPrivacyTitle": "100% Privado y Seguro",
-  "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
+  "seoPrivacyText": "Tu contenido no sale de esta pestaña: no se sube, ni se guarda, ni queda registrado en ningún sitio. El sitio sí cuenta cuántas veces se abre cada herramienta, como un total sin cookie ni identificador: nada que pueda atar una visita a ti.",
   "seoKeywords": [
     "conversor binario",
     "hexadecimal a decimal",

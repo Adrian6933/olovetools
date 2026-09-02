@@ -12,6 +12,7 @@ import { useReducedMotion } from './shared/motion';
 import { Layout } from './Layout';
 import { ProjectCategory } from '../types';
 import { MOCK_PROJECTS, LANGUAGES } from '../constants';
+import { leerVisitasPropias } from '../lib/toolVisits';
 import { createTranslator } from '../locales/meta';
 
 const categoryIconMap: Record<string, React.ComponentType<any>> = {
@@ -110,6 +111,36 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
     });
   };
 
+  // ---- Ordenación por visitas ------------------------------------------
+  // Dos fuentes distintas y separadas a propósito: las propias salen del
+  // navegador de quien mira y sirven desde la primera visita; las globales
+  // vienen del servidor y necesitan tráfico para significar algo.
+  type Orden = 'default' | 'global' | 'mine' | 'az';
+  const [orden, setOrden] = useState<Orden>('default');
+  const [visitasPropias, setVisitasPropias] = useState<Record<string, number>>({});
+  const [visitasGlobales, setVisitasGlobales] = useState<Record<string, number>>({});
+  const [hayContadorGlobal, setHayContadorGlobal] = useState(false);
+
+  useEffect(() => {
+    setVisitasPropias(leerVisitasPropias());
+  }, []);
+
+  useEffect(() => {
+    let vivo = true;
+    fetch('/api/stats')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (!vivo || !d) return;
+        // Sin almacén configurado el endpoint responde enabled:false, y el
+        // selector no ofrece el orden global en vez de enseñar ceros que
+        // parecerían datos reales.
+        setHayContadorGlobal(Boolean(d.enabled));
+        setVisitasGlobales(d.visits || {});
+      })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, []);
+
   const recentProjects = useMemo(
     () => recent.map((slug) => MOCK_PROJECTS.find((p) => p.slug === slug)).filter(Boolean) as typeof MOCK_PROJECTS,
     [recent]
@@ -129,6 +160,21 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, selectedCategory, favorites]);
+
+  const orderedProjects = useMemo(() => {
+    const lista = [...filteredProjects];
+    // Sin visitas registradas, el desempate es el orden del catálogo: así una
+    // herramienta con 0 visitas no salta a un sitio aleatorio.
+    const porVisitas = (fuente: Record<string, number>) =>
+      lista.sort((a, b) => (fuente[b.slug] || 0) - (fuente[a.slug] || 0));
+
+    if (orden === 'global') return porVisitas(visitasGlobales);
+    if (orden === 'mine') return porVisitas(visitasPropias);
+    if (orden === 'az') return lista.sort((a, b) => a.name.localeCompare(b.name));
+    return lista;
+  }, [filteredProjects, orden, visitasGlobales, visitasPropias]);
+
+  const tieneVisitasPropias = Object.keys(visitasPropias).length > 0;
 
   // Compute counts dynamically
   const categoryCounts = useMemo(() => {
@@ -519,15 +565,43 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               <div className="flex-grow w-full">
                 <div className="flex items-center justify-between mb-6 text-slate-400 text-xs font-semibold uppercase tracking-widest px-1">
                   <span>{t('showing')} {filteredProjects.length} {t('projectsText')}</span>
-                  <span className="hidden sm:inline bg-blue-500/10 text-blue-300 px-3 py-1 rounded-full border border-blue-500/20 text-[10px] font-bold">
-                    {selectedCategory === 'All' ? 'All Categories' : catLabel(selectedCategory)}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {/* Sólo se ofrecen los órdenes que tienen dato detrás: el
+                        global si hay contador configurado, el propio si esta
+                        persona ya ha abierto algo. Un botón que ordena por un
+                        criterio vacío no ordena nada y confunde. */}
+                    <div className="flex items-center gap-1 bg-white/[0.03] border border-white/[0.06] rounded-xl p-1">
+                      {([
+                        ['default', t('sortDefault')],
+                        ...(hayContadorGlobal ? [['global', t('sortGlobal')] as const] : []),
+                        ...(tieneVisitasPropias ? [['mine', t('sortMine')] as const] : []),
+                        ['az', t('sortAz')],
+                      ] as [Orden, string][]).map(([clave, etiqueta]) => (
+                        <button
+                          key={clave}
+                          type="button"
+                          onClick={() => setOrden(clave)}
+                          aria-pressed={orden === clave}
+                          className={`px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-wide transition-colors cursor-pointer ${
+                            orden === clave
+                              ? 'bg-blue-600 text-white'
+                              : 'text-slate-400 hover:text-white hover:bg-white/5'
+                          }`}
+                        >
+                          {etiqueta}
+                        </button>
+                      ))}
+                    </div>
+                    <span className="hidden sm:inline bg-blue-500/10 text-blue-300 px-3 py-1 rounded-full border border-blue-500/20 text-[10px] font-bold">
+                      {selectedCategory === 'All' ? 'All Categories' : catLabel(selectedCategory)}
+                    </span>
+                  </div>
                 </div>
 
-                {filteredProjects.length > 0 ? (
+                {orderedProjects.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     <AnimatePresence mode="popLayout">
-                      {filteredProjects.map((project, index) => (
+                      {orderedProjects.map((project, index) => (
                         <div key={project.id} className="contents">
                           <motion.div
                             key={project.id}
@@ -551,6 +625,8 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                               onOpen={() => recordVisit(project.slug)}
                               isFavorite={favorites.includes(project.slug)}
                               onToggleFavorite={() => toggleFavorite(project.slug)}
+                              visitasGlobales={hayContadorGlobal ? visitasGlobales[project.slug] : undefined}
+                              visitasPropias={visitasPropias[project.slug]}
                             />
                           </motion.div>
 

@@ -21,7 +21,7 @@ export default {
   "seoUseCaseTitle": "Entwürfe, Tests und Screenshots",
   "seoUseCaseText": "Füll eine Karte mit genau den 240 Zeichen, die das Design zulässt, prüfe, ob eine Überschrift die Übersetzung ins Russische überlebt, gib einem Test eine Fixture-Datei, die sich zwischen Läufen nicht ändern darf, oder füg das HTML direkt in ein Template ein, um die echten Tags an Ort und Stelle zu sehen.",
   "seoPrivacyTitle": "100% Privat & Sicher",
-  "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
+  "seoPrivacyText": "Dein Inhalt verlässt diesen Tab nicht: nichts wird hochgeladen, gespeichert oder protokolliert. Die Seite zählt allerdings, wie oft jedes Werkzeug geöffnet wird — als schlichte Summe ohne Cookie und ohne Kennung, nichts, was einen Besuch dir zuordnen könnte.",
   "seoKeywords": [
     "lorem ipsum generator",
     "blindtext",

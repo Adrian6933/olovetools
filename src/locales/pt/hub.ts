@@ -205,5 +205,13 @@ export default {
     "Animation": "Animação",
     "SVG": "SVG",
     "Optimizer": "Otimizador"
-  }
+  },
+  "sortDefault": "Recomendado",
+  "sortGlobal": "Mais visitadas",
+  "sortMine": "As que mais usas",
+  "sortAz": "A–Z",
+  "visitsGlobalShort": "visitas",
+  "visitsMineShort": "tuas",
+  "visitsGlobalHint": "Quantas vezes esta ferramenta foi aberta no total. É só um número: sem cookie, sem identificador, sem nada que o ligue a alguém.",
+  "visitsMineHint": "Quantas vezes a abriste. Guardado só neste navegador e nunca enviado para lado nenhum."
 };

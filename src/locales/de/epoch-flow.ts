@@ -42,7 +42,7 @@ export default {
   "seoUseCaseTitle": "Logs, Datenbanken und Registry-Dumps",
   "seoUseCaseText": "Entschlüssle die Nanosekunden-Zeitstempel von Go und InfluxDB, ermittle aus dem FILETIME, wann eine Windows-Datei wirklich angelegt wurde, mach aus einem Excel-Serial wieder ein Datum, oder prüfe, ob ein Vorfall um 02:30 vor oder nach der Zeitumstellung lag.",
   "seoPrivacyTitle": "100% Privat & Sicher",
-  "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
+  "seoPrivacyText": "Dein Inhalt verlässt diesen Tab nicht: nichts wird hochgeladen, gespeichert oder protokolliert. Die Seite zählt allerdings, wie oft jedes Werkzeug geöffnet wird — als schlichte Summe ohne Cookie und ohne Kennung, nichts, was einen Besuch dir zuordnen könnte.",
   "seoKeywords": [
     "unix zeitstempel umrechner",
     "epoch in datum",

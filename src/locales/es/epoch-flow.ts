@@ -42,7 +42,7 @@ export default {
   "seoUseCaseTitle": "Logs, bases de datos y volcados del registro",
   "seoUseCaseText": "Descifra los timestamps en nanosegundos que escriben Go e InfluxDB, averigua cuándo se creó de verdad un archivo de Windows a partir de su FILETIME, devuelve un serial de Excel a fecha, o comprueba si un incidente a las 02:30 pasó antes o después del cambio de hora.",
   "seoPrivacyTitle": "100% Privado y Seguro",
-  "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
+  "seoPrivacyText": "Tu contenido no sale de esta pestaña: no se sube, ni se guarda, ni queda registrado en ningún sitio. El sitio sí cuenta cuántas veces se abre cada herramienta, como un total sin cookie ni identificador: nada que pueda atar una visita a ti.",
   "seoKeywords": [
     "conversor timestamp unix",
     "epoch a fecha",

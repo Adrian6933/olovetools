@@ -16,7 +16,7 @@ export default {
   "seoUseCaseTitle": "Buying, returning or debugging",
   "seoUseCaseText": "Check a second-hand keyboard before you pay for it, prove a laptop key is dead before a warranty claim, or look up the exact event.code to bind in a game or a shortcut. The same board covers all three.",
   "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoPrivacyText": "Your content never leaves this tab: it is not uploaded, stored or logged anywhere. The site does count how many times each tool is opened, as a plain total with no cookie and no identifier — nothing that could tie a visit to you.",
   "seoKeywords": [
     "keyboard tester",
     "test keyboard keys online",

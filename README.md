@@ -46,7 +46,12 @@ docs/                     Documentación del proyecto
 **Todo el trabajo pesado ocurre en el navegador.** El backend existe sólo para lo
 que un navegador tiene prohibido hacer: guardar los secretos de las APIs de
 Twitch y Kick, y retransmitir peticiones a servidores que no envían cabeceras
-CORS. No hay base de datos ni cuentas de usuario.
+CORS. No hay cuentas de usuario.
+
+La única cosa que se guarda en servidor es un contador de visitas por
+herramienta, para poder ordenar el hub por popularidad: un número por slug, sin
+IP, sin cookie y sin identificador de visitante. Es opcional — sin las
+credenciales de Upstash el sitio funciona igual y el hub oculta ese orden.
 
 ### Añadir una herramienta
 

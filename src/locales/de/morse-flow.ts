@@ -10,7 +10,7 @@ export default {
   "tooltip_mute": "Stummschalten",
   "tooltip_unmute": "Ton ein",
   "seoPrivacyTitle": "100% Privat & Sicher",
-  "seoPrivacyText": "Keine Datenbanken, Tracking oder Netzwerk-Uploads. Ihre Daten verbleiben streng im lokalen Speicher und verschwinden beim Schließen des Tabs.",
+  "seoPrivacyText": "Dein Inhalt verlässt diesen Tab nicht: nichts wird hochgeladen, gespeichert oder protokolliert. Die Seite zählt allerdings, wie oft jedes Werkzeug geöffnet wird — als schlichte Summe ohne Cookie und ohne Kennung, nichts, was einen Besuch dir zuordnen könnte.",
   "faqTitle": "Häufig gestellte Fragen",
   "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",

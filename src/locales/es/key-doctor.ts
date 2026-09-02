@@ -16,7 +16,7 @@ export default {
   "seoUseCaseTitle": "Comprar, devolver o depurar",
   "seoUseCaseText": "Comprueba un teclado de segunda mano antes de pagarlo, demuestra que una tecla del portátil está muerta antes de reclamar la garantía, o busca el event.code exacto para asignarlo en un juego o un atajo. El mismo teclado sirve para las tres cosas.",
   "seoPrivacyTitle": "100% Privado y Seguro",
-  "seoPrivacyText": "Sin bases de datos, seguimientos ni subidas a la red. Tus datos residen estrictamente en memoria local y desaparecen al cerrar la pestaña.",
+  "seoPrivacyText": "Tu contenido no sale de esta pestaña: no se sube, ni se guarda, ni queda registrado en ningún sitio. El sitio sí cuenta cuántas veces se abre cada herramienta, como un total sin cookie ni identificador: nada que pueda atar una visita a ti.",
   "seoKeywords": [
     "probador de teclado",
     "probar teclas online",

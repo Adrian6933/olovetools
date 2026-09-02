@@ -16,7 +16,7 @@ export default {
   "seoUseCaseTitle": "Acheter, renvoyer ou déboguer",
   "seoUseCaseText": "Vérifiez un clavier d'occasion avant de payer, prouvez qu'une touche de portable est morte avant une demande de garantie, ou trouvez l'event.code exact à associer dans un jeu ou un raccourci. Le même clavier couvre les trois cas.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
-  "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
+  "seoPrivacyText": "Votre contenu ne quitte pas cet onglet : il n'est ni envoyé, ni stocké, ni journalisé. Le site compte en revanche combien de fois chaque outil est ouvert, sous forme d'un simple total sans cookie ni identifiant — rien qui puisse relier une visite à vous.",
   "seoKeywords": [
     "testeur de clavier",
     "tester les touches en ligne",

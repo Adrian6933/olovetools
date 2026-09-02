@@ -2153,6 +2153,37 @@ const appSchema = {
     <AdRail slug={tool!} client:idle={{ timeout: 2000 }} />
     <AdSlot position="anchor" size="mobile-banner" client:idle={{ timeout: 2000 }} />
 
+    {/* Registro de la visita, para poder ordenar el hub por popularidad.
+        Va aqui y no dentro de cada herramienta: una sola vez para las 60.
+
+        Se cuentan dos cosas independientes. La propia vive en el navegador de
+        quien visita y no sale de ahi. La global es un numero por herramienta en
+        el servidor, sin IP ni cookie ni identificador: no se puede reconstruir
+        quien abrio que porque ese dato nunca llega a existir.
+
+        keepalive para que la peticion sobreviva si se cierra la pestana justo
+        despues, y sin await ni bloqueo: si el contador falla, la herramienta
+        funciona igual. */}
+    <script is:inline define:vars={{ toolSlug: tool }}>
+      (() => {
+        try {
+          const CLAVE = 'olovetools_tool_visits';
+          const previas = JSON.parse(localStorage.getItem(CLAVE) || '{}');
+          previas[toolSlug] = (previas[toolSlug] || 0) + 1;
+          localStorage.setItem(CLAVE, JSON.stringify(previas));
+        } catch { /* modo privado: no se recuerda y ya esta */ }
+
+        try {
+          fetch('/api/stats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ slug: toolSlug }),
+            keepalive: true,
+          }).catch(() => {});
+        } catch { /* sin red: el contador global se lo pierde */ }
+      })();
+    </script>
+
     {toolCtas.length > 0 && (
       <section aria-label={ctaHeading} class="tool-ctas max-w-5xl mx-auto px-4 pt-10 pb-2">
         <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">{ctaHeading}</p>

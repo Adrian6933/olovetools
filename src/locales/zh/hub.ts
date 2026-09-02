@@ -205,5 +205,13 @@ export default {
     "Animation": "动画",
     "SVG": "SVG",
     "Optimizer": "优化"
-  }
+  },
+  "sortDefault": "推荐",
+  "sortGlobal": "访问最多",
+  "sortMine": "你最常用",
+  "sortAz": "A–Z",
+  "visitsGlobalShort": "次访问",
+  "visitsMineShort": "你的",
+  "visitsGlobalHint": "这个工具总共被打开过多少次。只是一个计数：没有 Cookie、没有标识符、不与任何人关联。",
+  "visitsMineHint": "你打开过多少次。只存在这个浏览器里，不会发往任何地方。"
 };

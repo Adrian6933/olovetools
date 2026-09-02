@@ -10,7 +10,7 @@ export default {
   "tooltip_mute": "静音",
   "tooltip_unmute": "取消静音",
   "seoPrivacyTitle": "100%私密与安全",
-  "seoPrivacyText": "没有数据库、跟踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
+  "seoPrivacyText": "你的内容不会离开这个标签页：不上传、不保存、不记录。站点确实会统计每个工具被打开过多少次，那只是一个没有 Cookie、没有标识符的总数，没有任何东西能把一次访问和你联系起来。",
   "faqTitle": "常见问题",
   "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",

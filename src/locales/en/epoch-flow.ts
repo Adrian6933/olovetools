@@ -42,7 +42,7 @@ export default {
   "seoUseCaseTitle": "Logs, databases and registry dumps",
   "seoUseCaseText": "Decode the nanosecond timestamps Go and InfluxDB write, work out when a Windows file was really created from its FILETIME, turn an Excel serial back into a date, or check whether an incident at 02:30 happened before or after the clocks went back.",
   "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoPrivacyText": "Your content never leaves this tab: it is not uploaded, stored or logged anywhere. The site does count how many times each tool is opened, as a plain total with no cookie and no identifier — nothing that could tie a visit to you.",
   "seoKeywords": [
     "unix timestamp converter",
     "epoch to date",

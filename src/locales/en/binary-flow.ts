@@ -23,7 +23,7 @@ export default {
   "seoUseCaseTitle": "Firmware, protocols and floating-point puzzles",
   "seoUseCaseText": "Work out why a register reads 0xD6 when you wrote −42, check the byte order of a packet before you send it, or see the exact value behind 0.1 + 0.2 instead of arguing about it. The bit grid is the answer in all three cases.",
   "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoPrivacyText": "Your content never leaves this tab: it is not uploaded, stored or logged anywhere. The site does count how many times each tool is opened, as a plain total with no cookie and no identifier — nothing that could tie a visit to you.",
   "seoKeywords": [
     "binary converter",
     "hex to decimal",

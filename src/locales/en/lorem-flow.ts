@@ -21,7 +21,7 @@ export default {
   "seoUseCaseTitle": "Mock-ups, tests and screenshots",
   "seoUseCaseText": "Fill a card with exactly the 240 characters the design allows, check that a headline survives being translated into Russian, feed a fixture file to a test that must not change between runs, or paste HTML straight into a template to see the real tags in place.",
   "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoPrivacyText": "Your content never leaves this tab: it is not uploaded, stored or logged anywhere. The site does count how many times each tool is opened, as a plain total with no cookie and no identifier — nothing that could tie a visit to you.",
   "seoKeywords": [
     "lorem ipsum generator",
     "placeholder text",

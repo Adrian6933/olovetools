@@ -31,7 +31,7 @@ export default {
   "seoUseCaseTitle": "Distributed teams, calls and travel",
   "seoUseCaseText": "Find the one hour that is not the middle of the night for anybody, check what time your call lands for a colleague in Bogotá, or work out whether the flight you booked arrives before or after the clocks go forward.",
   "seoPrivacyTitle": "100% Private & Secure",
-  "seoPrivacyText": "No databases, tracking, or network uploads. Your data resides strictly in local memory and disappears when you close the tab.",
+  "seoPrivacyText": "Your content never leaves this tab: it is not uploaded, stored or logged anywhere. The site does count how many times each tool is opened, as a plain total with no cookie and no identifier — nothing that could tie a visit to you.",
   "seoKeywords": [
     "world clock",
     "meeting planner time zones",

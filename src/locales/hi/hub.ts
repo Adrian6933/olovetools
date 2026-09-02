@@ -205,5 +205,13 @@ export default {
     "Animation": "एनीमेशन",
     "SVG": "SVG",
     "Optimizer": "अनुकूलक"
-  }
+  },
+  "sortDefault": "अनुशंसित",
+  "sortGlobal": "सबसे ज़्यादा देखी",
+  "sortMine": "आपकी सबसे उपयोग की",
+  "sortAz": "A–Z",
+  "visitsGlobalShort": "विज़िट",
+  "visitsMineShort": "आपकी",
+  "visitsGlobalHint": "यह टूल कुल कितनी बार खोला गया। बस एक संख्या: न कुकी, न पहचानकर्ता, न किसी से जोड़ने वाली कोई चीज़।",
+  "visitsMineHint": "आपने इसे कितनी बार खोला। सिर्फ़ इसी ब्राउज़र में रहता है और कहीं नहीं भेजा जाता।"
 };

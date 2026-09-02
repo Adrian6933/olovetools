@@ -23,7 +23,7 @@ export default {
   "seoUseCaseTitle": "Firmware, protocoles et énigmes de virgule flottante",
   "seoUseCaseText": "Comprenez pourquoi un registre affiche 0xD6 alors que vous avez écrit −42, vérifiez l'ordre des octets d'un paquet avant de l'envoyer, ou regardez la valeur exacte derrière 0.1 + 0.2 au lieu d'en débattre. La grille de bits répond dans les trois cas.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
-  "seoPrivacyText": "Aucune base de données, suivi ou envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
+  "seoPrivacyText": "Votre contenu ne quitte pas cet onglet : il n'est ni envoyé, ni stocké, ni journalisé. Le site compte en revanche combien de fois chaque outil est ouvert, sous forme d'un simple total sans cookie ni identifiant — rien qui puisse relier une visite à vous.",
   "seoKeywords": [
     "convertisseur binaire",
     "hexadécimal en décimal",

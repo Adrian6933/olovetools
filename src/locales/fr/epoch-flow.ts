@@ -42,7 +42,7 @@ export default {
   "seoUseCaseTitle": "Journaux, bases de données et dumps de registre",
   "seoUseCaseText": "Décodez les horodatages en nanosecondes écrits par Go et InfluxDB, retrouvez la vraie date de création d'un fichier Windows depuis son FILETIME, reconvertissez une série Excel en date, ou vérifiez si un incident à 02h30 a eu lieu avant ou après le changement d'heure.",
   "seoPrivacyTitle": "100% Privé et Sécurisé",
-  "seoPrivacyText": "Aucune base de données, suivi ni envoi réseau. Vos données résident strictement en mémoire locale et disparaissent à la fermeture de l'onglet.",
+  "seoPrivacyText": "Votre contenu ne quitte pas cet onglet : il n'est ni envoyé, ni stocké, ni journalisé. Le site compte en revanche combien de fois chaque outil est ouvert, sous forme d'un simple total sans cookie ni identifiant — rien qui puisse relier une visite à vous.",
   "seoKeywords": [
     "convertisseur timestamp unix",
     "epoch en date",

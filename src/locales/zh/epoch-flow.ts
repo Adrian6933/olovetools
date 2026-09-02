@@ -42,7 +42,7 @@ export default {
   "seoUseCaseTitle": "日志、数据库与注册表转储",
   "seoUseCaseText": "解读 Go 和 InfluxDB 写出的纳秒时间戳，从 FILETIME 推算一个 Windows 文件到底何时创建，把 Excel 序列值还原成日期，或者确认凌晨 02:30 的故障发生在拨钟之前还是之后。",
   "seoPrivacyTitle": "100% 隐私与安全",
-  "seoPrivacyText": "无数据库、追踪或网络上传。您的数据严格驻留在本地内存中，关闭标签页后即消失。",
+  "seoPrivacyText": "你的内容不会离开这个标签页：不上传、不保存、不记录。站点确实会统计每个工具被打开过多少次，那只是一个没有 Cookie、没有标识符的总数，没有任何东西能把一次访问和你联系起来。",
   "seoKeywords": [
     "unix 时间戳转换",
     "epoch 转日期",

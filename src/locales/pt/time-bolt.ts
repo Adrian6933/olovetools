@@ -31,7 +31,7 @@ export default {
   "seoUseCaseTitle": "Equipas distribuídas, chamadas e viagens",
   "seoUseCaseText": "Encontra a única hora que não é a meio da noite para ninguém, vê a que horas cai a chamada para um colega em Bogotá, ou descobre se o voo que reservaste chega antes ou depois da mudança da hora.",
   "seoPrivacyTitle": "100% Privado e Seguro",
-  "seoPrivacyText": "Sem bancos de dados, rastreamento ou envios de rede. Seus dados residem estritamente na memória local e desaparecem ao fechar a aba.",
+  "seoPrivacyText": "O teu conteúdo não sai deste separador: não é enviado, guardado nem registado em lado nenhum. O site conta, isso sim, quantas vezes cada ferramenta é aberta, como um total sem cookie nem identificador — nada que ligue uma visita a ti.",
   "seoKeywords": [
     "relógio mundial",
     "planeador de reuniões fusos horários",
