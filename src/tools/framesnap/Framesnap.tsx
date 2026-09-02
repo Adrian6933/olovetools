@@ -431,7 +431,8 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0502] font-sans text-slate-200 selection:bg-orange-500/25 selection:text-orange-50">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/framesnap`)} t={t} />
+      <Header
+        onReset={resetWorkspace} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/framesnap`)} t={t} />
 
       {/* The max width lives on <main> on purpose: AdRail measures this element
           against the viewport edge to decide whether the fixed side rails fit.

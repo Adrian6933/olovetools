@@ -546,7 +546,8 @@ export const Codecard: React.FC<CodecardProps> = ({ lang, dictionary }) => {
         }}
       />
 
-      <Header currentLang={lang} onLanguageChange={newLang => (window.location.href = `/${newLang.toLowerCase()}/codecard`)} t={t} />
+      <Header
+        onReset={resetAll} currentLang={lang} onLanguageChange={newLang => (window.location.href = `/${newLang.toLowerCase()}/codecard`)} t={t} />
 
       <main className="flex-1 flex flex-col items-center pt-36 pb-24 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-codecard-top" />

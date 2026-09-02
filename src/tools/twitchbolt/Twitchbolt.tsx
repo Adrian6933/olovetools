@@ -309,12 +309,22 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
     window.location.href = `/${code}/twitchbolt`;
   };
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * No hace nada mientras se arma un ZIP: reiniciar ahi aborta la descarga y tira el trabajo sin avisar.
+   */
+  const handleSoftReset = () => {
+    if (zipProgress) return;
+    handleReset();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#050407] selection:bg-twitch/30 relative overflow-hidden" style={{ backgroundImage: 'linear-gradient(to bottom, #15121e 0%, #0f0d14 25%, #0a080f 50%, #07060a 75%, #050407 100%)' }}>
       {/* Long Linear Atmospheric Glow */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-twitch/[0.05] via-transparent to-transparent pointer-events-none" />
       
-      <Header currentLang={lang} onLangChange={handleLangChange} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLangChange={handleLangChange} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, and at max-w-7xl the gap was 60px at

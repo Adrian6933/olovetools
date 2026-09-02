@@ -169,6 +169,7 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
       <div className="absolute top-[-10%] left-[15%] w-[600px] h-[600px] rounded-full blur-[150px] pointer-events-none z-0" style={{ background: 'rgba(83,252,24,0.08)' }} />
 
       <Header
+        onReset={backToCategories}
         currentLang={lang}
         onLanguageChange={(l) => (window.location.href = `/${l.toLowerCase()}/klipy`)}
         t={t}

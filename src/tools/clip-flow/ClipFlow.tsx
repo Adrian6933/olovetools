@@ -446,7 +446,8 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
     <div className="min-h-screen flex flex-col bg-[#0a0408] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
       <div className="absolute top-[-10%] left-[20%] w-[600px] h-[600px] rounded-full bg-violet-600/10 blur-[150px] pointer-events-none z-0" />
       <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-violet-600/10 blur-[120px] pointer-events-none z-0" />
-      <Header currentLang={lang} onLanguageChange={(l) => window.location.href = `/${l.toLowerCase()}/clip-flow`} t={t} />
+      <Header
+        onReset={resetWorkspace} currentLang={lang} onLanguageChange={(l) => window.location.href = `/${l.toLowerCase()}/clip-flow`} t={t} />
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is
           what keeps them visible instead of silently suppressed. */}

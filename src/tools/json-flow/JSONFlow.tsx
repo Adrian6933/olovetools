@@ -374,9 +374,26 @@ export const JSONFlow: React.FC<JSONFlowProps> = ({ lang, dictionary }) => {
   const jsonl = !escaped && looksLikeJsonLines(text);
   const offThread = text.length > AUTO_BUILD_LIMIT;
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Deshace la busqueda y vuelve a la vista de arbol con sangria de 2.
+   */
+  const handleSoftReset = () => {
+    setIndent(2);
+    setSort('none');
+    setTab('tree');
+    setQuery('');
+    setScope('both');
+    setExpanded(new Set());
+    setAutoDepth(2);
+    setFocus(null);
+    setShowShortcuts(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#050807] text-slate-200 flex flex-col justify-between font-sans selection:bg-emerald-500/20 selection:text-emerald-100">
-      <Header currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
 
       {/* The max width lives on <main> on purpose: AdRail measures this element
           against the viewport edge to decide whether the fixed side rails fit.

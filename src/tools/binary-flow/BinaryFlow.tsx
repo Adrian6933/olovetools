@@ -300,9 +300,29 @@ export default function BinaryFlow({ lang, dictionary }: BinaryFlowProps) {
     { id: 'bytes', label: t.label_bytes_mode || 'File bytes', icon: <FileDigit className="w-4 h-4" /> },
   ];
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Vuelve a los valores de ejemplo con los que abre la herramienta.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setMode('number');
+    setInputBase(10);
+    setInputValue('72');
+    setSignedness('unsigned');
+    setWidth(0);
+    setOutBase(36);
+    setLittleEndian(false);
+    setFloatInput('0.1');
+    setOpB('255');
+    setOp('and');
+    setTextInput('Hi');
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#020610] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/binary-flow`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/binary-flow`)} t={t} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is

@@ -247,9 +247,22 @@ export default function TimeBolt({ lang, dictionary }: TimeBoltProps) {
 
   const faq: { question: string; answer: string }[] = Array.isArray(t.faq) ? t.faq : [];
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Vuelve a la referencia y la franja por defecto. Las zonas elegidas se mantienen: son el trabajo del usuario, no estado pasajero.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setRefTz('UTC');
+    setSelectedHour(9);
+    setWorking(DEFAULT_WORKING);
+    setDuration(60);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#020a08] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/time-bolt`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/time-bolt`)} t={t} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is

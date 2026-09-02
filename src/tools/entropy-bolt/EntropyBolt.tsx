@@ -321,11 +321,29 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
     { icon: <IconOffline className="w-6 h-6" />, title: t.feat6Title || 'Never leaves the tab', text: t.feat6Text || 'No network requests, no storage, no analytics on what you type. Works with the connection off.' },
   ];
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Borra lo generado y lo que se estuviera comprobando: no conviene que una contrasena siga en pantalla despues de reiniciar.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setMode('chars');
+    setOptions(DEFAULT_OPTIONS);
+    setPhraseOpts(DEFAULT_PHRASE);
+    setPassword('');
+    setPhrase('');
+    setPhraseBits(0);
+    setBatch([]);
+    setBatchCount(10);
+    setTestPassword('');
+  };
+
   return (
     // pt-36 en móvil: el header se apila en dos filas por debajo de `md` y mide
     // 133px, no los 96px de la barra de escritorio. Con pt-24 tapaba 37px.
     <div className="min-h-screen flex flex-col bg-[#020a08] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-28">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/entropy-bolt`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/entropy-bolt`)} t={t} />
 
       {/* El ancho máximo vive en <main>: AdRail mide ESTE elemento para decidir
           si los raíles laterales caben. Un <main> a w-full deja hueco cero y los

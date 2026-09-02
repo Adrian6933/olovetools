@@ -1,6 +1,7 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { SqlMark } from './Illustrations';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -37,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
 
             <button
-              onClick={onReset}
+              onClick={withScrollToTop(onReset)}
               className="flex items-center gap-1.5 md:gap-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer min-w-0"
             >
               <div className="w-7 h-7 md:w-9 md:h-9 shrink-0 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-amber-500/20 group-hover:border-amber-500/50 transition-all">

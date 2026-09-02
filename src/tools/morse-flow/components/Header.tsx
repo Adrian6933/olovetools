@@ -1,10 +1,13 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Radio } from 'lucide-react';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
   onLanguageChange: (lang: string) => void;
+  /** Deja la herramienta como recien abierta. */
+  onReset?: () => void;
   t: any;
 }
 
@@ -14,14 +17,20 @@ const HeartIcon = () => (
   </svg>
 );
 
-export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t }) => {
+export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, onReset, t }) => {
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <header className="w-full border-b border-white/10 bg-[#0c0802]/95 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
         {/* `min-w-0` at every level is what lets the tool name truncate at
             375px instead of pushing the row past the viewport edge. */}
         <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-12 py-3 md:py-0 md:h-24 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
-          <div className="flex items-center gap-2 sm:gap-4 md:gap-8 w-full md:w-auto min-w-0">
+          <button
+              type="button"
+              onClick={withScrollToTop(onReset)}
+              title={t.resetHint || "Start over"}
+              aria-label={t.resetHint || "Start over"}
+              className="flex items-center gap-2 sm:gap-4 md:gap-8 w-full md:w-auto min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
+            >
             <a href={`/${currentLang.toLowerCase()}`} className="flex items-center gap-1.5 md:gap-3 group outline-none shrink-0">
               <span className="w-8 h-8 md:w-11 md:h-11 bg-red-600 rounded-lg md:rounded-2xl flex items-center justify-center group-hover:bg-red-500 transition-all shadow-lg shadow-red-600/40">
                 <HeartIcon />
@@ -34,16 +43,13 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t
 
             <span className="h-8 w-px bg-white/10 shrink-0" />
 
-            {/* Deliberately not a button: the old header wiped the workspace
-                the moment you clicked the tool name. Reset now sits in the
-                transport bar, where it reads as an action. */}
             <span className="flex items-center gap-1.5 md:gap-3 min-w-0">
               <span className="w-7 h-7 md:w-9 md:h-9 shrink-0 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10">
                 <Radio className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
               </span>
               <span className="text-base sm:text-lg md:text-2xl font-black text-white tracking-tight truncate">{t.title}</span>
             </span>
-          </div>
+          </button>
 
           <div className="flex items-center justify-center w-full md:w-auto shrink-0">
             <LanguageSwitcher currentLang={currentLang} onLanguageChange={onLanguageChange} />

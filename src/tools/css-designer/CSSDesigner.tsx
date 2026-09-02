@@ -318,9 +318,25 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
     ['Alt + ←/→', t.sc_fine || 'Fine slider steps (Shift for coarse)'],
   ];
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Vuelve a la vista y el formato por defecto. El diseno en si no se toca: es el trabajo del usuario.
+   */
+  const handleSoftReset = () => {
+    setBackdrop('mesh');
+    setFormat('css');
+    setSpace('hex');
+    setComparing(false);
+    setShared(false);
+    setActiveStop(null);
+    setActiveLayer(null);
+    setShowShortcuts(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#07060b] text-slate-200 flex flex-col justify-between font-sans">
-      <Header currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
 
       {/* The max width lives on <main> on purpose: AdRail measures this element
           against the viewport edge to decide whether the fixed side rails fit.

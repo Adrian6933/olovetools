@@ -1,10 +1,13 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Keyboard } from 'lucide-react';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
   onLanguageChange: (lang: string) => void;
+  /** Deja la herramienta como recien abierta. */
+  onReset?: () => void;
   t: any;
 }
 
@@ -14,7 +17,7 @@ const HeartIcon = () => (
   </svg>
 );
 
-export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t }) => {
+export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, onReset, t }) => {
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <header className="w-full h-auto md:h-24 py-4 md:py-0 border-b border-white/10 bg-[#0c0802]/95 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
@@ -34,18 +37,20 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t
             </a>
 
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
-
-            {/* Deliberately not a button: this used to be wired to "reset", so
-                clicking what looks like the tool name wiped the whole test run
-                with no confirmation. */}
-            <div className="flex items-center space-x-2 md:space-x-3 min-w-0">
+            <button
+              type="button"
+              onClick={withScrollToTop(onReset)}
+              title={t.resetHint || "Start over"}
+              aria-label={t.resetHint || "Start over"}
+              className="flex items-center space-x-2 md:space-x-3 min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
+            >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 shrink-0">
                 <Keyboard className="w-5 h-5 text-amber-400" />
               </div>
               <span className="text-base sm:text-xl md:text-2xl font-black text-white tracking-tight truncate">
                 {t.title}
               </span>
-            </div>
+            </button>
           </div>
 
           <div className="flex items-center justify-center w-full md:w-auto">

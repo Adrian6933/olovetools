@@ -643,6 +643,7 @@ export const DiffSnap: React.FC<DiffSnapProps> = ({ lang, dictionary }) => {
   return (
     <div className="min-h-screen bg-[#050809] text-slate-200 flex flex-col justify-between font-sans selection:bg-cyan-500/20 selection:text-cyan-100">
       <Header
+        onReset={resetAll}
         currentLang={lang}
         onLanguageChange={next => {
           const segments = window.location.pathname.split('/');

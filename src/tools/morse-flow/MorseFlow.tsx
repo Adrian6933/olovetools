@@ -331,7 +331,8 @@ export default function MorseFlow({ lang, dictionary }: MorseFlowProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0c0802] font-sans text-slate-200 selection:bg-amber-500/25 selection:text-amber-50">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/morse-flow`)} t={t} />
+      <Header
+        onReset={reset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/morse-flow`)} t={t} />
 
       {/* The max width lives on <main> on purpose: AdRail measures this element
           against the viewport edge to decide whether the fixed side rails fit.

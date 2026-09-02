@@ -1,5 +1,6 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -50,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
 
             {/* Current App Link */}
             <button 
-              onClick={onReset}
+              onClick={withScrollToTop(onReset)}
               className="flex items-center space-x-2 md:space-x-3 group outline-none transition-all hover:translate-x-1 cursor-pointer"
             >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/50 transition-all">

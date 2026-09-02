@@ -397,7 +397,8 @@ export default function JwtBolt({ lang, dictionary }: JwtBoltProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0408] font-sans text-slate-200 selection:bg-violet-500/25 selection:text-violet-50">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/jwt-bolt`)} t={t} />
+      <Header
+        onReset={resetWorkspace} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/jwt-bolt`)} t={t} />
 
       {/* The max width lives on <main> on purpose: AdRail measures this element
           against the viewport edge to decide whether the fixed side rails fit.

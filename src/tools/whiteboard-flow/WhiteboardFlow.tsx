@@ -492,13 +492,28 @@ export default function WhiteboardFlow({ lang, dictionary }: WhiteboardFlowProps
   const faq: { question: string; answer: string }[] = Array.isArray(t.faq) ? t.faq : [];
   const empty = doc.nodes.length === 0;
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Solo el estado de la vista. El tablero NO se borra: esta guardado en el navegador y una recarga tampoco se lo llevaria.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setSelection([]);
+    setEditingId(null);
+    setCleanView(false);
+    setLinkFrom(null);
+    setMenu(null);
+    setToast('');
+  };
+
   return (
     // El padding superior compensa el header fijo. Por debajo de `md` el header
     // se apila en dos filas (logo + selector de idioma) y mide 133px, no los
     // 96px de la barra de escritorio: con pt-28 (112px) tapaba 21px del
     // contenido.
     <div className="min-h-screen flex flex-col bg-[#04080a] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-28">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/whiteboard-flow`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/whiteboard-flow`)} t={t} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is

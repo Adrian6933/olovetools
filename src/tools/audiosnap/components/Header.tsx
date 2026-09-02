@@ -1,6 +1,7 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Mic } from 'lucide-react';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -41,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
                 nine locales render a longer tool name than "AudioSnap", and at
                 375px it would otherwise push the row past the viewport. */}
             <button
-              onClick={onReset}
+              onClick={withScrollToTop(onReset)}
               className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer min-w-0"
             >
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-rose-500/20 group-hover:border-rose-500/50 transition-all shrink-0">

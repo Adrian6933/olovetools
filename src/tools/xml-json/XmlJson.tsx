@@ -442,7 +442,8 @@ export default function XmlJson({ lang, dictionary }: XmlJsonProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-[#020a08] font-sans text-slate-200 selection:bg-teal-500/25 selection:text-teal-50">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/xml-json`)} t={t} />
+      <Header
+        onReset={resetWorkspace} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/xml-json`)} t={t} />
 
       {/* The max width lives on <main> on purpose: AdRail measures this element
           against the viewport edge to decide whether the fixed side rails fit.

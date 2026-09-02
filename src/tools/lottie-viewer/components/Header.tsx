@@ -1,9 +1,12 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
   onLanguageChange: (lang: string) => void;
+  /** Deja la herramienta como recien abierta. */
+  onReset?: () => void;
   t: any;
 }
 
@@ -22,7 +25,7 @@ const PlayheadIcon = () => (
   </svg>
 );
 
-export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t }) => {
+export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, onReset, t }) => {
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] pointer-events-none">
       <header className="w-full h-auto md:h-24 py-3 md:py-0 border-b border-white/10 bg-[#05050a]/95 backdrop-blur-3xl shadow-[0_10px_40px_rgba(0,0,0,0.5)] pointer-events-auto">
@@ -46,9 +49,12 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t
 
             <div className="h-8 w-px bg-white/10 hidden md:block" />
 
-            <a
-              href={`/${currentLang.toLowerCase()}/lottie-viewer`}
-              className="flex items-center gap-1.5 md:gap-3 group outline-none min-w-0"
+            <button
+              type="button"
+              onClick={withScrollToTop(onReset)}
+              title={t?.resetHint || "Start over"}
+              aria-label={t?.resetHint || "Start over"}
+              className="flex items-center gap-1.5 md:gap-3 group outline-none min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
             >
               <div className="w-7 h-7 md:w-9 md:h-9 shrink-0 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:border-indigo-500/50 transition-all">
                 <PlayheadIcon />
@@ -56,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, t
               <span className="text-base md:text-2xl font-black text-white tracking-tight group-hover:text-indigo-400 transition-all truncate">
                 {t.title}
               </span>
-            </a>
+            </button>
           </div>
 
           <div className="flex items-center justify-center w-full md:w-auto">

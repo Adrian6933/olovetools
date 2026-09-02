@@ -151,9 +151,21 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
 
   const faq: { question: string; answer: string }[] = Array.isArray(t.faq) ? t.faq : [];
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Opciones por defecto y sin texto generado.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setOpts(DEFAULTS);
+    setText('');
+    setCopied(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#0a0408] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/lorem-flow`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/lorem-flow`)} t={t} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is

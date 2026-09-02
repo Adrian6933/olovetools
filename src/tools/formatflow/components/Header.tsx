@@ -3,6 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, ChevronDown } from 'lucide-react';
 import type { Language } from '../../../locales/meta';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   language: Language;
@@ -72,10 +73,12 @@ const Header: React.FC<HeaderProps> = ({ language, dictionary: propDictionary, o
             <div className="h-6 sm:h-10 w-px bg-slate-800 mx-1 sm:mx-4 flex-shrink-0"></div>
 
             {/* FormatFlow Branding */}
-            <a 
-              href={`/${language}/formatflow`}
-              onClick={onHomeClick}
-              className="flex items-center gap-2 opacity-90 hover:opacity-100 transition-opacity focus:outline-none min-w-0"
+            <button
+              type="button"
+              onClick={withScrollToTop(onHomeClick)}
+              title="Start over"
+              aria-label="Start over"
+              className="flex items-center gap-2 opacity-90 hover:opacity-100 transition-opacity focus:outline-none min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
             >
               <div className="bg-secondary/20 p-1 sm:p-1.5 rounded-lg border border-secondary/30 flex-shrink-0">
                 <svg 
@@ -96,7 +99,7 @@ const Header: React.FC<HeaderProps> = ({ language, dictionary: propDictionary, o
               <span className="text-base sm:text-lg font-display font-bold text-slate-200 truncate leading-tight">
                 FormatFlow
               </span>
-            </a>
+            </button>
           </div>
         </div>
         

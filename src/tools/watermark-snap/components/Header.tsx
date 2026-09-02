@@ -1,6 +1,7 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Stamp } from 'lucide-react';
+import { withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -41,7 +42,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             <div className="h-8 w-px bg-white/10 hidden md:block" />
 
             <button
-              onClick={onReset}
+              onClick={withScrollToTop(onReset)}
               title={t.resetTitle || 'Start over'}
               className="flex items-center gap-1.5 md:gap-3 group border-none bg-transparent outline-none transition-all md:hover:translate-x-1 cursor-pointer min-w-0"
             >

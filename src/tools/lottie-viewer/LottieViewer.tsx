@@ -570,6 +570,7 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
   return (
     <div className="min-h-screen bg-[#05050a] text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-white">
       <Header
+        onReset={resetEdits}
         currentLang={lang}
         onLanguageChange={l => {
           window.location.href = `/${l.toLowerCase()}/lottie-viewer`;

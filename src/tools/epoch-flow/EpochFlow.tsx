@@ -215,9 +215,25 @@ export default function EpochFlow({ lang, dictionary }: EpochFlowProps) {
       ? t.errorOutOfRange || 'That instant is outside the range a date can represent.'
       : '';
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Vacia la entrada y vuelve a Unix/segundos/UTC.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setRawInput('');
+    setSystem('unix');
+    setUnit('s');
+    setUnitPinned(false);
+    setZone('UTC');
+    setWallInput('');
+    setCopiedField(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#020813] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/epoch-flow`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/epoch-flow`)} t={t} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is

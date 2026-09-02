@@ -218,9 +218,26 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
   }, [results]);
   const shownTypes = presentTypes.filter(ty => results && results[ty] && results[ty]!.answers.length > 0);
 
+  /**
+   * Reinicio desde el nombre de la herramienta en la cabecera.
+   * Vacia el dominio y descarta la consulta anterior. El resolutor elegido se mantiene, como haria una recarga.
+   * El scroll arriba lo pone withScrollToTop en el propio Header.
+   */
+  const handleSoftReset = () => {
+    setDomainInput('');
+    setQueried('');
+    setResults(null);
+    setLoading(false);
+    setError(null);
+    setViews(null);
+    setComparing(false);
+    setCopiedKey(null);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-[#05060f] text-slate-200 font-sans relative overflow-x-hidden pt-36 md:pt-24">
-      <Header currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/whois-bolt`)} t={t} />
+      <Header
+        onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/whois-bolt`)} t={t} />
 
       {/* The max width lives on <main>: AdRail measures this element to decide
           whether the fixed side rails fit, so reserving 440px from 1400px up is
