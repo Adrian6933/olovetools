@@ -1,7 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from '../types';
-import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2 } from 'lucide-react';
-import { downloadBlob } from '../services/twitchService';
+import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
+import { downloadBlob, fetchMovieBlob } from '../services/twitchService';
+import WatermarkPreview from './WatermarkPreview';
+import { WatermarkConfig, PositionPreset } from '../types';
+import {
+  loadStoredWatermarkConfig,
+  saveStoredWatermarkConfig,
+  loadStoredPresets,
+  saveCustomPresets,
+  processVideoWithWatermark,
+} from '../services/watermarkService';
 
 interface ClipResultProps {
   data: ClipData;
@@ -26,6 +35,78 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadingRes, setDownloadingRes] = useState<Record<string, { progress: number, completed: boolean, preparing: boolean, loaded: number, total: number, speed: number }>>({});
   const t = dictionary || {};
+
+  // ---- Editor de marca de agua -------------------------------------------
+  // La configuración se carga al abrir, no al montar: así dos clips abiertos a
+  // la vez no arrastran cada uno una copia distinta de lo que hay guardado.
+  const [wmAbierto, setWmAbierto] = useState(false);
+  const [wmConfig, setWmConfig] = useState<WatermarkConfig | null>(null);
+  const [wmPresets, setWmPresets] = useState<PositionPreset[]>([]);
+
+  const abrirWatermark = () => {
+    setWmConfig(loadStoredWatermarkConfig());
+    setWmPresets(loadStoredPresets());
+    setWmAbierto(true);
+  };
+
+  const cambiarWmConfig = (siguiente: WatermarkConfig) => {
+    setWmConfig(siguiente);
+    saveStoredWatermarkConfig(siguiente);
+  };
+
+  const guardarWmPreset = (nuevo: PositionPreset) => {
+    setWmPresets((prev) => {
+      const siguiente = [...prev, nuevo];
+      saveCustomPresets(siguiente.filter((x) => !x.isDefault));
+      return siguiente;
+    });
+  };
+
+  const borrarWmPreset = (id: string) => {
+    setWmPresets((prev) => {
+      const siguiente = prev.filter((x) => x.id !== id);
+      saveCustomPresets(siguiente.filter((x) => !x.isDefault));
+      return siguiente;
+    });
+  };
+
+  // Descarga el clip y le incrusta el cartel. Las dos fases informan por
+  // separado porque duran cosas muy distintas: la descarga va a la velocidad de
+  // la red y el render tarda lo que dura el clip, ni más ni menos.
+  const exportarConMarca = async (
+    quality: string,
+    config: WatermarkConfig,
+    signal: AbortSignal,
+    onProgress: (fase: 'descarga' | 'render', pct: number, restante: number) => void
+  ) => {
+    const res = data.resolutions.find((r) => r.quality === quality) || data.resolutions[0];
+    if (!res) throw new Error('No resolution available');
+
+    const original = await fetchMovieBlob(res.url, (loaded, total) => {
+      onProgress('descarga', total > 0 ? Math.round((loaded / total) * 100) : 0, 0);
+    }, signal);
+
+    const conMarca = await processVideoWithWatermark(
+      original,
+      data.broadcaster || 'Streamer',
+      config,
+      ({ pct, elapsed, total }) => onProgress('render', pct, Math.max(0, total - elapsed)),
+      signal
+    );
+
+    const safeTitle = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const ext = conMarca.type.includes('webm') ? 'webm' : 'mp4';
+    const url = URL.createObjectURL(conMarca);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${safeTitle}_${res.quality}_watermark.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    // Igual que en downloadBlob: Safari cancela la descarga si el object URL
+    // desaparece en el mismo tick, y estos archivos son grandes.
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  };
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const abortControllers = useRef<Record<string, AbortController>>({});
@@ -272,8 +353,38 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     </button>
                 );
              })}
+
+             <button
+               onClick={wmAbierto ? () => setWmAbierto(false) : abrirWatermark}
+               aria-expanded={wmAbierto}
+               className={`w-full rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
+                 wmAbierto
+                   ? 'bg-twitch text-white border-twitch shadow-lg shadow-twitch/20'
+                   : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-white/10'
+               }`}
+             >
+               <Sparkles className="w-4 h-4" />
+               {t.watermarkOpen || 'Add a watermark'}
+             </button>
           </div>
         </div>
+
+        {wmAbierto && wmConfig && (
+          <div className="border-t border-white/5 p-6 md:p-8">
+            <WatermarkPreview
+              clip={data}
+              config={wmConfig}
+              onChangeConfig={cambiarWmConfig}
+              presets={wmPresets}
+              onSavePreset={guardarWmPreset}
+              onDeletePreset={borrarWmPreset}
+              lang={lang}
+              dictionary={dictionary}
+              onExport={exportarConMarca}
+              onClose={() => setWmAbierto(false)}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

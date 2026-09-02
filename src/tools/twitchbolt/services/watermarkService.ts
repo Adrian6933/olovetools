@@ -23,13 +23,13 @@ export const WATERMARK_STORAGE_KEY = 'twitchbolt_watermark_config';
 export const PRESETS_STORAGE_KEY = 'twitchbolt_watermark_presets';
 
 export const DEFAULT_POSITION_PRESETS: PositionPreset[] = [
-  { id: 'top-left', name: 'Arriba Izq', x: 5, y: 5, isDefault: true },
-  { id: 'top-center', name: 'Arriba Centro', x: 50, y: 5, isDefault: true },
-  { id: 'top-right', name: 'Arriba Der', x: 95, y: 5, isDefault: true },
-  { id: 'center', name: 'Centro', x: 50, y: 50, isDefault: true },
-  { id: 'bottom-left', name: 'Abajo Izq', x: 5, y: 95, isDefault: true },
-  { id: 'bottom-center', name: 'Abajo Centro', x: 50, y: 95, isDefault: true },
-  { id: 'bottom-right', name: 'Abajo Der', x: 95, y: 95, isDefault: true },
+  { id: 'top-left', name: 'Top left', x: 5, y: 5, isDefault: true },
+  { id: 'top-center', name: 'Top centre', x: 50, y: 5, isDefault: true },
+  { id: 'top-right', name: 'Top right', x: 95, y: 5, isDefault: true },
+  { id: 'center', name: 'Centre', x: 50, y: 50, isDefault: true },
+  { id: 'bottom-left', name: 'Bottom left', x: 5, y: 95, isDefault: true },
+  { id: 'bottom-center', name: 'Bottom centre', x: 50, y: 95, isDefault: true },
+  { id: 'bottom-right', name: 'Bottom right', x: 95, y: 95, isDefault: true },
 ];
 
 export const DEFAULT_WATERMARK_CONFIG: WatermarkConfig = {
@@ -418,18 +418,97 @@ export const drawWatermarkOnCanvas = (
  * Process a video blob by rendering it onto an HTML canvas frame-by-frame 
  * with the watermark overlay applied, and recording it into a new Blob.
  */
+export interface WatermarkRenderProgress {
+  /** Porcentaje 0-100. */
+  pct: number;
+  /** Segundos del clip ya grabados. */
+  elapsed: number;
+  /** Duración total del clip, en segundos. */
+  total: number;
+}
+
+/**
+ * Graba el clip con la marca de agua incrustada.
+ *
+ * VA A VELOCIDAD REAL y no hay atajo: canvas.captureStream() muestrea a ritmo
+ * de reloj de pared, así que acelerar el vídeo no acelera el render — sólo
+ * comprime el contenido en menos tiempo, y el archivo resultante se reproduce
+ * a esa misma velocidad de más, con el audio agudo. Un clip de 60 s tarda 60 s.
+ * Por eso `onProgress` informa también de los segundos, para poder enseñar
+ * cuánto queda de verdad en vez de una barra sin referencia.
+ */
 export const processVideoWithWatermark = async (
   originalBlob: Blob,
   channelName: string,
   config: WatermarkConfig,
-  onProgress?: (loaded: number, total: number) => void
+  onProgress?: (p: WatermarkRenderProgress) => void,
+  signal?: AbortSignal
 ): Promise<Blob> => {
   return new Promise<Blob>((resolve, reject) => {
     const video = document.createElement('video');
+    const objectUrl = URL.createObjectURL(originalBlob);
     video.crossOrigin = 'anonymous';
-    video.src = URL.createObjectURL(originalBlob);
+    video.src = objectUrl;
+    // Arranca en silencio para que la política de autorreproducción nunca sea
+    // un problema; si el audio consigue enrutarse al grabador se desactiva
+    // más abajo, porque `muted` silencia también esa rama.
     video.muted = true;
     video.playsInline = true;
+
+    let audioCtx: AudioContext | null = null;
+    let recorder: MediaRecorder | null = null;
+    let finished = false;
+    let cancelado = false;
+    let safetyTimer: ReturnType<typeof setTimeout> | undefined;
+    let dibujoId: ReturnType<typeof setInterval> | undefined;
+    let alAvanzar: (() => void) | null = null;
+    let pausadoFuera = false;
+
+    const limpiar = () => {
+      clearTimeout(safetyTimer);
+      if (dibujoId !== undefined) clearInterval(dibujoId);
+      video.removeEventListener('ended', alTerminar);
+      if (alAvanzar) video.removeEventListener('timeupdate', alAvanzar);
+      signal?.removeEventListener('abort', alCancelar);
+      try { video.pause(); } catch { /* ya parado */ }
+      URL.revokeObjectURL(objectUrl);
+      if (audioCtx) audioCtx.close().catch(() => { /* ya cerrado */ });
+    };
+
+    const alTerminar = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(safetyTimer);
+      if (dibujoId !== undefined) clearInterval(dibujoId);
+      video.removeEventListener('ended', alTerminar);
+      if (recorder && recorder.state !== 'inactive') {
+        try { recorder.stop(); } catch { /* ya parando */ }
+      } else {
+        limpiar();
+        reject(new Error('El grabador nunca llegó a arrancar'));
+      }
+    };
+
+    const alCancelar = () => {
+      if (finished) return;
+      cancelado = true;
+      finished = true;
+      if (recorder && recorder.state !== 'inactive') {
+        // Se para el grabador igualmente para soltar el encoder; el onstop
+        // verá `cancelado` y rechazará en vez de devolver un vídeo a medias.
+        try { recorder.stop(); } catch { /* ya parando */ }
+      } else {
+        limpiar();
+        reject(new DOMException('Render cancelado', 'AbortError'));
+      }
+    };
+
+    if (signal?.aborted) {
+      URL.revokeObjectURL(objectUrl);
+      reject(new DOMException('Render cancelado', 'AbortError'));
+      return;
+    }
+    signal?.addEventListener('abort', alCancelar);
 
     video.onloadedmetadata = async () => {
       try {
@@ -441,142 +520,145 @@ export const processVideoWithWatermark = async (
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
-
         if (!ctx) {
-          reject(new Error("Could not get canvas context"));
+          limpiar();
+          reject(new Error('No se pudo obtener el contexto del canvas'));
           return;
         }
 
-        // Setup MediaRecorder from canvas stream at 60fps for maximum fluidity
-        const canvasStream = canvas.captureStream(60);
-
-        // Extract audio from original video if supported
+        // captureStream(0) NO muestrea por su cuenta: entrega un fotograma sólo
+        // cuando se le pide con requestFrame(). Así el vídeo deja de depender de
+        // que el compositor del navegador esté pintando, que es justo lo que se
+        // para en una pestaña de fondo. Si el navegador no lo soporta se vuelve
+        // al muestreo automático a 60 fps.
+        let canvasStream: MediaStream;
+        let pistaManual: any = null;
         try {
-          const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+          canvasStream = canvas.captureStream(0);
+          const [pista] = canvasStream.getVideoTracks();
+          if (pista && typeof (pista as any).requestFrame === 'function') {
+            pistaManual = pista;
+          } else {
+            canvasStream = canvas.captureStream(60);
+          }
+        } catch {
+          canvasStream = canvas.captureStream(60);
+        }
+
+        // El audio del original se desvía al grabador. createMediaElementSource
+        // saca el sonido del elemento y lo mete en el grafo, así que al no
+        // conectarlo a audioCtx.destination no se oye nada por los altavoces
+        // pero sí llega al archivo. Y hay que quitar `muted`: un elemento
+        // silenciado alimenta silencio al grafo, y el vídeo salía mudo.
+        try {
+          audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
           const source = audioCtx.createMediaElementSource(video);
           const dest = audioCtx.createMediaStreamDestination();
           source.connect(dest);
           dest.stream.getAudioTracks().forEach((track: MediaStreamTrack) => canvasStream.addTrack(track));
+          video.muted = false;
+          video.volume = 1;
         } catch (e) {
-          console.warn("Could not pipe audio to recorder, continuing with canvas stream", e);
+          console.warn('No se pudo llevar el audio al grabador; el vídeo saldrá mudo', e);
         }
 
         let mimeType = 'video/mp4;codecs=avc1.42E01E,mp4a.40.2';
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/mp4';
-        }
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/webm;codecs=vp9,opus';
-        }
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = 'video/webm;codecs=vp8,opus';
-        }
-        if (!MediaRecorder.isTypeSupported(mimeType)) {
-          mimeType = '';
-        }
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/mp4';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp9,opus';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8,opus';
+        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
 
-        // Set 15 Mbps video bitrate & 192 kbps audio bitrate to preserve 100% HD quality & full file size
-        const recorderOptions: MediaRecorderOptions = {
+        recorder = new MediaRecorder(canvasStream, {
           mimeType: mimeType || undefined,
-          videoBitsPerSecond: 15000000, // 15 Mbps Ultra HD bitrate
-          audioBitsPerSecond: 192000    // 192 kbps HD Audio
-        };
-
-        const recorder = new MediaRecorder(canvasStream, recorderOptions);
+          videoBitsPerSecond: 15000000,
+          audioBitsPerSecond: 192000,
+        });
         const chunks: BlobPart[] = [];
-        let finished = false;
-        let safetyTimer: ReturnType<typeof setTimeout> | undefined;
-
-        // Stopping the recorder used to happen only inside the
-        // requestAnimationFrame draw loop, which is throttled (sometimes to
-        // zero) by the browser whenever the tab isn't actively painting —
-        // background tab, minimized window, low-power mode, or just several
-        // of these running at once during a batch ZIP download. When that
-        // happened the video finished playing but rAF never ran again to
-        // notice, so recorder.stop() was never called and the whole
-        // download hung forever with no error. `ended`/`timeupdate` are
-        // driven by the media clock, not by paint, so they keep firing
-        // regardless — use those for stopping and progress instead, and
-        // keep a hard timeout as a last-resort safety net.
-        const finishRecording = () => {
-          if (finished) return;
-          finished = true;
-          video.removeEventListener('ended', finishRecording);
-          clearTimeout(safetyTimer);
-          if (recorder.state !== 'inactive') {
-            try { recorder.stop(); } catch { /* already stopping */ }
-          }
-        };
 
         recorder.ondataavailable = (e) => {
-          if (e.data && e.data.size > 0) {
-            chunks.push(e.data);
-          }
+          if (e.data && e.data.size > 0) chunks.push(e.data);
         };
 
         recorder.onstop = () => {
-          URL.revokeObjectURL(video.src);
-          const resultBlob = new Blob(chunks, { type: recorder.mimeType || 'video/mp4' });
-          resolve(resultBlob);
+          const tipo = recorder?.mimeType || 'video/mp4';
+          limpiar();
+          if (cancelado) {
+            reject(new DOMException('Render cancelado', 'AbortError'));
+            return;
+          }
+          if (pausadoFuera) {
+            reject(new Error('BACKGROUND_PAUSE'));
+            return;
+          }
+          resolve(new Blob(chunks, { type: tipo }));
         };
 
         recorder.onerror = (err) => {
-          URL.revokeObjectURL(video.src);
+          limpiar();
           reject(err);
         };
 
-        video.addEventListener('ended', finishRecording);
-        video.addEventListener('timeupdate', () => {
-          if (onProgress && duration > 0) {
-            const pct = Math.min(100, Math.round((video.currentTime / duration) * 100));
-            onProgress(pct, 100);
-          }
-        });
+        // Parar sólo desde el bucle de dibujo era el fallo antiguo: el navegador
+        // frena requestAnimationFrame (a veces del todo) cuando la pestaña no
+        // pinta — en segundo plano, minimizada o en ahorro de energía— así que
+        // el vídeo acababa y nadie llamaba a stop(). `ended` y `timeupdate` los
+        // mueve el reloj del medio, no el pintado, así que siguen llegando.
+        video.addEventListener('ended', alTerminar);
+        // Con nombre y con guarda de `finished` a propósito. Antes era una
+        // función anónima que nadie quitaba: tras cancelar seguía llegando un
+        // `timeupdate` DESPUÉS de que la promesa se hubiera rechazado, volvía a
+        // poner la interfaz en "renderizando" y ahí se quedaba clavada para
+        // siempre, sin error y sin forma de salir.
+        alAvanzar = () => {
+          if (finished || !onProgress || duration <= 0) return;
+          onProgress({
+            pct: Math.min(100, Math.round((video.currentTime / duration) * 100)),
+            elapsed: video.currentTime,
+            total: duration,
+          });
+        };
+        video.addEventListener('timeupdate', alAvanzar);
 
         recorder.start(100);
 
-        // Play at normal speed. canvas.captureStream() samples frames on a
-        // real wall-clock cadence, so it has no idea the source video is
-        // "virtually" playing faster — recording while accelerated just
-        // compresses the whole clip's content into less wall-clock time,
-        // which means the output plays back at that same multiple of the
-        // correct speed (a 27s clip recorded at 2x becomes a ~14s file that
-        // plays the full clip at double speed with pitched-up audio). There
-        // is no shortcut here: the render can only be as fast as real time.
         video.playbackRate = 1.0;
         video.currentTime = 0;
         await video.play();
 
-        // Absolute safety net: real clip duration plus generous slack for
-        // encoding overhead. If everything else fails to signal completion,
-        // this guarantees the promise still settles.
-        safetyTimer = setTimeout(finishRecording, duration * 1000 + 10000);
+        // Red de seguridad: la duración real más holgura de codificación.
+        safetyTimer = setTimeout(alTerminar, duration * 1000 + 10000);
 
-        const renderFrame = () => {
-          if (finished || video.paused || video.ended) {
-            finishRecording();
+        // El dibujo lo mueve setInterval, NUNCA requestAnimationFrame. Medido en
+        // este mismo navegador con la pestaña en segundo plano: rAF cae a 0 fps
+        // y requestVideoFrameCallback también, mientras setInterval sigue a 57
+        // fps porque el audio del clip mantiene la pestaña sin estrangular. Con
+        // rAF el canvas dejaba de actualizarse y el archivo salía casi negro y a
+        // 0,4 Mbps en vez de los 15 pedidos — sin ningún error, sólo un vídeo
+        // roto. La otra función de este servicio ya usaba setInterval por esto.
+        dibujoId = setInterval(() => {
+          if (finished) return;
+          if (video.ended) { alTerminar(); return; }
+          if (video.paused) {
+            // Con el audio enrutado esto no debería pasar. Si pasa, el navegador
+            // ha parado el vídeo por ahorro de energía: mejor decirlo que
+            // entregar un archivo cortado que parece bueno.
+            pausadoFuera = true;
+            alTerminar();
             return;
           }
-
-          // Draw video frame in crisp HD
           ctx.drawImage(video, 0, 0, width, height);
-
-          // Draw Watermark Overlay
           drawWatermarkOnCanvas(ctx, config, channelName, width, height, video.currentTime, duration);
-
-          requestAnimationFrame(renderFrame);
-        };
-
-        renderFrame();
+          if (pistaManual) pistaManual.requestFrame();
+        }, 1000 / 60);
       } catch (err) {
-        URL.revokeObjectURL(video.src);
+        limpiar();
         reject(err);
       }
     };
 
-    video.onerror = (e) => {
-      URL.revokeObjectURL(video.src);
-      reject(new Error("Failed to load video for watermark processing"));
+    video.onerror = () => {
+      limpiar();
+      reject(new Error('No se pudo cargar el vídeo para incrustar la marca de agua'));
     };
   });
 };

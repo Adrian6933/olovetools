@@ -1,4 +1,4 @@
-import { textosAnuncio } from '../../config/ads';
+import { useTextosAnuncio } from '../../config/ads';
 import React from 'react';
 import { ToolTheme } from '../../lib/themes';
 import { AdSlot, AdSlotSize } from './AdSlot';
@@ -32,6 +32,7 @@ export const UseCases: React.FC<UseCasesProps> = ({
   adSenseClient,
   adSenseSlot,
 }) => {
+  const textosAd = useTextosAnuncio();
   return (
     <section
       aria-labelledby={`${id}-h2`}
@@ -117,7 +118,7 @@ export const UseCases: React.FC<UseCasesProps> = ({
         </div>
 
         {withAd && (
-          <aside className="hidden lg:block" aria-label={textosAnuncio().anuncio}>
+          <aside className="hidden lg:block" aria-label={textosAd.anuncio}>
             <div className="sticky top-20">
               <AdSlot
                 theme={theme}

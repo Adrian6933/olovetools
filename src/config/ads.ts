@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 /**
  * Configuración central de AdSense. Este es el ÚNICO archivo a editar cuando
  * se creen las unidades de anuncio en el panel de AdSense: pega los slot IDs
@@ -82,7 +83,18 @@ const TEXTOS_ANUNCIO: Record<string, { anuncio: string; cerrar: string }> = {
   zh: { anuncio: '广告', cerrar: '关闭广告' },
 };
 
-export const textosAnuncio = () => {
-  const l = (typeof document !== 'undefined' ? document.documentElement.lang : 'en').slice(0, 2);
-  return TEXTOS_ANUNCIO[l] || TEXTOS_ANUNCIO.en;
+/**
+ * El idioma sale de <html lang>, que en el servidor no existe. Leerlo durante el
+ * render hacía que el servidor pintara "Advertisement" y el navegador "Anuncio",
+ * y React abortaba la hidratación de la isla entera — la herramienta se quedaba
+ * muerta. Por eso el primer render es siempre el inglés, igual en los dos lados,
+ * y el idioma real entra tras montar.
+ */
+export const useTextosAnuncio = () => {
+  const [txt, setTxt] = useState(TEXTOS_ANUNCIO.en);
+  useEffect(() => {
+    const l = document.documentElement.lang.slice(0, 2);
+    if (TEXTOS_ANUNCIO[l]) setTxt(TEXTOS_ANUNCIO[l]);
+  }, []);
+  return txt;
 };
