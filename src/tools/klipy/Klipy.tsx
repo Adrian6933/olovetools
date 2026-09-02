@@ -117,7 +117,7 @@ export default function Klipy({ lang, dictionary }: KlipyProps) {
     setLiveFallback(false);
     setLoading(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    let clips = await getClips(cat.id, tf);
+    let clips = await getClips(cat.slug, tf, cat.name);
     if (clips.length === 0) {
       // Clips blocked/empty → fall back to live channels (official, reliable)
       setLiveFallback(true);
