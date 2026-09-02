@@ -41,7 +41,6 @@ server/                   Lógica de backend, importada por las rutas de api/
 integrations/             Integraciones propias de Astro
 scripts/                  Utilidades de mantenimiento
 docs/                     Documentación del proyecto
-deploy/hostinger/         Configuración de Apache, sin uso desde la migración
 ```
 
 **Todo el trabajo pesado ocurre en el navegador.** El backend existe sólo para lo
