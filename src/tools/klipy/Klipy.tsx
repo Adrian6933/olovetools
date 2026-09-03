@@ -656,9 +656,11 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     }
 
     try {
-      // category.id ya es el slug de Kick (lo pone toCategory): es lo que pide el
-      // endpoint de clips, que rechaza el id numerico con un 404.
-      const page = await searchKickClips(category.id, time, null);
+      // category.id es el slug DERIVADO del nombre. Acierta en dos de cada tres
+      // categorias; para el resto ("Tibia" es "Tibia", "Grand Theft Auto V (GTA)"
+      // es "grand-theft-auto-v") hace falta el nombre para preguntarle a Kick
+      // cual es el slug de verdad, asi que se pasa siempre.
+      const page = await searchKickClips(category.id, time, null, category.name);
       const clips = page.clips.map(toClip);
       const cursor = page.cursor;
       // Evitar duplicados por id
@@ -689,6 +691,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
         state.activeCategory.id,
         state.timeFilter,
         state.paginationCursor,
+        state.activeCategory.name,
       );
       const newClips = nextPage.clips.map(toClip);
       const nextCursor = nextPage.cursor;
@@ -777,7 +780,9 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
             setState(prev => ({ ...prev, clips: snapshot }));
           }
         },
-        shouldContinue
+        shouldContinue,
+        undefined,
+        state.activeCategory.name,
       );
       if (completed) {
         setState(prev => ({ ...prev, isLoading: false, paginationCursor: null }));
@@ -824,6 +829,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
         },
         undefined,
         1,
+        state.activeCategory.name,
       );
       setState(prev => ({ ...prev, clips: [...mergedClips], isLoading: false }));
       if (completed) {
@@ -872,7 +878,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       setRenderPage(0);
       setAllClipsLoaded(false);
       deepCrawlResumeRef.current = null;
-      searchKickClips(state.activeCategory.id, state.timeFilter, null)
+      searchKickClips(state.activeCategory.id, state.timeFilter, null, state.activeCategory.name)
         .then(({ clips, cursor }) => {
           setState(prev => ({ ...prev, clips: clips.map(toClip), paginationCursor: cursor, isLoading: false }));
         })

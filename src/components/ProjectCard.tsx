@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors, UserRound, TrendingUp } from 'lucide-react';
+import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors, TrendingUp, History } from 'lucide-react';
 import { Project } from '../types';
 
 interface ProjectCardProps {
@@ -126,18 +126,20 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, categoryLabel
             {buttonLabel}
             <ArrowRight className="w-4 h-4 ml-2" />
           </div>
-          {/* Cuantas veces la has abierto tu. Va aparte y apagado: es un dato
+          {/* Cuantas veces la has abierto TU. Va aparte y apagado: es un dato
               privado, util para reencontrar lo que usas, pero no es lo que hace
-              interesante una herramienta. Icono y numero, sin palabra: cualquier
-              texto ahi tendria que concordar en genero y numero en nueve
-              idiomas ("tuyas", "ваших") y no hay sitio para eso. */}
+              interesante una herramienta.
+              Con un icono de persona y un numero suelto parecia "6 personas
+              conectadas ahora". El reloj de historial y el "x6" dicen lo que es:
+              seis veces, en el pasado. Y "x6" no necesita concordar en genero ni
+              numero, que con nueve idiomas no es poca cosa. */}
           {!!visitasPropias && (
             <span
               className="ml-auto mr-1 flex items-center gap-1 text-[10px] font-bold tabular-nums text-slate-500"
               title={t('visitsMineHint')}
             >
-              <UserRound className="h-3 w-3" strokeWidth={2.5} />
-              {formatoCorto(visitasPropias)}
+              <History className="h-3 w-3" strokeWidth={2.5} />
+              ×{formatoCorto(visitasPropias)}
             </span>
           )}
           <button

@@ -156,14 +156,66 @@ const KICK_V2 = 'https://kick.com/api/v2';
  * que sin seguir el cursor los clips con menos vistas nunca aparecian. Sigue el
  * cursor hasta agotarlo y devuelve lo reunido aunque una pagina posterior falle.
  */
-export async function getClips(slugOrName: string, time: string, name?: string): Promise<KItem[]> {
+/**
+ * El slug REAL de una categoria, preguntandoselo a Kick.
+ *
+ * No se puede deducir del nombre, y no es un detalle: medido contra la API,
+ *   "Tibia"                     -> "Tibia"                  (con mayuscula)
+ *   "Grand Theft Auto V (GTA)"  -> "grand-theft-auto-v"      (sin el parentesis)
+ *   "Project Zomboid"           -> "Project-Zomboid"         (con mayusculas)
+ *   "Garena Free Fire"          -> "Garena-Free-Fire"
+ *   "Mobile Legends: Bang Bang" -> "mobile-legends: - bang-bang"
+ * Con el slug derivado del nombre, 7 de cada 22 categorias no cargaban NI UN
+ * clip: la peticion daba 404 y la lista se quedaba vacia para siempre.
+ *
+ * Se pide directo desde el navegador, como los clips: por nuestro servidor
+ * Cloudflare responde 403 pase lo que pase, no solo desde centros de datos.
+ */
+const slugsResueltos = new Map<string, string | null>();
+
+export async function resolveCategorySlug(name: string, id?: string): Promise<string | null> {
+  const clave = `${id || ''}|${name}`;
+  if (slugsResueltos.has(clave)) return slugsResueltos.get(clave)!;
+
+  let encontrado: string | null = null;
+  try {
+    const res = await fetch(`https://kick.com/api/search?searched_word=${encodeURIComponent(name)}`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const cats: any[] = Array.isArray(data?.categories) ? data.categories : [];
+      // El id es la unica coincidencia exacta: la busqueda devuelve parecidos
+      // ("Tibia" trae tambien "TibiaME") y varios juegos comparten palabras.
+      const porId = id ? cats.find((c) => String(c.id) === String(id)) : undefined;
+      const porNombre = cats.find((c) => (c.name || '').toLowerCase() === name.toLowerCase());
+      const elegido = porId || porNombre || cats[0];
+      if (elegido?.slug) encontrado = String(elegido.slug);
+    }
+  } catch { /* sin red o bloqueado: se sigue con el slug derivado */ }
+
+  slugsResueltos.set(clave, encontrado);
+  return encontrado;
+}
+
+export async function getClips(slugOrName: string, time: string, name?: string, id?: string): Promise<KItem[]> {
   if (!slugOrName) return [];
+  // Primero el slug derivado, que acierta en dos de cada tres y ahorra una
+  // peticion. Si no da nada, se le pregunta a Kick cual es de verdad.
   const candidatos = [slugOrName];
   const corto = name ? shortCategorySlug(name) : null;
   if (corto) candidatos.push(corto);
   for (const cand of candidatos) {
     const r = await clipsPorSlug(cand, time);
     if (r.length) return r;
+  }
+
+  if (name) {
+    const real = await resolveCategorySlug(name, id);
+    if (real && !candidatos.includes(real)) {
+      const r = await clipsPorSlug(real, time);
+      if (r.length) return r;
+    }
   }
   return [];
 }
@@ -286,39 +338,90 @@ export async function getClipById(clipId: string): Promise<KItem | null> {
  * por `nextCursor` hasta agotarlo, asi que aqui basta con seguirlo e ir
  * emitiendo cada pagina.
  */
+/**
+ * Slug derivado -> slug real, una vez resuelto. Se comparte entre la carga por
+ * paginas y el barrido completo: si la primera peticion descubre que el slug
+ * bueno de "Grand Theft Auto V (GTA)" es "grand-theft-auto-v", las siguientes
+ * (y el cursor de paginacion) ya salen bien sin volver a preguntar.
+ */
+const slugCorregido = new Map<string, string>();
+
+/** Una peticion de clips. `ok` distingue "slug malo" (404) de "sin clips". */
+async function pedirPagina(slug: string, time: string, cursor?: string | null) {
+  const qs = new URLSearchParams({ sort: 'view', time });
+  if (cursor) qs.set('cursor', cursor);
+  try {
+    const res = await fetch(`${KICK_V2}/categories/${encodeURIComponent(slug)}/clips?${qs}`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return { ok: false, clips: [] as KItem[], cursor: null as string | null };
+    const data = await res.json();
+    const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
+    return {
+      ok: true,
+      clips: arr.map(mapClip).filter((c) => c.thumbnail),
+      cursor: typeof data?.nextCursor === 'string' ? data.nextCursor : null,
+    };
+  } catch {
+    return { ok: false, clips: [] as KItem[], cursor: null as string | null };
+  }
+}
+
+/**
+ * El slug con el que hay que pedir, corrigiendolo si hace falta. Devuelve null
+ * cuando ni el derivado ni el real responden, que es lo unico que deberia
+ * acabar en "esta categoria no tiene clips".
+ */
+async function slugQueResponde(derivado: string, time: string, name?: string): Promise<string | null> {
+  const yaSabido = slugCorregido.get(derivado);
+  if (yaSabido) return yaSabido;
+
+  const prueba = await pedirPagina(derivado, time);
+  if (prueba.ok) return derivado;
+
+  // El derivado da 404: se le pregunta a Kick cual es el de verdad.
+  const alternativas: string[] = [];
+  const corto = name ? shortCategorySlug(name) : null;
+  if (corto && corto !== derivado) alternativas.push(corto);
+  if (name) {
+    const real = await resolveCategorySlug(name);
+    if (real && real !== derivado && !alternativas.includes(real)) alternativas.push(real);
+  }
+  for (const alt of alternativas) {
+    const r = await pedirPagina(alt, time);
+    if (r.ok) {
+      slugCorregido.set(derivado, alt);
+      return alt;
+    }
+  }
+  return null;
+}
+
 export async function searchAllKickClips(
   categorySlug: string,
   time: string,
   onClips: (items: KItem[]) => void,
   shouldContinue?: () => boolean,
   maxPages?: number,
+  name?: string,
 ): Promise<{ completed: boolean }> {
   if (!categorySlug) return { completed: true };
+  const slug = await slugQueResponde(categorySlug, time, name);
+  if (!slug) return { completed: true };
+
   const seen = new Set<string>();
-  let cursor: string | undefined;
+  let cursor: string | null | undefined;
   const tope = maxPages ?? 25;
 
   for (let page = 0; page < tope; page++) {
     if (shouldContinue && !shouldContinue()) return { completed: false };
-    try {
-      const qs = new URLSearchParams({ sort: 'view', time });
-      if (cursor) qs.set('cursor', cursor);
-      const res = await fetch(`${KICK_V2}/categories/${encodeURIComponent(categorySlug)}/clips?${qs}`, {
-        headers: { Accept: 'application/json' },
-      });
-      if (!res.ok) break;
-      const data = await res.json();
-      const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
-      const nuevos = arr.map(mapClip).filter((c) => c.thumbnail && !seen.has(c.id));
-      for (const c of nuevos) seen.add(c.id);
-      if (nuevos.length) onClips(nuevos);
-
-      const next = typeof data?.nextCursor === 'string' ? data.nextCursor : undefined;
-      if (!next || next === cursor || arr.length === 0) return { completed: true };
-      cursor = next;
-    } catch {
-      break;
-    }
+    const r = await pedirPagina(slug, time, cursor);
+    if (!r.ok) break;
+    const nuevos = r.clips.filter((c) => !seen.has(c.id));
+    for (const c of nuevos) seen.add(c.id);
+    if (nuevos.length) onClips(nuevos);
+    if (!r.cursor || r.cursor === cursor || r.clips.length === 0) return { completed: true };
+    cursor = r.cursor;
   }
   return { completed: false };
 }
@@ -331,20 +434,11 @@ export async function searchKickClips(
   categorySlug: string,
   time: string,
   cursor?: string | null,
+  name?: string,
 ): Promise<{ clips: KItem[]; cursor: string | null }> {
   if (!categorySlug) return { clips: [], cursor: null };
-  try {
-    const qs = new URLSearchParams({ sort: 'view', time });
-    if (cursor) qs.set('cursor', cursor);
-    const res = await fetch(`${KICK_V2}/categories/${encodeURIComponent(categorySlug)}/clips?${qs}`, {
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) return { clips: [], cursor: null };
-    const data = await res.json();
-    const arr: any[] = Array.isArray(data?.clips) ? data.clips : Array.isArray(data?.data) ? data.data : [];
-    const next = typeof data?.nextCursor === 'string' ? data.nextCursor : null;
-    return { clips: arr.map(mapClip).filter((c) => c.thumbnail), cursor: next };
-  } catch {
-    return { clips: [], cursor: null };
-  }
+  const slug = await slugQueResponde(categorySlug, time, name);
+  if (!slug) return { clips: [], cursor: null };
+  const r = await pedirPagina(slug, time, cursor);
+  return { clips: r.clips, cursor: r.cursor };
 }

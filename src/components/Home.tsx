@@ -116,6 +116,10 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   // Dos fuentes distintas y separadas a propósito: las propias salen del
   // navegador de quien mira y sirven desde la primera visita; las globales
   // vienen del servidor y necesitan tráfico para significar algo.
+  // Cuánto pesa cada señal en la nota de "Recomendado".
+  const PESO_PROPIAS = 0.7;
+  const PESO_GLOBALES = 0.3;
+
   type Orden = 'default' | 'global' | 'mine' | 'az';
   const ORDEN_GUARDADO = 'olovetools_sort';
   const ORDENES_VALIDOS: Orden[] = ['default', 'global', 'mine', 'az'];
@@ -195,7 +199,38 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
     if (orden === 'global') return porVisitas(visitasGlobales);
     if (orden === 'mine') return porVisitas(visitasPropias);
     if (orden === 'az') return lista.sort((a, b) => a.name.localeCompare(b.name));
-    return lista;
+
+    // ---- Recomendado -----------------------------------------------------
+    // Una nota por herramienta: 70% lo que usas tú, 30% lo que usa todo el
+    // mundo. Los dos números NO son comparables en crudo (el global va en
+    // cientos y el tuyo en unidades), así que cada fuente se lleva a 0..1
+    // dividiendo por su propio máximo antes de mezclarlas; si no, el global
+    // aplastaría siempre al personal por pura escala.
+    //
+    // Quien entra por primera vez no tiene visitas propias: la nota queda en
+    // el 30% global, o sea "lo más usado", que es la mejor primera impresión
+    // posible. Y con todo a cero manda el orden del catálogo.
+    const maximo = (fuente: Record<string, number>) =>
+      lista.reduce((mayor, p) => Math.max(mayor, fuente[p.slug] || 0), 0);
+    const maxPropias = maximo(visitasPropias);
+    const maxGlobales = maximo(visitasGlobales);
+
+    if (maxPropias === 0 && maxGlobales === 0) return lista;
+
+    const nota = (slug: string) => {
+      const propia = maxPropias ? (visitasPropias[slug] || 0) / maxPropias : 0;
+      const global = maxGlobales ? (visitasGlobales[slug] || 0) / maxGlobales : 0;
+      return PESO_PROPIAS * propia + PESO_GLOBALES * global;
+    };
+
+    // El orden del catálogo desempata: dos herramientas con la misma nota no
+    // deben bailar de sitio entre recargas.
+    const posicion = new Map(lista.map((p, i) => [p.slug, i]));
+    return lista.sort((a, b) => {
+      const diferencia = nota(b.slug) - nota(a.slug);
+      if (Math.abs(diferencia) > 1e-9) return diferencia;
+      return (posicion.get(a.slug) ?? 0) - (posicion.get(b.slug) ?? 0);
+    });
   }, [filteredProjects, orden, visitasGlobales, visitasPropias]);
 
   const tieneVisitasPropias = Object.keys(visitasPropias).length > 0;
