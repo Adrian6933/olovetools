@@ -2170,24 +2170,65 @@ const appSchema = {
 
         keepalive para que la peticion sobreviva si se cierra la pestana justo
         despues, y sin await ni bloqueo: si el contador falla, la herramienta
-        funciona igual. */}
-    <script is:inline define:vars={{ toolSlug: tool }}>
-      (() => {
-        try {
-          const CLAVE = 'olovetools_tool_visits';
-          const previas = JSON.parse(localStorage.getItem(CLAVE) || '{}');
-          previas[toolSlug] = (previas[toolSlug] || 0) + 1;
-          localStorage.setItem(CLAVE, JSON.stringify(previas));
-        } catch { /* modo privado: no se recuerda y ya esta */ }
+        funciona igual.
 
-        try {
-          fetch('/api/stats', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ slug: toolSlug }),
-            keepalive: true,
-          }).catch(() => {});
-        } catch { /* sin red: el contador global se lo pierde */ }
+        Medido: con el ClientRouter, volver a una pagina ya visitada en la misma
+        pestana NO vuelve a ejecutar su script en linea. Cuatro entradas a una
+        herramienta disparaban UNA sola cuenta. Por eso se cuenta desde el evento
+        astro:page-load y no desde el cuerpo del script. */}
+    <script is:inline>
+      (() => {
+        // Registrar una sola vez por pestaña: el listener sobrevive a las
+        // navegaciones del ClientRouter, que es justo lo que hace falta.
+        if (window.__olovetoolsVisitas) return;
+        window.__olovetoolsVisitas = true;
+
+        const CLAVE = 'olovetools_tool_visits';
+        const ULTIMA = 'olovetools_tool_visits_last';
+        // Una misma persona entrando y saliendo sin parar no debe inflar el
+        // contador, pero volver al cabo de un rato sí cuenta. Un minuto separa
+        // las dos cosas sin necesitar sesiones ni identificadores.
+        const ESPERA_MS = 60000;
+
+        const contar = () => {
+          // El slug sale de la URL en el momento de contar, no de la página que
+          // definió el script: con navegación blanda son cosas distintas.
+          const partes = location.pathname.split('/').filter(Boolean);
+          if (partes.length < 2) return;
+          const slug = partes[1];
+          if (!/^[a-z0-9-]{1,40}$/.test(slug)) return;
+
+          const ahora = Date.now();
+          try {
+            const ultimas = JSON.parse(localStorage.getItem(ULTIMA) || '{}');
+            if (ahora - (ultimas[slug] || 0) < ESPERA_MS) return;
+            ultimas[slug] = ahora;
+            localStorage.setItem(ULTIMA, JSON.stringify(ultimas));
+          } catch {
+            // En modo privado no hay dónde recordar la última vez. Se cuenta
+            // igual: mejor un número algo alto que ninguno.
+          }
+
+          try {
+            const previas = JSON.parse(localStorage.getItem(CLAVE) || '{}');
+            previas[slug] = (previas[slug] || 0) + 1;
+            localStorage.setItem(CLAVE, JSON.stringify(previas));
+          } catch { /* modo privado: no se recuerda y ya esta */ }
+
+          try {
+            fetch('/api/stats', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ slug }),
+              keepalive: true,
+            }).catch(() => {});
+          } catch { /* sin red: el contador global se lo pierde */ }
+        };
+
+        // astro:page-load salta en cada navegación Y en la primera carga. La
+        // espera de un minuto se encarga de que no se cuente dos veces.
+        document.addEventListener('astro:page-load', contar);
+        contar();
       })();
     </script>
 

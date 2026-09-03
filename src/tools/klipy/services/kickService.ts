@@ -27,6 +27,10 @@ export interface KCategory {
   slug: string;
   name: string;
   thumbnail: string;
+  /** Espectadores sumados de los directos de esa categoria. 0 = no se sabe. */
+  viewers?: number;
+  /** Cuantos canales la estan emitiendo ahora mismo. */
+  channels?: number;
 }
 
 export interface KItem {
@@ -81,12 +85,31 @@ async function api(params: Record<string, string>): Promise<any> {
 }
 
 export async function searchCategories(q: string): Promise<KCategory[]> {
+  const termino = q.trim();
+  // "popular" es el valor con el que la interfaz compartida pide el catalogo de
+  // entrada. Antes se traducia a una busqueda de texto vacia, que el backend
+  // convertia en q="a" porque la API lo exige: salian los juegos cuyo NOMBRE
+  // lleva una a ("A Short Hike", "A Gracewind Tale") y la rejilla los pintaba
+  // como un ranking. Ahora hay un top de verdad, sumando los espectadores de
+  // los directos por categoria, que es como ordena la propia pagina de Kick.
+  if (!termino || termino.toLowerCase() === 'popular') {
+    try {
+      const data = await api({ action: 'top-categories' });
+      const arr: any[] = Array.isArray(data?.data) ? data.data : [];
+      return arr.map((c) => ({
+        id: String(c.id),
+        slug: categorySlug(c.name || ''),
+        name: c.name,
+        thumbnail: c.thumbnail || '',
+        viewers: Number(c.viewers) || 0,
+        channels: Number(c.channels) || 0,
+      }));
+    } catch {
+      return [];
+    }
+  }
+
   try {
-    // "popular" es el valor con el que la interfaz compartida pide el catalogo
-    // de entrada: en Twitch significaba "los juegos mas vistos", pero la API de
-    // Kick lo buscaria como palabra literal y devolveria casi nada. Se traduce
-    // a una busqueda amplia, que es lo que el backend hace con q vacia.
-    const termino = q.trim().toLowerCase() === 'popular' ? '' : q.trim();
     const data = await api({ action: 'categories', q: termino });
     const arr: any[] = Array.isArray(data?.data) ? data.data : [];
     return arr.map((c) => ({ id: String(c.id), slug: categorySlug(c.name || ''), name: c.name, thumbnail: c.thumbnail || '' }));

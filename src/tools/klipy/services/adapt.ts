@@ -44,8 +44,9 @@ export function toCategory(c: KCategory): Category {
     id: c.slug || c.id,
     name: c.name,
     box_art_url: c.thumbnail,
-    // La API oficial de categorias no devuelve espectadores por categoria. Cero
-    // significa "no se sabe", y la rejilla ya oculta el contador cuando es 0.
-    viewer_count: 0,
+    // El top de categorias suma los espectadores de los directos de cada una.
+    // En una busqueda por texto ese dato no viene: cero significa "no se sabe" y
+    // la rejilla oculta el contador.
+    viewer_count: c.viewers || 0,
   };
 }

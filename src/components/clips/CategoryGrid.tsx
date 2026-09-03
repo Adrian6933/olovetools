@@ -63,6 +63,13 @@ const CategoryCard: React.FC<{
         <h2 className="font-black text-sm sm:text-base md:text-xl text-gray-200 truncate group-hover:text-twitch-base transition-colors tracking-tight leading-tight mb-1.5 md:mb-2" title={category.name}>
           {category.name}
         </h2>
+        {/* Los espectadores sólo salen cuando se saben de verdad: una búsqueda
+            por texto no trae ese dato y un "0 espectadores" sería mentira. */}
+        {category.viewer_count > 0 && (
+          <p className="mb-1.5 truncate text-[11px] font-bold text-twitch-base/80 md:text-xs">
+            {formatoEspectadores(category.viewer_count)} {t('ui_viewers')}
+          </p>
+        )}
         <div className="flex min-w-0">
             {/* truncate + min-w-0: en móvil la tarjeta mide ~160px y la etiqueta
                 traducida ("Categoría de Twitch", "Twitch-Kategorie"...) es más
@@ -74,6 +81,20 @@ const CategoryCard: React.FC<{
       </div>
     </div>
   );
+};
+
+/**
+ * 44418 -> "44.4K". Con idioma FIJO a propósito: leer document.documentElement
+ * .lang aquí haría que el servidor formatease en inglés y el navegador en el
+ * idioma de la página, y React aborta la hidratación de la isla entera cuando
+ * el texto no coincide. La palabra que acompaña al número sí está traducida.
+ */
+const formatoEspectadores = (n: number): string => {
+  try {
+    return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+  } catch {
+    return String(n);
+  }
 };
 
 const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick, isLoading, t, showRank }) => {

@@ -69,6 +69,17 @@ type LegalKey = 'privacy' | 'terms' | 'cookies';
 type Panel = 'single' | 'batch' | 'scenes';
 
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
+
+// Ritmos a los que se puede recorrer el vídeo. El de por defecto es el del
+// propio vídeo (máximo detalle); bajarlo hace que cada paso salte varios
+// fotogramas, que es lo que se quiere para buscar rápido sin ir de uno en uno.
+const RITMOS = [60, 50, 30, 25, 24, 15, 12, 10, 5, 2, 1];
+
+// Cuánto espera un botón antes de empezar a repetir, y cuánto crece el salto.
+// Un seek tiene un coste fijo de decenas de milisegundos, así que ir más rápido
+// no se consigue repitiendo más a menudo sino saltando más fotogramas de golpe.
+const RETARDO_REPETICION_MS = 340;
+const SALTO_MAXIMO = 12;
 /** Past this the tab is holding more image data than most machines enjoy. */
 const MEMORY_WARN = 300 * 1024 * 1024;
 
@@ -191,19 +202,82 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
     if (fps) setInfo(current => ({ ...current, fps, fpsSource: 'measured' }));
   }, []);
 
-  const step = useCallback(
-    async (direction: number) => {
+  // ---- ritmo de paso ------------------------------------------------------
+  // null = el del vídeo. Se guarda aparte de info.fps porque info.fps es un
+  // hecho medido del archivo y esto es una preferencia de quien lo mira.
+  const [ritmo, setRitmo] = useState<number | null>(null);
+  const ritmoEfectivo = ritmo ?? info.fps ?? 30;
+
+  // Si el vídeo medido va más lento que el ritmo elegido, el elegido no vale:
+  // pedir 60 pasos por segundo en un vídeo de 24 deja varios saltos en el mismo
+  // fotograma y parece que el botón no hace nada.
+  useEffect(() => {
+    if (ritmo !== null && info.fps && ritmo > info.fps) setRitmo(null);
+  }, [ritmo, info.fps]);
+
+  /** Un salto de N fotogramas. Sin la guarda de `busy`: la usa la repetición. */
+  const saltar = useCallback(
+    async (direction: number, frames: number) => {
       const video = videoRef.current;
-      if (!video || busy) return;
+      if (!video) return;
       video.pause();
       setPlaying(false);
-      setBusy(true);
-      const time = await stepFrames(video, info.fps ?? 30, direction);
+      const time = await stepFrames(video, ritmoEfectivo, direction * Math.max(1, frames));
       setCurrentTime(time);
-      setBusy(false);
     },
-    [busy, info.fps]
+    [ritmoEfectivo]
   );
+
+  // ---- mantener pulsado para avanzar deprisa ------------------------------
+  // Cada iteración ESPERA a que el seek anterior haya terminado en vez de ir a
+  // intervalo fijo: encadenar seeks sin esperar los amontona y el vídeo se queda
+  // atrás. Y el salto crece con el tiempo, que es la única forma real de ganar
+  // velocidad cuando cada seek cuesta lo que cuesta.
+  const manteniendo = useRef(false);
+
+  const soltar = useCallback(() => {
+    manteniendo.current = false;
+  }, []);
+
+  const mantener = useCallback(
+    (direction: number) => {
+      if (manteniendo.current || busy) return;
+      manteniendo.current = true;
+      void (async () => {
+        setBusy(true);
+        try {
+          await saltar(direction, 1);
+          // Una pausa antes de repetir: un clic normal no debe disparar la
+          // repetición ni saltar dos fotogramas.
+          await new Promise(resolve => setTimeout(resolve, RETARDO_REPETICION_MS));
+          let vueltas = 0;
+          while (manteniendo.current) {
+            vueltas += 1;
+            const salto = Math.min(SALTO_MAXIMO, 1 + Math.floor(vueltas / 3));
+            await saltar(direction, salto);
+          }
+        } finally {
+          manteniendo.current = false;
+          setBusy(false);
+        }
+      })();
+    },
+    [busy, saltar]
+  );
+
+  // Si la pestaña se va o se suelta el ratón fuera del botón, la repetición
+  // tiene que parar igualmente: si no, el vídeo sigue corriendo solo.
+  useEffect(() => {
+    const parar = () => soltar();
+    window.addEventListener('pointerup', parar);
+    window.addEventListener('pointercancel', parar);
+    window.addEventListener('blur', parar);
+    return () => {
+      window.removeEventListener('pointerup', parar);
+      window.removeEventListener('pointercancel', parar);
+      window.removeEventListener('blur', parar);
+    };
+  }, [soltar]);
 
   const seek = useCallback(async (time: number) => {
     const video = videoRef.current;
@@ -275,8 +349,8 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
 
   // ---------------------------------------------------------------- batch --
   const plannedTimes = useMemo(
-    () => (info.duration ? batchTimes(batch, info.duration, info.fps) : []),
-    [batch, info.duration, info.fps]
+    () => (info.duration ? batchTimes(batch, info.duration, ritmoEfectivo) : []),
+    [batch, info.duration, ritmoEfectivo]
   );
 
   const startBatch = useCallback(async () => {
@@ -385,8 +459,11 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
       const tag = (event.target as HTMLElement)?.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
       const key = event.key.toLowerCase();
-      if (event.key === 'ArrowRight') { event.preventDefault(); void step(1); }
-      else if (event.key === 'ArrowLeft') { event.preventDefault(); void step(-1); }
+      // event.repeat: la primera pulsación arranca la repetición nuestra, y las
+      // que manda el sistema al mantener la tecla se ignoran para no encadenar
+      // seeks sueltos por encima del bucle.
+      if (event.key === 'ArrowRight') { event.preventDefault(); if (!event.repeat) mantener(1); }
+      else if (event.key === 'ArrowLeft') { event.preventDefault(); if (!event.repeat) mantener(-1); }
       else if (event.key === ' ') { event.preventDefault(); togglePlay(); }
       else if (key === 's') { event.preventDefault(); void captureNow(); }
       else if (key === 'c') { event.preventDefault(); void copyCurrent(); }
@@ -394,7 +471,10 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
       else if (event.key === 'Escape') { stopFlag.current = true; }
     };
     const down = (event: KeyboardEvent) => { if (event.key === 'Alt') setComparing(true); };
-    const up = (event: KeyboardEvent) => { if (event.key === 'Alt') setComparing(false); };
+    const up = (event: KeyboardEvent) => {
+      if (event.key === 'Alt') setComparing(false);
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') soltar();
+    };
     const blur = () => setComparing(false);
     window.addEventListener('keydown', onKey);
     window.addEventListener('keydown', down);
@@ -406,7 +486,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
       window.removeEventListener('keyup', up);
       window.removeEventListener('blur', blur);
     };
-  }, [videoUrl, step, togglePlay, captureNow, copyCurrent]);
+  }, [videoUrl, mantener, soltar, togglePlay, captureNow, copyCurrent]);
 
   // -------------------------------------------------------------- derived --
   const currentIndex = frameIndexAt(currentTime, info.fps);
@@ -491,7 +571,19 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
             <>
               {/* --------------------------- stage --------------------- */}
               <div ref={stageRef} className="relative bg-black">
-                <Viewer comparing={comparing} compareSrc={lastFrame?.url} className="aspect-video w-full">
+                <Viewer
+                  comparing={comparing}
+                  compareSrc={lastFrame?.url}
+                  natural={info.width ? { width: info.width, height: info.height } : null}
+                  labels={{
+                    zoomIn: t.zoomIn || 'Zoom in',
+                    zoomOut: t.zoomOut || 'Zoom out',
+                    reset: t.zoomReset || 'Fit to the frame',
+                    actual: t.zoomActual || 'Actual pixels (1:1)',
+                    fit: t.zoomCloser || 'Get much closer',
+                  }}
+                  className="aspect-video w-full"
+                >
                   <video
                     ref={videoRef}
                     src={videoUrl}
@@ -545,13 +637,34 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                 />
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <button type="button" onClick={() => void step(-1)} disabled={busy} className={iconButton} title={t.actionPrev || 'Previous frame'}>
+                  {/* onPointerDown en vez de onClick: mantener pulsado avanza
+                      solo, cada vez más deprisa. El pointerup lo escucha la
+                      ventana, para que soltar fuera del botón también pare. */}
+                  <button
+                    type="button"
+                    onPointerDown={() => mantener(-1)}
+                    onPointerUp={soltar}
+                    onPointerLeave={soltar}
+                    onContextMenu={event => event.preventDefault()}
+                    className={iconButton}
+                    title={t.actionPrev || 'Previous frame — hold to run back'}
+                    aria-label={t.actionPrev || 'Previous frame'}
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button type="button" onClick={togglePlay} className={iconButton} title={t.actionPlay || 'Play / pause'}>
                     {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
                   </button>
-                  <button type="button" onClick={() => void step(1)} disabled={busy} className={iconButton} title={t.actionNext || 'Next frame'}>
+                  <button
+                    type="button"
+                    onPointerDown={() => mantener(1)}
+                    onPointerUp={soltar}
+                    onPointerLeave={soltar}
+                    onContextMenu={event => event.preventDefault()}
+                    className={iconButton}
+                    title={t.actionNext || 'Next frame — hold to run forward'}
+                    aria-label={t.actionNext || 'Next frame'}
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </button>
 
@@ -561,6 +674,28 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                   </span>
 
                   <div className="ml-auto flex flex-wrap items-center gap-1.5">
+                    {/* A cuántos pasos por segundo se recorre el vídeo. Por
+                        defecto el del propio archivo, que es el máximo detalle;
+                        bajarlo salta varios fotogramas por paso. Sólo se ofrecen
+                        ritmos que el vídeo alcanza: pedir 60 en uno de 24 dejaría
+                        varios pasos dentro del mismo fotograma. */}
+                    <select
+                      value={ritmo === null ? 'nativo' : String(ritmo)}
+                      onChange={event => {
+                        const valor = event.target.value;
+                        setRitmo(valor === 'nativo' ? null : Number(valor));
+                      }}
+                      className="h-9 cursor-pointer rounded-lg border border-white/5 bg-white/5 px-2 text-[11px] font-bold text-slate-300 outline-none"
+                      aria-label={t.ui_stepRate || 'Step rate'}
+                      title={t.ui_stepRateHint || 'How many steps per second of video each press moves'}
+                    >
+                      <option value="nativo">
+                        {info.fps ? `${info.fps} fps · ${t.stepRateNative || 'every frame'}` : t.stepRateNative || 'every frame'}
+                      </option>
+                      {RITMOS.filter(r => !info.fps || r < info.fps).map(r => (
+                        <option key={r} value={r}>{r} fps</option>
+                      ))}
+                    </select>
                     <select
                       value={rate}
                       onChange={event => {

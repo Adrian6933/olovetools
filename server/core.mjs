@@ -159,6 +159,44 @@ export async function handleKick(url) {
   const params = url.searchParams;
   const action = params.get('action') || '';
 
+  // Categorias ordenadas por espectadores de verdad. La API publica de Kick no
+  // tiene un "top de categorias": /categories es una BUSQUEDA DE TEXTO y con la
+  // consulta vacia habia que mandarle "a", asi que devolvia los juegos cuyo
+  // nombre lleva una a ("A Short Hike", "A Gracewind Tale"...) y la interfaz los
+  // pintaba como si fueran un ranking. Aqui se suman los espectadores de los
+  // directos por categoria, que es lo que hace la propia pagina de Kick.
+  if (action === 'top-categories') {
+    const token = await getKickAppToken();
+    if (!token) return json(502, { error: 'token_failed' });
+    const headers = { Authorization: `Bearer ${token}`, Accept: 'application/json' };
+    const [code, body] = await kickFetch(
+      'https://api.kick.com/public/v1/livestreams?limit=100&sort=viewer_count',
+      headers
+    );
+    // kickFetch devuelve el cuerpo SIN parsear, como texto.
+    let emisiones = null;
+    try { emisiones = JSON.parse(body || 'null')?.data; } catch { /* respuesta no JSON */ }
+    if (!Array.isArray(emisiones)) return json(code || 502, { data: [] }, 120);
+
+    const porCategoria = new Map();
+    for (const emision of emisiones) {
+      const cat = emision?.category;
+      if (!cat?.id) continue;
+      const actual = porCategoria.get(cat.id) || {
+        id: String(cat.id),
+        name: cat.name || '',
+        thumbnail: cat.thumbnail || '',
+        viewers: 0,
+        channels: 0,
+      };
+      actual.viewers += Number(emision.viewer_count) || 0;
+      actual.channels += 1;
+      porCategoria.set(cat.id, actual);
+    }
+    const data = [...porCategoria.values()].sort((a, b) => b.viewers - a.viewers);
+    return json(200, { data }, 120);
+  }
+
   if (action === 'categories' || action === 'livestreams') {
     const token = await getKickAppToken();
     if (!token) return json(502, { error: 'token_failed' });
@@ -171,7 +209,7 @@ export async function handleKick(url) {
       target = `https://api.kick.com/public/v1/categories?q=${encodeURIComponent(q)}`;
     } else {
       const cat = parseInt(params.get('category_id') || '0', 10);
-      target = `https://api.kick.com/public/v1/livestreams?limit=50&sort=viewer_count${cat > 0 ? `&category_id=${cat}` : ''}`;
+      target = `https://api.kick.com/public/v1/livestreams?limit=${Math.min(100, parseInt(params.get('limit') || '50', 10) || 50)}&sort=viewer_count${cat > 0 ? `&category_id=${cat}` : ''}`;
     }
     const [code, body] = await kickFetch(target, headers);
     return json(code || 502, body ?? { data: [] }, 60);

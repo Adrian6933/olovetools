@@ -5,6 +5,11 @@
 // oculta la ordenación global en vez de enseñar ceros que parecerían datos.
 import type { APIRoute } from 'astro';
 import { leerVisitas, registrarVisita, statsEnabled } from '../../../server/visitStats.mjs';
+import { MOCK_PROJECTS } from '../../constants';
+
+// Sólo se cuentan herramientas que existen. Sin esto, cualquiera podía mandar
+// slugs inventados y llenar el almacén de filas que nadie lee nunca.
+const SLUGS = new Set(MOCK_PROJECTS.map(p => p.slug));
 
 export const prerender = false;
 
@@ -16,18 +21,18 @@ function json(status: number, data: unknown, cacheSegundos = 0) {
     headers: cacheSegundos
       ? {
           ...CABECERAS,
-          // Se sirve desde caché durante unos minutos y se revalida por detrás:
-          // un ranking de popularidad no necesita estar al segundo, y así el
-          // hub no pega al almacén en cada visita.
-          'Cache-Control': `public, max-age=0, s-maxage=${cacheSegundos}, stale-while-revalidate=600`,
+          // Medio minuto de caché: suficiente para que el hub no pegue al
+          // almacén en cada visita, y poco para que una visita nueva se vea casi
+          // enseguida. Con cinco minutos parecía que el contador no funcionaba.
+          'Cache-Control': `public, max-age=0, s-maxage=${cacheSegundos}, stale-while-revalidate=60`,
         }
       : { ...CABECERAS, 'Cache-Control': 'no-store' },
   });
 }
 
 export const GET: APIRoute = async () => {
-  if (!statsEnabled()) return json(200, { enabled: false, visits: {} }, 300);
-  return json(200, { enabled: true, visits: await leerVisitas() }, 300);
+  if (!statsEnabled()) return json(200, { enabled: false, visits: {} }, 30);
+  return json(200, { enabled: true, visits: await leerVisitas() }, 30);
 };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -40,6 +45,8 @@ export const POST: APIRoute = async ({ request }) => {
   } catch {
     return json(400, { error: 'cuerpo no válido' });
   }
+
+  if (!SLUGS.has(slug)) return json(400, { error: 'herramienta desconocida' });
 
   const total = await registrarVisita(slug);
   // Se responde 200 aunque no se haya contado: para quien visita la página, que
