@@ -188,6 +188,57 @@ const RELATED_HEADING: Record<string, string> = {
   hi: 'संबंधित उपकरण', ja: '関連ツール', zh: '相关工具',
 };
 const relatedSlugs = (RELATED_TOOLS[tool as string] || []).slice(0, 6);
+
+// ---------------------------------------------------------------------------
+// Dónde caen los bloques de anuncio de ESTA herramienta.
+//
+// Repartidos, y distintos en cada herramienta, para que recorrer el sitio no
+// sea ver el mismo anuncio en el mismo sitio sesenta veces. Pero NO al azar en
+// cada carga, por tres motivos concretos:
+//   1. La página se pinta en el servidor. Un Math.random() daría una posición
+//      en el servidor y otra en el navegador, React abortaría la hidratación y
+//      la herramienta entera se quedaría muerta (ya pasó con la etiqueta
+//      "Anuncio").
+//   2. Un anuncio que salta de sitio cada vez que recargas parece un fallo, y
+//      empuja el contenido bajo el dedo justo cuando vas a pulsar algo.
+//   3. AdSense pide que la colocación no provoque clics accidentales; meter
+//      unidades en un punto impredecible del contenido va justo en contra.
+//
+// Así que la variedad sale del nombre de la herramienta: estable para cada una,
+// distinta entre ellas. Dos puntos de cuatro posibles.
+// ---------------------------------------------------------------------------
+const PUNTOS_ANUNCIO = ['antesCtas', 'entreCtas', 'trasRelacionadas', 'trasSeo'] as const;
+type PuntoAnuncio = (typeof PUNTOS_ANUNCIO)[number];
+
+const huellaTool = (() => {
+  let h = 2166136261;
+  for (const c of String(tool)) {
+    h ^= c.charCodeAt(0);
+    h = Math.imul(h, 16777619) >>> 0;
+  }
+  return h;
+})();
+
+const puntosElegidos: Set<PuntoAnuncio> = (() => {
+  const primero = PUNTOS_ANUNCIO[huellaTool % PUNTOS_ANUNCIO.length];
+  // El desplazamiento nunca es múltiplo de 4, así que el segundo punto jamás
+  // coincide con el primero y siempre salen dos bloques.
+  const paso = 1 + ((huellaTool >>> 8) % (PUNTOS_ANUNCIO.length - 1));
+  const segundo = PUNTOS_ANUNCIO[(huellaTool + paso) % PUNTOS_ANUNCIO.length];
+  return new Set<PuntoAnuncio>([primero, segundo]);
+})();
+
+// Cada punto pide su unidad de AdSense. OJO: hoy `content` y `mid` son el MISMO
+// id en src/config/ads.ts, así que una herramienta que caiga en esos dos puntos
+// repite unidad. AdSense lo permite (el mismo bloque puede salir varias veces en
+// una página), pero significa que no se pueden separar métricas por posición
+// hasta que `mid` tenga id propio.
+const unidadAnuncio: Record<PuntoAnuncio, 'top' | 'content' | 'mid' | 'late'> = {
+  antesCtas: 'top',
+  entreCtas: 'content',
+  trasRelacionadas: 'mid',
+  trasSeo: 'late',
+};
 const relatedHeading = RELATED_HEADING[castLang] || RELATED_HEADING.en;
 
 // ---- CTAs cruzados: botones "siguiente paso" hacia herramientas que continúan el flujo ----
@@ -2232,6 +2283,12 @@ const appSchema = {
       })();
     </script>
 
+    {puntosElegidos.has('antesCtas') && (
+      <div class="max-w-3xl mx-auto px-4 pt-8">
+        <AdSlot position={unidadAnuncio.antesCtas} size="leaderboard" client:idle={{ timeout: 2000 }} />
+      </div>
+    )}
+
     {toolCtas.length > 0 && (
       <section aria-label={ctaHeading} class="tool-ctas max-w-5xl mx-auto px-4 pt-10 pb-2">
         <p class="text-[11px] font-black uppercase tracking-[0.25em] text-slate-500 mb-3">{ctaHeading}</p>
@@ -2248,6 +2305,12 @@ const appSchema = {
           ))}
         </div>
       </section>
+    )}
+
+    {puntosElegidos.has('entreCtas') && (
+      <div class="max-w-3xl mx-auto px-4 pt-8">
+        <AdSlot position={unidadAnuncio.entreCtas} size="leaderboard" client:idle={{ timeout: 2000 }} />
+      </div>
     )}
 
     {relatedSlugs.length > 0 && (
@@ -2268,11 +2331,13 @@ const appSchema = {
       </nav>
     )}
 
-    {/* Unidad in-content responsive central: cubre las 60 herramientas (incl. las que
-        no tienen AdBanner propio) sin editar cada una. Oculta en prod sin slot configurado. */}
-    <div class="max-w-3xl mx-auto px-4 pb-4">
-      <AdSlot position="content" size="leaderboard" client:idle={{ timeout: 2000 }} />
-    </div>
+    {/* Unidad in-content bajo las herramientas relacionadas. Ya no sale en todas:
+        es uno de los cuatro puntos posibles (ver PUNTOS_ANUNCIO). */}
+    {puntosElegidos.has('trasRelacionadas') && (
+      <div class="max-w-3xl mx-auto px-4 pb-4">
+        <AdSlot position={unidadAnuncio.trasRelacionadas} size="leaderboard" client:idle={{ timeout: 2000 }} />
+      </div>
+    )}
 
     <!-- SSR SEO content: visible (not display:none) to avoid cloaking. Some tools already
          show similar content in their own footer; this is intentionally supplementary,
@@ -2319,6 +2384,12 @@ const appSchema = {
         </div>
       </aside>
     </div>
+
+    {puntosElegidos.has('trasSeo') && (
+      <div class="max-w-3xl mx-auto px-4 pb-10">
+        <AdSlot position={unidadAnuncio.trasSeo} size="leaderboard" client:idle={{ timeout: 2000 }} />
+      </div>
+    )}
 
     {/* Footer renderizado aquí (tras CTAs, relacionadas y contenido SEO)
         para que quede al final real de la página, no dentro de la isla */}
