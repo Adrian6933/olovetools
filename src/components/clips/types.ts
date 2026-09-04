@@ -68,6 +68,14 @@ export interface SearchState {
   categories: Category[];
   clips: Clip[];
   paginationCursor: string | null; // Token for the next page of results
+  /**
+   * Cursor de la rejilla de CATEGORIAS, aparte del de los clips. Compartir uno
+   * solo rompia el "cargar mas categorias": al entrar en una categoria el
+   * cursor pasaba a ser el de los clips, y si volvias atras (con el boton del
+   * raton, por ejemplo) el boton seguia ahi pero pedia mas categorias con un
+   * cursor de clips, asi que no llegaba nada.
+   */
+  categoriesCursor: string | null;
   timeFilter: TimeFilter;
   sortType: SortType;
   anchorTime: string | null;

@@ -12,6 +12,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
 import { groupClipsByCategory, clipMatchesCategory } from '../../components/clips/grouping';
+import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
 import { searchCategories, searchKickClips, searchAllKickClips, getClipById, getClipVideoSource, fetchKickSuggestions } from './services/kickService';
 import { toCategory, toClip } from './services/adapt';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
@@ -80,6 +81,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     categories: [],
     clips: [],
     paginationCursor: null,
+    categoriesCursor: null,
     timeFilter: TimeFilter.DAY,
     sortType: SortType.VIEWS,
     anchorTime: null,
@@ -142,6 +144,10 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   // repartido en secciones desplegables por categoria.
   const [categoryScope, setCategoryScope] = useState<'active' | 'all'>('active');
   const [expandedSavedCats, setExpandedSavedCats] = useState<string[]>([]);
+  // Palabras que tiene que llevar el titulo del clip. No se guardan en disco ni
+  // sobreviven al cambio de categoria: un "ace" olvidado de la sesion de ayer
+  // te deja mirando una rejilla medio vacia sin entender por que.
+  const [keywords, setKeywords] = useState<string[]>([]);
   const [creatingList, setCreatingList] = useState(false);
   const [triggerShake, setTriggerShake] = useState(false);
   const savedListRef = useRef<HTMLDivElement>(null);
@@ -408,6 +414,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   const activeCategoryRef = useRef<Category | null>(null);
   useEffect(() => { activeCategoryRef.current = state.activeCategory; }, [state.activeCategory]);
 
+  useEffect(() => { setKeywords([]); }, [state.activeCategory?.id]);
+
   /**
    * Sella el clip con la categoria desde la que se guarda. Ni Kick ni Twitch la
    * devuelven dentro del clip, asi que la unica forma de saberla es mirar donde
@@ -611,7 +619,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       activeCategory: null,
       categories: [],
       clips: [],
-      paginationCursor: null
+      paginationCursor: null,
+      categoriesCursor: null
     }));
 
     try {
@@ -652,7 +661,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       const categories = (await searchCategories(query)).map(toCategory);
       const cursor = null;
       if (searchId !== lastSearchId.current) return;
-      setState(prev => ({ ...prev, categories, paginationCursor: cursor, isLoading: false }));
+      setState(prev => ({ ...prev, categories, categoriesCursor: cursor, isLoading: false }));
     } catch (error: any) {
       if (searchId !== lastSearchId.current) return;
       setState(prev => ({ ...prev, error: isClipUrl ? t('error_clips') : t('error_categories'), isLoading: false }));
@@ -660,7 +669,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   }, [t]);
 
   const loadMoreCategories = useCallback(async () => {
-    if (state.isLoading || !state.paginationCursor || state.mode !== 'categories') return;
+    if (state.isLoading || !state.categoriesCursor || state.mode !== 'categories') return;
     setState(prev => ({ ...prev, isLoading: true }));
     try {
       // Kick devuelve el catalogo de una vez: no hay segunda pagina que pedir.
@@ -669,13 +678,13 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       setState(prev => ({
         ...prev,
         categories: [...prev.categories, ...newCats],
-        paginationCursor: nextCursor,
+        categoriesCursor: nextCursor,
         isLoading: false
       }));
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.paginationCursor, state.query, state.mode]);
+  }, [state.isLoading, state.categoriesCursor, state.query, state.mode]);
 
   const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter) => {
     // Cambiamos el modo inmediatamente para que el usuario entre a la sección y vea los skeletons
@@ -1194,6 +1203,13 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     );
   };
 
+  // Normalizadas una vez, no una por clip: el filtro corre sobre miles de
+  // titulos cada vez que llega una pagina del barrido.
+  const keywordNeedles = useMemo(
+    () => keywords.map(normalizeText).map(w => w.trim()).filter(Boolean),
+    [keywords],
+  );
+
   const visibleClips = useMemo(() => {
     const blockedIds = new Set(activeBlockedList.map(s => s.id));
     const onlySet = activeOnlyLanguages.length > 0 ? new Set(activeOnlyLanguages) : null;
@@ -1202,6 +1218,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       if (blockedIds.has(clip.broadcaster_id)) return false;
       if (onlySet && !onlySet.has(clip.language || '')) return false;
       if (excludeSet && excludeSet.has(clip.language || '')) return false;
+      if (!clipMatchesKeywords(clip, keywordNeedles)) return false;
       return true;
     });
 
@@ -1242,7 +1259,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       grouped.push(...groups[channelId]);
     }
     return grouped;
-  }, [state.clips, activeBlockedList, groupByChannel, state.sortType, isDeepCrawling, activeOnlyLanguages, activeExcludeLanguages]);
+  }, [state.clips, activeBlockedList, groupByChannel, state.sortType, isDeepCrawling, activeOnlyLanguages, activeExcludeLanguages, keywordNeedles]);
 
   const totalRenderPages = Math.max(1, Math.ceil(visibleClips.length / RENDER_PAGE_SIZE));
 
@@ -1653,7 +1670,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
               t={t}
               showRank={isTopPopularMode}
             />
-            {state.paginationCursor && (
+            {state.categoriesCursor && (
               <div className="flex justify-center pb-24 md:pb-32">
                 <button onClick={loadMoreCategories} disabled={state.isLoading} className="flex items-center gap-3 md:gap-6 px-8 md:px-16 py-5 md:py-8 bg-[#1a1a24] border border-white/5 hover:border-white/20 rounded-3xl md:rounded-[2rem] text-sm md:text-lg font-black text-gray-400 hover:text-white transition-all shadow-xl active:scale-95 group disabled:opacity-50 cursor-pointer">
                   {state.isLoading ? <Loader2 className="w-6 h-6 md:w-8 md:h-8 animate-spin text-twitch-base" /> : <PlusCircle className="w-6 h-6 md:w-8 md:h-8 text-twitch-base" />}
@@ -1690,6 +1707,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                   onOnlyLanguagesChange={handleOnlyLanguagesChange}
                   playbackSpeed={playbackSpeed}
                   onPlaybackSpeedChange={handlePlaybackSpeedChange}
+                  keywords={keywords}
+                  onKeywordsChange={setKeywords}
                 />
                 {isBlocklistOpen && (
                   <BlocklistManager

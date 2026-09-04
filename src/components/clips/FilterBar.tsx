@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { TimeFilter, SortType } from './types';
-import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward } from 'lucide-react';
+import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward, Type } from 'lucide-react';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
 // así que velocidades altas (x3/x4) siguen siendo perfectamente reproducibles
@@ -70,6 +70,12 @@ interface FilterBarProps {
   onOnlyLanguagesChange?: (codes: string[]) => void;
   playbackSpeed?: number;
   onPlaybackSpeedChange?: (speed: number) => void;
+  /**
+   * Palabras que tiene que llevar el titulo del clip. Se cruzan con O: al
+   * anadir la segunda salen los clips de cualquiera de las dos.
+   */
+  keywords?: string[];
+  onKeywordsChange?: (words: string[]) => void;
 }
 
 const toDatetimeLocalValue = (date: Date) => {
@@ -100,13 +106,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onlyLanguages = [],
   onOnlyLanguagesChange,
   playbackSpeed = 2,
-  onPlaybackSpeedChange
+  onPlaybackSpeedChange,
+  keywords = [],
+  onKeywordsChange
 }) => {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isAnchorOpen, setIsAnchorOpen] = useState(false);
   const [isExcludeLangOpen, setIsExcludeLangOpen] = useState(false);
   const [isOnlyLangOpen, setIsOnlyLangOpen] = useState(false);
   const [isSpeedOpen, setIsSpeedOpen] = useState(false);
+  const [keywordDraft, setKeywordDraft] = useState('');
   const sortRef = useRef<HTMLDivElement>(null);
   const anchorRef = useRef<HTMLDivElement>(null);
   const anchorInputRef = useRef<HTMLInputElement>(null);
@@ -138,6 +147,29 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
   const toggleLanguageIn = (list: string[], code: string) =>
     list.includes(code) ? list.filter(c => c !== code) : [...list, code];
+
+  /**
+   * Acepta varias de golpe separadas por coma para poder pegar una lista, y se
+   * come los duplicados comparando en minusculas (que "ACE" y "ace" acaben
+   * siendo dos fichas distintas no ayuda a nadie).
+   */
+  const commitKeywordDraft = () => {
+    if (!onKeywordsChange) return;
+    const nuevas = keywordDraft
+      .split(',')
+      .map(w => w.trim())
+      .filter(Boolean);
+    if (nuevas.length === 0) return;
+    const vistas = new Set(keywords.map(w => w.toLowerCase()));
+    const salida = [...keywords];
+    for (const palabra of nuevas) {
+      if (vistas.has(palabra.toLowerCase())) continue;
+      vistas.add(palabra.toLowerCase());
+      salida.push(palabra);
+    }
+    onKeywordsChange(salida);
+    setKeywordDraft('');
+  };
 
   useEffect(() => {
     if (!isAnchorOpen) return;
@@ -479,6 +511,64 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </div>
         )}
       </div>
+
+      {/* Filtro por palabras del titulo, en su propia fila: las fichas crecen
+          con cada palabra y en la fila de arriba empujarian todo lo demas. */}
+      {onKeywordsChange && (
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 pb-4 -mt-1">
+          <div className="flex items-center gap-2 flex-shrink-0" title={t('keywords_hint')}>
+            <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
+              <Type className="w-5 h-5 text-twitch-base" />
+            </div>
+            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{t('keywords')}</span>
+          </div>
+
+          <form
+            className="flex-grow min-w-0 flex flex-wrap items-center gap-1.5 bg-twitch-black border border-twitch-surfaceAlt rounded-lg px-2 py-1.5 focus-within:border-twitch-base transition-colors"
+            onSubmit={(e) => { e.preventDefault(); commitKeywordDraft(); }}
+          >
+            {keywords.map(word => (
+              <span key={word} className="flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-md bg-twitch-base/15 border border-twitch-base/30 text-twitch-base text-xs font-bold max-w-full">
+                <span className="truncate">{word}</span>
+                <button
+                  type="button"
+                  onClick={() => onKeywordsChange(keywords.filter(w => w !== word))}
+                  title={t('delete')}
+                  className="p-0.5 rounded hover:bg-twitch-base/25 transition-colors cursor-pointer flex-shrink-0"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+            <input
+              value={keywordDraft}
+              onChange={(e) => setKeywordDraft(e.target.value)}
+              // Retroceso con el campo vacio quita la ultima ficha, que es lo
+              // que hace cualquier campo de etiquetas y evita tener que apuntar
+              // a una equis de 12px.
+              onKeyDown={(e) => {
+                if (e.key === 'Backspace' && keywordDraft === '' && keywords.length > 0) {
+                  onKeywordsChange(keywords.slice(0, -1));
+                }
+              }}
+              onBlur={commitKeywordDraft}
+              placeholder={keywords.length > 0 ? t('keywords_add') : t('keywords_placeholder')}
+              aria-label={t('keywords')}
+              maxLength={40}
+              className="flex-grow min-w-[8rem] bg-transparent text-sm text-white placeholder:text-gray-600 outline-none py-0.5"
+            />
+            {keywords.length > 0 && (
+              <button
+                type="button"
+                onClick={() => { onKeywordsChange([]); setKeywordDraft(''); }}
+                className="flex-shrink-0 px-2 py-1 text-[11px] font-bold text-gray-500 hover:text-white transition-colors cursor-pointer"
+              >
+                {t('clear_selection')}
+              </button>
+            )}
+          </form>
+        </div>
+      )}
     </div>
 );
 };
