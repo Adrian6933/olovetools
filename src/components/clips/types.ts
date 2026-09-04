@@ -43,6 +43,14 @@ export interface Clip {
    * porque su endpoint de clip suelto bloquea las IP de centro de datos.
    */
   playback_url?: string;
+  /**
+   * Categoria desde la que se guardo el clip. Ni Kick ni Twitch la devuelven
+   * dentro del clip, asi que se sella al guardarlo mirando en que categoria
+   * estaba navegando el usuario. Los clips guardados antes de que esto
+   * existiera no la tienen, y caen en el grupo "sin categoria".
+   */
+  category_id?: string;
+  category_name?: string;
 }
 
 export interface SavedCollection {

@@ -136,6 +136,8 @@ export default {
   "import_error": "ファイルのインポートに失敗しました",
   "import_invalid_format": "ファイル形式が正しくありません",
   "download": "ダウンロード",
+  "all_categories": "すべてのカテゴリ",
+  "uncategorized": "カテゴリなし",
   "add_to_lists": "リストに追加",
   "choose_lists": "リストに追加",
   "default_list": "デフォルトのリスト",

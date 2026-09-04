@@ -136,6 +136,8 @@ export default {
   "import_error": "फ़ाइल आयात करने में त्रुटि",
   "import_invalid_format": "अमान्य फ़ाइल स्वरूप",
   "download": "डाउनलोड",
+  "all_categories": "सभी श्रेणियाँ",
+  "uncategorized": "बिना श्रेणी",
   "add_to_lists": "सूचियों में जोड़ें",
   "choose_lists": "सूचियों में जोड़ें",
   "default_list": "डिफ़ॉल्ट सूची",

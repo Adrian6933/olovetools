@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff, Gauge, Loader2, ChevronDown } from 'lucide-react';
+import { X, GripHorizontal, AlertCircle, MonitorPlay, ExternalLink, Plus, Check, Link as LinkIcon, CheckCircle2, Download, RotateCcw, MoreVertical, Menu, EyeOff, Gauge, Loader2, ChevronDown, ListPlus } from 'lucide-react';
 import { Clip } from './types';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
@@ -15,6 +15,13 @@ interface FloatingPlayerProps {
   isSaved: boolean;
   onToggleSave: (clip: Clip) => void;
   onDownloadExternal: (url: string) => void;
+  /**
+   * Abre el selector de listas para este clip. Sin esto, el unico sitio desde
+   * donde archivar en una lista con nombre eran la tarjeta de la rejilla y el
+   * panel de guardados — y viendo un clip en el reproductor no hay ninguna de
+   * las dos a mano.
+   */
+  onAddToList?: (clip: Clip) => void;
   onBlockStreamer?: (id: string, name: string, image?: string) => void;
   t: (key: string) => string;
   /** Velocidad de reproducción elegida en el filtro; 1 = normal. */
@@ -67,7 +74,7 @@ const loadHls = (): Promise<any> =>
     document.head.appendChild(script);
   });
 
-const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange, getVideoSource }) => {
+const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved, onToggleSave, onDownloadExternal, onAddToList, onBlockStreamer, t, playbackSpeed, onPlaybackSpeedChange, getVideoSource }) => {
   // 480px fijos no caben en un móvil: el reproductor arrancaba saliéndose por
   // la derecha (x se topaba en 20 y el ancho seguía siendo 480 en una pantalla
   // de 375). Se ajusta al viewport manteniendo el 16:9.
@@ -573,6 +580,15 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                       {isSaved ? <Check className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
                       <span>{isSaved ? t('saved') : t('save')}</span>
                     </button>
+                    {onAddToList && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onAddToList(clip); setShowMenu(false); }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-300 hover:bg-white/10 transition-colors cursor-pointer"
+                      >
+                        <ListPlus className="w-4 h-4" />
+                        <span>{t('add_to_lists')}</span>
+                      </button>
+                    )}
                     {onBlockStreamer && (
                       <button
                         onClick={(e) => {
@@ -592,7 +608,9 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                       className="w-full flex items-center gap-3 px-4 py-2.5 text-xs font-bold text-gray-400 hover:bg-white/10 hover:text-white transition-colors cursor-pointer"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      <span>Twitch</span>
+                      {/* Rotulo traducido, no "Twitch" a pelo: este menu lo
+                          comparte Klipy, donde el enlace lleva a Kick. */}
+                      <span>{t('open_twitch')}</span>
                     </button>
                   </div>
                 )}
@@ -642,6 +660,16 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                     {isSaved ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
                     <span>{isSaved ? t('saved') : t('save')}</span>
                 </button>
+                {onAddToList && (
+                  <button
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onClick={() => onAddToList(clip)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border bg-white/10 text-white border-white/10 hover:bg-twitch-base hover:border-twitch-base hover:text-[var(--color-accent-ink)] cursor-pointer"
+                      title={t('add_to_lists')}
+                  >
+                      <ListPlus className="w-3.5 h-3.5" />
+                  </button>
+                )}
                 {onBlockStreamer && (
                   <button
                       onMouseDown={(e) => e.stopPropagation()}

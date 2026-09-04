@@ -136,6 +136,8 @@ export default {
   "import_error": "Erreur lors de l'import du fichier",
   "import_invalid_format": "Format de fichier invalide",
   "download": "Télécharger",
+  "all_categories": "Toutes les catégories",
+  "uncategorized": "Sans catégorie",
   "add_to_lists": "Ajouter à des listes",
   "choose_lists": "Ajouter à des listes",
   "default_list": "Liste par défaut",

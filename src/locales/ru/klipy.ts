@@ -209,6 +209,8 @@ export default {
   "import_error": "Ошибка при импорте файла",
   "import_invalid_format": "Неверный формат файла",
   "download": "Скачать",
+  "all_categories": "Все категории",
+  "uncategorized": "Без категории",
   "add_to_lists": "Добавить в списки",
   "choose_lists": "Добавить в списки",
   "default_list": "Список по умолчанию",

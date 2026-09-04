@@ -209,6 +209,8 @@ export default {
   "import_error": "导入文件出错",
   "import_invalid_format": "文件格式无效",
   "download": "下载",
+  "all_categories": "全部分类",
+  "uncategorized": "未分类",
   "add_to_lists": "添加到列表",
   "choose_lists": "添加到列表",
   "default_list": "默认列表",

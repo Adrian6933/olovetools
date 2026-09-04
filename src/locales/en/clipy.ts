@@ -128,6 +128,8 @@ export default {
   "all_clips_loaded": "All clips loaded",
   "import_empty": "No streamers found to import",
   "close": "Close",
+  "all_categories": "All categories",
+  "uncategorized": "Uncategorized",
   "add_to_lists": "Add to lists",
   "choose_lists": "Add to lists",
   "default_list": "Default list",

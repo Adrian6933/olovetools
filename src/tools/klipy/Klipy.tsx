@@ -9,7 +9,9 @@
 // redefinir esa variable en la raiz de esta herramienta y todo el arbol pasa a
 // verde Kick, sin tocar una sola linea de los componentes.
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
+import { groupClipsByCategory, clipMatchesCategory } from '../../components/clips/grouping';
 import { searchCategories, searchKickClips, searchAllKickClips, getClipById, getClipVideoSource, fetchKickSuggestions } from './services/kickService';
 import { toCategory, toClip } from './services/adapt';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
@@ -135,6 +137,11 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   /** Panel de listas (distinto del historial) y qué lista está desplegada dentro. */
   const [showListsPanel, setShowListsPanel] = useState(false);
   const [expandedListId, setExpandedListId] = useState<string | null>(null);
+  // Alcance por categoria de los paneles de guardados y de listas: dentro de
+  // Rust no pintan los clips de Valorant. 'all' vuelve a ensenarlo todo,
+  // repartido en secciones desplegables por categoria.
+  const [categoryScope, setCategoryScope] = useState<'active' | 'all'>('active');
+  const [expandedSavedCats, setExpandedSavedCats] = useState<string[]>([]);
   const [creatingList, setCreatingList] = useState(false);
   const [triggerShake, setTriggerShake] = useState(false);
   const savedListRef = useRef<HTMLDivElement>(null);
@@ -303,17 +310,21 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     });
   }, [savedClips, sessionActive, lang]);
 
-  const handleSaveCollection = () => {
-    if (savedClips.length === 0) return;
+  const handleSaveCollection = (clips: Clip[], label?: string) => {
+    if (clips.length === 0) return;
     if (collections.length >= MAX_COLLECTIONS) {
       showToast(t('collections_limit'), 'info');
       return;
     }
+    const stamp = new Date().toLocaleString(lang);
     const newCollection: SavedCollection = {
       id: crypto.randomUUID(),
-      name: new Date().toLocaleString(lang),
+      // Con el panel acotado a una categoria, la coleccion guarda solo esa
+      // parte: que lleve el nombre de la categoria delante evita acabar con
+      // cinco entradas de la misma fecha y ninguna pista de que hay dentro.
+      name: label ? `${label} - ${stamp}` : stamp,
       createdAt: new Date().toISOString(),
-      clips: savedClips,
+      clips,
     };
     setCollections(prev => [newCollection, ...prev]);
     showToast(t('collection_saved'));
@@ -347,7 +358,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     setCollections(prev => prev.map(c => {
       if (c.id !== collectionId) return c;
       const has = c.clips.some(x => x.id === clip.id);
-      return { ...c, clips: has ? c.clips.filter(x => x.id !== clip.id) : [...c.clips, clip] };
+      return { ...c, clips: has ? c.clips.filter(x => x.id !== clip.id) : [...c.clips, withCategoryRef.current(clip)] };
     }));
   }, []);
 
@@ -386,19 +397,31 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
 
   const handleDownloadCollectionTxt = (e: React.MouseEvent, collection: SavedCollection) => {
     e.stopPropagation();
-    const content = collection.clips.map(c => c.url).join('\n');
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${collection.name.replace(/[^a-z0-9]+/gi, '_')}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    // Revocado con retardo, no en el mismo tick que el click: Safari cancela la
-    // descarga en curso cuando la object URL desaparece bajo sus pies.
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    downloadClipsTxt(collection.clips, collection.name);
   };
+
+  /**
+   * La categoria que se esta mirando ahora mismo, en un ref: withCategory viaja
+   * como dependencia hasta cada ClipCard memoizada, y si cambiara de identidad
+   * al cambiar de categoria invalidaria toda la rejilla.
+   */
+  const activeCategoryRef = useRef<Category | null>(null);
+  useEffect(() => { activeCategoryRef.current = state.activeCategory; }, [state.activeCategory]);
+
+  /**
+   * Sella el clip con la categoria desde la que se guarda. Ni Kick ni Twitch la
+   * devuelven dentro del clip, asi que la unica forma de saberla es mirar donde
+   * estaba el usuario en ese momento. Los que ya la traen (los que vuelven de
+   * una lista o de una coleccion) se dejan como estan.
+   */
+  const withCategory = useCallback((clip: Clip): Clip => {
+    if (clip.category_name) return clip;
+    const cat = activeCategoryRef.current;
+    if (!cat) return clip;
+    return { ...clip, category_id: cat.id, category_name: cat.name };
+  }, []);
+  const withCategoryRef = useRef(withCategory);
+  withCategoryRef.current = withCategory;
 
   const handleToggleSave = useCallback((clip: Clip) => {
     setSavedClips(prev => {
@@ -409,12 +432,12 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       } else {
         setTriggerShake(true);
         setTimeout(() => setTriggerShake(false), 500);
-        newClips = [...prev, clip];
+        newClips = [...prev, withCategory(clip)];
       }
       return newClips;
     });
     setSessionActive(true);
-  }, [t]);
+  }, [t, withCategory]);
 
   const handleDeleteClip = (e: React.MouseEvent, clipId: string) => {
     e.stopPropagation();
@@ -438,35 +461,53 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     }
   };
 
-  const requestDeleteAll = (e: React.MouseEvent) => {
+  // Que se lleva por delante el "borrar todo": con el panel acotado a una
+  // categoria, solo esa; con el panel entero, todo. Va en un ref porque la
+  // confirmacion ocurre en otro render, ya con el modal abierto.
+  const deleteTargetRef = useRef<Clip[] | null>(null);
+
+  const requestDeleteAll = (e: React.MouseEvent, clips: Clip[]) => {
     e.stopPropagation();
+    deleteTargetRef.current = clips;
     setShowDeleteModal(true);
   };
 
   const confirmDeleteAll = () => {
-    setSavedClips([]);
-    setDeletedClipsStack([]);
+    const target = deleteTargetRef.current;
+    if (target && target.length > 0 && target.length < savedClips.length) {
+      const ids = new Set(target.map(c => c.id));
+      setSavedClips(prev => prev.filter(c => !ids.has(c.id)));
+    } else {
+      setSavedClips([]);
+      setDeletedClipsStack([]);
+    }
+    deleteTargetRef.current = null;
     setSessionActive(true);
     setShowDeleteModal(false);
     setShowSavedList(false);
     showToast(t('delete_confirm'), 'info');
   };
 
-  const handleDownloadTxt = () => {
-    if (savedClips.length === 0) return;
-    const content = savedClips.map(c => c.url).join('\n');
+  /**
+   * Un .txt con los enlaces de los clips que se le pasen. Lo usan la descarga
+   * del panel entero, la de una categoria suelta y la de cada lista, que solo
+   * se diferencian en que subconjunto le dan.
+   */
+  const downloadClipsTxt = useCallback((clips: Clip[], filename: string) => {
+    if (clips.length === 0) return;
+    const content = clips.map(c => c.url).join('\n');
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${t('download_filename')}.txt`;
+    a.download = `${filename.replace(/[^a-z0-9]+/gi, '_').replace(/^_+|_+$/g, '') || 'clips'}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     // Revocado con retardo, no en el mismo tick que el click: Safari cancela la
     // descarga en curso cuando la object URL desaparece bajo sus pies.
     setTimeout(() => URL.revokeObjectURL(url), 4000);
-  };
+  }, []);
 
   const openExternalDownload = useCallback(async (content: string) => {
     try {
@@ -486,9 +527,9 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     window.open(targetUrl.toString(), '_blank');
   }, [lang]);
 
-  const handleExternalZip = async () => {
-    if (savedClips.length === 0) return;
-    const content = savedClips.map(c => c.url).join('\n');
+  const handleExternalZip = async (clips: Clip[]) => {
+    if (clips.length === 0) return;
+    const content = clips.map(c => c.url).join('\n');
     openExternalDownload(content);
     setShowSavedList(false);
   };
@@ -1007,7 +1048,6 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
 
   const isTopPopularMode = state.query === 'popular' || !state.query.trim();
 
-  const totalSeconds = savedClips.reduce((acc, clip) => acc + (parseInt(clip.duration) || 0), 0);
   const formatTotalDuration = (seconds: number) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.floor((seconds % 3600) / 60);
@@ -1039,6 +1079,120 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   // llena solo de entradas con fecha que nadie ha pedido.
   const userLists = useMemo(() => collections.filter(c => !c.auto), [collections]);
   const autoHistory = useMemo(() => collections.filter(c => c.auto), [collections]);
+
+  // ---- Reparto por categoria de guardados y listas -----------------------
+  // Estando dentro de una categoria los paneles se acotan a ella; fuera (o
+  // pulsando "todas") se ensena todo repartido en secciones desplegables.
+  const categoryScoped = categoryScope === 'active' && !!state.activeCategory;
+
+  const savedInActiveCategory = useMemo(() => {
+    const cat = state.activeCategory;
+    if (!cat) return [];
+    return savedClips.filter(c => clipMatchesCategory(c, cat.id, cat.name));
+  }, [savedClips, state.activeCategory]);
+
+  const visibleSavedClips = categoryScoped ? savedInActiveCategory : savedClips;
+  const savedGroups = useMemo(() => groupClipsByCategory(savedClips), [savedClips]);
+  const visibleSeconds = visibleSavedClips.reduce((acc, clip) => acc + (parseInt(clip.duration) || 0), 0);
+  const scopeLabel = categoryScoped && state.activeCategory ? state.activeCategory.name : '';
+
+  // Cada lista con los clips que le tocan segun el alcance. Acotado, las listas
+  // que no tienen nada de esta categoria desaparecen en vez de salir vacias.
+  const visibleLists = useMemo(() => {
+    const cat = state.activeCategory;
+    if (!categoryScoped || !cat) return userLists.map(list => ({ list, clips: list.clips }));
+    return userLists
+      .map(list => ({ list, clips: list.clips.filter(c => clipMatchesCategory(c, cat.id, cat.name)) }))
+      .filter(entry => entry.clips.length > 0);
+  }, [userLists, categoryScoped, state.activeCategory]);
+
+  // Cuenta de la pestana de la categoria en el panel de listas: siempre la de
+  // la categoria abierta, este acotado o no. Sacandola de visibleLists, al
+  // pulsar "todas" la pestana de al lado se ponia a contar tambien lo que no
+  // era suyo.
+  const listedInActiveCategory = useMemo(() => {
+    const cat = state.activeCategory;
+    if (!cat) return 0;
+    return userLists.reduce((acc, list) => acc + list.clips.filter(c => clipMatchesCategory(c, cat.id, cat.name)).length, 0);
+  }, [userLists, state.activeCategory]);
+
+  const toggleSavedCat = useCallback((key: string) => {
+    setExpandedSavedCats(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
+  }, []);
+
+  const renderSavedClip = (clip: Clip) => (
+    <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
+      <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
+      <div className="flex-grow min-w-0 flex flex-col justify-center">
+        <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
+        <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+      </div>
+      {/* Desde aqui tambien se puede archivar en una lista con nombre: si el
+          clip ya no esta en la rejilla (otra categoria, otro filtro), este es
+          el unico sitio desde donde se puede rescatar. */}
+      <button
+        onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
+        className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
+        title={t('add_to_lists')}
+      >
+        <ListPlus className="w-4 h-4" />
+      </button>
+      <button
+        onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
+        className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
+        title={t('download') || 'Descargar'}
+      >
+        <Download className="w-4 h-4" />
+      </button>
+      <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+    </div>
+  );
+
+  const renderListClip = (clip: Clip, listId: string) => (
+    <div key={clip.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">
+      <button onClick={() => { setPlayingClip(clip); setShowListsPanel(false); }} className="flex items-center gap-3 flex-grow min-w-0 text-left cursor-pointer">
+        <img src={clip.thumbnail_url} alt="" loading="lazy" decoding="async" className="w-20 aspect-video object-cover rounded-lg flex-shrink-0 bg-black/40" />
+        <span className="flex flex-col min-w-0">
+          <span className="text-xs font-black text-gray-200 truncate">{clip.title}</span>
+          <span className="text-[10px] font-bold text-gray-500 truncate">{clip.broadcaster_name}</span>
+        </span>
+      </button>
+      <button
+        onClick={() => openExternalDownload(clip.url)}
+        title={t('download_zip_web')}
+        className="flex-shrink-0 p-2 rounded-lg text-gray-600 hover:text-twitch-base hover:bg-twitch-base/10 transition-colors cursor-pointer"
+      >
+        <Download className="w-3.5 h-3.5" />
+      </button>
+      <button
+        onClick={() => handleToggleClipInList(clip, listId)}
+        title={t('delete')}
+        className="flex-shrink-0 p-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+      >
+        <X className="w-3.5 h-3.5" />
+      </button>
+    </div>
+  );
+
+  /** Los dos paneles llevan el mismo par de pestanas, asi que se pinta una vez. */
+  const renderScopeTabs = (activeCount: number, allCount: number) => {
+    if (!state.activeCategory) return null;
+    const tab = 'flex items-center gap-2 px-3 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors cursor-pointer border';
+    const on = 'bg-twitch-base/15 border-twitch-base/40 text-twitch-base';
+    const off = 'bg-white/5 border-white/5 text-gray-400 hover:text-white hover:bg-white/10';
+    return (
+      <div className="flex items-center gap-2 flex-wrap">
+        <button onClick={() => setCategoryScope('active')} className={`${tab} ${categoryScoped ? on : off}`}>
+          <span className="truncate max-w-[10rem] normal-case tracking-tight text-[11px]">{state.activeCategory.name}</span>
+          <span className="tabular-nums opacity-70">{activeCount}</span>
+        </button>
+        <button onClick={() => setCategoryScope('all')} className={`${tab} ${categoryScoped ? off : on}`}>
+          <span>{t('all_categories')}</span>
+          <span className="tabular-nums opacity-70">{allCount}</span>
+        </button>
+      </div>
+    );
+  };
 
   const visibleClips = useMemo(() => {
     const blockedIds = new Set(activeBlockedList.map(s => s.id));
@@ -1295,8 +1449,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                       <h3 className="font-black text-base flex items-center gap-3">
                         <Archive className="w-5 h-5 text-twitch-base" />
                         <div className="flex flex-col">
-                          <span>{t('saved_clips')} ({savedClips.length})</span>
-                          {savedClips.length > 0 && <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t('total_duration')}: {formatTotalDuration(totalSeconds)}</span>}
+                          <span>{t('saved_clips')} ({visibleSavedClips.length})</span>
+                          {visibleSavedClips.length > 0 && <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">{t('total_duration')}: {formatTotalDuration(visibleSeconds)}</span>}
                         </div>
                       </h3>
                       <div className="flex items-center gap-4 md:gap-2">
@@ -1345,50 +1499,72 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                         )}
                       </div>
                     )}
+                    {savedClips.length > 0 && state.activeCategory && (
+                      <div className="px-5 pt-4 pb-1">
+                        {renderScopeTabs(savedInActiveCategory.length, savedClips.length)}
+                      </div>
+                    )}
                     <div className="overflow-y-auto custom-scrollbar p-5 space-y-3 flex-grow">
-                      {savedClips.length === 0 ? <div className="text-center py-20 text-gray-400 font-black text-sm uppercase tracking-widest">{t('no_saved_clips')}</div> : savedClips.map(clip => (
-                        <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
-                          <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
-                          <div className="flex-grow min-w-0 flex flex-col justify-center">
-                            <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
-                            <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
-                          </div>
-                          {/* Desde aquí también se puede archivar en una lista
-                              con nombre: si el clip ya no está en la rejilla
-                              (otra categoría, otro filtro), este es el único
-                              sitio desde donde se puede rescatar. */}
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenListPicker(clip);
-                            }}
-                            className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-                            title={t('add_to_lists')}
-                          >
-                            <ListPlus className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openExternalDownload(clip.url);
-                            }}
-                            className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-                            title={t('download') || 'Descargar'}
-                          >
-                            <Download className="w-4 h-4" />
-                          </button>
-                          <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
-                        </div>
-                      ))}
+                      {visibleSavedClips.length === 0 ? (
+                        <div className="text-center py-20 text-gray-400 font-black text-sm uppercase tracking-widest">{t('no_saved_clips')}</div>
+                      ) : categoryScoped ? (
+                        visibleSavedClips.map(renderSavedClip)
+                      ) : (
+                        // Fuera de una categoria concreta no tiene sentido una
+                        // lista plana de todo mezclado: cada categoria es su
+                        // propio desplegable y se abre el que interese.
+                        savedGroups.map(group => {
+                          const open = savedGroups.length === 1 || expandedSavedCats.includes(group.key);
+                          const groupName = group.name || t('uncategorized');
+                          return (
+                            <div key={group.key} className="bg-white/[0.02] border border-white/5 rounded-2xl overflow-hidden">
+                              <div className="flex items-center gap-1 p-2">
+                                <button
+                                  onClick={() => toggleSavedCat(group.key)}
+                                  aria-expanded={open}
+                                  className="flex-grow min-w-0 flex items-center gap-2.5 px-2 py-1.5 text-left cursor-pointer"
+                                >
+                                  <ChevronRight className={`w-4 h-4 flex-shrink-0 text-gray-500 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
+                                  <Layers className="w-3.5 h-3.5 flex-shrink-0 text-twitch-base" />
+                                  <span className="font-black text-xs text-white truncate">{groupName}</span>
+                                  <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black text-gray-400 tabular-nums">{group.clips.length}</span>
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); downloadClipsTxt(group.clips, groupName); }}
+                                  title={t('download_txt')}
+                                  className="flex-shrink-0 p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                >
+                                  <FileDown className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); openExternalDownload(group.clips.map(c => c.url).join('\n')); }}
+                                  title={t('download_zip_web')}
+                                  className="flex-shrink-0 p-2 rounded-xl text-gray-500 hover:text-twitch-base hover:bg-twitch-base/10 transition-colors cursor-pointer"
+                                >
+                                  <CloudDownload className="w-4 h-4" />
+                                </button>
+                              </div>
+                              {open && (
+                                <div className="border-t border-white/5 p-3 space-y-3">
+                                  {group.clips.map(renderSavedClip)}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })
+                      )}
                     </div>
-                    {savedClips.length > 0 && (
+                    {/* Todo lo de aqui abajo trabaja sobre lo que se esta
+                        viendo: acotado a Valorant se descarga, se guarda y se
+                        borra Valorant, no los guardados enteros. */}
+                    {visibleSavedClips.length > 0 && (
                       <div className="p-6 bg-[#15151b] border-t border-white/5 flex flex-col gap-4">
                         <div className="grid grid-cols-2 gap-3">
-                          <button onClick={handleDownloadTxt} className="bg-white/5 py-4 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer">{t('download_txt')}</button>
-                          <button onClick={handleExternalZip} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
+                          <button onClick={() => downloadClipsTxt(visibleSavedClips, scopeLabel || t('download_filename'))} className="bg-white/5 py-4 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer">{t('download_txt')}</button>
+                          <button onClick={() => handleExternalZip(visibleSavedClips)} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
                         </div>
-                        <button onClick={handleSaveCollection} className="flex items-center justify-center gap-2 bg-white/5 py-3 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer text-gray-300"><Save className="w-3.5 h-3.5" /> {t('save_collection')}</button>
-                        <button onClick={requestDeleteAll} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
+                        <button onClick={() => handleSaveCollection(visibleSavedClips, scopeLabel || undefined)} className="flex items-center justify-center gap-2 bg-white/5 py-3 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer text-gray-300"><Save className="w-3.5 h-3.5" /> {t('save_collection')}</button>
+                        <button onClick={(e) => requestDeleteAll(e, visibleSavedClips)} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
                       </div>
                     )}
                   </div>
@@ -1665,13 +1841,17 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       {playingClip && <FloatingPlayer getVideoSource={getClipVideoSource} clip={playingClip} onClose={() => {
         setPlayingClip(null);
         playingClipRef.current = null;
-      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} onBlockStreamer={handleBlockStreamer} t={t} playbackSpeed={playbackSpeed} onPlaybackSpeedChange={handlePlaybackSpeedChange} />}
+      }} isSaved={savedClips.some(c => c.id === playingClip.id)} onToggleSave={handleToggleSave} onDownloadExternal={openExternalDownload} onAddToList={handleOpenListPicker} onBlockStreamer={handleBlockStreamer} t={t} playbackSpeed={playbackSpeed} onPlaybackSpeedChange={handlePlaybackSpeedChange} />}
 
       {/* Panel de listas. Aquí se ve QUÉ tiene cada lista; el historial de
           instantáneas diarias sigue en su propio menú. */}
-      {showListsPanel && (
+      {/* Al <body> y por encima del reproductor: el FloatingPlayer se pinta en
+          un portal con z-index 9999, asi que un z-index de dentro del arbol de
+          la herramienta se queda debajo y el dialogo salia tapado. */}
+      {showListsPanel && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[115] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300"
+          className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300"
+          style={{ zIndex: 10000 }}
           onMouseDown={(e) => { if (e.target === e.currentTarget) setShowListsPanel(false); }}
         >
           <div
@@ -1734,11 +1914,20 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
             <div className="overflow-y-auto custom-scrollbar p-5 space-y-3">
               {/* Sin la lista por defecto: esa vive en su propio panel (el del
                   icono de archivo) y el botón + de las tarjetas ya va ahí. */}
-              {userLists.length === 0 && (
+              {userLists.length > 0 && state.activeCategory && (
+                <div className="pb-1">
+                  {renderScopeTabs(
+                    listedInActiveCategory,
+                    userLists.reduce((acc, list) => acc + list.clips.length, 0),
+                  )}
+                </div>
+              )}
+              {visibleLists.length === 0 && (
                 <p className="text-center py-12 text-gray-500 font-bold text-xs uppercase tracking-widest">{t('collections_empty')}</p>
               )}
-              {userLists.map(list => {
+              {visibleLists.map(({ list, clips: listClips }) => {
                 const open = expandedListId === list.id;
+                const listGroups = groupClipsByCategory(listClips);
                 return (
                   <div key={list.id} className="bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
                     <div className="flex items-center gap-3 p-4">
@@ -1750,20 +1939,23 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                         <span className="font-black text-sm text-white truncate">{list.name}</span>
                         {/* Solo el número, sin la palabra: "1 clips" quedaba mal
                             y pluralizar bien en 9 idiomas no compensa aquí. */}
-                        <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black text-gray-400 tabular-nums">{list.clips.length}</span>
+                        <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black text-gray-400 tabular-nums">{listClips.length}</span>
                       </button>
                       <div className="flex items-center gap-1 flex-shrink-0">
+                        {/* Sobre lo que se ve: con el panel acotado se
+                            exporta la parte de esta categoria, no la lista
+                            entera. */}
                         <button
-                          onClick={(e) => handleDownloadCollectionTxt(e, list)}
-                          disabled={list.clips.length === 0}
+                          onClick={(e) => { e.stopPropagation(); downloadClipsTxt(listClips, scopeLabel ? `${list.name} ${scopeLabel}` : list.name); }}
+                          disabled={listClips.length === 0}
                           title={t('download_txt')}
                           className="p-2 rounded-xl text-gray-500 hover:text-white hover:bg-white/10 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <FileDown className="w-4 h-4" />
                         </button>
                         <button
-                          onClick={(e) => handleSendCollectionExternal(e, list)}
-                          disabled={list.clips.length === 0}
+                          onClick={(e) => { e.stopPropagation(); openExternalDownload(listClips.map(c => c.url).join('\n')); }}
+                          disabled={listClips.length === 0}
                           title={t('download_zip_web')}
                           className="p-2 rounded-xl text-gray-500 hover:text-twitch-base hover:bg-twitch-base/10 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         >
@@ -1781,33 +1973,25 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
 
                     {open && (
                       <div className="border-t border-white/5 p-3 space-y-2 max-h-72 overflow-y-auto custom-scrollbar">
-                        {list.clips.length === 0 ? (
+                        {listClips.length === 0 ? (
                           <p className="text-center py-6 text-gray-500 font-bold text-[11px] uppercase tracking-widest">{t('collections_empty')}</p>
-                        ) : list.clips.map(clip => (
-                          <div key={clip.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">
-                            <button onClick={() => { setPlayingClip(clip); setShowListsPanel(false); }} className="flex items-center gap-3 flex-grow min-w-0 text-left cursor-pointer">
-                              <img src={clip.thumbnail_url} alt="" loading="lazy" decoding="async" className="w-20 aspect-video object-cover rounded-lg flex-shrink-0 bg-black/40" />
-                              <span className="flex flex-col min-w-0">
-                                <span className="text-xs font-black text-gray-200 truncate">{clip.title}</span>
-                                <span className="text-[10px] font-bold text-gray-500 truncate">{clip.broadcaster_name}</span>
-                              </span>
-                            </button>
-                            <button
-                              onClick={() => openExternalDownload(clip.url)}
-                              title={t('download_zip_web')}
-                              className="flex-shrink-0 p-2 rounded-lg text-gray-600 hover:text-twitch-base hover:bg-twitch-base/10 transition-colors cursor-pointer"
-                            >
-                              <Download className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleToggleClipInList(clip, list.id)}
-                              title={t('delete')}
-                              className="flex-shrink-0 p-2 rounded-lg text-gray-600 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        ))}
+                        ) : categoryScoped || listGroups.length === 1 ? (
+                          listClips.map(clip => renderListClip(clip, list.id))
+                        ) : (
+                          // Una lista puede mezclar categorias: se separan con
+                          // su nombre delante para no tener que adivinar de
+                          // donde salio cada clip.
+                          listGroups.map(group => (
+                            <div key={group.key} className="space-y-2">
+                              <div className="flex items-center gap-2 px-2 pt-2">
+                                <Layers className="w-3 h-3 flex-shrink-0 text-twitch-base" />
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 truncate">{group.name || t('uncategorized')}</span>
+                                <span className="text-[10px] font-black text-gray-600 tabular-nums">{group.clips.length}</span>
+                              </div>
+                              {group.clips.map(clip => renderListClip(clip, list.id))}
+                            </div>
+                          ))
+                        )}
                       </div>
                     )}
                   </div>
@@ -1815,14 +1999,16 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
               })}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {/* Selector de listas: el botón + de la tarjeta va directo a la lista por
           defecto sin preguntar; este es el que deja elegir destino. */}
-      {listPickerClip && (
+      {listPickerClip && typeof document !== 'undefined' && createPortal(
         <div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300"
+          className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-xl p-4 animate-in fade-in duration-300"
+          style={{ zIndex: 10001 }}
           onMouseDown={(e) => { if (e.target === e.currentTarget) setListPickerClip(null); }}
         >
           <div
@@ -1909,7 +2095,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
               {t('done')}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
 
       {showDeleteModal && (
