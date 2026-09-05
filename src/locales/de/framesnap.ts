@@ -21,6 +21,7 @@ export default {
   "ui_download": "Herunterladen",
   "ui_clear": "Video entfernen",
   "ui_fullscreen": "Vollbild",
+  "ui_exitFullscreen": "Beenden",
   "heroBadge": "Frame-Extraktor",
   "ui_formats": "MP4 · WebM · MOV und alles, was Ihr Browser decodieren kann – die Datei verlässt Ihr Gerät nicht",
   "ui_hint": "← / → ein Frame · Leertaste Wiedergabe/Pause · S aufnehmen · C kopieren · F Vollbild · Alt vergleichen · Esc stoppen",

@@ -21,6 +21,7 @@ export default {
   "ui_download": "下载",
   "ui_clear": "移除视频",
   "ui_fullscreen": "全屏",
+  "ui_exitFullscreen": "退出",
   "heroBadge": "帧提取器",
   "ui_formats": "MP4 · WebM · MOV，以及你的浏览器能解码的其他格式 —— 文件不会离开你的设备",
   "ui_hint": "← / → 单帧 · 空格 播放/暂停 · S 截取 · C 复制 · F 全屏 · Alt 对比 · Esc 停止",

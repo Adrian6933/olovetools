@@ -21,6 +21,7 @@ export default {
   "ui_download": "Descargar",
   "ui_clear": "Quitar vídeo",
   "ui_fullscreen": "Pantalla completa",
+  "ui_exitFullscreen": "Salir",
   "heroBadge": "Extractor de fotogramas",
   "ui_formats": "MP4 · WebM · MOV y cualquier otro que tu navegador sepa decodificar: el archivo no sale de tu dispositivo",
   "ui_hint": "← / → un fotograma · Espacio reproducir/pausar · S capturar · C copiar · F pantalla completa · Alt comparar · Esc parar",

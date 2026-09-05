@@ -21,6 +21,7 @@ export default {
   "ui_download": "Download",
   "ui_clear": "Clear video",
   "ui_fullscreen": "Fullscreen",
+  "ui_exitFullscreen": "Exit fullscreen",
   "heroBadge": "Frame extractor",
   "ui_formats": "MP4 · WebM · MOV and anything else your browser can decode — the file never leaves your device",
   "ui_hint": "← / → step one frame · Space play/pause · S capture · C copy · F fullscreen · Alt compare · Esc stop",

@@ -21,6 +21,7 @@ export default {
   "ui_download": "ダウンロード",
   "ui_clear": "動画を削除",
   "ui_fullscreen": "全画面",
+  "ui_exitFullscreen": "終了",
   "heroBadge": "フレーム抽出",
   "ui_formats": "MP4・WebM・MOV など、ブラウザーがデコードできる形式。ファイルは端末から出ません",
   "ui_hint": "← / → 1 フレーム · スペース 再生/一時停止 · S キャプチャ · C コピー · F 全画面 · Alt 比較 · Esc 中止",

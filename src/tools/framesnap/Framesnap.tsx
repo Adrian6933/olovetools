@@ -12,6 +12,7 @@ import {
   Layers,
   Loader2,
   Maximize2,
+  Minimize2,
   Package,
   Pause,
   Play,
@@ -58,6 +59,7 @@ import { DEFAULT_BATCH, DEFAULT_CAPTURE, DEFAULT_SCENES } from './types';
 import { formatTimecode, frameIndexAt, hasRvfc, measureFps, seekExact, stepFrames } from './lib/video';
 import { frameFilename, grabFrame, releaseFrames, totalBytes } from './lib/capture';
 import { batchTimes, runBatch, scanScenes } from './lib/batch';
+import { Selector } from './components/Selector';
 import { ACCEPT_ATTRIBUTE, baseNameOf, classifyVideo, copyImage, downloadBlob, formatBytes } from './lib/io';
 
 interface FramesnapProps {
@@ -75,11 +77,9 @@ const SPEEDS = [0.25, 0.5, 1, 2, 4];
 // fotogramas, que es lo que se quiere para buscar rápido sin ir de uno en uno.
 const RITMOS = [60, 50, 30, 25, 24, 15, 12, 10, 5, 2, 1];
 
-// Cuánto espera un botón antes de empezar a repetir, y cuánto crece el salto.
-// Un seek tiene un coste fijo de decenas de milisegundos, así que ir más rápido
-// no se consigue repitiendo más a menudo sino saltando más fotogramas de golpe.
-const RETARDO_REPETICION_MS = 340;
-const SALTO_MAXIMO = 12;
+// Cuánto espera un botón antes de empezar a repetir solo. Por debajo de esto un
+// clic normal dispararía la repetición y avanzaría dos fotogramas.
+const RETARDO_REPETICION_MS = 300;
 /** Past this the tab is holding more image data than most machines enjoy. */
 const MEMORY_WARN = 300 * 1024 * 1024;
 
@@ -95,6 +95,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
   const [rate, setRate] = useState(1);
   const [dragOver, setDragOver] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
 
   const [capture, setCapture] = useState<CaptureOptions>(DEFAULT_CAPTURE);
   const [panel, setPanel] = useState<Panel>('single');
@@ -215,24 +216,73 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
     if (ritmo !== null && info.fps && ritmo > info.fps) setRitmo(null);
   }, [ritmo, info.fps]);
 
-  /** Un salto de N fotogramas. Sin la guarda de `busy`: la usa la repetición. */
-  const saltar = useCallback(
-    async (direction: number, frames: number) => {
-      const video = videoRef.current;
-      if (!video) return;
-      video.pause();
+  // ---- motor de paso ------------------------------------------------------
+  // Un solo trabajador y una cola de dos huecos: `pasosPendientes` (relativo, de
+  // los botones y las flechas) y `destino` (absoluto, de la barra de tiempo).
+  //
+  // Lo que esto arregla: antes cada clic esperaba a que terminase el anterior y
+  // los de en medio se descartaban, así que veinte clics seguidos para avanzar
+  // veinte fotogramas se sentían como veinte esperas. Ahora se SUMAN: veinte
+  // clics son un único salto de veinte fotogramas, y un seek cuesta lo mismo
+  // vaya un fotograma o vaya veinte — el precio es fijo, no crece con la
+  // distancia. De ahí que ahora sea instantáneo.
+  const pasosPendientes = useRef(0);
+  const destino = useRef<number | null>(null);
+  const trabajo = useRef<Promise<void> | null>(null);
+  const ritmoRef = useRef(ritmoEfectivo);
+  ritmoRef.current = ritmoEfectivo;
+
+  const drenar = useCallback((): Promise<void> => {
+    if (trabajo.current) return trabajo.current;
+    const run = (async () => {
+      try {
+        while (destino.current !== null || pasosPendientes.current !== 0) {
+          const video = videoRef.current;
+          if (!video) return;
+          video.pause();
+          // El destino absoluto manda: si se ha arrastrado la barra mientras se
+          // pulsaba una flecha, lo que quiere la persona es ir ahí.
+          if (destino.current !== null) {
+            const objetivo = destino.current;
+            destino.current = null;
+            pasosPendientes.current = 0;
+            setCurrentTime(await seekExact(video, objetivo));
+            continue;
+          }
+          const delta = pasosPendientes.current;
+          pasosPendientes.current = 0;
+          setCurrentTime(await stepFrames(video, ritmoRef.current, delta));
+        }
+      } finally {
+        trabajo.current = null;
+        // Lo que haya entrado justo al salir del bucle no se puede quedar sin
+        // atender, o el último clic parecería perdido.
+        if (destino.current !== null || pasosPendientes.current !== 0) void drenarRef.current();
+      }
+    })();
+    trabajo.current = run;
+    return run;
+  }, []);
+  const drenarRef = useRef(drenar);
+  drenarRef.current = drenar;
+
+  /** Suma pasos a la cola. Vuelve enseguida: no espera al vídeo. */
+  const pasar = useCallback(
+    (delta: number) => {
+      pasosPendientes.current += delta;
       setPlaying(false);
-      const time = await stepFrames(video, ritmoEfectivo, direction * Math.max(1, frames));
-      setCurrentTime(time);
+      void drenar();
     },
-    [ritmoEfectivo]
+    [drenar]
   );
 
   // ---- mantener pulsado para avanzar deprisa ------------------------------
-  // Cada iteración ESPERA a que el seek anterior haya terminado en vez de ir a
-  // intervalo fijo: encadenar seeks sin esperar los amontona y el vídeo se queda
-  // atrás. Y el salto crece con el tiempo, que es la única forma real de ganar
-  // velocidad cuando cada seek cuesta lo que cuesta.
+  // Un fotograma por vuelta, siempre, y esperando a que el anterior esté en
+  // pantalla. Antes el salto CRECÍA con el tiempo (hasta doce de golpe) para
+  // ganar velocidad, y por eso mantener pulsado se saltaba fotogramas: iba
+  // rápido porque no los enseñaba todos. La velocidad ahora la marca lo que
+  // tarde el navegador en saltar, que es lo máximo que se puede ir sin
+  // perderse ninguno.
   const manteniendo = useRef(false);
 
   const soltar = useCallback(() => {
@@ -241,28 +291,19 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
 
   const mantener = useCallback(
     (direction: number) => {
-      if (manteniendo.current || busy) return;
+      // Un clic suelto entra siempre, aunque haya un seek a medias: se acumula.
+      pasar(direction);
+      if (manteniendo.current) return;
       manteniendo.current = true;
       void (async () => {
-        setBusy(true);
-        try {
-          await saltar(direction, 1);
-          // Una pausa antes de repetir: un clic normal no debe disparar la
-          // repetición ni saltar dos fotogramas.
-          await new Promise(resolve => setTimeout(resolve, RETARDO_REPETICION_MS));
-          let vueltas = 0;
-          while (manteniendo.current) {
-            vueltas += 1;
-            const salto = Math.min(SALTO_MAXIMO, 1 + Math.floor(vueltas / 3));
-            await saltar(direction, salto);
-          }
-        } finally {
-          manteniendo.current = false;
-          setBusy(false);
+        await new Promise(resolve => setTimeout(resolve, RETARDO_REPETICION_MS));
+        while (manteniendo.current) {
+          pasosPendientes.current += direction;
+          await drenar();
         }
       })();
     },
-    [busy, saltar]
+    [pasar, drenar]
   );
 
   // Si la pestaña se va o se suelta el ratón fuera del botón, la repetición
@@ -279,12 +320,17 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
     };
   }, [soltar]);
 
-  const seek = useCallback(async (time: number) => {
-    const video = videoRef.current;
-    if (!video) return;
-    const landed = await seekExact(video, time);
-    setCurrentTime(landed);
-  }, []);
+  // Arrastrar la barra dispara un evento por píxel. Encadenar un seek por cada
+  // uno los amontona y el vídeo se queda atrás; guardando sólo el ÚLTIMO
+  // destino, el arrastre va suelto y se acaba donde se soltó.
+  const seek = useCallback(
+    (time: number) => {
+      destino.current = time;
+      setCurrentTime(time);
+      void drenar();
+    },
+    [drenar]
+  );
 
   const togglePlay = useCallback(() => {
     const video = videoRef.current;
@@ -452,6 +498,21 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
     return { blob: frame.blob, name: frameFilename(base, frame, info.fps) };
   }, [expanded, frames, base, info.fps]);
 
+  // ---- pantalla completa ---------------------------------------------------
+  // En pantalla completa sólo se pinta el subárbol del elemento que entra, así
+  // que los controles de fuera desaparecen. Por eso hay una barra propia dentro
+  // del escenario, con todo lo que hace falta sin salir.
+  useEffect(() => {
+    const onChange = () => setFullscreen(document.fullscreenElement === stageRef.current);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (document.fullscreenElement) void document.exitFullscreen?.();
+    else void stageRef.current?.requestFullscreen?.();
+  }, []);
+
   // ------------------------------------------------------------ shortcuts --
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -467,7 +528,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
       else if (event.key === ' ') { event.preventDefault(); togglePlay(); }
       else if (key === 's') { event.preventDefault(); void captureNow(); }
       else if (key === 'c') { event.preventDefault(); void copyCurrent(); }
-      else if (key === 'f') { event.preventDefault(); stageRef.current?.requestFullscreen?.(); }
+      else if (key === 'f') { event.preventDefault(); toggleFullscreen(); }
       else if (event.key === 'Escape') { stopFlag.current = true; }
     };
     const down = (event: KeyboardEvent) => { if (event.key === 'Alt') setComparing(true); };
@@ -486,7 +547,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
       window.removeEventListener('keyup', up);
       window.removeEventListener('blur', blur);
     };
-  }, [videoUrl, mantener, soltar, togglePlay, captureNow, copyCurrent]);
+  }, [videoUrl, mantener, soltar, togglePlay, captureNow, copyCurrent, toggleFullscreen]);
 
   // -------------------------------------------------------------- derived --
   const currentIndex = frameIndexAt(currentTime, info.fps);
@@ -508,6 +569,14 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
   const field =
     'w-full rounded-lg border border-white/10 bg-black/40 px-2.5 py-1.5 text-xs font-semibold text-slate-200 outline-none transition-colors focus:border-orange-500/50';
   const microLabel = 'text-[10px] font-black uppercase tracking-[0.14em] text-slate-500';
+
+  // Opciones de los desplegables, en un sitio: las usan la barra normal y la de
+  // pantalla completa, y duplicarlas era pedir que se separasen.
+  const opcionesRitmo = [
+    { value: 'nativo', label: info.fps ? `${info.fps} fps · ${t.stepRateNative || 'every frame'}` : t.stepRateNative || 'every frame' },
+    ...RITMOS.filter(r => !info.fps || r < info.fps).map(r => ({ value: String(r), label: `${r} fps` })),
+  ];
+  const opcionesVelocidad = SPEEDS.map(speed => ({ value: String(speed), label: `${speed}×` }));
 
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0502] font-sans text-slate-200 selection:bg-orange-500/25 selection:text-orange-50">
@@ -582,7 +651,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                     actual: t.zoomActual || 'Actual pixels (1:1)',
                     fit: t.zoomCloser || 'Get much closer',
                   }}
-                  className="aspect-video w-full"
+                  className={fullscreen ? 'h-screen w-screen' : 'aspect-video w-full'}
                 >
                   <video
                     ref={videoRef}
@@ -602,6 +671,132 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                   <span className="pointer-events-none absolute right-3 top-3 rounded-md bg-black/75 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-orange-300">
                     {t.compareBadge || 'last capture'}
                   </span>
+                )}
+
+                {/* ---- mandos de pantalla completa ------------------------
+                    Los de abajo no existen aquí: en pantalla completa el
+                    navegador sólo pinta este elemento y su contenido. Así que
+                    esta barra repite lo que hace falta para no tener que salir
+                    — pasar fotogramas, capturar, comparar y la salida. */}
+                {fullscreen && (
+                  <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black via-black/85 to-transparent px-4 pb-4 pt-10">
+                    <input
+                      type="range"
+                      min={0}
+                      max={info.duration || 0}
+                      step={info.fps ? 1 / info.fps : 0.01}
+                      value={currentTime}
+                      onChange={event => seek(Number(event.target.value))}
+                      aria-label={t.ui_frame || 'Frame'}
+                      className="mb-3 h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/20 accent-orange-500"
+                    />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        onPointerDown={() => mantener(-1)}
+                        onPointerUp={soltar}
+                        onPointerLeave={soltar}
+                        onContextMenu={event => event.preventDefault()}
+                        className={iconButton}
+                        title={t.actionPrev || 'Previous frame'}
+                        aria-label={t.actionPrev || 'Previous frame'}
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+                      <button type="button" onClick={togglePlay} className={iconButton} title={t.actionPlay || 'Play / pause'}>
+                        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                      </button>
+                      <button
+                        type="button"
+                        onPointerDown={() => mantener(1)}
+                        onPointerUp={soltar}
+                        onPointerLeave={soltar}
+                        onContextMenu={event => event.preventDefault()}
+                        className={iconButton}
+                        title={t.actionNext || 'Next frame'}
+                        aria-label={t.actionNext || 'Next frame'}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+
+                      <span className="ml-1 font-mono text-xs text-orange-200">{formatTimecode(currentTime, info.fps)}</span>
+                      <span className="font-mono text-[11px] text-slate-400">
+                        {currentIndex >= 0 ? `#${currentIndex}${totalFrames ? ` / ${totalFrames}` : ''}` : ''}
+                      </span>
+
+                      <div className="ml-auto flex flex-wrap items-center gap-1.5">
+                        {/* up: la lista se abre hacia arriba porque la barra
+                            está pegada al borde de abajo de la pantalla. */}
+                        <Selector
+                          up
+                          alignRight
+                          className="w-[9.5rem]"
+                          value={ritmo === null ? 'nativo' : String(ritmo)}
+                          options={opcionesRitmo}
+                          onChange={valor => setRitmo(valor === 'nativo' ? null : Number(valor))}
+                          label={t.ui_stepRate || 'Step rate'}
+                          title={t.ui_stepRateHint || 'How many steps per second of video each press moves'}
+                        />
+                        <Selector
+                          up
+                          alignRight
+                          className="w-[4.75rem]"
+                          value={String(rate)}
+                          options={opcionesVelocidad}
+                          onChange={valor => {
+                            const value = Number(valor);
+                            setRate(value);
+                            if (videoRef.current) videoRef.current.playbackRate = value;
+                          }}
+                          label={t.ui_speed || 'Speed'}
+                        />
+                        <button
+                          type="button"
+                          onPointerDown={() => setComparing(true)}
+                          onPointerUp={() => setComparing(false)}
+                          onPointerLeave={() => setComparing(false)}
+                          disabled={!lastFrame}
+                          className={`${iconButton} ${comparing ? 'border-orange-500/40 bg-orange-500/20 text-orange-200' : ''}`}
+                          title={t.actionCompare || 'Hold to compare with the last capture'}
+                        >
+                          <Layers className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => void captureNow()}
+                          disabled={busy}
+                          className={`${iconButton} border-orange-500/40 bg-orange-500/20 text-orange-100`}
+                          title={t.ui_capture || 'Capture frame'}
+                        >
+                          {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Camera className="h-4 w-4" />}
+                        </button>
+                        <button type="button" onClick={() => void copyCurrent()} className={iconButton} title={t.ui_copy || 'Copy'}>
+                          {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <ClipboardCopy className="h-4 w-4" />}
+                        </button>
+                        {/* Clase propia y no `iconButton` con w-auto encima:
+                            entre dos utilidades de anchura gana la que Tailwind
+                            escriba después en la hoja, no la última del string,
+                            y el botón se quedaba en 36 px comiéndose el texto. */}
+                        <button
+                          type="button"
+                          onClick={toggleFullscreen}
+                          className="flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-lg border border-white/5 bg-white/5 px-3 text-[11px] font-black uppercase tracking-wider text-slate-300 outline-none transition-all hover:border-orange-500/30 hover:bg-orange-500/15 hover:text-orange-200"
+                          title={t.ui_exitFullscreen || 'Exit fullscreen'}
+                        >
+                          <Minimize2 className="h-4 w-4" />
+                          <span className="hidden sm:inline">{t.ui_exitFullscreen || 'Exit'}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Cuántos lleva capturados: en pantalla completa la
+                        galería no se ve, y sin esto no hay forma de saber si la
+                        captura ha entrado. */}
+                    <p className="mt-2 flex items-center gap-3 font-mono text-[11px] text-slate-400">
+                      <span>{frames.length} · {formatBytes(bytes)}</span>
+                      <span className="text-slate-600">{t.ui_hint || ''}</span>
+                    </p>
+                  </div>
                 )}
                 {progress.running && (
                   <div className="absolute inset-x-0 bottom-0 bg-black/80 px-4 py-2">
@@ -631,7 +826,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                   max={info.duration || 0}
                   step={info.fps ? 1 / info.fps : 0.01}
                   value={currentTime}
-                  onChange={event => void seek(Number(event.target.value))}
+                  onChange={event => seek(Number(event.target.value))}
                   aria-label={t.ui_frame || 'Frame'}
                   className="h-1.5 w-full cursor-pointer appearance-none rounded-full bg-white/10 accent-orange-500"
                 />
@@ -679,37 +874,25 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                         bajarlo salta varios fotogramas por paso. Sólo se ofrecen
                         ritmos que el vídeo alcanza: pedir 60 en uno de 24 dejaría
                         varios pasos dentro del mismo fotograma. */}
-                    <select
+                    <Selector
+                      className="w-[9.5rem]"
                       value={ritmo === null ? 'nativo' : String(ritmo)}
-                      onChange={event => {
-                        const valor = event.target.value;
-                        setRitmo(valor === 'nativo' ? null : Number(valor));
-                      }}
-                      className="h-9 cursor-pointer rounded-lg border border-white/5 bg-white/5 px-2 text-[11px] font-bold text-slate-300 outline-none"
-                      aria-label={t.ui_stepRate || 'Step rate'}
+                      options={opcionesRitmo}
+                      onChange={valor => setRitmo(valor === 'nativo' ? null : Number(valor))}
+                      label={t.ui_stepRate || 'Step rate'}
                       title={t.ui_stepRateHint || 'How many steps per second of video each press moves'}
-                    >
-                      <option value="nativo">
-                        {info.fps ? `${info.fps} fps · ${t.stepRateNative || 'every frame'}` : t.stepRateNative || 'every frame'}
-                      </option>
-                      {RITMOS.filter(r => !info.fps || r < info.fps).map(r => (
-                        <option key={r} value={r}>{r} fps</option>
-                      ))}
-                    </select>
-                    <select
-                      value={rate}
-                      onChange={event => {
-                        const value = Number(event.target.value);
+                    />
+                    <Selector
+                      className="w-[4.75rem]"
+                      value={String(rate)}
+                      options={opcionesVelocidad}
+                      onChange={valor => {
+                        const value = Number(valor);
                         setRate(value);
                         if (videoRef.current) videoRef.current.playbackRate = value;
                       }}
-                      className="h-9 cursor-pointer rounded-lg border border-white/5 bg-white/5 px-2 text-[11px] font-bold text-slate-300 outline-none"
-                      aria-label={t.ui_speed || 'Speed'}
-                    >
-                      {SPEEDS.map(speed => (
-                        <option key={speed} value={speed}>{speed}×</option>
-                      ))}
-                    </select>
+                      label={t.ui_speed || 'Speed'}
+                    />
                     <button
                       type="button"
                       onPointerDown={() => setComparing(true)}
@@ -724,7 +907,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                     <button type="button" onClick={() => void copyCurrent()} className={iconButton} title={t.ui_copy || 'Copy'}>
                       {copied ? <Check className="h-4 w-4 text-emerald-400" /> : <ClipboardCopy className="h-4 w-4" />}
                     </button>
-                    <button type="button" onClick={() => stageRef.current?.requestFullscreen?.()} className={iconButton} title={t.ui_fullscreen || 'Fullscreen'}>
+                    <button type="button" onClick={toggleFullscreen} className={iconButton} title={t.ui_fullscreen || 'Fullscreen'}>
                       <Maximize2 className="h-4 w-4" />
                     </button>
                     <button type="button" onClick={resetWorkspace} className={iconButton} title={t.ui_clear || 'Clear video'}>
@@ -773,11 +956,16 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     <label className="flex flex-col gap-1">
                       <span className={microLabel}>{t.labelFormat || 'Format'}</span>
-                      <select className={`${field} cursor-pointer`} value={capture.format} onChange={e => setCapture(c => ({ ...c, format: e.target.value as CaptureOptions['format'] }))}>
-                        <option value="image/png">PNG</option>
-                        <option value="image/jpeg">JPG</option>
-                        <option value="image/webp">WebP</option>
-                      </select>
+                      <Selector
+                        value={capture.format}
+                        options={[
+                          { value: 'image/png', label: 'PNG' },
+                          { value: 'image/jpeg', label: 'JPG' },
+                          { value: 'image/webp', label: 'WebP' },
+                        ]}
+                        onChange={value => setCapture(c => ({ ...c, format: value as CaptureOptions['format'] }))}
+                        label={t.labelFormat || 'Format'}
+                      />
                     </label>
                     <label className="flex flex-col gap-1">
                       <span className={microLabel}>{t.ui_quality || 'Quality'}</span>
@@ -793,11 +981,16 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                     </label>
                     <label className="flex flex-col gap-1">
                       <span className={microLabel}>{t.labelScale || 'Scale'}</span>
-                      <select className={`${field} cursor-pointer`} value={capture.scale} onChange={e => setCapture(c => ({ ...c, scale: Number(e.target.value) }))}>
-                        <option value={1}>100%{info.width ? ` · ${info.width}×${info.height}` : ''}</option>
-                        <option value={0.5}>50%</option>
-                        <option value={0.25}>25%</option>
-                      </select>
+                      <Selector
+                        value={String(capture.scale)}
+                        options={[
+                          { value: '1', label: `100%${info.width ? ` · ${info.width}×${info.height}` : ''}` },
+                          { value: '0.5', label: '50%' },
+                          { value: '0.25', label: '25%' },
+                        ]}
+                        onChange={value => setCapture(c => ({ ...c, scale: Number(value) }))}
+                        label={t.labelScale || 'Scale'}
+                      />
                     </label>
                     <div className="flex flex-col justify-end">
                       <span className={`${microLabel} mb-1`}>{t.labelHeld || 'In memory'}</span>
@@ -825,11 +1018,16 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                         <label className="flex flex-col gap-1">
                           <span className={microLabel}>{t.labelMode || 'Pick by'}</span>
-                          <select className={`${field} cursor-pointer`} value={batch.mode} onChange={e => setBatch(b => ({ ...b, mode: e.target.value as BatchOptions['mode'] }))}>
-                            <option value="interval">{t.modeInterval || 'Every N seconds'}</option>
-                            <option value="count">{t.modeCount || 'N evenly spaced'}</option>
-                            <option value="every-frame">{t.modeEveryFrame || 'Every frame'}</option>
-                          </select>
+                          <Selector
+                            value={batch.mode}
+                            options={[
+                              { value: 'interval', label: t.modeInterval || 'Every N seconds' },
+                              { value: 'count', label: t.modeCount || 'N evenly spaced' },
+                              { value: 'every-frame', label: t.modeEveryFrame || 'Every frame' },
+                            ]}
+                            onChange={value => setBatch(b => ({ ...b, mode: value as BatchOptions['mode'] }))}
+                            label={t.labelMode || 'Pick by'}
+                          />
                         </label>
                         {batch.mode === 'interval' && (
                           <label className="flex flex-col gap-1">
@@ -916,7 +1114,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
                               <button
                                 key={i}
                                 type="button"
-                                onClick={() => void seek(sample.time)}
+                                onClick={() => seek(sample.time)}
                                 title={`${sample.time.toFixed(2)}s · ${(sample.score * 100).toFixed(1)}%`}
                                 className={`min-w-[2px] flex-1 cursor-pointer rounded-t-sm ${sample.score >= scenes.threshold ? 'bg-orange-400' : 'bg-white/15'}`}
                                 style={{ height: `${Math.max(4, Math.min(100, sample.score * 320))}%` }}
