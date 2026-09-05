@@ -35,6 +35,7 @@ export const TOOL_FAVICONS: Record<string, string> = {
   'clip-flow': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='6' cy='6' r='3'/><circle cx='6' cy='18' r='3'/><line x1='20' y1='4' x2='8.12' y2='15.88'/><line x1='14.47' y1='14.48' x2='20' y2='20'/><line x1='8.12' y1='8.12' x2='12' y2='12'/></svg>",
   'qr-reader': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2306b6d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M3 7V5a2 2 0 0 1 2-2h2'/><path d='M17 3h2a2 2 0 0 1 2 2v2'/><path d='M21 17v2a2 2 0 0 1-2 2h-2'/><path d='M7 21H5a2 2 0 0 1-2-2v-2'/><path d='M7 12h10'/></svg>",
   'jwt-bolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b5cf6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='7' cy='15' r='4'/><path d='M10.85 12.15 19 4'/><path d='m18 5 3 3'/><path d='m15 8 3 3'/><path d='M3 21l3-3'/></svg>",
+  'framebolt': "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230ea5e9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='6' width='14' height='12' rx='2'/><path d='M2 10h14'/><path d='M2 14h14'/><path d='M20 5v14'/><path d='M18 7h4'/><path d='M18 17h4'/></svg>",
   default: "/icon.svg"
 };
 
@@ -76,6 +77,7 @@ export const TOOL_THEME_COLORS: Record<string, string> = {
   'base64-bolt': "#3b82f6",
   'clip-flow': "#8b5cf6",
   'jwt-bolt': "#8b5cf6",
+  'framebolt': "#0ea5e9",
   default: "#060609"
 };
 
@@ -701,5 +703,15 @@ export const MOCK_PROJECTS: Project[] = [
     tags: ['QR', 'Scanner', 'Reader', 'Decoder'],
     icon: 'ScanLine',
     color: 'bg-gradient-to-br from-cyan-500 to-sky-600'
+  },
+  {
+    id: '62',
+    name: 'FrameBolt',
+    slug: 'framebolt',
+    description: 'Rip every single frame out of a video into a ZIP, with no frame limit: pick the range, the step, the format and the size, skip repeated or black frames, 100% in your browser.',
+    category: ProjectCategory.VIDEO_AUDIO,
+    tags: ['Video', 'Frames', 'ZIP', 'Batch'],
+    icon: 'Images',
+    color: 'bg-gradient-to-br from-sky-500 to-blue-600'
   }
 ];
