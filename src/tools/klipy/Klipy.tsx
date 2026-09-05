@@ -11,7 +11,7 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
-import { groupClipsByCategory, clipMatchesCategory } from '../../components/clips/grouping';
+import { groupClipsByCategory, clipMatchesCategory, sumClipSeconds } from '../../components/clips/grouping';
 import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
 import { searchCategories, searchKickClips, searchAllKickClips, getClipById, getClipVideoSource, fetchKickSuggestions } from './services/kickService';
 import { toCategory, toClip } from './services/adapt';
@@ -1102,7 +1102,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
 
   const visibleSavedClips = categoryScoped ? savedInActiveCategory : savedClips;
   const savedGroups = useMemo(() => groupClipsByCategory(savedClips), [savedClips]);
-  const visibleSeconds = visibleSavedClips.reduce((acc, clip) => acc + (parseInt(clip.duration) || 0), 0);
+  const visibleSeconds = sumClipSeconds(visibleSavedClips);
   const scopeLabel = categoryScoped && state.activeCategory ? state.activeCategory.name : '';
 
   // Cada lista con los clips que le tocan segun el alcance. Acotado, las listas
@@ -1543,8 +1543,17 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                                 >
                                   <ChevronRight className={`w-4 h-4 flex-shrink-0 text-gray-500 transition-transform duration-200 ${open ? 'rotate-90' : ''}`} />
                                   <Layers className="w-3.5 h-3.5 flex-shrink-0 text-twitch-base" />
-                                  <span className="font-black text-xs text-white truncate">{groupName}</span>
-                                  <span className="flex-shrink-0 px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-[10px] font-black text-gray-400 tabular-nums">{group.clips.length}</span>
+                                  {/* Nombre arriba y "cuantos - cuanto dura"
+                                      debajo: en el panel estrecho del movil,
+                                      con las dos cosas en la misma linea el
+                                      nombre de la categoria se quedaba en dos
+                                      letras y unos puntos suspensivos. */}
+                                  <span className="flex-grow min-w-0 flex flex-col">
+                                    <span className="font-black text-xs text-white truncate">{groupName}</span>
+                                    <span className="text-[10px] font-bold text-gray-500 tabular-nums truncate">
+                                      {group.clips.length} · {formatTotalDuration(sumClipSeconds(group.clips))}
+                                    </span>
+                                  </span>
                                 </button>
                                 <button
                                   onClick={(e) => { e.stopPropagation(); downloadClipsTxt(group.clips, groupName); }}
@@ -2005,7 +2014,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                               <div className="flex items-center gap-2 px-2 pt-2">
                                 <Layers className="w-3 h-3 flex-shrink-0 text-twitch-base" />
                                 <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 truncate">{group.name || t('uncategorized')}</span>
-                                <span className="text-[10px] font-black text-gray-600 tabular-nums">{group.clips.length}</span>
+                                <span className="flex-shrink-0 text-[10px] font-black text-gray-600 tabular-nums">{group.clips.length} · {formatTotalDuration(sumClipSeconds(group.clips))}</span>
                               </div>
                               {group.clips.map(clip => renderListClip(clip, list.id))}
                             </div>

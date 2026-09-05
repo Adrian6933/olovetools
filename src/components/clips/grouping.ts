@@ -39,6 +39,15 @@ export function groupClipsByCategory(clips: Clip[]): ClipCategoryGroup[] {
 }
 
 /**
+ * Segundos que suman unos clips. `duration` llega como texto ("30", "30s"),
+ * asi que parseInt y a correr; lo que no se pueda leer cuenta como cero en vez
+ * de convertir el total entero en NaN.
+ */
+export function sumClipSeconds(clips: Clip[]): number {
+  return clips.reduce((acc, clip) => acc + (parseInt(clip.duration) || 0), 0);
+}
+
+/**
  * Un clip cuenta como de esta categoría si coincide el id o, para los que se
  * guardaron cuando el id se derivaba del nombre y no del slug real de Kick,
  * si coincide el nombre.
