@@ -15,7 +15,7 @@ interface ArtProps {
 // it — the whole promise of the tool in one picture.
 // ---------------------------------------------------------------------------
 export const ReaderHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 260" className={className} role="img" aria-hidden="true">
+  <svg viewBox="8 -16 384 232" className={className} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="qrdCode" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#67e8f9" />

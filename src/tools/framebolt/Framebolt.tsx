@@ -1012,7 +1012,7 @@ function Toggle({
 /** Una tira de película: lo que la herramienta hace, en un dibujo. */
 function FilmStripArt({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 224 160" fill="none" className={className} aria-hidden="true">
+    <svg viewBox="1 27 224 106" fill="none" className={className} aria-hidden="true">
       <rect x="8" y="34" width="150" height="92" rx="8" stroke="currentColor" strokeWidth="3" opacity="0.9" />
       {[0, 1, 2, 3, 4].map(i => (
         <rect key={`t${i}`} x={20 + i * 28} y="42" width="14" height="10" rx="2" fill="currentColor" opacity="0.35" />

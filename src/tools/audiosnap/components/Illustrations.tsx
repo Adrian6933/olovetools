@@ -23,7 +23,7 @@ export const StudioHeroArt: React.FC<ArtProps> = ({ className = '', animated = t
   ];
 
   return (
-    <svg viewBox="0 0 400 250" className={className} role="img" aria-hidden="true">
+    <svg viewBox="2 18 394 234" className={className} role="img" aria-hidden="true">
       <defs>
         <linearGradient id="asHeroWave" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#fda4af" />

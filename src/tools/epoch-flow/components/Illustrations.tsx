@@ -9,7 +9,7 @@ import React from 'react';
 const INK = '#38bdf8';
 
 export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 420 250" className={className} role="img" aria-hidden="true" fill="none">
+  <svg viewBox="21 47 402 178" className={className} role="img" aria-hidden="true" fill="none">
     <style>{`
       @keyframes ef-sweep { from { transform: rotate(0deg) } to { transform: rotate(360deg) } }
       @keyframes ef-blink { 0%,100% { opacity:.3 } 50% { opacity:1 } }
