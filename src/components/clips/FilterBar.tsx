@@ -1,7 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { TimeFilter, SortType } from './types';
-import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward, Type } from 'lucide-react';
+import { mergeKeywords, parseKeywordList } from './keywords';
+import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward, Type, Trash2 } from 'lucide-react';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
 // así que velocidades altas (x3/x4) siguen siendo perfectamente reproducibles
@@ -149,25 +150,36 @@ const FilterBar: React.FC<FilterBarProps> = ({
     list.includes(code) ? list.filter(c => c !== code) : [...list, code];
 
   /**
-   * Acepta varias de golpe separadas por coma para poder pegar una lista, y se
-   * come los duplicados comparando en minusculas (que "ACE" y "ace" acaben
-   * siendo dos fichas distintas no ayuda a nadie).
+   * Mete lo escrito en el campo. Acepta varias de golpe en cualquiera de los
+   * formatos en que suele llegar una lista (comas, saltos de linea, numerada,
+   * con viñetas, entre comillas) y descarta las repetidas.
    */
   const commitKeywordDraft = () => {
     if (!onKeywordsChange) return;
-    const nuevas = keywordDraft
-      .split(',')
-      .map(w => w.trim())
-      .filter(Boolean);
-    if (nuevas.length === 0) return;
-    const vistas = new Set(keywords.map(w => w.toLowerCase()));
-    const salida = [...keywords];
-    for (const palabra of nuevas) {
-      if (vistas.has(palabra.toLowerCase())) continue;
-      vistas.add(palabra.toLowerCase());
-      salida.push(palabra);
+    const nuevas = parseKeywordList(keywordDraft);
+    if (nuevas.length === 0) {
+      setKeywordDraft('');
+      return;
     }
-    onKeywordsChange(salida);
+    onKeywordsChange(mergeKeywords(keywords, nuevas));
+    setKeywordDraft('');
+  };
+
+  /**
+   * Pegar entra por aqui y no por el camino normal de escribir: asi cincuenta
+   * palabras de una lista pegada se convierten en cincuenta fichas de golpe, en
+   * vez de quedarse como un texto larguisimo dentro del campo esperando a que
+   * alguien pulse Enter.
+   */
+  const onPasteKeywords = (event: React.ClipboardEvent<HTMLInputElement>) => {
+    if (!onKeywordsChange) return;
+    const pegado = event.clipboardData.getData('text');
+    const nuevas = parseKeywordList(pegado);
+    // Una sola palabra sin separadores se deja pegar como texto normal: puede
+    // que la persona solo quiera completar lo que ya estaba escribiendo.
+    if (nuevas.length < 2) return;
+    event.preventDefault();
+    onKeywordsChange(mergeKeywords(keywords, [...parseKeywordList(keywordDraft), ...nuevas]));
     setKeywordDraft('');
   };
 
@@ -551,6 +563,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
             <input
               value={keywordDraft}
               onChange={(e) => setKeywordDraft(e.target.value)}
+              onPaste={onPasteKeywords}
               // Retroceso con el campo vacio quita la ultima ficha, que es lo
               // que hace cualquier campo de etiquetas y evita tener que apuntar
               // a una equis de 12px.
@@ -571,19 +584,24 @@ const FilterBar: React.FC<FilterBarProps> = ({
               <button
                 type="button"
                 onClick={() => { onKeywordsChange([]); setKeywordDraft(''); }}
-                title={t('clear_selection')}
-                className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                title={t('keywords_clear_all')}
+                aria-label={t('keywords_clear_all')}
+                className="flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-white/5 text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white hover:border-red-500/30 hover:bg-red-500/10 transition-colors cursor-pointer"
               >
-                <X className="w-3 h-3" />
-                <span className="hidden sm:inline">{t('clear_selection')}</span>
+                <Trash2 className="w-3 h-3" />
+                <span className="hidden sm:inline">{t('keywords_clear_all')}</span>
+                <span className="tabular-nums opacity-60">{keywords.length}</span>
               </button>
             )}
           </label>
 
           {/* La explicacion, a la vista: con el filtro puesto y la rejilla medio
               vacia, "por que faltan clips" tiene que poder contestarse sin pasar
-              el raton por encima de nada. */}
-          <p className="mt-2 px-1 text-[11px] font-medium text-gray-500">{t('keywords_hint')}</p>
+              el raton por encima de nada. Y como se pega una lista larga, que es
+              justo lo que no se adivina. */}
+          <p className="mt-2 px-1 text-[11px] font-medium text-gray-500">
+            {t('keywords_hint')} · <span className="text-gray-600">{t('keywords_paste_hint')}</span>
+          </p>
         </div>
       )}
     </div>

@@ -140,6 +140,8 @@ export default {
   "keywords_placeholder": "Tape un mot et appuie sur Entrée (ace, clutch…)",
   "keywords_add": "Ajouter un autre mot",
   "keywords_hint": "Seulement les clips dont le titre contient un de ces mots",
+  "keywords_clear_all": "Tout effacer",
+  "keywords_paste_hint": "Colle une liste entière d'un coup : virgules, une par ligne, numérotée ou à puces — tout passe.",
   "all_categories": "Toutes les catégories",
   "uncategorized": "Sans catégorie",
   "add_to_lists": "Ajouter à des listes",

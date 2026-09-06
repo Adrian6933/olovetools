@@ -140,6 +140,8 @@ export default {
   "keywords_placeholder": "Wort eingeben und Enter drücken (ace, clutch…)",
   "keywords_add": "Weiteres Wort hinzufügen",
   "keywords_hint": "Nur Clips, deren Titel eines dieser Wörter enthält",
+  "keywords_clear_all": "Alle löschen",
+  "keywords_paste_hint": "Ganze Liste auf einmal einfügen: Kommas, eine pro Zeile, nummeriert oder mit Aufzählungszeichen — alles geht.",
   "all_categories": "Alle Kategorien",
   "uncategorized": "Ohne Kategorie",
   "add_to_lists": "Zu Listen hinzufügen",

@@ -140,6 +140,8 @@ export default {
   "keywords_placeholder": "Введите слово и нажмите Enter (ace, clutch...)",
   "keywords_add": "Добавить ещё слово",
   "keywords_hint": "Только клипы, в названии которых есть одно из этих слов",
+  "keywords_clear_all": "Удалить все",
+  "keywords_paste_hint": "Вставьте сразу целый список: через запятую, по одному в строке, с номерами или маркерами — подойдёт любой вид.",
   "all_categories": "Все категории",
   "uncategorized": "Без категории",
   "add_to_lists": "Добавить в списки",

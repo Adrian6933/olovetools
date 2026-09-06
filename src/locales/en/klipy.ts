@@ -205,6 +205,8 @@ export default {
   "keywords_placeholder": "Type a word and press Enter (ace, clutch…)",
   "keywords_add": "Add another word",
   "keywords_hint": "Only clips whose title contains any of these words",
+  "keywords_clear_all": "Clear all",
+  "keywords_paste_hint": "Paste a whole list at once: commas, one per line, numbered or bulleted — it all works.",
   "all_categories": "All categories",
   "uncategorized": "Uncategorized",
   "add_to_lists": "Add to lists",

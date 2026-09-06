@@ -140,6 +140,8 @@ export default {
   "keywords_placeholder": "शब्द लिखें और Enter दबाएँ (ace, clutch...)",
   "keywords_add": "एक और शब्द जोड़ें",
   "keywords_hint": "सिर्फ़ वे क्लिप जिनके शीर्षक में इनमें से कोई शब्द हो",
+  "keywords_clear_all": "सब हटाएँ",
+  "keywords_paste_hint": "पूरी सूची एक साथ चिपकाएँ: कॉमा से, हर पंक्ति में एक, नंबर वाली या बुलेट वाली — सब चलेगा।",
   "all_categories": "सभी श्रेणियाँ",
   "uncategorized": "बिना श्रेणी",
   "add_to_lists": "सूचियों में जोड़ें",

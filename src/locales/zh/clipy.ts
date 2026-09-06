@@ -140,6 +140,8 @@ export default {
   "keywords_placeholder": "输入词语后按 Enter（ace、clutch…）",
   "keywords_add": "再加一个词",
   "keywords_hint": "只显示标题包含其中任一词语的剪辑",
+  "keywords_clear_all": "全部清除",
+  "keywords_paste_hint": "可以整份列表一次粘贴：逗号分隔、一行一个、带编号或带项目符号，都可以。",
   "all_categories": "全部分类",
   "uncategorized": "未分类",
   "add_to_lists": "添加到列表",

@@ -213,6 +213,8 @@ export default {
   "keywords_placeholder": "単語を入力して Enter (ace, clutch...)",
   "keywords_add": "単語を追加",
   "keywords_hint": "タイトルにいずれかの単語を含むクリップだけを表示",
+  "keywords_clear_all": "すべて消す",
+  "keywords_paste_hint": "リストごと貼り付けできます。カンマ区切り、1行に1つ、番号付き、箇条書き — どれでも大丈夫です。",
   "all_categories": "すべてのカテゴリ",
   "uncategorized": "カテゴリなし",
   "add_to_lists": "リストに追加",

@@ -38,12 +38,15 @@ const STORAGE_KEY = 'klipy_saved_session';
 const COLLECTIONS_KEY = 'klipy_saved_collections';
 const ANCHOR_TIME_KEY = 'klipy_anchor_time';
 const BLOCKED_STREAMERS_KEY = 'klipy_blocked_streamers';
+const KEYWORDS_KEY = 'klipy_keywords';
 const SORT_TYPE_KEY = 'klipy_sort_type';
 const PERF_MODE_KEY = 'klipy_perf_mode';
 const EXCLUDE_LANGUAGES_KEY = 'klipy_exclude_languages';
 const ONLY_LANGUAGES_KEY = 'klipy_only_languages';
 const PLAYBACK_SPEED_KEY = 'klipy_playback_speed';
 const MAX_COLLECTIONS = 50;
+/** Misma referencia siempre: un [] nuevo por render invalidaria el memo. */
+const EMPTY_KEYWORDS: string[] = [];
 const RENDER_PAGE_SIZE = 50;
 const POPULAR_TAGS = [
   'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
@@ -145,10 +148,12 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   // repartido en secciones desplegables por categoria.
   const [categoryScope, setCategoryScope] = useState<'active' | 'all'>('active');
   const [expandedSavedCats, setExpandedSavedCats] = useState<string[]>([]);
-  // Palabras que tiene que llevar el titulo del clip. No se guardan en disco ni
-  // sobreviven al cambio de categoria: un "ace" olvidado de la sesion de ayer
-  // te deja mirando una rejilla medio vacia sin entender por que.
-  const [keywords, setKeywords] = useState<string[]>([]);
+  // Palabras que tiene que llevar el titulo del clip, POR CATEGORIA y guardadas
+  // en el navegador. Antes se borraban al cambiar de categoria, y con eso se iba
+  // tambien la lista de cincuenta palabras que habias preparado para Valorant en
+  // cuanto pasabas un momento por Rust. Guardarlas por categoria arregla las dos
+  // cosas: vuelven al volver, y las de una categoria no aparecen en otra.
+  const [keywordsByCategory, setKeywordsByCategory] = useState<Record<string, string[]>>({});
   const [creatingList, setCreatingList] = useState(false);
   const [triggerShake, setTriggerShake] = useState(false);
   const savedListRef = useRef<HTMLDivElement>(null);
@@ -243,6 +248,11 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
           setState(prev => ({ ...prev, anchorTime: now.toISOString() }));
         }
       }
+      const savedKeywords = localStorage.getItem(KEYWORDS_KEY);
+      if (savedKeywords) {
+        const parsed = JSON.parse(savedKeywords);
+        if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) setKeywordsByCategory(parsed);
+      }
       const savedBlocked = localStorage.getItem(BLOCKED_STREAMERS_KEY);
       if (savedBlocked) {
         setBlockedStreamers(JSON.parse(savedBlocked));
@@ -281,6 +291,10 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   useEffect(() => {
     localStorage.setItem(BLOCKED_STREAMERS_KEY, JSON.stringify(blockedStreamers));
   }, [blockedStreamers]);
+
+  useEffect(() => {
+    localStorage.setItem(KEYWORDS_KEY, JSON.stringify(keywordsByCategory));
+  }, [keywordsByCategory]);
 
   useEffect(() => {
     localStorage.setItem(EXCLUDE_LANGUAGES_KEY, JSON.stringify(excludeLanguages));
@@ -416,7 +430,6 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   const activeCategoryRef = useRef<Category | null>(null);
   useEffect(() => { activeCategoryRef.current = state.activeCategory; }, [state.activeCategory]);
 
-  useEffect(() => { setKeywords([]); }, [state.activeCategory?.id]);
 
   /**
    * Sella el clip con la categoria desde la que se guarda. Ni Kick ni Twitch la
@@ -1103,6 +1116,20 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   const blockedCount = activeBlockedList.length;
   const activeExcludeLanguages = excludeLanguages[categoryId] || [];
   const activeOnlyLanguages = onlyLanguages[categoryId] || [];
+  const keywords = keywordsByCategory[categoryId] || EMPTY_KEYWORDS;
+
+  const handleKeywordsChange = useCallback((next: string[]) => {
+    setKeywordsByCategory(prev => {
+      // Sin palabras se borra la entrada entera en vez de dejar un array vacio:
+      // asi lo guardado no se llena de categorias por las que solo se paso.
+      if (next.length === 0) {
+        if (!prev[categoryId]) return prev;
+        const { [categoryId]: _fuera, ...resto } = prev;
+        return resto;
+      }
+      return { ...prev, [categoryId]: next };
+    });
+  }, [categoryId]);
 
   // Ambos van como prop a ClipGrid y de ahí a cada ClipCard memoizada. Sin
   // memoizar aquí, el Set se reconstruía entero (O(n) sobre los guardados) en
@@ -1792,7 +1819,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                   playbackSpeed={playbackSpeed}
                   onPlaybackSpeedChange={handlePlaybackSpeedChange}
                   keywords={keywords}
-                  onKeywordsChange={setKeywords}
+                  onKeywordsChange={handleKeywordsChange}
                 />
                 {isBlocklistOpen && (
                   <BlocklistManager
