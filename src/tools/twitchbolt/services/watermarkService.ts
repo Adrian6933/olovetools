@@ -784,3 +784,28 @@ export const renderTextOverlayVideo = async (
     safetyTimer = setTimeout(finishRecording, totalDuration * 1000 + 10000);
   });
 };
+
+// ---------------------------------------------------------------------------
+// Exportar un clip con la marca incrustada
+// ---------------------------------------------------------------------------
+
+export const QUALITY_STORAGE_KEY = 'twitchbolt_quality';
+
+/** Calidad elegida en la barra de resultados, para no volver a ponerla cada vez. */
+export const loadStoredQuality = (fallback: string): string => {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    return localStorage.getItem(QUALITY_STORAGE_KEY) || fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+export const saveStoredQuality = (quality: string): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(QUALITY_STORAGE_KEY, quality);
+  } catch {
+    /* almacenamiento lleno o bloqueado: la sesión sigue, sólo no se recuerda */
+  }
+};

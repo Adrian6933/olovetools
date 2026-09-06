@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "Au centre",
   "wm_pos_bottom-left": "En bas à gauche",
   "wm_pos_bottom-center": "En bas au centre",
-  "wm_pos_bottom-right": "En bas à droite"
+  "wm_pos_bottom-right": "En bas à droite",
+  "watermarkAll": "Filigrane sur tout",
+  "watermarkAllTitle": "Mettre le filigrane sur tous les clips",
+  "watermarkAllHint": "Utilise le filigrane déjà configuré. Ouvre l'éditeur de n'importe quel clip pour le changer, et il change ici aussi.",
+  "watermarkAllGo": "Appliquer à {n} clips",
+  "watermarkAllDownloading": "Téléchargement",
+  "watermarkAllRendering": "Incrustation",
+  "watermarkAllFailed": "{n} clips n'ont pas pu être traités. Les autres ont bien été enregistrés.",
+  "wm_test": "Tester",
+  "wm_test_in": "Animation d'entrée",
+  "wm_test_out": "Animation de sortie",
+  "wm_test_in_short": "Entrée",
+  "wm_test_out_short": "Sortie"
 };

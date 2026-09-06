@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "बीच में",
   "wm_pos_bottom-left": "नीचे बाएँ",
   "wm_pos_bottom-center": "नीचे बीच में",
-  "wm_pos_bottom-right": "नीचे दाएँ"
+  "wm_pos_bottom-right": "नीचे दाएँ",
+  "watermarkAll": "सब पर वॉटरमार्क",
+  "watermarkAllTitle": "सभी क्लिप पर वॉटरमार्क लगाएँ",
+  "watermarkAllHint": "वही वॉटरमार्क इस्तेमाल होता है जो आपने पहले से सेट किया है। किसी भी क्लिप के एडिटर में बदलें, यहाँ भी बदल जाएगा।",
+  "watermarkAllGo": "{n} क्लिप पर लगाएँ",
+  "watermarkAllDownloading": "डाउनलोड हो रहा है",
+  "watermarkAllRendering": "जोड़ा जा रहा है",
+  "watermarkAllFailed": "{n} क्लिप प्रोसेस नहीं हो सके। बाक़ी सहेज लिए गए।",
+  "wm_test": "आज़माएँ",
+  "wm_test_in": "आने का एनिमेशन",
+  "wm_test_out": "जाने का एनिमेशन",
+  "wm_test_in_short": "आना",
+  "wm_test_out_short": "जाना"
 };

@@ -143,6 +143,7 @@ export default {
   "all_categories": "すべてのカテゴリ",
   "uncategorized": "カテゴリなし",
   "add_to_lists": "リストに追加",
+  "drag_to_reorder": "ドラッグして並べ替え",
   "choose_lists": "リストに追加",
   "default_list": "デフォルトのリスト",
   "new_list": "新しいリスト",

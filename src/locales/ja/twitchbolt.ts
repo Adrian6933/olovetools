@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "中央",
   "wm_pos_bottom-left": "左下",
   "wm_pos_bottom-center": "中央下",
-  "wm_pos_bottom-right": "右下"
+  "wm_pos_bottom-right": "右下",
+  "watermarkAll": "全部に透かし",
+  "watermarkAllTitle": "すべてのクリップに透かしを入れる",
+  "watermarkAllHint": "すでに設定してある透かしを使います。どのクリップのエディタで変えても、ここにも反映されます。",
+  "watermarkAllGo": "{n} 件に適用",
+  "watermarkAllDownloading": "ダウンロード中",
+  "watermarkAllRendering": "焼き込み中",
+  "watermarkAllFailed": "{n} 件は処理できませんでした。残りは保存済みです。",
+  "wm_test": "確認",
+  "wm_test_in": "表示アニメーション",
+  "wm_test_out": "消えるアニメーション",
+  "wm_test_in_short": "表示",
+  "wm_test_out_short": "消去"
 };

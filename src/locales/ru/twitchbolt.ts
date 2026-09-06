@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "По центру",
   "wm_pos_bottom-left": "Снизу слева",
   "wm_pos_bottom-center": "Снизу по центру",
-  "wm_pos_bottom-right": "Снизу справа"
+  "wm_pos_bottom-right": "Снизу справа",
+  "watermarkAll": "Знак на все",
+  "watermarkAllTitle": "Поставить знак на все клипы",
+  "watermarkAllHint": "Берётся тот водяной знак, что уже настроен. Откройте редактор любого клипа, чтобы изменить его — здесь тоже изменится.",
+  "watermarkAllGo": "Применить к {n} клипам",
+  "watermarkAllDownloading": "Загрузка",
+  "watermarkAllRendering": "Впечатывание",
+  "watermarkAllFailed": "{n} клипов обработать не удалось. Остальные сохранены.",
+  "wm_test": "Проверить",
+  "wm_test_in": "Анимация появления",
+  "wm_test_out": "Анимация ухода",
+  "wm_test_in_short": "Вход",
+  "wm_test_out_short": "Выход"
 };

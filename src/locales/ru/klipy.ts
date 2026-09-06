@@ -216,6 +216,7 @@ export default {
   "all_categories": "Все категории",
   "uncategorized": "Без категории",
   "add_to_lists": "Добавить в списки",
+  "drag_to_reorder": "Перетащите, чтобы изменить порядок",
   "choose_lists": "Добавить в списки",
   "default_list": "Список по умолчанию",
   "new_list": "Новый список",

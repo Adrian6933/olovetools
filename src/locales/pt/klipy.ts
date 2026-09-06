@@ -216,6 +216,7 @@ export default {
   "all_categories": "Todas as categorias",
   "uncategorized": "Sem categoria",
   "add_to_lists": "Adicionar a listas",
+  "drag_to_reorder": "Arrasta para mudar a ordem",
   "choose_lists": "Adicionar a listas",
   "default_list": "Lista padrão",
   "new_list": "Nova lista",

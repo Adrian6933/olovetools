@@ -3,6 +3,13 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import LegalModal from './components/LegalModal';
 import ClipResult from './components/ClipResult';
+import {
+  loadStoredWatermarkConfig,
+  loadStoredQuality,
+  saveStoredQuality,
+  processVideoWithWatermark,
+} from './services/watermarkService';
+import type { WatermarkConfig } from './types';
 import ClipSkeleton from './components/ClipSkeleton';
 import { 
   ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge
@@ -41,7 +48,28 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [zipProgress, setZipProgress] = useState<{current: number, total: number, percentage: number, loadedBytes: number, totalBytes: number, speed: number, preparingZip?: boolean} | null>(null);
   const [activeLegal, setActiveLegal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
-  const [selectedQuality, setSelectedQuality] = useState('max');
+  // La calidad se recuerda: es lo primero que se toca al llegar y volver a
+  // ponerla en cada visita no aporta nada.
+  const [selectedQuality, setSelectedQuality] = useState(() => loadStoredQuality('max'));
+  useEffect(() => { saveStoredQuality(selectedQuality); }, [selectedQuality]);
+
+  // ---- marca de agua en todos los clips de golpe --------------------------
+  // El editor vive dentro de cada clip, asi que ponerle la marca a diez era
+  // abrir diez editores. Esto usa la marca ya guardada (la misma que edita
+  // cualquiera de los editores) y recorre la lista entera.
+  const [wmAllOpen, setWmAllOpen] = useState(false);
+  const [wmAllConfig, setWmAllConfig] = useState<WatermarkConfig | null>(null);
+  const [wmAll, setWmAll] = useState<{
+    indice: number;
+    total: number;
+    titulo: string;
+    fase: 'descarga' | 'render';
+    pct: number;
+    fallos: number;
+  } | null>(null);
+  const wmAllAbort = useRef<AbortController | null>(null);
+  /** Cuántos se quedaron por el camino en la última pasada. */
+  const [wmAllFallos, setWmAllFallos] = useState(0);
   const [isQualityOpen, setIsQualityOpen] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -300,6 +328,71 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
       abortControllerRef.current = null;
     }
   };
+
+  /** Pone la marca guardada a todos los clips listos, uno detras de otro. */
+  const aplicarMarcaATodos = useCallback(async () => {
+    const listos = clips.filter(c => c.status === 'success' && c.data).map(c => c.data!);
+    if (listos.length === 0 || wmAll) return;
+    const config = wmAllConfig ?? loadStoredWatermarkConfig();
+
+    const abort = new AbortController();
+    wmAllAbort.current = abort;
+    setWmAllFallos(0);
+    let fallos = 0;
+
+    try {
+      for (let i = 0; i < listos.length; i += 1) {
+        if (abort.signal.aborted) break;
+        const clip = listos[i];
+        const base = { indice: i + 1, total: listos.length, titulo: clip.title, fallos };
+        setWmAll({ ...base, fase: 'descarga', pct: 0 });
+
+        // Se elige la resolucion igual que la descarga en lote: la pedida si
+        // esta, y si no la mejor que tenga ese clip.
+        const objetivo = selectedQuality === 'max'
+          ? clip.resolutions[0]
+          : clip.resolutions.find(r => r.quality === `${selectedQuality}p`)
+            || clip.resolutions.find(r => r.quality.startsWith(selectedQuality))
+            || clip.resolutions[0];
+        if (!objetivo) { fallos += 1; continue; }
+
+        try {
+          const original = await fetchMovieBlob(objetivo.url, (loaded, total) => {
+            setWmAll({ ...base, fase: 'descarga', pct: total > 0 ? Math.round((loaded / total) * 100) : 0 });
+          }, abort.signal);
+
+          const conMarca = await processVideoWithWatermark(
+            original,
+            clip.broadcaster || 'Streamer',
+            config,
+            ({ pct }) => setWmAll({ ...base, fase: 'render', pct }),
+            abort.signal,
+          );
+
+          const nombre = clip.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+          const ext = conMarca.type.includes('webm') ? 'webm' : 'mp4';
+          const url = URL.createObjectURL(conMarca);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${nombre}_${objetivo.quality}_watermark.${ext}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          // Con retardo y generoso: son archivos grandes y Safari cancela la
+          // descarga si la object URL desaparece antes de tiempo.
+          setTimeout(() => URL.revokeObjectURL(url), 60000);
+        } catch (e) {
+          // Un clip que falla no puede llevarse por delante a los otros nueve.
+          if (abort.signal.aborted) break;
+          fallos += 1;
+        }
+      }
+    } finally {
+      wmAllAbort.current = null;
+      setWmAll(null);
+      setWmAllFallos(fallos);
+    }
+  }, [clips, wmAll, wmAllConfig, selectedQuality]);
 
   const activeOption = qualityOptions.find(o => o.id === selectedQuality) || qualityOptions[0];
 
@@ -674,12 +767,95 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                         </button>
                       );
                     })()}
+                    {/* La marca, a todos de una vez. El editor sigue estando
+                        dentro de cada clip para afinarla; esto es para cuando
+                        ya esta puesta y lo que falta es aplicarla. */}
+                    <button
+                      onClick={() => { setWmAllConfig(loadStoredWatermarkConfig()); setWmAllOpen(true); }}
+                      disabled={!!wmAll || !!zipProgress || clips.every(c => c.status !== 'success')}
+                      title={t.watermarkAllTitle || 'Watermark on every clip'}
+                      className="h-12 px-5 bg-twitch/15 border border-twitch/40 text-twitch rounded-xl flex items-center gap-2 text-xs font-black uppercase tracking-widest transition-all cursor-pointer hover:bg-twitch hover:text-white disabled:opacity-40 disabled:cursor-not-allowed active:scale-95"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        <span className="hidden lg:inline">{t.watermarkAll || 'Watermark all'}</span>
+                    </button>
                     <button onClick={handleReset} className="w-12 h-12 bg-dark-950 border border-white/5 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer hover:bg-red-500/10 hover:border-red-500/20 active:scale-90">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
              </div>
              
+             {/* Panel de "marca en todos": lo que se va a hacer, en cuantos, y
+                 con que marca — antes de empezar, no despues. */}
+             {(wmAllOpen || wmAll) && (
+               <div className="w-full bg-[#111114] border border-twitch/30 rounded-[2rem] p-6 md:p-7 shadow-2xl relative z-30 space-y-5">
+                 <div className="flex items-start gap-4">
+                   <div className="p-3 bg-twitch/15 border border-twitch/30 rounded-2xl shrink-0">
+                     <Sparkles className="w-5 h-5 text-twitch" />
+                   </div>
+                   <div className="min-w-0 flex-1">
+                     <h3 className="text-sm font-black uppercase tracking-widest text-white">
+                       {t.watermarkAll || 'Watermark all'}
+                     </h3>
+                     <p className="text-xs text-gray-400 font-medium mt-1 leading-relaxed">
+                       {t.watermarkAllHint || 'Uses the watermark you already set up. Open any clip editor to change it.'}
+                     </p>
+                   </div>
+                   {!wmAll && (
+                     <button
+                       onClick={() => setWmAllOpen(false)}
+                       aria-label={t.close || 'Close'}
+                       className="p-2 rounded-xl border border-white/10 text-gray-500 hover:text-white hover:border-white/25 transition-all cursor-pointer shrink-0"
+                     >
+                       <X className="w-4 h-4" />
+                     </button>
+                   )}
+                 </div>
+
+                 {wmAll ? (
+                   <div className="space-y-3">
+                     <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-bold">
+                       <span className="text-white tabular-nums">
+                         {wmAll.indice} / {wmAll.total}
+                         <span className="text-gray-500 font-medium ml-2 truncate">{wmAll.titulo}</span>
+                       </span>
+                       <span className="text-twitch uppercase tracking-widest">
+                         {wmAll.fase === 'descarga' ? (t.watermarkAllDownloading || 'Downloading') : (t.watermarkAllRendering || 'Burning in')} · {wmAll.pct}%
+                       </span>
+                     </div>
+                     <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                       <div className="h-full bg-twitch transition-[width] duration-200" style={{ width: `${wmAll.pct}%` }} />
+                     </div>
+                     <button
+                       onClick={() => wmAllAbort.current?.abort()}
+                       className="px-4 py-2.5 rounded-xl bg-red-500/15 border border-red-500/30 text-red-300 text-[11px] font-black uppercase tracking-widest hover:bg-red-500/25 transition-all cursor-pointer"
+                     >
+                       {t.cancel || 'Cancel'}
+                     </button>
+                   </div>
+                 ) : (
+                   <div className="flex flex-wrap items-center gap-3">
+                     <button
+                       onClick={() => { setWmAllOpen(false); void aplicarMarcaATodos(); }}
+                       className="px-6 py-3.5 rounded-xl bg-twitch text-white text-xs font-black uppercase tracking-widest hover:bg-twitch/85 transition-all cursor-pointer active:scale-95 flex items-center gap-2"
+                     >
+                       <Sparkles className="w-4 h-4" />
+                       {(t.watermarkAllGo || 'Apply to {n} clips').replace('{n}', String(clips.filter(c => c.status === 'success').length))}
+                     </button>
+                     <span className="text-[11px] font-bold text-gray-500">
+                       {activeOption.label}
+                     </span>
+                   </div>
+                 )}
+               </div>
+             )}
+
+             {wmAllFallos > 0 && !wmAll && (
+               <div className="w-full rounded-[2rem] border border-amber-500/25 bg-amber-500/5 px-6 py-4 text-xs font-bold text-amber-300">
+                 {(t.watermarkAllFailed || '{n} clips could not be processed.').replace('{n}', String(wmAllFallos))}
+               </div>
+             )}
+
              <div className="grid grid-cols-1 gap-12 relative z-10">
                 {clips.map((c, i) => {
                   if (c.status === 'loading') {

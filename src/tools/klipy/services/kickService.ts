@@ -84,6 +84,57 @@ async function api(params: Record<string, string>): Promise<any> {
   return res.json();
 }
 
+/**
+ * Semillas para ir ampliando el catalogo de categorias.
+ *
+ * Kick NO tiene un endpoint de "todas las categorias": /categories es una
+ * busqueda de texto que EXIGE una consulta y devuelve como mucho 100
+ * resultados. Y el top de entrada sale de agrupar los 100 directos mas vistos,
+ * o sea que en una tarde floja son diecinueve categorias y se acabo.
+ *
+ * Asi que "cargar mas" recorre esta lista: cada pulsacion pide una semilla y
+ * añade lo que no estuviera ya. Estan ordenadas por lo que rinden — las
+ * primeras devuelven las 100 de tope — y elegidas por trozos que aparecen en
+ * muchisimos titulos de juego, no por letra suelta.
+ */
+const SEMILLAS_CATALOGO = [
+  'a', 'the', 'e', 'o', 'i', 'game', 'of', 's', 'simulator', '2', 'war',
+  'world', 'legend', 'star', 'dark', 'super', 'city', 'life', 'story', 'dead',
+  'fire', 'night', 'black', 'red', 'blue', 'king', 'island', 'last', 'new',
+  'lego', 'call', 'grand', 'football', 'racing', 'horror', 'craft', 'quest',
+  'battle', 'hero', 'space', 'ninja', 'zombie', 'dragon', 'magic', 'sport',
+];
+
+export const CATALOGO_PAGINAS = SEMILLAS_CATALOGO.length;
+
+/**
+ * Una tanda mas de categorias. `pagina` es el indice de la semilla; devuelve el
+ * indice siguiente, o null cuando ya no quedan.
+ */
+export async function loadCategoryPage(
+  pagina: number,
+): Promise<{ categories: KCategory[]; next: number | null }> {
+  const semilla = SEMILLAS_CATALOGO[pagina];
+  if (!semilla) return { categories: [], next: null };
+  const siguiente = pagina + 1 < SEMILLAS_CATALOGO.length ? pagina + 1 : null;
+  try {
+    const data = await api({ action: 'categories', q: semilla });
+    const arr: any[] = Array.isArray(data?.data) ? data.data : [];
+    return {
+      categories: arr.map((c) => ({
+        id: String(c.id),
+        slug: categorySlug(c.name || ''),
+        name: c.name,
+        thumbnail: c.thumbnail || '',
+      })),
+      next: siguiente,
+    };
+  } catch {
+    // Una semilla que falla no puede cortar el catalogo: se pasa a la siguiente.
+    return { categories: [], next: siguiente };
+  }
+}
+
 export async function searchCategories(q: string): Promise<KCategory[]> {
   const termino = q.trim();
   // "popular" es el valor con el que la interfaz compartida pide el catalogo de
@@ -404,26 +455,36 @@ export async function searchAllKickClips(
   shouldContinue?: () => boolean,
   maxPages?: number,
   name?: string,
-): Promise<{ completed: boolean }> {
-  if (!categorySlug) return { completed: true };
+  /**
+   * Cursor por el que se quedo la vez anterior. SIN esto, una llamada con
+   * maxPages=1 volvia a pedir la primera pagina cada vez: el scroll infinito se
+   * pasaba la vida diciendo "buscando clips" y trayendo los mismos veinte de
+   * siempre, que la rejilla descartaba por repetidos. Nunca aparecia uno nuevo
+   * y nunca se daba por terminado.
+   */
+  startCursor?: string | null,
+): Promise<{ completed: boolean; cursor: string | null }> {
+  if (!categorySlug) return { completed: true, cursor: null };
   const slug = await slugQueResponde(categorySlug, time, name);
-  if (!slug) return { completed: true };
+  if (!slug) return { completed: true, cursor: null };
 
   const seen = new Set<string>();
-  let cursor: string | null | undefined;
+  let cursor: string | null | undefined = startCursor ?? undefined;
   const tope = maxPages ?? 25;
 
   for (let page = 0; page < tope; page++) {
-    if (shouldContinue && !shouldContinue()) return { completed: false };
+    if (shouldContinue && !shouldContinue()) return { completed: false, cursor: cursor ?? null };
     const r = await pedirPagina(slug, time, cursor);
     if (!r.ok) break;
     const nuevos = r.clips.filter((c) => !seen.has(c.id));
     for (const c of nuevos) seen.add(c.id);
     if (nuevos.length) onClips(nuevos);
-    if (!r.cursor || r.cursor === cursor || r.clips.length === 0) return { completed: true };
+    // Un cursor que no avanza es el final tanto como no tener cursor: Kick lo
+    // repite en la ultima pagina en vez de dejarlo vacio.
+    if (!r.cursor || r.cursor === cursor || r.clips.length === 0) return { completed: true, cursor: null };
     cursor = r.cursor;
   }
-  return { completed: false };
+  return { completed: false, cursor: cursor ?? null };
 }
 
 /**

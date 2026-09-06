@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
 import { groupClipsByCategory, clipMatchesCategory, sumClipSeconds } from '../../components/clips/grouping';
 import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
+import { useReorder } from '../../components/clips/useReorder';
 import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition, getClipVideoSource, fetchTwitchSuggestions } from './services/twitchService';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
@@ -13,7 +14,7 @@ import CategoryGrid from '../../components/clips/CategoryGrid';
 import FloatingPlayer from '../../components/clips/FloatingPlayer';
 import LegalModal from './components/LegalModal';
 import BlocklistManager from '../../components/clips/BlocklistManager';
-import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus } from 'lucide-react';
+import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus, GripVertical } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AdBanner } from '../../components/shared/AdBanner';
 import {
@@ -1129,37 +1130,80 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     return userLists.reduce((acc, list) => acc + list.clips.filter(c => clipMatchesCategory(c, cat.id, cat.name)).length, 0);
   }, [userLists, state.activeCategory]);
 
+  // Reordenar arrastrando por el asa. El orden que sale es el de la lista
+  // maestra, asi que vale igual con la vista plana de una categoria que con las
+  // secciones desplegables.
+  const handleReorderSaved = useCallback((nextIds: string[]) => {
+    setSavedClips(prev => {
+      const porId = new Map(prev.map(c => [c.id, c]));
+      const ordenados = nextIds.map(id => porId.get(id)).filter((c): c is Clip => !!c);
+      // Lo que no estuviera en la lista visible (otra categoria) se queda
+      // detras en su orden de siempre: mover un clip de Rust no puede tirar los
+      // de Valorant.
+      const movidos = new Set(nextIds);
+      return [...ordenados, ...prev.filter(c => !movidos.has(c.id))];
+    });
+    setSessionActive(true);
+  }, []);
+
+  const reorder = useReorder(visibleSavedClips.map(c => c.id), handleReorderSaved);
+
   const toggleSavedCat = useCallback((key: string) => {
     setExpandedSavedCats(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
   }, []);
 
-  const renderSavedClip = (clip: Clip) => (
-    <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
-      <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
-      <div className="flex-grow min-w-0 flex flex-col justify-center">
-        <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
-        <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+  const renderSavedClip = (clip: Clip) => {
+    const arrastrando = reorder.state.dragging === clip.id;
+    const encima = reorder.state.over === clip.id && reorder.state.dragging !== clip.id;
+    return (
+      <div
+        key={clip.id}
+        {...reorder.rowProps(clip.id)}
+        onClick={() => handleScrollToClip(clip.id)}
+        className={`bg-white/5 hover:bg-white/10 border rounded-2xl p-3 flex items-center gap-2 sm:gap-3 group transition-all cursor-pointer ${
+          arrastrando ? 'opacity-40 border-twitch-base/40' : encima ? 'border-twitch-base/60 bg-twitch-base/10' : 'border-white/5'
+        }`}
+      >
+        {/* El asa, no la fila entera: la fila lleva botones que hay que poder
+            pulsar, y en movil el touch-action que necesita el arrastre se queda
+            aqui dentro para que el panel se siga deslizando con el dedo. */}
+        <span
+          {...reorder.handleProps(clip.id)}
+          onClick={(e) => e.stopPropagation()}
+          title={t('drag_to_reorder')}
+          aria-label={t('drag_to_reorder')}
+          className="flex-shrink-0 -ml-1 p-1 text-gray-600 hover:text-twitch-base cursor-grab active:cursor-grabbing touch-none"
+        >
+          <GripVertical className="w-4 h-4" />
+        </span>
+        <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
+        <div className="flex-grow min-w-0 flex flex-col justify-center">
+          <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
+          <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+        </div>
+        {/* Anadir a una lista con nombre. Va resaltado y no en gris como los
+            demas: es la accion que se venia sin encontrar, y si el clip ya no
+            esta en la rejilla (otra categoria, otro filtro) este es el unico
+            sitio desde donde se puede rescatar. */}
+        <button
+          onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
+          className="flex-shrink-0 flex items-center gap-1.5 px-2 py-2 rounded-xl bg-twitch-base/10 border border-twitch-base/25 text-twitch-base hover:bg-twitch-base/20 cursor-pointer transition-colors"
+          title={t('add_to_lists')}
+        >
+          <ListPlus className="w-4 h-4" />
+          <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">{t('add_to_lists')}</span>
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
+          className="flex-shrink-0 p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
+          title={t('download') || 'Descargar'}
+        >
+          <Download className="w-4 h-4" />
+        </button>
+        <button onClick={(e) => handleDeleteClip(e, clip.id)} className="flex-shrink-0 p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
       </div>
-      {/* Desde aqui tambien se puede archivar en una lista con nombre: si el
-          clip ya no esta en la rejilla (otra categoria, otro filtro), este es
-          el unico sitio desde donde se puede rescatar. */}
-      <button
-        onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
-        className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-        title={t('add_to_lists')}
-      >
-        <ListPlus className="w-4 h-4" />
-      </button>
-      <button
-        onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
-        className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-        title={t('download') || 'Descargar'}
-      >
-        <Download className="w-4 h-4" />
-      </button>
-      <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
-    </div>
-  );
+    );
+  };
 
   const renderListClip = (clip: Clip, listId: string) => (
     <div key={clip.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">

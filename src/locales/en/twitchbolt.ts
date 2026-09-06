@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "Centre",
   "wm_pos_bottom-left": "Bottom left",
   "wm_pos_bottom-center": "Bottom centre",
-  "wm_pos_bottom-right": "Bottom right"
+  "wm_pos_bottom-right": "Bottom right",
+  "watermarkAll": "Watermark all",
+  "watermarkAllTitle": "Put the watermark on every clip",
+  "watermarkAllHint": "Uses the watermark you already set up. Open any clip's editor to change it, and it changes here too.",
+  "watermarkAllGo": "Apply to {n} clips",
+  "watermarkAllDownloading": "Downloading",
+  "watermarkAllRendering": "Burning in",
+  "watermarkAllFailed": "{n} clips could not be processed. The rest were saved.",
+  "wm_test": "Test",
+  "wm_test_in": "Entry animation",
+  "wm_test_out": "Exit animation",
+  "wm_test_in_short": "In",
+  "wm_test_out_short": "Out"
 };

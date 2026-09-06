@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "Mittig",
   "wm_pos_bottom-left": "Unten links",
   "wm_pos_bottom-center": "Unten mittig",
-  "wm_pos_bottom-right": "Unten rechts"
+  "wm_pos_bottom-right": "Unten rechts",
+  "watermarkAll": "Alle mit Wasserzeichen",
+  "watermarkAllTitle": "Das Wasserzeichen auf alle Clips setzen",
+  "watermarkAllHint": "Nimmt das Wasserzeichen, das du schon eingerichtet hast. Ändere es im Editor eines beliebigen Clips, dann ändert es sich auch hier.",
+  "watermarkAllGo": "Auf {n} Clips anwenden",
+  "watermarkAllDownloading": "Wird geladen",
+  "watermarkAllRendering": "Wird eingebrannt",
+  "watermarkAllFailed": "{n} Clips konnten nicht verarbeitet werden. Der Rest wurde gespeichert.",
+  "wm_test": "Testen",
+  "wm_test_in": "Einblend-Animation",
+  "wm_test_out": "Ausblend-Animation",
+  "wm_test_in_short": "Ein",
+  "wm_test_out_short": "Aus"
 };

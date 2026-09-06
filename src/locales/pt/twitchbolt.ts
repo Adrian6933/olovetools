@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "Ao centro",
   "wm_pos_bottom-left": "Baixo à esquerda",
   "wm_pos_bottom-center": "Baixo ao centro",
-  "wm_pos_bottom-right": "Baixo à direita"
+  "wm_pos_bottom-right": "Baixo à direita",
+  "watermarkAll": "Marca em todos",
+  "watermarkAllTitle": "Pôr a marca em todos os clipes",
+  "watermarkAllHint": "Usa a marca que já tens configurada. Abre-a no editor de qualquer clipe para a mudares e muda aqui também.",
+  "watermarkAllGo": "Aplicar a {n} clipes",
+  "watermarkAllDownloading": "A descarregar",
+  "watermarkAllRendering": "A incrustar",
+  "watermarkAllFailed": "{n} clipes ficaram pelo caminho. Os restantes foram guardados.",
+  "wm_test": "Testar",
+  "wm_test_in": "Animação de entrada",
+  "wm_test_out": "Animação de saída",
+  "wm_test_in_short": "Entrada",
+  "wm_test_out_short": "Saída"
 };

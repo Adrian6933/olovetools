@@ -208,6 +208,7 @@ export default {
   "all_categories": "All categories",
   "uncategorized": "Uncategorized",
   "add_to_lists": "Add to lists",
+  "drag_to_reorder": "Drag to reorder",
   "choose_lists": "Add to lists",
   "default_list": "Default list",
   "new_list": "New list",

@@ -13,7 +13,8 @@ import { createPortal } from 'react-dom';
 import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
 import { groupClipsByCategory, clipMatchesCategory, sumClipSeconds } from '../../components/clips/grouping';
 import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
-import { searchCategories, searchKickClips, searchAllKickClips, getClipById, getClipVideoSource, fetchKickSuggestions } from './services/kickService';
+import { useReorder } from '../../components/clips/useReorder';
+import { searchCategories, searchKickClips, searchAllKickClips, getClipById, getClipVideoSource, fetchKickSuggestions, loadCategoryPage } from './services/kickService';
 import { toCategory, toClip } from './services/adapt';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
@@ -24,7 +25,7 @@ import CategoryGrid from '../../components/clips/CategoryGrid';
 import FloatingPlayer from '../../components/clips/FloatingPlayer';
 import LegalModal from './components/LegalModal';
 import BlocklistManager from '../../components/clips/BlocklistManager';
-import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus } from 'lucide-react';
+import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus, GripVertical } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AdBanner } from '../../components/shared/AdBanner';
 import {
@@ -161,7 +162,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   // retome justo ahí en vez de volver a la franja más antigua cada vez.
   // Kick pagina por cursor hasta agotarlo, sin el tope de profundidad que
   // obligaba a Clipy a trocear la ventana en franjas horarias.
-  const deepCrawlResumeRef = useRef<null>(null);
+  /** Cursor por el que se quedo el barrido, para retomarlo donde lo dejo. */
+  const deepCrawlResumeRef = useRef<string | null>(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
   const langMenuRef = useRef<HTMLDivElement>(null);
@@ -659,9 +661,14 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       }
 
       const categories = (await searchCategories(query)).map(toCategory);
-      const cursor = null;
+      // El top de entrada sale de agrupar los directos mas vistos, asi que en
+      // una tarde floja son veinte categorias y punto. El cursor "0" es la
+      // primera semilla del catalogo: con el aparece "cargar mas" y cada
+      // pulsacion trae otra tanda. En una busqueda de texto no, que ahi lo que
+      // se quiere es lo que se ha buscado y no un catalogo entero detras.
+      const esCatalogo = !query.trim() || query.trim().toLowerCase() === 'popular';
       if (searchId !== lastSearchId.current) return;
-      setState(prev => ({ ...prev, categories, categoriesCursor: cursor, isLoading: false }));
+      setState(prev => ({ ...prev, categories, categoriesCursor: esCatalogo ? '0' : null, isLoading: false }));
     } catch (error: any) {
       if (searchId !== lastSearchId.current) return;
       setState(prev => ({ ...prev, error: isClipUrl ? t('error_clips') : t('error_categories'), isLoading: false }));
@@ -672,19 +679,34 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     if (state.isLoading || !state.categoriesCursor || state.mode !== 'categories') return;
     setState(prev => ({ ...prev, isLoading: true }));
     try {
-      // Kick devuelve el catalogo de una vez: no hay segunda pagina que pedir.
-      const newCats: Category[] = [];
-      const nextCursor = null;
+      // Se piden semillas hasta que una traiga algo nuevo de verdad: hay
+      // semillas cuyos cien resultados ya estaban todos, y devolver "no hay
+      // mas" por eso dejaria el catalogo cortado a la mitad.
+      let pagina = parseInt(state.categoriesCursor, 10) || 0;
+      const vistos = new Set(state.categories.map(c => c.id));
+      let nuevas: Category[] = [];
+      let siguiente: number | null = pagina;
+      for (let intento = 0; intento < 6 && siguiente !== null; intento += 1) {
+        const tanda = await loadCategoryPage(siguiente);
+        siguiente = tanda.next;
+        for (const cruda of tanda.categories) {
+          const cat = toCategory(cruda);
+          if (vistos.has(cat.id)) continue;
+          vistos.add(cat.id);
+          nuevas.push(cat);
+        }
+        if (nuevas.length >= 20) break;
+      }
       setState(prev => ({
         ...prev,
-        categories: [...prev.categories, ...newCats],
-        categoriesCursor: nextCursor,
-        isLoading: false
+        categories: [...prev.categories, ...nuevas],
+        categoriesCursor: siguiente === null ? null : String(siguiente),
+        isLoading: false,
       }));
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.categoriesCursor, state.query, state.mode]);
+  }, [state.isLoading, state.categoriesCursor, state.categories, state.mode]);
 
   const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter) => {
     // Cambiamos el modo inmediatamente para que el usuario entre a la sección y vea los skeletons
@@ -812,7 +834,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     let allLoadedClips: Clip[] = [...state.clips];
 
     try {
-      const { completed } = await searchAllKickClips(
+      const { completed, cursor: dondeSeQuedo } = await searchAllKickClips(
         state.activeCategory.id,
         state.timeFilter,
         (items) => {
@@ -833,7 +855,9 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
         shouldContinue,
         undefined,
         state.activeCategory.name,
+        deepCrawlResumeRef.current,
       );
+      deepCrawlResumeRef.current = dondeSeQuedo;
       if (completed) {
         setState(prev => ({ ...prev, isLoading: false, paginationCursor: null }));
         setAllClipsLoaded(true);
@@ -862,10 +886,13 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     setState(prev => ({ ...prev, isLoading: true }));
 
     const seen = new Set(state.clips.map(c => c.id));
+    const habia = seen.size;
     let mergedClips: Clip[] = [...state.clips];
 
     try {
-      const { completed } = await searchAllKickClips(
+      // Tres paginas por tanda, no una: veinte clips por scroll se quedaba
+      // corto y obligaba a bajar cinco veces para ver algo distinto.
+      const { completed, cursor: dondeSeQuedo } = await searchAllKickClips(
         state.activeCategory.id,
         state.timeFilter,
         (items) => {
@@ -878,11 +905,16 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
           }
         },
         undefined,
-        1,
+        3,
         state.activeCategory.name,
+        deepCrawlResumeRef.current,
       );
+      deepCrawlResumeRef.current = dondeSeQuedo;
       setState(prev => ({ ...prev, clips: [...mergedClips], isLoading: false }));
-      if (completed) {
+      // Sin cursor donde seguir, o una tanda entera sin traer nada nuevo: no hay
+      // mas. Seguir pidiendo solo repetiria la misma pagina para siempre, que
+      // es justo lo que hacia que pusiera "buscando clips" sin parar.
+      if (completed || dondeSeQuedo === null || seen.size === habia) {
         deepCrawlResumeRef.current = null;
         setAllClipsLoaded(true);
       }
@@ -1125,37 +1157,80 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     return userLists.reduce((acc, list) => acc + list.clips.filter(c => clipMatchesCategory(c, cat.id, cat.name)).length, 0);
   }, [userLists, state.activeCategory]);
 
+  // Reordenar arrastrando por el asa. El orden que sale es el de la lista
+  // maestra, asi que vale igual con la vista plana de una categoria que con las
+  // secciones desplegables.
+  const handleReorderSaved = useCallback((nextIds: string[]) => {
+    setSavedClips(prev => {
+      const porId = new Map(prev.map(c => [c.id, c]));
+      const ordenados = nextIds.map(id => porId.get(id)).filter((c): c is Clip => !!c);
+      // Lo que no estuviera en la lista visible (otra categoria) se queda
+      // detras en su orden de siempre: mover un clip de Rust no puede tirar los
+      // de Valorant.
+      const movidos = new Set(nextIds);
+      return [...ordenados, ...prev.filter(c => !movidos.has(c.id))];
+    });
+    setSessionActive(true);
+  }, []);
+
+  const reorder = useReorder(visibleSavedClips.map(c => c.id), handleReorderSaved);
+
   const toggleSavedCat = useCallback((key: string) => {
     setExpandedSavedCats(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]);
   }, []);
 
-  const renderSavedClip = (clip: Clip) => (
-    <div key={clip.id} onClick={() => handleScrollToClip(clip.id)} className="bg-white/5 hover:bg-white/10 border border-white/5 rounded-2xl p-3 flex gap-4 group transition-all cursor-pointer">
-      <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
-      <div className="flex-grow min-w-0 flex flex-col justify-center">
-        <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
-        <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+  const renderSavedClip = (clip: Clip) => {
+    const arrastrando = reorder.state.dragging === clip.id;
+    const encima = reorder.state.over === clip.id && reorder.state.dragging !== clip.id;
+    return (
+      <div
+        key={clip.id}
+        {...reorder.rowProps(clip.id)}
+        onClick={() => handleScrollToClip(clip.id)}
+        className={`bg-white/5 hover:bg-white/10 border rounded-2xl p-3 flex items-center gap-2 sm:gap-3 group transition-all cursor-pointer ${
+          arrastrando ? 'opacity-40 border-twitch-base/40' : encima ? 'border-twitch-base/60 bg-twitch-base/10' : 'border-white/5'
+        }`}
+      >
+        {/* El asa, no la fila entera: la fila lleva botones que hay que poder
+            pulsar, y en movil el touch-action que necesita el arrastre se queda
+            aqui dentro para que el panel se siga deslizando con el dedo. */}
+        <span
+          {...reorder.handleProps(clip.id)}
+          onClick={(e) => e.stopPropagation()}
+          title={t('drag_to_reorder')}
+          aria-label={t('drag_to_reorder')}
+          className="flex-shrink-0 -ml-1 p-1 text-gray-600 hover:text-twitch-base cursor-grab active:cursor-grabbing touch-none"
+        >
+          <GripVertical className="w-4 h-4" />
+        </span>
+        <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
+        <div className="flex-grow min-w-0 flex flex-col justify-center">
+          <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
+          <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+        </div>
+        {/* Anadir a una lista con nombre. Va resaltado y no en gris como los
+            demas: es la accion que se venia sin encontrar, y si el clip ya no
+            esta en la rejilla (otra categoria, otro filtro) este es el unico
+            sitio desde donde se puede rescatar. */}
+        <button
+          onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
+          className="flex-shrink-0 flex items-center gap-1.5 px-2 py-2 rounded-xl bg-twitch-base/10 border border-twitch-base/25 text-twitch-base hover:bg-twitch-base/20 cursor-pointer transition-colors"
+          title={t('add_to_lists')}
+        >
+          <ListPlus className="w-4 h-4" />
+          <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">{t('add_to_lists')}</span>
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
+          className="flex-shrink-0 p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
+          title={t('download') || 'Descargar'}
+        >
+          <Download className="w-4 h-4" />
+        </button>
+        <button onClick={(e) => handleDeleteClip(e, clip.id)} className="flex-shrink-0 p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
       </div>
-      {/* Desde aqui tambien se puede archivar en una lista con nombre: si el
-          clip ya no esta en la rejilla (otra categoria, otro filtro), este es
-          el unico sitio desde donde se puede rescatar. */}
-      <button
-        onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
-        className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-        title={t('add_to_lists')}
-      >
-        <ListPlus className="w-4 h-4" />
-      </button>
-      <button
-        onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
-        className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-        title={t('download') || 'Descargar'}
-      >
-        <Download className="w-4 h-4" />
-      </button>
-      <button onClick={(e) => handleDeleteClip(e, clip.id)} className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
-    </div>
-  );
+    );
+  };
 
   const renderListClip = (clip: Clip, listId: string) => (
     <div key={clip.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors group">

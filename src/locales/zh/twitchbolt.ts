@@ -244,5 +244,17 @@ export default {
   "wm_pos_center": "居中",
   "wm_pos_bottom-left": "左下",
   "wm_pos_bottom-center": "下方居中",
-  "wm_pos_bottom-right": "右下"
+  "wm_pos_bottom-right": "右下",
+  "watermarkAll": "全部加水印",
+  "watermarkAllTitle": "给所有剪辑加上水印",
+  "watermarkAllHint": "使用你已经设置好的水印。在任意剪辑的编辑器里改动，这里也会跟着变。",
+  "watermarkAllGo": "应用到 {n} 个剪辑",
+  "watermarkAllDownloading": "下载中",
+  "watermarkAllRendering": "合成中",
+  "watermarkAllFailed": "{n} 个剪辑没能处理。其余的已经保存。",
+  "wm_test": "试看",
+  "wm_test_in": "入场动画",
+  "wm_test_out": "退场动画",
+  "wm_test_in_short": "入场",
+  "wm_test_out_short": "退场"
 };

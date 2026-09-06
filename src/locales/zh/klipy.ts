@@ -216,6 +216,7 @@ export default {
   "all_categories": "全部分类",
   "uncategorized": "未分类",
   "add_to_lists": "添加到列表",
+  "drag_to_reorder": "拖动以调整顺序",
   "choose_lists": "添加到列表",
   "default_list": "默认列表",
   "new_list": "新建列表",

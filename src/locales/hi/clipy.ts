@@ -143,6 +143,7 @@ export default {
   "all_categories": "सभी श्रेणियाँ",
   "uncategorized": "बिना श्रेणी",
   "add_to_lists": "सूचियों में जोड़ें",
+  "drag_to_reorder": "क्रम बदलने के लिए खींचें",
   "choose_lists": "सूचियों में जोड़ें",
   "default_list": "डिफ़ॉल्ट सूची",
   "new_list": "नई सूची",

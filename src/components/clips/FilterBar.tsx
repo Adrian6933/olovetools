@@ -512,34 +512,42 @@ const FilterBar: React.FC<FilterBarProps> = ({
         )}
       </div>
 
-      {/* Filtro por palabras del titulo, en su propia fila: las fichas crecen
-          con cada palabra y en la fila de arriba empujarian todo lo demas. */}
+      {/* Filtro por palabras del titulo. Fila propia y separada por una linea:
+          las fichas crecen con cada palabra y arriba empujarian todo lo demas.
+          El campo entero es la caja — icono, fichas y entrada dentro del mismo
+          recuadro — para que se lea como UNA cosa y no como una etiqueta suelta
+          al lado de un cuadro de texto, que era lo que quedaba raro. */}
       {onKeywordsChange && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 px-4 pb-4 -mt-1">
-          <div className="flex items-center gap-2 flex-shrink-0" title={t('keywords_hint')}>
-            <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
-              <Type className="w-5 h-5 text-twitch-base" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{t('keywords')}</span>
-          </div>
-
-          <form
-            className="flex-grow min-w-0 flex flex-wrap items-center gap-1.5 bg-twitch-black border border-twitch-surfaceAlt rounded-lg px-2 py-1.5 focus-within:border-twitch-base transition-colors"
-            onSubmit={(e) => { e.preventDefault(); commitKeywordDraft(); }}
+        <div className="border-t border-twitch-surfaceAlt/60 px-4 py-3">
+          <label
+            className="flex flex-wrap items-center gap-2 rounded-xl border border-twitch-surfaceAlt bg-twitch-black px-3 py-2 transition-colors focus-within:border-twitch-base/60 focus-within:ring-1 focus-within:ring-twitch-base/20 cursor-text"
+            title={t('keywords_hint')}
           >
+            <span className="flex items-center gap-2 flex-shrink-0 text-twitch-base">
+              <Type className="w-4 h-4" />
+              <span className="text-[10px] font-black uppercase tracking-[0.18em] hidden sm:inline">{t('keywords')}</span>
+            </span>
+
+            <span className="hidden sm:block h-5 w-px bg-white/10 flex-shrink-0" />
+
             {keywords.map(word => (
-              <span key={word} className="flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-md bg-twitch-base/15 border border-twitch-base/30 text-twitch-base text-xs font-bold max-w-full">
+              <span
+                key={word}
+                className="group flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-full bg-twitch-base/15 border border-twitch-base/30 text-twitch-base text-xs font-bold max-w-full"
+              >
                 <span className="truncate">{word}</span>
                 <button
                   type="button"
                   onClick={() => onKeywordsChange(keywords.filter(w => w !== word))}
                   title={t('delete')}
-                  className="p-0.5 rounded hover:bg-twitch-base/25 transition-colors cursor-pointer flex-shrink-0"
+                  aria-label={`${t('delete')} ${word}`}
+                  className="flex items-center justify-center w-4 h-4 rounded-full text-twitch-base/60 hover:text-white hover:bg-twitch-base/40 transition-colors cursor-pointer flex-shrink-0"
                 >
                   <X className="w-3 h-3" />
                 </button>
               </span>
             ))}
+
             <input
               value={keywordDraft}
               onChange={(e) => setKeywordDraft(e.target.value)}
@@ -547,7 +555,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
               // que hace cualquier campo de etiquetas y evita tener que apuntar
               // a una equis de 12px.
               onKeyDown={(e) => {
-                if (e.key === 'Backspace' && keywordDraft === '' && keywords.length > 0) {
+                if (e.key === 'Enter') { e.preventDefault(); commitKeywordDraft(); }
+                else if (e.key === 'Backspace' && keywordDraft === '' && keywords.length > 0) {
                   onKeywordsChange(keywords.slice(0, -1));
                 }
               }}
@@ -555,18 +564,26 @@ const FilterBar: React.FC<FilterBarProps> = ({
               placeholder={keywords.length > 0 ? t('keywords_add') : t('keywords_placeholder')}
               aria-label={t('keywords')}
               maxLength={40}
-              className="flex-grow min-w-[8rem] bg-transparent text-sm text-white placeholder:text-gray-600 outline-none py-0.5"
+              className="flex-grow min-w-[8rem] bg-transparent text-sm font-medium text-white placeholder:text-gray-600 outline-none py-0.5"
             />
+
             {keywords.length > 0 && (
               <button
                 type="button"
                 onClick={() => { onKeywordsChange([]); setKeywordDraft(''); }}
-                className="flex-shrink-0 px-2 py-1 text-[11px] font-bold text-gray-500 hover:text-white transition-colors cursor-pointer"
+                title={t('clear_selection')}
+                className="flex-shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest text-gray-500 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
               >
-                {t('clear_selection')}
+                <X className="w-3 h-3" />
+                <span className="hidden sm:inline">{t('clear_selection')}</span>
               </button>
             )}
-          </form>
+          </label>
+
+          {/* La explicacion, a la vista: con el filtro puesto y la rejilla medio
+              vacia, "por que faltan clips" tiene que poder contestarse sin pasar
+              el raton por encima de nada. */}
+          <p className="mt-2 px-1 text-[11px] font-medium text-gray-500">{t('keywords_hint')}</p>
         </div>
       )}
     </div>

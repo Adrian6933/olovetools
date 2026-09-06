@@ -147,10 +147,13 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
   // sin forzar velocidad — mejor eso que no reproducir nada.
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [videoResolveFailed, setVideoResolveFailed] = useState(false);
+  /** Rellenando buffer. Sin esto, un clip que tarda parece uno roto. */
+  const [buffering, setBuffering] = useState(false);
 
   useEffect(() => {
     setVideoSrc(null);
     setVideoResolveFailed(false);
+    setBuffering(false);
     if (isMockClip) return;
     // Si el listado ya trajo la fuente, no hace falta preguntar por ella.
     if (clip.playback_url) {
@@ -185,7 +188,29 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
       .then((Hls) => {
         if (cancelado || !videoRef.current) return;
         if (Hls.isSupported()) {
-          hls = new Hls({ maxMaxBufferLength: 30 });
+          // Los clips de Kick vienen en un solo nivel de calidad, en trozos de
+          // dos segundos de ~2,2 MB — unos 9 Mbps. Con los valores de fabrica
+          // (maxBufferSize 60 MB) el buffer se llenaba a los ~25 segundos y el
+          // reproductor iba siempre pegado al borde: de ahi los cortes. Un clip
+          // dura 180 s como mucho, asi que cabe entero y se le deja caber.
+          hls = new Hls({
+            maxBufferLength: 60,
+            maxMaxBufferLength: 200,
+            maxBufferSize: 300 * 1000 * 1000,
+            backBufferLength: 30,
+            fragLoadingMaxRetry: 6,
+            manifestLoadingMaxRetry: 4,
+            levelLoadingMaxRetry: 4,
+          });
+          // Un fallo de red a mitad dejaba el reproductor congelado sin decir
+          // nada. La propia libreria sabe recuperarse de casi todos si se le
+          // pide; solo lo que no tiene arreglo termina la reproduccion.
+          hls.on(Hls.Events.ERROR, (_evento: unknown, datos: any) => {
+            if (!datos?.fatal) return;
+            if (datos.type === Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+            else if (datos.type === Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+            else setVideoResolveFailed(true);
+          });
           hls.loadSource(videoSrc);
           hls.attachMedia(videoRef.current);
           return;
@@ -732,6 +757,7 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
             // <video> propio (no el iframe de Twitch) es lo único que permite
             // forzar playbackRate — un iframe cross-origin no da acceso a su
             // <video> interno desde aquí.
+            <>
             <video
                 ref={videoRef}
                 key={videoSrc}
@@ -751,11 +777,21 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
                     applyStoredVolume(e.currentTarget);
                     e.currentTarget.playbackRate = playbackSpeed;
                 }}
+                onWaiting={() => setBuffering(true)}
+                onStalled={() => setBuffering(true)}
+                onPlaying={() => setBuffering(false)}
+                onCanPlay={() => setBuffering(false)}
                 onVolumeChange={(e) => rememberVolume(e.currentTarget)}
                 onRateChange={(e) => {
                     if (e.currentTarget.playbackRate !== playbackSpeed) e.currentTarget.playbackRate = playbackSpeed;
                 }}
             />
+            {buffering && (
+              <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/30">
+                <Loader2 className="w-8 h-8 text-twitch-base animate-spin" />
+              </div>
+            )}
+            </>
         ) : videoResolveFailed ? (
             <iframe
             key={embedUrl}

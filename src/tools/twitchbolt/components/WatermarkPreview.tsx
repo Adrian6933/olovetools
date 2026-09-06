@@ -1173,77 +1173,90 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   // STANDARD INLINE VIEW LAYOUT
   return (
     <div className="w-full bg-[#111114]/90 backdrop-blur-2xl border border-twitch/30 rounded-[2.5rem] p-6 md:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] animate-fade-in space-y-8">
-      {/* Header bar of editor */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="p-3 bg-twitch/20 rounded-2xl border border-twitch/30">
-            <Sparkles className="w-6 h-6 text-twitch" />
+      {/* Cabecera del editor.
+          Antes era una fila unica con el titulo, la insignia, la pista de
+          arrastrar, las coordenadas, dos botones de prueba, la equis y pantalla
+          completa — todo del mismo tamaño y del mismo color, apretandose entre
+          si en cuanto la ventana se estrechaba. Ahora va en dos alturas: arriba
+          quien eres y donde estas, abajo los mandos, agrupados por lo que hacen
+          y separados por lineas. */}
+      <div className="space-y-4 pb-6 border-b border-white/10">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="p-3 bg-twitch/20 rounded-2xl border border-twitch/30 shrink-0">
+              <Sparkles className="w-6 h-6 text-twitch" />
+            </div>
+            <div className="min-w-0">
+              <h3 className="text-base md:text-lg font-black uppercase tracking-tight text-white truncate">
+                {tr('wm_title', 'Channel Watermark Preview')}
+              </h3>
+              <p className="text-xs text-gray-400 font-medium">
+                {tr('wm_subtitle', 'Set up the overlay before you burn it into the clip')}
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-black uppercase tracking-tight text-white flex items-center gap-2">
-              {tr('wm_title', 'Channel Watermark Preview')}
-              <span className="text-[10px] bg-twitch/20 text-twitch px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest border border-twitch/30">
-                Live Editor
-              </span>
-            </h3>
-            <p className="text-xs text-gray-400 font-medium">
-              {tr('wm_subtitle', 'Set up the overlay before you burn it into the clip')}
-            </p>
+
+          {/* Cerrar y pantalla completa arriba a la derecha, que es donde se
+              buscan, y lejos de los mandos que cambian el cartel. */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setIsFullscreen(true)}
+              className="p-2.5 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/25 transition-colors cursor-pointer"
+              title={tr('wm_fullscreen', 'Fullscreen')}
+              aria-label={tr('wm_fullscreen', 'Fullscreen')}
+            >
+              <Maximize2 className="w-4 h-4" />
+            </button>
+            {onClose && (
+              <button
+                onClick={onClose}
+                title={tr('wm_close', 'Close')}
+                aria-label={tr('wm_close', 'Close')}
+                className="p-2.5 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-red-500/30 hover:bg-red-500/10 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Position coordinates indicator & Drag hint OUTSIDE video player */}
-        <div className="flex items-center gap-3">
-          <div className="hidden lg:flex items-center gap-2 px-3.5 py-2 bg-twitch/10 border border-twitch/30 rounded-xl text-xs font-bold text-twitch">
-            <Move className="w-3.5 h-3.5" />
-            <span>{tr('wm_drag_hint', 'Drag on video to move')}</span>
-          </div>
-
-          <div className="px-3.5 py-2 bg-dark-950/80 border border-white/10 rounded-xl flex items-center gap-2 text-xs font-mono font-bold text-gray-300">
-            <Move className="w-3.5 h-3.5 text-twitch" />
-            <span>X: <strong className="text-twitch">{config.customX}%</strong></span>
-            <span className="text-white/20">|</span>
-            <span>Y: <strong className="text-twitch">{config.customY}%</strong></span>
-          </div>
-
-          <button
-            onClick={handleTestEntry}
-            className="px-3 py-1.5 bg-twitch/20 hover:bg-twitch/30 border border-twitch/40 rounded-xl text-xs font-bold text-twitch flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            <ArrowRight className="w-3.5 h-3.5" />
-            Entrada
-          </button>
-
-          <button
-            onClick={handleTestExit}
-            className="px-3 py-1.5 bg-twitch/20 hover:bg-twitch/30 border border-twitch/40 rounded-xl text-xs font-bold text-twitch flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Salida
-          </button>
-
-          {onClose && (
-            <button
-              onClick={onClose}
-              title={tr('wm_close', 'Close')}
-              aria-label={tr('wm_close', 'Close')}
-              className="p-2.5 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/25 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          )}
-
-          {/* FULLSCREEN TOGGLE BUTTON */}
-          <button
-            onClick={() => setIsFullscreen(true)}
-            className="p-2.5 rounded-xl border text-xs font-bold transition-all duration-200 hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer bg-twitch/10 border-twitch/30 text-twitch hover:bg-twitch hover:text-white shadow-sm"
-            title={tr('wm_fullscreen', 'Fullscreen')}
-          >
-            <Maximize2 className="w-4 h-4" />
-            <span className="hidden sm:inline">
-              {tr('wm_fullscreen', 'Fullscreen')}
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Donde esta el cartel: la pista y las coordenadas son la misma
+              informacion, asi que van en la misma pastilla en vez de en dos. */}
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-dark-950/80 border border-white/10 rounded-xl text-xs font-bold text-gray-400">
+            <Move className="w-3.5 h-3.5 text-twitch shrink-0" />
+            <span className="hidden md:inline font-medium">{tr('wm_drag_hint', 'Drag on video to move')}</span>
+            <span className="hidden md:inline text-white/15">|</span>
+            <span className="font-mono text-gray-300">
+              X <strong className="text-twitch">{config.customX}%</strong>
+              <span className="text-white/20 mx-1.5">·</span>
+              Y <strong className="text-twitch">{config.customY}%</strong>
             </span>
-          </button>
+          </div>
+
+          {/* Probar las animaciones: dos acciones hermanas, en un mismo grupo
+              con la etiqueta delante, para que no parezcan navegacion. */}
+          <div className="flex items-center gap-1 px-1.5 py-1 bg-dark-950/80 border border-white/10 rounded-xl">
+            <span className="hidden sm:inline px-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
+              {tr('wm_test', 'Test')}
+            </span>
+            <button
+              onClick={handleTestEntry}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-twitch hover:bg-twitch/15 flex items-center gap-1.5 transition-colors cursor-pointer"
+              title={tr('wm_test_in', 'Entry animation')}
+            >
+              <ArrowRight className="w-3.5 h-3.5" />
+              {tr('wm_test_in_short', 'In')}
+            </button>
+            <button
+              onClick={handleTestExit}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-bold text-twitch hover:bg-twitch/15 flex items-center gap-1.5 transition-colors cursor-pointer"
+              title={tr('wm_test_out', 'Exit animation')}
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              {tr('wm_test_out_short', 'Out')}
+            </button>
+          </div>
         </div>
       </div>
 
