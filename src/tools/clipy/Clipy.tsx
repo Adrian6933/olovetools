@@ -549,9 +549,15 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     openExternalDownload(content);
   };
 
-  const handleScrollToClip = (clipId: string) => {
+  /**
+   * Un clip guardado se abre en el reproductor en vez de llevarte a su sitio en
+   * la rejilla. Lo de antes solo funcionaba si el clip seguia cargado ahi
+   * abajo: uno guardado hace meses, o de otra categoria, no esta, y el clic no
+   * hacia absolutamente nada. Reproducirlo funciona venga de donde venga.
+   */
+  const handlePlaySavedClip = (clip: Clip) => {
     setShowSavedList(false);
-    clipGridRef.current?.scrollToClip(clipId);
+    setPlayingClip(clip);
   };
 
   const handleContactClick = (e: React.MouseEvent) => {
@@ -1186,8 +1192,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       <div
         key={clip.id}
         {...reorder.rowProps(clip.id)}
-        onClick={() => handleScrollToClip(clip.id)}
-        className={`bg-white/5 hover:bg-white/10 border rounded-2xl p-3 flex items-center gap-2 sm:gap-3 group transition-all cursor-pointer ${
+        onClick={() => handlePlaySavedClip(clip)}
+        className={`bg-white/5 hover:bg-white/10 border rounded-2xl p-3 flex items-center gap-2 group transition-all cursor-pointer ${
           arrastrando ? 'opacity-40 border-twitch-base/40' : encima ? 'border-twitch-base/60 bg-twitch-base/10' : 'border-white/5'
         }`}
       >
@@ -1206,28 +1212,43 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         <div className="w-16 h-10 rounded-xl overflow-hidden flex-shrink-0 bg-black border border-white/10"><img src={clip.thumbnail_url} alt={clip.title} className="w-full h-full object-cover" /></div>
         <div className="flex-grow min-w-0 flex flex-col justify-center">
           <div className="text-xs font-black text-gray-100 truncate tracking-tight">{clip.title}</div>
-          <div className="text-[10px] font-bold text-gray-500">{t('duration')}: {clip.duration}</div>
+          <div className="text-[10px] font-bold text-gray-500 truncate">{t('duration')}: {clip.duration}</div>
         </div>
-        {/* Anadir a una lista con nombre. Va resaltado y no en gris como los
-            demas: es la accion que se venia sin encontrar, y si el clip ya no
-            esta en la rejilla (otra categoria, otro filtro) este es el unico
-            sitio desde donde se puede rescatar. */}
-        <button
-          onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
-          className="flex-shrink-0 flex items-center gap-1.5 px-2 py-2 rounded-xl bg-twitch-base/10 border border-twitch-base/25 text-twitch-base hover:bg-twitch-base/20 cursor-pointer transition-colors"
-          title={t('add_to_lists')}
-        >
-          <ListPlus className="w-4 h-4" />
-          <span className="hidden lg:inline text-[10px] font-black uppercase tracking-widest">{t('add_to_lists')}</span>
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
-          className="flex-shrink-0 p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer"
-          title={t('download') || 'Descargar'}
-        >
-          <Download className="w-4 h-4" />
-        </button>
-        <button onClick={(e) => handleDeleteClip(e, clip.id)} className="flex-shrink-0 p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer"><Trash2 className="w-4 h-4" /></button>
+        {/* Los tres botones, juntos y del mismo tamano. Sueltos en la fila se
+            comian con sus separaciones el hueco del titulo, que en un panel de
+            350 pixeles se quedaba en dos palabras. */}
+        <div className="flex-shrink-0 flex items-center gap-0.5">
+          {/* Anadir a una lista con nombre. Va en color y no en gris como los
+              demas: es la accion que se venia sin encontrar, y si el clip ya no
+              esta en la rejilla (otra categoria, otro filtro) este es el unico
+              sitio desde donde se puede rescatar. Solo el icono: con el rotulo
+              entero al lado, el titulo y la duracion del clip acababan pisados
+              por un boton del ancho de media fila. */}
+          <button
+            onClick={(e) => { e.stopPropagation(); handleOpenListPicker(clip); }}
+            className="p-2 rounded-xl bg-twitch-base/10 text-twitch-base hover:bg-twitch-base/25 cursor-pointer transition-colors"
+            title={t('add_to_lists')}
+            aria-label={t('add_to_lists')}
+          >
+            <ListPlus className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); openExternalDownload(clip.url); }}
+            className="p-2 text-gray-500 hover:text-twitch-base rounded-xl hover:bg-twitch-base/10 cursor-pointer transition-colors"
+            title={t('download') || 'Descargar'}
+            aria-label={t('download') || 'Descargar'}
+          >
+            <Download className="w-4 h-4" />
+          </button>
+          <button
+            onClick={(e) => handleDeleteClip(e, clip.id)}
+            className="p-2 text-gray-500 hover:text-red-500 rounded-xl hover:bg-red-500/10 cursor-pointer transition-colors"
+            title={t('delete')}
+            aria-label={t('delete')}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     );
   };
