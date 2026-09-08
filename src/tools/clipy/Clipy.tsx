@@ -37,6 +37,48 @@ const MAX_COLLECTIONS = 50;
 /** Misma referencia siempre: un [] nuevo por render invalidaria el memo. */
 const EMPTY_KEYWORDS: string[] = [];
 const RENDER_PAGE_SIZE = 50;
+/**
+ * Páginas que se piden de una tanda. Twitch sirve 100 clips por página, pero de
+ * esos caen los repetidos, los de streamers bloqueados y los que no pasan el
+ * filtro de idioma o de palabras clave: con los filtros puestos, una sola
+ * página deja la rejilla casi vacía. Se piden varias seguidas y se entregan
+ * juntas.
+ */
+const PAGINAS_PRIMERA_TANDA = 2;
+const PAGINAS_POR_TANDA = 2;
+
+/** Encadena varias páginas de clips y devuelve todo junto con el último cursor. */
+async function pedirTanda(
+  categoryId: string,
+  categoryName: string,
+  time: TimeFilter,
+  desde: string | null,
+  paginas: number,
+  anchorISO?: string,
+): Promise<{ clips: Clip[]; cursor: string | null }> {
+  const clips: Clip[] = [];
+  let cursor: string | null = desde;
+  for (let i = 0; i < paginas; i++) {
+    let page: { clips: Clip[]; cursor: string | null };
+    try {
+      page = await searchTwitchClips(categoryId, categoryName, time, cursor, anchorISO);
+    } catch (error) {
+      // La primera que se va deja la pantalla vacía y quien llama tiene que
+      // poder contarlo. Con clips ya en la mano, mejor quedarse con ellos y
+      // dejar el cursor donde estaba para reintentar en la siguiente tanda.
+      if (i === 0) throw error;
+      break;
+    }
+    clips.push(...page.clips);
+    if (!page.cursor || page.cursor === cursor || page.clips.length === 0) {
+      cursor = null;
+      break;
+    }
+    cursor = page.cursor;
+  }
+  return { clips, cursor };
+}
+
 const POPULAR_TAGS = [
   'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
   'Minecraft', 'Rust', 'Fortnite', 'Roblox', 'Call of Duty', 'Apex Legends',
@@ -737,7 +779,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     }
 
     try {
-      const { clips, cursor } = await searchTwitchClips(category.id, category.name, time, null, state.anchorTime || undefined);
+      const { clips, cursor } = await pedirTanda(category.id, category.name, time, null, PAGINAS_PRIMERA_TANDA, state.anchorTime || undefined);
       // Evitar duplicados por id
       const uniqueClips: Clip[] = [];
       const seen = new Set<string>();
@@ -762,11 +804,12 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
     setState(prev => ({ ...prev, isLoading: true }));
     try {
-      const { clips: newClips, cursor: nextCursor } = await searchTwitchClips(
+      const { clips: newClips, cursor: nextCursor } = await pedirTanda(
         state.activeCategory.id,
         state.activeCategory.name,
         state.timeFilter,
         state.paginationCursor,
+        PAGINAS_POR_TANDA,
         state.anchorTime || undefined
       );
       setState(prev => {

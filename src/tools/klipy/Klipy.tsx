@@ -48,6 +48,49 @@ const MAX_COLLECTIONS = 50;
 /** Misma referencia siempre: un [] nuevo por render invalidaria el memo. */
 const EMPTY_KEYWORDS: string[] = [];
 const RENDER_PAGE_SIZE = 50;
+/**
+ * Páginas que se piden de una tanda. Kick sirve 20 clips por página, y de esos
+ * caen los repetidos, los de streamers bloqueados y los que no pasan el filtro
+ * de idioma o de palabras clave: en la rejilla se quedaban ocho o nueve, así
+ * que una categoría recién abierta parecía medio vacía. Se piden varias
+ * páginas seguidas y se entregan juntas.
+ */
+const PAGINAS_PRIMERA_TANDA = 4;
+const PAGINAS_POR_TANDA = 3;
+
+/** Encadena varias páginas de clips y devuelve todo junto con el último cursor. */
+async function pedirTanda(
+  slug: string,
+  name: string,
+  time: TimeFilter,
+  desde: string | null,
+  paginas: number,
+): Promise<{ clips: Clip[]; cursor: string | null }> {
+  const clips: Clip[] = [];
+  let cursor: string | null = desde;
+  for (let i = 0; i < paginas; i++) {
+    let page: { clips: any[]; cursor: string | null };
+    try {
+      page = await searchKickClips(slug, time, cursor, name);
+    } catch (error) {
+      // La primera que se va deja la pantalla vacía y quien llama tiene que
+      // poder contarlo. Con clips ya en la mano, mejor quedarse con ellos y
+      // dejar el cursor donde estaba para reintentar en la siguiente tanda.
+      if (i === 0) throw error;
+      break;
+    }
+    clips.push(...page.clips.map(toClip));
+    // Kick repite el cursor en la última página en vez de dejarlo vacío: si no
+    // avanza, esto es el final y seguir pidiendo trae lo mismo otra vez.
+    if (!page.cursor || page.cursor === cursor || page.clips.length === 0) {
+      cursor = null;
+      break;
+    }
+    cursor = page.cursor;
+  }
+  return { clips, cursor };
+}
+
 const POPULAR_TAGS = [
   'Just Chatting', 'League of Legends', 'GTA V', 'Valorant', 'Counter-Strike 2',
   'Minecraft', 'Rust', 'Fortnite', 'Roblox', 'Call of Duty', 'Apex Legends',
@@ -751,8 +794,8 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       // categorias; para el resto ("Tibia" es "Tibia", "Grand Theft Auto V (GTA)"
       // es "grand-theft-auto-v") hace falta el nombre para preguntarle a Kick
       // cual es el slug de verdad, asi que se pasa siempre.
-      const page = await searchKickClips(category.id, time, null, category.name);
-      const clips = page.clips.map(toClip);
+      const page = await pedirTanda(category.id, category.name, time, null, PAGINAS_PRIMERA_TANDA);
+      const clips = page.clips;
       const cursor = page.cursor;
       // Evitar duplicados por id
       const uniqueClips: Clip[] = [];
@@ -778,13 +821,14 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
     setState(prev => ({ ...prev, isLoading: true }));
     try {
-      const nextPage = await searchKickClips(
+      const nextPage = await pedirTanda(
         state.activeCategory.id,
+        state.activeCategory.name,
         state.timeFilter,
         state.paginationCursor,
-        state.activeCategory.name,
+        PAGINAS_POR_TANDA,
       );
-      const newClips = nextPage.clips.map(toClip);
+      const newClips = nextPage.clips;
       const nextCursor = nextPage.cursor;
       setState(prev => {
         const mergedClips = [...prev.clips, ...newClips];

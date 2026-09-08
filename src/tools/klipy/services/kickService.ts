@@ -428,7 +428,13 @@ async function slugQueResponde(derivado: string, time: string, name?: string): P
   if (yaSabido) return yaSabido;
 
   const prueba = await pedirPagina(derivado, time);
-  if (prueba.ok) return derivado;
+  if (prueba.ok) {
+    // Guardar tambien el que ya valia, no solo el corregido: sin esto cada
+    // peticion de clips empezaba por esta comprobacion, asi que una tanda de
+    // cuatro paginas eran ocho viajes a Kick y la mitad para nada.
+    slugCorregido.set(derivado, derivado);
+    return derivado;
+  }
 
   // El derivado da 404: se le pregunta a Kick cual es el de verdad.
   const alternativas: string[] = [];
