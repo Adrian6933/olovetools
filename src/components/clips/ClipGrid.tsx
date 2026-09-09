@@ -266,13 +266,24 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
 
   useEffect(() => {
     if (!autoLoadOnScroll) return;
+    // Se pide la siguiente tanda cuando aún faltan un par de pantallas para el
+    // final, no al llegar. Con los 200px de antes el aviso saltaba justo al
+    // tocar fondo: bajabas, te quedabas mirando "cargando más clips" y luego
+    // aparecían. Pidiéndolos con margen, si bajas a ritmo normal ya están ahí
+    // cuando llegas. Bajando a toda velocidad seguirás viendo el cartel, pero
+    // eso es que has ido más rápido que la red.
+    const margen = typeof window !== 'undefined'
+      ? Math.max(1200, Math.round(window.innerHeight * 2))
+      : 1200;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !isLoading) {
           onLoadMore();
         }
       },
-      { threshold: 0.1, rootMargin: '200px' }
+      // Sólo hacia abajo: ensanchar por arriba haría que el centinela contara
+      // como visible mientras subes, que no es cuando hace falta cargar nada.
+      { threshold: 0, rootMargin: `0px 0px ${margen}px 0px` }
     );
     if (observerTarget.current) observer.observe(observerTarget.current);
     return () => { if (observerTarget.current) observer.unobserve(observerTarget.current); };
