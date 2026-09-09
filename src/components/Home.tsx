@@ -30,6 +30,43 @@ const categoryIconMap: Record<string, React.ComponentType<any>> = {
   social_downloads: CloudDownload
 };
 
+/**
+ * Minúsculas y sin tildes, para que el buscador no dependa de si alguien
+ * escribe "codigo" o "código" (ni de dónde tenga la tecla de la tilde).
+ */
+const normaliza = (texto: string) =>
+  texto.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '').trim();
+
+/** Hueco mínimo y máximo de herramientas entre dos anuncios de la rejilla. */
+const AD_GAP_MIN = 7;
+const AD_GAP_MAX = 15;
+
+/**
+ * Dónde van los anuncios dentro de la rejilla de herramientas. El primero
+ * sigue detrás de las tres primeras, y a partir de ahí se reparten a saltos
+ * irregulares en vez de cada N exactas: un patrón fijo se nota enseguida al
+ * bajar y "cansa". Es el mismo reparto que hace la rejilla de clips.
+ *
+ * El azar es determinista a propósito: con un Math.random() suelto los
+ * anuncios cambiarían de sitio en cada repintado, y aquí hay repintados de
+ * sobra (buscar, filtrar por categoría, reordenar). Dependiendo solo del
+ * índice, cada anuncio se queda donde estaba.
+ */
+const adPositions = (total: number): Set<number> => {
+  const out = new Set<number>();
+  let seed = 0x9e3779b9;
+  let i = 2;
+  // `total - 1` deja fuera la última celda: un anuncio cerrando la rejilla
+  // parece el final de la lista y esconde la herramienta que va antes.
+  while (i < total - 1) {
+    out.add(i);
+    // xorshift32: barato, sin dependencias y siempre da la misma secuencia.
+    seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0;
+    i += AD_GAP_MIN + (seed % (AD_GAP_MAX - AD_GAP_MIN + 1));
+  }
+  return out;
+};
+
 export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en', dictionary }) => {
   const t = createTranslator(dictionary);
   const prefersReduced = useReducedMotion();
@@ -232,6 +269,100 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
       return (posicion.get(a.slug) ?? 0) - (posicion.get(b.slug) ?? 0);
     });
   }, [filteredProjects, orden, visitasGlobales, visitasPropias]);
+
+  const adSlots = useMemo(() => adPositions(orderedProjects.length), [orderedProjects.length]);
+
+  // ---- Autocompletado del buscador --------------------------------------
+  // La rejilla ya filtra según escribes, pero con sesenta herramientas eso
+  // deja el resultado a dos pantallas de scroll. Esto pone las que mejor
+  // encajan justo debajo del campo, para ir directo con Enter.
+  const sugerencias = useMemo(() => {
+    const q = normaliza(searchQuery);
+    if (!q) return [];
+    const palabras = q.split(/\s+/).filter(Boolean);
+    const traducir = (p: typeof MOCK_PROJECTS[number]) => {
+      const clave = `projects.${p.id}.description`;
+      const texto = t(clave);
+      return normaliza(texto === clave ? p.description : texto);
+    };
+    // Cuanto más bajo, más arriba sale. Lo que empieza por lo escrito va
+    // primero: quien teclea "qr" quiere el lector de QR, no una herramienta
+    // cuya descripción menciona los códigos QR de pasada.
+    const nota = (p: typeof MOCK_PROJECTS[number]) => {
+      const nombre = normaliza(p.name);
+      const etiquetas = p.tags.map(normaliza);
+      if (nombre === q) return 0;
+      if (nombre.startsWith(q)) return 1;
+      if (nombre.includes(q)) return 2;
+      if (etiquetas.some(tag => tag.startsWith(q))) return 3;
+      if (etiquetas.some(tag => tag.includes(q))) return 4;
+      if (traducir(p).includes(q)) return 5;
+      // Lo último: varias palabras sueltas que aparecen todas, aunque sea en
+      // sitios distintos. "convertir color" no es el nombre de nada, pero
+      // describe bastante bien lo que se está buscando.
+      if (palabras.length > 1) {
+        const todo = `${nombre} ${etiquetas.join(' ')} ${traducir(p)}`;
+        if (palabras.every(w => todo.includes(w))) return 6;
+      }
+      return 99;
+    };
+    return MOCK_PROJECTS
+      .map(p => ({ p, n: nota(p) }))
+      .filter(x => x.n < 99)
+      .sort((a, b) => a.n - b.n || a.p.name.localeCompare(b.p.name))
+      .slice(0, 6)
+      .map(x => x.p);
+  }, [searchQuery, dictionary]);
+
+  const [sugerenciasAbiertas, setSugerenciasAbiertas] = useState(false);
+  const [sugerenciaActiva, setSugerenciaActiva] = useState(-1);
+  const buscadorRef = useRef<HTMLDivElement>(null);
+  const listaVisible = sugerenciasAbiertas && sugerencias.length > 0;
+
+  const irAHerramienta = (slug: string) => {
+    recordVisit(slug);
+    window.location.href = `/${lang}/${slug}/`;
+  };
+
+  const teclaBuscador = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Escape') { setSugerenciasAbiertas(false); return; }
+    if (!listaVisible) {
+      // Con la lista cerrada, la flecha abajo la vuelve a abrir en vez de
+      // mover el cursor por el texto, que es lo que se espera de un buscador.
+      if (e.key === 'ArrowDown' && sugerencias.length > 0) { setSugerenciasAbiertas(true); e.preventDefault(); }
+      return;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const paso = e.key === 'ArrowDown' ? 1 : -1;
+      const total = sugerencias.length;
+      setSugerenciaActiva(actual => {
+        const siguiente = actual + paso;
+        if (siguiente < 0) return total - 1;
+        if (siguiente >= total) return 0;
+        return siguiente;
+      });
+      return;
+    }
+    if (e.key === 'Enter') {
+      // Sin nada marcado, Enter abre la primera: es la que se está mirando.
+      const elegida = sugerencias[sugerenciaActiva] ?? sugerencias[0];
+      if (elegida) { e.preventDefault(); irAHerramienta(elegida.slug); }
+    }
+  };
+
+  // Cerrar al pulsar fuera. Con onBlur no valdría: el clic sobre una sugerencia
+  // desenfoca el campo antes de que llegue a contarse como clic.
+  useEffect(() => {
+    if (!listaVisible) return;
+    const fuera = (e: MouseEvent) => {
+      if (buscadorRef.current && !buscadorRef.current.contains(e.target as Node)) {
+        setSugerenciasAbiertas(false);
+      }
+    };
+    document.addEventListener('mousedown', fuera);
+    return () => document.removeEventListener('mousedown', fuera);
+  }, [listaVisible]);
 
   const tieneVisitasPropias = Object.keys(visitasPropias).length > 0;
 
@@ -577,18 +708,62 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: prefersReduced ? 0 : 0.7, delay: prefersReduced ? 0 : 0.25, ease: "easeOut" }}
-                className="relative group max-w-2xl mx-auto z-10"
+                /* z-30: el desplegable de sugerencias cae sobre la rejilla, que
+                   viene después en el documento y con el mismo z-10 se pintaba
+                   por encima. */
+                className="relative group max-w-2xl mx-auto z-30"
+                ref={buscadorRef}
               >
                 <input
                   type="text"
                   value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onChange={(e) => { setSearchQuery(e.target.value); setSugerenciasAbiertas(true); setSugerenciaActiva(-1); }}
+                  onFocus={() => setSugerenciasAbiertas(true)}
+                  onKeyDown={teclaBuscador}
                   placeholder={t('searchPlaceholder')}
+                  /* El autocompletado del navegador taparía el nuestro con su
+                     propia lista de cosas escritas antes. */
+                  autoComplete="off"
+                  role="combobox"
+                  aria-expanded={listaVisible}
+                  aria-controls="buscador-sugerencias"
+                  aria-activedescendant={sugerenciaActiva >= 0 ? `sugerencia-${sugerenciaActiva}` : undefined}
                   className="w-full pl-14 pr-6 py-4 bg-[#1e1f20]/90 border border-white/[0.06] rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-2xl transition-all font-sans"
                 />
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none z-25">
                   <Search className="w-5 h-5 text-slate-400 group-hover:text-blue-400 group-focus-within:text-blue-400 transition-colors" />
                 </div>
+
+                {listaVisible && (
+                  <ul
+                    id="buscador-sugerencias"
+                    role="listbox"
+                    className="absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#1e1f20] shadow-2xl text-left"
+                  >
+                    {sugerencias.map((p, i) => {
+                      const Icono = categoryIconMap[p.category] || Sparkles;
+                      const activa = i === sugerenciaActiva;
+                      return (
+                        <li key={p.id} id={`sugerencia-${i}`} role="option" aria-selected={activa}>
+                          <a
+                            href={`/${lang}/${p.slug}/`}
+                            onClick={() => recordVisit(p.slug)}
+                            onMouseEnter={() => setSugerenciaActiva(i)}
+                            className={`flex items-center gap-3 px-4 py-3 transition-colors ${
+                              activa ? 'bg-blue-500/15 text-white' : 'text-slate-300 hover:bg-white/[0.04]'
+                            }`}
+                          >
+                            <Icono className={`w-4 h-4 shrink-0 ${activa ? 'text-blue-400' : 'text-slate-500'}`} />
+                            <span className="flex-grow min-w-0 truncate text-sm font-semibold">{p.name}</span>
+                            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                              {t(`categories.${p.category}`)}
+                            </span>
+                          </a>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </motion.div>
             </div>
           </div>
@@ -711,13 +886,16 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                           </motion.div>
 
                           {/* In-feed Ad Slot card inside the tools grid flow — hidden in production until ads.ts is configured */}
-                          {index === 2 && (ADS_ENABLED || import.meta.env.DEV) && (
+                          {adSlots.has(index) && (ADS_ENABLED || import.meta.env.DEV) && (
                             <motion.div
                               layout
                               initial={{ opacity: 0, scale: prefersReduced ? 1 : 0.95 }}
                               animate={{ opacity: 1, scale: 1 }}
                               className="bg-white/[0.01] border border-white/[0.04] border-dashed rounded-3xl p-4 flex flex-col justify-center items-center text-center min-h-[350px]"
-                              id="adsense-infeed-card"
+                              /* Con varios anuncios en la rejilla el id tiene que
+                                 llevar el índice: repetido dejaba de identificar
+                                 nada y un id duplicado es HTML inválido. */
+                              id={`adsense-infeed-card-${index}`}
                             >
                               <AdSlot position="infeed" size="rectangle" />
                             </motion.div>
