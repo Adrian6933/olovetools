@@ -1,7 +1,7 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { ShieldCheck } from 'lucide-react';
-import { withScrollToTop } from '../../../lib/softReset';
+import { propsAbrirEnOtraPestana, withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -41,7 +41,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
 
             <button
-              onClick={withScrollToTop(onReset)}
+              onClick={withScrollToTop(onReset)} {...propsAbrirEnOtraPestana}
               className="flex min-w-0 items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all md:hover:translate-x-1 cursor-pointer"
             
               title={t.resetHint || 'Start over'}

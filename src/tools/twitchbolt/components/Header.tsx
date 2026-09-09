@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Zap, Heart, ChevronDown, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LANGUAGES } from '../../../constants';
-import { withScrollToTop } from '../../../lib/softReset';
+import { propsAbrirEnOtraPestana, withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -53,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ currentLang, onLangChange, onReset, res
             {/* LOGO CLIPBOLT */}
             <button
               type="button"
-              onClick={withScrollToTop(onReset)}
+              onClick={withScrollToTop(onReset)} {...propsAbrirEnOtraPestana}
               title={resetHint || 'Start over'}
               aria-label={resetHint || 'Start over'}
               className="flex items-center gap-3 shrink-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"

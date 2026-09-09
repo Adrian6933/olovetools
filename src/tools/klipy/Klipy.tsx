@@ -14,6 +14,7 @@ import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } fr
 import { groupClipsByCategory, clipMatchesCategory, sumClipSeconds } from '../../components/clips/grouping';
 import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
 import { useReorder } from '../../components/clips/useReorder';
+import { propsAbrirEnOtraPestana } from '../../lib/softReset';
 import { searchCategories, searchKickClips, searchAllKickClips, getClipById, getClipVideoSource, fetchKickSuggestions, loadCategoryPage } from './services/kickService';
 import { toCategory, toClip } from './services/adapt';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
@@ -1568,7 +1569,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
               </div>
             </a>
 
-            <div className="flex items-center gap-1 sm:gap-3 cursor-pointer group" onClick={handleLogoClick}>
+            <div className="flex items-center gap-1 sm:gap-3 cursor-pointer group" onClick={handleLogoClick} {...propsAbrirEnOtraPestana}>
               <div className="bg-[#1c1c24] p-2.5 rounded-xl border border-white/5 group-hover:rotate-6 transition-transform group-hover:bg-[#2c2c36]">
                 <Clapperboard className="w-5 h-5 text-white" />
               </div>

@@ -35,3 +35,32 @@ export function withScrollToTop(reset?: () => void): () => void {
     }
   };
 }
+
+/**
+ * El nombre de la herramienta, arriba del todo, tiene toda la pinta de ser un
+ * enlace, así que mucha gente le da con la rueda del ratón esperando abrirlo en
+ * otra pestaña. Pero es un botón —el de empezar de cero— y en un botón la rueda
+ * no hace nada, salvo arrancar el desplazamiento automático de Windows. Estas
+ * props le dan el comportamiento que se espera de él.
+ *
+ * Se abre la ruta sin la parte de la interrogación: un `?handoff=1` en la URL
+ * haría que la pestaña nueva se quedase con el archivo que venía de camino a
+ * esta.
+ */
+export const propsAbrirEnOtraPestana = {
+  onAuxClick: (event: { button: number; target: EventTarget | null; preventDefault(): void }) => {
+    if (event.button !== 1) return;
+    // El logo de oLoveTools va dentro y ese sí es un enlace de verdad: ya abre
+    // su propia pestaña, y sin esto se abrirían dos.
+    if ((event.target as HTMLElement | null)?.closest?.('a')) return;
+    event.preventDefault();
+    window.open(window.location.pathname, '_blank', 'noopener,noreferrer');
+  },
+  onMouseDown: (event: { button: number; target: EventTarget | null; preventDefault(): void }) => {
+    if (event.button !== 1) return;
+    if ((event.target as HTMLElement | null)?.closest?.('a')) return;
+    // Sin esto, el botón central abre el desplazamiento automático del sistema
+    // y el puntero se queda con el icono de las flechitas pegado.
+    event.preventDefault();
+  },
+};

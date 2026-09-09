@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
-import { withScrollToTop } from '../../../lib/softReset';
+import { propsAbrirEnOtraPestana, withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -48,7 +48,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
 
             {/* Current App Link */}
             <button 
-              onClick={withScrollToTop(onReset)}
+              onClick={withScrollToTop(onReset)} {...propsAbrirEnOtraPestana}
               className="flex items-center space-x-2 md:space-x-3 group outline-none transition-all hover:translate-x-1 cursor-pointer"
             
               title={t.resetHint || 'Start over'}

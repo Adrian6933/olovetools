@@ -1,7 +1,7 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Braces } from 'lucide-react';
-import { withScrollToTop } from '../../../lib/softReset';
+import { propsAbrirEnOtraPestana, withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -26,7 +26,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
               375px instead of pushing the row past the viewport edge. */}
           <button
               type="button"
-              onClick={withScrollToTop(onReset)}
+              onClick={withScrollToTop(onReset)} {...propsAbrirEnOtraPestana}
               title={t.resetHint || "Start over"}
               aria-label={t.resetHint || "Start over"}
               className="flex items-center gap-2 sm:gap-4 md:gap-8 w-full md:w-auto min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"

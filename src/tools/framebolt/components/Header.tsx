@@ -1,6 +1,7 @@
 import React from 'react';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { Images } from 'lucide-react';
+import { propsAbrirEnOtraPestana } from '../../../lib/softReset';
 
 interface HeaderProps {
   currentLang: string;
@@ -31,7 +32,7 @@ export const Header: React.FC<HeaderProps> = ({ currentLang, onLanguageChange, o
               </div>
             </a>
             <div className="h-8 w-px bg-white/10 hidden sm:block"></div>
-            <button onClick={onReset} className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer">
+            <button onClick={onReset} {...propsAbrirEnOtraPestana} className="flex items-center space-x-2 md:space-x-3 group border-none bg-transparent outline-none transition-all hover:translate-x-1 cursor-pointer">
               <div className="w-8 h-8 md:w-9 md:h-9 bg-white/5 rounded-lg md:rounded-xl flex items-center justify-center border border-white/10 group-hover:bg-sky-500/20 group-hover:border-sky-500/50 transition-all">
                 <Images className="w-5 h-5 text-sky-400" />
               </div>

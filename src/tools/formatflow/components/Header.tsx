@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Heart, ChevronDown } from 'lucide-react';
 import type { Language } from '../../../locales/meta';
-import { withScrollToTop } from '../../../lib/softReset';
+import { propsAbrirEnOtraPestana, withScrollToTop } from '../../../lib/softReset';
 
 interface HeaderProps {
   language: Language;
@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({ language, dictionary: propDictionary, o
             {/* FormatFlow Branding */}
             <button
               type="button"
-              onClick={withScrollToTop(onHomeClick)}
+              onClick={withScrollToTop(onHomeClick)} {...propsAbrirEnOtraPestana}
               title={dictionary.resetHint || 'Start over'}
               aria-label={dictionary.resetHint || 'Start over'}
               className="flex items-center gap-2 opacity-90 hover:opacity-100 transition-opacity focus:outline-none min-w-0 bg-transparent border-none outline-none cursor-pointer transition-opacity hover:opacity-75 focus-visible:opacity-75"
