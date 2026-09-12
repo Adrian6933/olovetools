@@ -10,6 +10,7 @@ import {
   loadStoredPresets,
   saveCustomPresets,
   processVideoWithWatermark,
+  nombreDeArchivo,
 } from '../services/watermarkService';
 
 interface ClipResultProps {
@@ -94,7 +95,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
       signal
     );
 
-    const safeTitle = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const safeTitle = nombreDeArchivo(data.title, data.broadcaster, data.id);
     const ext = conMarca.type.includes('webm') ? 'webm' : 'mp4';
     const url = URL.createObjectURL(conMarca);
     const a = document.createElement('a');
@@ -167,7 +168,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
     }));
 
     try {
-        const safeTitle = data.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const safeTitle = nombreDeArchivo(data.title, data.broadcaster, data.id);
         
         await downloadBlob(res.url, `${safeTitle}_${res.quality}.mp4`, (loaded, total) => {
             const percentage = total > 0 ? Math.round((loaded / total) * 100) : 0;

@@ -809,3 +809,55 @@ export const saveStoredQuality = (quality: string): void => {
     /* almacenamiento lleno o bloqueado: la sesión sigue, sólo no se recuerda */
   }
 };
+
+export const WATERMARK_ALL_STORAGE_KEY = 'twitchbolt_watermark_all';
+
+/**
+ * Si la marca de agua va puesta en la descarga en lote. Se recuerda porque es
+ * una decisión de las que se toman una vez ("mis clips llevan mi marca") y no
+ * una por cada tanda de enlaces que se pega.
+ */
+export const loadStoredWatermarkAll = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  try {
+    return localStorage.getItem(WATERMARK_ALL_STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+
+export const saveStoredWatermarkAll = (activa: boolean): void => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(WATERMARK_ALL_STORAGE_KEY, activa ? '1' : '0');
+  } catch {
+    /* almacenamiento lleno o bloqueado: la sesión sigue, sólo no se recuerda */
+  }
+};
+
+/**
+ * Nombre de archivo a partir del título del clip.
+ *
+ * Cambiar a la brava todo lo que no sea a-z0-9 por un guión bajo dejaba cosas
+ * como `1___________________1080p.mp4`: un título en japonés, en cirílico o con
+ * emojis se convertía en una hilera de guiones. Aquí se quitan las tildes (la
+ * letra se queda), se junta cada tramo de caracteres raros en UN guión, y se va
+ * probando cada candidato hasta que uno deje algo legible: título, canal y, de
+ * último recurso, el identificador del clip, que siempre es ASCII y único.
+ */
+export const nombreDeArchivo = (...candidatos: (string | undefined)[]): string => {
+  const limpiar = (texto: string) =>
+    texto
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .replace(/[^a-z0-9]+/gi, '_')
+      .replace(/^_+|_+$/g, '')
+      .toLowerCase()
+      .slice(0, 60)
+      .replace(/_+$/, '');
+  for (const candidato of candidatos) {
+    const limpio = limpiar(candidato || '');
+    if (limpio) return limpio;
+  }
+  return 'clip';
+};
