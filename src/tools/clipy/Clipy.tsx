@@ -593,13 +593,15 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   };
 
   /**
-   * Un clip guardado se abre en el reproductor en vez de llevarte a su sitio en
-   * la rejilla. Lo de antes solo funcionaba si el clip seguia cargado ahi
-   * abajo: uno guardado hace meses, o de otra categoria, no esta, y el clic no
-   * hacia absolutamente nada. Reproducirlo funciona venga de donde venga.
+   * Pulsar un guardado te lleva a su sitio en la rejilla, que es donde se ve
+   * con quien esta y cuantas vistas lleva. Pero eso solo funciona si el clip
+   * sigue cargado ahi abajo: uno guardado hace dias, o de otra categoria, no
+   * esta, y antes el clic no hacia absolutamente nada. Cuando no esta, se abre
+   * en el reproductor, que funciona venga de donde venga.
    */
   const handlePlaySavedClip = (clip: Clip) => {
     setShowSavedList(false);
+    if (clipGridRef.current?.scrollToClip(clip.id)) return;
     setPlayingClip(clip);
   };
 

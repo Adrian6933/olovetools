@@ -57,7 +57,8 @@ const VIEW_FORMATTER = new Intl.NumberFormat('en-US', {
 });
 
 export interface ClipGridHandle {
-  scrollToClip: (clipId: string) => void;
+  /** Lleva la vista a ese clip y lo resalta. `false` si no está en la rejilla. */
+  scrollToClip: (clipId: string) => boolean;
 }
 
 interface ClipGridProps {
@@ -253,14 +254,16 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
   const adSlots = useMemo(() => adPositions(clips.length), [clips.length]);
 
   useImperativeHandle(ref, () => ({
+    /** `false` si ese clip no está en la rejilla: quien llama decide qué hacer. */
     scrollToClip: (clipId: string) => {
       const element = document.getElementById(`clip-card-${clipId}`);
-      if (!element) return;
+      if (!element) return false;
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       element.classList.add('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50', 'transition-all', 'duration-500');
       setTimeout(() => {
         element.classList.remove('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50');
       }, 1500);
+      return true;
     },
   }), []);
 
