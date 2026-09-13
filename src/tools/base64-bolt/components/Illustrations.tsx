@@ -17,7 +17,7 @@ interface ArtProps {
 // literally the whole algorithm, so it is what the picture shows.
 // ---------------------------------------------------------------------------
 export const Base64HeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 280" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 280" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="b64Panel" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#0a1a3a" />

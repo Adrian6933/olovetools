@@ -18,7 +18,7 @@ interface ArtProps {
 // pops out, and the counters tick along the side.
 // ---------------------------------------------------------------------------
 export const WordFlowHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 280" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 280" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="wfPage" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#082f2c" />

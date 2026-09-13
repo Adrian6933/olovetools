@@ -9,7 +9,7 @@ import React from 'react';
 const INK = '#34d399';
 
 export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 420 250" className={className} role="img" aria-hidden="true" fill="none">
+  <svg viewBox="0 0 420 250" className={`tool-hero-art ${className}`} role="img" aria-hidden="true" fill="none">
     <style>{`
       @keyframes tb-slide { 0%,100% { transform: translateX(0) } 50% { transform: translateX(28px) } }
       @keyframes tb-pulse { 0%,100% { opacity:.35 } 50% { opacity:.9 } }

@@ -19,7 +19,7 @@ interface ArtProps {
 // them as a scan line sweeps across.
 // ---------------------------------------------------------------------------
 export const RegexHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 290" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 290" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="rfPanel" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#2a0b29" />

@@ -24,7 +24,7 @@ const DIM = '#0f766e';
  * Los caracteres van cambiando de opacidad en cascada, insinuando el sorteo.
  */
 export const HeroArt: React.FC<ArtProps> = ({ className = '' }) => (
-  <svg viewBox="0 0 420 260" role="img" aria-hidden="true" className={className}>
+  <svg viewBox="0 0 420 260" role="img" aria-hidden="true" className={`tool-hero-art ${className}`}>
     <defs>
       <linearGradient id="pb-hero-g" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#34d399" stopOpacity="0.9" />

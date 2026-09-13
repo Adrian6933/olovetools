@@ -16,7 +16,7 @@ interface ArtProps {
 // of settling into a row of swatches underneath.
 // ---------------------------------------------------------------------------
 export const ColorHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 280" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 280" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="csSky" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#4c1d3d" />

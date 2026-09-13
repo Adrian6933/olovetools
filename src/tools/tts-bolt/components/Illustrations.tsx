@@ -20,7 +20,7 @@ interface ArtProps {
 const HERO_BARS = [14, 30, 52, 78, 46, 96, 64, 112, 40, 84, 58, 100, 34, 70, 22];
 
 export const VoiceHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="ttsPaper" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#1c1207" />

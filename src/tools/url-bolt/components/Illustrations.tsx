@@ -16,7 +16,7 @@ interface ArtProps {
 // the encoded form streaming underneath.
 // ---------------------------------------------------------------------------
 export const UrlHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 270" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 270" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="ubBar" x1="0" y1="0" x2="1" y2="0">
         <stop offset="0%" stopColor="#064e3b" />

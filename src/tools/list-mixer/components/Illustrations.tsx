@@ -19,7 +19,7 @@ interface ArtProps {
 // sorted, deduplicated and numbered on the right.
 // ---------------------------------------------------------------------------
 export const ListMixerHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 420 290" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 420 290" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="lmPanel" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#2a1405" />

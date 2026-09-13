@@ -20,7 +20,7 @@ interface ArtProps {
 // tool is for: choosing the frame, not redrawing the picture.
 // ---------------------------------------------------------------------------
 export const RatioHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="22 34 374 212" className={className} role="img" aria-hidden="true">
+  <svg viewBox="22 34 374 212" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="arPhoto" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#365314" />

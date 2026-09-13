@@ -18,7 +18,7 @@ interface ArtProps {
 // the rendered document on the right as a beam sweeps across.
 // ---------------------------------------------------------------------------
 export const MarkdownHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 420 290" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 420 290" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="mlPane" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#1b1035" />

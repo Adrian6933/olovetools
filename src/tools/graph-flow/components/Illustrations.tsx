@@ -16,7 +16,7 @@ interface ArtProps {
 // and the trend line sweeps in — the whole promise of the tool in one picture.
 // ---------------------------------------------------------------------------
 export const ChartHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="1 21 398 218" className={className} role="img" aria-hidden="true">
+  <svg viewBox="1 21 398 218" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="gfBar" x1="0" y1="1" x2="0" y2="0">
         <stop offset="0%" stopColor="#b45309" />

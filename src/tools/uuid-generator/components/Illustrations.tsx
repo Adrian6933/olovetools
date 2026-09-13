@@ -21,7 +21,7 @@ export const UuidHeroArt: React.FC<ArtProps> = ({ className = '', animated = tru
   let cursor = 0;
 
   return (
-    <svg viewBox="0 0 400 270" className={className} role="img" aria-hidden="true">
+    <svg viewBox="0 0 400 270" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
       <defs>
         <linearGradient id="uuidCell" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#c4b5fd" />

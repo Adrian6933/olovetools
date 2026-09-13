@@ -35,7 +35,7 @@ const C = {
 // ---------------------------------------------------------------------------
 
 export const SanitizerHeroArt: React.FC<ArtProps> = ({ className, animated = true }) => (
-  <svg viewBox="0 0 460 320" className={className} xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <svg viewBox="0 0 460 320" className={`tool-hero-art ${className}`} xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
     <defs>
       <linearGradient id="hs-panel" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor={C.panelSoft} />

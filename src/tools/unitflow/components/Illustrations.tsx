@@ -36,7 +36,7 @@ export const UnitHeroArt: React.FC<ArtProps> = ({ className = '', animated = tru
   const imperial = Array.from({ length: 9 }, (_, i) => i);
 
   return (
-    <svg viewBox="0 0 400 280" className={className} role="img" aria-hidden="true">
+    <svg viewBox="0 0 400 280" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
       <defs>
         <linearGradient id="ufPanel" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#0a1a3a" />

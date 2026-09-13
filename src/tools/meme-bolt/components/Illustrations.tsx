@@ -18,7 +18,7 @@ interface ArtProps {
 // Impact-style text landing on the picture, a sticker settling into place.
 // ---------------------------------------------------------------------------
 export const MemeHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 320" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 320" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="mbSky" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#4c1d95" />

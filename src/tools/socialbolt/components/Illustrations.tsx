@@ -25,7 +25,7 @@ const CHIPS = [
 ];
 
 export const SocialHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="sbCard" x1="0" y1="0" x2="1" y2="1">
         <stop offset="0%" stopColor="#1e1b4b" />

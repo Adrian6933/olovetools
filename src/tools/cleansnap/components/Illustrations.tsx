@@ -23,7 +23,7 @@ const MOTION_GUARD = '@media (prefers-reduced-motion: reduce) { .cs-anim { anima
  * hacia el hueco, que es exactamente lo que hace el algoritmo.
  */
 export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 420 300" className={className} role="img" aria-hidden="true" fill="none">
+  <svg viewBox="0 0 420 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true" fill="none">
     <style>{`
       ${MOTION_GUARD}
       @keyframes cs-travel { 0% { opacity: 0; transform: translate(0,0); } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; transform: translate(84px, -26px); } }

@@ -18,7 +18,7 @@ interface ArtProps {
 // (16 / 32 / 180 / 512) fanning out of it.
 // ---------------------------------------------------------------------------
 export const FaviconHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 400 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
     <defs>
       <linearGradient id="fbGlass" x1="0" y1="0" x2="0" y2="1">
         <stop offset="0%" stopColor="#111a33" />

@@ -35,7 +35,7 @@ export const SubtitleHeroArt: React.FC<ArtProps> = ({ className = '', animated =
   const span = cursor;
 
   return (
-    <svg viewBox="0 0 420 300" className={className} role="img" aria-hidden="true">
+    <svg viewBox="0 0 420 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
       <defs>
         <linearGradient id="subBar" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#60a5fa" />

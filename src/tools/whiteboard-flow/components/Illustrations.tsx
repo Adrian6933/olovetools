@@ -11,7 +11,7 @@ import React from 'react';
 const INK = '#67e8f9';
 
 export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 420 300" className={className} role="img" aria-hidden="true" fill="none">
+  <svg viewBox="0 0 420 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true" fill="none">
     <style>{`
       @keyframes wbf-float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
       @keyframes wbf-dash { to { stroke-dashoffset: -24 } }

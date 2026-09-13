@@ -35,7 +35,7 @@ export const GifHeroArt: React.FC<ArtProps> = ({ className = '', animated = true
   const times = ARC.map((_, i) => (i / CELLS).toFixed(3)).concat('1');
 
   return (
-    <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
+    <svg viewBox="0 0 400 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
       <defs>
         <linearGradient id="gbScreen" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#3b0764" />

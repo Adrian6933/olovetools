@@ -45,7 +45,7 @@ export const CronHeroArt: React.FC<ArtProps> = ({ className = '', animated = tru
   ];
 
   return (
-    <svg viewBox="19 1 392 268" className={className} role="img" aria-hidden="true">
+    <svg viewBox="19 1 392 268" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
       <defs>
         <radialGradient id="cronGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stopColor="#a78bfa" stopOpacity="0.35" />

@@ -18,7 +18,7 @@ const MOTION_GUARD = '@media (prefers-reduced-motion: reduce) { .dt-anim { anima
 
 /** Un portátil con la webcam mirando, el medidor moviéndose y la ficha del sistema. */
 export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 420 300" className={className} role="img" aria-hidden="true" fill="none">
+  <svg viewBox="0 0 420 300" className={`tool-hero-art ${className}`} role="img" aria-hidden="true" fill="none">
     <style>{`
       ${MOTION_GUARD}
       @keyframes dt-bar { 0%,100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }

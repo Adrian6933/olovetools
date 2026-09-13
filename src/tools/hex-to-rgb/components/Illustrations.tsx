@@ -34,7 +34,7 @@ export const ColorHeroArt: React.FC<ArtProps> = ({ className = '', animated = tr
   const wheel = Array.from({ length: 24 }, (_, i) => i);
 
   return (
-    <svg viewBox="5 5 404 226" className={className} role="img" aria-hidden="true">
+    <svg viewBox="5 5 404 226" className={`tool-hero-art ${className}`} role="img" aria-hidden="true">
       <defs>
         <linearGradient id="c2rPanel" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#062a26" />
