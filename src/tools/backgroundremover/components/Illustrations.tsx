@@ -1,4 +1,5 @@
 import React from 'react';
+import { BackgroundProcessArt } from '../../../components/shared/ToolProcessArt';
 
 // ============================================================================
 // Bespoke SVG artwork for the Background Remover.
@@ -8,7 +9,7 @@ import React from 'react';
 
 interface ArtProps {
   className?: string;
-  /** Disables the SMIL animations for users who asked for reduced motion. */
+  /** Shows the finished cutout without motion when false. */
   animated?: boolean;
 }
 
@@ -16,95 +17,8 @@ interface ArtProps {
 // Hero: a photo whose background dissolves into transparency behind a sweeping
 // cut line. The subject stays put — which is exactly what the tool does.
 // ---------------------------------------------------------------------------
-export const CutoutHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="brSky" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#4c1d95" />
-        <stop offset="55%" stopColor="#9333ea" />
-        <stop offset="100%" stopColor="#f0abfc" />
-      </linearGradient>
-      <linearGradient id="brSubject" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#fdf4ff" />
-        <stop offset="100%" stopColor="#e879f9" />
-      </linearGradient>
-      <linearGradient id="brHill" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#701a75" />
-        <stop offset="100%" stopColor="#3b0764" />
-      </linearGradient>
-      <linearGradient id="brBeam" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#f0abfc" stopOpacity="0" />
-        <stop offset="45%" stopColor="#f0abfc" stopOpacity="1" />
-        <stop offset="100%" stopColor="#f0abfc" stopOpacity="0" />
-      </linearGradient>
-
-      <pattern id="brChecker" width="20" height="20" patternUnits="userSpaceOnUse">
-        <rect width="20" height="20" fill="#140d1e" />
-        <rect width="10" height="10" fill="#1e1430" />
-        <rect x="10" y="10" width="10" height="10" fill="#1e1430" />
-      </pattern>
-
-      <clipPath id="brFrame">
-        <rect x="10" y="10" width="380" height="280" rx="26" />
-      </clipPath>
-
-      {/* The cut sweeps across the frame; everything to its right is already
-          transparent. One animated rect drives the reveal and the beam. */}
-      <clipPath id="brReveal">
-        <rect y="0" width="400" height="300" x={animated ? 150 : 210}>
-          {animated && (
-            <animate
-              attributeName="x"
-              values="330;70;330"
-              dur="7s"
-              repeatCount="indefinite"
-              calcMode="spline"
-              keyTimes="0;0.5;1"
-              keySplines="0.45 0 0.55 1;0.45 0 0.55 1"
-            />
-          )}
-        </rect>
-      </clipPath>
-
-      <filter id="brGlow" x="-60%" y="-60%" width="220%" height="220%">
-        <feGaussianBlur stdDeviation="5" result="b" />
-        <feMerge>
-          <feMergeNode in="b" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-
-    <g clipPath="url(#brFrame)">
-      {/* Original photo */}
-      <rect x="10" y="10" width="380" height="280" fill="url(#brSky)" />
-      <circle cx="308" cy="74" r="26" fill="#fde68a" opacity="0.85" />
-      <path d="M10 214 L104 152 L182 208 L246 166 L330 226 L390 190 L390 290 L10 290 Z" fill="url(#brHill)" />
-      <path d="M10 246 L88 206 L168 250 L262 208 L390 258 L390 290 L10 290 Z" fill="#2e1065" opacity="0.9" />
-
-      {/* Removed background */}
-      <g clipPath="url(#brReveal)">
-        <rect x="10" y="10" width="380" height="280" fill="url(#brChecker)" />
-      </g>
-
-      {/* Subject — survives the cut, drawn above both layers */}
-      <g>
-        <ellipse cx="196" cy="118" rx="34" ry="38" fill="url(#brSubject)" />
-        <path
-          d="M138 290 C138 226 162 196 196 196 C230 196 254 226 254 290 Z"
-          fill="url(#brSubject)"
-        />
-        <path d="M176 108 C182 96 210 96 216 108" stroke="#a21caf" strokeWidth="3" fill="none" strokeLinecap="round" opacity="0.5" />
-      </g>
-
-      {/* Cut beam */}
-      <g clipPath="url(#brReveal)">
-        <rect y="0" width="3" height="300" x="0" fill="url(#brBeam)" filter="url(#brGlow)" />
-      </g>
-    </g>
-
-    <rect x="10" y="10" width="380" height="280" rx="26" fill="none" stroke="rgba(232,121,249,0.25)" strokeWidth="1.5" />
-  </svg>
+export const CutoutHeroArt: React.FC<ArtProps> = props => (
+  <BackgroundProcessArt {...props} />
 );
 
 // ---------------------------------------------------------------------------

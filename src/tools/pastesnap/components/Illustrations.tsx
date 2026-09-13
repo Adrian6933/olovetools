@@ -1,4 +1,5 @@
 import React from 'react';
+import { ConversionProcessArt } from '../../../components/shared/ToolProcessArt';
 
 // ============================================================================
 // Ilustraciones propias de PasteSnap, en el índigo/rosa de la herramienta.
@@ -7,97 +8,16 @@ import React from 'react';
 
 interface ArtProps {
   className?: string;
-  /** Las animaciones SMIL se apagan si el usuario pide menos movimiento. */
+  /** Permite mostrar el estado final sin movimiento. */
   animated?: boolean;
 }
 
 // ---------------------------------------------------------------------------
-// Héroe: del portapapeles a un abanico de formatos.
+// Héroe: del portapapeles a una imagen lista para descargar.
 // ---------------------------------------------------------------------------
-export const PasteHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 420 250" className={className} role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="psHero" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#818cf8" />
-        <stop offset="100%" stopColor="#f472b6" />
-      </linearGradient>
-      <linearGradient id="psShot" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#312e81" />
-        <stop offset="100%" stopColor="#1e1b4b" />
-      </linearGradient>
-      <filter id="psGlow" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="8" stdDeviation="10" floodColor="#4f46e5" floodOpacity="0.35" />
-      </filter>
-    </defs>
-
-    {/* Portapapeles */}
-    <g filter="url(#psGlow)">
-      <rect x="26" y="42" width="132" height="166" rx="16" fill="#0f1024" stroke="#312e81" strokeWidth="2" />
-      <rect x="66" y="30" width="52" height="26" rx="9" fill="url(#psHero)" />
-      <rect x="78" y="40" width="28" height="6" rx="3" fill="#0f1024" opacity="0.55" />
-
-      {/* Captura dentro del portapapeles */}
-      <rect x="44" y="74" width="96" height="66" rx="8" fill="url(#psShot)" />
-      <circle cx="66" cy="98" r="9" fill="#f472b6" opacity="0.9" />
-      <path d="M50 132 L74 108 L92 126 L108 112 L134 134 Z" fill="#818cf8" opacity="0.85" />
-
-      {[0, 1, 2].map(i => (
-        <rect key={i} x={44} y={152 + i * 14} width={[86, 62, 74][i]} height="7" rx="3.5" fill="#312e81" />
-      ))}
-    </g>
-
-    {/* Flecha de conversión */}
-    <path
-      d="M170 125 H206"
-      stroke="#818cf8"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeDasharray="5 6"
-    >
-      {animated && <animate attributeName="stroke-dashoffset" values="22;0" dur="1.8s" repeatCount="indefinite" />}
-    </path>
-    <path d="M200 118 L210 125 L200 132 Z" fill="#818cf8" />
-
-    {/* Abanico de formatos */}
-    {[
-      { label: 'PNG', y: 40, fill: '#4f46e5' },
-      { label: 'JPG', y: 92, fill: '#7c3aed' },
-      { label: 'WEBP', y: 144, fill: '#c026d3' },
-      { label: 'AVIF', y: 196, fill: '#db2777' },
-    ].map((chip, index) => (
-      <g key={chip.label}>
-        <rect x="228" y={chip.y} width="150" height="40" rx="12" fill={chip.fill} opacity="0.16" />
-        <rect x="228" y={chip.y} width="150" height="40" rx="12" fill="none" stroke={chip.fill} strokeWidth="1.6" />
-        <rect x="242" y={chip.y + 13} width="14" height="14" rx="3.5" fill={chip.fill} />
-        <text
-          x="266"
-          y={chip.y + 25}
-          fill="#e5e7eb"
-          fontSize="13"
-          fontWeight="700"
-          fontFamily="system-ui, sans-serif"
-        >
-          {chip.label}
-        </text>
-        {animated && (
-          <rect x="228" y={chip.y} width="150" height="40" rx="12" fill={chip.fill} opacity="0">
-            <animate
-              attributeName="opacity"
-              values="0;0.22;0"
-              dur="4.4s"
-              begin={`${index * 1.1}s`}
-              repeatCount="indefinite"
-            />
-          </rect>
-        )}
-      </g>
-    ))}
-  </svg>
+export const PasteHeroArt: React.FC<ArtProps> = props => (
+  <ConversionProcessArt {...props} clipboard />
 );
-
-// ---------------------------------------------------------------------------
-// Iconos de características
-// ---------------------------------------------------------------------------
 
 /** Portapapeles con el cursor: pegar con Ctrl+V. */
 export const ClipboardIcon: React.FC<ArtProps> = ({ className = '' }) => (

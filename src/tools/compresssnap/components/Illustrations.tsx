@@ -1,15 +1,10 @@
 import React from 'react';
+import { CompressionProcessArt } from '../../../components/shared/ToolProcessArt';
 
 // ============================================================================
 // Bespoke SVG artwork for CompressSnap, in the tool's cyan palette.
 //
-// Every animation is SMIL and gated on `animated`, so prefers-reduced-motion
-// gets a finished still frame rather than a half-drawn one.
-//
-// Any trigonometry is rounded to two decimals before it reaches an attribute:
-// the island is server-rendered, and an unrounded sin/cos can differ in its
-// last binary digit between Node and the browser, which throws the whole tree
-// away on hydration.
+// The hero uses CSS motion with a reduced-motion guard and a finished still.
 // ============================================================================
 
 interface ArtProps {
@@ -17,164 +12,13 @@ interface ArtProps {
   animated?: boolean;
 }
 
-const r2 = (n: number): string => n.toFixed(2);
 
 // ---------------------------------------------------------------------------
-// Hero: a photo funnelled through a grid that keeps the picture and drops the
-// bytes. The stack on the right is the file getting shorter; the meter under
-// it is the quality that survived — the two numbers the tool exists to trade
-// against each other.
+// Hero: the picture keeps its dimensions while its byte count shrinks.
 // ---------------------------------------------------------------------------
-export const CompressHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => {
-  const cells = Array.from({ length: 8 * 6 }, (_, i) => ({
-    x: 24 + (i % 8) * 17,
-    y: 60 + Math.floor(i / 8) * 17,
-    delay: ((i % 8) + Math.floor(i / 8)) * 0.12,
-    lit: (i * 7) % 5 < 2,
-  }));
-
-  return (
-    <svg viewBox="0 0 420 300" className={className} role="img" aria-hidden="true">
-      <defs>
-        <linearGradient id="csCell" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#67e8f9" />
-          <stop offset="100%" stopColor="#0e7490" />
-        </linearGradient>
-        <linearGradient id="csStack" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#0891b2" />
-        </linearGradient>
-        <radialGradient id="csGlow" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#06b6d4" stopOpacity="0.3" />
-          <stop offset="100%" stopColor="#06b6d4" stopOpacity="0" />
-        </radialGradient>
-        <clipPath id="csFrame">
-          <rect x="18" y="54" width="150" height="108" rx="10" />
-        </clipPath>
-      </defs>
-
-      <ellipse cx="210" cy="150" rx="200" ry="130" fill="url(#csGlow)" />
-
-      {/* Source frame, as a pixel grid */}
-      <rect x="18" y="54" width="150" height="108" rx="10" fill="#071219" stroke="#164e63" strokeOpacity="0.7" />
-      <g clipPath="url(#csFrame)">
-        {cells.map((cell, i) => (
-          <rect
-            key={i}
-            x={r2(cell.x - 6)}
-            y={r2(cell.y - 6)}
-            width="15"
-            height="15"
-            rx="2.5"
-            fill={cell.lit ? 'url(#csCell)' : '#0e2a35'}
-            opacity={cell.lit ? 0.9 : 0.55}
-          >
-            {animated && cell.lit && (
-              <animate
-                attributeName="opacity"
-                values="0.9;0.35;0.9"
-                dur="3.6s"
-                begin={`${r2(cell.delay)}s`}
-                repeatCount="indefinite"
-              />
-            )}
-          </rect>
-        ))}
-      </g>
-      <text x="93" y="180" textAnchor="middle" fontFamily="ui-monospace, monospace" fontSize="10" fill="#67e8f9">
-        4.2 MB
-      </text>
-
-      {/* Funnel */}
-      <path d="M176 78 L232 108 L232 132 L176 138 Z" fill="#0e7490" fillOpacity="0.18" stroke="#0891b2" strokeOpacity="0.6" />
-      {animated &&
-        [0, 1, 2].map(i => (
-          <circle key={i} cx="180" cy={r2(96 + i * 12)} r="2.6" fill="#a5f3fc">
-            <animate
-              attributeName="cx"
-              values="180;230"
-              dur="1.9s"
-              begin={`${r2(i * 0.42)}s`}
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="opacity"
-              values="0;1;0"
-              dur="1.9s"
-              begin={`${r2(i * 0.42)}s`}
-              repeatCount="indefinite"
-            />
-          </circle>
-        ))}
-
-      {/* Output stack, each layer thinner than the last */}
-      <g transform="translate(244,62)">
-        {[0, 1, 2, 3].map(i => (
-          <g key={i}>
-            <rect
-              x="0"
-              y={r2(i * 22)}
-              width={r2(150 - i * 26)}
-              height="16"
-              rx="5"
-              fill="url(#csStack)"
-              opacity={0.85 - i * 0.15}
-            >
-              {animated && (
-                <animate
-                  attributeName="width"
-                  values={`${r2(150 - i * 26)};${r2(150 - i * 26 - 8)};${r2(150 - i * 26)}`}
-                  dur="4s"
-                  begin={`${r2(i * 0.3)}s`}
-                  repeatCount="indefinite"
-                />
-              )}
-            </rect>
-            <text
-              x={r2(158 - i * 26)}
-              y={r2(i * 22 + 12)}
-              fontFamily="ui-monospace, monospace"
-              fontSize="8"
-              fill="#5eead4"
-              opacity="0.75"
-            >
-              {['JPG', 'WebP', 'AVIF', 'PNG'][i]}
-            </text>
-          </g>
-        ))}
-      </g>
-
-      {/* Quality meter */}
-      <g transform="translate(244,168)">
-        <text x="0" y="0" fontFamily="ui-monospace, monospace" fontSize="9" fill="#0e7490">
-          SSIM
-        </text>
-        <rect x="0" y="8" width="150" height="9" rx="4.5" fill="#0e2a35" />
-        <rect x="0" y="8" width="141" height="9" rx="4.5" fill="#22d3ee">
-          {animated && <animate attributeName="width" values="60;141;141;60" dur="4.4s" repeatCount="indefinite" />}
-        </rect>
-        <text x="150" y="32" textAnchor="end" fontFamily="ui-monospace, monospace" fontSize="11" fill="#a5f3fc">
-          0.98
-        </text>
-        <text x="0" y="32" fontFamily="ui-monospace, monospace" fontSize="11" fill="#67e8f9">
-          412 KB
-        </text>
-      </g>
-
-      {/* Saving badge */}
-      <g transform="translate(18,196)">
-        <rect x="0" y="0" width="150" height="34" rx="10" fill="#071219" stroke="#164e63" strokeOpacity="0.7" />
-        <text x="75" y="22" textAnchor="middle" fontFamily="ui-monospace, monospace" fontSize="14" fill="#5eead4">
-          −90%
-        </text>
-      </g>
-    </svg>
-  );
-};
-
-// ---------------------------------------------------------------------------
-// Feature icons
-// ---------------------------------------------------------------------------
+export const CompressHeroArt: React.FC<ArtProps> = props => (
+  <CompressionProcessArt {...props} />
+);
 
 /** Two gears offset from the main track: the encoder running off-thread. */
 export const IconWorker: React.FC<ArtProps> = ({ className = '' }) => (
