@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors, TrendingUp, History } from 'lucide-react';
+import { ArrowRight, Film, Music, Image, Code, MessageSquare, Box, ExternalLink, Zap, Download, Repeat, Palette, Volume2, FileText, Video, QrCode, Crop, Images, PenTool, GitCompare, Tag, Shield, Smile, FolderArchive, Star, Eraser, Scissors, TrendingUp, History, AlignLeft, BarChart3, Binary, Camera, Captions, Clock, Database, FileCode, Fingerprint, Globe, Keyboard, KeyRound, Link, ListOrdered, Lock, Maximize2, Play, Radio, Ratio, Ruler, ScanLine, Search, ShieldCheck, StickyNote } from 'lucide-react';
 import { Project } from '../types';
 
 interface ProjectCardProps {
@@ -41,7 +41,31 @@ const IconMap: Record<string, React.ElementType> = {
   'Smile': Smile,
   'FolderArchive': FolderArchive,
   'Eraser': Eraser,
-  'Scissors': Scissors
+  'Scissors': Scissors,
+  'AlignLeft': AlignLeft,
+  'BarChart3': BarChart3,
+  'Binary': Binary,
+  'Camera': Camera,
+  'Captions': Captions,
+  'Clock': Clock,
+  'Database': Database,
+  'FileCode': FileCode,
+  'Fingerprint': Fingerprint,
+  'Globe': Globe,
+  'Keyboard': Keyboard,
+  'KeyRound': KeyRound,
+  'Link': Link,
+  'ListOrdered': ListOrdered,
+  'Lock': Lock,
+  'Maximize2': Maximize2,
+  'Play': Play,
+  'Radio': Radio,
+  'Ratio': Ratio,
+  'Ruler': Ruler,
+  'ScanLine': ScanLine,
+  'Search': Search,
+  'ShieldCheck': ShieldCheck,
+  'StickyNote': StickyNote
 };
 
 /** 1.204 -> "1,2k". Los numeros largos descuadran la tarjeta. */

@@ -10,7 +10,7 @@ Alcance: inventario y análisis estático transversal; no certificación funcion
 | Directorios src/tools y proyectos de constants.ts | 62 herramientas | El plan tiene una ficha por slug. |
 | Astro check | 1536 archivos; 0 errors, 0 warnings, 247 hints | Resultado final del comprobador. Algunos hints se muestran individualmente como warning ts(...), pero la categoría final es hints. |
 | Traducciones | 404 incidencias heurísticas; 0 archivos ausentes/no parseables | No equivale a 404 fallos visibles; requiere revisión de falsos positivos. |
-| Correspondencia catálogo→IconMap | 28 herramientas caen a Box | Omisiones comprobadas del mapa, no un supuesto estético. |
+| Correspondencia catálogo→IconMap | 28 herramientas caían a Box en la base auditada; corregido en el lote L01 | Se añadieron las 23 claves ausentes y la comprobación posterior da 0 fallbacks para las claves del catálogo. Falta validación visual. |
 | Correspondencia catálogo→TOOL_FAVICONS | 27 herramientas sin entrada | Usan favicon genérico. |
 | Git antes del trabajo | Limpio | Esta entrega solo añade documentos. |
 | Pruebas de operaciones y descarga en las 62 herramientas | No ejecutadas | Todas pendientes en el registro por herramienta. |
@@ -23,6 +23,8 @@ El primer intento aislado falló leyendo dependencias por permisos; se descartó
 No se ha repetido npm run build en esta entrega documental: no se ha cambiado código del producto. Los builds previos de la conversación no cuentan como validación de operaciones.
 
 ## Iconos: omisiones comprobadas
+
+Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.
 
 Sin favicon propio (27):
 drawsnap, diffsnap, base64-bolt, uuid-generator, list-mixer, html-sanitizer, colorsnap, hex-to-rgb, aspect-ratio, unitflow, sql-flow, cron-flow, xml-json, binary-flow, morse-flow, epoch-flow, time-bolt, device-test, lorem-flow, key-doctor, whiteboard-flow, subtitles-bolt, entropy-bolt, whois-bolt, framesnap, cleansnap, klipy.
@@ -64,4 +66,3 @@ Los dos casos de claves faltantes son hub.visitsGlobalForms.one en ja y zh. La U
 src/constants.ts; src/components/ProjectCard.tsx; src/components/Home.tsx; src/styles/global.css; src/components/shared/motion.ts; src/lib/seo.ts; src/pages/[lang]/[tool]/index.astro; src/pages/[lang]/index.astro; astro.config.mjs; public/robots.txt; public/manifest.json; package.json; scripts/check-translations.mjs.
 
 Catálogo completo: src/tools/* y src/locales/en/*.ts. Inspecciones adicionales de parsers, workers, recorder, DNS, servicios y APIs en los archivos referidos en el plan. Revisar módulos de una herramienta no acredita haber ejecutado todas sus opciones.
-

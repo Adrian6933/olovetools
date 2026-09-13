@@ -11,11 +11,15 @@ Este registro comienza con las 62 herramientas pendientes de prueba funcional. I
 | Inventario y plan | Hecho | 62 fichas; cobertura cotejada con src/tools. |
 | Astro check inicial | Pasa | 1536 archivos, 0 errors, 0 warnings, 247 hints. |
 | Traducciones | Revisar | 404 incidencias heurísticas; ver RESULTADOS-AUDITORIA.md. |
-| ICON-01 | Pendiente | 28 tarjetas con fallback Box. |
+| ICON-01 | Hecho | Se añadieron las 23 claves de lucide que faltaban en ProjectCard; comprobación catálogo→IconMap: 0 fallbacks. |
 | ICON-02/03 | Pendiente | 27 favicons ausentes y recursos de instalación por validar. |
 | Copy/SEO global | Pendiente | Promesas locales vs flujos remotos. |
 | Animaciones | Pendiente | Validación visual por escena y modo reducido. |
 | Embudo / rendimiento | Pendiente | Sin datos de campo en esta auditoría. |
+
+## L01 — iconos de tarjetas
+
+Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `IconMap` de `src/components/ProjectCard.tsx`. El mapa ya cubre las 47 claves usadas por el catálogo y conserva `Box` solo como fallback defensivo. Pendiente comprobar visualmente las 62 tarjetas en escritorio, móvil, tema oscuro y contraste.
 
 ## Herramientas
 
