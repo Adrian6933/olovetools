@@ -50,6 +50,10 @@ export async function normalizeSource(file: File): Promise<NormalizedSource> {
     const heic2any = (await import('heic2any')).default;
     const result = await heic2any({ blob: file, toType: 'image/png' });
     const blob = Array.isArray(result) ? result[0] : result;
+    // heic2any may return an empty array for a truncated or unsupported HEIC.
+    // Let the queue surface a normal decode error instead of passing undefined
+    // into the worker and failing later with an unrelated message.
+    if (!(blob instanceof Blob) || blob.size === 0) throw new Error('heic-decode-failed');
     return { blob, mime: 'image/png', transcoded: true };
   }
 
@@ -85,6 +89,9 @@ async function tiffToPng(file: File): Promise<Blob> {
   const rgba = UTIF.toRGBA8(pages[0]);
   const width = pages[0].width;
   const height = pages[0].height;
+  if (!Number.isFinite(width) || !Number.isFinite(height) || width < 1 || height < 1 || !rgba?.length) {
+    throw new Error('tiff-decode-failed');
+  }
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;

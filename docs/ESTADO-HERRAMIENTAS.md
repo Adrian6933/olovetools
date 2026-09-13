@@ -35,9 +35,9 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | clipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | codecard | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | colorsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| compresssnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| compresssnap | pasa (lógica) | Sanitiza dimensiones restauradas y valores no finitos antes de calcular el tamaño; evita `NaN` y reservas inválidas en configuraciones antiguas o automatizadas. | `npx tsc --noEmit`; revisión estática de `targetSize`. Pendiente prueba manual de archivos grandes, transparencia y descarga en Chromium/Firefox/Safari. | L03 |
 | cron-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| cropsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| cropsnap | pasa (lógica) | `renderCrop` limita marcos persistidos a los límites del canvas y sustituye valores no finitos; evita rectángulos negativos o fuera de rango al exportar. | `npx tsc --noEmit`; `git diff --check`; revisión estática de render y exportación. Pendiente prueba manual con rotación EXIF, 1080×1080 y ZIP. | L03 |
 | css-designer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | device-test | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | diffsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
@@ -46,7 +46,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | epoch-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | exif-clear | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | favicon-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| formatflow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| formatflow | pasa (lógica) | Valida el resultado de HEIC y las dimensiones/píxeles TIFF antes de entregarlos al pipeline; los archivos dañados producen errores accionables de decodificación. | `npx tsc --noEmit`; `git diff --check`; revisión estática de normalización HEIC/TIFF. Pendiente muestra real HEIC, TIFF multipágina y códec no disponible. | L03 |
 | framebolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | framesnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | gif-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

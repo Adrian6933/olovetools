@@ -104,35 +104,44 @@ export function targetSize(
   height: number,
   settings: CompressSettings
 ): { width: number; height: number } {
-  let w = width;
-  let h = height;
+  // Inputs normally come from ImageBitmap, but settings can also be restored
+  // from an old local session or edited through automation. Keep invalid or
+  // fractional dimensions from turning the aspect-ratio branch into NaN and
+  // making canvas allocation fail later.
+  const sourceWidth = Math.max(1, Math.min(MAX_SIDE, Math.floor(Number.isFinite(width) ? width : 1)));
+  const sourceHeight = Math.max(1, Math.min(MAX_SIDE, Math.floor(Number.isFinite(height) ? height : 1)));
+  let w = sourceWidth;
+  let h = sourceHeight;
 
   if (settings.resizeMode === 'scale') {
-    const factor = Math.max(1, Math.min(100, settings.scale)) / 100;
-    w = Math.round(width * factor);
-    h = Math.round(height * factor);
+    const factor = Math.max(1, Math.min(100, Number.isFinite(settings.scale) ? settings.scale : 100)) / 100;
+    w = Math.round(sourceWidth * factor);
+    h = Math.round(sourceHeight * factor);
   } else if (settings.resizeMode === 'longEdge') {
-    const longest = Math.max(width, height);
-    if (settings.longEdge > 0 && longest > settings.longEdge) {
-      const factor = settings.longEdge / longest;
-      w = Math.round(width * factor);
-      h = Math.round(height * factor);
+    const longest = Math.max(sourceWidth, sourceHeight);
+    const requested = Number.isFinite(settings.longEdge) ? settings.longEdge : 0;
+    if (requested > 0 && longest > requested) {
+      const factor = requested / longest;
+      w = Math.round(sourceWidth * factor);
+      h = Math.round(sourceHeight * factor);
     }
   } else if (settings.resizeMode === 'dimensions') {
+    const boxW = Math.max(1, Math.min(MAX_SIDE, Math.floor(Number.isFinite(settings.width) ? settings.width : 1)));
+    const boxH = Math.max(1, Math.min(MAX_SIDE, Math.floor(Number.isFinite(settings.height) ? settings.height : 1)));
     if (settings.maintainAspectRatio) {
-      const ratio = width / height;
+      const ratio = sourceWidth / sourceHeight;
       // `contain`, not `cover`: the whole image has to fit inside the box the
       // user typed, or the crop is a surprise.
-      if (settings.width / settings.height > ratio) {
-        h = settings.height;
+      if (boxW / boxH > ratio) {
+        h = boxH;
         w = Math.round(h * ratio);
       } else {
-        w = settings.width;
+        w = boxW;
         h = Math.round(w / ratio);
       }
     } else {
-      w = settings.width;
-      h = settings.height;
+      w = boxW;
+      h = boxH;
     }
   }
 
