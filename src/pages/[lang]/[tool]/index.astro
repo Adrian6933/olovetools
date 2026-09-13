@@ -331,8 +331,8 @@ const appSchema = {
     <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin />
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4601581729676999" crossorigin="anonymous"></script>
     
-    <link rel="icon" type={currentFavicon.endsWith('.svg') ? 'image/svg+xml' : 'image/png'} href={currentFavicon}>
-    <link rel="apple-touch-icon" href="/icon.svg">
+    <link rel="icon" type={currentFavicon.startsWith('data:image/svg+xml') || currentFavicon.endsWith('.svg') ? 'image/svg+xml' : 'image/png'} href={currentFavicon}>
+    <link rel="apple-touch-icon" type="image/svg+xml" href={currentFavicon}>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content={currentThemeColor} />
     
