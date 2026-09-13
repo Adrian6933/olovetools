@@ -9,51 +9,82 @@ import React from 'react';
 
 const TW = '#a970ff';
 
+/** One clock keeps links, previews, progress and completion in order.
+ * Unanimated SVG attributes present the finished result for reduced motion.
+ */
 export const HeroArt: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 440 200" className={className} role="img" aria-hidden="true" fill="none">
+  <svg viewBox="0 0 440 240" className={`tb-hero ${className || ''}`} aria-hidden="true" fill="none">
     <style>{`
-      @keyframes tb-fill { 0% { width: 0 } 100% { width: 84px } }
-      @keyframes tb-nudge { 0%,100% { transform: translateY(0) } 50% { transform: translateY(6px) } }
-      .tb-fill { animation: tb-fill 2.4s ease-in-out infinite alternate; }
-      .tb-nudge { animation: tb-nudge 1.9s ease-in-out infinite; }
+      .tb-hero .tb-link { animation: tb-links 8s ease-in-out infinite both; }
+      .tb-hero .tb-preview-0 { animation: tb-preview-0 8s ease-in-out infinite both; }
+      .tb-hero .tb-preview-1 { animation: tb-preview-1 8s ease-in-out infinite both; }
+      .tb-hero .tb-preview-2 { animation: tb-preview-2 8s ease-in-out infinite both; }
+      .tb-hero .tb-progress { transform-origin: 256px 180px; animation: tb-progress 8s linear infinite both; }
+      .tb-hero .tb-packet { animation: tb-packet 8s ease-in-out infinite both; }
+      .tb-hero .tb-complete { animation: tb-complete 8s ease-in-out infinite both; }
+      @keyframes tb-links { 0% { opacity: .25; } 12%,90% { opacity: 1; } 100% { opacity: .25; } }
+      @keyframes tb-preview-0 { 0%,18% { opacity: 0; transform: translateY(5px); } 28%,90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0); } }
+      @keyframes tb-preview-1 { 0%,32% { opacity: 0; transform: translateY(5px); } 42%,90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0); } }
+      @keyframes tb-preview-2 { 0%,46% { opacity: 0; transform: translateY(5px); } 56%,90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0); } }
+      @keyframes tb-progress { 0%,18% { transform: scaleX(0); opacity: 1; } 70%,90% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+      @keyframes tb-packet { 0%,12% { opacity: 0; transform: translateX(0); } 18% { opacity: 1; transform: translateX(0); } 52% { opacity: 1; transform: translateX(48px); } 60%,100% { opacity: 0; transform: translateX(48px); } }
+      @keyframes tb-complete { 0%,70% { opacity: 0; transform: translateY(4px); } 78%,90% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0); } }
       @media (prefers-reduced-motion: reduce) {
-        .tb-fill { animation: none !important; width: 84px !important; }
-        .tb-nudge { animation: none !important; transform: none !important; }
+        .tb-hero .tb-link, .tb-hero .tb-preview-0, .tb-hero .tb-preview-1,
+        .tb-hero .tb-preview-2, .tb-hero .tb-progress,
+        .tb-hero .tb-packet, .tb-hero .tb-complete { animation: none; }
+        .tb-hero .tb-packet { opacity: 0; }
       }
     `}</style>
 
-    {/* the pasted list */}
-    <rect x="12" y="30" width="140" height="140" rx="14" fill="#140f1c" stroke="rgba(255,255,255,0.08)" />
-    {[0, 1, 2, 3, 4].map(i => (
-      <g key={i}>
-        <circle cx="30" cy={54 + i * 24} r="3" fill={TW} opacity={0.55} />
-        <rect x="40" y={50 + i * 24} width={96 - (i % 3) * 16} height="7" rx="3.5" fill="rgba(255,255,255,0.16)" />
+    {/* Three pasted links correspond to exactly three output videos. */}
+    <rect x="12" y="32" width="140" height="158" rx="16" fill="#171020" stroke="#59406f" />
+    <path d="M29 49h28m5 0h8" stroke="#aa86ce" strokeWidth="3" strokeLinecap="round" />
+    <circle cx="134" cy="49" r="3" fill="#b68aff" />
+    {[0, 1, 2].map(i => (
+      <g key={i} className="tb-link">
+        <rect x="24" y={65 + i * 38} width="116" height="28" rx="7" fill="#261b34" stroke="#49315f" />
+        <g transform={`translate(31 ${73 + i * 38})`} stroke="#c9a4ff" strokeWidth="1.5" strokeLinecap="round">
+          <path d="m5 3 2-2a3 3 0 0 1 4 4L9 7M6 9l-2 2a3 3 0 0 1-4-4l2-2M4 7l3-3" />
+        </g>
+        <path d={`M52 ${76 + i * 38}h${66 - i * 9}m-${66 - i * 9} 7h42`} stroke="#b39acb" strokeWidth="3" strokeLinecap="round" />
       </g>
     ))}
 
-    {/* the arrow through the middle */}
-    <g className="tb-nudge">
-      <path d="M170 100 h56" stroke={TW} strokeWidth="3" strokeLinecap="round" />
-      <path d="M218 92 l 10 8 l -10 8" stroke={TW} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    {/* Direction stays horizontal; only the transferred item moves. */}
+    <path d="M169 111h52m-7-7 7 7-7 7" stroke="#a970ff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    <g className="tb-packet" opacity="0">
+      <rect x="163" y="101" width="15" height="20" rx="4" fill="#d6baff" />
+      <path d="m168 107 5 4-5 4z" fill="#39204f" />
     </g>
 
-    {/* the finished pack */}
-    <rect x="248" y="30" width="180" height="140" rx="14" fill="rgba(169,112,255,0.07)" stroke="rgba(169,112,255,0.25)" />
+    <rect x="240" y="16" width="188" height="212" rx="16" fill="#1c1328" stroke="#8054ac" />
+    <path d="M257 33h36m5 0h8" stroke="#c3a1e7" strokeWidth="3" strokeLinecap="round" />
+    <text x="412" y="37" textAnchor="end" fill="#d6baff" fontSize="10" fontFamily="ui-monospace, monospace">.mp4</text>
     {[0, 1, 2].map(i => (
-      <g key={i}>
-        <rect x={264} y={48 + i * 40} width="60" height="32" rx="6" fill="#140f1c" stroke="rgba(255,255,255,0.1)" />
-        <path d={`M${286} ${58 + i * 40} l 12 6 l -12 6 z`} fill={TW} opacity="0.75" />
-        <rect x="334" y={56 + i * 40} width="78" height="6" rx="3" fill="rgba(255,255,255,0.14)" />
-        <rect x="334" y={68 + i * 40} width="48" height="5" rx="2.5" fill="rgba(255,255,255,0.07)" />
+      <g key={i} className={`tb-preview-${i}`}>
+        <rect x="256" y={48 + i * 40} width="156" height="32" rx="7" fill="#2a1c3a" stroke="#674583" />
+        <rect x="261" y={53 + i * 40} width="44" height="22" rx="4" fill={['#65418a', '#514677', '#794774'][i]} />
+        <path d={`M266 ${71 + i * 40}l9-10 8 7 8-9 9 12z`} fill="#d5b9f5" fillOpacity=".45" />
+        <path d={`M279 ${58 + i * 40}l9 6-9 6z`} fill="#f1e5ff" />
+        <path d={`M315 ${59 + i * 40}h58m-58 10h36`} stroke="#c4aadf" strokeWidth="3" strokeLinecap="round" />
+        <text x="403" y={71 + i * 40} textAnchor="end" fill="#a88dbf" fontSize="8" fontFamily="ui-monospace, monospace">0{i + 1}</text>
       </g>
     ))}
 
-    <rect x="264" y="150" width="84" height="6" rx="3" fill="rgba(255,255,255,0.08)" />
-    <rect className="tb-fill" x="264" y="150" width="84" height="6" rx="3" fill={TW} />
-    <text x="360" y="156" fill="#7c8296" fontSize="9" fontFamily="sans-serif">one .zip</text>
+    {/* Dedicated footer: progress never intersects the last video (ends at 160). */}
+    <path d="M256 172h156" stroke="#49315f" />
+    <rect x="256" y="180" width="156" height="4" rx="2" fill="#47305e" />
+    <rect className="tb-progress" x="256" y="180" width="156" height="4" rx="2" fill="#c29aff" />
+    <g className="tb-complete">
+      <rect x="256" y="195" width="156" height="22" rx="6" fill="#312042" />
+      <path d="M268 199v14m-3-11h6m-6 4h6m-6 4h6" stroke="#c9a4ff" strokeWidth="1.5" />
+      <text x="282" y="210" fill="#eadbff" fontSize="11" fontFamily="ui-monospace, monospace">clips.zip</text>
+      <circle cx="399" cy="206" r="7" fill="#bbf7d0" />
+      <path d="m396 206 2 2 4-4" stroke="#166534" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </g>
   </svg>
 );
-
 const base = 'w-full h-full';
 
 export const IconPaste: React.FC = () => (
