@@ -21,6 +21,7 @@ import { LegalModal } from './components/LegalModal';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { useHandoffIntake } from '../../lib/useHandoff';
+import { useReducedMotion } from '../../components/shared/motion';
 
 import type { Cue, Format, Track } from './lib/model';
 import { nextUid, toReadable, totalDuration } from './lib/model';
@@ -63,6 +64,7 @@ interface PendingFile {
 
 export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
 
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies'>(null);
   const [source, setSource] = useState('');
@@ -362,7 +364,7 @@ export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) 
 
             <div className="relative">
               <div className="absolute inset-0 bg-blue-500/10 blur-[80px] rounded-full" />
-              <SubtitleHeroArt className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]" />
+              <SubtitleHeroArt className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]" animated={!prefersReduced} />
             </div>
           </section>
 

@@ -21,6 +21,7 @@ import { LegalModal } from './components/LegalModal';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { useHandoffIntake } from '../../lib/useHandoff';
+import { useReducedMotion } from '../../components/shared/motion';
 
 import { parseCron } from './lib/cron';
 import type { FieldKind } from './lib/cron';
@@ -95,6 +96,7 @@ function groupDigits(n: number): string {
 
 export default function CronFlow({ lang, dictionary }: CronFlowProps) {
   const t = dictionary || {};
+  const prefersReduced = useReducedMotion();
   const vocab = useMemo(() => vocabFrom(t), [t]);
 
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies'>(null);
@@ -412,7 +414,7 @@ export default function CronFlow({ lang, dictionary }: CronFlowProps) {
 
             <div className="relative">
               <div className="absolute inset-0 bg-violet-500/10 blur-[80px] rounded-full" />
-              <CronHeroArt className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]" />
+              <CronHeroArt className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]" animated={!prefersReduced} />
             </div>
           </section>
 
