@@ -13,138 +13,64 @@ interface ArtProps {
 }
 
 // ---------------------------------------------------------------------------
-// Hero: a pane of glass floating over a gradient, with the sliders that made
-// it drifting on the left and the resulting rule printed underneath.
+// Hero: a compact, readable story of the tool — controls become a preview,
+// then become a copy-ready CSS rule. Each stage has its own space.
 // ---------------------------------------------------------------------------
 export const CssHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
+  <svg viewBox="0 0 420 250" className={className} role="img" aria-hidden="true">
     <defs>
-      <linearGradient id="cdBack" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#2e1065" />
-        <stop offset="55%" stopColor="#7c3aed" />
-        <stop offset="100%" stopColor="#db2777" />
-      </linearGradient>
-      <linearGradient id="cdPane" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.28" />
-        <stop offset="100%" stopColor="#ffffff" stopOpacity="0.08" />
-      </linearGradient>
-      <linearGradient id="cdEdge" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.85" />
-        <stop offset="60%" stopColor="#ffffff" stopOpacity="0.15" />
-      </linearGradient>
-      <clipPath id="cdCanvas">
-        <rect x="10" y="14" width="380" height="230" rx="18" />
-      </clipPath>
-      <filter id="cdBlur" x="-30%" y="-30%" width="160%" height="160%">
-        <feGaussianBlur stdDeviation="9" />
-      </filter>
+      <linearGradient id="cdBack" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor="#170c30" /><stop offset="1" stopColor="#31105a" /></linearGradient>
+      <linearGradient id="cdPreview" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#c084fc" /><stop offset="1" stopColor="#22d3ee" /></linearGradient>
+      <filter id="cdGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="7" /></filter>
     </defs>
-
-    <g clipPath="url(#cdCanvas)">
-      <rect x="10" y="14" width="380" height="230" fill="#0b0716" />
-
-      {/* The backdrop the glass will blur */}
-      <g filter="url(#cdBlur)">
-        <rect x="10" y="14" width="380" height="230" fill="url(#cdBack)" opacity="0.9" />
-        <circle cx="120" cy="80" r="52" fill="#f0abfc" opacity="0.7">
-          {animated && (
-            <animate attributeName="cx" values="120;180;120" dur="11s" repeatCount="indefinite" />
-          )}
-        </circle>
-        <circle cx="300" cy="190" r="66" fill="#22d3ee" opacity="0.45">
-          {animated && (
-            <animate attributeName="cy" values="190;140;190" dur="13s" repeatCount="indefinite" />
-          )}
-        </circle>
-      </g>
-
-      {/* Grid, so the surface reads as a design canvas */}
-      <g stroke="#ffffff" strokeOpacity="0.05" strokeWidth="1">
-        {[0, 1, 2, 3, 4, 5, 6, 7].map(i => (
-          <line key={`v${i}`} x1={10 + i * 48} y1="14" x2={10 + i * 48} y2="244" />
-        ))}
-        {[0, 1, 2, 3, 4].map(i => (
-          <line key={`h${i}`} x1="10" y1={14 + i * 48} x2="390" y2={14 + i * 48} />
-        ))}
-      </g>
-
-      {/* The glass pane itself */}
-      <g>
-        {animated && (
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            values="0 0; 0 -6; 0 0"
-            dur="9s"
-            repeatCount="indefinite"
-          />
-        )}
-        <rect x="148" y="66" width="196" height="128" rx="22" fill="url(#cdPane)" />
-        <rect
-          x="148"
-          y="66"
-          width="196"
-          height="128"
-          rx="22"
-          fill="none"
-          stroke="url(#cdEdge)"
-          strokeWidth="1.5"
-        />
-        {/* Inner highlight — the detail that sells frosted glass */}
-        <path d="M162 67 H330" stroke="#ffffff" strokeOpacity="0.55" strokeWidth="1.5" strokeLinecap="round" />
-        <rect x="170" y="92" width="88" height="9" rx="4.5" fill="#ffffff" fillOpacity="0.75" />
-        <rect x="170" y="110" width="146" height="6" rx="3" fill="#ffffff" fillOpacity="0.32" />
-        <rect x="170" y="124" width="112" height="6" rx="3" fill="#ffffff" fillOpacity="0.32" />
-        <rect x="170" y="150" width="74" height="24" rx="12" fill="#ffffff" fillOpacity="0.9" />
-      </g>
-
-      {/* Control rack */}
-      <g>
-        <rect x="26" y="66" width="98" height="128" rx="14" fill="#0d0820" fillOpacity="0.85" stroke="#ffffff" strokeOpacity="0.08" />
-        {[0, 1, 2, 3].map(i => {
-          const y = 88 + i * 28;
-          const from = [30, 62, 44, 70][i];
-          const to = [58, 36, 72, 40][i];
-          return (
-            <g key={i}>
-              <rect x="40" y={y} width="70" height="4" rx="2" fill="#ffffff" fillOpacity="0.12" />
-              <rect x="40" y={y} width={from} height="4" rx="2" fill="#8b5cf6">
-                {animated && (
-                  <animate
-                    attributeName="width"
-                    values={`${from};${to};${from}`}
-                    dur={`${6 + i}s`}
-                    repeatCount="indefinite"
-                  />
-                )}
-              </rect>
-              <circle cx={40 + from} cy={y + 2} r="5" fill="#c4b5fd" stroke="#0b0716" strokeWidth="1.5">
-                {animated && (
-                  <animate
-                    attributeName="cx"
-                    values={`${40 + from};${40 + to};${40 + from}`}
-                    dur={`${6 + i}s`}
-                    repeatCount="indefinite"
-                  />
-                )}
-              </circle>
-            </g>
-          );
-        })}
-      </g>
+    <rect x="8" y="8" width="404" height="234" rx="22" fill="url(#cdBack)" stroke="#ffffff" strokeOpacity=".1" />
+    <path d="M140 36v178M280 36v178" stroke="#ffffff" strokeOpacity=".08" strokeDasharray="3 5" />
+    <g fill="#c4b5fd" fontFamily="system-ui, sans-serif" fontSize="10" fontWeight="700" letterSpacing="1.2">
+      <text x="28" y="31">INPUT</text><text x="168" y="31">PREVIEW</text><text x="308" y="31">CSS READY</text>
     </g>
-
-    {/* The generated rule */}
     <g>
-      <rect x="10" y="256" width="380" height="32" rx="10" fill="#08060f" stroke="#ffffff" strokeOpacity="0.07" />
-      <rect x="24" y="268" width="52" height="7" rx="3.5" fill="#a78bfa" />
-      <rect x="84" y="268" width="34" height="7" rx="3.5" fill="#f472b6" />
-      <rect x="126" y="268" width="88" height="7" rx="3.5" fill="#67e8f9" />
-      <rect x="222" y="268" width="46" height="7" rx="3.5" fill="#a78bfa" opacity="0.6" />
-      <rect x="276" y="268" width="62" height="7" rx="3.5" fill="#f472b6" opacity="0.5" />
-      <circle cx="366" cy="272" r="9" fill="#8b5cf6" fillOpacity="0.2" stroke="#a78bfa" strokeWidth="1.5" />
-      <path d="M362 272 l3 3 l6 -6" stroke="#c4b5fd" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="24" y="49" width="100" height="126" rx="13" fill="#090611" stroke="#a78bfa" strokeOpacity=".28" />
+      <path d="M38 69h70M38 99h70M38 129h70" stroke="#ffffff" strokeOpacity=".14" strokeWidth="5" strokeLinecap="round" />
+      {[{ y:69, x:78 }, { y:99, x:58 }, { y:129, x:92 }].map((item, i) => <g key={i}>
+        <path d={`M38 ${item.y}h${item.x - 38}`} stroke="#a78bfa" strokeWidth="5" strokeLinecap="round">
+          {animated && <animate attributeName="d" values={`M38 ${item.y}h${item.x - 38};M38 ${item.y}h${[92, 74, 68][i] - 38};M38 ${item.y}h${item.x - 38}`} dur="6s" repeatCount="indefinite" />}
+        </path>
+        <circle cx={item.x} cy={item.y} r="5" fill="#f0abfc" />
+      </g>)}
+      <rect x="38" y="151" width="50" height="10" rx="5" fill="#7c3aed" fillOpacity=".8" />
     </g>
+    <g>
+      {animated && <animate attributeName="opacity" values=".55;1;.55" dur="6s" repeatCount="indefinite" />}
+      <circle cx="155" cy="112" r="23" fill="#a855f7" fillOpacity=".28" filter="url(#cdGlow)" />
+      <path d="M146 112h18m-7-7 7 7-7 7" stroke="#e9d5ff" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </g>
+    <g>
+      <rect x="171" y="49" width="90" height="126" rx="13" fill="#ffffff" fillOpacity=".08" stroke="#ffffff" strokeOpacity=".24" />
+      <rect x="185" y="65" width="62" height="55" rx="10" fill="url(#cdPreview)" fillOpacity=".8" />
+      <rect x="185" y="132" width="40" height="8" rx="4" fill="#ffffff" fillOpacity=".55" />
+      <rect x="185" y="148" width="57" height="6" rx="3" fill="#ffffff" fillOpacity=".2" />
+      <rect x="185" y="160" width="46" height="6" rx="3" fill="#ffffff" fillOpacity=".2" />
+    </g>
+    <g>
+      {animated && <animateTransform attributeName="transform" type="translate" values="0 0;4 0;0 0" dur="6s" repeatCount="indefinite" />}
+      <circle cx="276" cy="112" r="23" fill="#22d3ee" fillOpacity=".2" filter="url(#cdGlow)" />
+      <path d="M267 112h18m-7-7 7 7-7 7" stroke="#a5f3fc" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </g>
+    <g>
+      <rect x="292" y="49" width="104" height="126" rx="13" fill="#090611" stroke="#22d3ee" strokeOpacity=".28" />
+      <text x="305" y="69" fill="#67e8f9" fontFamily="monospace" fontSize="9">.card {'{'}</text>
+      <rect x="305" y="82" width="66" height="6" rx="3" fill="#c084fc" />
+      <rect x="305" y="96" width="52" height="6" rx="3" fill="#f472b6" />
+      <rect x="305" y="110" width="73" height="6" rx="3" fill="#67e8f9" />
+      <text x="305" y="139" fill="#67e8f9" fontFamily="monospace" fontSize="9">{'}'}</text>
+      <circle cx="371" cy="153" r="10" fill="#22c55e" fillOpacity=".22" stroke="#86efac" strokeOpacity=".7" />
+      <path d="m366 153 3 3 6-7" stroke="#bbf7d0" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+    </g>
+    <g fontFamily="system-ui, sans-serif" fontSize="9" fontWeight="600" fill="#ffffff" fillOpacity=".55">
+      <text x="43" y="202">Tune values</text><text x="190" y="202">See it live</text><text x="316" y="202">Copy rule</text>
+    </g>
+    <rect x="24" y="218" width="372" height="8" rx="4" fill="#ffffff" fillOpacity=".06" />
+    {animated && <rect x="24" y="218" width="0" height="8" rx="4" fill="#a78bfa"><animate attributeName="width" values="0;372;0" dur="6s" repeatCount="indefinite" /></rect>}
   </svg>
 );
 
