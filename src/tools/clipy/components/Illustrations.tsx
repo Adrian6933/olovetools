@@ -65,9 +65,36 @@ export const IconHandoff: React.FC = () => (
   </svg>
 );
 
+/** A shared seven-second cycle: action, result, hold, then a quiet reset.
+ * Base SVG attributes show the completed state when reduced motion is enabled.
+ */
 const frame = (children: React.ReactNode) => (
-  <svg viewBox="0 0 200 120" className="w-full h-auto" fill="none" aria-hidden="true">
-    <rect x="2" y="2" width="196" height="116" rx="12" fill="#16121f" stroke="rgba(145,70,255,0.18)" />
+  <svg viewBox="0 0 200 120" className="clipy-step w-full h-auto" fill="none" aria-hidden="true">
+    <style>{`
+      .clipy-step .cp-result { animation: cp-result 7s ease-in-out infinite; }
+      .clipy-step .cp-query { transform-origin: 53px 36px; animation: cp-query 7s ease-in-out infinite; }
+      .clipy-step .cp-toggle { animation: cp-toggle 7s ease-in-out infinite; }
+      .clipy-step .cp-selected { animation: cp-selected 7s ease-in-out infinite; }
+      .clipy-step .cp-progress { transform-origin: 29px 86px; animation: cp-progress 7s linear infinite; }
+      .clipy-step .cp-transfer { animation: cp-transfer 7s ease-in-out infinite; }
+      .clipy-step .cp-done { animation: cp-done 7s ease-in-out infinite; }
+      @keyframes cp-query { 0%,8% { transform: scaleX(0); opacity: 0; } 25%,88% { transform: scaleX(1); opacity: 1; } 100% { opacity: 0; } }
+      @keyframes cp-result { 0%,25% { opacity: 0; transform: translateY(5px); } 38%,88% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(0); } }
+      @keyframes cp-toggle { 0%,18% { transform: translateX(-10px); } 30%,90% { transform: translateX(0); } 100% { transform: translateX(-10px); } }
+      @keyframes cp-selected { 0%,18%,100% { opacity: .15; } 30%,90% { opacity: 1; } }
+      @keyframes cp-progress { 0%,16% { transform: scaleX(0); opacity: 1; } 76%,90% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+      @keyframes cp-transfer { 0%,22% { opacity: 0; transform: translateX(0); } 30% { opacity: 1; transform: translateX(0); } 60% { opacity: 1; transform: translateX(35px); } 67%,100% { opacity: 0; transform: translateX(35px); } }
+      @keyframes cp-done { 0%,62% { opacity: 0; } 72%,90% { opacity: 1; } 100% { opacity: 0; } }
+      @media (prefers-reduced-motion: reduce) {
+        .clipy-step .cp-result, .clipy-step .cp-query, .clipy-step .cp-toggle,
+        .clipy-step .cp-selected, .clipy-step .cp-progress,
+        .clipy-step .cp-transfer, .clipy-step .cp-done { animation: none; }
+        .clipy-step .cp-transfer { opacity: 0; }
+      }
+    `}</style>
+    <rect x="2" y="2" width="196" height="116" rx="12" fill="#100d18" stroke="#493263" />
+    <path d="M16 15h18m4 0h5" stroke="#76539c" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="182" cy="15" r="2" fill="#b68aff" />
     {children}
   </svg>
 );
@@ -75,12 +102,20 @@ const frame = (children: React.ReactNode) => (
 export const StepSearch: React.FC = () =>
   frame(
     <>
-      <rect x="24" y="30" width="152" height="26" rx="9" stroke={TW} strokeWidth="1.6" />
-      <circle cx="42" cy="43" r="5" stroke={TW} strokeWidth="1.6" />
-      <path d="M46 47 l 4 4" stroke={TW} strokeWidth="1.6" strokeLinecap="round" />
-      <text x="58" y="47" fill="#7c7490" fontSize="9.5" fontFamily="sans-serif">Just Chatting</text>
-      {[0, 1, 2, 3].map(i => (
-        <rect key={i} x={24 + i * 39} y="68" width="33" height="26" rx="5" fill="rgba(145,70,255,0.14)" />
+      <rect x="18" y="25" width="164" height="24" rx="7" fill="#21172f" stroke="#9563cf" />
+      <circle cx="32" cy="36" r="4" stroke="#d2b6ff" strokeWidth="1.5" />
+      <path d="m35 39 4 4" stroke="#d2b6ff" strokeWidth="1.5" strokeLinecap="round" />
+      <g className="cp-query">
+        <text x="53" y="40" fill="#eadfff" fontSize="10" fontFamily="sans-serif">Just Chatting</text>
+        <path d="M120 31v11" stroke="#b68aff" />
+      </g>
+      {[0, 1, 2].map(i => (
+        <g key={i} className="cp-result" style={{ animationDelay: `${i * .18}s` }}>
+          <rect x={18 + i * 56} y="59" width="52" height="43" rx="6" fill="#251b36" stroke="#61467e" />
+          <path d={`M${22 + i * 56} 85 l12 -13 9 7 10 -11 13 17z`} fill={['#8053b5', '#6163b0', '#a15090'][i]} />
+          <circle cx={54 + i * 56} cy="69" r="4" fill="#ddc6ff" />
+          <path d={`M${25 + i * 56} 94h24`} stroke="#c0a9db" strokeWidth="3" strokeLinecap="round" />
+        </g>
       ))}
     </>
   );
@@ -89,15 +124,16 @@ export const StepFilter: React.FC = () =>
   frame(
     <>
       {[
-        { y: 24, w: 150, on: true, label: 'Last 24 h' },
-        { y: 52, w: 150, on: false, label: 'Most viewed' },
-        { y: 80, w: 150, on: false, label: 'English only' },
+        { y: 25, label: '24 h' },
+        { y: 53, label: '1 000 +' },
+        { y: 81, label: 'EN' },
       ].map((o, i) => (
         <g key={i}>
-          <rect x="25" y={o.y} width={o.w} height="22" rx="7" fill={o.on ? 'rgba(145,70,255,0.18)' : 'rgba(255,255,255,0.03)'} stroke={o.on ? TW : 'rgba(255,255,255,0.08)'} strokeWidth={o.on ? 1.5 : 1} />
-          <rect x="36" y={o.y + 7} width="14" height="8" rx="4" fill={o.on ? TW : '#3f3a4d'} />
-          <circle cx={o.on ? 46 : 40} cy={o.y + 11} r="3" fill="#fff" />
-          <text x="58" y={o.y + 14} fill={o.on ? '#e2e8f0' : '#7c7490'} fontSize="8.5" fontFamily="sans-serif">{o.label}</text>
+          <rect x="18" y={o.y} width="164" height="22" rx="6" fill="#20172c" stroke="#513a6c" />
+          <rect className="cp-selected" x="18" y={o.y} width="164" height="22" rx="6" fill="#9146ff" fillOpacity=".12" stroke="#b68aff" style={{ animationDelay: `${i * .35}s` }} />
+          <text x="32" y={o.y + 15} fill="#eadfff" fontSize="10" fontFamily="sans-serif">{o.label}</text>
+          <rect x="146" y={o.y + 6} width="24" height="11" rx="5.5" fill="#7041a8" />
+          <circle className="cp-toggle" cx="164" cy={o.y + 11.5} r="4" fill="#f2eaff" style={{ animationDelay: `${i * .35}s` }} />
         </g>
       ))}
     </>
@@ -106,22 +142,39 @@ export const StepFilter: React.FC = () =>
 export const StepWatch: React.FC<{ caption?: string }> = ({ caption }) =>
   frame(
     <>
-      <rect x="30" y="24" width="140" height="66" rx="8" fill="rgba(145,70,255,0.09)" stroke="rgba(145,70,255,0.28)" />
-      <path d="M92 45 l 22 12 l -22 12 z" fill={TW} />
-      <rect x="38" y="32" width="26" height="12" rx="6" fill="#ef4444" />
-      <text x="51" y="41" textAnchor="middle" fill="#fff" fontSize="7" fontWeight="800" fontFamily="sans-serif">LIVE</text>
-      <text x="100" y="107" textAnchor="middle" fill="#7c7490" fontSize="8.5" fontFamily="sans-serif">{caption || 'without leaving the page'}</text>
+      <rect x="18" y="25" width="164" height="69" rx="7" fill="#241933" stroke="#745096" />
+      <path d="m24 76 30-30 25 21 26-30 29 25 20-17 22 31z" fill="#65428d" />
+      <circle cx="147" cy="41" r="8" fill="#b68aff" />
+      <circle cx="100" cy="57" r="15" fill="#100d18" fillOpacity=".85" stroke="#b68aff" />
+      <path d="M96 51v12m8-12v12" stroke="#eadfff" strokeWidth="3" strokeLinecap="round" />
+      <path d="M29 86h142" stroke="#443153" strokeWidth="3" strokeLinecap="round" />
+      <path className="cp-progress" d="M29 86h142" stroke="#c6a0ff" strokeWidth="3" strokeLinecap="round" />
+      <text x="100" y="108" textAnchor="middle" fill="#c1b1d4" fontSize="8.5" fontFamily="sans-serif">{caption || 'without leaving the page'}</text>
     </>
   );
 
 export const StepSend: React.FC = () =>
   frame(
     <>
-      <rect x="20" y="34" width="66" height="48" rx="8" stroke={TW} strokeWidth="1.6" />
-      <text x="53" y="62" textAnchor="middle" fill="#7c7490" fontSize="9" fontWeight="700" fontFamily="sans-serif">Clipy</text>
-      <path d="M92 58 h24" stroke={TW} strokeWidth="2.4" strokeLinecap="round" />
-      <path d="M110 52 l 6 6 l -6 6" stroke={TW} strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      <rect x="122" y="34" width="60" height="48" rx="8" fill="rgba(145,70,255,0.16)" stroke={TW} strokeWidth="1.6" />
-      <text x="152" y="62" textAnchor="middle" fill={TW} fontSize="8.5" fontWeight="800" fontFamily="sans-serif">TwitchBolt</text>
+      <rect x="16" y="30" width="60" height="57" rx="8" fill="#241933" stroke="#8056a9" />
+      {[0, 1, 2].map(i => (
+        <g key={i}>
+          <rect x="25" y={40 + i * 13} width="14" height="9" rx="2" fill="#a775eb" />
+          <path d={`M45 ${44 + i * 13}h20`} stroke="#c1a8de" strokeWidth="3" strokeLinecap="round" />
+        </g>
+      ))}
+      <path d="M83 59h32m-6-5 6 5-6 5" stroke="#8965ad" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <g className="cp-transfer" opacity="0">
+        <rect x="79" y="49" width="13" height="19" rx="3" fill="#c6a0ff" />
+        <path d="m83 55 5 4-5 4z" fill="#241933" />
+      </g>
+      <rect x="124" y="30" width="60" height="57" rx="8" fill="#241933" stroke="#8056a9" />
+      <path d="m155 40-10 17h9l-3 15 13-20h-10l4-12z" fill="#b68aff" />
+      <g className="cp-done">
+        <circle cx="177" cy="81" r="9" fill="#bbf7d0" stroke="#100d18" strokeWidth="2" />
+        <path d="m173 81 3 3 5-6" stroke="#166534" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </g>
+      <text x="46" y="104" textAnchor="middle" fill="#e5d6f8" fontSize="10" fontWeight="700" fontFamily="sans-serif">Clipy</text>
+      <text x="154" y="104" textAnchor="middle" fill="#e5d6f8" fontSize="9" fontWeight="700" fontFamily="sans-serif">TwitchBolt</text>
     </>
   );
