@@ -1,4 +1,5 @@
 import React from 'react';
+import { QrProcessArt } from '../../../components/shared/MoreToolProcessArt';
 
 // ============================================================================
 // Bespoke SVG artwork for QRBolt, in the tool's emerald palette.
@@ -7,92 +8,16 @@ import React from 'react';
 
 interface ArtProps {
   className?: string;
-  /** Disables the SMIL animations for users who asked for reduced motion. */
+  /** Shows the completed illustration without motion when false. */
   animated?: boolean;
 }
 
-// A fixed pseudo-random pattern: a real QR would be misleading (it would not
-// decode), and a regular grid would not read as a QR at all.
-const MODULES = [
-  0b0110100101, 0b1011010110, 0b0101101010, 0b1101001101, 0b0010110011,
-  0b1010011010, 0b0111010101, 0b1001101001, 0b0100110110, 0b1110010011,
-];
 
 // ---------------------------------------------------------------------------
-// Hero: a QR being drawn module by module, with a logo dropping into the middle.
+// Hero: content and styling choices become a QR illustration ready to export.
 // ---------------------------------------------------------------------------
-export const QrHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 320 320" className={className} role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="qbFill" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#34d399" />
-        <stop offset="100%" stopColor="#047857" />
-      </linearGradient>
-      <linearGradient id="qbScan" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#6ee7b7" stopOpacity="0" />
-        <stop offset="50%" stopColor="#6ee7b7" stopOpacity="0.7" />
-        <stop offset="100%" stopColor="#6ee7b7" stopOpacity="0" />
-      </linearGradient>
-      <clipPath id="qbFrame">
-        <rect x="20" y="20" width="280" height="280" rx="24" />
-      </clipPath>
-    </defs>
-
-    <rect x="20" y="20" width="280" height="280" rx="24" fill="#04120d" stroke="rgba(16,185,129,0.25)" strokeWidth="1.5" />
-
-    {/* Finder patterns */}
-    {[
-      [44, 44],
-      [204, 44],
-      [44, 204],
-    ].map(([x, y], i) => (
-      <g key={i}>
-        <rect x={x} y={y} width="72" height="72" rx="14" fill="none" stroke="url(#qbFill)" strokeWidth="12" />
-        <rect x={x + 26} y={y + 26} width="20" height="20" rx="5" fill="url(#qbFill)" />
-      </g>
-    ))}
-
-    {/* Data modules */}
-    <g clipPath="url(#qbFrame)">
-      {MODULES.map((row, r) =>
-        Array.from({ length: 10 }, (_, c) => {
-          if (!(row & (1 << c))) return null;
-          // Keep the finder corners clear.
-          if ((r < 3 && c < 3) || (r < 3 && c > 6) || (r > 6 && c < 3)) return null;
-          const x = 44 + c * 24;
-          const y = 44 + r * 24;
-          return (
-            <rect key={`${r}-${c}`} x={x} y={y} width="17" height="17" rx="4" fill="url(#qbFill)">
-              {animated && (
-                <animate
-                  attributeName="opacity"
-                  values="0.25;1;1;0.25"
-                  keyTimes="0;0.15;0.85;1"
-                  dur="4s"
-                  begin={`${((r * 7 + c * 3) % 20) * 0.12}s`}
-                  repeatCount="indefinite"
-                />
-              )}
-            </rect>
-          );
-        })
-      )}
-
-      {animated && (
-        <rect x="20" y="0" width="280" height="50" fill="url(#qbScan)">
-          <animate attributeName="y" values="10;270;10" dur="5s" repeatCount="indefinite" />
-        </rect>
-      )}
-    </g>
-
-    {/* Centre logo slot */}
-    <g>
-      <rect x="128" y="128" width="64" height="64" rx="16" fill="#04120d" />
-      <rect x="132" y="132" width="56" height="56" rx="13" fill="#ecfdf5" />
-      <path d="M160 146l14 26h-28Z" fill="#059669" />
-      <circle cx="160" cy="176" r="6" fill="#047857" />
-    </g>
-  </svg>
+export const QrHeroArt: React.FC<ArtProps> = props => (
+  <QrProcessArt {...props} />
 );
 
 // ---------------------------------------------------------------------------

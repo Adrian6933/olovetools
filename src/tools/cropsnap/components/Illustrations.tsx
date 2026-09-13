@@ -1,4 +1,5 @@
 import React from 'react';
+import { useReducedMotion } from '../../../components/shared/motion';
 
 // ============================================================================
 // Bespoke SVG artwork for CropSnap, in the tool's rose palette.
@@ -28,11 +29,11 @@ const FRAME = {
   height: 146,
 };
 
-const LOOP = { keyTimes: '0;0.3;0.7;1', dur: '7s', repeatCount: 'indefinite' } as const;
+const LOOP = { keyTimes: '0;0.15;0.55;0.9;1', dur: '8s', repeatCount: 'indefinite', calcMode: 'spline', keySplines: '0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1;0.4 0 0.2 1' } as const;
 
-/** `open → set → set → open` on one attribute, in step with the whole frame. */
+/** Hold the source, settle the crop, hold the result, then reset together. */
 const FrameLoop: React.FC<{ attr: string; open: number; set: number }> = ({ attr, open, set }) => (
-  <animate attributeName={attr} values={`${open};${set};${set};${open}`} {...LOOP} />
+  <animate attributeName={attr} values={`${open};${open};${set};${set};${open}`} {...LOOP} />
 );
 
 /** A geometric feature of the frame, measured in both poses. */
@@ -44,6 +45,8 @@ const at = (fraction: number) => ({
 const round = (n: number) => Math.round(n * 10) / 10;
 
 export const CropHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => {
+  const reduced = useReducedMotion();
+  animated = animated && !reduced;
   const { top, height } = FRAME;
   const bottom = top + height;
   const edges = { left: at(0), third1: at(1 / 3), third2: at(2 / 3), right: at(1) };
@@ -51,7 +54,13 @@ export const CropHeroArt: React.FC<ArtProps> = ({ className = '', animated = tru
   const handleX = (edge: { open: number; set: number }) => ({ open: edge.open - 5, set: edge.set - 5 });
 
   return (
-    <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
+    <svg viewBox="0 0 400 300" className={`crop-process ${className}`} data-static={animated ? undefined : ''} role="img" aria-hidden="true">
+      <style>{`
+        .crop-process .crop-finish { animation: crop-finish 8s ease-in-out infinite both; }
+        @keyframes crop-finish { 0%,55% { opacity: 0; } 65%,90% { opacity: 1; } 100% { opacity: 0; } }
+        .crop-process[data-static] .crop-finish { animation: none; }
+        @media (prefers-reduced-motion: reduce) { .crop-process .crop-finish { animation: none; } }
+      `}</style>
       <defs>
         <linearGradient id="csSky" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#4c0519" />
@@ -159,6 +168,12 @@ export const CropHeroArt: React.FC<ArtProps> = ({ className = '', animated = tru
       </g>
 
       <rect x="14" y="18" width="372" height="238" rx="20" fill="none" stroke="rgba(251,113,133,0.25)" strokeWidth="1.5" />
+      <g className="crop-finish">
+        <rect x="121" y="265" width="158" height="26" rx="8" fill="#341522" stroke="#bc6679" />
+        <text x="134" y="283" fontFamily="ui-monospace, monospace" fontSize="12" fill="#ffe4e6">cropped.png</text>
+        <circle cx="261" cy="278" r="7" fill="#bbf7d0" />
+        <path d="m258 278 2 2 4-4" fill="none" stroke="#166534" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
     </svg>
   );
 };

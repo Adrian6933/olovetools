@@ -1,4 +1,5 @@
 import React from 'react';
+import { RecordingProcessArt } from '../../../components/shared/MoreToolProcessArt';
 
 // ============================================================================
 // Bespoke SVG artwork for RecordSnap.
@@ -13,115 +14,10 @@ interface ArtProps {
 }
 
 // ---------------------------------------------------------------------------
-// Hero: a monitor mid-recording, with the webcam bubble and a REC pulse. The
-// scan line sweeping down is the only motion, so it stays calm on a landing.
+// Hero: screen and webcam capture, centered audio levels and a finished file.
 // ---------------------------------------------------------------------------
-export const RecorderHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="rsScreen" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#1c1206" />
-        <stop offset="100%" stopColor="#2c1d08" />
-      </linearGradient>
-      <linearGradient id="rsBezel" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#3b2c14" />
-        <stop offset="100%" stopColor="#1a1208" />
-      </linearGradient>
-      <linearGradient id="rsCam" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#fde68a" />
-        <stop offset="100%" stopColor="#f59e0b" />
-      </linearGradient>
-      <linearGradient id="rsScan" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#fbbf24" stopOpacity="0" />
-        <stop offset="50%" stopColor="#fbbf24" stopOpacity="0.55" />
-        <stop offset="100%" stopColor="#fbbf24" stopOpacity="0" />
-      </linearGradient>
-      <clipPath id="rsInner">
-        <rect x="26" y="26" width="348" height="196" rx="12" />
-      </clipPath>
-      <filter id="rsGlow" x="-70%" y="-70%" width="240%" height="240%">
-        <feGaussianBlur stdDeviation="4" result="b" />
-        <feMerge>
-          <feMergeNode in="b" />
-          <feMergeNode in="SourceGraphic" />
-        </feMerge>
-      </filter>
-    </defs>
-
-    {/* Monitor */}
-    <rect x="16" y="16" width="368" height="216" rx="20" fill="url(#rsBezel)" />
-    <rect x="26" y="26" width="348" height="196" rx="12" fill="url(#rsScreen)" />
-
-    <g clipPath="url(#rsInner)">
-      {/* Fake app window being recorded */}
-      <rect x="48" y="52" width="188" height="150" rx="9" fill="#0f0a04" stroke="rgba(245,158,11,0.18)" />
-      <circle cx="62" cy="66" r="3.4" fill="#f87171" />
-      <circle cx="74" cy="66" r="3.4" fill="#fbbf24" />
-      <circle cx="86" cy="66" r="3.4" fill="#4ade80" />
-      <rect x="60" y="84" width="120" height="7" rx="3.5" fill="#f59e0b" opacity="0.75" />
-      <rect x="60" y="99" width="164" height="5" rx="2.5" fill="#ffffff" opacity="0.14" />
-      <rect x="60" y="111" width="140" height="5" rx="2.5" fill="#ffffff" opacity="0.12" />
-      <rect x="60" y="123" width="152" height="5" rx="2.5" fill="#ffffff" opacity="0.1" />
-      <rect x="60" y="142" width="76" height="22" rx="7" fill="#f59e0b" opacity="0.9" />
-      <rect x="146" y="142" width="58" height="22" rx="7" fill="#ffffff" opacity="0.08" />
-      <rect x="60" y="176" width="164" height="5" rx="2.5" fill="#ffffff" opacity="0.08" />
-
-      {/* Waveform panel */}
-      <rect x="252" y="52" width="104" height="72" rx="9" fill="#0f0a04" stroke="rgba(245,158,11,0.18)" />
-      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(i => (
-        <rect key={i} x={264 + i * 10} y={78} width="5" height="20" rx="2.5" fill="#f59e0b" opacity={0.35 + (i % 3) * 0.25}>
-          {animated && (
-            <animate
-              attributeName="height"
-              values={`${8 + (i % 4) * 6};${30 - (i % 3) * 7};${8 + (i % 4) * 6}`}
-              dur={`${1.1 + (i % 5) * 0.23}s`}
-              repeatCount="indefinite"
-            />
-          )}
-          {animated && (
-            <animate
-              attributeName="y"
-              values={`${94 - (i % 4) * 3};${79 + (i % 3) * 3};${94 - (i % 4) * 3}`}
-              dur={`${1.1 + (i % 5) * 0.23}s`}
-              repeatCount="indefinite"
-            />
-          )}
-        </rect>
-      ))}
-
-      {/* Webcam bubble overlay */}
-      <g>
-        <circle cx="308" cy="176" r="34" fill="#140d04" />
-        <circle cx="308" cy="164" r="11" fill="url(#rsCam)" />
-        <path d="M288 200c0-13 9-20 20-20s20 7 20 20Z" fill="url(#rsCam)" />
-        <circle cx="308" cy="176" r="34" fill="none" stroke="#f59e0b" strokeWidth="3" />
-      </g>
-
-      {/* Scan sweep */}
-      {animated && (
-        <rect x="26" y="0" width="348" height="44" fill="url(#rsScan)">
-          <animate attributeName="y" values="10;190;10" dur="6s" repeatCount="indefinite" />
-        </rect>
-      )}
-    </g>
-
-    {/* REC pill */}
-    <g transform="translate(46,40)">
-      <rect x="-8" y="-11" width="70" height="24" rx="12" fill="#450a0a" opacity="0.85" />
-      <circle cx="6" cy="1" r="5.5" fill="#ef4444" filter="url(#rsGlow)">
-        {animated && <animate attributeName="opacity" values="1;0.25;1" dur="1.6s" repeatCount="indefinite" />}
-      </circle>
-      <text x="19" y="5.5" fontSize="12" fontWeight="800" fill="#fecaca" fontFamily="system-ui, sans-serif">
-        REC
-      </text>
-    </g>
-
-    {/* Stand */}
-    <path d="M170 232h60l8 30h-76Z" fill="url(#rsBezel)" />
-    <rect x="140" y="262" width="120" height="10" rx="5" fill="#2a1d0c" />
-
-    <rect x="16" y="16" width="368" height="216" rx="20" fill="none" stroke="rgba(245,158,11,0.25)" strokeWidth="1.5" />
-  </svg>
+export const RecorderHeroArt: React.FC<ArtProps> = props => (
+  <RecordingProcessArt {...props} />
 );
 
 // ---------------------------------------------------------------------------

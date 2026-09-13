@@ -1,4 +1,5 @@
 import React from 'react';
+import { CodeProcessArt } from '../../../components/shared/MoreToolProcessArt';
 
 // ============================================================================
 // Ilustraciones propias de CodeCard, en la paleta índigo/violeta de la tool.
@@ -18,119 +19,8 @@ const TOKEN_COLORS = ['#c678dd', '#61afef', '#98c379', '#d19a66', '#56b6c2'];
 // Héroe: texto plano a la izquierda que cruza y se convierte en una tarjeta
 // con degradado, cromo de ventana y sintaxis coloreada a la derecha.
 // ---------------------------------------------------------------------------
-export const CodeCardHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 420 260" className={className} role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="ccHeroBg" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stopColor="#6a11cb" />
-        <stop offset="100%" stopColor="#2575fc" />
-      </linearGradient>
-      <linearGradient id="ccHeroFade" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#6366f1" stopOpacity="0" />
-        <stop offset="50%" stopColor="#818cf8" stopOpacity="0.85" />
-        <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
-      </linearGradient>
-      <filter id="ccHeroShadow" x="-40%" y="-40%" width="180%" height="200%">
-        <feDropShadow dx="0" dy="10" stdDeviation="12" floodColor="#000000" floodOpacity="0.45" />
-      </filter>
-    </defs>
-
-    {/* Izquierda: código crudo, monocromo */}
-    <g opacity="0.55">
-      {[0, 1, 2, 3, 4, 5].map(i => (
-        <rect
-          key={`raw-${i}`}
-          x={16}
-          y={62 + i * 20}
-          width={[74, 96, 60, 88, 52, 80][i]}
-          height="8"
-          rx="4"
-          fill="#475569"
-        />
-      ))}
-    </g>
-
-    {/* Haz de transformación */}
-    {animated && (
-      <rect x="112" y="52" width="46" height="140" fill="url(#ccHeroFade)" opacity="0.5">
-        <animate attributeName="x" values="106;150;106" dur="4.2s" repeatCount="indefinite" />
-      </rect>
-    )}
-    <path
-      d="M116 130 L160 130"
-      stroke="#818cf8"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeDasharray="4 6"
-      opacity="0.7"
-    />
-    <path d="M154 124 L162 130 L154 136 Z" fill="#818cf8" />
-
-    {/* Derecha: la tarjeta terminada */}
-    <g filter="url(#ccHeroShadow)">
-      <rect x="176" y="34" width="230" height="192" rx="18" fill="url(#ccHeroBg)" />
-      <rect x="200" y="58" width="182" height="144" rx="10" fill="#282c34" />
-
-      {/* Barra de título con los tres puntos */}
-      <rect x="200" y="58" width="182" height="20" rx="10" fill="#21252b" />
-      <rect x="200" y="70" width="182" height="8" fill="#21252b" />
-      <circle cx="212" cy="68" r="3.4" fill="#ff5f56" />
-      <circle cx="223" cy="68" r="3.4" fill="#ffbd2e" />
-      <circle cx="234" cy="68" r="3.4" fill="#27c93f" />
-      <rect x="292" y="65" width="46" height="6" rx="3" fill="#3b4048" />
-
-      {/* Canalón de números */}
-      {[0, 1, 2, 3, 4, 5].map(i => (
-        <rect key={`ln-${i}`} x={208} y={90 + i * 17} width="6" height="6" rx="2" fill="#4b5263" />
-      ))}
-      <line x1="222" y1="86" x2="222" y2="196" stroke="#3b4048" strokeWidth="1" />
-
-      {/* Línea resaltada: la función estrella de la herramienta */}
-      <rect x="222" y="121" width="160" height="15" fill="#61afef" opacity="0.13" />
-      <rect x="222" y="121" width="2.5" height="15" fill="#61afef" />
-
-      {/* Tokens de colores */}
-      {[
-        [[16, '#c678dd'], [34, '#61afef'], [26, '#abb2bf']],
-        [[22, '#56b6c2'], [46, '#98c379']],
-        [[30, '#d19a66'], [20, '#abb2bf'], [38, '#98c379']],
-        [[18, '#c678dd'], [52, '#61afef']],
-        [[26, '#abb2bf'], [30, '#d19a66'], [22, '#56b6c2']],
-        [[40, '#5c6370']],
-      ].map((row, r) => {
-        let x = 232;
-        return (
-          <g key={`row-${r}`}>
-            {row.map(([w, color], c) => {
-              const rect = (
-                <rect
-                  key={`t-${r}-${c}`}
-                  x={x}
-                  y={90 + r * 17}
-                  width={w as number}
-                  height="7"
-                  rx="3.5"
-                  fill={color as string}
-                >
-                  {animated && (
-                    <animate
-                      attributeName="opacity"
-                      values="0.35;1;1;0.35"
-                      dur="4.2s"
-                      begin={`${(r * 3 + c) * 0.12}s`}
-                      repeatCount="indefinite"
-                    />
-                  )}
-                </rect>
-              );
-              x += (w as number) + 8;
-              return rect;
-            })}
-          </g>
-        );
-      })}
-    </g>
-  </svg>
+export const CodeCardHeroArt: React.FC<ArtProps> = props => (
+  <CodeProcessArt {...props} />
 );
 
 // ---------------------------------------------------------------------------

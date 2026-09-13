@@ -319,6 +319,11 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
   const buscadorRef = useRef<HTMLDivElement>(null);
   const listaVisible = sugerenciasAbiertas && sugerencias.length > 0;
 
+  useEffect(() => {
+    if (!listaVisible || sugerenciaActiva < 0) return;
+    document.getElementById(`sugerencia-${sugerenciaActiva}`)?.scrollIntoView({ block: 'nearest' });
+  }, [listaVisible, sugerenciaActiva]);
+
   const irAHerramienta = (slug: string) => {
     recordVisit(slug);
     window.location.href = `/${lang}/${slug}/`;
@@ -682,7 +687,8 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
           />
               
           {/* Hero Header Area */}
-          <div className="relative pt-20 pb-12 selection:bg-indigo-500/30 selection:text-white">
+          {/* The entire hero must sit above the grid's stacking context. */}
+          <div className="relative z-20 pt-20 pb-12 selection:bg-indigo-500/30 selection:text-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
               <motion.h1
                 initial={{ y: prefersReduced ? 0 : 20 }}
@@ -708,9 +714,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                 initial={{ opacity: 0, y: prefersReduced ? 0 : 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: prefersReduced ? 0 : 0.7, delay: prefersReduced ? 0 : 0.25, ease: "easeOut" }}
-                /* z-30: el desplegable de sugerencias cae sobre la rejilla, que
-                   viene después en el documento y con el mismo z-10 se pintaba
-                   por encima. */
                 className="relative group max-w-2xl mx-auto z-30"
                 ref={buscadorRef}
               >
@@ -724,10 +727,13 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   /* El autocompletado del navegador taparía el nuestro con su
                      propia lista de cosas escritas antes. */
                   autoComplete="off"
+                  spellCheck={false}
+                  aria-label={t('searchPlaceholder')}
+                  aria-autocomplete="list"
                   role="combobox"
                   aria-expanded={listaVisible}
                   aria-controls="buscador-sugerencias"
-                  aria-activedescendant={sugerenciaActiva >= 0 ? `sugerencia-${sugerenciaActiva}` : undefined}
+                  aria-activedescendant={listaVisible && sugerenciaActiva >= 0 ? `sugerencia-${sugerenciaActiva}` : undefined}
                   className="w-full pl-14 pr-6 py-4 bg-[#1e1f20]/90 border border-white/[0.06] rounded-2xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 shadow-2xl transition-all font-sans"
                 />
                 <div className="absolute left-5 top-1/2 -translate-y-1/2 pointer-events-none z-25">
@@ -738,7 +744,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                   <ul
                     id="buscador-sugerencias"
                     role="listbox"
-                    className="absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden rounded-2xl border border-white/[0.08] bg-[#1e1f20] shadow-2xl text-left"
+                    className="absolute left-0 right-0 top-full mt-2 z-50 max-h-[min(20rem,50dvh)] overflow-y-auto overscroll-contain rounded-2xl border border-white/[0.12] bg-[#1e1f20] shadow-2xl text-left"
                   >
                     {sugerencias.map((p, i) => {
                       const Icono = categoryIconMap[p.category] || Sparkles;
@@ -755,7 +761,7 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                           >
                             <Icono className={`w-4 h-4 shrink-0 ${activa ? 'text-blue-400' : 'text-slate-500'}`} />
                             <span className="flex-grow min-w-0 truncate text-sm font-semibold">{p.name}</span>
-                            <span className="shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                            <span className="hidden sm:block max-w-[45%] truncate shrink-0 text-[10px] font-bold uppercase tracking-wider text-slate-400">
                               {t(`categories.${p.category}`)}
                             </span>
                           </a>

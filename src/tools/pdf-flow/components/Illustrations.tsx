@@ -1,4 +1,5 @@
 import React from 'react';
+import { PdfProcessArt } from '../../../components/shared/MoreToolProcessArt';
 
 // ============================================================================
 // Bespoke SVG artwork for PDFFlow. Inline, self-contained, themed on the tool's
@@ -13,77 +14,8 @@ interface ArtProps {
 // ---------------------------------------------------------------------------
 // Hero: loose pages sliding together into a single bound document.
 // ---------------------------------------------------------------------------
-export const PdfHeroArt: React.FC<ArtProps> = ({ className = '', animated = true }) => (
-  <svg viewBox="0 0 400 300" className={className} role="img" aria-hidden="true">
-    <defs>
-      <linearGradient id="pfPaper" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#fff7f7" />
-        <stop offset="100%" stopColor="#e2d5d6" />
-      </linearGradient>
-      <linearGradient id="pfPaperDim" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#cdb9bb" />
-        <stop offset="100%" stopColor="#a58c8f" />
-      </linearGradient>
-      <linearGradient id="pfSpine" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%" stopColor="#ef4444" />
-        <stop offset="100%" stopColor="#991b1b" />
-      </linearGradient>
-      <filter id="pfShadow" x="-40%" y="-40%" width="180%" height="180%">
-        <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#000" floodOpacity="0.45" />
-      </filter>
-    </defs>
-
-    {/* Incoming pages, left and right */}
-    <g filter="url(#pfShadow)">
-      <g transform="rotate(-14 96 150)">
-        <rect x="46" y="86" width="100" height="130" rx="8" fill="url(#pfPaperDim)" />
-        <g fill="#8d7376">
-          <rect x="60" y="106" width="60" height="6" rx="3" />
-          <rect x="60" y="122" width="72" height="5" rx="2.5" />
-          <rect x="60" y="134" width="48" height="5" rx="2.5" />
-        </g>
-        {animated && (
-          <animateTransform attributeName="transform" type="translate"
-            values="-26 8; 0 0; -26 8" dur="5s" repeatCount="indefinite"
-            calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.2 1;0.4 0 0.2 1" additive="sum" />
-        )}
-      </g>
-
-      <g transform="rotate(13 306 150)">
-        <rect x="256" y="86" width="100" height="130" rx="8" fill="url(#pfPaperDim)" />
-        <g fill="#8d7376">
-          <rect x="270" y="106" width="58" height="6" rx="3" />
-          <rect x="270" y="122" width="70" height="5" rx="2.5" />
-          <rect x="270" y="134" width="44" height="5" rx="2.5" />
-        </g>
-        {animated && (
-          <animateTransform attributeName="transform" type="translate"
-            values="26 8; 0 0; 26 8" dur="5s" repeatCount="indefinite"
-            calcMode="spline" keyTimes="0;0.5;1" keySplines="0.4 0 0.2 1;0.4 0 0.2 1" additive="sum" />
-        )}
-      </g>
-    </g>
-
-    {/* The finished document */}
-    <g filter="url(#pfShadow)">
-      <rect x="142" y="62" width="116" height="176" rx="10" fill="url(#pfPaper)" />
-      <rect x="142" y="62" width="12" height="176" rx="6" fill="url(#pfSpine)" />
-      <g fill="#b9a3a5">
-        <rect x="168" y="88" width="70" height="7" rx="3.5" />
-        <rect x="168" y="106" width="78" height="5" rx="2.5" />
-        <rect x="168" y="118" width="62" height="5" rx="2.5" />
-        <rect x="168" y="130" width="74" height="5" rx="2.5" />
-      </g>
-      <rect x="168" y="150" width="78" height="52" rx="6" fill="#efdcdd" />
-      <path d="M172 196 L192 172 L206 188 L218 176 L242 196 Z" fill="#c9a6a8" />
-      <circle cx="190" cy="163" r="6" fill="#e8b4b6" />
-      {/* PDF badge */}
-      <rect x="196" y="210" width="50" height="18" rx="5" fill="#dc2626" />
-      <text x="221" y="223" textAnchor="middle" fontSize="11" fontWeight="800" fill="#fff" fontFamily="system-ui, sans-serif">PDF</text>
-    </g>
-
-    <rect x="10" y="10" width="380" height="280" rx="26" fill="none" stroke="rgba(239,68,68,0.22)" strokeWidth="1.5" />
-  </svg>
+export const PdfHeroArt: React.FC<ArtProps> = props => (
+  <PdfProcessArt {...props} />
 );
 
 // ---------------------------------------------------------------------------
