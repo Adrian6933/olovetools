@@ -80,7 +80,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | twitchbolt | Pasa (lógica de solicitudes) | Al reiniciar o iniciar otra lista, las respuestas tardías de la anterior ya no restauran clips descartados. La identidad de lote ignora resultados obsoletos del relé. | Interfaz y copy de relés cargados en navegador local; se verificó que la isla no pudo hidratar tras reconstrucciones concurrentes de Astro, aunque su módulo Vite responde. Revisión de URLs, deduplicación, relés, calidad, ZIP y marca de agua; `npx tsc --noEmit` sin diagnósticos. Pendiente: resolver una URL pública, mezcla de éxitos/fallos, descarga individual, ZIP y cancelación en un navegador limpio. | Pendiente |
 | unitflow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | url-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| uuid-generator | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| uuid-generator | Pasa (motor de identificadores) | Generación v4/v7/ULID por bytes, lotes sin duplicados y orden temporal monotónico para v7/ULID. | Prueba determinista: ULID cero, lote de 1.000 v4/v7/ULID, bits de versión/variante, orden lexicográfico, inspector y cero duplicados. `npx tsc --noEmit` sin diagnósticos. Pendiente: vectores v3/v5 y exportaciones TXT/CSV/JSON/SQL abiertas en un consumidor externo. | Pendiente |
 | watermark-snap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | whiteboard-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | whois-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

@@ -70,6 +70,11 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - Se evitó que la liberación temprana de la URL temporal cancele exportaciones grandes en Safari; la descarga se mantiene disponible 60 segundos.
 - Pendiente: contenedores JSON, dotLottie y TGS reales, recursos de imagen empaquetados y abrir cada exportación generada.
 
+## Ejecución: UUID Generator (14 de septiembre)
+
+- Se verificaron ULID cero, lotes de 1.000 v4, v7 y ULID, bits de versión y variante, orden temporal de v7/ULID, ausencia de duplicados e inspección de UUID v7.
+- El motor responde correctamente en estas pruebas. Pendiente validar los vectores publicados de UUID v3/v5 y abrir los formatos de exportación en sus consumidores.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.
