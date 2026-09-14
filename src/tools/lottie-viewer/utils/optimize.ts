@@ -20,7 +20,8 @@ export const DEFAULT_OPTIMIZE: OptimizeOptions = {
 };
 
 /** Author metadata: useful in After Effects, dead weight in a shipped file. */
-const METADATA_KEYS = ['nm', 'mn', 'cl', 'ln', 'ix', 'bm', 'cix'];
+// Blend modes and property indices affect rendering / expressions. Keep them.
+const METADATA_KEYS = ['nm', 'mn', 'cl', 'ln'];
 /** Keys we must never round or strip — they are structural, not geometric. */
 const STRUCTURAL_KEYS = new Set(['v', 'fr', 'ip', 'op', 'w', 'h', 'ty', 'ind', 'parent', 'refId', 'id', 'st', 'sr', 'ddd', 'a', 'p', 'e', 'tt', 'td', 'hd']);
 

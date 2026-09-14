@@ -38,12 +38,12 @@ interface OffscreenAnim {
  * The host div is attached to the document (lottie measures its container) but
  * kept out of the flow and out of the accessibility tree.
  */
-function createOffscreen(
+async function createOffscreen(
   lottie: LottieModule,
   json: LottieJson,
   width: number,
   background: string | null
-): OffscreenAnim {
+): Promise<OffscreenAnim> {
   const docWidth = json.w || 512;
   const docHeight = json.h || 512;
   const height = Math.max(1, Math.round((width * docHeight) / docWidth));
@@ -64,19 +64,41 @@ function createOffscreen(
   document.body.appendChild(host);
 
   const anim = lottie.loadAnimation({
-    container: host,
+    // Supplying a container makes lottie-web create a different canvas and
+    // ignore rendererSettings.context. Export into our canvas directly.
     renderer: 'canvas',
     loop: false,
     autoplay: false,
     animationData: structuredClone(json),
     rendererSettings: {
       context,
-      // We paint the backdrop ourselves when one was asked for, so lottie must
-      // not wipe it; when exporting with transparency it has to clear.
-      clearCanvas: background === null,
+      dpr: 1,
+      // Each export frame is cleared below. Disable Lottie's frame cache so
+      // a static/repeated frame is repainted even after our explicit clear.
+      clearCanvas: false,
       preserveAspectRatio: 'xMidYMid meet',
     },
   });
+
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const cleanup = () => {
+        clearTimeout(timer);
+        anim.removeEventListener('DOMLoaded', ready);
+        anim.removeEventListener('data_failed', failed);
+      };
+      const ready = () => { cleanup(); resolve(); };
+      const failed = () => { cleanup(); reject(new Error('Animation could not be loaded for export')); };
+      const timer = setTimeout(failed, 30000);
+      anim.addEventListener('DOMLoaded', ready);
+      anim.addEventListener('data_failed', failed);
+      if (anim.isLoaded) ready();
+    });
+  } catch (error) {
+    anim.destroy();
+    host.remove();
+    throw error;
+  }
 
   return {
     anim,
@@ -122,7 +144,7 @@ export async function exportFramePng(
   frame: number,
   options: Pick<RasterOptions, 'width' | 'background'>
 ): Promise<Blob> {
-  const off = createOffscreen(lottie, json, options.width, options.background);
+  const off = await createOffscreen(lottie, json, options.width, options.background);
   try {
     clear(off.canvas);
     off.anim.goToAndStop(frame, true);
@@ -140,7 +162,7 @@ export async function exportFrameSequenceZip(
   options: RasterOptions,
   onProgress?: (done: number, total: number) => void
 ): Promise<Blob> {
-  const off = createOffscreen(lottie, json, options.width, options.background);
+  const off = await createOffscreen(lottie, json, options.width, options.background);
   const zip = new JSZip();
   const total = Math.max(1, options.to - options.from + 1);
   const pad = String(options.to).length;
@@ -198,11 +220,12 @@ export async function exportWebm(
   // WebM has no alpha in the VP8 profile MediaRecorder emits, so a transparent
   // export would come out black. Default to a solid backdrop instead of lying.
   const background = options.background ?? '#000000';
-  const off = createOffscreen(lottie, json, options.width, background);
+  const off = await createOffscreen(lottie, json, options.width, background);
   const total = Math.max(1, options.to - options.from + 1);
+  let stream: MediaStream | undefined;
 
   try {
-    const stream = off.canvas.captureStream(0);
+    stream = off.canvas.captureStream(0);
     const track = stream.getVideoTracks()[0] as CanvasCaptureMediaStreamTrack;
     const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
       ? 'video/webm;codecs=vp9'
@@ -236,6 +259,7 @@ export async function exportWebm(
     recorder.stop();
     return await finished;
   } finally {
+    stream?.getTracks().forEach(track => track.stop());
     off.destroy();
   }
 }
