@@ -193,19 +193,17 @@ function writeV6(bytes: Uint8Array, offset: number, nowMs: number): void {
 
 /** Advances the sub-millisecond counter used by v7 and ULID. */
 function nextSubCounter(nowMs: number): { millis: number; counter: number } {
-  if (nowMs === lastMillis) {
-    subCounter += 1;
-    if (subCounter > 0xfff) {
-      // Counter exhausted inside one millisecond: borrow from the next one
-      // rather than emit a duplicate or a value that sorts backwards.
-      lastMillis = nowMs + 1;
-      subCounter = 0;
-    }
-  } else if (nowMs > lastMillis) {
+  if (nowMs > lastMillis) {
     lastMillis = nowMs;
     subCounter = randomBytes(2)[0] & 0x0f; // small random start, room to climb
   } else {
     subCounter += 1;
+    // Check exhaustion even when our logical clock is ahead of wall time.
+    // Large batches and clock rollback can cross this boundary repeatedly.
+    if (subCounter > 0xfff) {
+      lastMillis += 1;
+      subCounter = 0;
+    }
   }
   return { millis: lastMillis, counter: subCounter };
 }
