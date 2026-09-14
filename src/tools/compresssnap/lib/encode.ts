@@ -148,16 +148,16 @@ export function targetSize(
     }
   }
 
-  w = Math.max(1, Math.min(MAX_SIDE, w));
-  h = Math.max(1, Math.min(MAX_SIDE, h));
-  if (w * h > MAX_PIXELS) {
-    // Floor, not round: rounding both sides up can land back over the cap by a
-    // few thousand pixels, and the cap exists precisely so the allocation
-    // cannot fail.
-    const factor = Math.sqrt(MAX_PIXELS / (w * h));
-    w = Math.max(1, Math.floor(w * factor));
-    h = Math.max(1, Math.floor(h * factor));
-  }
+  // Apply all canvas limits with one factor. Limiting width and height one at
+  // a time turns wide panoramas into visibly stretched images.
+  const factor = Math.min(
+    1,
+    MAX_SIDE / w,
+    MAX_SIDE / h,
+    Math.sqrt(MAX_PIXELS / (w * h))
+  );
+  w = Math.max(1, Math.floor(w * factor));
+  h = Math.max(1, Math.floor(h * factor));
   return { width: w, height: h };
 }
 

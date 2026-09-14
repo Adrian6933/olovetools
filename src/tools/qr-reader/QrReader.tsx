@@ -87,8 +87,19 @@ function escapeVCardValue(value: string): string {
 
 function meCardName(raw: string, fallback: string): { family: string; given: string; formatted: string } {
   const match = raw.match(/(?:^MECARD:|;)N:((?:\\.|[^;])*)/i);
-  const value = (match?.[1] || fallback).replace(/\\([,;:])/g, '$1').trim();
-  const [family = '', given = ''] = value.split(',', 2);
+  const value = match?.[1] || fallback;
+  let separator = -1;
+  for (let index = 0; index < value.length; index += 1) {
+    if (value[index] === '\\') {
+      index += 1;
+    } else if (value[index] === ',') {
+      separator = index;
+      break;
+    }
+  }
+  const unescape = (part: string) => part.replace(/\\([,;:])/g, '$1').trim();
+  const family = unescape(separator < 0 ? value : value.slice(0, separator));
+  const given = unescape(separator < 0 ? '' : value.slice(separator + 1));
   return { family, given, formatted: [given, family].filter(Boolean).join(' ') || fallback || 'Unknown' };
 }
 
