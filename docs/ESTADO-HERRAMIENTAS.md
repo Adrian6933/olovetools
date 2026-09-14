@@ -68,7 +68,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | pastesnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | pdf-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | qr-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| qr-reader | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| qr-reader | Pasa (texto y análisis local) | Al exportar una MeCard se generaba un archivo `.vcf` cuyo contenido seguía siendo MeCard. Ahora se convierte en un vCard 3.0 válido; los vCard originales se conservan sin cambios. | Navegador local: se analizaron un enlace HTTP con IP, credenciales y ejecutable (cuatro avisos visibles y sin navegación automática), y un vCard con campos de contacto. El botón de descarga vCard ejecuta el flujo local; el navegador de automatización no expuso el evento Blob para abrir el archivo. `npx tsc --noEmit` sin diagnósticos. Pendiente: foto QR real, cámara con permiso explícito, MeCard descargada en un lector de contactos y portapapeles. | Pendiente |
 | recordsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | regex-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | socialbolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

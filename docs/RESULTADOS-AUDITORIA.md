@@ -36,6 +36,14 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - Se evitó una carrera al reiniciar: antes una respuesta de `fetchClipInfo` que llegase tarde podía repoblar resultados ya descartados. Cada tanda tiene ahora una identidad; las respuestas obsoletas se ignoran.
 - Pendiente: repetir con un navegador de desarrollo limpio una URL pública de Kick, lote con éxito parcial, cancelación de ZIP y abrir los MP4/ZIP generados. Durante la prueba, una reconstrucción concurrente de Astro dejó la isla sin hidratar; no se toma como fallo certificado de KickBolt ni como prueba funcional válida.
 
+## Ejecución: QR Reader (14 de septiembre)
+
+- Se verificó en navegador el análisis local de un enlace de prueba con HTTP, dirección IP, credenciales incrustadas y un ejecutable. Se mostraron los cuatro avisos correspondientes y no hubo navegación automática.
+- También se comprobó un vCard de prueba: se desglosan nombre, teléfono y correo, y se ofrece la descarga de contacto.
+- Se corrigió la exportación de MeCard: antes se descargaba el texto `MECARD:` con extensión `.vcf`; ahora se crea un vCard 3.0 válido a partir de sus campos. Los vCard que el QR ya traía se descargan sin modificación.
+- El botón de descarga usa `Blob` local. La automatización no recibió su evento de descarga, por lo que queda pendiente abrir el archivo final en un cliente de contactos. También quedan pendientes una foto QR real, la cámara (requiere permiso explícito) y el portapapeles del navegador.
+- `npx tsc --noEmit` terminó sin diagnósticos.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.

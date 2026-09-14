@@ -70,6 +70,34 @@ interface HistoryEntry {
 /** Warnings that should stop someone before they tap a link. */
 const SEVERE: WarningKind[] = ['punycode', 'mixedScript', 'credentials', 'executable', 'ipHost'];
 
+const VCARD_PROPERTIES: Record<string, string> = {
+  fieldName: 'FN',
+  fieldOrganization: 'ORG',
+  fieldJobTitle: 'TITLE',
+  fieldPhone: 'TEL',
+  fieldEmail: 'EMAIL',
+  fieldWebsite: 'URL',
+  fieldAddress: 'ADR',
+  fieldNote: 'NOTE',
+  fieldBirthday: 'BDAY',
+};
+
+function escapeVCardValue(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
+}
+
+function contactAsVCard(payload: ParsedPayload): string {
+  if (payload.kind === 'vcard') return payload.raw;
+
+  const lines = ['BEGIN:VCARD', 'VERSION:3.0'];
+  for (const field of payload.fields) {
+    const property = VCARD_PROPERTIES[field.key];
+    if (property && field.value) lines.push(`${property}:${escapeVCardValue(field.value)}`);
+  }
+  lines.push('END:VCARD');
+  return lines.join('\r\n');
+}
+
 export default function QrReader({ lang, dictionary }: QrReaderProps) {
   const t = dictionary || {};
   const prefersReduced = useReducedMotion();
@@ -298,7 +326,7 @@ export default function QrReader({ lang, dictionary }: QrReaderProps) {
 
   const downloadVCard = useCallback(() => {
     if (!result) return;
-    const blob = new Blob([result.raw], { type: 'text/vcard;charset=utf-8' });
+    const blob = new Blob([contactAsVCard(result)], { type: 'text/vcard;charset=utf-8' });
     const href = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = href;
