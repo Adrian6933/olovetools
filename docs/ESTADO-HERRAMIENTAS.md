@@ -61,7 +61,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | klipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | list-mixer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | lorem-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| lottie-viewer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| lottie-viewer | Pasa (lectura y optimización) | Las descargas grandes de PNG, ZIP, WebM y dotLottie conservan su URL temporal 60 s para no cancelarse en Safari. | Prueba determinista de diagnósticos y optimización: documento mínimo, capa oculta eliminada y precisión reducida. `npx tsc --noEmit` sin diagnósticos. Pendiente: cargar JSON/.lottie/.tgs reales y abrir PNG, ZIP, WebM y dotLottie exportados. | Pendiente |
 | markdown-live | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | meme-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | morse-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

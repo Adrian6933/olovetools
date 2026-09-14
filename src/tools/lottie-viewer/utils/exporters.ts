@@ -275,8 +275,8 @@ export async function exportDotLottie(json: LottieJson, name: string): Promise<B
 /**
  * Hands a blob to the browser as a download.
  *
- * The object URL is revoked on the next tick — the old `data:` URI approach
- * silently failed above a couple of megabytes, which is most real Lotties.
+ * Keep the object URL alive briefly: Safari can still be resolving a large ZIP
+ * or WebM after click() returns. The bounded timeout still releases memory.
  */
 export function downloadBlob(blob: Blob, fileName: string): void {
   const url = URL.createObjectURL(blob);
@@ -286,5 +286,5 @@ export function downloadBlob(blob: Blob, fileName: string): void {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

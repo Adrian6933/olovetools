@@ -64,6 +64,12 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - Se corrigió el encuadre para múltiplos: el redondeo al múltiplo más cercano podía superar la imagen fuente. El resultado ahora se redondea hacia abajo y se mantiene dentro de sus límites.
 - Pendiente: probar carga de imagen/vídeo, edición visual y exportaciones PNG, JPEG y WebP.
 
+## Ejecución: Lottie Viewer (14 de septiembre)
+
+- Se verificaron diagnósticos y optimización con un documento Lottie mínimo: identifica un documento limpio, elimina capas ocultas y redondea coordenadas.
+- Se evitó que la liberación temprana de la URL temporal cancele exportaciones grandes en Safari; la descarga se mantiene disponible 60 segundos.
+- Pendiente: contenedores JSON, dotLottie y TGS reales, recursos de imagen empaquetados y abrir cada exportación generada.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.
