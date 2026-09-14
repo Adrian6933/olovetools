@@ -51,6 +51,13 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - El navegador local mostró la interfaz, pero no hidrató la isla durante esta prueba después de las reconstrucciones concurrentes de Astro. El módulo de Vite devolvió JavaScript correctamente y `npx tsc --noEmit` no produjo diagnósticos; esto no sustituye la prueba de descarga.
 - Pendiente: URL pública resuelta, lote parcial, descarga MP4, ZIP/cancelación y exportación con marca de agua en un navegador de desarrollo limpio.
 
+## Ejecución: FrameSnap (14 de septiembre)
+
+- Se revisaron los caminos de lectura, avance por FPS, captura, lotes, detección de escenas y liberación de recursos. La herramienta limita los lotes, genera miniaturas pequeñas y revoca las URLs de fotogramas al cerrar la sesión.
+- Se corrigió la descarga individual: la URL `Blob` se revocaba inmediatamente después del clic, condición que puede cancelar el archivo en Safari. Se conserva durante 60 segundos y después se libera.
+- `npx tsc --noEmit` y `git diff --check` terminaron sin diagnósticos.
+- Pendiente: cargar vídeos CFR/VFR, comparar el fotograma solicitado con el exportado, recorrer los extremos y abrir PNG/JPEG/WebP descargados. Seleccionar el archivo local requiere una interacción de carga que no se ha ejecutado en esta pasada.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.

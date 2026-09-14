@@ -56,9 +56,10 @@ export function downloadBlob(blob: Blob, filename: string) {
   link.href = url;
   link.download = filename;
   link.click();
-  // Safe immediately: the browser has taken its own reference by now. Not
-  // revoking is how a session ends up pinning every export in memory.
-  URL.revokeObjectURL(url);
+  // Safari can still be resolving the URL when click() returns. Releasing it
+  // in the same task intermittently cancels the image download there, while a
+  // bounded delay still releases the captured frame from memory.
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 export function formatBytes(bytes: number): string {
