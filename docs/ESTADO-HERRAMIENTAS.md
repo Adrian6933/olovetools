@@ -57,7 +57,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | json-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | jwt-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | key-doctor | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| kickbolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| kickbolt | Pasa (lógica de solicitudes) | Al reiniciar o iniciar una nueva tanda, las respuestas tardías de la tanda anterior ya no pueden repoblar los resultados. | Inspección del flujo de rutas, relés, lote, cancelación de ZIP y errores. `npx tsc --noEmit` sin diagnósticos. La isla no hidrató en el servidor de desarrollo tras una reconstrucción concurrente de Astro, así que sigue pendiente comprobar el flujo completo de una URL pública, el lote parcial y el ZIP en un navegador limpio. | Pendiente |
 | klipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | list-mixer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | lorem-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

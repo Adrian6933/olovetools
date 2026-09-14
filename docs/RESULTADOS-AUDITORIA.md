@@ -30,6 +30,12 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - La exportación TXT se ejecuta en cliente mediante `Blob` y URL temporal. El navegador de automatización no notificó el evento de descarga, por lo que queda pendiente abrir el archivo descargado en navegadores de usuario antes de certificar su contenido.
 - `npx tsc --noEmit` terminó sin diagnósticos. El build de Astro fue iniciado con la telemetría desactivada, pero el ejecutor no devolvió el cierre completo tras la fase de entrypoints; no se usa como evidencia de éxito final.
 
+## Ejecución: KickBolt (14 de septiembre)
+
+- Se revisó el flujo de entrada, resolución por lotes, relés, descargas individuales y ZIP. La herramienta muestra que Kick requiere un relé y permite desactivar los relés públicos.
+- Se evitó una carrera al reiniciar: antes una respuesta de `fetchClipInfo` que llegase tarde podía repoblar resultados ya descartados. Cada tanda tiene ahora una identidad; las respuestas obsoletas se ignoran.
+- Pendiente: repetir con un navegador de desarrollo limpio una URL pública de Kick, lote con éxito parcial, cancelación de ZIP y abrir los MP4/ZIP generados. Durante la prueba, una reconstrucción concurrente de Astro dejó la isla sin hidratar; no se toma como fallo certificado de KickBolt ni como prueba funcional válida.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.

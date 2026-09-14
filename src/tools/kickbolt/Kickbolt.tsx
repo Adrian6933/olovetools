@@ -50,6 +50,10 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qualityRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // Las consultas de metadatos no admiten cancelación desde la API de Kick.
+  // Un contador invalida las respuestas de una tanda anterior si se reinicia
+  // la herramienta o se inicia una tanda nueva antes de que terminen.
+  const resolveRequestRef = useRef(0);
   
   const t = createTranslator(dictionary);
 
@@ -105,6 +109,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
   // function it was a new value on every render, so the popstate listener was
   // torn down and re-attached on each one.
   const handleReset = useCallback(() => {
+    resolveRequestRef.current++;
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -126,6 +131,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
     const unique = [...new Set(urls.filter(u => u.trim()))];
     if (unique.length === 0) { setStatus('idle'); return; }
 
+    const requestId = ++resolveRequestRef.current;
     setStatus('success'); // Go to results page immediately
 
     const initialClips: ClipItem[] = unique.map(url => ({
@@ -146,8 +152,10 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
         await Promise.allSettled(batch.map(async (url) => {
             try {
                 const data = await fetchClipInfo(url);
+                if (requestId !== resolveRequestRef.current) return;
                 setClips(prev => prev.map(c => c.url === url ? { ...c, status: 'success', data } : c));
             } catch (error) {
+                if (requestId !== resolveRequestRef.current) return;
                 setClips(prev => prev.map(c => c.url === url ? { ...c, status: 'error' } : c));
             }
         }));
