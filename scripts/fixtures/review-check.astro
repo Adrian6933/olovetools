@@ -1,0 +1,35 @@
+<html><head><title>Review regression checks</title></head><body><h1>Browser export checks</h1><pre id="result">Running…</pre><script is:inline type="module">
+import RefreshRuntime from '/@react-refresh';
+RefreshRuntime.injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;
+window.__vite_plugin_react_preamble_installed__ = true;
+</script><script>
+import lottie from 'lottie-web';
+import JSZip from 'jszip';
+import { exportFramePng, exportFrameSequenceZip } from '../tools/lottie-viewer/utils/exporters';
+import { optimizeLottie, DEFAULT_OPTIMIZE } from '../tools/lottie-viewer/utils/optimize';
+import { frameForRatio } from '../tools/aspect-ratio/lib/ratio';
+import { paintFrame } from '../tools/aspect-ratio/components/RatioCanvas';
+const lines: string[]=[];
+function report(s:string){lines.push(s);document.querySelector('#result')!.textContent=lines.join('\n');}
+async function pixels(blob:Blob){const bmp=await createImageBitmap(blob);const c=document.createElement('canvas');c.width=bmp.width;c.height=bmp.height;const ctx=c.getContext('2d')!;ctx.drawImage(bmp,0,0);bmp.close();return {w:c.width,h:c.height,data:ctx.getImageData(0,0,c.width,c.height).data};}
+async function run(){
+const ks={o:{a:0,k:100},r:{a:0,k:0},p:{a:0,k:[0,0,0]},a:{a:0,k:[0,0,0]},s:{a:0,k:[100,100,100]}};
+const json:any={v:'5.7.0',fr:30,ip:0,op:60,w:100,h:100,assets:[],layers:[{ddd:0,ty:1,ind:1,bm:1,sw:100,sh:100,sc:'#ff0000',ks,ip:0,op:60,st:0,sr:1},{ddd:0,ty:1,ind:2,bm:0,sw:100,sh:100,sc:'#00ff00',ks,ip:0,op:60,st:0,sr:1}]};
+const before=await pixels(await exportFramePng(lottie,json,0,{width:100,background:null}));
+const after=await pixels(await exportFramePng(lottie,optimizeLottie(json,DEFAULT_OPTIMIZE).json,0,{width:100,background:null}));
+if(before.data[3]!==255)throw Error('Lottie exported blank PNG');
+if(!before.data.every((v,i)=>v===after.data[i]))throw Error('Optimization changed rendered pixels');
+report('PASS Lottie PNG: 100×100, opaque; identical pixels before/after optimization');
+const zip=await JSZip.loadAsync(await exportFrameSequenceZip(lottie,json,{width:100,background:null,from:0,to:1}));
+for(const file of Object.values(zip.files)){const p=await pixels(await file.async('blob'));if(p.data[3]!==255)throw Error('Blank ZIP frame');}
+report('PASS Lottie ZIP: '+Object.keys(zip.files).join(', ')+', decoded nonblank PNGs');
+const src=document.createElement('canvas');src.width=100;src.height=60;src.getContext('2d')!.fillRect(0,0,100,60);
+const size=frameForRatio({w:100,h:60},16,9,1);const out=document.createElement('canvas');out.width=size.w;out.height=size.h;
+paintFrame(out.getContext('2d')!,src,{w:100,h:60},size,{ratioW:16,ratioH:9,mode:'cover',zoom:1,offsetX:0,offsetY:0},'transparent');
+for(const type of ['image/png','image/jpeg','image/webp']){const blob=await new Promise<Blob>((resolve,reject)=>out.toBlob(b=>b?resolve(b):reject(Error('no blob')),type));const p=await pixels(blob);if(p.w!==96||p.h!==54||p.data[3]!==255)throw Error('Invalid Aspect export');report('PASS Aspect Ratio '+type+': decoded 96×54, opaque');}
+report('DONE');
+}
+run().catch(e=>report('FAIL '+e.message));
+</script></body></html>

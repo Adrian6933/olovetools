@@ -25,7 +25,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 
 | Slug | Estado funcional | Hallazgo/cambio | Prueba y evidencia | Commit |
 |---|---|---|---|---|
-| aspect-ratio | Pasa (cálculo y encuadre) | El encuadre redondeado a múltiplos podía exceder la fuente. Ahora usa el múltiplo inferior y conserva el frame dentro de la imagen. | Pruebas deterministas: 100×60 a 16:9/múltiplo 16 devuelve 96×48; 4000×3000 a 9:16/múltiplo 8 devuelve 1680×3000; proporción y redimensionado 16:9. `npx tsc --noEmit` sin diagnósticos. Pendiente: carga de imagen/vídeo y descarga real. | Pendiente |
+| aspect-ratio | Validación parcial | Encuadre y exportación conservan la proporción exacta y múltiplos; las combinaciones imposibles se bloquean con aviso. | Regresión 100×60, 16:9, múltiplo 16: sin solución; múltiplo 1: 96×54. Casos horizontales, verticales y decimales. Navegador: PNG/JPEG/WebP generados con paintFrame y decodificados a 96×54. Pendiente: flujo completo del editor, vídeo y gestos. | Pendiente |
 | audiosnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | backgroundremover | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | base64-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
@@ -61,7 +61,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | klipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | list-mixer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | lorem-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| lottie-viewer | Pasa (lectura y optimización) | Las descargas grandes de PNG, ZIP, WebM y dotLottie conservan su URL temporal 60 s para no cancelarse en Safari. | Prueba determinista de diagnósticos y optimización: documento mínimo, capa oculta eliminada y precisión reducida. `npx tsc --noEmit` sin diagnósticos. Pendiente: cargar JSON/.lottie/.tgs reales y abrir PNG, ZIP, WebM y dotLottie exportados. | Pendiente |
+| lottie-viewer | Validación parcial | Optimización conserva bm e índices. Exportación espera la carga, utiliza el lienzo correcto y redibuja fotogramas estáticos. Libera pistas WebM. | Navegador con lottie-web real: PNG opaco e idéntico antes/después de optimizar una mezcla de capas; ZIP abierto y dos PNG decodificados sin quedar vacíos. Pendiente: interfaz completa, assets externos, TGS, WebM y dotLottie. | Pendiente |
 | markdown-live | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | meme-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | morse-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
@@ -80,7 +80,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | twitchbolt | Pasa (lógica de solicitudes) | Al reiniciar o iniciar otra lista, las respuestas tardías de la anterior ya no restauran clips descartados. La identidad de lote ignora resultados obsoletos del relé. | Interfaz y copy de relés cargados en navegador local; se verificó que la isla no pudo hidratar tras reconstrucciones concurrentes de Astro, aunque su módulo Vite responde. Revisión de URLs, deduplicación, relés, calidad, ZIP y marca de agua; `npx tsc --noEmit` sin diagnósticos. Pendiente: resolver una URL pública, mezcla de éxitos/fallos, descarga individual, ZIP y cancelación en un navegador limpio. | Pendiente |
 | unitflow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | url-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| uuid-generator | Pasa (motor de identificadores) | Generación v4/v7/ULID por bytes, lotes sin duplicados y orden temporal monotónico para v7/ULID. | Prueba determinista: ULID cero, lote de 1.000 v4/v7/ULID, bits de versión/variante, orden lexicográfico, inspector y cero duplicados. `npx tsc --noEmit` sin diagnósticos. Pendiente: vectores v3/v5 y exportaciones TXT/CSV/JSON/SQL abiertas en un consumidor externo. | Pendiente |
+| uuid-generator | Validación parcial | Corregido el desbordamiento repetido del contador v7/ULID incluso con reloj retrasado. | Por tipo: lote de 100.000 y otro de 10.000 tras retrasar el reloj; orden estricto, sin duplicados; versión/variante v7. Pendiente: vectores v3/v5 y exportaciones desde interfaz. | Pendiente |
 | watermark-snap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | whiteboard-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | whois-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

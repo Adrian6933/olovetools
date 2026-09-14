@@ -119,3 +119,16 @@ Los dos casos de claves faltantes son hub.visitsGlobalForms.one en ja y zh. La U
 src/constants.ts; src/components/ProjectCard.tsx; src/components/Home.tsx; src/styles/global.css; src/components/shared/motion.ts; src/lib/seo.ts; src/pages/[lang]/[tool]/index.astro; src/pages/[lang]/index.astro; astro.config.mjs; public/robots.txt; public/manifest.json; package.json; scripts/check-translations.mjs.
 
 Catálogo completo: src/tools/* y src/locales/en/*.ts. Inspecciones adicionales de parsers, workers, recorder, DNS, servicios y APIs en los archivos referidos en el plan. Revisar módulos de una herramienta no acredita haber ejecutado todas sus opciones.
+
+
+## Correcciones verificadas — 14 septiembre 2026
+
+Esta revisión sustituye los anteriores “Pasa” de Aspect Ratio, UUID Generator y Lottie Viewer por validación parcial. No da por completadas las 15 herramientas ni su SEO.
+
+- UUID v7/ULID: desbordamiento comprobado con 100.000 IDs, más 10.000 con reloj retrasado; contador corregido. Cero duplicados y orden estricto en ambas tandas.
+- Aspect Ratio: escalado conjunto del par reducido; no redondea cada eje por separado. 100×60 a 16:9 permite 96×54 con múltiplo 1; múltiplo 16 devuelve incompatibilidad. La interfaz informa y desactiva la exportación imposible. PNG, JPEG y WebP generados con el pintor real y decodificados en Chromium: 96×54 y píxeles opacos.
+- Lottie: se conservan modos de mezcla e índices al optimizar. La prueba real detectó PNG vacío: el contenedor hacía que lottie-web ignorara el contexto de exportación y dibujara en otro canvas. Corregido, junto con espera de carga y redibujado de frames estáticos. PNG comparado píxel a píxel antes/después de optimizar dos capas con mezcla; ZIP abierto y dos PNG decodificados. Ambos pasan. Se fija DPR 1 y se liberan las pistas de captura WebM.
+
+Pruebas repetibles: `node scripts/test-review-regressions.cjs`. Para navegador, copiar `scripts/fixtures/review-check.astro` a `src/pages/review-check.astro`, arrancar Astro y visitar `/review-check`; retirar esa ruta al terminar. No se publica esa página de pruebas. Usa datos sintéticos y los exportadores reales; no equivale a verificar todos los botones ni guardar la descarga desde el sistema operativo.
+
+Pendiente: flujos completos de interfaz; UUID v3/v5 y TXT/CSV/JSON/SQL; Lottie con assets externos, TGS, WebM y dotLottie; Aspect Ratio con vídeo. Se mantienen los pendientes del resto de herramientas. No se ha hecho push.
