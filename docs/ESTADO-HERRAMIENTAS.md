@@ -77,7 +77,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | svg-optimizer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | time-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | tts-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| twitchbolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| twitchbolt | Pasa (lógica de solicitudes) | Al reiniciar o iniciar otra lista, las respuestas tardías de la anterior ya no restauran clips descartados. La identidad de lote ignora resultados obsoletos del relé. | Interfaz y copy de relés cargados en navegador local; se verificó que la isla no pudo hidratar tras reconstrucciones concurrentes de Astro, aunque su módulo Vite responde. Revisión de URLs, deduplicación, relés, calidad, ZIP y marca de agua; `npx tsc --noEmit` sin diagnósticos. Pendiente: resolver una URL pública, mezcla de éxitos/fallos, descarga individual, ZIP y cancelación en un navegador limpio. | Pendiente |
 | unitflow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | url-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | uuid-generator | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

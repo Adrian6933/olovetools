@@ -44,6 +44,13 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - El botón de descarga usa `Blob` local. La automatización no recibió su evento de descarga, por lo que queda pendiente abrir el archivo final en un cliente de contactos. También quedan pendientes una foto QR real, la cámara (requiere permiso explícito) y el portapapeles del navegador.
 - `npx tsc --noEmit` terminó sin diagnósticos.
 
+## Ejecución: TwitchBolt (14 de septiembre)
+
+- Se revisaron la entrada de URLs, deduplicación, selección de calidad, relés, descarga individual, ZIP y el lote con marca de agua. La interfaz informa de los relés y permite desactivar los públicos antes de iniciar solicitudes.
+- Se evitó una carrera: una respuesta tardía de `fetchClipInfo` podía volver a mostrar clips después de reiniciar o sustituir la lista. Cada tanda tiene ahora una identidad y las respuestas de tandas antiguas se descartan.
+- El navegador local mostró la interfaz, pero no hidrató la isla durante esta prueba después de las reconstrucciones concurrentes de Astro. El módulo de Vite devolvió JavaScript correctamente y `npx tsc --noEmit` no produjo diagnósticos; esto no sustituye la prueba de descarga.
+- Pendiente: URL pública resuelta, lote parcial, descarga MP4, ZIP/cancelación y exportación con marca de agua en un navegador de desarrollo limpio.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.

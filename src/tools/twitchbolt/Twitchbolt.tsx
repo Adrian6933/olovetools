@@ -122,6 +122,9 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qualityRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  // fetchClipInfo cannot be aborted through Twitch's relay chain. Keep the
+  // current batch identity so a late response cannot restore discarded clips.
+  const resolveRequestRef = useRef(0);
   
   const t = createTranslator(dictionary);
 
@@ -177,6 +180,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   // function it was a new value on every render, so the popstate listener was
   // torn down and re-attached on each one.
   const handleReset = useCallback(() => {
+    resolveRequestRef.current += 1;
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
@@ -197,6 +201,8 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   const processClips = useCallback(async (urls: string[]) => {
     const unique = [...new Set(urls.filter(u => u.trim()))];
     if (unique.length === 0) { setStatus('idle'); return; }
+    const requestId = resolveRequestRef.current + 1;
+    resolveRequestRef.current = requestId;
 
     setStatus('success'); // Go to results page immediately
 
@@ -218,8 +224,10 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
         await Promise.allSettled(batch.map(async (url) => {
             try {
                 const data = await fetchClipInfo(url);
+                if (resolveRequestRef.current !== requestId) return;
                 setClips(prev => prev.map(c => c.url === url ? { ...c, status: 'success', data } : c));
             } catch (error) {
+                if (resolveRequestRef.current !== requestId) return;
                 setClips(prev => prev.map(c => c.url === url ? { ...c, status: 'error' } : c));
             }
         }));
