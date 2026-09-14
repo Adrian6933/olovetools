@@ -167,25 +167,13 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
     return { source, frame, cover: fitInto(source, frame, 'cover'), contain: fitInto(source, frame, 'contain') };
   }, [loaded, origSize, edit.ratioW, edit.ratioH, multiple]);
 
-  /**
-   * Output pixel size for the export, from the width the user asked for.
-   *
-   * The height follows the *frame* rather than the raw ratio whenever there is
-   * one: the frame is already rounded to whole pixels, and re-deriving from
-   * 9/16 reintroduced the rounding error, so a frame reported as 1688×3000
-   * exported as 1688×3001.
-   */
+  // Use the same exact ratio/multiple lattice for the report and export.
   const outputSize = useMemo<Size>(() => {
     const w = parseDimension(outWidth);
-    if (!(w > 0)) return { w: 0, h: 0 };
-    const width = roundToMultiple(w, multiple);
-    const frame = fitReport?.frame;
-    const height =
-      frame && frame.w > 0
-        ? roundToMultiple((width * frame.h) / frame.w, multiple)
-        : roundToMultiple((width * edit.ratioH) / edit.ratioW, multiple);
-    return { w: width, h: height };
-  }, [outWidth, edit.ratioW, edit.ratioH, multiple, fitReport]);
+    if (!(w > 0) || !(edit.ratioW > 0) || !(edit.ratioH > 0)) return { w: 0, h: 0 };
+    if ((loaded || origSize.w > 0) && !fitReport) return { w: 0, h: 0 };
+    return frameForRatio({ w, h: w * edit.ratioH / edit.ratioW }, edit.ratioW, edit.ratioH, multiple);
+  }, [outWidth, edit.ratioW, edit.ratioH, multiple, fitReport, loaded, origSize.w]);
 
   const snippets = useMemo(() => {
     const ratio = simplifyRatio(activeRatio.w, activeRatio.h, maxDen);
@@ -1049,7 +1037,9 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
                   </div>
                 ) : (
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    {t.fitNeedsSize || 'Type an original size in the Resize tab, or load a file above, and the frame maths appears here.'}
+                    {loaded || origSize.w > 0
+                      ? t.frame_constraints || 'No exact frame fits this size and pixel multiple. Increase the size or choose a smaller multiple.'
+                      : t.fitNeedsSize || 'Type an original size in the Resize tab, or load a file above, and the frame maths appears here.'}
                   </p>
                 )}
 
@@ -1059,7 +1049,7 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
                   </label>
                   <input id="ar-outw" type="number" min="1" value={outWidth} onChange={e => setOutWidth(e.target.value)} className={inputClass} />
                   <p className="text-[11px] text-lime-400/60 font-mono mt-2">
-                    {outputSize.w > 0 ? `${outputSize.w} × ${outputSize.h} px` : '—'}
+                    {outputSize.w > 0 ? `${outputSize.w} × ${outputSize.h} px` : t.frame_constraints || 'No exact frame fits this size and pixel multiple. Increase the size or choose a smaller multiple.'}
                   </p>
                 </div>
 

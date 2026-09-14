@@ -232,19 +232,16 @@ export function fitInto(source: Size, frame: Size, mode: FitMode): FitResult {
  * 9:16 out of this 4000×3000 photo" into concrete pixel dimensions.
  */
 export function frameForRatio(bounds: Size, ratioW: number, ratioH: number, multiple = 1): Size {
-  if (!(bounds.w > 0) || !(bounds.h > 0) || !(ratioW > 0) || !(ratioH > 0)) return { w: 0, h: 0 };
-  const r = ratioW / ratioH;
-  const byWidth = { w: bounds.w, h: bounds.w / r };
-  const byHeight = { w: bounds.h * r, h: bounds.h };
-  const pick = byWidth.h <= bounds.h ? byWidth : byHeight;
-  // A frame must remain inside its source. Nearest-multiple rounding could
-  // turn a 100×56 frame into 96×64 and make it taller than a 100×60 image.
-  const floorToMultiple = (value: number) => {
-    if (multiple <= 1) return Math.max(1, Math.floor(value));
-    const rounded = Math.floor(value / multiple) * multiple;
-    return rounded > 0 ? rounded : Math.max(1, Math.floor(value));
-  };
-  return { w: floorToMultiple(pick.w), h: floorToMultiple(pick.h) };
+  if (![bounds.w, bounds.h, ratioW, ratioH, multiple].every(v => Number.isFinite(v) && v > 0)) return { w: 0, h: 0 };
+  const ratio = simplifyRatio(ratioW, ratioH, 1000000);
+  if (!ratio.exact) return { w: 0, h: 0 };
+  // Scale the reduced integer pair together. Independent rounding changes
+  // the requested ratio. Zero means no exact frame satisfies the constraints.
+  const step = Math.max(1, Math.ceil(multiple));
+  const unitW = ratio.w * step;
+  const unitH = ratio.h * step;
+  const count = Math.floor(Math.min(bounds.w / unitW, bounds.h / unitH));
+  return { w: unitW * count, h: unitH * count };
 }
 
 // ---------------------------------------------------------------------------

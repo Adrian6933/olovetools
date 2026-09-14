@@ -1,4 +1,5 @@
 export default {
+  "frame_constraints": "No exact frame fits this size and pixel multiple. Increase the size or choose a smaller multiple.",
   "resetHint": "Start over",
   "title": "Aspect Ratio",
   "badge": "Aspect ratio toolkit",
