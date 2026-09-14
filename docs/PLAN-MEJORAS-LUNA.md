@@ -1,7 +1,15 @@
 # Plan de auditoría y mejora de oLoveTools para Luna
 
-Fecha: 13 de septiembre de 2026. Base de código: b3557cf. Alcance: las 62 herramientas, inicio, navegación, identidad, accesibilidad, rendimiento y SEO.
+Fecha: 14 de septiembre de 2026. Base de código: b3557cf. Alcance de auditoría: las 62 herramientas, inicio, navegación, identidad, accesibilidad, rendimiento y SEO. Alcance de ejecución inmediato: las 15 herramientas priorizadas en la sección siguiente.
 Este documento es un plan de ejecución; no certifica que las 62 herramientas funcionen correctamente.
+
+## 0. Prioridad de ejecución acordada
+
+La hoja de Search Console se usa como señal de páginas ya expuestas en búsqueda, no como estimación de demanda. Durante el periodo exportado, Clipy y KickBolt son las candidatas con clics y posiciones más favorables; QR Reader concentra impresiones pero todavía está lejos de la primera página. Se conserva también TwitchBolt y FrameSnap por interés de producto indicado por el propietario.
+
+El orden de trabajo es: Clipy, KickBolt, QR Reader, TwitchBolt, FrameSnap, Aspect Ratio, Lottie Viewer, UUID Generator, DrawSnap, Base64Bolt, HTML Sanitizer, PDF Flow, CompressSnap, FormatFlow y CSS Designer.
+
+Para cada herramienta: auditar primero el flujo implementado y sus límites; reproducir en navegador una tarea real y las salidas o exportaciones que ofrezca; arreglar solo fallos comprobados o mejoras que no dupliquen funciones existentes; documentar el resultado; validar y subir un commit independiente. Las demás 47 siguen inventariadas, pero no entran en esta ejecución hasta que cambie la prioridad.
 
 ## 1. Resultado de esta revisión
 
@@ -216,4 +224,3 @@ Objetivos técnicos de referencia de campo p75: LCP ≤2,5 s, INP ≤200 ms, CLS
 - web.dev, umbrales y percentiles: https://web.dev/articles/defining-core-web-vitals-thresholds
 
 Las fuentes orientan SEO/rendimiento; no demuestran demanda de palabras clave ni funcionamiento de oLoveTools. Los hallazgos de código se refieren a los archivos citados y la base indicada.
-

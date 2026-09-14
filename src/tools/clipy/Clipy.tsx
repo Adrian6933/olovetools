@@ -15,7 +15,7 @@ import CategoryGrid from '../../components/clips/CategoryGrid';
 import FloatingPlayer from '../../components/clips/FloatingPlayer';
 import LegalModal from './components/LegalModal';
 import BlocklistManager from '../../components/clips/BlocklistManager';
-import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus, GripVertical } from 'lucide-react';
+import { Clapperboard, Archive, ChevronRight, ChevronLeft, ArrowLeft, X, Trash2, Heart, History, AlertTriangle, Undo, ArrowUp, CheckCircle2, Sparkles, PlusCircle, Loader2, Zap, CloudDownload, Layers, Mail, Info, Save, Pencil, FolderOpen, Download, Library, FileDown, ListPlus, GripVertical, Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { AdBanner } from '../../components/shared/AdBanner';
 import {
@@ -758,7 +758,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         isLoading: false
       }));
     } catch (error) {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState(prev => ({ ...prev, error: t('error_categories'), isLoading: false }));
     }
   }, [state.isLoading, state.categoriesCursor, state.query, state.mode]);
 
@@ -1796,13 +1796,24 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
         {state.mode === 'categories' ? (
           <div className="flex flex-col gap-20">
-            <CategoryGrid
-              categories={state.categories}
-              onCategoryClick={handleCategoryClick}
-              isLoading={state.isLoading && state.categories.length === 0}
-              t={t}
-              showRank={isTopPopularMode}
-            />
+            {!state.isLoading && !state.error && state.categories.length === 0 ? (
+              <div className="mx-auto flex max-w-xl flex-col items-center rounded-3xl border border-white/10 bg-white/[0.03] px-6 py-12 text-center shadow-2xl md:rounded-[2.5rem] md:px-12">
+                <Search className="mb-5 h-10 w-10 text-twitch-base" aria-hidden="true" />
+                <h2 className="text-2xl font-black tracking-tight text-white">{t('no_results_title')}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-gray-400 md:text-base">{t('no_results_desc')}</p>
+                <button onClick={handleLogoClick} className="mt-7 rounded-2xl bg-twitch-base px-6 py-3 text-sm font-black text-white transition-colors hover:bg-twitch-base/80">
+                  {t('explore_popular')}
+                </button>
+              </div>
+            ) : (
+              <CategoryGrid
+                categories={state.categories}
+                onCategoryClick={handleCategoryClick}
+                isLoading={state.isLoading && state.categories.length === 0}
+                t={t}
+                showRank={isTopPopularMode}
+              />
+            )}
             {state.categoriesCursor && (
               <div className="flex justify-center pb-24 md:pb-32">
                 <button onClick={loadMoreCategories} disabled={state.isLoading} className="flex items-center gap-3 md:gap-6 px-8 md:px-16 py-5 md:py-8 bg-[#1a1a24] border border-white/5 hover:border-white/20 rounded-3xl md:rounded-[2rem] text-sm md:text-lg font-black text-gray-400 hover:text-white transition-all shadow-xl active:scale-95 group disabled:opacity-50 cursor-pointer">

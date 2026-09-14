@@ -32,7 +32,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | binary-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | cleansnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | clip-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| clipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| clipy | Pasa (flujo principal) | La búsqueda de categorías ya no oculta los fallos de Twitch como una lista vacía; se muestra un error recuperable. Las consultas sin coincidencias muestran una salida clara para volver a categorías populares. | Navegador local: búsqueda real de «Valorant», carga de clips, filtros y más de una página de resultados; consulta inexistente; guardar un clip y panel de guardados. La descarga TXT dispara un enlace Blob local, pero el navegador de automatización no expuso el evento de descarga para inspeccionar el archivo. Pendiente: probar en Chromium/Firefox/Safari el TXT descargado, reproductor flotante, paginación profunda, token caducado y envío a TwitchBolt. | Pendiente |
 | codecard | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | colorsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | compresssnap | pasa (lógica) | Sanitiza dimensiones restauradas y valores no finitos antes de calcular el tamaño; evita `NaN` y reservas inválidas en configuraciones antiguas o automatizadas. | `npx tsc --noEmit`; revisión estática de `targetSize`. Pendiente prueba manual de archivos grandes, transparencia y descarga en Chromium/Firefox/Safari. | L03 |

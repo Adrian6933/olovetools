@@ -73,8 +73,7 @@ const getThumbnailUrl = (url: string) => {
 };
 
 export const searchTwitchCategories = async (query: string, cursor?: string | null): Promise<{ categories: Category[], cursor: string | null }> => {
-    try {
-        const headers = await getHeaders();
+    const headers = await getHeaders();
         let endpoint = '';
         const isPopular = query === 'popular' || !query.trim();
         
@@ -123,10 +122,7 @@ export const searchTwitchCategories = async (query: string, cursor?: string | nu
             });
         }
 
-        return { categories: results, cursor: nextCursor };
-    } catch (error) {
-        return { categories: [], cursor: null };
-    }
+    return { categories: results, cursor: nextCursor };
 };
 
 export const getClipById = async (clipId: string): Promise<Clip | null> => {

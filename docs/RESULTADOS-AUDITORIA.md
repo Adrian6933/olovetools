@@ -22,6 +22,14 @@ El primer intento aislado falló leyendo dependencias por permisos; se descartó
 
 No se ha repetido npm run build en esta entrega documental: no se ha cambiado código del producto. Los builds previos de la conversación no cuentan como validación de operaciones.
 
+## Ejecución: Clipy (14 de septiembre)
+
+- Se verificó en navegador una búsqueda de categoría real (`Valorant`), la carga de clips, filtros, guardado local y panel de clips guardados.
+- Se reprodujo una búsqueda sin coincidencias. Antes no había una salida visible; ahora se muestra un mensaje localizado y un botón para volver a explorar categorías populares.
+- Se corrigió el origen de un fallo de diagnóstico: `searchTwitchCategories` devolvía una lista vacía ante cualquier error de red/API. Ahora propaga el error a Clipy, que muestra el aviso recuperable ya existente.
+- La exportación TXT se ejecuta en cliente mediante `Blob` y URL temporal. El navegador de automatización no notificó el evento de descarga, por lo que queda pendiente abrir el archivo descargado en navegadores de usuario antes de certificar su contenido.
+- `npx tsc --noEmit` terminó sin diagnósticos. El build de Astro fue iniciado con la telemetría desactivada, pero el ejecutor no devolvió el cierre completo tras la fase de entrypoints; no se usa como evidencia de éxito final.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.
