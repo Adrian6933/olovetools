@@ -25,7 +25,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 
 | Slug | Estado funcional | Hallazgo/cambio | Prueba y evidencia | Commit |
 |---|---|---|---|---|
-| aspect-ratio | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| aspect-ratio | Pasa (cálculo y encuadre) | El encuadre redondeado a múltiplos podía exceder la fuente. Ahora usa el múltiplo inferior y conserva el frame dentro de la imagen. | Pruebas deterministas: 100×60 a 16:9/múltiplo 16 devuelve 96×48; 4000×3000 a 9:16/múltiplo 8 devuelve 1680×3000; proporción y redimensionado 16:9. `npx tsc --noEmit` sin diagnósticos. Pendiente: carga de imagen/vídeo y descarga real. | Pendiente |
 | audiosnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | backgroundremover | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | base64-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

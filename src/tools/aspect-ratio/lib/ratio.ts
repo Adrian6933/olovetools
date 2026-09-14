@@ -237,7 +237,14 @@ export function frameForRatio(bounds: Size, ratioW: number, ratioH: number, mult
   const byWidth = { w: bounds.w, h: bounds.w / r };
   const byHeight = { w: bounds.h * r, h: bounds.h };
   const pick = byWidth.h <= bounds.h ? byWidth : byHeight;
-  return { w: roundToMultiple(pick.w, multiple), h: roundToMultiple(pick.h, multiple) };
+  // A frame must remain inside its source. Nearest-multiple rounding could
+  // turn a 100×56 frame into 96×64 and make it taller than a 100×60 image.
+  const floorToMultiple = (value: number) => {
+    if (multiple <= 1) return Math.max(1, Math.floor(value));
+    const rounded = Math.floor(value / multiple) * multiple;
+    return rounded > 0 ? rounded : Math.max(1, Math.floor(value));
+  };
+  return { w: floorToMultiple(pick.w), h: floorToMultiple(pick.h) };
 }
 
 // ---------------------------------------------------------------------------

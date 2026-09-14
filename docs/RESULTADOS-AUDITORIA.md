@@ -58,6 +58,12 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 - `npx tsc --noEmit` y `git diff --check` terminaron sin diagnósticos.
 - Pendiente: cargar vídeos CFR/VFR, comparar el fotograma solicitado con el exportado, recorrer los extremos y abrir PNG/JPEG/WebP descargados. Seleccionar el archivo local requiere una interacción de carga que no se ha ejecutado en esta pasada.
 
+## Ejecución: Aspect Ratio (14 de septiembre)
+
+- Se verificaron cálculo de proporción, redimensionado y creación de encuadre en funciones puras.
+- Se corrigió el encuadre para múltiplos: el redondeo al múltiplo más cercano podía superar la imagen fuente. El resultado ahora se redondea hacia abajo y se mantiene dentro de sus límites.
+- Pendiente: probar carga de imagen/vídeo, edición visual y exportaciones PNG, JPEG y WebP.
+
 ## Iconos: omisiones comprobadas
 
 Estado tras L01: las omisiones de `IconMap` están corregidas en `src/components/ProjectCard.tsx`. La lista siguiente conserva la evidencia histórica de la base `b3557cf`; no la uses como estado actual.
