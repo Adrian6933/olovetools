@@ -78,10 +78,13 @@ export function renderCrop(options: RenderOptions): HTMLCanvasElement {
   // Frames are persisted locally and can outlive a previous editor version.
   // Clamp them before drawing so a stale or hand-written frame cannot request
   // negative source rectangles or spill outside the rotated stage.
-  const x = Math.min(1, Math.max(0, Number.isFinite(options.crop.x) ? options.crop.x : 0));
-  const y = Math.min(1, Math.max(0, Number.isFinite(options.crop.y) ? options.crop.y : 0));
-  const width = Math.min(1 - x, Math.max(1 / stage.width, Number.isFinite(options.crop.width) ? options.crop.width : 1));
-  const height = Math.min(1 - y, Math.max(1 / stage.height, Number.isFinite(options.crop.height) ? options.crop.height : 1));
+  const width = Math.min(1, Math.max(1 / stage.width, Number.isFinite(options.crop.width) ? options.crop.width : 1));
+  const height = Math.min(1, Math.max(1 / stage.height, Number.isFinite(options.crop.height) ? options.crop.height : 1));
+  // Clamp the origin after knowing the minimum possible size. At x=1, the
+  // previous code still asked drawImage() for one pixel starting after the
+  // canvas; this keeps the whole source rectangle in bounds.
+  const x = Math.min(1 - width, Math.max(0, Number.isFinite(options.crop.x) ? options.crop.x : 0));
+  const y = Math.min(1 - height, Math.max(0, Number.isFinite(options.crop.y) ? options.crop.y : 0));
   const sx = x * stage.width;
   const sy = y * stage.height;
   const sw = Math.max(1, width * stage.width);

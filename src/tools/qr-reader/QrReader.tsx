@@ -71,7 +71,6 @@ interface HistoryEntry {
 const SEVERE: WarningKind[] = ['punycode', 'mixedScript', 'credentials', 'executable', 'ipHost'];
 
 const VCARD_PROPERTIES: Record<string, string> = {
-  fieldName: 'FN',
   fieldOrganization: 'ORG',
   fieldJobTitle: 'TITLE',
   fieldPhone: 'TEL',
@@ -86,13 +85,33 @@ function escapeVCardValue(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
 }
 
+function meCardName(raw: string, fallback: string): { family: string; given: string; formatted: string } {
+  const match = raw.match(/(?:^MECARD:|;)N:((?:\\.|[^;])*)/i);
+  const value = (match?.[1] || fallback).replace(/\\([,;:])/g, '$1').trim();
+  const [family = '', given = ''] = value.split(',', 2);
+  return { family, given, formatted: [given, family].filter(Boolean).join(' ') || fallback || 'Unknown' };
+}
+
 function contactAsVCard(payload: ParsedPayload): string {
   if (payload.kind === 'vcard') return payload.raw;
 
-  const lines = ['BEGIN:VCARD', 'VERSION:3.0'];
+  const displayName = payload.fields.find(field => field.key === 'fieldName')?.value || '';
+  const name = meCardName(payload.raw, displayName);
+  // VERSION, N and FN are required in vCard 3.0. MeCard encodes its name as
+  // family,given, so preserve that structure instead of emitting only FN.
+  const lines = [
+    'BEGIN:VCARD',
+    'VERSION:3.0',
+    `N:${escapeVCardValue(name.family)};${escapeVCardValue(name.given)};;;`,
+    `FN:${escapeVCardValue(name.formatted)}`,
+  ];
   for (const field of payload.fields) {
     const property = VCARD_PROPERTIES[field.key];
-    if (property && field.value) lines.push(`${property}:${escapeVCardValue(field.value)}`);
+    if (!property || !field.value) continue;
+    // MeCard gives ADR as a single value. Put it in the street component of
+    // vCard's structured address instead of turning its separators into text.
+    if (property === 'ADR') lines.push(`ADR:;;${escapeVCardValue(field.value)};;;;`);
+    else lines.push(`${property}:${escapeVCardValue(field.value)}`);
   }
   lines.push('END:VCARD');
   return lines.join('\r\n');
@@ -334,7 +353,7 @@ export default function QrReader({ lang, dictionary }: QrReaderProps) {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    URL.revokeObjectURL(href);
+    window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
   }, [result]);
 
   const reset = useCallback(() => {

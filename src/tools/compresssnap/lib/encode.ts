@@ -108,8 +108,11 @@ export function targetSize(
   // from an old local session or edited through automation. Keep invalid or
   // fractional dimensions from turning the aspect-ratio branch into NaN and
   // making canvas allocation fail later.
-  const sourceWidth = Math.max(1, Math.min(MAX_SIDE, Math.floor(Number.isFinite(width) ? width : 1)));
-  const sourceHeight = Math.max(1, Math.min(MAX_SIDE, Math.floor(Number.isFinite(height) ? height : 1)));
+  // Do not cap the source before applying a resize. A 20 000px-wide panorama
+  // scaled to 50% is a perfectly valid 10 000px export; capping it first
+  // squashes only the long side and changes its aspect ratio.
+  const sourceWidth = Math.max(1, Math.floor(Number.isFinite(width) ? width : 1));
+  const sourceHeight = Math.max(1, Math.floor(Number.isFinite(height) ? height : 1));
   let w = sourceWidth;
   let h = sourceHeight;
 

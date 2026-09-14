@@ -748,7 +748,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
   const loadMoreCategories = useCallback(async () => {
     if (state.isLoading || !state.categoriesCursor || state.mode !== 'categories') return;
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState(prev => ({ ...prev, error: null, isLoading: true }));
     try {
       const { categories: newCats, cursor: nextCursor } = await searchTwitchCategories(state.query, state.categoriesCursor);
       setState(prev => ({

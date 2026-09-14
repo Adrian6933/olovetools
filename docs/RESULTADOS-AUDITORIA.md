@@ -40,7 +40,7 @@ No se ha repetido npm run build en esta entrega documental: no se ha cambiado c�
 
 - Se verificó en navegador el análisis local de un enlace de prueba con HTTP, dirección IP, credenciales incrustadas y un ejecutable. Se mostraron los cuatro avisos correspondientes y no hubo navegación automática.
 - También se comprobó un vCard de prueba: se desglosan nombre, teléfono y correo, y se ofrece la descarga de contacto.
-- Se corrigió la exportación de MeCard: antes se descargaba el texto `MECARD:` con extensión `.vcf`; ahora se crea un vCard 3.0 válido a partir de sus campos. Los vCard que el QR ya traía se descargan sin modificación.
+- Se corrigió la exportación de MeCard: antes se descargaba el texto `MECARD:` con extensión `.vcf`; ahora se crea un vCard 3.0 con `N`, `FN` y una dirección estructurada. Los vCard que el QR ya traía se descargan sin modificación.
 - El botón de descarga usa `Blob` local. La automatización no recibió su evento de descarga, por lo que queda pendiente abrir el archivo final en un cliente de contactos. También quedan pendientes una foto QR real, la cámara (requiere permiso explícito) y el portapapeles del navegador.
 - `npx tsc --noEmit` terminó sin diagnósticos.
 
