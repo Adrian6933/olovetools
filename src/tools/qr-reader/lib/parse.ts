@@ -137,6 +137,23 @@ function splitEscaped(input: string, separator: string): string[] {
   return parts;
 }
 
+/** Same split, but retains escapes so fields with escaped commas can be parsed. */
+function splitEscapedRetaining(input: string, separator: string): string[] {
+  const parts: string[] = [];
+  let current = '';
+  for (let i = 0; i < input.length; i += 1) {
+    const char = input[i];
+    if (char === '\\' && i + 1 < input.length) {
+      current += char + input[++i];
+    } else if (char === separator) {
+      parts.push(current);
+      current = '';
+    } else current += char;
+  }
+  parts.push(current);
+  return parts;
+}
+
 function parseWifi(raw: string): ParsedPayload {
   const body = raw.slice(5);
   const values: Record<string, string> = {};
@@ -216,13 +233,23 @@ const MECARD_LABELS: Record<string, string> = {
 function parseMeCard(raw: string): ParsedPayload {
   const body = raw.slice(7).replace(/;;\s*$/, '');
   const fields: PayloadField[] = [];
-  for (const chunk of splitEscaped(body, ';')) {
+  for (const chunk of splitEscapedRetaining(body, ';')) {
     const at = chunk.indexOf(':');
     if (at < 0) continue;
     const name = chunk.slice(0, at).toUpperCase();
-    const value = chunk.slice(at + 1).trim();
+    const rawValue = chunk.slice(at + 1).trim();
+    const value = rawValue.replace(/\\([,;:])/g, '$1').trim();
     if (!value || !MECARD_LABELS[name]) continue;
-    fields.push({ key: MECARD_LABELS[name], value: name === 'N' ? value.split(',').reverse().join(' ').trim() : value });
+    if (name === 'N') {
+      let separator = -1;
+      for (let i = 0; i < rawValue.length; i += 1) {
+        if (rawValue[i] === '\\') i += 1;
+        else if (rawValue[i] === ',') { separator = i; break; }
+      }
+      const family = (separator < 0 ? rawValue : rawValue.slice(0, separator)).replace(/\\([,;:])/g, '$1').trim();
+      const given = (separator < 0 ? '' : rawValue.slice(separator + 1)).replace(/\\([,;:])/g, '$1').trim();
+      fields.push({ key: MECARD_LABELS[name], value: [given, family].filter(Boolean).join(' ') });
+    } else fields.push({ key: MECARD_LABELS[name], value });
   }
   return { kind: 'mecard', raw, fields, warnings: [] };
 }
