@@ -474,8 +474,11 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     });
   };
 
+  // Rotate every surviving page relative to its current orientation. Setting
+  // an absolute value here used to erase per-page rotations when the user
+  // applied a second "rotate right/left" pass after editing individual pages.
   const rotateAllOps = (angle: number) =>
-    setPageOps(prev => prev.map(op => ({ ...op, rotation: angle })));
+    setPageOps(prev => prev.map(op => ({ ...op, rotation: (op.rotation + angle + 360) % 360 })));
 
   const resetOps = () =>
     setPageOps(Array.from({ length: pageCount }, (_, i) => ({ index: i, rotation: 0 })));
