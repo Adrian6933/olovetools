@@ -150,6 +150,8 @@ export default {
   "undo_delete": "削除を取り消す",
   "restore_history": "セッションを復元",
   "delete_all": "リストを空にする",
+  "delete_all_lists": "すべてのリストを空にする",
+  "delete_this_list": "このリストを空にする",
   "delete_confirm": "リストをクリアしました。",
   "demo_mode": "デモモード",
   "demo_desc": "デモンストレーション用のシミュレーション結果を表示中。",

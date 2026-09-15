@@ -150,6 +150,8 @@ export default {
   "undo_delete": "Annuler suppression",
   "restore_history": "Restaurer session",
   "delete_all": "Vider la liste",
+  "delete_all_lists": "Vider toutes les listes",
+  "delete_this_list": "Vider cette liste",
   "delete_confirm": "Liste vidée.",
   "demo_mode": "Mode démo",
   "demo_desc": "Résultats simulés.",

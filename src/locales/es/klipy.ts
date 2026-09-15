@@ -150,6 +150,8 @@ export default {
   "undo_delete": "Deshacer borrado",
   "restore_history": "Restaurar sesión",
   "delete_all": "Vaciar lista",
+  "delete_all_lists": "Vaciar todas las listas",
+  "delete_this_list": "Vaciar esta lista",
   "delete_confirm": "Lista vaciada.",
   "demo_mode": "Modo demo",
   "demo_desc": "Mostrando resultados simulados para la demostración.",

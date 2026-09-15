@@ -1,4 +1,4 @@
-import { Category, Clip, TimeFilter, SortType } from '../../../components/clips/types';
+import { Category, Clip, TimeFilter, SortType, DayRange } from '../../../components/clips/types';
 
 // The Twitch app token is issued by /api/twitch/token (src/pages/api/twitch/
 // token.ts, same origin — Vercel serverless function) so the client_secret
@@ -211,13 +211,44 @@ const mapClip = (clip: any): Clip => ({
     language: clip.language || ''
 });
 
+const HOUR_MS = 60 * 60 * 1000;
+const DAY_MS = 24 * HOUR_MS;
+
 const getDateRangeMs = (timeFilter: TimeFilter): number => {
     switch (timeFilter) {
-        case TimeFilter.WEEK: return 7 * 24 * 60 * 60 * 1000;
-        case TimeFilter.MONTH: return 30 * 24 * 60 * 60 * 1000;
+        case TimeFilter.WEEK: return 7 * DAY_MS;
+        case TimeFilter.MONTH: return 30 * DAY_MS;
         case TimeFilter.DAY:
-        default: return 24 * 60 * 60 * 1000;
+        default: return DAY_MS;
     }
+};
+
+/** Tramo de tiempo del que se piden clips. null = sin limite (todo el tiempo). */
+export type ClipWindow = { startMs: number; endMs: number } | null;
+
+/**
+ * La ventana que corresponde a lo elegido en la barra de filtros. Se calcula en
+ * el momento de pedir, no al elegir: "ultimas 24 horas" sin hora fija es
+ * relativo a ahora.
+ *
+ * Un rango de dias va de las 00:00 del primero a las 00:00 del siguiente al
+ * ultimo, en hora LOCAL — el usuario elige "el 3 de septiembre" pensando en su
+ * dia, no en el de UTC — y sin pasar de ahora, que Twitch no tiene clips del
+ * futuro y pedir de mas solo alarga el barrido por franjas.
+ *
+ * "Todo el tiempo" antes caia en el default de getDateRangeMs y pedia 24 horas.
+ */
+export const resolveClipWindow = (timeFilter: TimeFilter, anchorISO?: string, dayRange?: DayRange | null): ClipWindow => {
+    if (dayRange) {
+        const [fy, fm, fd] = dayRange.from.split('-').map(Number);
+        const [ty, tm, td] = dayRange.to.split('-').map(Number);
+        const startMs = new Date(fy, fm - 1, fd).getTime();
+        const endMs = Math.min(new Date(ty, tm - 1, td + 1).getTime(), Date.now());
+        return { startMs, endMs: Math.max(endMs, startMs + 1) };
+    }
+    if (timeFilter === TimeFilter.ALL) return null;
+    const endMs = anchorISO ? new Date(anchorISO).getTime() : Date.now();
+    return { startMs: endMs - getDateRangeMs(timeFilter), endMs };
 };
 
 // NOTE: does NOT swallow errors into { clips: [], cursor: null } — a transient
@@ -229,17 +260,13 @@ const getDateRangeMs = (timeFilter: TimeFilter): number => {
 export const searchTwitchClips = async (
   categoryId: string,
   categoryName: string,
-  timeFilter: TimeFilter,
+  window: ClipWindow,
   cursor?: string | null,
-  anchorISO?: string
 ): Promise<{ clips: Clip[], cursor: string | null }> => {
     const headers = await getHeaders();
-    const now = anchorISO ? new Date(anchorISO) : new Date();
-    const endDateStr = now.toISOString();
-    const startDateStr = new Date(now.getTime() - getDateRangeMs(timeFilter)).toISOString();
 
     let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
-    if (startDateStr) url += `&started_at=${startDateStr}&ended_at=${endDateStr}`;
+    if (window) url += `&started_at=${new Date(window.startMs).toISOString()}&ended_at=${new Date(window.endMs).toISOString()}`;
     if (cursor) url += `&after=${cursor}`;
 
     const response = await fetch(url, { headers });
@@ -271,8 +298,7 @@ export interface TwitchCrawlPosition {
 
 export const searchAllTwitchClips = async (
   categoryId: string,
-  timeFilter: TimeFilter,
-  anchorISO: string | undefined,
+  window: ClipWindow,
   onClips: (clips: Clip[]) => void,
   // Comprobado antes de cada petición (no aborta una ya en marcha): así el
   // llamador puede parar el barrido en cuanto quiera — p.ej. la carga
@@ -287,18 +313,19 @@ export const searchAllTwitchClips = async (
   // "Load all" no lo pasa y usa el límite de seguridad completo.
   maxPagesThisCall?: number,
 ): Promise<{ completed: boolean; resumeFrom?: TwitchCrawlPosition }> => {
-    const now = anchorISO ? new Date(anchorISO) : new Date();
-    const endMs = now.getTime();
-    const rangeMs = getDateRangeMs(timeFilter);
-    // 1h slices for a 24h window, 1-day slices for week/month (finer slicing
-    // for week/month would mean hundreds of requests — impractical for a
-    // single button click).
-    const sliceMs = timeFilter === TimeFilter.DAY ? 60 * 60 * 1000 : 24 * 60 * 60 * 1000;
-    const startMs = endMs - rangeMs;
-
-    const slices: [number, number][] = [];
-    for (let sliceStart = startMs; sliceStart < endMs; sliceStart += sliceMs) {
-        slices.push([sliceStart, Math.min(sliceStart + sliceMs, endMs)]);
+    // 1h slices for a window of a day or less, 1-day slices for anything
+    // longer (finer slicing for week/month would mean hundreds of requests —
+    // impractical for a single button click). "All time" can't be sliced at
+    // all, so it's one plain paginated query.
+    const slices: ([number, number] | null)[] = [];
+    if (window) {
+        const { startMs, endMs } = window;
+        const sliceMs = endMs - startMs <= DAY_MS ? HOUR_MS : DAY_MS;
+        for (let sliceStart = startMs; sliceStart < endMs; sliceStart += sliceMs) {
+            slices.push([sliceStart, Math.min(sliceStart + sliceMs, endMs)]);
+        }
+    } else {
+        slices.push(null);
     }
 
     const MAX_TOTAL_PAGES = 400; // safety ceiling across every slice combined
@@ -309,16 +336,17 @@ export const searchAllTwitchClips = async (
     for (let sliceIndex = startSliceIndex; sliceIndex < slices.length; sliceIndex++) {
         if (shouldContinue && !shouldContinue()) return { completed: false, resumeFrom: { sliceIndex, cursor: null } };
         if (totalPages >= pageLimit) return { completed: false, resumeFrom: { sliceIndex, cursor: null } };
-        const [sliceStartMs, sliceEndMs] = slices[sliceIndex];
-        const startISO = new Date(sliceStartMs).toISOString();
-        const endISO = new Date(sliceEndMs).toISOString();
+        const slice = slices[sliceIndex];
+        const rangeQuery = slice
+            ? `&started_at=${new Date(slice[0]).toISOString()}&ended_at=${new Date(slice[1]).toISOString()}`
+            : '';
         let cursor: string | null = sliceIndex === startSliceIndex ? (resumeFrom?.cursor ?? null) : null;
 
         do {
             if (shouldContinue && !shouldContinue()) return { completed: false, resumeFrom: { sliceIndex, cursor } };
             if (totalPages >= pageLimit) return { completed: false, resumeFrom: { sliceIndex, cursor } };
             const headers = await getHeaders();
-            let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100&started_at=${startISO}&ended_at=${endISO}`;
+            let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100${rangeQuery}`;
             if (cursor) url += `&after=${cursor}`;
 
             const response = await fetch(url, { headers });

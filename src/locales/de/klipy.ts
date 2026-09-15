@@ -150,6 +150,8 @@ export default {
   "undo_delete": "Löschen rückgängig",
   "restore_history": "Sitzung laden",
   "delete_all": "Liste leeren",
+  "delete_all_lists": "Alle Listen leeren",
+  "delete_this_list": "Diese Liste leeren",
   "delete_confirm": "Liste geleert.",
   "demo_mode": "Demo Modus",
   "demo_desc": "Simulierte Ergebnisse.",

@@ -150,6 +150,8 @@ export default {
   "undo_delete": "Undo delete",
   "restore_history": "Restore session",
   "delete_all": "Empty list",
+  "delete_all_lists": "Empty all lists",
+  "delete_this_list": "Empty this list",
   "delete_confirm": "List cleared.",
   "demo_mode": "Demo mode",
   "demo_desc": "Showing simulated results for demonstration.",

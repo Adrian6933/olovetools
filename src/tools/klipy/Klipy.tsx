@@ -531,16 +531,19 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
   // Que se lleva por delante el "borrar todo": con el panel acotado a una
   // categoria, solo esa; con el panel entero, todo. Va en un ref porque la
   // confirmacion ocurre en otro render, ya con el modal abierto.
-  const deleteTargetRef = useRef<Clip[] | null>(null);
+  // `keepPanelOpen` es para vaciar una sola lista desde la vista agrupada: las
+  // demas siguen ahi y cerrar el panel obligaria a reabrirlo para seguir.
+  const deleteTargetRef = useRef<{ clips: Clip[]; keepPanelOpen: boolean } | null>(null);
 
-  const requestDeleteAll = (e: React.MouseEvent, clips: Clip[]) => {
+  const requestDeleteAll = (e: React.MouseEvent, clips: Clip[], keepPanelOpen = false) => {
     e.stopPropagation();
-    deleteTargetRef.current = clips;
+    deleteTargetRef.current = { clips, keepPanelOpen };
     setShowDeleteModal(true);
   };
 
   const confirmDeleteAll = () => {
-    const target = deleteTargetRef.current;
+    const target = deleteTargetRef.current?.clips;
+    const keepPanelOpen = !!deleteTargetRef.current?.keepPanelOpen;
     if (target && target.length > 0 && target.length < savedClips.length) {
       const ids = new Set(target.map(c => c.id));
       setSavedClips(prev => prev.filter(c => !ids.has(c.id)));
@@ -548,10 +551,11 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
       setSavedClips([]);
       setDeletedClipsStack([]);
     }
+    const emptiedEverything = !target || target.length >= savedClips.length;
     deleteTargetRef.current = null;
     setSessionActive(true);
     setShowDeleteModal(false);
-    setShowSavedList(false);
+    if (!keepPanelOpen || emptiedEverything) setShowSavedList(false);
     showToast(t('delete_confirm'), 'info');
   };
 
@@ -1739,6 +1743,14 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                                 >
                                   <CloudDownload className="w-4 h-4" />
                                 </button>
+                                <button
+                                  onClick={(e) => requestDeleteAll(e, group.clips, true)}
+                                  title={t('delete_this_list')}
+                                  aria-label={`${t('delete_this_list')}: ${groupName}`}
+                                  className="flex-shrink-0 p-2 rounded-xl text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
                               </div>
                               {open && (
                                 <div className="border-t border-white/5 p-3 space-y-3">
@@ -1760,7 +1772,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
                           <button onClick={() => handleExternalZip(visibleSavedClips)} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
                         </div>
                         <button onClick={() => handleSaveCollection(visibleSavedClips, scopeLabel || undefined)} className="flex items-center justify-center gap-2 bg-white/5 py-3 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer text-gray-300"><Save className="w-3.5 h-3.5" /> {t('save_collection')}</button>
-                        <button onClick={(e) => requestDeleteAll(e, visibleSavedClips)} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
+                        <button onClick={(e) => requestDeleteAll(e, visibleSavedClips)} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{!categoryScoped && savedGroups.length > 1 ? t('delete_all_lists') : t('delete_all')}</button>
                       </div>
                     )}
                   </div>
@@ -2305,7 +2317,7 @@ export const Klipy: React.FC<KlipyProps> = ({ lang = 'en', dictionary }) => {
             <p className="text-gray-400 text-lg mb-14 leading-relaxed font-bold">{t('delete_desc_modal')}</p>
             <div className="flex gap-4">
               <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-7 bg-white/5 rounded-[2rem] text-base font-black hover:bg-white/10 transition-all">{t('cancel')}</button>
-              <button onClick={confirmDeleteAll} className="flex-1 py-7 bg-red-600/90 rounded-[2rem] text-base font-black text-white hover:bg-red-600 transition-all shadow-xl shadow-red-600/5">{t('confirm_delete')}</button>
+              <button onClick={confirmDeleteAll} className="flex-1 py-7 bg-red-600/90 rounded-[2rem] text-base font-black text-white hover:bg-red-600 transition-all shadow-xl shadow-red-600/5">{deleteTargetRef.current?.keepPanelOpen ? t('delete_this_list') : t('confirm_delete')}</button>
             </div>
           </div>
         </div>

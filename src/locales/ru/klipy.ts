@@ -150,6 +150,8 @@ export default {
   "undo_delete": "Отменить удаление",
   "restore_history": "Восстановить сессию",
   "delete_all": "Очистить",
+  "delete_all_lists": "Очистить все списки",
+  "delete_this_list": "Очистить этот список",
   "delete_confirm": "Список очищен.",
   "demo_mode": "Демо-режим",
   "demo_desc": "Примеры результатов.",

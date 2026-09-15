@@ -150,6 +150,8 @@ export default {
   "undo_delete": "撤销删除",
   "restore_history": "恢复会话",
   "delete_all": "清空列表",
+  "delete_all_lists": "清空所有列表",
+  "delete_this_list": "清空此列表",
   "delete_confirm": "列表已清空。",
   "demo_mode": "演示模式",
   "demo_desc": "显示模拟结果以供演示。",

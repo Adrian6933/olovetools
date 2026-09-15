@@ -150,6 +150,8 @@ export default {
   "undo_delete": "Desfazer exclusão",
   "restore_history": "Restaurar sessão",
   "delete_all": "Limpar lista",
+  "delete_all_lists": "Limpar todas as listas",
+  "delete_this_list": "Limpar esta lista",
   "delete_confirm": "Lista limpa.",
   "demo_mode": "Modo demo",
   "demo_desc": "Resultados simulados.",

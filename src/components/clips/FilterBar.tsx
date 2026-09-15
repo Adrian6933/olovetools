@@ -1,7 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { TimeFilter, SortType } from './types';
+import { TimeFilter, SortType, type DayRange } from './types';
 import { mergeKeywords, parseKeywordList } from './keywords';
+import DayRangeFilter from './DayRangeFilter';
 import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward, Type, Trash2 } from 'lucide-react';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
@@ -77,6 +78,14 @@ interface FilterBarProps {
    */
   keywords?: string[];
   onKeywordsChange?: (words: string[]) => void;
+  /**
+   * Dias concretos elegidos en calendario. Solo lo pasa quien puede pedir clips
+   * por fechas (Twitch); sin `onDayRangeChange` el boton no aparece.
+   */
+  dayRange?: DayRange | null;
+  onDayRangeChange?: (range: DayRange | null) => void;
+  /** Idioma de la pagina, para los nombres de mes y dia del calendario. */
+  locale?: string;
 }
 
 const toDatetimeLocalValue = (date: Date) => {
@@ -109,8 +118,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
   playbackSpeed = 2,
   onPlaybackSpeedChange,
   keywords = [],
-  onKeywordsChange
+  onKeywordsChange,
+  dayRange = null,
+  onDayRangeChange,
+  locale
 }) => {
+  const [isRangeOpen, setIsRangeOpen] = useState(false);
+  // Con dias elegidos (o eligiendolos) los botones de 24 horas / 7 dias no
+  // pintan nada: se apagan para que no parezca que siguen mandando.
+  const presetsOff = !!onDayRangeChange && (!!dayRange || isRangeOpen);
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [isAnchorOpen, setIsAnchorOpen] = useState(false);
   const [isExcludeLangOpen, setIsExcludeLangOpen] = useState(false);
@@ -207,26 +223,42 @@ const FilterBar: React.FC<FilterBarProps> = ({
           encogen ni saltan de línea, y el último botón se salía del recuadro. */}
       <div className="flex flex-col lg:flex-row lg:flex-wrap lg:items-center justify-between gap-3 lg:gap-4 p-4">
 
-        <div className="flex items-center gap-3 w-full lg:w-auto min-w-0">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto min-w-0">
           <div className="p-2 bg-twitch-surfaceAlt rounded-lg hidden sm:block">
               <Clock className="w-5 h-5 text-twitch-base" />
           </div>
-          <div className="grid grid-cols-2 lg:flex lg:flex-row gap-1 bg-twitch-black p-1 rounded-lg flex-grow lg:flex-none">
+          <div
+            className={`grid grid-cols-2 lg:flex lg:flex-row gap-1 bg-twitch-black p-1 rounded-lg flex-grow lg:flex-none transition-opacity ${presetsOff ? 'opacity-40' : ''}`}
+            aria-disabled={presetsOff || undefined}
+          >
             {Object.values(TimeFilter).map((filter) => (
               <button
                 key={filter}
                 onClick={() => onTimeChange(filter)}
-                disabled={disabled}
-                className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none cursor-pointer hover:scale-105 active:scale-95 ${
-                  currentTime === filter
+                disabled={disabled || presetsOff}
+                className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none ${
+                  presetsOff ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105 active:scale-95'
+                } ${
+                  currentTime === filter && !presetsOff
                     ? 'bg-twitch-base text-[var(--color-accent-ink)] shadow-md'
-                    : 'text-gray-400 hover:text-white hover:bg-twitch-surfaceAlt'
+                    : `text-gray-400 ${presetsOff ? '' : 'hover:text-white hover:bg-twitch-surfaceAlt'}`
                 }`}
               >
                 {t(`time_${filter}`)}
               </button>
             ))}
           </div>
+          {onDayRangeChange && (
+            <DayRangeFilter
+              value={dayRange}
+              onChange={onDayRangeChange}
+              open={isRangeOpen}
+              onOpenChange={setIsRangeOpen}
+              disabled={disabled}
+              locale={locale}
+              t={t}
+            />
+          )}
         </div>
 
         <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2 sm:gap-3 w-full lg:w-auto min-w-0">
@@ -312,7 +344,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           {t('filters_label') || 'Filters'}
         </span>
 
-        {onAnchorChange && currentTime !== TimeFilter.ALL && (
+        {onAnchorChange && currentTime !== TimeFilter.ALL && !dayRange && (
           <div className="relative" ref={anchorRef}>
             <button
               onClick={() => !disabled && setIsAnchorOpen(!isAnchorOpen)}

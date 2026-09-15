@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection } from '../../components/clips/types';
+import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection, type DayRange } from '../../components/clips/types';
 import { groupClipsByCategory, clipMatchesCategory, sumClipSeconds } from '../../components/clips/grouping';
 import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
 import { useReorder } from '../../components/clips/useReorder';
 import { propsAbrirEnOtraPestana } from '../../lib/softReset';
-import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition, getClipVideoSource, fetchTwitchSuggestions } from './services/twitchService';
+import { searchTwitchCategories, searchTwitchClips, searchAllTwitchClips, resolveClipWindow, type ClipWindow, getClipById, getTwitchUserAvatars, type TwitchCrawlPosition, getClipVideoSource, fetchTwitchSuggestions } from './services/twitchService';
 import { createTranslator, FLAGS, LANGUAGE_NAMES, type Language } from '../../locales/meta';
 import { legalTranslations } from '../../locales/legal';
 import SearchBar from '../../components/clips/SearchBar';
 import FilterBar from '../../components/clips/FilterBar';
+import { formatDayRange } from '../../components/clips/DayRangeFilter';
 import ClipGrid, { type ClipGridHandle } from '../../components/clips/ClipGrid';
 import CategoryGrid from '../../components/clips/CategoryGrid';
 import FloatingPlayer from '../../components/clips/FloatingPlayer';
@@ -52,17 +53,16 @@ const PAGINAS_POR_TANDA = 2;
 async function pedirTanda(
   categoryId: string,
   categoryName: string,
-  time: TimeFilter,
+  window: ClipWindow,
   desde: string | null,
   paginas: number,
-  anchorISO?: string,
 ): Promise<{ clips: Clip[]; cursor: string | null }> {
   const clips: Clip[] = [];
   let cursor: string | null = desde;
   for (let i = 0; i < paginas; i++) {
     let page: { clips: Clip[]; cursor: string | null };
     try {
-      page = await searchTwitchClips(categoryId, categoryName, time, cursor, anchorISO);
+      page = await searchTwitchClips(categoryId, categoryName, window, cursor);
     } catch (error) {
       // La primera que se va deja la pantalla vacía y quien llama tiene que
       // poder contarlo. Con clips ya en la mano, mejor quedarse con ellos y
@@ -125,6 +125,11 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     error: null
   });
 
+  // Dias elegidos en el calendario. Mientras hay rango, manda sobre los botones
+  // de 24 horas / 7 dias / 30 dias y sobre la hora fija. Fuera de SearchState
+  // porque ese tipo lo comparte Klipy, y la API de clips de Kick no deja pedir
+  // por fechas.
+  const [dayRange, setDayRange] = useState<DayRange | null>(null);
   const [playingClip, setPlayingClip] = useState<Clip | null>(null);
   const [savedClips, setSavedClips] = useState<Clip[]>([]);
   const [blockedStreamers, setBlockedStreamers] = useState<Record<string, { id: string; name: string; image?: string }[]>>({});
@@ -516,16 +521,19 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   // Que se lleva por delante el "borrar todo": con el panel acotado a una
   // categoria, solo esa; con el panel entero, todo. Va en un ref porque la
   // confirmacion ocurre en otro render, ya con el modal abierto.
-  const deleteTargetRef = useRef<Clip[] | null>(null);
+  // `keepPanelOpen` es para vaciar una sola lista desde la vista agrupada: las
+  // demas siguen ahi y cerrar el panel obligaria a reabrirlo para seguir.
+  const deleteTargetRef = useRef<{ clips: Clip[]; keepPanelOpen: boolean } | null>(null);
 
-  const requestDeleteAll = (e: React.MouseEvent, clips: Clip[]) => {
+  const requestDeleteAll = (e: React.MouseEvent, clips: Clip[], keepPanelOpen = false) => {
     e.stopPropagation();
-    deleteTargetRef.current = clips;
+    deleteTargetRef.current = { clips, keepPanelOpen };
     setShowDeleteModal(true);
   };
 
   const confirmDeleteAll = () => {
-    const target = deleteTargetRef.current;
+    const target = deleteTargetRef.current?.clips;
+    const keepPanelOpen = !!deleteTargetRef.current?.keepPanelOpen;
     if (target && target.length > 0 && target.length < savedClips.length) {
       const ids = new Set(target.map(c => c.id));
       setSavedClips(prev => prev.filter(c => !ids.has(c.id)));
@@ -533,10 +541,11 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       setSavedClips([]);
       setDeletedClipsStack([]);
     }
+    const emptiedEverything = !target || target.length >= savedClips.length;
     deleteTargetRef.current = null;
     setSessionActive(true);
     setShowDeleteModal(false);
-    setShowSavedList(false);
+    if (!keepPanelOpen || emptiedEverything) setShowSavedList(false);
     showToast(t('delete_confirm'), 'info');
   };
 
@@ -762,7 +771,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     }
   }, [state.isLoading, state.categoriesCursor, state.query, state.mode]);
 
-  const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter) => {
+  // `range` llega aparte cuando quien llama acaba de cambiarlo: el setState de
+  // dayRange todavia no se ha aplicado y esta funcion veria el anterior.
+  const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter, range: DayRange | null = dayRange) => {
     // Cambiamos el modo inmediatamente para que el usuario entre a la sección y vea los skeletons
     setState(prev => ({
       ...prev,
@@ -782,7 +793,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     }
 
     try {
-      const { clips, cursor } = await pedirTanda(category.id, category.name, time, null, PAGINAS_PRIMERA_TANDA, state.anchorTime || undefined);
+      const { clips, cursor } = await pedirTanda(category.id, category.name, resolveClipWindow(time, state.anchorTime || undefined, range), null, PAGINAS_PRIMERA_TANDA);
       // Evitar duplicados por id
       const uniqueClips: Clip[] = [];
       const seen = new Set<string>();
@@ -801,7 +812,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } catch (error: any) {
       setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
     }
-  }, [t, handleSearch, state.anchorTime]);
+  }, [t, handleSearch, state.anchorTime, dayRange]);
 
   const loadMoreClips = useCallback(async () => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
@@ -810,10 +821,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       const { clips: newClips, cursor: nextCursor } = await pedirTanda(
         state.activeCategory.id,
         state.activeCategory.name,
-        state.timeFilter,
+        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange),
         state.paginationCursor,
-        PAGINAS_POR_TANDA,
-        state.anchorTime || undefined
+        PAGINAS_POR_TANDA
       );
       setState(prev => {
         const mergedClips = [...prev.clips, ...newClips];
@@ -835,7 +845,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime]);
+  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime, dayRange]);
 
   // Solo baja la página al final del scroll — NO cambia de página en modo
   // rendimiento. Saltar de página de golpe (a la vez que el contenido de esa
@@ -884,8 +894,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     try {
       const { completed } = await searchAllTwitchClips(
         state.activeCategory.id,
-        state.timeFilter,
-        state.anchorTime || undefined,
+        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange),
         (newClips) => {
           let changed = false;
           for (const clip of newClips) {
@@ -917,7 +926,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } finally {
       setIsDeepCrawling(false);
     }
-  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, state.clips, allClipsLoaded, jumpToLoadedEnd]);
+  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, state.clips, allClipsLoaded, jumpToLoadedEnd]);
 
   // Igual que loadAllClips pero se para después de UNA página (~100 clips o
   // menos) del crawl por franjas horarias, en vez de recorrerlo entero de
@@ -935,8 +944,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     try {
       const { completed, resumeFrom } = await searchAllTwitchClips(
         state.activeCategory.id,
-        state.timeFilter,
-        state.anchorTime || undefined,
+        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange),
         (newClips) => {
           for (const clip of newClips) {
             if (!seen.has(clip.id)) {
@@ -959,7 +967,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, state.clips, allClipsLoaded]);
+  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, state.clips, allClipsLoaded]);
 
   // El cursor simple de Twitch (loadMoreClips) se trunca solo a ~1000 clips
   // aunque existan muchos más — así que cuando se agota, en vez de darlo por
@@ -998,7 +1006,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       setRenderPage(0);
       setAllClipsLoaded(false);
       deepCrawlResumeRef.current = null;
-      searchTwitchClips(state.activeCategory.id, state.activeCategory.name, state.timeFilter, null, value || undefined)
+      searchTwitchClips(state.activeCategory.id, state.activeCategory.name, resolveClipWindow(state.timeFilter, value || undefined, dayRange), null)
         .then(({ clips, cursor }) => {
           setState(prev => ({ ...prev, clips, paginationCursor: cursor, isLoading: false }));
         })
@@ -1006,6 +1014,11 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
         });
     }
+  };
+  // null = volver a los botones de 24 horas / 7 dias / 30 dias.
+  const handleDayRangeChange = (range: DayRange | null) => {
+    setDayRange(range);
+    if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter, range);
   };
   const handleSortChange = (sort: SortType) => {
     setState(prev => ({ ...prev, sortType: sort }));
@@ -1693,6 +1706,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                                 >
                                   <CloudDownload className="w-4 h-4" />
                                 </button>
+                                <button
+                                  onClick={(e) => requestDeleteAll(e, group.clips, true)}
+                                  title={t('delete_this_list')}
+                                  aria-label={`${t('delete_this_list')}: ${groupName}`}
+                                  className="flex-shrink-0 p-2 rounded-xl text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
                               </div>
                               {open && (
                                 <div className="border-t border-white/5 p-3 space-y-3">
@@ -1714,7 +1735,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                           <button onClick={() => handleExternalZip(visibleSavedClips)} className="bg-twitch-base/70 py-4 rounded-2xl text-[11px] font-black text-white hover:bg-twitch-base transition-all uppercase tracking-widest cursor-pointer">{t('download_zip_web')}</button>
                         </div>
                         <button onClick={() => handleSaveCollection(visibleSavedClips, scopeLabel || undefined)} className="flex items-center justify-center gap-2 bg-white/5 py-3 rounded-2xl text-[11px] font-black border border-white/5 hover:bg-white/10 transition-all uppercase tracking-widest cursor-pointer text-gray-300"><Save className="w-3.5 h-3.5" /> {t('save_collection')}</button>
-                        <button onClick={(e) => requestDeleteAll(e, visibleSavedClips)} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{t('delete_all')}</button>
+                        <button onClick={(e) => requestDeleteAll(e, visibleSavedClips)} className="text-[10px] text-red-500/40 font-black py-2 hover:text-red-500 transition-colors uppercase tracking-[0.2em] cursor-pointer">{!categoryScoped && savedGroups.length > 1 ? t('delete_all_lists') : t('delete_all')}</button>
                       </div>
                     )}
                   </div>
@@ -1770,7 +1791,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                   <div className="flex flex-wrap items-center gap-4 md:gap-8 text-sm md:text-xl text-gray-400 font-bold">
                     <span className="text-twitch-base flex items-center gap-2 md:gap-3"><Sparkles className="w-5 h-5 md:w-6 md:h-6" /> {t('top_clips')}</span>
                     <ChevronRight className="w-4 h-4 md:w-6 md:h-6 opacity-10" />
-                    <span className="text-gray-400 bg-white/5 px-4 py-2 md:px-6 md:py-3 rounded-2xl">{t(`time_${state.timeFilter}`)}</span>
+                    <span className="text-gray-400 bg-white/5 px-4 py-2 md:px-6 md:py-3 rounded-2xl">{dayRange ? formatDayRange(dayRange, lang) : t(`time_${state.timeFilter}`)}</span>
                   </div>
                 </div>
               </div>
@@ -1853,6 +1874,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                   onPlaybackSpeedChange={handlePlaybackSpeedChange}
                   keywords={keywords}
                   onKeywordsChange={handleKeywordsChange}
+                  dayRange={dayRange}
+                  onDayRangeChange={handleDayRangeChange}
+                  locale={lang}
                 />
                 {isBlocklistOpen && (
                   <BlocklistManager
@@ -2270,7 +2294,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
             <p className="text-gray-400 text-lg mb-14 leading-relaxed font-bold">{t('delete_desc_modal')}</p>
             <div className="flex gap-4">
               <button onClick={() => setShowDeleteModal(false)} className="flex-1 py-7 bg-white/5 rounded-[2rem] text-base font-black hover:bg-white/10 transition-all">{t('cancel')}</button>
-              <button onClick={confirmDeleteAll} className="flex-1 py-7 bg-red-600/90 rounded-[2rem] text-base font-black text-white hover:bg-red-600 transition-all shadow-xl shadow-red-600/5">{t('confirm_delete')}</button>
+              <button onClick={confirmDeleteAll} className="flex-1 py-7 bg-red-600/90 rounded-[2rem] text-base font-black text-white hover:bg-red-600 transition-all shadow-xl shadow-red-600/5">{deleteTargetRef.current?.keepPanelOpen ? t('delete_this_list') : t('confirm_delete')}</button>
             </div>
           </div>
         </div>

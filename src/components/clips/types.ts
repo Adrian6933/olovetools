@@ -11,6 +11,16 @@ export enum SortType {
   TRENDING = 'trending'
 }
 
+/**
+ * Dias elegidos a mano en el calendario, ambos incluidos. En fecha LOCAL
+ * (YYYY-MM-DD) y no en ISO: "el dia 3" es el dia 3 de quien lo elige, y un
+ * instante UTC lo movia al 2 o al 4 segun la zona horaria.
+ */
+export interface DayRange {
+  from: string;
+  to: string;
+}
+
 export interface Category {
   id: string;
   name: string;

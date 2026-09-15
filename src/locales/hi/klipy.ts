@@ -150,6 +150,8 @@ export default {
   "undo_delete": "हटाना वापस लें",
   "restore_history": "सत्र बहाल",
   "delete_all": "खाली करें",
+  "delete_all_lists": "सभी सूचियाँ खाली करें",
+  "delete_this_list": "यह सूची खाली करें",
   "delete_confirm": "सूची खाली की गई।",
   "demo_mode": "डेमो मोड",
   "demo_desc": "नकली परिणाम।",
