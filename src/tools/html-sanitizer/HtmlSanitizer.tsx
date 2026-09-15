@@ -291,7 +291,12 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
     link.href = url;
     const base = sourceName ? sourceName.replace(/\.[^.]+$/, '') : 'sanitized';
     link.download = `${base}-clean.${extension}`;
+    // Some browsers ignore programmatic clicks on detached anchors when the
+    // href is a Blob URL. Attach it briefly so HTML/TXT exports download
+    // consistently across Firefox and Safari too.
+    document.body.appendChild(link);
     link.click();
+    link.remove();
     // Keep the URL alive while the browser consumes the generated document.
     setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }, [output, sourceName, textOnly]);

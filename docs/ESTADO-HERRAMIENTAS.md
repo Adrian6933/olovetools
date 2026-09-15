@@ -53,7 +53,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | graph-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | hash-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | hex-to-rgb | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| html-sanitizer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| html-sanitizer | Validación parcial | La descarga HTML/TXT inserta temporalmente el ancla Blob en el documento para evitar que Firefox o Safari ignoren el clic programático. | Revisión de DOMPurify, políticas de esquemas, estilos, `srcset` y reporte de eliminaciones; `tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente ejecutar muestras XSS reales en navegador, probar overrides y abrir los archivos descargados. | Pendiente |
 | json-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | jwt-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | key-doctor | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
