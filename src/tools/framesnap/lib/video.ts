@@ -109,8 +109,14 @@ export async function measureFps(video: HTMLVideoElement, samples = 12): Promise
     }, 1500);
   });
 
-  video.pause();
-  if (wasPaused) video.currentTime = startedAt;
+  // Restore the playback state the caller had before measuring. Measuring a
+  // playing video must not unexpectedly leave it paused.
+  if (wasPaused) {
+    video.pause();
+    video.currentTime = startedAt;
+  } else {
+    try { await video.play(); } catch { /* autoplay policy may block resume */ }
+  }
   video.muted = wasMuted;
 
   const deltas: number[] = [];
