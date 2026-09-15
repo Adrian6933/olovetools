@@ -164,7 +164,10 @@ export function drawShape(ctx: CanvasRenderingContext2D, shape: Shape) {
     ctx.roundRect(x, y, w, h, r);
     shape.fill ? ctx.fill() : ctx.stroke();
   } else if (shape.type === 'ellipse') {
-    ctx.ellipse(a.x, a.y, Math.abs(b.x - a.x), Math.abs(b.y - a.y), 0, 0, Math.PI * 2);
+    // Canvas expects radii, while the editor stores the opposite corner of
+    // the bounding box. Using the full width/height here made exported and
+    // preview ellipses twice as large as the drag rectangle.
+    ctx.ellipse((a.x + b.x) / 2, (a.y + b.y) / 2, Math.abs(b.x - a.x) / 2, Math.abs(b.y - a.y) / 2, 0, 0, Math.PI * 2);
     shape.fill ? ctx.fill() : ctx.stroke();
   } else {
     ctx.moveTo((a.x + b.x) / 2, a.y);

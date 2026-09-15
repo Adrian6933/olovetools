@@ -41,7 +41,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | css-designer | Validación parcial | La exportación PNG interpola los gradientes HSL en HSL real, en lugar de tratarlos como OKLCH; esto alinea el PNG con la vista previa CSS. | Revisión de serialización, gradientes, filtros y exportación; `tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente probar PNG generado en tamaños 1x/2x/4x, fondos fotográficos y formatos de código desde la interfaz. | Pendiente |
 | device-test | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | diffsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| drawsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| drawsnap | Validación parcial | La elipse se exporta con el centro y radios correctos: el editor guarda la esquina opuesta del rectángulo y Canvas2D necesita semianchos, evitando figuras el doble de grandes. | Revisión de dibujo, selección, imágenes, SVG/PNG y liberación de recursos; `tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente probar lienzo real con trazos, elipses, imágenes y descargas PNG/SVG. | Pendiente |
 | entropy-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | epoch-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | exif-clear | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
