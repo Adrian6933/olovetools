@@ -38,7 +38,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | compresssnap | pasa (lógica) | Sanitiza dimensiones restauradas y valores no finitos; los límites de lado y píxeles se aplican con una sola escala para no deformar panorámicas. | Pruebas deterministas de `targetSize` a 50 % y 100 %, `npx tsc --noEmit` y revisión estática. Pendiente prueba manual de archivos grandes, transparencia y descarga en Chromium/Firefox/Safari. | L03 |
 | cron-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | cropsnap | pasa (lógica) | `renderCrop` limita marcos persistidos a los límites del canvas y sustituye valores no finitos; incluso un recorte en `x=1` se desplaza al último píxel válido. | Prueba determinista del borde derecho, `npx tsc --noEmit`; `git diff --check`. Pendiente prueba manual con rotación EXIF, 1080×1080 y ZIP. | L03 |
-| css-designer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| css-designer | Validación parcial | La exportación PNG interpola los gradientes HSL en HSL real, en lugar de tratarlos como OKLCH; esto alinea el PNG con la vista previa CSS. | Revisión de serialización, gradientes, filtros y exportación; `tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente probar PNG generado en tamaños 1x/2x/4x, fondos fotográficos y formatos de código desde la interfaz. | Pendiente |
 | device-test | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | diffsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | drawsnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

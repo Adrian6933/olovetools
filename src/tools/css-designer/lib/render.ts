@@ -102,8 +102,9 @@ function expandStops(design: Design): { offset: number; color: string }[] {
     }
     for (let s = 0; s <= SAMPLES; s++) {
       const t = s / SAMPLES;
-      const mix =
-        g.interpolation === 'oklch' || g.interpolation === 'hsl'
+      const mix = g.interpolation === 'hsl'
+        ? hslMix(ca, cb, t)
+        : g.interpolation === 'oklch'
           ? oklchToRgb(la.l + (lb.l - la.l) * t, la.c + (lb.c - la.c) * t, la.h + dh * t)
           : oklabMix(la, lb, t);
       const alpha = a.opacity + (b.opacity - a.opacity) * t;
@@ -115,6 +116,37 @@ function expandStops(design: Design): { offset: number; color: string }[] {
     }
   }
   return out;
+}
+
+/** CSS HSL interpolation is distinct from OKLCH; keep the PNG export aligned
+ * with the browser preview when the user selects the HSL colour space. */
+function hslMix(a: { r: number; g: number; b: number }, b: { r: number; g: number; b: number }, t: number) {
+  const ah = rgbToHslLocal(a.r, a.g, a.b);
+  const bh = rgbToHslLocal(b.r, b.g, b.b);
+  let dh = bh.h - ah.h;
+  if (dh > 180) dh -= 360;
+  if (dh < -180) dh += 360;
+  return hslToRgbLocal(ah.h + dh * t, ah.s + (bh.s - ah.s) * t, ah.l + (bh.l - ah.l) * t);
+}
+
+function rgbToHslLocal(r: number, g: number, b: number) {
+  const rn = r / 255, gn = g / 255, bn = b / 255;
+  const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn), d = max - min;
+  const l = (max + min) / 2;
+  if (!d) return { h: 0, s: 0, l };
+  const s = d / (1 - Math.abs(2 * l - 1));
+  let h = max === rn ? 60 * (((gn - bn) / d) % 6) : max === gn ? 60 * ((bn - rn) / d + 2) : 60 * ((rn - gn) / d + 4);
+  if (h < 0) h += 360;
+  return { h, s, l };
+}
+
+function hslToRgbLocal(h: number, s: number, l: number) {
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  const seg = Math.floor((((h % 360) + 360) % 360) / 60);
+  const [r, g, b] = [[c, x, 0], [x, c, 0], [0, c, x], [0, x, c], [x, 0, c], [c, 0, x]][seg];
+  return { r: Math.round((r + m) * 255), g: Math.round((g + m) * 255), b: Math.round((b + m) * 255) };
 }
 
 function oklabMix(a: { l: number; c: number; h: number }, b: { l: number; c: number; h: number }, t: number) {
