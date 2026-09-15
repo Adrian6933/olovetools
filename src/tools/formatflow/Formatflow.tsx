@@ -173,7 +173,9 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
       link.href = url;
       link.download = `formatflow-${ready.length}.zip`;
       link.click();
-      URL.revokeObjectURL(url);
+      // Keep the generated archive available while the browser starts the
+      // download, especially for large batches.
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } finally {
       setZipping(false);
     }

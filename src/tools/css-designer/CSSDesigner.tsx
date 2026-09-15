@@ -188,7 +188,8 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
       link.href = url;
       link.download = `css-designer-${tab}.png`;
       link.click();
-      URL.revokeObjectURL(url);
+      // Keep the object URL alive while the browser consumes the PNG.
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
     } finally {
       setExporting(false);
     }
