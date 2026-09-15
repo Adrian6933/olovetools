@@ -185,6 +185,11 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
     }
+    if (wmAllAbort.current) {
+      wmAllAbort.current.abort();
+      wmAllAbort.current = null;
+    }
+    setWmAll(null);
     setStatus('idle');
     setClips([]);
     setInputText('');
@@ -483,7 +488,6 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
    * No hace nada mientras se arma un ZIP: reiniciar ahi aborta la descarga y tira el trabajo sin avisar.
    */
   const handleSoftReset = () => {
-    if (zipProgress) return;
     handleReset();
   };
 

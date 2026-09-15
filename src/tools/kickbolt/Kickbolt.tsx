@@ -319,12 +319,8 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
     window.location.href = `/${code}/kickbolt`;
   };
 
-  /**
-   * Reinicio desde el nombre de la herramienta en la cabecera.
-   * No hace nada mientras se arma un ZIP: reiniciar ahi aborta la descarga y tira el trabajo sin avisar.
-   */
+  /** Reinicio desde la cabecera; también cancela un ZIP en curso. */
   const handleSoftReset = () => {
-    if (zipProgress) return;
     handleReset();
   };
 
