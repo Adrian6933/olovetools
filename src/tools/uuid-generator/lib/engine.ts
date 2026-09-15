@@ -641,7 +641,9 @@ export function decodeUlid(text: string): Uint8Array | null {
     if (i === 0) {
       // 26 characters carry 130 bits for a 128-bit value, so the leading
       // character holds two padding bits and only three significant ones.
-      value = digit & 0x07;
+      // Values 8–31 would set the two padding bits and overflow 128 bits.
+      if (digit > 7) return null;
+      value = digit;
       bits = 3;
       continue;
     }
