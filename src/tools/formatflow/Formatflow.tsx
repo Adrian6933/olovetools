@@ -148,7 +148,11 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
     const link = document.createElement('a');
     link.href = active.result.url;
     link.download = `${baseName(active.file.name)}.${active.result.ext}`;
+    // Append the anchor for Firefox/Safari, which can ignore clicks on a
+    // detached element when the URL points at a Blob.
+    document.body.appendChild(link);
     link.click();
+    link.remove();
   }, [active]);
 
   const downloadZip = useCallback(async () => {

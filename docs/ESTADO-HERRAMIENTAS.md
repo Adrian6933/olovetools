@@ -46,7 +46,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | epoch-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | exif-clear | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | favicon-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| formatflow | pasa (lógica) | Valida el resultado de HEIC y las dimensiones/píxeles TIFF antes de entregarlos al pipeline; los archivos dañados producen errores accionables de decodificación. | `npx tsc --noEmit`; `git diff --check`; revisión estática de normalización HEIC/TIFF. Pendiente muestra real HEIC, TIFF multipágina y códec no disponible. | L03 |
+| formatflow | Validación parcial | Valida HEIC/TIFF antes del pipeline y las descargas individuales usan un ancla insertada en el documento, compatible con Firefox/Safari cuando el resultado es un Blob. | `tsc --noEmit` y `git diff --check`; revisión estática de normalización HEIC/TIFF, nombres, lotes y ZIP. Pendiente muestra real HEIC, TIFF multipágina, códec no disponible y descargas en navegadores. | Pendiente |
 | framebolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | framesnap | Pasa (lógica de exportación) | La URL temporal del fotograma se revocaba en el mismo ciclo del clic, lo que podía cancelar una descarga en Safari. Se conserva 60 s y luego se libera. | Revisión de lectura, avance de fotogramas, lotes, escenas, memoria y descarga; `npx tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente: subir un vídeo CFR/VFR (requiere seleccionar archivo local), comparar pasos repetidos y abrir PNG/JPEG/WebP descargados. | Pendiente |
 | gif-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
