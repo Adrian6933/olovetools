@@ -131,4 +131,8 @@ Esta revisión sustituye los anteriores “Pasa” de Aspect Ratio, UUID Generat
 
 Pruebas repetibles: `node scripts/test-review-regressions.cjs`. Para navegador, copiar `scripts/fixtures/review-check.astro` a `src/pages/review-check.astro`, arrancar Astro y visitar `/review-check`; retirar esa ruta al terminar. No se publica esa página de pruebas. Usa datos sintéticos y los exportadores reales; no equivale a verificar todos los botones ni guardar la descarga desde el sistema operativo.
 
-Pendiente: flujos completos de interfaz; UUID v3/v5 y TXT/CSV/JSON/SQL; Lottie con assets externos, TGS, WebM y dotLottie; Aspect Ratio con vídeo. Se mantienen los pendientes del resto de herramientas. No se ha hecho push.
+Pendiente: flujos completos de interfaz; UUID v3/v5 y TXT/CSV/JSON/SQL; Lottie con assets externos, TGS, WebM y dotLottie; Aspect Ratio con vídeo. Se mantienen los pendientes del resto de herramientas. Los cambios validados se han subido a `main` y la página de pruebas no se publica.
+
+## Correcciones de descargas — 15 septiembre 2026
+
+Se detectó el mismo riesgo de liberar URLs `blob:` demasiado pronto en exportaciones iniciadas desde un clic. Se corrigió en KickBolt, TwitchBolt, Base64Bolt, CompressSnap, HTML Sanitizer, DrawSnap, FormatFlow y CSS Designer, manteniendo la URL temporal 60 segundos. TypeScript y `git diff --check` pasan después del lote. Estas correcciones evitan carreras de descarga, pero no sustituyen la apertura y validación externa de cada archivo.
