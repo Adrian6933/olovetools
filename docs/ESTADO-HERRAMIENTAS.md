@@ -28,7 +28,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | aspect-ratio | Validación parcial | Encuadre y exportación conservan la proporción exacta y múltiplos; las combinaciones imposibles se bloquean con aviso. | Regresión 100×60, 16:9, múltiplo 16: sin solución; múltiplo 1: 96×54. Casos horizontales, verticales y decimales. Navegador: PNG/JPEG/WebP generados con paintFrame y decodificados a 96×54. Pendiente: flujo completo del editor, vídeo y gestos. | Pendiente |
 | audiosnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | backgroundremover | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| base64-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
+| base64-bolt | Validación parcial | El motor trabaja sobre `Uint8Array`, admite Base64 estándar/URL-safe, padding opcional, saltos MIME y prefijos `data:`; la descarga Blob conserva la URL durante 60 s. | Harness determinista: 128 tamaños binarios (0–127 bytes), ambos alfabetos y padding sí/no, round-trip exacto; vectores `Man`, UTF-8, URL-safe y data URL; entradas inválidas (`A`, `abcde`, caracteres extraños) devuelven errores/avisos sin lanzar. Pendiente: cargar archivos reales desde la interfaz, comprobar preview truncada, descarga completa y archivos binarios en Chromium/Firefox/Safari. | Pendiente |
 | binary-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | cleansnap | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | clip-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
