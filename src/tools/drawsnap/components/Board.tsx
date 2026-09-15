@@ -1037,8 +1037,8 @@ export const Board: React.FC<BoardProps> = ({ lang, t }) => {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    // Revoking immediately can cancel the download in Safari; one tick is enough.
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    // Keep the URL alive while the browser consumes a potentially large export.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   };
 
   const exportPng = useCallback(() => {

@@ -292,9 +292,8 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
     const base = sourceName ? sourceName.replace(/\.[^.]+$/, '') : 'sanitized';
     link.download = `${base}-clean.${extension}`;
     link.click();
-    // Revoking on the next task would race the download in Firefox; a frame is
-    // enough for the click to have been consumed.
-    setTimeout(() => URL.revokeObjectURL(url), 4000);
+    // Keep the URL alive while the browser consumes the generated document.
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }, [output, sourceName, textOnly]);
 
   const getResult = useCallback(async () => {

@@ -101,14 +101,14 @@ function newId(): string {
   return Math.random().toString(36).slice(2);
 }
 
-/** Downloads a Blob and releases the object URL once the click has been handed off. */
+/** Downloads a Blob and keeps the URL alive while the browser consumes it. */
 function downloadBlob(blob: Blob, name: string) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
   anchor.download = name;
   anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 interface FileResult {

@@ -297,9 +297,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
     link.href = url;
     link.download = name;
     link.click();
-    // Next tick, not synchronously: Firefox cancels a download whose object
-    // URL is released in the same task as the click.
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    // Keep the URL alive while the browser consumes the blob (large images can
+    // still be handed off after the click task has finished).
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }, []);
 
   const downloadOne = useCallback(
