@@ -223,8 +223,16 @@ const getDateRangeMs = (timeFilter: TimeFilter): number => {
     }
 };
 
-/** Tramo de tiempo del que se piden clips. null = sin limite (todo el tiempo). */
-export type ClipWindow = { startMs: number; endMs: number } | null;
+/**
+ * Tramos de tiempo de los que se piden clips: uno para 24 horas / 7 dias o un
+ * rango, varios con dias sueltos. null = sin limite (todo el tiempo).
+ */
+export type ClipWindow = { startMs: number; endMs: number }[] | null;
+
+const dayStartMs = (key: string, offsetDays = 0) => {
+    const [y, m, d] = key.split('-').map(Number);
+    return new Date(y, m - 1, d + offsetDays).getTime();
+};
 
 /**
  * La ventana que corresponde a lo elegido en la barra de filtros. Se calcula en
@@ -240,15 +248,41 @@ export type ClipWindow = { startMs: number; endMs: number } | null;
  */
 export const resolveClipWindow = (timeFilter: TimeFilter, anchorISO?: string, dayRange?: DayRange | null): ClipWindow => {
     if (dayRange) {
-        const [fy, fm, fd] = dayRange.from.split('-').map(Number);
-        const [ty, tm, td] = dayRange.to.split('-').map(Number);
-        const startMs = new Date(fy, fm - 1, fd).getTime();
-        const endMs = Math.min(new Date(ty, tm - 1, td + 1).getTime(), Date.now());
-        return { startMs, endMs: Math.max(endMs, startMs + 1) };
+        // Dias sueltos: los que van seguidos se juntan en un solo tramo, que
+        // son menos peticiones y el mismo resultado.
+        const runs: [string, string][] = [];
+        for (const day of dayRange.days?.length ? [...dayRange.days].sort() : [dayRange.from]) {
+            const last = runs[runs.length - 1];
+            if (last && dayStartMs(last[1], 1) === dayStartMs(day)) last[1] = day;
+            else runs.push([day, day]);
+        }
+        if (!dayRange.days?.length) runs[0][1] = dayRange.to;
+        const now = Date.now();
+        return runs
+            .map(([from, to]) => {
+                const startMs = dayStartMs(from);
+                return { startMs, endMs: Math.max(Math.min(dayStartMs(to, 1), now), startMs + 1) };
+            })
+            .filter(w => w.startMs < now);
     }
     if (timeFilter === TimeFilter.ALL) return null;
     const endMs = anchorISO ? new Date(anchorISO).getTime() : Date.now();
-    return { startMs: endMs - getDateRangeMs(timeFilter), endMs };
+    return [{ startMs: endMs - getDateRangeMs(timeFilter), endMs }];
+};
+
+/**
+ * Cursor de searchTwitchClips con varios tramos: el de Twitch de cada uno,
+ * '' si aun no se ha pedido y null si ya se agoto. Va en JSON dentro del mismo
+ * string que antes era el cursor de Twitch, asi quien pagina no se entera.
+ */
+const readCursors = (cursor: string | null | undefined, count: number): (string | null)[] => {
+    if (cursor) {
+        try {
+            const parsed = JSON.parse(cursor);
+            if (Array.isArray(parsed) && parsed.length === count) return parsed;
+        } catch { /* cursor viejo o de otro filtro: se empieza de cero */ }
+    }
+    return Array.from({ length: count }, () => '');
 };
 
 // NOTE: does NOT swallow errors into { clips: [], cursor: null } — a transient
@@ -265,16 +299,41 @@ export const searchTwitchClips = async (
 ): Promise<{ clips: Clip[], cursor: string | null }> => {
     const headers = await getHeaders();
 
-    let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
-    if (window) url += `&started_at=${new Date(window.startMs).toISOString()}&ended_at=${new Date(window.endMs).toISOString()}`;
-    if (cursor) url += `&after=${cursor}`;
+    const fetchPage = async (range: { startMs: number; endMs: number } | null, after: string | null) => {
+        let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
+        if (range) url += `&started_at=${new Date(range.startMs).toISOString()}&ended_at=${new Date(range.endMs).toISOString()}`;
+        if (after) url += `&after=${after}`;
+        const response = await fetch(url, { headers });
+        if (!response.ok) throw new Error(`Twitch Clip API Error: ${response.status}`);
+        const data = await response.json();
+        return { clips: (data.data || []) as any[], next: (data.pagination?.cursor || null) as string | null };
+    };
 
-    const response = await fetch(url, { headers });
-    if (!response.ok) throw new Error(`Twitch Clip API Error: ${response.status}`);
+    let clipsData: any[];
+    let nextCursor: string | null;
 
-    const data = await response.json();
-    let clipsData = data.data || [];
-    const nextCursor = data.pagination?.cursor || null;
+    // Sin ningun tramo (todos los dias elegidos en el futuro) no hay nada que
+    // pedir; ojo, que null significa lo contrario: todo el tiempo.
+    if (window && window.length === 0) return { clips: [], cursor: null };
+
+    if (!window || window.length === 1) {
+        const page = await fetchPage(window ? window[0] : null, cursor || null);
+        clipsData = page.clips;
+        nextCursor = page.next;
+    } else {
+        // Dias sueltos: una pagina de CADA tramo por llamada, no un tramo
+        // detras de otro. Si no, las primeras tandas serian todas del primer
+        // dia elegido y los demas no asomarian hasta bajar muchisimo.
+        const cursors = readCursors(cursor, window.length);
+        const pending = cursors.map((c, i) => (c === null ? -1 : i)).filter(i => i >= 0);
+        const pages = await Promise.all(pending.map(i => fetchPage(window[i], cursors[i] || null)));
+        clipsData = [];
+        pages.forEach((page, k) => {
+            clipsData.push(...page.clips);
+            cursors[pending[k]] = page.clips.length > 0 ? page.next : null;
+        });
+        nextCursor = cursors.some(c => c !== null) ? JSON.stringify(cursors) : null;
+    }
 
     clipsData.sort((a: any, b: any) => b.view_count - a.view_count);
 
@@ -313,16 +372,17 @@ export const searchAllTwitchClips = async (
   // "Load all" no lo pasa y usa el límite de seguridad completo.
   maxPagesThisCall?: number,
 ): Promise<{ completed: boolean; resumeFrom?: TwitchCrawlPosition }> => {
-    // 1h slices for a window of a day or less, 1-day slices for anything
+    // Per window: 1h slices for a window of a day or less, 1-day slices for anything
     // longer (finer slicing for week/month would mean hundreds of requests —
     // impractical for a single button click). "All time" can't be sliced at
     // all, so it's one plain paginated query.
     const slices: ([number, number] | null)[] = [];
     if (window) {
-        const { startMs, endMs } = window;
-        const sliceMs = endMs - startMs <= DAY_MS ? HOUR_MS : DAY_MS;
-        for (let sliceStart = startMs; sliceStart < endMs; sliceStart += sliceMs) {
-            slices.push([sliceStart, Math.min(sliceStart + sliceMs, endMs)]);
+        for (const { startMs, endMs } of window) {
+            const sliceMs = endMs - startMs <= DAY_MS ? HOUR_MS : DAY_MS;
+            for (let sliceStart = startMs; sliceStart < endMs; sliceStart += sliceMs) {
+                slices.push([sliceStart, Math.min(sliceStart + sliceMs, endMs)]);
+            }
         }
     } else {
         slices.push(null);

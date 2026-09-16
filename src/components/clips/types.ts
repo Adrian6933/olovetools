@@ -19,6 +19,11 @@ export enum SortType {
 export interface DayRange {
   from: string;
   to: string;
+  /**
+   * Con dias sueltos ("el 3, el 7 y el 12"), la lista ordenada; `from` y `to`
+   * son entonces el primero y el ultimo. Sin ella, es todo de `from` a `to`.
+   */
+  days?: string[];
 }
 
 export interface Category {
