@@ -168,7 +168,10 @@ export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, t
       });
       return blob;
     } catch (e: any) {
-      if (e.message === "AbortError") throw e;
+      // Browsers surface an aborted XHR as either our sentinel message or a
+      // DOMException named AbortError. Preserve cancellation instead of
+      // needlessly trying every remaining proxy.
+      if (e.message === "AbortError" || e.name === "AbortError") throw e;
       console.warn("Proxy failed, trying next...", e);
     }
   }
