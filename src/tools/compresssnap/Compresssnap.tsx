@@ -296,7 +296,9 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
     const link = document.createElement('a');
     link.href = url;
     link.download = name;
+    document.body.appendChild(link);
     link.click();
+    link.remove();
     // Keep the URL alive while the browser consumes the blob (large images can
     // still be handed off after the click task has finished).
     window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
