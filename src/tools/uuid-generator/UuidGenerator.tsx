@@ -336,7 +336,9 @@ export default function UuidGenerator({ lang, dictionary }: UuidGeneratorProps) 
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    later(() => URL.revokeObjectURL(url), 1000);
+    // Keep large CSV/JSON exports alive while the browser starts the download
+    // (one second was too short on slower devices and Safari).
+    later(() => URL.revokeObjectURL(url), 60_000);
   }, [result, format, exportFormat, later]);
 
   const getHandoffBlob = useCallback(
