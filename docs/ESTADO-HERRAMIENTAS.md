@@ -57,7 +57,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | json-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | jwt-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | key-doctor | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| kickbolt | Pasa (lógica de solicitudes) | Al reiniciar o iniciar una nueva tanda, las respuestas tardías de la tanda anterior ya no pueden repoblar los resultados. | Inspección del flujo de rutas, relés, lote, cancelación de ZIP y errores. `npx tsc --noEmit` sin diagnósticos. La isla no hidrató en el servidor de desarrollo tras una reconstrucción concurrente de Astro, así que sigue pendiente comprobar el flujo completo de una URL pública, el lote parcial y el ZIP en un navegador limpio. | Pendiente |
+| kickbolt | Validación parcial | Al reiniciar o iniciar una nueva tanda, las respuestas tardías no repueblan resultados; además, las URI de segmentos HLS se resuelven con `new URL`, admitiendo rutas absolutas, relativas y root-relative. | Inspección de rutas, relés, lote, cancelación de ZIP, errores y playlist HLS; `tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente comprobar URL pública, lote parcial y ZIP en navegador limpio. | Pendiente |
 | klipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | list-mixer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | lorem-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

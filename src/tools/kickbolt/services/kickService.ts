@@ -202,7 +202,6 @@ interface HLSSegment {
 
 const fetchHLSBlob = async (url: string, onProgress: (loaded: number, total: number) => void, signal?: AbortSignal): Promise<Blob> => {
     let playlistText = "";
-    let baseUrl = "";
     
     for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {
         if (signal?.aborted) throw new Error("AbortError");
@@ -210,7 +209,6 @@ const fetchHLSBlob = async (url: string, onProgress: (loaded: number, total: num
             const res = await fetch(makeUrl(url), { signal });
             if (!res.ok) continue;
             playlistText = await res.text();
-            baseUrl = url.substring(0, url.lastIndexOf('/') + 1);
             break;
         } catch(e: any) {
             if (e.message === "AbortError" || e.name === "AbortError") throw e;
@@ -238,7 +236,15 @@ const fetchHLSBlob = async (url: string, onProgress: (loaded: number, total: num
                 currentByteRange = { length };
             }
         } else if (!line.startsWith('#')) {
-            const segmentUrl = line.startsWith('http') ? line : baseUrl + line;
+            // HLS playlists may use root-relative (`/seg.ts`), path-relative
+            // or absolute segment URIs. String concatenation broke the first
+            // two whenever the playlist lived below the origin root.
+            let segmentUrl: string;
+            try {
+                segmentUrl = new URL(line, url).toString();
+            } catch {
+                continue;
+            }
             let finalByteRange: { length: number; offset: number } | undefined = undefined;
             if (currentByteRange) {
                 let offset = currentByteRange.offset;
