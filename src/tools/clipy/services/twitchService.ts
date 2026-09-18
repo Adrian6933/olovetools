@@ -1,4 +1,4 @@
-import { Category, Clip, TimeFilter, SortType, DayRange } from '../../../components/clips/types';
+import { Category, Clip, TimeFilter, SortType, DayRange, CustomSpan } from '../../../components/clips/types';
 
 // The Twitch app token is issued by /api/twitch/token (src/pages/api/twitch/
 // token.ts, same origin — Vercel serverless function) so the client_secret
@@ -245,8 +245,16 @@ const dayStartMs = (key: string, offsetDays = 0) => {
  * futuro y pedir de mas solo alarga el barrido por franjas.
  *
  * "Todo el tiempo" antes caia en el default de getDateRangeMs y pedia 24 horas.
+ *
+ * Prioridad: los dias del calendario, luego el periodo personalizado y al final
+ * el boton de 24 horas / 7 / 30 dias.
  */
-export const resolveClipWindow = (timeFilter: TimeFilter, anchorISO?: string, dayRange?: DayRange | null): ClipWindow => {
+export const resolveClipWindow = (
+    timeFilter: TimeFilter,
+    anchorISO?: string,
+    dayRange?: DayRange | null,
+    customSpan?: CustomSpan | null,
+): ClipWindow => {
     if (dayRange) {
         // Dias sueltos: los que van seguidos se juntan en un solo tramo, que
         // son menos peticiones y el mismo resultado.
@@ -265,8 +273,11 @@ export const resolveClipWindow = (timeFilter: TimeFilter, anchorISO?: string, da
             })
             .filter(w => w.startMs < now);
     }
-    if (timeFilter === TimeFilter.ALL) return null;
     const endMs = anchorISO ? new Date(anchorISO).getTime() : Date.now();
+    if (customSpan && customSpan.amount > 0) {
+        return [{ startMs: endMs - customSpan.amount * (customSpan.unit === 'hours' ? HOUR_MS : DAY_MS), endMs }];
+    }
+    if (timeFilter === TimeFilter.ALL) return null;
     return [{ startMs: endMs - getDateRangeMs(timeFilter), endMs }];
 };
 

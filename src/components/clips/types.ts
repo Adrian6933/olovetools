@@ -26,6 +26,16 @@ export interface DayRange {
   days?: string[];
 }
 
+/**
+ * Periodo elegido a mano en vez de 24 horas / 7 dias / 30 dias: "las ultimas
+ * 48 horas", "los ultimos 45 dias". Relativo a ahora (o a la hora fija), igual
+ * que los botones de siempre.
+ */
+export interface CustomSpan {
+  amount: number;
+  unit: 'hours' | 'days';
+}
+
 export interface Category {
   id: string;
   name: string;

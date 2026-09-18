@@ -1,8 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { TimeFilter, SortType, type DayRange } from './types';
+import { TimeFilter, SortType, type DayRange, type CustomSpan } from './types';
 import { mergeKeywords, parseKeywordList } from './keywords';
 import DayRangeFilter from './DayRangeFilter';
+import CustomSpanFilter from './CustomSpanFilter';
 import { Clock, TrendingUp, ChevronDown, Check, ChevronsDown, Loader2, CalendarClock, X, ShieldAlert, Users, Gauge, Ban, Languages, FastForward, Type, Trash2 } from 'lucide-react';
 
 // Twitch clips no traen pista de audio de alta calidad ni suelen durar mucho,
@@ -84,6 +85,12 @@ interface FilterBarProps {
    */
   dayRange?: DayRange | null;
   onDayRangeChange?: (range: DayRange | null) => void;
+  /**
+   * Periodo a medida ("ultimas 48 horas"). Como el calendario, solo aparece si
+   * se pasa `onCustomSpanChange`.
+   */
+  customSpan?: CustomSpan | null;
+  onCustomSpanChange?: (span: CustomSpan | null) => void;
   /** Idioma de la pagina, para los nombres de mes y dia del calendario. */
   locale?: string;
 }
@@ -121,6 +128,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onKeywordsChange,
   dayRange = null,
   onDayRangeChange,
+  customSpan = null,
+  onCustomSpanChange,
   locale
 }) => {
   const [isRangeOpen, setIsRangeOpen] = useState(false);
@@ -239,7 +248,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 className={`px-3 py-1.5 text-xs sm:text-sm rounded-md transition-all font-medium whitespace-nowrap sm:flex-1 lg:flex-none ${
                   presetsOff ? 'cursor-not-allowed' : 'cursor-pointer hover:scale-105 active:scale-95'
                 } ${
-                  currentTime === filter && !presetsOff
+                  currentTime === filter && !customSpan && !presetsOff
                     ? 'bg-twitch-base text-[var(--color-accent-ink)] shadow-md'
                     : `text-gray-400 ${presetsOff ? '' : 'hover:text-white hover:bg-twitch-surfaceAlt'}`
                 }`}
@@ -247,6 +256,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 {t(`time_${filter}`)}
               </button>
             ))}
+            {onCustomSpanChange && (
+              <div className="col-span-2 lg:col-span-1">
+                <CustomSpanFilter
+                  value={customSpan}
+                  onChange={onCustomSpanChange}
+                  disabled={disabled || presetsOff}
+                  t={t}
+                />
+              </div>
+            )}
           </div>
           {onDayRangeChange && (
             <DayRangeFilter
@@ -344,7 +363,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           {t('filters_label') || 'Filters'}
         </span>
 
-        {onAnchorChange && currentTime !== TimeFilter.ALL && !dayRange && (
+        {onAnchorChange && (currentTime !== TimeFilter.ALL || !!customSpan) && !dayRange && (
           <div className="relative" ref={anchorRef}>
             <button
               onClick={() => !disabled && setIsAnchorOpen(!isAnchorOpen)}

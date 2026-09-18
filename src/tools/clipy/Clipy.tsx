@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection, type DayRange } from '../../components/clips/types';
+import { SearchState, TimeFilter, SortType, Category, Clip, SavedCollection, type DayRange, type CustomSpan } from '../../components/clips/types';
 import { groupClipsByCategory, clipMatchesCategory, sumClipSeconds } from '../../components/clips/grouping';
 import { clipMatchesKeywords, normalizeText } from '../../components/clips/keywords';
 import { useReorder } from '../../components/clips/useReorder';
@@ -11,6 +11,7 @@ import { legalTranslations } from '../../locales/legal';
 import SearchBar from '../../components/clips/SearchBar';
 import FilterBar from '../../components/clips/FilterBar';
 import { formatDayRange } from '../../components/clips/DayRangeFilter';
+import { formatCustomSpan } from '../../components/clips/CustomSpanFilter';
 import ClipGrid, { type ClipGridHandle } from '../../components/clips/ClipGrid';
 import CategoryGrid from '../../components/clips/CategoryGrid';
 import FloatingPlayer from '../../components/clips/FloatingPlayer';
@@ -130,6 +131,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   // porque ese tipo lo comparte Klipy, y la API de clips de Kick no deja pedir
   // por fechas.
   const [dayRange, setDayRange] = useState<DayRange | null>(null);
+  // "Ultimas 48 horas", "ultimos 45 dias": manda sobre el boton de 24 horas /
+  // 7 / 30 dias, y por debajo de los dias del calendario.
+  const [customSpan, setCustomSpan] = useState<CustomSpan | null>(null);
   const [playingClip, setPlayingClip] = useState<Clip | null>(null);
   const [savedClips, setSavedClips] = useState<Clip[]>([]);
   const [blockedStreamers, setBlockedStreamers] = useState<Record<string, { id: string; name: string; image?: string }[]>>({});
@@ -773,7 +777,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
   // `range` llega aparte cuando quien llama acaba de cambiarlo: el setState de
   // dayRange todavia no se ha aplicado y esta funcion veria el anterior.
-  const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter, range: DayRange | null = dayRange) => {
+  const loadClipsForCategory = useCallback(async (category: Category, time: TimeFilter, range: DayRange | null = dayRange, span: CustomSpan | null = customSpan) => {
     // Cambiamos el modo inmediatamente para que el usuario entre a la sección y vea los skeletons
     setState(prev => ({
       ...prev,
@@ -793,7 +797,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     }
 
     try {
-      const { clips, cursor } = await pedirTanda(category.id, category.name, resolveClipWindow(time, state.anchorTime || undefined, range), null, PAGINAS_PRIMERA_TANDA);
+      const { clips, cursor } = await pedirTanda(category.id, category.name, resolveClipWindow(time, state.anchorTime || undefined, range, span), null, PAGINAS_PRIMERA_TANDA);
       // Evitar duplicados por id
       const uniqueClips: Clip[] = [];
       const seen = new Set<string>();
@@ -812,7 +816,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } catch (error: any) {
       setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
     }
-  }, [t, handleSearch, state.anchorTime, dayRange]);
+  }, [t, handleSearch, state.anchorTime, dayRange, customSpan]);
 
   const loadMoreClips = useCallback(async () => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
@@ -821,7 +825,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       const { clips: newClips, cursor: nextCursor } = await pedirTanda(
         state.activeCategory.id,
         state.activeCategory.name,
-        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange),
+        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange, customSpan),
         state.paginationCursor,
         PAGINAS_POR_TANDA
       );
@@ -845,7 +849,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime, dayRange]);
+  }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, customSpan]);
 
   // Solo baja la página al final del scroll — NO cambia de página en modo
   // rendimiento. Saltar de página de golpe (a la vez que el contenido de esa
@@ -894,7 +898,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     try {
       const { completed } = await searchAllTwitchClips(
         state.activeCategory.id,
-        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange),
+        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange, customSpan),
         (newClips) => {
           let changed = false;
           for (const clip of newClips) {
@@ -926,7 +930,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } finally {
       setIsDeepCrawling(false);
     }
-  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, state.clips, allClipsLoaded, jumpToLoadedEnd]);
+  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, customSpan, state.clips, allClipsLoaded, jumpToLoadedEnd]);
 
   // Igual que loadAllClips pero se para después de UNA página (~100 clips o
   // menos) del crawl por franjas horarias, en vez de recorrerlo entero de
@@ -944,7 +948,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     try {
       const { completed, resumeFrom } = await searchAllTwitchClips(
         state.activeCategory.id,
-        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange),
+        resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange, customSpan),
         (newClips) => {
           for (const clip of newClips) {
             if (!seen.has(clip.id)) {
@@ -967,7 +971,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     } catch (error) {
       setState(prev => ({ ...prev, isLoading: false }));
     }
-  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, state.clips, allClipsLoaded]);
+  }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, customSpan, state.clips, allClipsLoaded]);
 
   // El cursor simple de Twitch (loadMoreClips) se trunca solo a ~1000 clips
   // aunque existan muchos más — así que cuando se agota, en vez de darlo por
@@ -987,9 +991,16 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   }, []);
 
   const handleCategoryClick = (category: Category) => { loadClipsForCategory(category, state.timeFilter); };
+  // Pulsar 24 horas / 7 / 30 dias quita el periodo personalizado: si no, el
+  // boton se marcaria pero seguiria mandando el otro.
   const handleFilterChange = (filter: TimeFilter) => {
     setState(prev => ({ ...prev, timeFilter: filter }));
-    if (state.activeCategory) loadClipsForCategory(state.activeCategory, filter);
+    setCustomSpan(null);
+    if (state.activeCategory) loadClipsForCategory(state.activeCategory, filter, dayRange, null);
+  };
+  const handleCustomSpanChange = (span: CustomSpan | null) => {
+    setCustomSpan(span);
+    if (state.activeCategory) loadClipsForCategory(state.activeCategory, state.timeFilter, dayRange, span);
   };
   const handleAnchorChange = (value: string | null) => {
     setState(prev => ({ ...prev, anchorTime: value }));
@@ -1006,7 +1017,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       setRenderPage(0);
       setAllClipsLoaded(false);
       deepCrawlResumeRef.current = null;
-      searchTwitchClips(state.activeCategory.id, state.activeCategory.name, resolveClipWindow(state.timeFilter, value || undefined, dayRange), null)
+      searchTwitchClips(state.activeCategory.id, state.activeCategory.name, resolveClipWindow(state.timeFilter, value || undefined, dayRange, customSpan), null)
         .then(({ clips, cursor }) => {
           setState(prev => ({ ...prev, clips, paginationCursor: cursor, isLoading: false }));
         })
@@ -1791,7 +1802,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                   <div className="flex flex-wrap items-center gap-4 md:gap-8 text-sm md:text-xl text-gray-400 font-bold">
                     <span className="text-twitch-base flex items-center gap-2 md:gap-3"><Sparkles className="w-5 h-5 md:w-6 md:h-6" /> {t('top_clips')}</span>
                     <ChevronRight className="w-4 h-4 md:w-6 md:h-6 opacity-10" />
-                    <span className="text-gray-400 bg-white/5 px-4 py-2 md:px-6 md:py-3 rounded-2xl">{dayRange ? formatDayRange(dayRange, lang) : t(`time_${state.timeFilter}`)}</span>
+                    <span className="text-gray-400 bg-white/5 px-4 py-2 md:px-6 md:py-3 rounded-2xl">{dayRange ? formatDayRange(dayRange, lang) : customSpan ? formatCustomSpan(customSpan, t) : t(`time_${state.timeFilter}`)}</span>
                   </div>
                 </div>
               </div>
@@ -1874,6 +1885,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
                   onPlaybackSpeedChange={handlePlaybackSpeedChange}
                   keywords={keywords}
                   onKeywordsChange={handleKeywordsChange}
+                  customSpan={customSpan}
+                  onCustomSpanChange={handleCustomSpanChange}
                   dayRange={dayRange}
                   onDayRangeChange={handleDayRangeChange}
                   locale={lang}
