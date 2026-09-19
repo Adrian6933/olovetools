@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "HashBolt",
   "badge": "チェックサムとファイル整合性",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "チェックサムと照合する",
   "verifyPlaceholder": "ハッシュを一つ、あるいは SHA256SUMS ファイルごと貼り付けてください。各行はファイル名で突き合わせます。",
   "verifyHint": "16進でも Base64 でも、大文字小文字を問わず照合します。選んだどのアルゴリズムにも当てはまらない長さは、不一致ではなくその旨をはっきり伝えます。",
-  "verifySummary": "チェックサム {count} 件を読み取り · 一致 {ok} 件 · 不一致 {bad} 件",
+  "verifySummary": "読み込んだチェックサム: {count} · 一致: {ok} · 不一致: {bad}",
   "verifyMatch": "一致 — 同じ {algo} ダイジェストです。",
   "verifyMismatch": "不一致。このファイルは、そのチェックサムが示すものではありません。",
   "verifyUnknownLength": "そのチェックサムの長さは、選択中のどのアルゴリズムにも当てはまりません。正しいものを選んで計算し直してください。",

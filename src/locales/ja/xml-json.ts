@@ -1,4 +1,5 @@
 export default {
+  "xpath_matches_one": "{n} 件一致",
   "resetHint": "最初からやり直す",
   "title": "XML to JSON",
   "seoHeroTitle": "XML to JSON",

@@ -1,4 +1,5 @@
 export default {
+  "report_dangerous_one": "{0} удаление могло выполнить код.",
   "previewTitle": "Предпросмотр очищенного HTML",
   "resetHint": "Начать заново",
   "title": "HTML Sanitizer",

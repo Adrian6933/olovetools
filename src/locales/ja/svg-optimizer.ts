@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "SVG Optimizer",
   "description": "SVGベクトルファイルをブラウザ上で100%ローカルに最適化、クリーンアップ、圧縮し、ファイルサイズを削減して読み込みパフォーマンスを向上させます。",

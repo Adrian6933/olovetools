@@ -418,7 +418,7 @@ export default function MorseFlow({ lang, dictionary }: MorseFlowProps) {
             <div className="flex flex-wrap items-center gap-2 border-t border-white/5 bg-amber-500/[0.06] px-3 py-2.5 md:px-4">
               <AlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
               <span className="text-[11px] font-bold text-amber-200">
-                {(t.issuesTitle || '{n} characters have no Morse equivalent, shown as {mark}:')
+                {((issues.length === 1 && t.issuesTitle_one) || t.issuesTitle || '{n} characters have no Morse equivalent, shown as {mark}:')
                   .replace('{n}', String(issues.length))
                   .replace('{mark}', UNKNOWN)}
               </span>

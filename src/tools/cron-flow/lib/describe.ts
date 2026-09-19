@@ -226,13 +226,14 @@ function timeClause(cron: Cron, v: Vocab): string {
 
   // --- sub-minute schedules -------------------------------------------------
   if (secondsEvery && minutesEvery && hoursEvery) return v.s('d_everySecond');
-  if (secondsStep && secondsStep.from === 0 && secondsStep.to === 59 && minutesEvery && hoursEvery) {
+  if (secondsStep && secondsStep.step > 1 && secondsStep.from === 0 && secondsStep.to === 59 && minutesEvery && hoursEvery) {
     return fill(v.s('d_everyNSeconds'), { n: secondsStep.step });
   }
 
   // --- minute-driven --------------------------------------------------------
   const minuteStep = fullStep(minute);
-  if (minuteStep && minuteStep.from === 0 && minuteStep.to === 59) {
+  // `*/1` es "cada minuto", no "cada 1 minutos": el paso 1 cae a la rama de abajo.
+  if (minuteStep && minuteStep.step > 1 && minuteStep.from === 0 && minuteStep.to === 59) {
     push(fill(v.s('d_everyNMinutes'), { n: minuteStep.step }));
     push(hourClause(hour, v));
     push(secondClause(second, v));
@@ -247,7 +248,7 @@ function timeClause(cron: Cron, v: Vocab): string {
 
   // --- hour-driven ----------------------------------------------------------
   const hourStep = fullStep(hour);
-  if (hourStep && hourStep.from === 0 && hourStep.to === 23 && minute.values.length === 1) {
+  if (hourStep && hourStep.step > 1 && hourStep.from === 0 && hourStep.to === 23 && minute.values.length === 1) {
     push(fill(v.s('d_everyNHours'), { n: hourStep.step }));
     if (minute.values[0] !== 0) push(fill(v.s('d_atMinute'), { v: minute.values[0] }));
     push(secondClause(second, v));

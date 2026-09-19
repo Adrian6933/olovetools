@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "整数に小数はありません。12.5 は浮動小数点に切り替えてください。",
   "resetHint": "最初からやり直す",
   "title": "BinaryFlow",
   "seo_title": "ビットエディター付きの2進数・16進数・10進数コンバーター",

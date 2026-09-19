@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "GIFBolt",
   "description": "動画からフレームを取り出したり静止画を並べたりして、タイムラインを編集し、共通パレットとフレーム間圧縮で GIF に書き出します。すべてブラウザー内で完結します。",

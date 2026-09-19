@@ -1,4 +1,5 @@
 export default {
+  "frame_constraints": "Aucun cadre exact ne tient avec cette taille et ce multiple de pixels. Augmentez la taille ou choisissez un multiple plus petit.",
   "resetHint": "Recommencer",
   "title": "Aspect Ratio",
   "badge": "Boîte à outils des ratios",

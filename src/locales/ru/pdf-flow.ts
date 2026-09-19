@@ -1,4 +1,8 @@
 export default {
+  "rangeNoPages": "Таких страниц нет: в документе их {n}.",
+  "zoomOutLabel": "Уменьшить",
+  "zoomInLabel": "Увеличить",
+  "zoomFitLabel": "По размеру",
   "removeFile": "Убрать файл",
   "resetHint": "Начать заново",
   "title": "PDFFlow",

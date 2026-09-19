@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createUniqueNamer } from '../../lib/uniqueName';
 import { motion } from 'framer-motion';
 import {
   AlertCircle, ArrowUp, Check, Copy, Download, Eye, Image as ImageIcon, Layers as LayersIcon,
@@ -429,12 +430,12 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
     return encoderRef.current;
   };
 
-  const renderItem = async (item: ImageItem, options: { archive: boolean; wantBlob: boolean }) => {
+  const renderItem = async (item: ImageItem, options: { archive: boolean; wantBlob: boolean; name?: string }) => {
     const decoded = await decodeImage(item.file, 0);
     try {
       return await getEncoder().add({
         id: item.id,
-        name: outputName(item.name, settings),
+        name: options.name || outputName(item.name, settings),
         source: decoded.bitmap,
         width: decoded.width,
         height: decoded.height,
@@ -457,6 +458,8 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
     setProgress({ current: 0, total: targets.length });
     await ensureFonts(layers);
     getEncoder().reset();
+    // Nombres repetidos dentro del ZIP se pisaban y se perdia una imagen.
+    const uniqueName = createUniqueNamer();
 
     try {
       for (let i = 0; i < targets.length; i++) {
@@ -465,7 +468,11 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
         setItems(prev => prev.map(it => (it.id === item.id ? { ...it, status: 'exporting' } : it)));
 
         try {
-          const result = await renderItem(item, { archive: mode === 'all', wantBlob: mode === 'single' });
+          const result = await renderItem(item, {
+            archive: mode === 'all',
+            wantBlob: mode === 'single',
+            name: mode === 'all' ? uniqueName(outputName(item.name, settings)) : undefined,
+          });
           setItems(prev => prev.map(it => (it.id === item.id ? { ...it, status: 'done', outputSize: result.size } : it)));
           if (mode === 'single' && result.blob) downloadBlob(result.blob, outputName(item.name, settings));
         } catch (err) {

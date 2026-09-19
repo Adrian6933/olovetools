@@ -1,4 +1,5 @@
 export default {
+  "report_dangerous_one": "{0} removal could have executed code.",
   "previewTitle": "Preview of the cleaned HTML",
   "resetHint": "Start over",
   "title": "HTML Sanitizer",

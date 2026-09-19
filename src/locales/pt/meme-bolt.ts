@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "MemeBolt",
   "badge": "Estúdio de memes",

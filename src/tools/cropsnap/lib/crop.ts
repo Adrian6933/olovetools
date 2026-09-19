@@ -8,6 +8,7 @@
 // ============================================================================
 
 import type { AspectRatioPreset, OutputFormat, SizePreset } from '../types';
+import { loadImage } from '../../../lib/loadImage';
 
 // ---------------------------------------------------------------------------
 // Template
@@ -205,10 +206,7 @@ export function mayHaveAlpha(file: File): boolean {
 }
 
 export async function readImageSize(url: string): Promise<{ width: number; height: number }> {
-  const image = new Image();
-  image.decoding = 'async';
-  image.src = url;
-  await image.decode();
+  const image = await loadImage(url);
   return { width: image.naturalWidth, height: image.naturalHeight };
 }
 

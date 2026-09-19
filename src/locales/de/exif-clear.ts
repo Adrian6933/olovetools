@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "{n} Datei reinigen",
+  "badgeTags_one": "{n} Feld",
   "resetHint": "Neu anfangen",
   "title": "EXIF Cleaner",
   "badge": "Metadaten-Reiniger für Bilder",
@@ -57,7 +59,7 @@ export default {
   "optKeepOrientationHint": "Schreibt einen 30 Byte kleinen EXIF-Block zurück, der nur Orientation enthält, damit Hochformat-Aufnahmen nicht quer landen.",
   "optRemoveIcc": "Auch das Farbprofil entfernen",
   "optRemoveIccHint": "Das ICC-Profil ist kein personenbezogenes Datum und sein Entfernen kann Farben sichtbar verschieben, deshalb bleibt es standardmäßig drin.",
-  "cleanBtn": "{n} Datei(en) reinigen",
+  "cleanBtn": "{n} Dateien reinigen",
   "cleaningLabel": "Wird gereinigt…",
   "downloadBtn": "Herunterladen",
   "downloadZipBtn": ".zip herunterladen",

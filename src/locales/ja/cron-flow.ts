@@ -1,4 +1,5 @@
 export default {
+  "calendar_runs_one": "{n} 回",
   "resetHint": "最初からやり直す",
   "title": "CronFlow",
   "badge": "cron 式",

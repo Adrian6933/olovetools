@@ -1,4 +1,5 @@
 export default {
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "AudioSnap",
   "badge": "Gravador de voz e cortador de áudio",

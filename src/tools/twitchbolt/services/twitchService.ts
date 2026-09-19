@@ -62,6 +62,9 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   const query = `query GetClip($slug: ID!) { clip(slug: $slug) { id slug title createdAt viewCount durationSeconds thumbnailURL broadcaster { displayName profileImageURL(width: 50) } playbackAccessToken(params: { platform: "web", playerBackend: "mediaplayer", playerType: "site" }) { signature value } videoQualities { frameRate quality sourceURL } } }`;
 
   let responseData: any = null;
+  // Twitch contestó y dijo que ese clip no existe: no tiene sentido seguir
+  // preguntando a los demás relés, que darían la misma respuesta.
+  let confirmedMissing = false;
   for (const makeProxyUrl of usableProxies(GQL_PROXIES)) {
       for (const clientId of CLIENT_IDS) {
           try {
@@ -69,15 +72,19 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
                   method: 'POST',
                   headers: { 'Client-ID': clientId, 'Content-Type': 'application/json' },
                   body: JSON.stringify({ query, variables: { slug } }),
+                  // Sin tope, un relé que no contesta dejaba el clip en
+                  // "Cargando…" para siempre y el botón del ZIP bloqueado.
+                  signal: AbortSignal.timeout(10_000),
               });
               if (res.ok) {
                   const json = await res.json();
                   const data = json.contents ? JSON.parse(json.contents) : json;
                   if (data.data?.clip) { responseData = data.data.clip; break; }
+                  if (data.data && data.data.clip === null && !data.errors) { confirmedMissing = true; break; }
               }
           } catch (e) {}
       }
-      if (responseData) break;
+      if (responseData || confirmedMissing) break;
   }
 
   if (!responseData) throw new Error("Clip not found.");

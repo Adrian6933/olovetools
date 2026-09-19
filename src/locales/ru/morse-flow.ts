@@ -1,4 +1,5 @@
 export default {
+  "issuesTitle_one": "Символов без эквивалента в морзе: {n}; показаны как {mark}:",
   "resetHint": "Начать заново",
   "title": "MorseFlow",
   "label_text": "Текст",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "FaviconBolt",
   "description": "用一个表情符号、几个字母或你自己的标志，生成一整套网站图标。所有内容都在浏览器里完成。",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "HashBolt",
   "badge": "Checksums e integridade de ficheiros",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "Verificar contra um checksum",
   "verifyPlaceholder": "Cola um hash, ou um ficheiro SHA256SUMS inteiro — as linhas são emparelhadas pelo nome do ficheiro.",
   "verifyHint": "Hex e Base64 funcionam, em qualquer caixa. Um comprimento que nenhum algoritmo marcado produz é assinalado em vez de ser dado como divergência.",
-  "verifySummary": "{count} checksum(s) lidos · {ok} verificados · {bad} sem corresponder",
+  "verifySummary": "Checksums lidos: {count} · verificados: {ok} · sem corresponder: {bad}",
   "verifyMatch": "Corresponde — o mesmo resumo {algo}.",
   "verifyMismatch": "Não corresponde. Este ficheiro não é o que esse checksum descreve.",
   "verifyUnknownLength": "Esse comprimento de checksum não corresponde a nenhum dos algoritmos marcados. Marca o correcto e calcula outra vez.",

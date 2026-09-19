@@ -1,4 +1,5 @@
 export default {
+  "frame_constraints": "Mit dieser Größe und diesem Pixelvielfachen passt kein exakter Rahmen. Vergrößere das Bild oder wähle ein kleineres Vielfaches.",
   "resetHint": "Neu anfangen",
   "title": "Aspect Ratio",
   "badge": "Werkzeugkasten für Seitenverhältnisse",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "कॉपी हो गया!",
+  "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क:",
   "resetHint": "फिर से शुरू करें",
   "title": "MemeBolt",
   "badge": "मीम स्टूडियो",

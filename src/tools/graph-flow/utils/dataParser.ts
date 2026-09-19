@@ -78,7 +78,7 @@ function detectDelimiter(lines: string[]): string {
  * Returns `null` when there is no number at all, so the caller can count how
  * many cells it had to fall back on instead of pretending they were zeroes.
  */
-export function parseNumber(raw: string): number | null {
+export function parseNumber(raw: string, decimalMark?: ',' | '.'): number | null {
   let s = raw.trim();
   if (!s) return null;
 
@@ -109,7 +109,10 @@ export function parseNumber(raw: string): number | null {
     s = looksGrouped && after === 3 ? s.replace(/,/g, '') : s.replace(',', '.');
   } else if (lastDot > -1) {
     const groups = s.split('.');
-    const looksGrouped = groups.length > 2 && groups.slice(1).every(g => g.length === 3);
+    // Un solo punto con tres cifras detras ("1.100") es ambiguo: mil cien o
+    // uno coma uno. Si el resto del archivo usa coma decimal, es de miles.
+    const minGroups = decimalMark === ',' ? 2 : 3;
+    const looksGrouped = groups.length >= minGroups && groups.slice(1).every(g => g.length === 3);
     if (looksGrouped) s = s.replace(/\./g, '');
   }
 
@@ -118,6 +121,24 @@ export function parseNumber(raw: string): number | null {
   const n = Number(s);
   if (!Number.isFinite(n)) return null;
   return negative ? -n : n;
+}
+
+/**
+ * La convención de todo el archivo, sacada de las celdas que no dejan duda:
+ * "1.234,5" o "12,75" dicen coma decimal; "1,234.5" o "12.75" dicen punto.
+ * Sirve para desempatar las que si la dejan, como "1.100".
+ */
+export function detectDecimalMark(cells: string[]): ',' | '.' | undefined {
+  let comma = 0;
+  let dot = 0;
+  for (const raw of cells) {
+    const s = raw.replace(/[^\d.,]/g, '');
+    if (/\.\d{3},\d/.test(s) || /^\d*,\d{1,2}$/.test(s) || /,\d{4,}$/.test(s)) comma++;
+    else if (/,\d{3}\.\d/.test(s) || /^\d*\.\d{1,2}$/.test(s) || /\.\d{4,}$/.test(s)) dot++;
+  }
+  if (comma > dot) return ',';
+  if (dot > comma) return '.';
+  return undefined;
 }
 
 /**
@@ -155,6 +176,7 @@ export function parseDelimited(text: string): ParseResult {
   const coercedCount: number[] = seriesNames.map(() => 0);
 
   const limit = Math.min(lines.length, MAX_ROWS + 1);
+  const decimalMark = detectDecimalMark(lines.slice(1, limit).flatMap(l => splitLine(l, delimiter).slice(1)));
 
   for (let i = 1; i < limit; i++) {
     const cols = splitLine(lines[i], delimiter);
@@ -162,7 +184,7 @@ export function parseDelimited(text: string): ParseResult {
 
     labels.push(cols[0] || `#${labels.length + 1}`);
     for (let j = 0; j < seriesNames.length; j++) {
-      const n = parseNumber(cols[j + 1] ?? '');
+      const n = parseNumber(cols[j + 1] ?? '', decimalMark);
       if (n === null) {
         coercedCount[j]++;
         columns[j].push(0);

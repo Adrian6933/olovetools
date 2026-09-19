@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "Limpar {n} arquivo",
+  "badgeTags_one": "{n} etiqueta",
   "resetHint": "Começar de novo",
   "title": "EXIF Cleaner",
   "badge": "Limpador de metadados de imagem",
@@ -57,7 +59,7 @@ export default {
   "optKeepOrientationHint": "Grava de volta um bloco EXIF de 30 bytes contendo apenas Orientation, para que as fotos na vertical não saiam deitadas.",
   "optRemoveIcc": "Remover também o perfil de cor",
   "optRemoveIccHint": "O perfil ICC não é dado pessoal e tirá-lo pode mudar as cores de forma visível, então ele fica por padrão.",
-  "cleanBtn": "Limpar {n} arquivo(s)",
+  "cleanBtn": "Limpar {n} arquivos",
   "cleaningLabel": "Limpando…",
   "downloadBtn": "Baixar",
   "downloadZipBtn": "Baixar .zip",

@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "Un entier n’a pas de décimales. Pour 12,5, passez en Virgule flottante.",
   "resetHint": "Recommencer",
   "title": "BinaryFlow",
   "seo_title": "Convertisseur binaire, hexadécimal et décimal avec éditeur de bits",

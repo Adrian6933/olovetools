@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "resetHint": "Neu anfangen",
   "title": "HashBolt",
   "badge": "Prüfsummen und Dateiintegrität",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "Gegen eine Prüfsumme verifizieren",
   "verifyPlaceholder": "Einen Hash einfügen oder eine ganze SHA256SUMS-Datei — die Zeilen werden über den Dateinamen zugeordnet.",
   "verifyHint": "Hex und Base64 funktionieren beide, in jeder Schreibweise. Eine Länge, die kein ausgewählter Algorithmus erzeugt, wird benannt statt als Abweichung gemeldet.",
-  "verifySummary": "{count} Prüfsumme(n) gelesen · {ok} bestätigt · {bad} abweichend",
+  "verifySummary": "Prüfsummen gelesen: {count} · bestätigt: {ok} · abweichend: {bad}",
   "verifyMatch": "Treffer — derselbe {algo}-Prüfwert.",
   "verifyMismatch": "Kein Treffer. Diese Datei ist nicht die, die diese Prüfsumme beschreibt.",
   "verifyUnknownLength": "Diese Prüfsummenlänge passt zu keinem der ausgewählten Algorithmen. Wähle den richtigen und berechne erneut.",

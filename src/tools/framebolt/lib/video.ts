@@ -12,6 +12,7 @@
 // ============================================================================
 
 import type { VideoInfo } from '../types';
+import { resolveVideoDuration } from '../../../lib/videoDuration';
 
 export interface FrameMeta {
   mediaTime: number;
@@ -162,6 +163,8 @@ export async function probeVideo(video: HTMLVideoElement, file: File, url: strin
     video.addEventListener('error', ko, { once: true });
   });
 
+  // WebM de MediaRecorder: duración Infinity hasta que se busca el final.
+  await resolveVideoDuration(video);
   // Un primer fotograma en pantalla antes de medir nada: si no, el primer
   // salto tiene que esperar además a que arranque la decodificación.
   await seekExact(video, 0);

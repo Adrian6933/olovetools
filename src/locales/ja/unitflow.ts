@@ -1,4 +1,6 @@
 export default {
+  "batch_results_one": "{n} 行を変換しました",
+  "batch_errors_one": "読み取れない行 {n}",
   "resetHint": "最初からやり直す",
   "title": "UnitFlow",
   "badge": "正確な単位変換ツール",

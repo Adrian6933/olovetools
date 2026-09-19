@@ -1,4 +1,5 @@
 export default {
+  "issuesTitle_one": "{n} 文字にモールスの対応がありません（{mark} で表示）:",
   "resetHint": "最初からやり直す",
   "title": "MorseFlow",
   "label_text": "テキスト",

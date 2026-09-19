@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "WordFlow",
   "description": "Conte palavras, meça a legibilidade, encontre frases fracas e limpe o texto — tudo dentro do navegador, em nove idiomas.",

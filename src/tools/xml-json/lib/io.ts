@@ -39,9 +39,9 @@ export function downloadText(text: string, filename: string, mime: string) {
   link.href = url;
   link.download = filename;
   link.click();
-  // Safe to revoke straight away: the browser already holds its own reference
-  // by the time click() returns. Not revoking pinned every export in memory.
-  URL.revokeObjectURL(url);
+  // Diferido: Safari puede estar resolviendo aun la URL cuando click() vuelve,
+  // y liberarla en la misma tarea cancela la descarga a veces.
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 export type ReadError = 'too-large' | 'read-failed';

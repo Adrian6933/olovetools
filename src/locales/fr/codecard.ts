@@ -49,28 +49,28 @@ export default {
   "features": [
     {
       "title": "Vraie coloration, 48 langages",
-      "text": "Le coloriseur lit le flux de jetons brut de Prism : JavaScript, Rust, Zig, Terraform, Dockerfile et 43 autres sortent avec les bonnes couleurs — et seule la grammaire choisie est telechargee."
+      "text": "Le coloriseur lit le flux de jetons brut de Prism : JavaScript, Rust, Zig, Terraform, Dockerfile et 43 autres sortent avec les bonnes couleurs — et seule la grammaire choisie est téléchargée."
     },
     {
       "title": "Mettez en avant les lignes utiles",
-      "text": "Cliquez un numero de ligne pour la souligner et attenuer le reste. Maj+clic prend une plage, Alt+clic inverse toute la selection, clic droit l’efface."
+      "text": "Cliquez un numéro de ligne pour la souligner et atténuer le reste. Maj+clic prend une plage, Alt+clic inverse toute la sélection, clic droit l’efface."
     },
     {
       "title": "Des exports dont rien n’est coupe",
-      "text": "La carte est mesuree a sa largeur reelle avant capture : les longues lignes survivent a l’export au lieu d’etre tronquees au bord de l’apercu. PNG, JPEG, WebP ou SVG vectoriel, jusqu’a 4x."
+      "text": "La carte est mesurée à sa largeur réelle avant capture : les longues lignes survivent à l’export au lieu d’être tronquées au bord de l’aperçu. PNG, JPEG, WebP ou SVG vectoriel, jusqu’à 4x."
     },
     {
       "title": "Local, et vraiment hors ligne",
-      "text": "Polices et grammaires viennent de ce site, pas d’un CDN tiers. Une fois la page chargee, coloration et export fonctionnent reseau debranche."
+      "text": "Polices et grammaires viennent de ce site, pas d’un CDN tiers. Une fois la page chargée, coloration et export fonctionnent réseau débranché."
     }
   ],
   "footerCredit": "Fait partie de la suite oLoveTools",
   "seoHeroTitle": "Créez de superbes images de vos codes sources en ligne",
   "seoHeroText": "Partager du code sous forme de texte brut sur les réseaux sociaux ou dans des présentations peut être visuellement ennuyeux. CodeCard transforme instantanément votre code en cartes au design élégant. Ajustez l'espacement, les ombres, les polices et le style de fenêtre pour correspondre à votre identité.",
   "seoHeroList": [
-    "PNG, JPEG, WebP et SVG vectoriel jusqu’a 4x",
-    "Polices et grammaires auto-hebergees : fonctionne hors ligne",
-    "Sans compte, et le filigrane est desactive par defaut"
+    "PNG, JPEG, WebP et SVG vectoriel jusqu’à 4x",
+    "Polices et grammaires auto-hébergées : fonctionne hors ligne",
+    "Sans compte, et le filigrane est désactivé par défaut"
   ],
   "seoBrowserSpeedTitle": "Génération locale rapide et sécurisée",
   "seoBrowserSpeedText": "CodeCard s'exécute entièrement dans votre navigateur via un rendu côté client. Aucun fichier ou texte ne quitte jamais votre ordinateur.",
@@ -91,28 +91,28 @@ export default {
   "faqTitle": "Foire Aux Questions",
   "faq": [
     {
-      "question": "Pourquoi mes longues lignes etaient-elles coupees ailleurs ?",
-      "answer": "Parce que la plupart des outils capturent le DOM tel qu’il est mis en page, et un bloc de code avec barre de defilement horizontale ne met en page que la partie visible. CodeCard mesure la carte a sa largeur reelle, non rognee, avant la capture."
+      "question": "Pourquoi mes longues lignes étaient-elles coupées ailleurs ?",
+      "answer": "Parce que la plupart des outils capturent le DOM tel qu’il est mis en page, et un bloc de code avec barre de défilement horizontale ne met en page que la partie visible. CodeCard mesure la carte à sa largeur réelle, non rognée, avant la capture."
     },
     {
       "question": "Comment mettre certaines lignes en avant ?",
-      "answer": "Cliquez un numero de ligne dans l’apercu pour la souligner et attenuer le reste. Maj+clic etend une plage, Alt+clic inverse toute la selection, le clic droit l’efface. Vous pouvez aussi saisir des plages comme 3, 7-9, 12."
+      "answer": "Cliquez un numéro de ligne dans l’aperçu pour la souligner et atténuer le reste. Maj+clic étend une plage, Alt+clic inverse toute la sélection, le clic droit l’efface. Vous pouvez aussi saisir des plages comme 3, 7-9, 12."
     },
     {
       "question": "Quels langages sont pris en charge ?",
-      "answer": "48, dont JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfile, Bash, PowerShell, Markdown et les diffs unifies. Seule la grammaire choisie est telechargee."
+      "answer": "48, dont JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfile, Bash, PowerShell, Markdown et les diffs unifiés. Seule la grammaire choisie est téléchargée."
     },
     {
       "question": "Puis-je utiliser CodeCard hors ligne ?",
-      "answer": "Oui. Les polices monospace et les grammaires viennent de ce site et non d’un CDN tiers : une fois la page chargee, coloration et export continuent sans reseau."
+      "answer": "Oui. Les polices monospace et les grammaires viennent de ce site et non d’un CDN tiers : une fois la page chargée, coloration et export continuent sans réseau."
     },
     {
-      "question": "Mon code est-il en securite ?",
-      "answer": "Votre code n’est transmis nulle part. Coloration, mise en page et rendu de l’image se font dans votre navigateur ; rien n’est envoye ni journalise."
+      "question": "Mon code est-il en sécurité ?",
+      "answer": "Votre code n’est transmis nulle part. Coloration, mise en page et rendu de l’image se font dans votre navigateur ; rien n’est envoyé ni journalise."
     },
     {
-      "question": "Quel reglage donne l’export le plus net ?",
-      "answer": "PNG en 3x ou 4x pour un usage matriciel. Si la destination accepte les vecteurs, choisissez SVG : il reste net a toute taille et pese souvent moins qu’un PNG 4x."
+      "question": "Quel réglage donne l’export le plus net ?",
+      "answer": "PNG en 3x ou 4x pour un usage matriciel. Si la destination accepte les vecteurs, choisissez SVG : il reste net à toute taille et pese souvent moins qu’un PNG 4x."
     }
   ],
   "footerTagline": "Générateur de captures de code gratuit et élégant, fonctionnant 100% localement sur votre appareil.",
@@ -130,93 +130,93 @@ export default {
   "heroChipLanguages": "48 langages",
   "heroChipLocal": "Fonctionne dans votre navigateur",
   "heroChipNoAccount": "Sans compte ni envoi",
-  "previewTitle": "Apercu en direct",
+  "previewTitle": "Aperçu en direct",
   "privacyNote": "Coloration dans votre navigateur. Votre code ne quitte pas cet appareil.",
-  "dropTitle": "Deposez le fichier ici",
-  "dropHint": "Deposez un fichier source ici, ou collez le code.",
+  "dropTitle": "Déposez le fichier ici",
+  "dropHint": "Déposez un fichier source ici, ou collez le code.",
   "dropBrowse": "Ouvrir un fichier",
-  "startBlank": "Partir de zero",
+  "startBlank": "Partir de zéro",
   "pendingLines": "lignes",
-  "pendingLoad": "Charger dans l'editeur",
-  "pendingLoadRaw": "Charger sans detection",
-  "pendingDiscard": "Ecarter",
+  "pendingLoad": "Charger dans l'éditeur",
+  "pendingLoadRaw": "Charger sans détection",
+  "pendingDiscard": "Écarter",
   "pendingBig": "Fichier volumineux : la coloration peut ralentir pendant la saisie.",
-  "labelStartLine": "Numero de la premiere ligne",
+  "labelStartLine": "Numéro de la première ligne",
   "labelHighlightLines": "Lignes mises en avant",
-  "highlightHint": "Ou cliquez les numeros de ligne dans l’apercu. Maj+clic pour une plage, Alt+clic inverse, clic droit efface.",
+  "highlightHint": "Ou cliquez les numéros de ligne dans l’aperçu. Maj+clic pour une plage, Alt+clic inverse, clic droit efface.",
   "highlightPlaceholder": "ex. 3, 7-9, 12",
   "clearHighlights": "Effacer",
-  "labelDimOthers": "Attenuer les autres lignes",
-  "labelBgMode": "Arriere-plan",
-  "bgModeGradient": "Degrade",
+  "labelDimOthers": "Atténuer les autres lignes",
+  "labelBgMode": "Arrière-plan",
+  "bgModeGradient": "Dégradé",
   "bgModeSolid": "Uni",
   "bgModeNone": "Aucun",
-  "labelBgColor": "Couleur d'arriere-plan",
+  "labelBgColor": "Couleur d'arrière-plan",
   "labelFontFamily": "Police",
   "fontIbmPlex": "IBM Plex Mono",
-  "fontSystem": "Monospace du systeme",
+  "fontSystem": "Monospace du système",
   "labelLineHeight": "Hauteur de ligne",
   "labelAspect": "Format d'image",
   "aspectAuto": "Auto",
-  "aspectSquare": "Carre",
+  "aspectSquare": "Carré",
   "aspectWide": "Large",
   "aspectSocial": "Social",
   "aspectPortrait": "Portrait",
   "windowMacDesc": "Les trois pastilles macOS",
-  "windowWindowsDesc": "Reduire, agrandir, fermer",
-  "windowSimpleDesc": "Un seul reperage colore",
+  "windowWindowsDesc": "Réduire, agrandir, fermer",
+  "windowSimpleDesc": "Un seul repère coloré",
   "windowNoneDesc": "Aucune barre de titre",
   "labelWordWrap": "Renvoyer les longues lignes",
-  "wordWrapHint": "Desactive, la carte s’elargit jusqu’a la ligne la plus longue.",
+  "wordWrapHint": "Désactivé, la carte s’élargit jusqu’à la ligne la plus longue.",
   "labelLigatures": "Ligatures de police",
   "ligaturesHint": "Transforme => et !== en glyphes uniques.",
-  "watermarkHint": "Desactive par defaut. Rien n’est appose sur votre image sans votre accord.",
+  "watermarkHint": "Désactivé par défaut. Rien n’est apposé sur votre image sans votre accord.",
   "labelCardWidth": "Largeur de la carte",
   "labelTabSize": "Taille de tabulation",
   "labelFormat": "Format",
-  "labelQuality": "Qualite",
-  "btnDownload": "Telecharger",
+  "labelQuality": "Qualité",
+  "btnDownload": "Télécharger",
   "btnCopy": "Copier l'image",
-  "copyOk": "Copiee",
-  "copyFail": "Votre navigateur a bloque le presse-papiers. Telechargez-la plutot.",
-  "presetsTitle": "Styles enregistres",
+  "copyOk": "Copiée",
+  "copyFail": "Votre navigateur a bloque le presse-papiers. Téléchargez-la plutôt.",
+  "presetsTitle": "Styles enregistrés",
   "presetSave": "Enregistrer",
-  "presetEmpty": "Rien d’enregistre. Les styles restent dans ce navigateur.",
+  "presetEmpty": "Rien d’enregistré. Les styles restent dans ce navigateur.",
   "presetDelete": "Supprimer le style",
   "undo": "Annuler",
-  "redo": "Retablir",
+  "redo": "Rétablir",
   "zoomIn": "Zoom avant",
-  "zoomOut": "Zoom arriere",
-  "zoomFit": "Reinitialiser la vue",
+  "zoomOut": "Zoom arrière",
+  "zoomFit": "Réinitialiser la vue",
   "compareHold": "Maintenez pour voir le code brut",
   "backToTop": "Retour en haut",
   "statusExporting": "Rendu de l'image...",
   "statusGrammar": "Chargement de la grammaire...",
   "errorGrammar": "Impossible de charger la grammaire. Le code s’affiche en texte brut.",
-  "errorTooBig": "Ce fichier depasse 4 Mo.",
-  "howTitle": "Comment ca marche",
-  "howStep1Title": "Collez ou deposez votre code",
-  "howStep1Text": "Tapez, collez ou deposez un fichier source. Le fichier attend : sa taille et son nombre de lignes s’affichent, et rien ne se charge avant votre clic.",
-  "howStep2Title": "Stylisez et choisissez les lignes cles",
-  "howStep2Text": "Dix themes, neuf degrades ou votre couleur, cinq habillages de fenetre. Cliquez un numero de ligne pour la mettre en avant et attenuer le reste.",
+  "errorTooBig": "Ce fichier dépasse 4 Mo.",
+  "howTitle": "Comment ça marche",
+  "howStep1Title": "Collez ou déposez votre code",
+  "howStep1Text": "Tapez, collez ou déposez un fichier source. Le fichier attend : sa taille et son nombre de lignes s’affichent, et rien ne se charge avant votre clic.",
+  "howStep2Title": "Stylisez et choisissez les lignes clés",
+  "howStep2Text": "Dix thèmes, neuf dégradés ou votre couleur, cinq habillages de fenêtre. Cliquez un numéro de ligne pour la mettre en avant et atténuer le reste.",
   "howStep3Title": "Exportez ou envoyez plus loin",
-  "howStep3Text": "PNG, JPEG, WebP ou SVG vectoriel, jusqu’a 4x. Copiez dans le presse-papiers, ou transmettez l’image a CompressSnap, CropSnap ou WatermarkSnap sans la telecharger.",
+  "howStep3Text": "PNG, JPEG, WebP ou SVG vectoriel, jusqu’à 4x. Copiez dans le presse-papiers, ou transmettez l’image a CompressSnap, CropSnap ou WatermarkSnap sans la télécharger.",
   "seoEngineTitle": "Base sur le flux de jetons de Prism",
-  "seoEngineText": "Plutot que de demander au coloriseur du HTML fini, CodeCard lit le flux de jetons brut et reconstruit le code ligne par ligne. C’est ce qui rend possibles les numeros exacts, la mise en avant par ligne, le renvoi avec retrait et les exports non rognes.",
+  "seoEngineText": "Plutôt que de demander au coloriseur du HTML fini, CodeCard lit le flux de jetons brut et reconstruit le code ligne par ligne. C’est ce qui rend possibles les numéros exacts, la mise en avant par ligne, le renvoi avec retrait et les exports non rognés.",
   "nextStepTitle": "Continuez",
-  "nextStepHint": "Votre image vous suit, sans reenvoi",
+  "nextStepHint": "Votre image vous suit, sans réenvoi",
   "nextCompress": "Compressez-la",
   "nextCrop": "Recadrez-la",
   "nextFormat": "Changez de format",
   "nextWatermark": "Ajoutez un filigrane",
-  "nextMeme": "Faites un meme",
+  "nextMeme": "Faites un même",
   "groupWeb": "Web",
-  "groupSystems": "Systeme",
+  "groupSystems": "Système",
   "groupApps": "Applications",
-  "groupData": "Donnees et configuration",
+  "groupData": "Données et configuration",
   "groupOps": "Shell et ops",
   "groupText": "Texte et diffs",
   "gradientCandy": "Rose Bonbon",
   "gradientMono": "Graphite",
-  "gradientPeach": "Peche Douce",
+  "gradientPeach": "Pêche Douce",
 };

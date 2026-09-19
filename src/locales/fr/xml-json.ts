@@ -1,4 +1,5 @@
 export default {
+  "xpath_matches_one": "{n} correspondance",
   "resetHint": "Recommencer",
   "title": "XML to JSON",
   "seoHeroTitle": "XML to JSON",

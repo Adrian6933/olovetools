@@ -1,4 +1,8 @@
 export default {
+  "rangeNoPages": "Nenhuma dessas páginas existe: o documento tem {n}.",
+  "zoomOutLabel": "Diminuir zoom",
+  "zoomInLabel": "Aumentar zoom",
+  "zoomFitLabel": "Ajustar",
   "removeFile": "Remover o ficheiro",
   "resetHint": "Começar de novo",
   "title": "PDFFlow",

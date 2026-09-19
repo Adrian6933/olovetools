@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "Lottie Viewer",
   "description": ".lottie・.tgs・.json のアニメーションを開き、塗り・線・グラデーションの各ストップを配色し直し、他のプレイヤーで壊れる箇所を確認して、JSON・SVG・PNG・連番画像・WebM に書き出せます。すべてブラウザ内で完結します。",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "最適化",
   "opt_precision": "小数の桁数",
   "opt_drop_hidden": "非表示レイヤーを削除",
-  "opt_drop_names": "作者のメタデータを削除",
+  "opt_drop_names": "レイヤー名を削除（アプリのキーパスや動的テキストが使えなくなります）",
   "opt_drop_expressions": "エクスプレッションを削除",
   "btn_optimize": "最適化する",
   "opt_removed_layers": "非表示レイヤーを {n} 枚削除しました",

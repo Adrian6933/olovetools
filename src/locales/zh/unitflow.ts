@@ -1,4 +1,6 @@
 export default {
+  "batch_results_one": "已换算 {n} 行",
+  "batch_errors_one": "{n} 行无法读取",
   "resetHint": "重新开始",
   "title": "UnitFlow",
   "badge": "精确单位换算器",

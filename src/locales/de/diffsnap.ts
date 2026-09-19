@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "resetHint": "Neu anfangen",
   "title": "DiffSnap",
   "description": "Vergleiche zwei Texte oder zwei Fassungen einer Datei und sieh genau, was sich geändert hat: ausgerichtete Spalten, die umgeschriebenen Wörter innerhalb jeder Zeile hervorgehoben und ein anwendbarer vereinheitlichter Patch.",

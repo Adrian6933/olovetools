@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "{n} 件を処理",
+  "badgeTags_one": "タグ {n} 件",
   "resetHint": "最初からやり直す",
   "title": "EXIF Cleaner",
   "badge": "画像メタデータクリーナー",

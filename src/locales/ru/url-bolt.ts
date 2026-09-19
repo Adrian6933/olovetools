@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "К этой ссылке прицеплено параметров отслеживания: {0}.",
   "resetHint": "Начать заново",
   "title": "URLBolt",
   "seo_title": "URLBolt | Кодировщик, декодировщик и инспектор URL",

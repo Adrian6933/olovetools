@@ -1,4 +1,5 @@
 export default {
+  "frame_constraints": "このサイズとピクセル倍数では正確な枠が収まりません。サイズを大きくするか、小さい倍数を選んでください。",
   "resetHint": "最初からやり直す",
   "title": "Aspect Ratio",
   "badge": "アスペクト比ツールキット",

@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "Um inteiro não tem casas decimais. Para 12,5, mude para Vírgula flutuante.",
   "resetHint": "Começar de novo",
   "title": "BinaryFlow",
   "seo_title": "Conversor de binário, hexadecimal e decimal com editor de bits",

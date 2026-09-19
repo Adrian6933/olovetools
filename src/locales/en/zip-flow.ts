@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "ZipFlow",
   "description": "Pack files and whole folders into a ZIP, or open an archive and browse it like a file manager — entirely inside your browser.",

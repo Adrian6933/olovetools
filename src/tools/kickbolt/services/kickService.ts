@@ -46,7 +46,9 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   // The Node backend fetches kick.com's Cloudflare-protected API server-side.
   try {
       const res = await fetch(`/api/kick?action=clip&slug=${encodeURIComponent(slug)}`, {
-          headers: { 'Accept': 'application/json' }
+          headers: { 'Accept': 'application/json' },
+          // Sin tope, un backend o relé que no contesta dejaba el clip cargando para siempre.
+          signal: AbortSignal.timeout(10_000),
       });
       if (res.ok) {
           const json = await res.json();
@@ -59,7 +61,8 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
           try {
               const res = await fetch(makeProxyUrl(apiUrl), {
                   method: 'GET',
-                  headers: { 'Accept': 'application/json' }
+                  headers: { 'Accept': 'application/json' },
+                  signal: AbortSignal.timeout(10_000),
               });
               if (res.ok) {
                   const json = await res.json();
@@ -92,7 +95,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
 
     for (const makeProxyUrl of usableProxies(DOWNLOAD_PROXIES)) {
         try {
-            const res = await fetch(makeProxyUrl(masterUrl));
+            const res = await fetch(makeProxyUrl(masterUrl), { signal: AbortSignal.timeout(10_000) });
             if (res.ok) {
                 const text = await res.text();
                 if (text.includes('#EXT-X-STREAM-INF')) {
@@ -107,7 +110,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
     if (!masterPlaylistText) {
         for (const makeProxyUrl of usableProxies(DOWNLOAD_PROXIES)) {
             try {
-                const res = await fetch(makeProxyUrl(videoUrl));
+                const res = await fetch(makeProxyUrl(videoUrl), { signal: AbortSignal.timeout(10_000) });
                 if (res.ok) {
                     masterPlaylistText = await res.text();
                     activeUrl = videoUrl;

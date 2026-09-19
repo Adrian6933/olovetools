@@ -35,9 +35,9 @@ export function downloadText(text: string, filename: string, mime = 'text/plain;
   link.href = url;
   link.download = filename;
   link.click();
-  // Safe to revoke straight away: the browser took its own reference inside
-  // click(). Leaving it pinned the blob for the life of the tab.
-  URL.revokeObjectURL(url);
+  // Diferido: Safari puede estar resolviendo aun la URL cuando click() vuelve,
+  // y liberarla en la misma tarea cancela la descarga a veces.
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 /** Anything past this goes into the parked state instead of into the editor. */

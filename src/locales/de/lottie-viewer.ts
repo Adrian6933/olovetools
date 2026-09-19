@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "resetHint": "Neu anfangen",
   "title": "Lottie Viewer",
   "description": "Öffne .lottie-, .tgs- und .json-Animationen, färbe jede Füllung, Kontur und jeden Verlaufsstopp neu ein, prüfe, was in anderen Playern kaputtgeht, und exportiere als JSON, SVG, PNG, Bildsequenz oder WebM — alles im Browser.",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "Optimierer",
   "opt_precision": "Nachkommastellen",
   "opt_drop_hidden": "Ausgeblendete Ebenen entfernen",
-  "opt_drop_names": "Autoren-Metadaten entfernen",
+  "opt_drop_names": "Ebenennamen entfernen (bricht Keypaths und dynamischen Text in Apps)",
   "opt_drop_expressions": "Expressions entfernen",
   "btn_optimize": "Optimieren",
   "opt_removed_layers": "{n} ausgeblendete Ebene(n) entfernt",

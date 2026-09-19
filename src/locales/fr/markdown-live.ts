@@ -1,4 +1,8 @@
 export default {
+  "anchorLabel": "Lien vers cette section",
+  "howItWorksTitle": "Comment ça marche",
+  "emailCopied": "Copié !",
+  "contactForIdeas": "Contact pour idées et commentaires :",
   "resetHint": "Recommencer",
   "title": "MarkdownLive",
   "description": "Écrivez du Markdown à gauche et regardez le document se construire à droite : listes imbriquées, listes de tâches, tableaux, notes de bas de page et code coloré, le tout interprété dans votre propre onglet.",

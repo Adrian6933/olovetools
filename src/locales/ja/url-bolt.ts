@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "このリンクには {0} 個のトラッキングパラメータが付いています。",
   "resetHint": "最初からやり直す",
   "title": "URLBolt",
   "seo_title": "URLBolt | URLエンコーダー・デコーダー・インスペクター",

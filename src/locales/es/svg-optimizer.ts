@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:",
   "resetHint": "Empezar de nuevo",
   "title": "SVG Optimizer",
   "description": "Optimiza, limpia y minifica archivos vectoriales SVG 100% localmente en tu navegador para reducir el tamaño del archivo y mejorar el rendimiento de carga.",

@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "{0} paramètre de suivi est accroché à ce lien.",
   "resetHint": "Recommencer",
   "title": "URLBolt",
   "seo_title": "URLBolt | Encodeur, décodeur et inspecteur d'URL",

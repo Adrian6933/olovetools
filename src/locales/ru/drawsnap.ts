@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Скопировано!",
+  "contactForIdeas": "Контакт для идей и замечаний:",
   "resetHint": "Начать заново",
   "title": "DrawSnap",
   "badge": "Доска для рисования и обводка",

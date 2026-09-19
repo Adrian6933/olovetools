@@ -1,4 +1,5 @@
 export default {
+  "calendar_runs_one": "{n} रन",
   "resetHint": "फिर से शुरू करें",
   "title": "CronFlow",
   "badge": "Cron एक्सप्रेशन",

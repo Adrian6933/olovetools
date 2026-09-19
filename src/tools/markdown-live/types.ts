@@ -86,6 +86,8 @@ export interface RenderOptions {
   bare?: boolean;
   /** Anchor links next to headings. Off for exports that are not web pages. */
   anchors?: boolean;
+  /** aria-label del ancla "#" de cada titulo, ya traducido. */
+  anchorLabel?: string;
   /** Syntax highlighter. Returns HTML, or null to leave the code as text. */
   highlight?: (code: string, lang: string) => string | null;
 }
@@ -96,6 +98,7 @@ export interface RenderOptions {
 export interface WorkerRequest {
   id: number;
   text: string;
+  anchorLabel?: string;
 }
 
 export interface WorkerResponse {

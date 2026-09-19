@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "WordFlow",
   "description": "文字数を数え、読みやすさを測り、弱い文を見つけ、テキストを整える。すべてブラウザーの中で、9言語に対応。",

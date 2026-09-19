@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "MemeBolt",
   "badge": "Meme studio",

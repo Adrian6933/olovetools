@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:",
   "resetHint": "Empezar de nuevo",
   "title": "HashBolt",
   "badge": "Checksums e integridad de archivos",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "Verificar contra un checksum",
   "verifyPlaceholder": "Pega un hash, o un archivo SHA256SUMS entero: las líneas se emparejan por nombre de archivo.",
   "verifyHint": "Funcionan tanto hex como Base64, en cualquier caja. Si la longitud del resumen no la produce ningún algoritmo marcado se te avisa, en vez de darlo por no coincidente.",
-  "verifySummary": "{count} checksum(s) leídos · {ok} verificados · {bad} sin coincidir",
+  "verifySummary": "Checksums leídos: {count} · verificados: {ok} · sin coincidir: {bad}",
   "verifyMatch": "Coincide: el mismo resumen {algo}.",
   "verifyMismatch": "No coincide. Este archivo no es el que describe ese checksum.",
   "verifyUnknownLength": "Esa longitud de checksum no la produce ninguno de los algoritmos marcados. Marca el correcto y vuelve a calcular.",

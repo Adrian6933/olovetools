@@ -1,4 +1,5 @@
 export default {
+  "report_dangerous_one": "{0} 件の削除はコードを実行し得たものです。",
   "previewTitle": "整形済み HTML のプレビュー",
   "resetHint": "最初からやり直す",
   "title": "HTML Sanitizer",

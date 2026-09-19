@@ -1,4 +1,5 @@
 export default {
+  "issuesTitle_one": "{n} carácter no tiene equivalente en morse; se muestra como {mark}:",
   "resetHint": "Empezar de nuevo",
   "title": "MorseFlow",
   "label_text": "Texto",

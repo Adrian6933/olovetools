@@ -15,13 +15,18 @@ import type { LottieJson, OptimizeOptions, OptimizeResult } from '../types';
 export const DEFAULT_OPTIMIZE: OptimizeOptions = {
   precision: 2,
   dropHidden: true,
-  dropNames: true,
+  dropNames: false,
   dropExpressions: false,
 };
 
-/** Author metadata: useful in After Effects, dead weight in a shipped file. */
-// Blend modes and property indices affect rendering / expressions. Keep them.
-const METADATA_KEYS = ['nm', 'mn', 'cl', 'ln'];
+/**
+ * Nombres de After Effects: `nm` (nombre visible) y `mn` (match name).
+ * Ojo: `nm` es lo que usan lottie-ios y lottie-android en sus keypaths para
+ * cambiar texto o colores en tiempo de ejecucion, asi que quitarlo se avisa en
+ * la etiqueta. `cl` y `ln` NO van aqui: el reproductor web los convierte en la
+ * clase y el id de cada capa del SVG, y hay CSS y JS que dependen de ellos.
+ */
+const METADATA_KEYS = ['nm', 'mn'];
 /** Keys we must never round or strip — they are structural, not geometric. */
 const STRUCTURAL_KEYS = new Set(['v', 'fr', 'ip', 'op', 'w', 'h', 'ty', 'ind', 'parent', 'refId', 'id', 'st', 'sr', 'ddd', 'a', 'p', 'e', 'tt', 'td', 'hd']);
 

@@ -1,4 +1,9 @@
 export default {
+  "tree_rows_one": "{0} 行",
+  "tree_hits_one": "{0} 处匹配",
+  "query_matches_one": "{0} 处匹配",
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "copyPath": "复制路径",
   "copyValue": "复制值",
   "copyBranch": "复制整个分支",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "ZipFlow",
   "description": "ファイルやフォルダーごとZIPにまとめたり、アーカイブを開いてファイルマネージャーのように中身をたどったり。すべてブラウザーの中で完結します。",

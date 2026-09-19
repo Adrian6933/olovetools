@@ -51,9 +51,9 @@ export function renderBody(markdown: string, options: { bare?: boolean; anchors?
 // Standalone HTML
 // ---------------------------------------------------------------------------
 
-export function buildHtmlFile(markdown: string, theme: ThemeId, lang: string): string {
+export function buildHtmlFile(markdown: string, theme: ThemeId, lang: string, anchorLabel?: string): string {
   const doc = parse(markdown);
-  const body = render(doc.blocks, { anchors: true, highlight });
+  const body = render(doc.blocks, { anchors: true, anchorLabel, highlight });
   const title = documentName(markdown, 'Document');
   const meta = themeMeta(theme);
 

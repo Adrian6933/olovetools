@@ -57,6 +57,70 @@ export function renderLines(cue: Cue, target: Format, speakerNames: boolean): st
   return lines.map(l => l.replace(/\s{2,}/g, ' ').trim()).filter((l, i, a) => l !== '' || a.length === 1);
 }
 
+/**
+ * Las etiquetas de estilo de SRT/VTT (<i>, <b>, <u>, <s>, <font color>) no
+ * existen en ASS ni en TTML. Antes pasaban tal cual: en ASS quedaba el <i>
+ * literal y en TTML se escapaba, asi que el espectador veia "<i>mundo</i>"
+ * escrito en pantalla. Cada formato tiene su equivalente.
+ */
+const TAG = /<(\/?)([a-z]+)([^>]*)>/gi;
+const fontColor = (attrs: string) => /color\s*=\s*["']?([^"'\s>]+)/i.exec(attrs)?.[1] || '';
+
+/** `#RRGGBB` → `&HBBGGRR&`, el orden de ASS. Lo que no es hex se ignora. */
+function assColor(css: string): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(css);
+  if (!m) return '';
+  const [r, g, b] = [m[1].slice(0, 2), m[1].slice(2, 4), m[1].slice(4, 6)];
+  return `&H${b}${g}${r}&`.toUpperCase();
+}
+
+export function htmlTagsToAss(line: string): string {
+  return line.replace(TAG, (_all, close: string, name: string, attrs: string) => {
+    const tag = name.toLowerCase();
+    const on = close ? '0' : '1';
+    if (tag === 'i' || tag === 'b' || tag === 'u' || tag === 's') return `{\\${tag}${on}}`;
+    if (tag === 'font') {
+      if (close) return '{\\c}';
+      const c = assColor(fontColor(attrs));
+      return c ? `{\\c${c}}` : '';
+    }
+    return '';
+  });
+}
+
+const TTML_SPAN: Record<string, string> = {
+  i: 'tts:fontStyle="italic"',
+  b: 'tts:fontWeight="bold"',
+  u: 'tts:textDecoration="underline"',
+  s: 'tts:textDecoration="lineThrough"',
+};
+
+export function htmlTagsToTtml(line: string): string {
+  let out = '';
+  let last = 0;
+  let open = 0;
+  for (const m of line.matchAll(TAG)) {
+    out += escapeXml(line.slice(last, m.index));
+    last = m.index! + m[0].length;
+    const tag = m[2].toLowerCase();
+    if (m[1]) {
+      if ((TTML_SPAN[tag] || tag === 'font') && open > 0) {
+        out += '</span>';
+        open--;
+      }
+      continue;
+    }
+    const attr = tag === 'font' ? (fontColor(m[3]) ? `tts:color="${escapeXml(fontColor(m[3]))}"` : '') : TTML_SPAN[tag];
+    if (attr) {
+      out += `<span ${attr}>`;
+      open++;
+    }
+  }
+  out += escapeXml(line.slice(last));
+  // Etiquetas sin cerrar en el origen: se cierran para que el XML sea valido.
+  return out + '</span>'.repeat(open);
+}
+
 export interface EmitOptions {
   /** Fold `<v Speaker>` / ASS Name into the text as "Speaker: ". */
   speakerNames: boolean;
@@ -131,7 +195,7 @@ function emitAss(track: Track, o: EmitOptions): string {
       : ASS_HEADER;
   const events = track.cues
     .map(cue => {
-      const text = renderLines(cue, 'ass', false).join('\\N').replace(/\n/g, '\\N');
+      const text = renderLines(cue, 'ass', false).map(htmlTagsToAss).join('\\N').replace(/\n/g, '\\N');
       const style = cue.style || 'Default';
       const name = o.speakerNames ? '' : cue.speaker || '';
       return `Dialogue: 0,${toAssTime(cue.start)},${toAssTime(cue.end)},${style},${name},0,0,0,,${text}`;
@@ -146,7 +210,7 @@ function emitAss(track: Track, o: EmitOptions): string {
 function emitTtml(track: Track, o: EmitOptions): string {
   const body = track.cues
     .map(cue => {
-      const text = renderLines(cue, 'ttml', o.speakerNames).map(escapeXml).join('<br/>');
+      const text = renderLines(cue, 'ttml', o.speakerNames).map(htmlTagsToTtml).join('<br/>');
       const region = cue.style ? ` region="${escapeXml(cue.style)}"` : '';
       return `      <p begin="${toTtmlTime(cue.start)}" end="${toTtmlTime(cue.end)}"${region}>${text}</p>`;
     })

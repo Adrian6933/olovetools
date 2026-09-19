@@ -1,4 +1,5 @@
 export default {
+  "xpath_matches_one": "совпадений: {n}",
   "resetHint": "Начать заново",
   "title": "XML to JSON",
   "seoHeroTitle": "XML to JSON",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "SVG Optimizer",
   "description": "100% 在线本地优化、清理并压缩 SVG 矢量图文件，有效减小文件体积并提升网页加载性能。",

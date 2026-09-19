@@ -278,9 +278,10 @@ export default function SubtitlesBolt({ lang, dictionary }: SubtitlesBoltProps) 
     link.href = url;
     link.download = name;
     link.click();
-    // Revoking on the next tick, not synchronously: Firefox cancels a download
-    // whose object URL is released in the same task as the click.
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    // Revoking later, not synchronously: Firefox cancels a download
+    // whose object URL is released in the same task as the click, and Safari
+    // can still be resolving it on the next tick.
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
   };
 
   const resetWorkspace = () => {

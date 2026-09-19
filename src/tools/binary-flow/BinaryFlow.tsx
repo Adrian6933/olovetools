@@ -271,7 +271,9 @@ export default function BinaryFlow({ lang, dictionary }: BinaryFlowProps) {
   const errorText = parsed.error
     ? parsed.error === 'digit'
       ? (t.errorDigit || '"{c}" is not a digit in base {b}').replace('{c}', parsed.at).replace('{b}', String(inputBase))
-      : ''
+      : parsed.error === 'fraction'
+        ? t.errorFraction || 'Whole numbers have no decimals. For 12.5, switch to Floating point.'
+        : ''
     : '';
 
   const widthLabel = (w: Width) => (w === 0 ? t.widthAuto || 'Auto' : `${w}`);

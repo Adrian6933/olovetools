@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "Whole numbers have no decimals. For 12.5, switch to Floating point.",
   "resetHint": "Start over",
   "title": "BinaryFlow",
   "seo_title": "Binary, hex and decimal converter with a bit editor",

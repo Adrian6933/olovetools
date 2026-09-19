@@ -1,4 +1,10 @@
 export default {
+  "status_errors_one": "Проблем: {0}",
+  "status_warnings_one": "Стоит проверить: {0}",
+  "lines_one": "строка",
+  "lines_few": "строки",
+  "chars_one": "символ",
+  "chars_few": "символа",
   "resetHint": "Начать заново",
   "title": "SQLFlow",
   "dialect": "Диалект",

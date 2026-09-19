@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "HashBolt",
   "badge": "Checksums & file integrity",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "Verify against a checksum",
   "verifyPlaceholder": "Paste one hash, or a whole SHA256SUMS file — lines are matched by file name.",
   "verifyHint": "Hex and Base64 both work, in any case. A digest length that no ticked algorithm produces is called out instead of being reported as a mismatch.",
-  "verifySummary": "{count} checksum(s) read · {ok} verified · {bad} mismatched",
+  "verifySummary": "Checksums read: {count} · verified: {ok} · mismatched: {bad}",
   "verifyMatch": "Match — the same {algo} digest.",
   "verifyMismatch": "No match. This file is not the one that checksum describes.",
   "verifyUnknownLength": "That checksum length matches none of the algorithms you ticked. Tick the right one and compute again.",

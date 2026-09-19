@@ -1,4 +1,8 @@
 export default {
+  "status_errors_one": "{0} 处问题",
+  "status_warnings_one": "{0} 处值得确认",
+  "lines_one": "行",
+  "chars_one": "字符",
   "resetHint": "重新开始",
   "title": "SQLFlow",
   "dialect": "方言",

@@ -453,7 +453,7 @@ export default function HashBolt({ lang, dictionary }: HashBoltProps) {
     document.body.appendChild(anchor);
     anchor.click();
     anchor.remove();
-    URL.revokeObjectURL(href);
+    window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
   };
 
   const copyAll = () => {
@@ -1136,7 +1136,7 @@ export default function HashBolt({ lang, dictionary }: HashBoltProps) {
                   />
                   {expected.length > 0 && (
                     <p className="text-[11px] text-slate-500 font-medium">
-                      {(t.verifySummary || '{count} checksum(s) read · {ok} verified · {bad} mismatched')
+                      {(t.verifySummary || 'Checksums read: {count} · verified: {ok} · mismatched: {bad}')
                         .replace('{count}', String(expected.length))
                         .replace('{ok}', String(verifiedCount))
                         .replace('{bad}', String(mismatchCount))}

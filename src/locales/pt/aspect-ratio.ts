@@ -1,4 +1,5 @@
 export default {
+  "frame_constraints": "Nenhum enquadramento exato cabe com esse tamanho e múltiplo de pixels. Aumente o tamanho ou escolha um múltiplo menor.",
   "resetHint": "Começar de novo",
   "title": "Aspect Ratio",
   "badge": "Kit de proporções",

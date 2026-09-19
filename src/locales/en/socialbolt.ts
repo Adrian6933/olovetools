@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "SocialBolt",
   "description": "Paste a TikTok or X link and pick exactly what you take: video without watermark, HD track, MP3 audio, cover art or every photo in the carousel.",

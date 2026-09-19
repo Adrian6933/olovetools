@@ -861,7 +861,7 @@ export default function XmlJson({ lang, dictionary }: XmlJsonProps) {
                       ) : (
                         <>
                           <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-slate-500">
-                            {(t.xpath_matches || '{n} matches').replace('{n}', String(xpathResult.total))}
+                            {((xpathResult.total === 1 && t.xpath_matches_one) || t.xpath_matches || '{n} matches').replace('{n}', String(xpathResult.total))}
                           </p>
                           {xpathResult.matches.map((match, i) => (
                             <div key={i} className="border-b border-white/5 py-1.5">

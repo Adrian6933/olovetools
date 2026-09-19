@@ -115,7 +115,11 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
   const [voiceProcessing, setVoiceProcessing] = useState(true);
 
   // --- Encoder settings (free to change right up to the first frame) -------
-  const containers = useMemo(() => availableContainers(), []);
+  // Se averigua tras montar, no al renderizar: en el servidor no hay
+  // MediaRecorder, asi que alli salia solo WEBM y desactivado, en el navegador
+  // MP4 y WEBM, y React tiraba la hidratacion entera de la herramienta.
+  const [containers, setContainers] = useState<ContainerMode[]>(['mp4', 'webm']);
+  const [containersReady, setContainersReady] = useState(false);
   const [container, setContainer] = useState<ContainerMode>('mp4');
   const [quality, setQuality] = useState<QualityMode>('balanced');
   const [countdownSeconds, setCountdownSeconds] = useState(3);
@@ -176,9 +180,11 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
   const needsMic = audioSource === 'mic' || audioSource === 'both';
   const needsSystem = audioSource === 'system' || audioSource === 'both';
 
+  // Igual que los formatos: el codec solo se sabe en el navegador. Mientras no
+  // se ha montado vale '' en los dos lados y la fila del codec aparece despues.
   const activeMime = useMemo(
-    () => supportedMime(container) || supportedMime(container === 'mp4' ? 'webm' : 'mp4') || '',
-    [container]
+    () => (containersReady ? supportedMime(container) || supportedMime(container === 'mp4' ? 'webm' : 'mp4') || '' : ''),
+    [container, containersReady]
   );
   // Before arming there is no real frame size yet, so the panel previews the
   // bitrate against the selected cap (or 1080p for "native").
@@ -198,7 +204,10 @@ export const Recordsnap: React.FC<RecordsnapProps> = ({ lang, dictionary }) => {
       !!navigator.mediaDevices &&
       typeof navigator.mediaDevices.getUserMedia === 'function';
     setSupported(ok);
-    if (ok && containers.length && !containers.includes(container)) setContainer(containers[0]);
+    const real = availableContainers();
+    setContainers(real);
+    setContainersReady(true);
+    if (ok && real.length && !real.includes(container)) setContainer(real[0]);
     void listDevices().then(setDevices);
   }, []);
 

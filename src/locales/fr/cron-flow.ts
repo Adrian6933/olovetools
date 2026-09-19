@@ -1,4 +1,5 @@
 export default {
+  "calendar_runs_one": "{n} exécution",
   "resetHint": "Recommencer",
   "title": "CronFlow",
   "badge": "Expressions cron",

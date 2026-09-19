@@ -1,4 +1,5 @@
 export default {
+  "frame_constraints": "在此尺寸和像素倍数下放不下精确的画框。请增大尺寸或选择更小的倍数。",
   "resetHint": "重新开始",
   "title": "Aspect Ratio",
   "badge": "宽高比工具箱",

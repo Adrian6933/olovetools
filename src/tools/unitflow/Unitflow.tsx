@@ -986,14 +986,12 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-widest text-blue-400/70">
-                    {(t.batch_results || '{n} lines converted').replace(
-                      '{n}',
-                      String(batchRun.rows.length - batchRun.errors)
+                    {((batchRun.rows.length - batchRun.errors === 1 && t.batch_results_one) || t.batch_results || '{n} lines converted').replace('{n}', String(batchRun.rows.length - batchRun.errors)
                     )}
                   </span>
                   {batchRun.errors > 0 && (
                     <span className="text-[10px] font-black uppercase tracking-widest text-amber-300/80">
-                      {(t.batch_errors || '{n} unreadable').replace('{n}', String(batchRun.errors))}
+                      {((batchRun.errors === 1 && t.batch_errors_one) || t.batch_errors || '{n} unreadable').replace('{n}', String(batchRun.errors))}
                     </span>
                   )}
                   <span className="h-px flex-1 min-w-[2rem] bg-white/5" />

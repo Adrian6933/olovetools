@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "Lottie Viewer",
   "description": "Open .lottie, .tgs and .json animations, recolour every fill, stroke and gradient stop, check what will break on other players, and export to JSON, SVG, PNG, a frame sequence or WebM — all inside your browser.",
@@ -97,7 +99,7 @@ export default {
   "label_optimize": "Optimizer",
   "opt_precision": "Decimal precision",
   "opt_drop_hidden": "Drop hidden layers",
-  "opt_drop_names": "Drop author metadata",
+  "opt_drop_names": "Drop layer names (breaks keypaths and dynamic text in apps)",
   "opt_drop_expressions": "Drop expressions",
   "btn_optimize": "Optimize",
   "opt_removed_layers": "{n} hidden layer(s) removed",

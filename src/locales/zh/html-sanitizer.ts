@@ -1,4 +1,5 @@
 export default {
+  "report_dangerous_one": "有 {0} 处移除本来可能执行代码。",
   "previewTitle": "清理后 HTML 的预览",
   "resetHint": "重新开始",
   "title": "HTML Sanitizer",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "DiffSnap",
   "description": "比较两段文本或同一文件的两个版本，看清究竟改了什么：对齐的双栏、每一行内被改写的词单独高亮，以及可直接应用的统一格式补丁。",

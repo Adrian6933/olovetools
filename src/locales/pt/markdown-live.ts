@@ -1,4 +1,8 @@
 export default {
+  "anchorLabel": "Link para esta seção",
+  "howItWorksTitle": "Como funciona",
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "MarkdownLive",
   "description": "Escreve Markdown à esquerda e vê o documento a construir-se à direita — listas aninhadas, listas de tarefas, tabelas, notas de rodapé e código realçado, tudo interpretado dentro do teu separador.",

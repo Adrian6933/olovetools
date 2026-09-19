@@ -1,4 +1,8 @@
 export default {
+  "rangeNoPages": "該当するページがありません。この文書は {n} ページです。",
+  "zoomOutLabel": "縮小",
+  "zoomInLabel": "拡大",
+  "zoomFitLabel": "全体表示",
   "removeFile": "ファイルを外す",
   "resetHint": "最初からやり直す",
   "title": "PDFFlow",

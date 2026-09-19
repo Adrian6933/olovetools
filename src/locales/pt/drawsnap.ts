@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "DrawSnap",
   "badge": "Quadro de desenho e vetorizador",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:",
   "resetHint": "Empezar de nuevo",
   "title": "Lottie Viewer",
   "description": "Abre animaciones .lottie, .tgs y .json, recolorea cada relleno, trazo y parada de degradado, comprueba qué se va a romper en otros reproductores y exporta a JSON, SVG, PNG, secuencia de fotogramas o WebM, todo dentro de tu navegador.",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "Optimizador",
   "opt_precision": "Decimales",
   "opt_drop_hidden": "Quitar capas ocultas",
-  "opt_drop_names": "Quitar metadatos del autor",
+  "opt_drop_names": "Quitar nombres de capa (rompe keypaths y texto dinámico en apps)",
   "opt_drop_expressions": "Quitar expresiones",
   "btn_optimize": "Optimizar",
   "opt_removed_layers": "{n} capa(s) oculta(s) eliminada(s)",

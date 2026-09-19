@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "CSS Designer",
   "description": "现代 CSS 的交互式实验台：玻璃拟态、多层阴影、以 OKLab 插值的渐变、有机圆角与滤镜，生成的代码始终在视野之内。",

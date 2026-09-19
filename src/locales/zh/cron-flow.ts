@@ -1,4 +1,5 @@
 export default {
+  "calendar_runs_one": "{n} 次执行",
   "resetHint": "重新开始",
   "title": "CronFlow",
   "badge": "cron 表达式",

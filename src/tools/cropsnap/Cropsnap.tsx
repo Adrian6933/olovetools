@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createUniqueNamer } from '../../lib/uniqueName';
 import { motion } from 'framer-motion';
 import {
   AlertTriangle,
@@ -1206,6 +1207,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
     try {
       const JSZip = (await import('jszip')).default;
       const zip = new JSZip();
+      const uniqueName = createUniqueNamer();
 
       for (let i = 0; i < sources.length; i++) {
         const item = sources[i];
@@ -1213,7 +1215,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
         const { width, height } = sizeFor(item, frame);
         const rendered = await renderOne(item, frame, width, height);
         const base = item.file.name.replace(/\.[^.]+$/, '') || `image-${i + 1}`;
-        zip.file(`${base}-${rendered.width}x${rendered.height}.${extensionFor(format)}`, rendered.blob);
+        zip.file(uniqueName(`${base}-${rendered.width}x${rendered.height}.${extensionFor(format)}`), rendered.blob);
         setBatchProgress({ done: i + 1, total: sources.length });
       }
 
@@ -1225,7 +1227,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url);
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
       setStatus('ready');
     } catch {
       setError(t.errorExport || 'The crop could not be rendered. Try a smaller output size.');
@@ -1264,7 +1266,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url);
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
       setStatus('ready');
     } catch {
       setError(t.errorExport || 'The crop could not be rendered. Try a smaller output size.');

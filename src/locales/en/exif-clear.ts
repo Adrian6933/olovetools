@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "Clean {n} file",
+  "badgeTags_one": "{n} tag",
   "resetHint": "Start over",
   "title": "EXIF Cleaner",
   "badge": "Image metadata cleaner",
@@ -64,7 +66,7 @@ export default {
   "optRemoveIcc": "Also remove the colour profile",
   "optRemoveIccHint": "The ICC profile is not personal data and dropping it can visibly shift colours, so it stays by default.",
 
-  "cleanBtn": "Clean {n} file(s)",
+  "cleanBtn": "Clean {n} files",
   "cleaningLabel": "Cleaning…",
   "downloadBtn": "Download",
   "downloadZipBtn": "Download .zip",

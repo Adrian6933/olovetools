@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "这个链接上挂着 {0} 个跟踪参数。",
   "resetHint": "重新开始",
   "title": "URLBolt",
   "seo_title": "URLBolt | URL 编码、解码与解析工具",

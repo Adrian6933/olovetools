@@ -41,20 +41,23 @@ export interface Compiled {
   stale: boolean;
 }
 
-function compileInline(text: string): Omit<Compiled, 'stale'> {
+function compileInline(text: string, anchorLabel?: string): Omit<Compiled, 'stale'> {
   const doc = parse(text);
   return {
-    html: render(doc.blocks, { anchors: true }),
+    html: render(doc.blocks, { anchors: true, anchorLabel }),
     toc: doc.toc,
     stats: doc.stats,
     frontMatter: doc.frontMatter,
   };
 }
 
-export function useCompiled(text: string): Compiled {
+export function useCompiled(text: string, anchorLabel?: string): Compiled {
+  // En un ref: `run` es estable a proposito y no debe rehacerse por esto.
+  const anchorLabelRef = useRef(anchorLabel);
+  anchorLabelRef.current = anchorLabel;
   // The first paint is synchronous on purpose: a preview that arrives one tick
   // later reads as a flash of empty panel on every navigation.
-  const [result, setResult] = useState(() => ({ ...compileInline(text), forLength: text.length }));
+  const [result, setResult] = useState(() => ({ ...compileInline(text, anchorLabel), forLength: text.length }));
 
   const workerRef = useRef<Worker | null>(null);
   const nextId = useRef(1);
@@ -91,12 +94,12 @@ export function useCompiled(text: string): Compiled {
   const run = useCallback((value: string) => {
     const worker = workerRef.current;
     if (!worker || broken.current) {
-      setResult({ ...compileInline(value), forLength: value.length });
+      setResult({ ...compileInline(value, anchorLabelRef.current), forLength: value.length });
       return;
     }
     const id = nextId.current++;
     pending.current = id;
-    const message: WorkerRequest = { id, text: value };
+    const message: WorkerRequest = { id, text: value, anchorLabel: anchorLabelRef.current };
     worker.postMessage(message);
   }, []);
 

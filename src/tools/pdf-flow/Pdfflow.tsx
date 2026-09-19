@@ -273,6 +273,9 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   const handleSplitRangeInput = (value: string) => {
     setSplitRange(value);
     setSelectedPages(parseRangeToPages(value, pageCount));
+    // El resultado de antes ya no es lo que se pide: dejarlo con su boton de
+    // descarga hacia que se bajara el PDF del rango anterior sin darse cuenta.
+    clearResult();
   };
 
   // -------------------------------------------------------------------------
@@ -993,8 +996,14 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                                 placeholder="1-3, 5"
                                 value={splitRange}
                                 onChange={e => handleSplitRangeInput(e.target.value)}
+                                aria-invalid={splitRange.trim() !== '' && selectedPages.length === 0}
                                 className="w-full bg-[#201316] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-red-500"
                               />
+                              {splitRange.trim() !== '' && selectedPages.length === 0 && (
+                                <p className="text-[11px] font-bold text-amber-300">
+                                  {(t.rangeNoPages || 'None of those pages exist: this document has {n}.').replace('{n}', String(pageCount))}
+                                </p>
+                              )}
                             </div>
                           </div>
                         )}

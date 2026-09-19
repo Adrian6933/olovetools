@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "整数没有小数部分。要输入 12.5，请切换到浮点数。",
   "resetHint": "重新开始",
   "title": "BinaryFlow",
   "seo_title": "带位编辑器的二进制、十六进制与十进制转换器",

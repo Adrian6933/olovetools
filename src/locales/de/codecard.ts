@@ -49,15 +49,15 @@ export default {
   "features": [
     {
       "title": "Echte Syntax, 48 Sprachen",
-      "text": "Der Highlighter liest den rohen Prism-Tokenstrom: JavaScript, Rust, Zig, Terraform, Dockerfiles und 43 weitere bekommen richtige Farben — geladen wird nur die gewaehlte Grammatik."
+      "text": "Der Highlighter liest den rohen Prism-Tokenstrom: JavaScript, Rust, Zig, Terraform, Dockerfiles und 43 weitere bekommen richtige Farben — geladen wird nur die gewählte Grammatik."
     },
     {
       "title": "Die wichtigen Zeilen hervorheben",
-      "text": "Klicke eine Zeilennummer, um sie hervorzuheben und den Rest abzudunkeln. Umschalt+Klick nimmt einen Bereich, Alt+Klick invertiert die ganze Auswahl, Rechtsklick loescht sie."
+      "text": "Klicke eine Zeilennummer, um sie hervorzuheben und den Rest abzudunkeln. Umschalt+Klick nimmt einen Bereich, Alt+Klick invertiert die ganze Auswahl, Rechtsklick löscht sie."
     },
     {
       "title": "Exporte, bei denen nichts abgeschnitten wird",
-      "text": "Die Karte wird vor der Aufnahme in voller Breite vermessen, damit lange Zeilen den Export ueberleben statt am Rand der Vorschau abzureissen. PNG, JPEG, WebP oder Vektor-SVG, bis 4x."
+      "text": "Die Karte wird vor der Aufnahme in voller Breite vermessen, damit lange Zeilen den Export überleben statt am Rand der Vorschau abzureißen. PNG, JPEG, WebP oder Vektor-SVG, bis 4x."
     },
     {
       "title": "Lokal — und wirklich offline",
@@ -69,8 +69,8 @@ export default {
   "seoHeroText": "Das Teilen von reinem Text-Code in sozialen Medien oder Präsentationen kann optisch langweilig sein. CodeCard verwandelt Ihren Quellcode sofort in elegante Designerkarten. Passen Sie Abstände, Schatten, Schriftarten und Fensterstile an Ihre persönliche Marke an.",
   "seoHeroList": [
     "PNG, JPEG, WebP und Vektor-SVG bis 4x",
-    "Schriften und Grammatiken selbst gehostet — offlinefaehig",
-    "Kein Konto, und das Wasserzeichen ist standardmaessig aus"
+    "Schriften und Grammatiken selbst gehostet — offlinefähig",
+    "Kein Konto, und das Wasserzeichen ist standardmäßig aus"
   ],
   "seoBrowserSpeedTitle": "Schnelle und sichere lokale Generierung",
   "seoBrowserSpeedText": "CodeCard läuft vollständig im Webbrowser mit Client-seitigem Rendering. Keine Dateien oder Texte verlassen jemals Ihren Computer.",
@@ -96,11 +96,11 @@ export default {
     },
     {
       "question": "Wie hebe ich bestimmte Zeilen hervor?",
-      "answer": "Klicke in der Vorschau eine Zeilennummer an, um sie hervorzuheben und den Rest abzudunkeln. Umschalt+Klick erweitert einen Bereich, Alt+Klick invertiert die ganze Auswahl, Rechtsklick loescht sie. Du kannst auch Bereiche wie 3, 7-9, 12 eintippen."
+      "answer": "Klicke in der Vorschau eine Zeilennummer an, um sie hervorzuheben und den Rest abzudunkeln. Umschalt+Klick erweitert einen Bereich, Alt+Klick invertiert die ganze Auswahl, Rechtsklick löscht sie. Du kannst auch Bereiche wie 3, 7-9, 12 eintippen."
     },
     {
-      "question": "Welche Sprachen werden unterstuetzt?",
-      "answer": "48, darunter JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfiles, Bash, PowerShell, Markdown und Unified Diffs. Geladen wird nur die gewaehlte Grammatik."
+      "question": "Welche Sprachen werden unterstützt?",
+      "answer": "48, darunter JavaScript, TypeScript, JSX/TSX, Python, Rust, Go, Zig, C, C++, C#, Java, Kotlin, Swift, Ruby, PHP, SQL, YAML, TOML, Terraform, Dockerfiles, Bash, PowerShell, Markdown und Unified Diffs. Geladen wird nur die gewählte Grammatik."
     },
     {
       "question": "Kann ich CodeCard offline nutzen?",
@@ -108,11 +108,11 @@ export default {
     },
     {
       "question": "Ist mein Code sicher?",
-      "answer": "Dein Code wird nirgendwohin uebertragen. Hervorhebung, Layout und Bildrendering passieren im Browser; nichts wird hochgeladen oder protokolliert."
+      "answer": "Dein Code wird nirgendwohin übertragen. Hervorhebung, Layout und Bildrendering passieren im Browser; nichts wird hochgeladen oder protokolliert."
     },
     {
-      "question": "Welche Einstellung liefert den schaerfsten Export?",
-      "answer": "PNG mit 3x oder 4x fuer Rastereinsatz. Akzeptiert das Ziel Vektoren, nimm SVG: bleibt in jeder Groesse scharf und wiegt meist weniger als ein 4x-PNG."
+      "question": "Welche Einstellung liefert den schärfsten Export?",
+      "answer": "PNG mit 3x oder 4x für Rastereinsatz. Akzeptiert das Ziel Vektoren, nimm SVG: bleibt in jeder Größe scharf und wiegt meist weniger als ein 4x-PNG."
     }
   ],
   "footerTagline": "Kostenloser, stilvoller Code-Screenshot-Generator, der zu 100% lokal auf Ihrem Gerät läuft.",
@@ -140,12 +140,12 @@ export default {
   "pendingLoad": "In den Editor laden",
   "pendingLoadRaw": "Ohne Erkennung laden",
   "pendingDiscard": "Verwerfen",
-  "pendingBig": "Grosse Datei: die Hervorhebung kann beim Tippen traege wirken.",
+  "pendingBig": "Große Datei: die Hervorhebung kann beim Tippen träge wirken.",
   "labelStartLine": "Erste Zeilennummer",
   "labelHighlightLines": "Hervorgehobene Zeilen",
-  "highlightHint": "Oder klicke die Zeilennummern in der Vorschau. Umschalt+Klick fuer einen Bereich, Alt+Klick invertiert, Rechtsklick loescht.",
+  "highlightHint": "Oder klicke die Zeilennummern in der Vorschau. Umschalt+Klick für einen Bereich, Alt+Klick invertiert, Rechtsklick löscht.",
   "highlightPlaceholder": "z.B. 3, 7-9, 12",
-  "clearHighlights": "Loeschen",
+  "clearHighlights": "Löschen",
   "labelDimOthers": "Andere Zeilen abdunkeln",
   "labelBgMode": "Hintergrund",
   "bgModeGradient": "Verlauf",
@@ -155,26 +155,26 @@ export default {
   "labelFontFamily": "Schriftart",
   "fontIbmPlex": "IBM Plex Mono",
   "fontSystem": "System-Monospace",
-  "labelLineHeight": "Zeilenhoehe",
-  "labelAspect": "Seitenverhaeltnis",
+  "labelLineHeight": "Zeilenhöhe",
+  "labelAspect": "Seitenverhältnis",
   "aspectAuto": "Auto",
   "aspectSquare": "Quadrat",
   "aspectWide": "Breit",
   "aspectSocial": "Social",
   "aspectPortrait": "Hochformat",
   "windowMacDesc": "Die drei macOS-Punkte",
-  "windowWindowsDesc": "Minimieren, maximieren, schliessen",
+  "windowWindowsDesc": "Minimieren, maximieren, schließen",
   "windowSimpleDesc": "Ein einzelner Farbmarker",
   "windowNoneDesc": "Ganz ohne Titelleiste",
   "labelWordWrap": "Lange Zeilen umbrechen",
-  "wordWrapHint": "Aus: die Karte waechst bis zur laengsten Zeile.",
+  "wordWrapHint": "Aus: die Karte wächst bis zur längsten Zeile.",
   "labelLigatures": "Schrift-Ligaturen",
   "ligaturesHint": "Macht aus => und !== einzelne Glyphen.",
-  "watermarkHint": "Standardmaessig aus. Ohne dein Zutun wird nichts auf dein Bild gedruckt.",
+  "watermarkHint": "Standardmäßig aus. Ohne dein Zutun wird nichts auf dein Bild gedruckt.",
   "labelCardWidth": "Kartenbreite",
   "labelTabSize": "Tabulatorbreite",
   "labelFormat": "Format",
-  "labelQuality": "Qualitaet",
+  "labelQuality": "Qualität",
   "btnDownload": "Herunterladen",
   "btnCopy": "Bild kopieren",
   "copyOk": "Kopiert",
@@ -182,33 +182,33 @@ export default {
   "presetsTitle": "Gespeicherte Looks",
   "presetSave": "Aktuellen speichern",
   "presetEmpty": "Noch nichts gespeichert. Die Looks bleiben in diesem Browser.",
-  "presetDelete": "Look loeschen",
-  "undo": "Rueckgaengig",
+  "presetDelete": "Look löschen",
+  "undo": "Rückgängig",
   "redo": "Wiederholen",
-  "zoomIn": "Vergroessern",
+  "zoomIn": "Vergrößern",
   "zoomOut": "Verkleinern",
-  "zoomFit": "Ansicht zuruecksetzen",
-  "compareHold": "Gedrueckt halten fuer den rohen Code",
+  "zoomFit": "Ansicht zurücksetzen",
+  "compareHold": "Gedrückt halten für den rohen Code",
   "backToTop": "Nach oben",
   "statusExporting": "Bild wird erzeugt...",
   "statusGrammar": "Grammatik wird geladen...",
   "errorGrammar": "Die Grammatik konnte nicht geladen werden. Der Code erscheint unformatiert.",
-  "errorTooBig": "Diese Datei ist groesser als 4 MB.",
+  "errorTooBig": "Diese Datei ist größer als 4 MB.",
   "howTitle": "So funktioniert es",
   "howStep1Title": "Code einfugen oder ablegen",
-  "howStep1Text": "Tippen, einfugen oder eine Quelldatei ablegen. Die Datei wartet: Groesse und Zeilenzahl werden angezeigt, geladen wird erst auf Knopfdruck.",
-  "howStep2Title": "Gestalten und Schluesselzeilen waehlen",
-  "howStep2Text": "Zehn Themes, neun Verlaeufe oder deine Farbe, fuenf Fensterrahmen. Klicke eine Zeilennummer, um sie hervorzuheben und den Rest abzudunkeln.",
+  "howStep1Text": "Tippen, einfugen oder eine Quelldatei ablegen. Die Datei wartet: Größe und Zeilenzahl werden angezeigt, geladen wird erst auf Knopfdruck.",
+  "howStep2Title": "Gestalten und Schlüsselzeilen wählen",
+  "howStep2Text": "Zehn Themes, neun Verläufe oder deine Farbe, fünf Fensterrahmen. Klicke eine Zeilennummer, um sie hervorzuheben und den Rest abzudunkeln.",
   "howStep3Title": "Exportieren oder weiterschicken",
-  "howStep3Text": "PNG, JPEG, WebP oder Vektor-SVG, bis 4x. Direkt in die Zwischenablage kopieren oder ohne Umweg an CompressSnap, CropSnap oder WatermarkSnap uebergeben.",
+  "howStep3Text": "PNG, JPEG, WebP oder Vektor-SVG, bis 4x. Direkt in die Zwischenablage kopieren oder ohne Umweg an CompressSnap, CropSnap oder WatermarkSnap übergeben.",
   "seoEngineTitle": "Auf dem Prism-Tokenstrom aufgebaut",
-  "seoEngineText": "Statt fertiges HTML vom Highlighter zu holen, liest CodeCard den rohen Tokenstrom und baut den Code Zeile fuer Zeile neu auf. Erst das ermoeglicht exakte Zeilennummern, Hervorhebung pro Zeile, haengenden Einzug und unbeschnittene Exporte.",
+  "seoEngineText": "Statt fertiges HTML vom Highlighter zu holen, liest CodeCard den rohen Tokenstrom und baut den Code Zeile für Zeile neu auf. Erst das ermöglicht exakte Zeilennummern, Hervorhebung pro Zeile, hängenden Einzug und unbeschnittene Exporte.",
   "nextStepTitle": "Weiter geht es",
   "nextStepHint": "Dein Bild reist mit — kein erneuter Upload",
   "nextCompress": "Komprimieren",
   "nextCrop": "Zuschneiden",
-  "nextFormat": "Format aendern",
-  "nextWatermark": "Wasserzeichen hinzufuegen",
+  "nextFormat": "Format ändern",
+  "nextWatermark": "Wasserzeichen hinzufügen",
   "nextMeme": "Meme daraus machen",
   "groupWeb": "Web",
   "groupSystems": "Systemnah",

@@ -1,4 +1,9 @@
 export default {
+  "tree_rows_one": "{0} Zeile",
+  "tree_hits_one": "{0} Treffer",
+  "query_matches_one": "{0} Treffer",
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "copyPath": "Pfad kopieren",
   "copyValue": "Wert kopieren",
   "copyBranch": "Ganzen Zweig kopieren",

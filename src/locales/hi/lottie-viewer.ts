@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "कॉपी हो गया!",
+  "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क:",
   "resetHint": "फिर से शुरू करें",
   "title": "Lottie Viewer",
   "description": ".lottie, .tgs और .json एनिमेशन खोलें, हर भराव, स्ट्रोक और ग्रेडिएंट स्टॉप का रंग बदलें, देखें कि दूसरे प्लेयर में क्या टूटेगा, और JSON, SVG, PNG, फ़्रेम अनुक्रम या WebM में निर्यात करें — सब कुछ आपके ब्राउज़र में।",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "ऑप्टिमाइज़र",
   "opt_precision": "दशमलव अंक",
   "opt_drop_hidden": "छिपी लेयर हटाएँ",
-  "opt_drop_names": "लेखक का मेटाडेटा हटाएँ",
+  "opt_drop_names": "लेयर के नाम हटाएँ (ऐप्स में keypath और डायनामिक टेक्स्ट टूट जाते हैं)",
   "opt_drop_expressions": "एक्सप्रेशन हटाएँ",
   "btn_optimize": "ऑप्टिमाइज़ करें",
   "opt_removed_layers": "{n} छिपी लेयर हटाई गईं",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copié !",
+  "contactForIdeas": "Contact pour idées et commentaires :",
   "resetHint": "Recommencer",
   "title": "Lottie Viewer",
   "description": "Ouvrez des animations .lottie, .tgs et .json, recolorez chaque remplissage, contour et arrêt de dégradé, vérifiez ce qui cassera sur les autres lecteurs et exportez en JSON, SVG, PNG, séquence d’images ou WebM — le tout dans votre navigateur.",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "Optimiseur",
   "opt_precision": "Décimales",
   "opt_drop_hidden": "Supprimer les calques masqués",
-  "opt_drop_names": "Supprimer les métadonnées d’auteur",
+  "opt_drop_names": "Retirer les noms de calques (casse les keypaths et le texte dynamique dans les apps)",
   "opt_drop_expressions": "Supprimer les expressions",
   "btn_optimize": "Optimiser",
   "opt_removed_layers": "{n} calque(s) masqué(s) supprimé(s)",

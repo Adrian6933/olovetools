@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "WordFlow",
   "description": "统计字数、评估可读性、找出无力的句子并清理文本——全部在浏览器内完成，支持九种语言。",

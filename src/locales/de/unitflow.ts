@@ -1,4 +1,6 @@
 export default {
+  "batch_results_one": "{n} Zeile umgerechnet",
+  "batch_errors_one": "{n} unlesbar",
   "resetHint": "Neu anfangen",
   "title": "UnitFlow",
   "badge": "Exakter Einheitenrechner",

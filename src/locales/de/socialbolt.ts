@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "resetHint": "Neu anfangen",
   "title": "SocialBolt",
   "description": "Füge einen TikTok- oder X-Link ein und wähle genau, was du mitnimmst: Video ohne Wasserzeichen, HD-Spur, MP3-Audio, Titelbild oder alle Fotos des Karussells.",

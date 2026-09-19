@@ -19,11 +19,11 @@ import type { WorkerRequest, WorkerResponse } from '../types';
 const scope = self as unknown as DedicatedWorkerGlobalScope;
 
 scope.onmessage = (event: MessageEvent<WorkerRequest>) => {
-  const { id, text } = event.data;
+  const { id, text, anchorLabel } = event.data;
   const doc = parse(text);
   const message: WorkerResponse = {
     id,
-    html: render(doc.blocks, { anchors: true }),
+    html: render(doc.blocks, { anchors: true, anchorLabel }),
     toc: doc.toc,
     stats: doc.stats,
     frontMatter: doc.frontMatter,

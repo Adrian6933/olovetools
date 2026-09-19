@@ -67,7 +67,14 @@ export function formatStamp(ns: bigint, system: System, unit: Unit): string {
   return String(r !== 0n && shifted < 0n ? q - 1n : q);
 }
 
-export const nsToMs = (ns: bigint): number => Number(ns / 1_000_000n);
+// Suelo y no division truncada: `subMs` da el resto siempre positivo, asi que
+// el milisegundo tiene que ser el de abajo. Truncando, -1 ns salia como
+// 1970-01-01T00:00:00.000 "mas 999 µs" (despues de 1970, no antes) y -1500 µs
+// caia en .999 en vez de .998.
+export const nsToMs = (ns: bigint): number => {
+  const q = ns / 1_000_000n;
+  return Number(ns % 1_000_000n !== 0n && ns < 0n ? q - 1n : q);
+};
 
 /** The sub-millisecond remainder, for display next to the date. */
 export function subMs(ns: bigint): { us: number; ns: number } {

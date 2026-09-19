@@ -111,7 +111,7 @@ function renderBlock(block: Block, options: RenderOptions): string {
     case 'heading': {
       const id = escapeAttribute(block.slug);
       const anchor = options.anchors
-        ? `<a class="md-anchor" href="#${id}" aria-label="Link to this section">#</a>`
+        ? `<a class="md-anchor" href="#${id}" aria-label="${escapeAttribute(options.anchorLabel || 'Link to this section')}">#</a>`
         : '';
       return `<h${block.depth} id="${id}">${renderInline(block.children, options)}${anchor}</h${block.depth}>`;
     }

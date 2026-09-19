@@ -1,4 +1,8 @@
 export default {
+  "anchorLabel": "このセクションへのリンク",
+  "howItWorksTitle": "使い方",
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "MarkdownLive",
   "description": "左に Markdown を書けば、右で文書が組み上がっていきます。入れ子のリスト、タスクリスト、表、脚注、色付きのコードまで、すべてブラウザーのタブの中だけで解析します。",

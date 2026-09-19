@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "Lottie Viewer",
   "description": "打开 .lottie、.tgs 和 .json 动画，重新配置每个填充、描边和渐变色标，检查在其他播放器上会出问题的地方，并导出为 JSON、SVG、PNG、序列帧或 WebM——全部在浏览器中完成。",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "优化器",
   "opt_precision": "小数位数",
   "opt_drop_hidden": "移除隐藏图层",
-  "opt_drop_names": "移除作者元数据",
+  "opt_drop_names": "删除图层名称（会破坏应用中的 keypath 和动态文字）",
   "opt_drop_expressions": "移除表达式",
   "btn_optimize": "开始优化",
   "opt_removed_layers": "已移除 {n} 个隐藏图层",

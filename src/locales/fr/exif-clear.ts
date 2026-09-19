@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "Nettoyer {n} fichier",
+  "badgeTags_one": "{n} balise",
   "resetHint": "Recommencer",
   "title": "EXIF Cleaner",
   "badge": "Nettoyeur de métadonnées d'image",
@@ -57,7 +59,7 @@ export default {
   "optKeepOrientationHint": "Réécrit un bloc EXIF de 30 octets ne contenant que Orientation, pour que les photos verticales ne ressortent pas couchées.",
   "optRemoveIcc": "Supprimer aussi le profil colorimétrique",
   "optRemoveIccHint": "Le profil ICC n'est pas une donnée personnelle et le retirer peut décaler visiblement les couleurs : il reste donc par défaut.",
-  "cleanBtn": "Nettoyer {n} fichier(s)",
+  "cleanBtn": "Nettoyer {n} fichiers",
   "cleaningLabel": "Nettoyage…",
   "downloadBtn": "Télécharger",
   "downloadZipBtn": "Télécharger le .zip",

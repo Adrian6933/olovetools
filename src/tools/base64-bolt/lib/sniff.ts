@@ -167,3 +167,20 @@ export function extFromMime(mime: string): string {
 export function isPreviewableMime(mime: string): boolean {
   return /^image\/(png|jpeg|gif|webp|avif|bmp|x-icon|vnd\.microsoft\.icon|svg\+xml)$/i.test(mime);
 }
+
+/**
+ * Las etiquetas de arriba estan en ingles ("PNG image", "ZIP archive") y se
+ * enseñaban tal cual en los 9 idiomas. Se parten en nombre del formato + clase
+ * y la clase va por el diccionario como plantilla ("Imagen {0}", "{0}-Bild"),
+ * porque el orden cambia segun el idioma. Lo que no sigue ese patron (Binary,
+ * Plain text, JSON…) tiene su propia clave o se deja tal cual.
+ */
+const KINDS = ['image', 'audio', 'video', 'archive', 'font', 'document', 'book', 'workbook', 'deck', 'database', 'block', 'binary', 'executable'];
+
+export function localizeFormatLabel(label: string, t: Record<string, any>): string {
+  const own = t[`fmtLabel_${label.replace(/[^a-z0-9]/gi, '')}`];
+  if (own) return own;
+  const m = /^(.*) ([a-z]+)$/.exec(label);
+  if (m && KINDS.includes(m[2]) && t[`fmtKind_${m[2]}`]) return String(t[`fmtKind_${m[2]}`]).replace('{0}', m[1]);
+  return label;
+}

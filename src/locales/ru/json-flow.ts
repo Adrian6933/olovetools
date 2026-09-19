@@ -1,4 +1,9 @@
 export default {
+  "tree_rows_one": "Строк: {0}",
+  "tree_hits_one": "совпадений: {0}",
+  "query_matches_one": "совпадений: {0}",
+  "emailCopied": "Скопировано!",
+  "contactForIdeas": "Контакт для идей и замечаний:",
   "copyPath": "Скопировать путь",
   "copyValue": "Скопировать значение",
   "copyBranch": "Скопировать всю ветвь",

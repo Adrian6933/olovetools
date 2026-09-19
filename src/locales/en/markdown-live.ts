@@ -1,4 +1,8 @@
 export default {
+  "anchorLabel": "Link to this section",
+  "howItWorksTitle": "How it works",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "MarkdownLive",
   "description": "Write Markdown on the left and watch the finished document build itself on the right — nested lists, task lists, tables, footnotes and highlighted code, all parsed inside your own tab.",

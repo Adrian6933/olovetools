@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "SocialBolt",
   "description": "TikTok や X のリンクを貼り、必要なものだけを選んで持ち帰れます。透かしなしの動画、HD のトラック、MP3 の音声、カバー画像、カルーセルの全写真。",

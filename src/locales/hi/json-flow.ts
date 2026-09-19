@@ -1,4 +1,9 @@
 export default {
+  "tree_hits_one": "{0} मेल",
+  "query_matches_one": "{0} मेल",
+  "tree_rows_one": "{0} पंक्ति",
+  "emailCopied": "कॉपी हो गया!",
+  "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क:",
   "copyPath": "पथ कॉपी करें",
   "copyValue": "मान कॉपी करें",
   "copyBranch": "पूरी शाखा कॉपी करें",

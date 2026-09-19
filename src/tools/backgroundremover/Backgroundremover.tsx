@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { loadImage } from '../../lib/loadImage';
 import { motion } from 'framer-motion';
 import {
   Upload,
@@ -242,10 +243,9 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
   const startManual = async (id: string) => {
     const target = items.find(i => i.id === id);
     if (!target) return;
-    const img = new Image();
-    img.src = target.originalUrl;
+    let img: HTMLImageElement;
     try {
-      await img.decode();
+      img = await loadImage(target.originalUrl);
     } catch {
       return;
     }

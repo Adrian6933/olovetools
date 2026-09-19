@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "CSS Designer",
   "description": "モダンな CSS の対話型プレイグラウンド。グラスモーフィズム、多層シャドウ、OKLab で補間するグラデーション、有機的な角丸、フィルター — 生成されたコードは常に画面に。",

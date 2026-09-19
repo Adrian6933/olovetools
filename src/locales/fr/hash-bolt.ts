@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copié !",
+  "contactForIdeas": "Contact pour idées et commentaires :",
   "resetHint": "Recommencer",
   "title": "HashBolt",
   "badge": "Sommes de contrôle et intégrité",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "Vérifier contre une somme de contrôle",
   "verifyPlaceholder": "Collez une empreinte, ou un fichier SHA256SUMS entier — les lignes sont appariées par nom de fichier.",
   "verifyHint": "Hex et Base64 fonctionnent, dans n'importe quelle casse. Une longueur qu'aucun algorithme coché ne produit vous est signalée au lieu d'être annoncée comme une non-concordance.",
-  "verifySummary": "{count} somme(s) lue(s) · {ok} vérifiée(s) · {bad} en écart",
+  "verifySummary": "Sommes lues : {count} · vérifiées : {ok} · différentes : {bad}",
   "verifyMatch": "Concordance — le même condensé {algo}.",
   "verifyMismatch": "Aucune concordance. Ce fichier n'est pas celui que décrit cette somme de contrôle.",
   "verifyUnknownLength": "Cette longueur ne correspond à aucun des algorithmes cochés. Cochez le bon puis relancez le calcul.",

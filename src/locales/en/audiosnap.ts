@@ -1,4 +1,5 @@
 export default {
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "AudioSnap",
   "badge": "Voice recorder & audio trimmer",

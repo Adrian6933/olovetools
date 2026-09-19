@@ -1,4 +1,8 @@
 export default {
+  "rangeNoPages": "इनमें से कोई पेज मौजूद नहीं: दस्तावेज़ में {n} पेज हैं।",
+  "zoomOutLabel": "छोटा करें",
+  "zoomInLabel": "बड़ा करें",
+  "zoomFitLabel": "फ़िट करें",
   "removeFile": "फ़ाइल हटाएँ",
   "resetHint": "फिर से शुरू करें",
   "title": "PDFFlow",

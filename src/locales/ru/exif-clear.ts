@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "Очистить файлов: {n}",
+  "badgeTags_one": "тегов: {n}",
   "resetHint": "Начать заново",
   "title": "EXIF Cleaner",
   "badge": "Очистка метаданных изображений",

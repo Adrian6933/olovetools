@@ -1,4 +1,5 @@
 export default {
+  "xpath_matches_one": "{n} 个匹配",
   "resetHint": "重新开始",
   "title": "XML to JSON",
   "seoHeroTitle": "XML to JSON",

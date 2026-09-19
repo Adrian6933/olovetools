@@ -108,7 +108,7 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
     link.href = url;
     link.download = `${baseName()}_clean.${entry.ext}`;
     link.click();
-    URL.revokeObjectURL(url);
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
   }, [toBlob, format, quality, baseName]);
 
   const handoffResult = useCallback(async () => {

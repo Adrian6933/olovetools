@@ -93,7 +93,7 @@ export const ScheduleCalendar: React.FC<ScheduleCalendarProps> = ({
           return (
             <div
               key={day}
-              title={on ? (t.calendar_runs || '{n} runs').replace('{n}', String(runsPerDay)) : ''}
+              title={on ? ((runsPerDay === 1 && t.calendar_runs_one) || t.calendar_runs || '{n} runs').replace('{n}', String(runsPerDay)) : ''}
               className={`aspect-square rounded-lg flex items-center justify-center text-[11px] font-bold border transition-colors ${
                 on
                   ? 'bg-violet-600/45 border-violet-400/60 text-white'

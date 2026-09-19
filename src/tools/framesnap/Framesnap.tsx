@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { resolveVideoDuration } from '../../lib/videoDuration';
 import JSZip from 'jszip';
 import {
   Camera,
@@ -188,10 +189,13 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
     const video = videoRef.current;
     if (!video) return;
     const exact = hasRvfc(video);
+    // WebM de MediaRecorder: `duration` es Infinity y el lote hasta «0 = final»
+    // se iba al tope de 500 capturas sobre un vídeo de dos segundos.
+    const duration = await resolveVideoDuration(video);
     setInfo({
       width: video.videoWidth,
       height: video.videoHeight,
-      duration: video.duration || 0,
+      duration,
       fps: null,
       fpsSource: 'unknown',
       exact,

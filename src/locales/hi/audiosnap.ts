@@ -1,4 +1,5 @@
 export default {
+  "contactForIdeas": "विचारों और टिप्पणियों के लिए संपर्क:",
   "resetHint": "फिर से शुरू करें",
   "title": "AudioSnap",
   "badge": "वॉइस रिकॉर्डर और ऑडियो ट्रिमर",

@@ -1,4 +1,8 @@
 export default {
+  "rangeNoPages": "这些页面都不存在：文档共有 {n} 页。",
+  "zoomOutLabel": "缩小",
+  "zoomInLabel": "放大",
+  "zoomFitLabel": "适合页面",
   "removeFile": "移除文件",
   "resetHint": "重新开始",
   "title": "PDFFlow",

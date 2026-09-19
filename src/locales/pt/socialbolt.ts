@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "SocialBolt",
   "description": "Cole um link do TikTok ou do X e escolha exatamente o que leva: vídeo sem marca d’água, faixa em HD, áudio em MP3, capa ou todas as fotos do carrossel.",

@@ -131,7 +131,7 @@ export default function MarkdownLive({ lang, dictionary }: MarkdownLiveProps) {
   const scrollOwner = useRef<'editor' | 'preview' | null>(null);
   const scrollTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  const compiled = useCompiled(doc.text);
+  const compiled = useCompiled(doc.text, t.anchorLabel);
 
   // -------------------------------------------------------------------------
   // Preferences and persistence
@@ -324,7 +324,7 @@ export default function MarkdownLive({ lang, dictionary }: MarkdownLiveProps) {
 
   const downloadHtml = () =>
     run('html', () => {
-      const file = buildHtmlFile(doc.text, theme, lang);
+      const file = buildHtmlFile(doc.text, theme, lang, t.anchorLabel);
       download(new Blob([file], { type: 'text/html;charset=utf-8' }), `${baseName}.html`);
     });
 

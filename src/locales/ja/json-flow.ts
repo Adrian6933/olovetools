@@ -1,4 +1,9 @@
 export default {
+  "tree_rows_one": "{0} 行",
+  "tree_hits_one": "一致 {0} 件",
+  "query_matches_one": "一致 {0} 件",
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "copyPath": "パスをコピー",
   "copyValue": "値をコピー",
   "copyBranch": "ブランチ全体をコピー",

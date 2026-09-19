@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "ZipFlow",
   "description": "Empacote arquivos e pastas inteiras num ZIP, ou abra um arquivo compactado e percorra-o como um gerenciador de arquivos, tudo dentro do navegador.",

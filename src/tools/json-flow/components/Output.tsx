@@ -685,7 +685,7 @@ export const Output: React.FC<OutputProps> = props => {
               {queryResult.ok ? (
                 <div className="space-y-1">
                   <p className="text-slate-500">
-                    {(t.query_matches || '{0} matches').replace('{0}', String(queryResult.matches.length))}
+                    {((queryResult.matches.length === 1 && t.query_matches_one) || t.query_matches || '{0} matches').replace('{0}', String(queryResult.matches.length))}
                   </p>
                   {queryResult.matches.length > 0 && (
                     <div className="max-h-28 overflow-auto bg-[#050807] border border-white/5 rounded-xl divide-y divide-white/5">

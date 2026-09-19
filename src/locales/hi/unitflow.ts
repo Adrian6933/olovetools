@@ -1,4 +1,6 @@
 export default {
+  "batch_errors_one": "{n} अपठनीय",
+  "batch_results_one": "{n} पंक्ति बदली गई",
   "resetHint": "फिर से शुरू करें",
   "title": "UnitFlow",
   "badge": "सटीक इकाई परिवर्तक",

@@ -1,4 +1,8 @@
 export default {
+  "anchorLabel": "链接到本节",
+  "howItWorksTitle": "使用方法",
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "MarkdownLive",
   "description": "左边写 Markdown，右边看着文档自己成形——嵌套列表、任务清单、表格、脚注和高亮代码，全部在你自己的标签页里解析。",

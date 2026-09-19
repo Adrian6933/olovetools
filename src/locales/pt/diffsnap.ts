@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copiado!",
+  "contactForIdeas": "Contato para ideias e comentários:",
   "resetHint": "Começar de novo",
   "title": "DiffSnap",
   "description": "Compare dois textos ou duas versões de um ficheiro e veja exatamente o que mudou: colunas alinhadas, as palavras reescritas destacadas dentro de cada linha e um patch unificado pronto a aplicar.",

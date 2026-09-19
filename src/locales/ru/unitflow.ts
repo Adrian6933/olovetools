@@ -1,4 +1,6 @@
 export default {
+  "batch_results_one": "Переведено строк: {n}",
+  "batch_errors_one": "Нечитаемых: {n}",
   "resetHint": "Начать заново",
   "title": "UnitFlow",
   "badge": "Точный конвертер единиц",

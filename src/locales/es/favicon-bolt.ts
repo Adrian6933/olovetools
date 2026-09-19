@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:",
   "resetHint": "Empezar de nuevo",
   "title": "FaviconBolt",
   "description": "Crea un pack completo de favicons a partir de un emoji, unas letras o tu propio logo. Todo se genera dentro de tu navegador.",

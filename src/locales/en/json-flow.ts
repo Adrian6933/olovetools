@@ -1,4 +1,9 @@
 export default {
+  "tree_rows_one": "{0} row",
+  "tree_hits_one": "{0} hit",
+  "query_matches_one": "{0} match",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "copyPath": "Copy path",
   "copyValue": "Copy value",
   "copyBranch": "Copy whole branch",

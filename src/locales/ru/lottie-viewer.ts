@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Скопировано!",
+  "contactForIdeas": "Контакт для идей и замечаний:",
   "resetHint": "Начать заново",
   "title": "Lottie Viewer",
   "description": "Откройте анимации .lottie, .tgs и .json, перекрасьте каждую заливку, обводку и точку градиента, проверьте, что сломается в других плеерах, и экспортируйте в JSON, SVG, PNG, секвенцию кадров или WebM — всё прямо в браузере.",
@@ -137,7 +139,7 @@ export default {
   "label_optimize": "Оптимизатор",
   "opt_precision": "Знаков после запятой",
   "opt_drop_hidden": "Убрать скрытые слои",
-  "opt_drop_names": "Убрать авторские метаданные",
+  "opt_drop_names": "Удалить имена слоёв (ломает keypath и динамический текст в приложениях)",
   "opt_drop_expressions": "Убрать выражения",
   "btn_optimize": "Оптимизировать",
   "opt_removed_layers": "Удалено скрытых слоёв: {n}",

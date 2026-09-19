@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "WordFlow",
   "description": "Count words, grade readability, spot weak sentences and clean up text — entirely inside your browser, in nine languages.",

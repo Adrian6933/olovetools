@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "resetHint": "Neu anfangen",
   "title": "WordFlow",
   "description": "Wörter zählen, Lesbarkeit messen, schwache Sätze finden und Text säubern — vollständig im Browser, in neun Sprachen.",

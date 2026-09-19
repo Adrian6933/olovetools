@@ -141,5 +141,5 @@ export const saveBlob = (blob: Blob, filename: string): void => {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
-  URL.revokeObjectURL(blobUrl);
+  window.setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
 };

@@ -1,4 +1,8 @@
 export default {
+  "status_errors_one": "問題 {0} 件",
+  "status_warnings_one": "確認したい点 {0} 件",
+  "lines_one": "行",
+  "chars_one": "文字",
   "resetHint": "最初からやり直す",
   "title": "SQLFlow",
   "dialect": "方言",

@@ -1,4 +1,5 @@
 export default {
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "AudioSnap",
   "badge": "录音机与音频剪辑",

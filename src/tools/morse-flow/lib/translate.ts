@@ -70,7 +70,12 @@ export function encode(text: string): TranslateResult {
     // By code point, not by code unit: indexing a string splits an emoji into
     // two lone surrogates and reports the same character as two failures.
     const raw = String.fromCodePoint(source.codePointAt(i)!);
-    const code = TO_CODE[raw.toUpperCase()];
+    // Las letras con tilde que no tienen codigo propio (Á, Í, Ó, Ú, Ì…) se
+    // envian como su letra base, que es lo que hace cualquier operador. Antes
+    // salian como # y "Ñandú" o "canción" quedaban rotas en español, portugués
+    // o francés. Las que si tienen codigo (Ñ, É, Ü…) lo conservan.
+    const base = raw.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const code = TO_CODE[raw.toUpperCase()] || (base !== raw ? TO_CODE[base.toUpperCase()] : undefined);
     if (code) {
       current.push(code);
       translated += 1;

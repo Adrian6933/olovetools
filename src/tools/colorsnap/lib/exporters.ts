@@ -219,7 +219,7 @@ export function download(content: string, filename: string, mime: string): void 
   link.href = url;
   link.download = filename;
   link.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 export function downloadBlob(blob: Blob, filename: string): void {
@@ -228,7 +228,7 @@ export function downloadBlob(blob: Blob, filename: string): void {
   link.href = url;
   link.download = filename;
   link.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 /** `sunset.heic` → `sunset-palette` */

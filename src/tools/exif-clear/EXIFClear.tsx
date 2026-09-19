@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createUniqueNamer } from '../../lib/uniqueName';
 import { motion } from 'framer-motion';
 import {
   AlertTriangle,
@@ -418,7 +419,8 @@ export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
     }
 
     const zip = new JSZip();
-    for (const item of ready) zip.file(item.result!.name, item.result!.blob);
+    const uniqueName = createUniqueNamer();
+    for (const item of ready) zip.file(uniqueName(item.result!.name), item.result!.blob);
     save(await zip.generateAsync({ type: 'blob' }), 'cleaned-images.zip');
   }, []);
 
@@ -732,7 +734,7 @@ export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
                         ? { label: t.badgeGps || 'GPS', className: 'bg-rose-500/10 text-rose-400 border-rose-500/20' }
                         : item.report.tags.length || item.report.blocks.length
                           ? {
-                              label: (t.badgeTags || '{n} tags').replace('{n}', String(item.report.tags.length)),
+                              label: ((item.report.tags.length === 1 && t.badgeTags_one) || t.badgeTags || '{n} tags').replace('{n}', String(item.report.tags.length)),
                               className: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
                             }
                           : { label: t.badgeClean || 'Clean', className: 'bg-slate-500/10 text-slate-400 border-slate-500/20' };
@@ -1040,7 +1042,7 @@ export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
                     <span className="truncate">
                       {busy
                         ? t.cleaningLabel || 'Cleaning…'
-                        : (t.cleanBtn || 'Clean {n} file(s)').replace('{n}', String(items.length))}
+                        : ((items.length === 1 && t.cleanBtn_one) || t.cleanBtn || 'Clean {n} files').replace('{n}', String(items.length))}
                     </span>
                   </button>
 

@@ -1,4 +1,5 @@
 export default {
+  "issuesTitle_one": "有 {n} 个字符没有摩尔斯对应，显示为 {mark}：",
   "resetHint": "重新开始",
   "title": "MorseFlow",
   "label_text": "文本",

@@ -1,4 +1,5 @@
 export default {
+  "calendar_runs_one": "{n} запуск",
   "resetHint": "Начать заново",
   "title": "CronFlow",
   "badge": "Cron-выражения",

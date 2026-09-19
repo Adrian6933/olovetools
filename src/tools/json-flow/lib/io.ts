@@ -39,7 +39,7 @@ export function downloadText(text: string, filename: string, mime = 'text/plain;
   link.click();
   // Revoking immediately is safe: the browser has already taken its own
   // reference by the time click() returns.
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 /** Reads a text file, rejecting anything that is obviously not text. */

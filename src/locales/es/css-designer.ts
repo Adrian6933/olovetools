@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:",
   "resetHint": "Empezar de nuevo",
   "title": "CSS Designer",
   "description": "Laboratorio interactivo de CSS moderno: glassmorphism, sombras por capas, degradados con interpolación OKLab, bordes orgánicos y filtros, con el código generado siempre a la vista.",

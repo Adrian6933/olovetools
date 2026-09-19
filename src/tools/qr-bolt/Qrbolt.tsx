@@ -367,7 +367,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
         document.body.appendChild(a);
         a.click();
         a.remove();
-        URL.revokeObjectURL(href);
+        window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
       } finally {
         setDownloading(null);
       }

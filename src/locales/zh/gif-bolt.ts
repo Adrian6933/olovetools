@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "GIFBolt",
   "description": "从视频里抽帧，或把一组图片排成序列，编辑时间轴，再用全局调色板和帧间压缩导出 GIF——全部在浏览器里完成。",

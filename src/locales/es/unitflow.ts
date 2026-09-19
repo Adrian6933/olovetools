@@ -1,4 +1,6 @@
 export default {
+  "batch_results_one": "{n} línea convertida",
+  "batch_errors_one": "{n} ilegible",
   "resetHint": "Empezar de nuevo",
   "title": "UnitFlow",
   "badge": "Conversor de unidades exacto",

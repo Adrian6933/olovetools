@@ -1,4 +1,5 @@
 export default {
+  "report_dangerous_one": "{0} हटाव कोड चला सकता था।",
   "previewTitle": "साफ़ किए गए HTML का पूर्वावलोकन",
   "resetHint": "फिर से शुरू करें",
   "title": "HTML Sanitizer",

@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "{0} tracking parameter is attached to this link.",
   "resetHint": "Start over",
   "title": "URLBolt",
   "seo_title": "URLBolt | URL Encoder, Decoder, Inspector & Tracker Cleaner",

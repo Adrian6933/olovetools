@@ -38,7 +38,7 @@ export function downloadText(text: string, filename: string, mime = 'text/plain'
   link.href = url;
   link.download = filename;
   link.click();
-  URL.revokeObjectURL(url);
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 export function readTextFile(file: File): Promise<string> {

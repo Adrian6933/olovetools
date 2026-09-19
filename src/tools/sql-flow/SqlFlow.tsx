@@ -122,6 +122,15 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
     (key: string, fallback: string, args?: string[]) => fmt(t[key] || fallback, args),
     [t]
   );
+  // Recuentos: "1 problema" y no "1 problemas". Busca `clave_one`, `_few`…
+  // segun las reglas de plural del idioma (el ruso tiene tres formas) y cae a
+  // la clave sin sufijo, que es el plural de siempre.
+  const plural = useMemo(() => new Intl.PluralRules(lang), [lang]);
+  const txn = useCallback(
+    (key: string, n: number, fallback: string) =>
+      fmt(t[`${key}_${plural.select(n)}`] || t[key] || fallback, [String(n)]),
+    [t, plural]
+  );
 
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const history = useHistory('');
@@ -700,7 +709,7 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
 
             <div className="flex items-center justify-between gap-2 px-3 py-2 border-t border-amber-900/25 text-[10.5px] text-stone-500 font-mono flex-wrap">
               <span>
-                {stats ? `${stats.lines} ${tx('lines', 'lines')} · ${stats.chars} ${tx('chars', 'chars')}` : '—'}
+                {stats ? `${stats.lines} ${txn('lines', stats.lines, 'lines')} · ${stats.chars} ${txn('chars', stats.chars, 'chars')}` : '—'}
               </span>
               <div className="flex flex-wrap gap-1.5">
                 {SAMPLES.slice(0, 4).map(sample => (
@@ -881,9 +890,9 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
                   }`}
                 >
                   {errorCount
-                    ? tx('status_errors', '{0} problems', [String(errorCount)])
+                    ? txn('status_errors', errorCount, '{0} problems')
                     : warningCount
-                      ? tx('status_warnings', '{0} things to check', [String(warningCount)])
+                      ? txn('status_warnings', warningCount, '{0} things to check')
                       : tx('status_clean', 'Nothing to flag')}
                 </span>
               )}

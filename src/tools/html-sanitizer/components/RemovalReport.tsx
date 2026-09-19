@@ -53,7 +53,7 @@ export const RemovalReport: React.FC<RemovalReportProps> = ({ removals, override
         <div className="flex items-start gap-2.5 px-4 py-3 border-b border-white/5 bg-rose-500/[0.07]">
           <AlertTriangle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
           <span className="text-[11.5px] text-rose-200/90 leading-relaxed font-medium">
-            {(t.report_dangerous || '{0} removals could have executed code.').replace('{0}', String(dangerous))}
+            {((dangerous === 1 && t.report_dangerous_one) || t.report_dangerous || '{0} removals could have executed code.').replace('{0}', String(dangerous))}
           </span>
         </div>
       )}

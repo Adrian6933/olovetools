@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copié !",
+  "contactForIdeas": "Contact pour idées et commentaires :",
   "resetHint": "Recommencer",
   "title": "DrawSnap",
   "badge": "Tableau de dessin et calque",

@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "{n} फ़ाइल साफ़ कीजिए",
+  "badgeTags_one": "{n} टैग",
   "resetHint": "फिर से शुरू करें",
   "title": "EXIF Cleaner",
   "badge": "इमेज मेटाडेटा क्लीनर",

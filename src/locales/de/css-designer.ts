@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Kopiert!",
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
   "resetHint": "Neu anfangen",
   "title": "CSS Designer",
   "description": "Interaktive Spielwiese für modernes CSS: Glassmorphismus, mehrschichtige Schatten, Verläufe mit OKLab-Interpolation, organische Eckenradien und Filter — der erzeugte Code immer im Blick.",

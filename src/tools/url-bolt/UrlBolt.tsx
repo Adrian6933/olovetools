@@ -117,7 +117,7 @@ function downloadBlob(blob: Blob, name: string) {
   anchor.click();
   // The object URL pins the blob in memory until it is revoked; a task is
   // enough for the click to have been handed to the browser.
-  setTimeout(() => URL.revokeObjectURL(url), 0);
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 export default function UrlBolt({ lang, dictionary }: UrlBoltProps) {
@@ -903,7 +903,7 @@ export default function UrlBolt({ lang, dictionary }: UrlBoltProps) {
                               <Info className="w-4 h-4 shrink-0 mt-0.5" />
                             )}
                             <span className="leading-relaxed">
-                              {fill(t[finding.key] || finding.key, finding.detail)}
+                              {fill((finding.detail === '1' && t[`${finding.key}_one`]) || t[finding.key] || finding.key, finding.detail)}
                             </span>
                           </div>
                         ))}

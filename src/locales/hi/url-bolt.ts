@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "इस लिंक से {0} ट्रैकिंग पैरामीटर जुड़ा है।",
   "resetHint": "फिर से शुरू करें",
   "title": "URLBolt",
   "seo_title": "URLBolt | URL एनकोडर, डिकोडर और इंस्पेक्टर",

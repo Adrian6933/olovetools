@@ -1,4 +1,5 @@
 export default {
+  "contactForIdeas": "Контакт для идей и замечаний:",
   "resetHint": "Начать заново",
   "title": "AudioSnap",
   "badge": "Диктофон и обрезка аудио",

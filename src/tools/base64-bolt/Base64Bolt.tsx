@@ -65,7 +65,7 @@ import {
   type Issue,
   type SourceCharset,
 } from './lib/base64';
-import { extFromMime, isPreviewableMime, sniff, type Format } from './lib/sniff';
+import { localizeFormatLabel, extFromMime, isPreviewableMime, sniff, type Format } from './lib/sniff';
 import { measure, NO_EXTRAS, type Extras } from './lib/measure';
 import { availableSnippets, renderSnippet, type SnippetId } from './lib/snippets';
 import { fill, formatBytes, formatCount, PREVIEW_CHARS } from './lib/format';
@@ -953,7 +953,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                     <Stat
                       icon={<IconSniff className="w-3.5 h-3.5" />}
                       label={t.statFormat || 'Detected'}
-                      value={textResult.format ? textResult.format.label : '—'}
+                      value={textResult.format ? localizeFormatLabel(textResult.format.label, t) : '—'}
                     />
                     <Stat
                       icon={<IconRoundTrip className="w-3.5 h-3.5" />}
@@ -1234,7 +1234,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                         label={t.statGzip || 'Gzipped'}
                         value={fileResult.extras.gzipBytes >= 0 ? formatBytes(fileResult.extras.gzipBytes) : '—'}
                       />
-                      <Stat icon={<IconSniff className="w-3.5 h-3.5" />} label={t.statFormat || 'Detected'} value={fileResult.format.label} />
+                      <Stat icon={<IconSniff className="w-3.5 h-3.5" />} label={t.statFormat || 'Detected'} value={localizeFormatLabel(fileResult.format.label, t)} />
                       <Stat icon={<Zap className="w-3.5 h-3.5" />} label={t.statTime || 'Took'} value={`${Math.round(fileResult.ms)} ms`} />
                     </div>
 
@@ -1361,10 +1361,11 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                               decodedName
                             )
                           }
+                          title={`${t.downloadFile || 'Download the file'} (${decodedName})`}
                           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-600/30 text-blue-300 text-[11px] font-bold hover:bg-blue-600/30 transition-all cursor-pointer shrink-0"
                         >
                           <Download className="w-3.5 h-3.5" />
-                          .{mimeOverride ? extFromMime(mimeOverride) : decoded.format.ext}
+                          {t.downloadFile || 'Download the file'} .{mimeOverride ? extFromMime(mimeOverride) : decoded.format.ext}
                         </button>
                       )}
                     </div>
@@ -1388,7 +1389,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                       ) : decoded && decoded.bytes.length ? (
                         <div className="text-center space-y-2">
                           <IconSniff className="w-10 h-10 text-blue-400 mx-auto" />
-                          <p className="text-sm font-bold text-white">{decoded.format.label}</p>
+                          <p className="text-sm font-bold text-white">{localizeFormatLabel(decoded.format.label, t)}</p>
                           <p className="text-xs text-slate-500">{formatBytes(decoded.bytes.length)}</p>
                           <p className="text-[10px] text-slate-600 max-w-xs">
                             {t.noPreview || 'This format has no browser preview. Download it or send it to another tool.'}
@@ -1407,7 +1408,7 @@ export default function Base64Bolt({ lang, dictionary }: Base64BoltProps) {
                   <>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       <Stat icon={<Hash className="w-3.5 h-3.5" />} label={t.statBytes || 'Payload'} value={formatBytes(decoded.bytes.length)} />
-                      <Stat icon={<IconSniff className="w-3.5 h-3.5" />} label={t.statFormat || 'Detected'} value={decoded.format.label} />
+                      <Stat icon={<IconSniff className="w-3.5 h-3.5" />} label={t.statFormat || 'Detected'} value={localizeFormatLabel(decoded.format.label, t)} />
                       <Stat
                         icon={<IconUrlSafe className="w-3.5 h-3.5" />}
                         label={t.statAlphabet || 'Alphabet'}

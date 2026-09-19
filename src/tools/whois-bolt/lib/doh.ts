@@ -116,12 +116,19 @@ export function resolversAgree(views: ResolverView[]): boolean {
   return answered.every(v => v.values.join('|') === first);
 }
 
-/** Turns "https://www.example.com/path?x=1" into "example.com". */
+/**
+ * Turns "https://user@www.example.com:8080/path?x=1" into "www.example.com".
+ *
+ * El `www.` ya no se quita: esto es una consulta DNS y `www.example.com` es
+ * otro nombre, a menudo un CNAME hacia una CDN con registros distintos de los
+ * del dominio desnudo. Quitarlo respondia sobre algo que no se habia preguntado.
+ */
 export function sanitizeDomain(input: string): string {
   let v = input.trim().toLowerCase();
   v = v.replace(/^[a-z]+:\/\//, '');
-  v = v.replace(/^www\./, '');
   v = v.split(/[/?#]/)[0];
+  v = v.replace(/^[^@]*@/, '');
+  v = v.replace(/:\d+$/, '');
   // A trailing dot is legal in DNS but confuses the display.
   return v.replace(/\.$/, '');
 }

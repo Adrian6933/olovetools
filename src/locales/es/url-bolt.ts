@@ -1,4 +1,5 @@
 export default {
+  "riskTrackers_one": "Este enlace lleva {0} parámetro de rastreo pegado.",
   "resetHint": "Empezar de nuevo",
   "title": "URLBolt",
   "seo_title": "URLBolt | Codificador, decodificador e inspector de URLs",

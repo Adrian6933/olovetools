@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "Ganzzahlen haben keine Nachkommastellen. Für 12,5 wechsle zu Gleitkomma.",
   "resetHint": "Neu anfangen",
   "title": "BinaryFlow",
   "seo_title": "Binär-, Hex- und Dezimalrechner mit Bit-Editor",

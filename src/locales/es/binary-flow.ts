@@ -1,4 +1,5 @@
 export default {
+  "errorFraction": "Un entero no lleva decimales. Para 12,5 cambia a Coma flotante.",
   "resetHint": "Empezar de nuevo",
   "title": "BinaryFlow",
   "seo_title": "Conversor de binario, hexadecimal y decimal con editor de bits",

@@ -72,7 +72,7 @@ export const ExportPanel: React.FC<ExportPanelProps> = ({
     a.click();
     // Revoking on the next tick rather than never: the old build leaked one
     // object URL per download for the lifetime of the tab.
-    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
   };
 
   return (

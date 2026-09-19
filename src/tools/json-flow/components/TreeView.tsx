@@ -254,9 +254,9 @@ export const TreeView: React.FC<TreeViewProps> = ({
 
       <div className="flex items-center justify-between gap-3 pt-2 text-[10.5px] font-mono text-slate-600">
         <span className={capped ? 'text-amber-300/80' : undefined}>
-          {(t.tree_rows || '{0} rows').replace('{0}', String(rows.length))}
+          {((rows.length === 1 && t.tree_rows_one) || t.tree_rows || '{0} rows').replace('{0}', String(rows.length))}
           {capped ? ` · ${t.tree_capped || 'ceiling reached — collapse a level to see the rest'}` : ''}
-          {match ? ` · ${(t.tree_hits || '{0} hits').replace('{0}', String(match.total))}` : ''}
+          {match ? ` · ${((match.total === 1 && t.tree_hits_one) || t.tree_hits || '{0} hits').replace('{0}', String(match.total))}` : ''}
         </span>
         <span>{(t.tree_mounted || '{0} in the DOM').replace('{0}', String(slice.length))}</span>
       </div>

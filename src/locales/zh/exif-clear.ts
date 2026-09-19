@@ -1,4 +1,6 @@
 export default {
+  "cleanBtn_one": "清理 {n} 个文件",
+  "badgeTags_one": "{n} 个标签",
   "resetHint": "重新开始",
   "title": "EXIF Cleaner",
   "badge": "图片元数据清理器",

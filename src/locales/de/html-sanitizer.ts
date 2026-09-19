@@ -1,4 +1,5 @@
 export default {
+  "report_dangerous_one": "{0} Entfernung hätte Code ausführen können.",
   "previewTitle": "Vorschau des bereinigten HTML",
   "resetHint": "Neu anfangen",
   "title": "HTML Sanitizer",

@@ -37,6 +37,16 @@ export function parseInBase(input: string, base: number): ParseResult {
   if ((base === 16 && v.startsWith('0x')) || (base === 2 && v.startsWith('0b')) || (base === 8 && v.startsWith('0o'))) {
     v = v.slice(2);
   }
+  // Punto y coma valen como separador de miles ("1.000.000", "1,048,576"),
+  // pero solo si lo parecen: grupos de 3 cifras en decimal, de 4 u 8 en las
+  // demas bases. Antes se borraban siempre, y "12.5" pasaba a ser 125 sin
+  // avisar; ahora eso se señala como decimal, que un entero no admite.
+  if (/[.,]/.test(v)) {
+    const groups = v.replace(/[\s_]/g, '').split(/[.,]/);
+    const size = base === 10 ? [3] : [4, 8];
+    const grouped = groups[0].length > 0 && groups.slice(1).every(g => size.includes(g.length));
+    if (!grouped) return fail('fraction', v.match(/[.,]/)![0]);
+  }
   v = v.replace(/[\s_.,]/g, '');
   if (!v) return fail('empty');
 

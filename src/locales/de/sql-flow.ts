@@ -1,4 +1,8 @@
 export default {
+  "status_errors_one": "{0} Problem",
+  "status_warnings_one": "{0} Punkt zum Prüfen",
+  "lines_one": "Zeile",
+  "chars_one": "Zeichen",
   "resetHint": "Neu anfangen",
   "title": "SQLFlow",
   "dialect": "Dialekt",

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
   "resetHint": "Start over",
   "title": "GIFBolt",
   "description": "Pull frames from a video or line up stills, edit the timeline, and encode a GIF with a global palette and inter-frame compression — all in your browser.",

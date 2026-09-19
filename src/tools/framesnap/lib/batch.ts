@@ -97,7 +97,7 @@ export async function scanScenes(
   shouldStop: () => boolean
 ): Promise<SceneScan> {
   const started = performance.now();
-  const duration = video.duration || 0;
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
   const step = Math.max(0.05, options.step);
   const total = Math.max(1, Math.floor(duration / step));
 

@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "コピーしました！",
+  "contactForIdeas": "ご意見・ご要望の連絡先:",
   "resetHint": "最初からやり直す",
   "title": "FaviconBolt",
   "description": "絵文字、数文字のテキスト、あるいは自分のロゴから、ファビコン一式をまとめて作成します。すべてブラウザの中で生成されます。",

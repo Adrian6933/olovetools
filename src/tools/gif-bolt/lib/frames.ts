@@ -6,6 +6,7 @@
 // ============================================================================
 
 import type { FitMode, Frame } from '../types';
+import { resolveVideoDuration } from '../../../lib/videoDuration';
 
 // ---------------------------------------------------------------------------
 // Accepted input
@@ -89,9 +90,12 @@ export function openVideo(file: File): Promise<VideoHandle> {
       video.removeEventListener('error', onError);
     };
 
-    const onReady = () => {
+    const onReady = async () => {
       cleanup();
-      if (!video.videoWidth || !video.videoHeight || !isFinite(video.duration)) {
+      // Un WebM de MediaRecorder llega con duración Infinity: no está roto,
+      // solo hay que ir a buscarla al final antes de rechazarlo.
+      const duration = await resolveVideoDuration(video);
+      if (!video.videoWidth || !video.videoHeight || !duration) {
         URL.revokeObjectURL(url);
         reject(new Error('unsupported'));
         return;
@@ -99,7 +103,7 @@ export function openVideo(file: File): Promise<VideoHandle> {
       resolve({
         video,
         url,
-        duration: video.duration,
+        duration,
         width: video.videoWidth,
         height: video.videoHeight,
         release: () => {

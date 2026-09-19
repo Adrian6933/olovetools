@@ -1,4 +1,8 @@
 export default {
+  "chars_one": "अक्षर",
+  "status_errors_one": "{0} समस्या",
+  "status_warnings_one": "{0} बात जाँचने लायक",
+  "lines_one": "पंक्ति",
   "resetHint": "फिर से शुरू करें",
   "title": "SQLFlow",
   "dialect": "डायलेक्ट",

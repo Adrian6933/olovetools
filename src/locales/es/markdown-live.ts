@@ -1,4 +1,8 @@
 export default {
+  "anchorLabel": "Enlace a esta sección",
+  "howItWorksTitle": "Cómo funciona",
+  "emailCopied": "¡Copiado!",
+  "contactForIdeas": "Contacto para ideas y comentarios:",
   "resetHint": "Empezar de nuevo",
   "title": "MarkdownLive",
   "description": "Escribe Markdown a la izquierda y mira cómo se construye el documento a la derecha: listas anidadas, listas de tareas, tablas, notas al pie y código resaltado, todo interpretado dentro de tu propia pestaña.",

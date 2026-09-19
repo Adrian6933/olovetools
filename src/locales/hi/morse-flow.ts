@@ -1,4 +1,5 @@
 export default {
+  "issuesTitle_one": "{n} वर्ण का मोर्स समकक्ष नहीं है, वह {mark} के रूप में दिखता है:",
   "resetHint": "फिर से शुरू करें",
   "title": "MorseFlow",
   "label_text": "टेक्स्ट",

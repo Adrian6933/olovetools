@@ -63,6 +63,7 @@ import { parsePattern } from './lib/ast';
 import { explain } from './lib/explain';
 import { lint, supportsIndices, supportsLookbehind, supportsUnicodeSets } from './lib/lint';
 import { replacementTokens } from './lib/engine';
+import { needsUnicodeFlag, regexErrorKey } from './lib/errors';
 import { AUTO_LIMIT, TIMEOUT_MS, useRegexRun } from './lib/useRegexRun';
 import { CATEGORIES, CHEAT_SHEET, LIBRARY, type LibraryCategory, type LibraryEntry } from './lib/library';
 import { CODE_TARGETS, targetById } from './lib/codegen';
@@ -382,7 +383,7 @@ export const RegexFlow: React.FC<RegexFlowProps> = ({ lang, dictionary }) => {
     anchor.click();
     // Revoked on the next tick: the click has already queued the download,
     // and holding the URL keeps the whole blob alive in memory.
-    setTimeout(() => URL.revokeObjectURL(url), 0);
+    setTimeout(() => URL.revokeObjectURL(url), 60_000);
   };
 
   const handoffPayload = useCallback(async () => {
@@ -682,7 +683,9 @@ export const RegexFlow: React.FC<RegexFlowProps> = ({ lang, dictionary }) => {
                 {!ok ? (
                   <span className="flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/10 px-3 py-1.5 font-bold text-red-300">
                     <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                    <span className="min-w-0 break-all">{error}</span>
+                    <span className="min-w-0 break-words" title={error}>
+                      {regexErrorKey(error) ? t(regexErrorKey(error)!) : error}
+                    </span>
                   </span>
                 ) : timedOut ? (
                   <span className="flex items-center gap-1.5 rounded-full border border-red-500/25 bg-red-500/10 px-3 py-1.5 font-bold text-red-300">
@@ -699,6 +702,13 @@ export const RegexFlow: React.FC<RegexFlowProps> = ({ lang, dictionary }) => {
                 {ok && !timedOut && (
                   <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-slate-400">
                     {total === 0 ? t('noMatches') : t('matchesFound', { count: total })}
+                  </span>
+                )}
+
+                {ok && needsUnicodeFlag(pattern, flags) && (
+                  <span className="flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 font-bold text-amber-200">
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    {t('regexHintUnicode')}
                   </span>
                 )}
 

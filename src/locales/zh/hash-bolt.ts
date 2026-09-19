@@ -1,4 +1,6 @@
 export default {
+  "emailCopied": "已复制！",
+  "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "HashBolt",
   "badge": "校验和与文件完整性",
@@ -60,7 +62,7 @@ export default {
   "verifyTitle": "与校验和比对",
   "verifyPlaceholder": "粘贴一个哈希，或整份 SHA256SUMS 文件——每行会按文件名自动配对。",
   "verifyHint": "十六进制和 Base64 都支持，大小写不限。如果某个长度不属于你勾选的任何算法，会直接说明，而不是当成不匹配。",
-  "verifySummary": "读取 {count} 条校验和 · 已验证 {ok} 条 · 不匹配 {bad} 条",
+  "verifySummary": "已读取校验和：{count} · 已验证：{ok} · 不匹配：{bad}",
   "verifyMatch": "匹配——同一个 {algo} 摘要。",
   "verifyMismatch": "不匹配。这个文件不是该校验和所描述的那一个。",
   "verifyUnknownLength": "这个校验和的长度不属于你勾选的任何算法。请勾选正确的算法后重新计算。",
