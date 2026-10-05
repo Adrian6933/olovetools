@@ -725,7 +725,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
     <div className="min-h-screen flex flex-col bg-[#1c1012] text-slate-100 selection:bg-red-500/30 overflow-x-hidden font-sans">
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={resetApp} t={t} />
 
-      {/* The width cap lives on <main> so AdRail can measure a real side gap. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-pdf-flow-top" />
 
@@ -1566,7 +1566,6 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           </section>
         </div>
 
-        <AdBanner id="adsense-pdf-flow-bottom" />
       </main>
 
       <AnimatePresence>

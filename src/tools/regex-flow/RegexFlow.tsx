@@ -513,10 +513,7 @@ export const RegexFlow: React.FC<RegexFlowProps> = ({ lang, dictionary }) => {
         t={dictionary}
       />
 
-      {/* The max-w lives on <main> itself, and reserves the width of the two
-          fixed ad rails past 1400px. AdRail measures the gap between <main>
-          and the viewport edge: with a plain max-w-7xl that gap is 60px a side
-          at 1400px and the rails silently never render. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="relative z-10 mx-auto flex w-full max-w-6xl min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] flex-1 flex-col gap-16 px-4 pb-20 pt-28 sm:px-6 md:pt-36">
         <AdBanner id="adsense-regex-flow-top" />
 
@@ -1318,7 +1315,6 @@ export const RegexFlow: React.FC<RegexFlowProps> = ({ lang, dictionary }) => {
           )}
         </section>
 
-        <AdBanner id="adsense-regex-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={dictionary} onOpenModal={setLegalModal} />

@@ -499,10 +499,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
       <Header
         onReset={handleSoftReset} resetHint={t('resetHint')} currentLang={lang} onLangChange={handleLangChange} />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, and at max-w-7xl the gap was 60px at
-          1400px wide, so the rails were silently suppressed on the most common
-          desktop size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-6 pt-56 md:pt-52 pb-40">
         <AdBanner id="adsense-twitchbolt-top" className="mb-12" />
         
@@ -682,8 +679,6 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                     ))}
                 </div>
             </section>
-
-            <AdBanner id="adsense-twitchbolt-mid" className="mt-32 w-full max-w-4xl" />
 
             {/* How it works ------------------------------------------------- */}
             <section id="how-it-works" className="mt-32 w-full max-w-6xl space-y-10 scroll-mt-32">
@@ -1007,7 +1002,6 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
           </div>
         )}
 
-        <AdBanner id="adsense-twitchbolt-bottom" className="mt-24" />
       </main>
 
       <Footer lang={lang} dictionary={dictionary} onOpenLegal={setActiveLegal} />

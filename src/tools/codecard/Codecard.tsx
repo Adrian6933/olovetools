@@ -1301,8 +1301,6 @@ export const Codecard: React.FC<CodecardProps> = ({ lang, dictionary }) => {
             </div>
           </div>
 
-          <AdBanner id="adsense-codecard-mid" />
-
           {/* ---------------------------------------------------------------- */}
           {/* Cómo funciona                                                    */}
           {/* ---------------------------------------------------------------- */}
@@ -1423,7 +1421,6 @@ export const Codecard: React.FC<CodecardProps> = ({ lang, dictionary }) => {
           </div>
         </div>
 
-        <AdBanner id="adsense-codecard-bottom" />
       </main>
 
       {showScrollTop && (

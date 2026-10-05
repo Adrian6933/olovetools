@@ -167,9 +167,7 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
       <Header
         onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/lorem-flow`)} t={t} />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, so reserving 440px from 1400px up is
-          what keeps them visible instead of silently suppressed. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col gap-12 md:gap-20">
         <AdBanner id="adsense-lorem-flow-top" />
 
@@ -391,8 +389,6 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
           </div>
         </section>
 
-        <AdBanner id="adsense-lorem-flow-mid" />
-
         {/* How it works ---------------------------------------------------- */}
         <section id="how-it-works" className="space-y-8 scroll-mt-28">
           <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
@@ -454,7 +450,6 @@ export default function LoremFlow({ lang, dictionary }: LoremFlowProps) {
           </section>
         )}
 
-        <AdBanner id="adsense-lorem-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={m => setLegalModal(m)} />

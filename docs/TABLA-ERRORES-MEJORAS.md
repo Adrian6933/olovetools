@@ -8,17 +8,49 @@ Inicio: 2026-09-19. Base: `8085ff5`. Se va rellenando según avanza la revisión
 - ⚠️ Funciona, pero hay algo que conviene mejorar o no se ha podido probar del todo.
 - ❌ Fallo abierto (no arreglado todavía).
 
-## Resumen
+## Tabla resumen
 
-- **Revisadas las 62 herramientas**: pasada automática en todas (carga, hidratación, móvil, textos) y prueba de uso real en todas salvo las partes que exigen permisos del sistema (cámara, micrófono, captura de pantalla, guardar en disco).
-- **Fallos arreglados**: 26 filas 🔧 + 9 arreglos transversales (plurales, textos en inglés, descargas en Safari, nombres repetidos en ZIP, `decode()` en pestaña oculta, vídeos WebM sin duración, traducciones sin tildes…).
-- **Pendiente de decidir o de hacer** (no arreglado):
-  - ❌ json-flow: el detalle de los ~30 mensajes de error del analizador sigue en inglés (necesita plantillas con parámetros en 9 idiomas).
-  - ⚠️ backgroundremover: librería con licencia **AGPL-3.0** y modelos servidos desde el CDN de img.ly.
-  - ⚠️ codecard: el SVG exportado pesa más que el PNG, al contrario de lo que dice su FAQ.
-  - ⚠️ whois-bolt: el nombre promete «Whois» pero solo hace DNS.
-  - Mejoras transversales: números con punto decimal en idiomas de coma, 16 textos con «(s)», un único `Footer`/`LegalModal` compartido en vez de más de 50 copias.
-- **No probado** (necesita permisos o selectores del sistema): grabar en recordsnap, cámara/micro en device-test, guardar «directo al disco» en framebolt.
+**Cuentas**
+
+| | Nº |
+|---|---|
+| Herramientas revisadas | 62 |
+| Filas de la tabla detallada | 68 (37 ✅ · 26 🔧 · 5 ⚠️) |
+| Fallos arreglados en esta revisión | 26 por herramienta + 9 transversales |
+| Fallos abiertos | 1 (❌ json-flow) |
+| Decisiones pendientes del dueño | 3 (licencia, peso del SVG, nombre de whois-bolt) |
+| Partes sin probar (piden permisos del sistema) | 3 (recordsnap, device-test, framebolt) |
+
+**Arreglado**
+
+| # | Qué fallaba | Herramientas | Qué le pasaba al usuario | Estado |
+|---|---|---|---|---|
+| 1 | Archivos perdidos dentro del ZIP | exif-clear, cropsnap, watermark-snap | Dos fotos llamadas `IMG_0001.jpg` → el ZIP salía con **una sola**, sin aviso | 🔧 |
+| 2 | Datos mal leídos, sin avisar | binary-flow, graph-flow, epoch-flow | «12.5» convertido como 125; «1.100» de un Excel en español leído como 1,1; fechas negativas en µs/ns descuadradas | 🔧 |
+| 3 | Se queda colgado o no termina | twitchbolt, kickbolt, cropsnap, framesnap, gif-bolt, framebolt, backgroundremover | «Cargando…» para siempre con un clip inexistente; 500 capturas sobre un vídeo de 2 s; vídeos del propio navegador rechazados; todo se paraba al cambiar de pestaña | 🔧 |
+| 4 | El resultado exportado no es el que se ve | subtitles-bolt, lottie-viewer, pdf-flow, whois-bolt | «\<i\>mundo\</i\>» escrito en pantalla en TTML; nombres de capa borrados del Lottie; descarga del rango de páginas anterior; consulta a otro dominio al quitar el `www.` | 🔧 |
+| 5 | Hidratación rota | recordsnap | React tiraba la herramienta y la regeneraba entera en cada carga | 🔧 |
+| 6 | Textos en inglés en los 9 idiomas | 24 herramientas | Unos 480 textos (controles del reproductor, botones de zoom, «Copied!», 44 nombres de formato…) | 🔧 |
+| 7 | Traducciones sin tildes ni eñes | codecard, pastesnap (es, fr, pt, de) | «Por que…?», «Einfuegen», «Copie e cole» | 🔧 |
+| 8 | Plurales mal | 9 herramientas | «1 problemas», «1 coincidencias», «Este enlace lleva 1 parámetros» | 🔧 |
+| 9 | Errores en crudo y en inglés | regex-flow | El mensaje del motor de JavaScript tal cual, con banderas que el usuario no puso | 🔧 |
+| 10 | Caracteres que se perdían | morse-flow | «Ñandú» y «canción» salían con `#` | 🔧 |
+| 11 | Descargas canceladas en Safari | 14 herramientas (16 puntos) | El archivo grande se quedaba a medias | 🔧 |
+| 12 | Código muerto | backgroundremover, compresssnap, klipy | 3 ficheros que no importaba nadie | 🔧 |
+
+**Pendiente**
+
+| Qué | Herramientas | Por qué no está hecho | Estado |
+|---|---|---|---|
+| ~30 mensajes del analizador en inglés | json-flow | Necesita plantillas con parámetros en los 9 idiomas | ❌ |
+| Librería con licencia **AGPL-3.0** y modelos desde el CDN de img.ly | backgroundremover | Decisión tuya: en una web pública suele obligar a publicar el código | ⚠️ |
+| El SVG exportado pesa más que el PNG, al revés de lo que dice su FAQ | codecard | Decisión tuya: cambiar el export o corregir la FAQ | ⚠️ |
+| Se llama «Whois» pero solo hace DNS | whois-bolt | Decisión tuya: añadir Whois de verdad o renombrar | ⚠️ |
+| Todas las preferencias se leen en un solo `try` | clipy, klipy | Si una se corrompe, se pierden las que van detrás | ⚠️ |
+| Números con punto decimal en idiomas de coma | diffsnap, entropy-bolt, compresssnap, pdf-flow | Mejora transversal: `Intl.NumberFormat` en vez de `toFixed` | ⚠️ |
+| 16 textos con «(s)» / «(es)» | 8 herramientas | Mejora de estilo: variantes `_one` | ⚠️ |
+| Más de 50 copias casi iguales de `Footer`/`LegalModal` | — | Mejora de mantenimiento: un solo componente compartido | ⚠️ |
+| Grabar, cámara/micro, guardar directo al disco | recordsnap, device-test, framebolt | Piden permisos o selectores del sistema que no debo aceptar yo | ⚠️ |
 
 ## 1. Pasada automática (las 62, en `/es`)
 

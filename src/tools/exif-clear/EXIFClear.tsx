@@ -568,9 +568,7 @@ export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
         t={t}
       />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails have room. With a plain w-full it measured
-          a zero gap and the rails never rendered at any window size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-exif-clear-top" />
 
@@ -1281,7 +1279,6 @@ export const EXIFClear: React.FC<EXIFClearProps> = ({ lang, dictionary }) => {
           </section>
         </div>
 
-        <AdBanner id="adsense-exif-clear-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

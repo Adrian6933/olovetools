@@ -587,9 +587,7 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
       <Header
         onReset={resetWorkspace} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/framesnap`)} t={t} />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          against the viewport edge to decide whether the fixed side rails fit.
-          The previous max-w-5xl left the gap short of the 168px a rail needs. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-20 pt-28 min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] md:px-8 md:pt-36">
         <AdBanner id="adsense-framesnap-top" />
 
@@ -1223,7 +1221,6 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
         )}
 
         <div className="mt-10">
-          <AdBanner id="adsense-framesnap-mid" />
         </div>
 
         {/* ================================================================ */}
@@ -1353,7 +1350,6 @@ export default function Framesnap({ lang, dictionary }: FramesnapProps) {
         </section>
 
         <div className="mt-16">
-          <AdBanner id="adsense-framesnap-bottom" />
         </div>
       </main>
 

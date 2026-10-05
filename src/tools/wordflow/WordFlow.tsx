@@ -1555,7 +1555,6 @@ export const WordFlow: React.FC<WordFlowProps> = ({ lang, dictionary }) => {
           )}
         </section>
 
-        <AdBanner id="adsense-wordflow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

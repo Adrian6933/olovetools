@@ -378,9 +378,7 @@ const GraphFlow: React.FC<GraphFlowProps> = ({ lang, dictionary }) => {
     <div className="min-h-screen flex flex-col font-sans antialiased">
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={handleReset} t={t} />
 
-      {/* The max-width lives on <main> itself: AdRail measures the gap between
-          this element and the viewport edge, and a full-width <main> leaves it
-          zero, silently suppressing both rails at every screen size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 pt-28 md:pt-32 pb-8 px-4 md:px-8 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-graph-flow-top" />
 
@@ -897,8 +895,6 @@ const GraphFlow: React.FC<GraphFlowProps> = ({ lang, dictionary }) => {
             </>
           )}
 
-          <AdBanner id="adsense-graph-flow-mid" />
-
           {/* ── Features ──────────────────────────────────────────────── */}
           <section className="space-y-6 pt-4">
             <h2 className="text-2xl md:text-3xl font-black text-white tracking-tight text-center">
@@ -955,7 +951,6 @@ const GraphFlow: React.FC<GraphFlowProps> = ({ lang, dictionary }) => {
           )}
         </div>
 
-        <AdBanner id="adsense-graph-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

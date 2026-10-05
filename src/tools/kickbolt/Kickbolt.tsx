@@ -332,10 +332,7 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
       <Header
         onReset={handleSoftReset} resetHint={t('resetHint')} currentLang={lang} onLangChange={handleLangChange} />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, and at max-w-7xl the gap was 60px at
-          1400px wide, so the rails were silently suppressed on the most common
-          desktop size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-6 pt-56 md:pt-52 pb-40">
         {/* Bloque AdSense Horizontal — debajo del header */}
         <AdBanner id="adsense-kickbolt-top" className="mb-12" />
@@ -523,8 +520,6 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
                 </div>
             </section>
             </motion.div>
-
-            <AdBanner id="adsense-kickbolt-mid" className="mt-32 w-full max-w-4xl" />
 
             {/* How it works ------------------------------------------------- */}
             <section id="how-it-works" className="mt-32 w-full max-w-6xl space-y-10 scroll-mt-32">
@@ -720,8 +715,6 @@ const Kickbolt: React.FC<KickboltProps> = ({ lang = 'en', dictionary }) => {
       </main>
 
       {/* Bloque AdSense Horizontal — al final, antes del footer */}
-      <AdBanner id="adsense-kickbolt-bottom" className="mb-12" />
-
       <Footer lang={lang} dictionary={dictionary} onOpenLegal={setActiveLegal} />
 
       <LegalModal type={activeLegal} lang={lang} dictionary={dictionary} onClose={() => setActiveLegal(null)} />

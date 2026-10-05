@@ -395,11 +395,7 @@ export const JSONFlow: React.FC<JSONFlowProps> = ({ lang, dictionary }) => {
       <Header
         onReset={handleSoftReset} currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          against the viewport edge to decide whether the fixed side rails fit.
-          A full-width <main> leaves a 0px gap and the rails never render — the
-          previous max-w-7xl left only 60px at 1400px, well under the 168px the
-          rail needs. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-32 md:pt-36 pb-20">
         <AdBanner id="adsense-json-flow-top" />
 
@@ -1026,7 +1022,6 @@ export const JSONFlow: React.FC<JSONFlowProps> = ({ lang, dictionary }) => {
           )}
         </section>
 
-        <AdBanner id="adsense-json-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

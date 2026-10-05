@@ -1758,16 +1758,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       </header>
 
       {/* CONTENIDO PRINCIPAL */}
-      {/* AdRail mide el hueco entre este <main> y el borde del viewport y solo
-          muestra cada raíl si caben 120-160px + margen. Un ancho fijo no sirve:
-          con 1800px no cabían nunca, y con uno fijo más pequeño se malgasta
-          pantalla en monitores grandes. Reservando 440px (220 por lado) el
-          hueco es suficiente, y el tope de 1800px sigue mandando en monitores
-          muy anchos.
-          El hueco SOLO se reserva a partir de 1400px, que es donde los raíles
-          se llegan a pintar. Restarlo siempre era lo que rompía el móvil:
-          calc(100vw-440px) da negativo por debajo de 440px de pantalla, el
-          max-width se queda en 0 y todo el contenido se salía de la caja. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="w-full mx-auto px-4 sm:px-6 pt-44 md:pt-40 flex-grow max-w-[1800px] min-[1400px]:max-w-[min(1800px,calc(100vw-440px))] relative z-10">
         <AdBanner id="adsense-clipy-top" className="mb-8" />
         <div className="mb-8 md:mb-14" key={state.mode}>
@@ -1966,8 +1957,6 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           </div>
         )}
 
-        <AdBanner id="adsense-clipy-mid" className="mt-24" />
-
         {/* Como funciona ------------------------------------------------- */}
         <section id="how-it-works" className="mt-24 space-y-8 scroll-mt-32">
           <h2 className="text-2xl md:text-3xl font-black tracking-tight text-white text-center">
@@ -2035,7 +2024,6 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
           </section>
         )}
 
-        <AdBanner id="adsense-clipy-bottom" className="mt-24" />
       </main>
 
       {playingClip && <FloatingPlayer getVideoSource={getClipVideoSource} clip={playingClip} onClose={() => {

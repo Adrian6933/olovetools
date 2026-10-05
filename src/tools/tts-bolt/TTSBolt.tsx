@@ -843,9 +843,7 @@ export const TTSBolt: React.FC<TTSBoltProps> = ({ lang, dictionary }) => {
         t={t}
       />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          to decide whether the fixed side rails fit, and reserving 440px from
-          1400px up is what keeps them visible instead of silently suppressed. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-tts-bolt-top" />
 
@@ -1474,7 +1472,6 @@ export const TTSBolt: React.FC<TTSBoltProps> = ({ lang, dictionary }) => {
           </section>
         </div>
 
-        <AdBanner id="adsense-tts-bolt-bottom" />
       </main>
 
       {picker && (

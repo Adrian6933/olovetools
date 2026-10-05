@@ -369,8 +369,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
         t={t}
       />
 
-      {/* El max-w vive en el propio <main> a propósito: AdRail mide ESTE
-          elemento para decidir si caben los raíles laterales fijos. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 sm:px-6 md:px-10 pt-28 md:pt-36 pb-24 flex flex-col gap-16 relative z-10">
         <AdBanner id="adsense-socialbolt-top" />
 
@@ -731,7 +730,6 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
           )}
         </section>
 
-        <AdBanner id="adsense-socialbolt-bottom" />
       </main>
 
       {showScrollTop && (

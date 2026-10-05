@@ -322,9 +322,7 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
         t={t}
       />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, and a full-width main leaves it a
-          gap of zero at every viewport size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-36 md:pt-32 pb-24 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-colorsnap-top" />
 
@@ -813,8 +811,6 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
             </div>
           </section>
 
-          <AdBanner id="adsense-colorsnap-mid" />
-
           {/* ================================================================ */}
           {/* How it works                                                     */}
           {/* ================================================================ */}
@@ -963,7 +959,6 @@ export default function Colorsnap({ lang, dictionary }: ColorsnapProps) {
           </section>
         </div>
 
-        <AdBanner id="adsense-colorsnap-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

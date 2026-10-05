@@ -578,9 +578,7 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
         t={t}
       />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          to decide whether the fixed side rails fit. A full-width <main> leaves
-          a zero gap and the rails silently never render at any screen size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col gap-10 pt-32 pb-24 px-4 md:px-8 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-lottie-viewer-top" />
 
@@ -1333,8 +1331,6 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
           </div>
         </section>
 
-        <AdBanner id="adsense-lottie-viewer-mid" />
-
         {/* ================================================================= */}
         {/* How it works                                                      */}
         {/* ================================================================= */}
@@ -1471,7 +1467,6 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
           )}
         </section>
 
-        <AdBanner id="adsense-lottie-viewer-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setActiveModal(modal)} />

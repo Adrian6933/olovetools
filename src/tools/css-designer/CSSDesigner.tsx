@@ -339,9 +339,7 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
       <Header
         onReset={handleSoftReset} currentLang={lang} onLanguageChange={handleLanguageChange} t={t} />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          against the viewport edge to decide whether the fixed side rails fit.
-          A full-width <main> leaves a 0px gap and the rails never render. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-32 md:pt-36 pb-20">
         <AdBanner id="adsense-css-designer-top" />
 
@@ -785,7 +783,6 @@ const CSSDesigner: React.FC<CSSDesignerProps> = ({ lang, dictionary }) => {
           )}
         </section>
 
-        <AdBanner id="adsense-css-designer-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={m => setActiveModal(m)} />

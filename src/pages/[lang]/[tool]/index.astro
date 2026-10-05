@@ -69,7 +69,6 @@ import { Footer as CodecardFooter } from '../../../tools/codecard/components/Foo
 import { Footer as PastesnapFooter } from '../../../tools/pastesnap/components/Footer';
 import { CookieBanner } from '../../../components/CookieBanner';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
-import { AdRail } from '../../../components/shared/AdRail';
 import { AdSlot } from '../../../components/shared/AdSlot';
 import { RELATED_TOOLS } from '../../../config/related-tools';
 import { TOOL_CTAS, CTA_HEADING } from '../../../config/tool-ctas';
@@ -79,13 +78,6 @@ import { TOOL_FAVICONS, TOOL_THEME_COLORS } from '../../../constants';
 import Analytics from '../../../components/Analytics.astro';
 import '../../../styles/global.css';
 import { resolveOgImage } from '../../../lib/ogImage';
-
-// Rotulo accesible del carril de anuncios. Los componentes de anuncio leen el
-// idioma de <html lang>, pero este <aside> lo pinta la pagina, que ya lo sabe.
-const ANUNCIO: Record<string, string> = {
-  en: 'Advertisement', es: 'Anuncio', fr: 'Publicité', de: 'Anzeige',
-  pt: 'Publicidade', ru: 'Реклама', hi: 'विज्ञापन', ja: '広告', zh: '广告',
-};
 
 export const prerender = true;
 
@@ -191,56 +183,6 @@ const RELATED_HEADING: Record<string, string> = {
 };
 const relatedSlugs = (RELATED_TOOLS[tool as string] || []).slice(0, 6);
 
-// ---------------------------------------------------------------------------
-// Dónde caen los bloques de anuncio de ESTA herramienta.
-//
-// Repartidos, y distintos en cada herramienta, para que recorrer el sitio no
-// sea ver el mismo anuncio en el mismo sitio sesenta veces. Pero NO al azar en
-// cada carga, por tres motivos concretos:
-//   1. La página se pinta en el servidor. Un Math.random() daría una posición
-//      en el servidor y otra en el navegador, React abortaría la hidratación y
-//      la herramienta entera se quedaría muerta (ya pasó con la etiqueta
-//      "Anuncio").
-//   2. Un anuncio que salta de sitio cada vez que recargas parece un fallo, y
-//      empuja el contenido bajo el dedo justo cuando vas a pulsar algo.
-//   3. AdSense pide que la colocación no provoque clics accidentales; meter
-//      unidades en un punto impredecible del contenido va justo en contra.
-//
-// Así que la variedad sale del nombre de la herramienta: estable para cada una,
-// distinta entre ellas. Dos puntos de cuatro posibles.
-// ---------------------------------------------------------------------------
-const PUNTOS_ANUNCIO = ['antesCtas', 'entreCtas', 'trasRelacionadas', 'trasSeo'] as const;
-type PuntoAnuncio = (typeof PUNTOS_ANUNCIO)[number];
-
-const huellaTool = (() => {
-  let h = 2166136261;
-  for (const c of String(tool)) {
-    h ^= c.charCodeAt(0);
-    h = Math.imul(h, 16777619) >>> 0;
-  }
-  return h;
-})();
-
-const puntosElegidos: Set<PuntoAnuncio> = (() => {
-  const primero = PUNTOS_ANUNCIO[huellaTool % PUNTOS_ANUNCIO.length];
-  // El desplazamiento nunca es múltiplo de 4, así que el segundo punto jamás
-  // coincide con el primero y siempre salen dos bloques.
-  const paso = 1 + ((huellaTool >>> 8) % (PUNTOS_ANUNCIO.length - 1));
-  const segundo = PUNTOS_ANUNCIO[(huellaTool + paso) % PUNTOS_ANUNCIO.length];
-  return new Set<PuntoAnuncio>([primero, segundo]);
-})();
-
-// Cada punto pide su unidad de AdSense. OJO: hoy `content` y `mid` son el MISMO
-// id en src/config/ads.ts, así que una herramienta que caiga en esos dos puntos
-// repite unidad. AdSense lo permite (el mismo bloque puede salir varias veces en
-// una página), pero significa que no se pueden separar métricas por posición
-// hasta que `mid` tenga id propio.
-const unidadAnuncio: Record<PuntoAnuncio, 'top' | 'content' | 'mid' | 'late'> = {
-  antesCtas: 'top',
-  entreCtas: 'content',
-  trasRelacionadas: 'mid',
-  trasSeo: 'late',
-};
 const relatedHeading = RELATED_HEADING[castLang] || RELATED_HEADING.en;
 
 // ---- CTAs cruzados: botones "siguiente paso" hacia herramientas que continúan el flujo ----
@@ -2226,14 +2168,6 @@ const appSchema = {
         )}
     </div>
 
-    {/* El timeout no es cosmético: `client:idle` a secas espera un hueco de
-        requestIdleCallback que en herramientas pesadas (Clipy con su barrido de
-        clips) no llega NUNCA, y las islas de anuncios se quedaban sin hidratar
-        para siempre. Por eso no se veían los raíles laterales. Con timeout se
-        hidratan igual de tarde, pero se hidratan. */}
-    <AdRail slug={tool!} client:idle={{ timeout: 2000 }} />
-    <AdSlot position="anchor" size="mobile-banner" client:idle={{ timeout: 2000 }} />
-
     {/* Registro de la visita, para poder ordenar el hub por popularidad.
         Va aqui y no dentro de cada herramienta: una sola vez para las 60.
 
@@ -2306,11 +2240,10 @@ const appSchema = {
       })();
     </script>
 
-    {puntosElegidos.has('antesCtas') && (
-      <div class="max-w-3xl mx-auto px-4 pt-8">
-        <AdSlot position={unidadAnuncio.antesCtas} size="leaderboard" client:idle={{ timeout: 2000 }} />
-      </div>
-    )}
+    {/* Second and final manual placement, outside the interactive workspace. */}
+    <div class="max-w-5xl mx-auto px-4 py-8">
+      <AdSlot position="content" client:idle={{ timeout: 2000 }} />
+    </div>
 
     {toolCtas.length > 0 && (
       <section aria-label={ctaHeading} class="tool-ctas max-w-5xl mx-auto px-4 pt-10 pb-2">
@@ -2330,11 +2263,6 @@ const appSchema = {
       </section>
     )}
 
-    {puntosElegidos.has('entreCtas') && (
-      <div class="max-w-3xl mx-auto px-4 pt-8">
-        <AdSlot position={unidadAnuncio.entreCtas} size="leaderboard" client:idle={{ timeout: 2000 }} />
-      </div>
-    )}
 
     {relatedSlugs.length > 0 && (
       <nav aria-label={relatedHeading} class="related-tools max-w-5xl mx-auto px-4 py-10 border-t border-white/5">
@@ -2354,18 +2282,11 @@ const appSchema = {
       </nav>
     )}
 
-    {/* Unidad in-content bajo las herramientas relacionadas. Ya no sale en todas:
-        es uno de los cuatro puntos posibles (ver PUNTOS_ANUNCIO). */}
-    {puntosElegidos.has('trasRelacionadas') && (
-      <div class="max-w-3xl mx-auto px-4 pb-4">
-        <AdSlot position={unidadAnuncio.trasRelacionadas} size="leaderboard" client:idle={{ timeout: 2000 }} />
-      </div>
-    )}
 
     <!-- SSR SEO content: visible (not display:none) to avoid cloaking. Some tools already
          show similar content in their own footer; this is intentionally supplementary,
          not hidden duplicate text, so it carries no cloaking/penalty risk. -->
-    <div class="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+    <div class="max-w-5xl mx-auto px-4 py-12">
       <section class="ssr-seo-content text-slate-300">
         <h1 class="text-2xl md:text-3xl font-black text-white mb-4">{finalTitle}</h1>
         <p class="text-sm leading-relaxed text-slate-400 mb-8">{t('seo_description')}</p>
@@ -2399,20 +2320,8 @@ const appSchema = {
         )}
       </section>
 
-      <!-- Rail sticky del slot "side": comparte columna con el contenido SEO/FAQ real de
-           arriba (mismo texto en todas las herramientas), así no requiere copy nueva por tool. -->
-      <aside class="hidden lg:block" aria-label={ANUNCIO[castLang] || ANUNCIO.en}>
-        <div class="sticky top-20">
-          <AdSlot position="side" size="rectangle" client:idle={{ timeout: 2000 }} />
-        </div>
-      </aside>
     </div>
 
-    {puntosElegidos.has('trasSeo') && (
-      <div class="max-w-3xl mx-auto px-4 pb-10">
-        <AdSlot position={unidadAnuncio.trasSeo} size="leaderboard" client:idle={{ timeout: 2000 }} />
-      </div>
-    )}
 
     {/* Footer renderizado aquí (tras CTAs, relacionadas y contenido SEO)
         para que quede al final real de la página, no dentro de la isla */}

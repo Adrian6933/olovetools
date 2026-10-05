@@ -657,10 +657,7 @@ export const DiffSnap: React.FC<DiffSnapProps> = ({ lang, dictionary }) => {
         t={t}
       />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          against the viewport edge to decide whether the fixed side rails fit.
-          The previous max-w-7xl left 60px at 1400px — well under the 168px a
-          rail needs — so the rails never rendered at any window size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-32 md:pt-36 pb-20">
         <AdBanner id="adsense-diffsnap-top" />
 
@@ -1431,7 +1428,6 @@ export const DiffSnap: React.FC<DiffSnapProps> = ({ lang, dictionary }) => {
           )}
         </section>
 
-        <AdBanner id="adsense-diffsnap-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

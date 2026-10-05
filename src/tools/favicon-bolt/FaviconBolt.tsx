@@ -389,9 +389,7 @@ export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) =>
         t={t}
       />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, and the old max-w-7xl left a 57px
-          gap at 1400px, which meant the rails were never rendered at all. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-36 pb-24 relative z-10 flex flex-col">
         <AdBanner id="adsense-favicon-bolt-top" />
 
@@ -589,8 +587,6 @@ export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) =>
             <NextStepBar lang={lang} t={t} getResult={getHandoffResult} />
           </section>
 
-          <AdBanner id="adsense-favicon-bolt-mid" />
-
           {/* ========================== How it works ========================== */}
           <section className="space-y-10">
             <div className="text-center space-y-3">
@@ -756,7 +752,6 @@ export const FaviconBolt: React.FC<FaviconBoltProps> = ({ lang, dictionary }) =>
           </section>
         </div>
 
-        <AdBanner id="adsense-favicon-bolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={type => {

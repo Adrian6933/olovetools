@@ -37,36 +37,6 @@ const categoryIconMap: Record<string, React.ComponentType<any>> = {
 const normaliza = (texto: string) =>
   texto.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '').trim();
 
-/** Hueco mínimo y máximo de herramientas entre dos anuncios de la rejilla. */
-const AD_GAP_MIN = 7;
-const AD_GAP_MAX = 15;
-
-/**
- * Dónde van los anuncios dentro de la rejilla de herramientas. El primero
- * sigue detrás de las tres primeras, y a partir de ahí se reparten a saltos
- * irregulares en vez de cada N exactas: un patrón fijo se nota enseguida al
- * bajar y "cansa". Es el mismo reparto que hace la rejilla de clips.
- *
- * El azar es determinista a propósito: con un Math.random() suelto los
- * anuncios cambiarían de sitio en cada repintado, y aquí hay repintados de
- * sobra (buscar, filtrar por categoría, reordenar). Dependiendo solo del
- * índice, cada anuncio se queda donde estaba.
- */
-const adPositions = (total: number): Set<number> => {
-  const out = new Set<number>();
-  let seed = 0x9e3779b9;
-  let i = 2;
-  // `total - 1` deja fuera la última celda: un anuncio cerrando la rejilla
-  // parece el final de la lista y esconde la herramienta que va antes.
-  while (i < total - 1) {
-    out.add(i);
-    // xorshift32: barato, sin dependencias y siempre da la misma secuencia.
-    seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0;
-    i += AD_GAP_MIN + (seed % (AD_GAP_MAX - AD_GAP_MIN + 1));
-  }
-  return out;
-};
-
 export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en', dictionary }) => {
   const t = createTranslator(dictionary);
   const prefersReduced = useReducedMotion();
@@ -270,7 +240,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
     });
   }, [filteredProjects, orden, visitasGlobales, visitasPropias]);
 
-  const adSlots = useMemo(() => adPositions(orderedProjects.length), [orderedProjects.length]);
 
   // ---- Autocompletado del buscador --------------------------------------
   // La rejilla ya filtra según escribes, pero con sesenta herramientas eso
@@ -585,13 +554,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
               </button>
             )}
 
-            {/* Sidebar Ad Slot (Visible when expanded) */}
-            {!isSidebarCollapsed && (ADS_ENABLED || import.meta.env.DEV) && (
-              <div className="px-2.5 py-2.5 text-center" id="adsense-sidebar-ad">
-                <AdSlot position="side" size="rectangle" />
-              </div>
-            )}
-
             {/* Language selector */}
             <div className="relative" ref={langMenuRef}>
               <button
@@ -648,27 +610,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
             )}
           </div>
         </aside>
-
-        {/* Fixed Skyscraper Side Banners - positioned relative to the centered 7xl content column, scrolling-free (fixed) */}
-        {(ADS_ENABLED || import.meta.env.DEV) && (
-          <div className={`fixed inset-y-0 right-0 pointer-events-none z-30 hidden transition-all duration-300 justify-center ${
-            isSidebarCollapsed 
-              ? '[@media(min-width:1800px)]:flex left-[76px]' 
-              : '[@media(min-width:2000px)]:flex left-[272px]'
-          }`}>
-            <div className="relative w-full max-w-7xl h-full flex items-center">
-              {/* Left Skyscraper */}
-              <div className="absolute left-[-280px] pointer-events-auto w-[160px] h-[600px] flex items-center justify-center" id="adsense-left-skyscraper">
-                <AdSlot position="railLeft" size="skyscraper" />
-              </div>
-
-              {/* Right Skyscraper */}
-              <div className="absolute right-[-280px] pointer-events-auto w-[160px] h-[600px] flex items-center justify-center" id="adsense-right-skyscraper">
-                <AdSlot position="railRight" size="skyscraper" />
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Page Content area which adjusts spacing next to the left-fixed sidebar */}
         <div className={`relative isolate transition-all duration-300 ${
@@ -891,21 +832,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
                             />
                           </motion.div>
 
-                          {/* In-feed Ad Slot card inside the tools grid flow — hidden in production until ads.ts is configured */}
-                          {adSlots.has(index) && (ADS_ENABLED || import.meta.env.DEV) && (
-                            <motion.div
-                              layout
-                              initial={{ opacity: 0, scale: prefersReduced ? 1 : 0.95 }}
-                              animate={{ opacity: 1, scale: 1 }}
-                              className="bg-white/[0.01] border border-white/[0.04] border-dashed rounded-3xl p-4 flex flex-col justify-center items-center text-center min-h-[350px]"
-                              /* Con varios anuncios en la rejilla el id tiene que
-                                 llevar el índice: repetido dejaba de identificar
-                                 nada y un id duplicado es HTML inválido. */
-                              id={`adsense-infeed-card-${index}`}
-                            >
-                              <AdSlot position="infeed" size="rectangle" />
-                            </motion.div>
-                          )}
                         </div>
                       ))}
                     </AnimatePresence>
@@ -1026,8 +952,6 @@ export const Home: React.FC<{ lang: string, dictionary?: any }> = ({ lang = 'en'
           )}
         </AnimatePresence>
 
-        {/* Barra fija descartable al pie, misma que en todas las herramientas (AdSlot 'anchor') */}
-        <AdSlot position="anchor" size="mobile-banner" />
       </div>
     </Layout>
   );

@@ -137,9 +137,7 @@ export default function DeviceTest({ lang, dictionary }: DeviceTestProps) {
         t={t}
       />
 
-      {/* El max-w vive en el <main>: AdRail mide ESTE elemento. Con el
-          `max-w-6xl` de antes (1152 px) el hueco a 1440 era de 141 px, por
-          debajo de los 168 que pide el raíl, así que no salía ninguno. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-5xl mx-auto min-[1400px]:max-w-[min(64rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col gap-8">
         <AdBanner id="adsense-device-test-top" />
 
@@ -398,8 +396,6 @@ export default function DeviceTest({ lang, dictionary }: DeviceTestProps) {
           <p className="text-[11px] text-slate-500 leading-relaxed">{ui.sysNote}</p>
         </section>
 
-        <AdBanner id="adsense-device-test-mid" />
-
         {steps.length > 0 && (
           <section className="space-y-7">
             <div className="text-center space-y-2">
@@ -473,7 +469,6 @@ export default function DeviceTest({ lang, dictionary }: DeviceTestProps) {
           </section>
         )}
 
-        <AdBanner id="adsense-device-test-bottom" />
       </main>
 
       {screenTest && <ScreenTest onClose={() => setScreenTest(false)} t={ui} />}

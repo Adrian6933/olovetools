@@ -506,9 +506,7 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
         t={t}
       />
 
-      {/* El max-w vive en el propio <main>: AdRail mide ESTE elemento para decidir
-          si caben los raíles laterales, y un <main> a ancho completo deja hueco
-          cero y los apaga en silencio en todas las resoluciones. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-40 md:pt-32 pb-16 relative z-10 flex flex-col gap-8">
         <AdBanner id="adsense-unitflow-top" />
 
@@ -1034,8 +1032,6 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
           </div>
         </section>
 
-        <AdBanner id="adsense-unitflow-mid" />
-
         {/* ---------------------------------------------------------------- */}
         {/* Cómo funciona                                                     */}
         {/* ---------------------------------------------------------------- */}
@@ -1105,7 +1101,6 @@ export default function Unitflow({ lang, dictionary }: UnitflowProps) {
           </section>
         )}
 
-        <AdBanner id="adsense-unitflow-bottom" />
       </main>
 
       <SearchPalette

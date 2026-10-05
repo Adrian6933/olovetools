@@ -450,10 +450,7 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
         t={t}
       />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          to decide whether the fixed side rails fit. The previous max-w-7xl left
-          a 57px gap at 1400px against the 168px the rails need, so they never
-          rendered — and AdRail fails silently when that happens. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-32 md:pt-36 pb-20">
         <AdBanner id="adsense-html-sanitizer-top" />
 
@@ -854,8 +851,6 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
             )}
           </section>
 
-          <AdBanner id="adsense-html-sanitizer-mid" />
-
           {/* ============================================================== */}
           {/* How it works                                                   */}
           {/* ============================================================== */}
@@ -1027,7 +1022,6 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
           </section>
         </div>
 
-        <AdBanner id="adsense-html-sanitizer-bottom" />
       </main>
 
       {toast && (

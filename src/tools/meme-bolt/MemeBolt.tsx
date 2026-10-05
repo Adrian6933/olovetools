@@ -369,9 +369,7 @@ export const MemeBolt: React.FC<MemeBoltProps> = ({ lang, dictionary }) => {
         t={t}
       />
 
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, and reserving 440px from 1400px up is
-          what keeps them visible instead of silently suppressed. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-36 pb-24 relative z-10 flex flex-col">
         <AdBanner id="adsense-meme-bolt-top" />
 
@@ -740,7 +738,6 @@ export const MemeBolt: React.FC<MemeBoltProps> = ({ lang, dictionary }) => {
           </section>
         </div>
 
-        <AdBanner id="adsense-meme-bolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={handleOpenLegal} />

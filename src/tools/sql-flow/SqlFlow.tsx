@@ -412,10 +412,7 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
         t={t}
       />
 
-      {/* El ancho máximo vive en el propio <main>: AdRail mide el hueco entre
-          este elemento y el borde del viewport, y con un <main> a max-w-7xl
-          quedaban 60px por lado a 1400px — por debajo de los 168px que necesita
-          un raíl, así que no se mostraban NUNCA. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-28 md:pt-32 pb-16 space-y-6">
         <AdBanner id="adsense-sql-flow-top" />
 
@@ -983,8 +980,6 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
 
         <NextStepBar lang={lang} t={t} getResult={getResult} disabled={!hasText} />
 
-        <AdBanner id="adsense-sql-flow-mid" />
-
         {/* ---------------------------------------------------------------- */}
         {/* Features                                                         */}
         {/* ---------------------------------------------------------------- */}
@@ -1063,7 +1058,6 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
           )}
         </section>
 
-        <AdBanner id="adsense-sql-flow-bottom" />
       </main>
 
       <input

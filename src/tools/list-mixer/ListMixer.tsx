@@ -412,10 +412,7 @@ export default function ListMixer({ lang, dictionary }: ListMixerProps) {
         </div>
       )}
 
-      {/* The width cap lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, so a full-width <main> silently
-          hides them at every screen size. 440px reserves 160px of rail plus
-          24px of air on each side. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       {/* pt-36 and not pt-28 on mobile: the header stacks into two rows below
           md (brand + language switcher) and measures 125 px, so 112 px of
           padding left the top ad banner sitting behind it. */}
@@ -1025,8 +1022,6 @@ export default function ListMixer({ lang, dictionary }: ListMixerProps) {
           }}
         />
 
-        <AdBanner id="adsense-list-mixer-mid" />
-
         {/* ================================================================= */}
         {/* How it works                                                      */}
         {/* ================================================================= */}
@@ -1173,7 +1168,6 @@ export default function ListMixer({ lang, dictionary }: ListMixerProps) {
           )}
         </section>
 
-        <AdBanner id="adsense-list-mixer-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setActiveModal(modal)} />

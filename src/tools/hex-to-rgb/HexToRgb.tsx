@@ -314,9 +314,7 @@ export default function HexToRgb({ lang, dictionary }: HexToRgbProps) {
         t={t}
       />
 
-      {/* El max-w vive en el propio <main>: AdRail mide ESTE elemento para
-          decidir si caben los raíles laterales, y un <main> a ancho completo
-          los deja fuera para siempre, en cualquier resolución. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-10 pt-32 md:pt-32 pb-20 relative z-10 flex flex-col gap-10">
         <AdBanner id="adsense-hex-to-rgb-top" />
 
@@ -649,8 +647,6 @@ export default function HexToRgb({ lang, dictionary }: HexToRgbProps) {
           <NextStepBar lang={lang} t={t} disabled={!colors.length} getResult={getResult} />
         </section>
 
-        <AdBanner id="adsense-hex-to-rgb-mid" />
-
         {/* -------------------------------------------------------------- Derivados */}
         <RampPanel
           t={t}
@@ -830,7 +826,6 @@ export default function HexToRgb({ lang, dictionary }: HexToRgbProps) {
           </div>
         )}
 
-        <AdBanner id="adsense-hex-to-rgb-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />

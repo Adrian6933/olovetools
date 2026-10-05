@@ -514,8 +514,7 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
     <div className="min-h-screen flex flex-col bg-[#050907] text-slate-100 selection:bg-emerald-500/30 overflow-x-hidden font-sans">
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={handleReset} t={t} />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          to decide whether the fixed side rails fit. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-qr-bolt-top" />
 
@@ -1333,7 +1332,6 @@ export const Qrbolt: React.FC<QrboltProps> = ({ lang, dictionary }) => {
           </section>
         </div>
 
-        <AdBanner id="adsense-qr-bolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

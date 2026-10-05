@@ -1,8 +1,7 @@
-import React, { useState, useRef, useEffect, useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { Clip } from './types';
 import { Play, ImageOff, Loader2, Plus, Check, ArrowDownCircle, FastForward, Link as LinkIcon, Download, EyeOff, CheckCircle2, ListPlus } from 'lucide-react';
 import ProgressiveImage from './ProgressiveImage';
-import { AdSlot } from '../shared/AdSlot';
 
 // Tres columnas es el tope, también en monitores grandes: la 4ª estrechaba
 // demasiado la portada y es la rejilla la que crece, no el número de columnas.
@@ -11,43 +10,6 @@ const GRID_CLASSNAME = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:
 /** Ancho al que se pinta la portada en cada corte de la rejilla, para que el
  *  navegador baje del srcset el tamaño justo y no la más grande siempre. */
 const THUMB_SIZES = '(min-width: 2240px) 560px, (min-width: 1800px) 25vw, (min-width: 1400px) 24vw, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, 94vw';
-
-/** Hueco mínimo y máximo de clips entre dos anuncios de la rejilla. */
-const AD_GAP_MIN = 8;
-const AD_GAP_MAX = 17;
-
-/**
- * Posiciones de los anuncios dentro de la rejilla, con separación irregular en
- * vez de una cada N exactas (un patrón fijo se nota y "cansa" al bajar).
- *
- * El azar es determinista a propósito: un Math.random() suelto recolocaría los
- * anuncios en cada repintado, y con el barrido profundo eso son decenas de
- * saltos por segundo. Con este generador la posición solo depende del índice,
- * así que se mantiene estable mientras se van añadiendo clips al final.
- */
-const adPositions = (total: number): Set<number> => {
-  const out = new Set<number>();
-  let seed = 0x9e3779b9;
-  let i = Math.floor(AD_GAP_MIN / 2);
-  while (i < total - 1) {
-    out.add(i);
-    // xorshift32: barato, sin dependencias y siempre da la misma secuencia.
-    seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5; seed >>>= 0;
-    i += AD_GAP_MIN + (seed % (AD_GAP_MAX - AD_GAP_MIN + 1));
-  }
-  return out;
-};
-
-/**
- * Anuncio in-feed ocupando una celda de la rejilla, al estilo de YouTube o
- * Twitch. Reutiliza el slot `infeed` y el layout key que ya estaban en
- * ads.ts para el grid del hub, así que no hay que crear nada en AdSense.
- */
-const FeedAdCard: React.FC = () => (
-  <div className="flex flex-col items-center justify-center gap-3 rounded-[2rem] border border-white/5 bg-[#0d0d12] p-4">
-    <AdSlot position="infeed" size="rectangle" />
-  </div>
-);
 
 // Construir un Intl.NumberFormat es caro y aquí se hacía uno por tarjeta y por
 // render. Con 500 clips en pantalla eso son 500 constructores en cada repintado.
@@ -251,7 +213,6 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
   clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, onBlockStreamer, onAddToLists, t, autoLoadOnScroll = true
 }, ref) => {
   const observerTarget = useRef<HTMLDivElement>(null);
-  const adSlots = useMemo(() => adPositions(clips.length), [clips.length]);
 
   useImperativeHandle(ref, () => ({
     /** `false` si ese clip no está en la rejilla: quien llama decide qué hacer. */
@@ -312,7 +273,6 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
     <>
       <div className={GRID_CLASSNAME}>
         {clips.map((clip, i) => {
-          const adAfter = adSlots.has(i);
           return (
             <React.Fragment key={clip.id}>
               <ClipCard
@@ -320,7 +280,6 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
                 onToggleSave={onToggleSave} onDownloadExternal={onDownloadExternal} onBlockStreamer={onBlockStreamer}
                 onAddToLists={onAddToLists} t={t}
               />
-              {adAfter && <FeedAdCard />}
             </React.Fragment>
           );
         })}

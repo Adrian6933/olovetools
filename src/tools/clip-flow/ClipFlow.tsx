@@ -448,9 +448,7 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
       <div className="absolute bottom-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-violet-600/10 blur-[120px] pointer-events-none z-0" />
       <Header
         onReset={resetWorkspace} currentLang={lang} onLanguageChange={(l) => window.location.href = `/${l.toLowerCase()}/clip-flow`} t={t} />
-      {/* The max width lives on <main>: AdRail measures this element to decide
-          whether the fixed side rails fit, so reserving 440px from 1400px up is
-          what keeps them visible instead of silently suppressed. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col space-y-6">
         <div className="text-center md:text-left space-y-2">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white flex items-center justify-center md:justify-start gap-3">
@@ -492,8 +490,6 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
                 t={t}
               />
             </div>
-
-            <AdBanner id="adsense-clip-flow-mid" />
 
             <motion.div
               initial={prefersReduced ? false : 'hidden'}
@@ -639,7 +635,6 @@ export default function ClipFlow({ lang, dictionary }: ClipFlowProps) {
           </section>
         )}
 
-        <AdBanner id="adsense-clip-flow-bottom" />
       </main>
       <Footer lang={lang} t={t} onOpenModal={(modal) => setLegalModal(modal)} />
       <LegalModal isOpen={legalModal === 'privacy'} onClose={() => setLegalModal(null)} title={legalTranslations[lang]?.privacy.title || 'Privacy Policy'} content={legalTranslations[lang]?.privacy.content} t={t} />

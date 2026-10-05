@@ -229,9 +229,7 @@ const SVGOptimizer: React.FC<SVGOptimizerProps> = ({ lang, dictionary }) => {
     <div className="min-h-screen flex flex-col font-sans antialiased">
       <Header currentLang={lang} onLanguageChange={handleLanguageChange} onReset={reset} t={t} />
 
-      {/* The max-w formula reserves the fixed ad rails' gutters: they are 120px
-          wide from 1400px and 160px from 1650px, plus 24px of air on each side.
-          Without it AdRail measures a zero gap and silently renders nothing. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 pt-40 md:pt-32 pb-8 px-4 md:px-8 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-svg-optimizer-top" />
 
@@ -679,14 +677,11 @@ const SVGOptimizer: React.FC<SVGOptimizerProps> = ({ lang, dictionary }) => {
             </section>
           )}
 
-          <AdBanner id="adsense-svg-optimizer-mid" />
-
           <HowItWorks t={t} animated={!prefersReducedMotion} />
           <Features t={t} />
           <Faq t={t} />
         </div>
 
-        <AdBanner id="adsense-svg-optimizer-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={setActiveModal} />

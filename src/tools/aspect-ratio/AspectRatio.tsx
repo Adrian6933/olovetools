@@ -1177,8 +1177,6 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
 
         {loaded && <NextStepBar lang={lang} t={t} getResult={renderResult} />}
 
-        <AdBanner id="adsense-aspect-ratio-mid" />
-
         {/* ---------------------------------------------------------------- */}
         {/* How it works                                                      */}
         {/* ---------------------------------------------------------------- */}
@@ -1258,7 +1256,6 @@ export default function AspectRatio({ lang, dictionary }: AspectRatioProps) {
           </button>
         </div>
 
-        <AdBanner id="adsense-aspect-ratio-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

@@ -155,9 +155,7 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
         t={t}
       />
 
-      {/* El max-w vive en el <main> porque AdRail mide ESTE elemento para decidir
-          si los raíles fijos caben. Medido: 205 px de hueco por lado a 1440 y
-          385 a 1800, por encima de los 168/208 que pide cada raíl. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-5xl mx-auto min-[1400px]:max-w-[min(64rem,calc(100vw-440px))] px-4 md:px-8 py-8 relative z-10 flex flex-col gap-8">
         <AdBanner id="adsense-cleansnap-top" />
 
@@ -254,8 +252,6 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
                 </ol>
               </section>
             )}
-
-            <AdBanner id="adsense-cleansnap-mid" />
 
             {features.length > 0 && (
               <section className="space-y-7">
@@ -448,7 +444,6 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
           </>
         )}
 
-        <AdBanner id="adsense-cleansnap-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

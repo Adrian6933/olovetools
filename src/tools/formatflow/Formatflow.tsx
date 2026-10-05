@@ -214,12 +214,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
 
       <Header language={language} dictionary={dictionary} onLanguageChange={next => { window.location.href = `/${next.toLowerCase()}/formatflow`; }} onHomeClick={clearAll} />
 
-      {/* El max-w va en el <main> a propósito: AdRail mide ESTE elemento para
-          decidir si los raíles fijos caben. Con el `container mx-auto` que
-          había antes el hueco era de 57px a 1400px y de 132px a 1800px, por
-          debajo de los 168/208px que pide el raíl, así que no salían nunca en
-          ningún ancho de pantalla. La fórmula reserva 120/160px de raíl más
-          24px de aire a cada lado. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 sm:px-6 py-8 sm:py-12 flex flex-col gap-10">
         <AdBanner id="adsense-formatflow-top" />
 
@@ -288,8 +283,6 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
                 </ol>
               </section>
             )}
-
-            <AdBanner id="adsense-formatflow-mid" />
 
             {/* Features */}
             {featureItems.length > 0 && (
@@ -545,7 +538,6 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
           </>
         )}
 
-        <AdBanner id="adsense-formatflow-bottom" />
       </main>
 
       <footer className="border-t border-slate-900 bg-slate-900/20 mt-auto py-10">

@@ -3,10 +3,7 @@ import { Category } from './types';
 import { Sparkles } from 'lucide-react';
 
 import ProgressiveImage from './ProgressiveImage';
-import { AdSlot } from '../shared/AdSlot';
 
-/** Cada cuántas categorías se cuela una franja de anuncio (6 columnas x 2 filas). */
-const CATEGORY_AD_EVERY = 12;
 
 /** Ancho al que se pinta la carátula en cada corte, para elegir del srcset. */
 const ART_SIZES = '(min-width: 1800px) 260px, (min-width: 1400px) 14vw, (min-width: 1280px) 15vw, (min-width: 1024px) 18vw, (min-width: 768px) 30vw, 46vw';
@@ -123,14 +120,6 @@ const CategoryGrid: React.FC<CategoryGridProps> = ({ categories, onCategoryClick
               showRank={showRank}
               index={index}
           />
-          {/* A todo el ancho y no en una celda: con 6 columnas cada celda mide
-              ~240px y un in-feed ahí sale apretado. Cada 2 filas de la rejilla
-              más ancha (12 = 6 x 2) y nunca detrás de la última tarjeta. */}
-          {(index + 1) % CATEGORY_AD_EVERY === 0 && index < categories.length - 1 && (
-            <div className="col-span-full flex items-center justify-center py-2">
-              <AdSlot position="content" size="leaderboard" />
-            </div>
-          )}
         </React.Fragment>
       ))}
     </div>

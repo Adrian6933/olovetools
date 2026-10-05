@@ -994,7 +994,6 @@ export default function MarkdownLive({ lang, dictionary }: MarkdownLiveProps) {
           )}
         </section>
 
-        <AdBanner id="adsense-markdown-live-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

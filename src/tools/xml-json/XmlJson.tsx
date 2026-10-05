@@ -445,10 +445,7 @@ export default function XmlJson({ lang, dictionary }: XmlJsonProps) {
       <Header
         onReset={resetWorkspace} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/xml-json`)} t={t} />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          against the viewport edge to decide whether the fixed side rails fit.
-          The previous max-w-6xl left 124px at 1400px, under the 168px a rail
-          needs, so the rails never rendered at any width at all. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] flex-1 px-4 pb-20 pt-28 md:px-8 md:pt-36">
         <AdBanner id="adsense-xml-json-top" />
 
@@ -992,7 +989,6 @@ export default function XmlJson({ lang, dictionary }: XmlJsonProps) {
         )}
 
         <div className="mt-10">
-          <AdBanner id="adsense-xml-json-mid" />
         </div>
 
         {/* ================================================================ */}
@@ -1136,7 +1132,6 @@ export default function XmlJson({ lang, dictionary }: XmlJsonProps) {
         </section>
 
         <div className="mt-16">
-          <AdBanner id="adsense-xml-json-bottom" />
         </div>
       </main>
 

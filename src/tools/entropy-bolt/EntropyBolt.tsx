@@ -345,9 +345,7 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
       <Header
         onReset={handleSoftReset} currentLang={lang} onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/entropy-bolt`)} t={t} />
 
-      {/* El ancho máximo vive en <main>: AdRail mide ESTE elemento para decidir
-          si los raíles laterales caben. Un <main> a w-full deja hueco cero y los
-          raíles no se muestran nunca, en ninguna resolución. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-grow w-full max-w-5xl mx-auto min-[1400px]:max-w-[min(64rem,calc(100vw-440px))] px-4 sm:px-6 py-8 relative z-10 flex flex-col gap-12 md:gap-16">
         <AdBanner id="adsense-entropy-bolt-top" />
 
@@ -876,8 +874,6 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
           </div>
         </section>
 
-        <AdBanner id="adsense-entropy-bolt-mid" />
-
         {/* --- cómo funciona --- */}
         <section className="space-y-6">
           <h3 className="text-xl md:text-2xl font-black text-white tracking-tight">{t.howTitle || 'How it works'}</h3>
@@ -931,7 +927,6 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
           </section>
         )}
 
-        <AdBanner id="adsense-entropy-bolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

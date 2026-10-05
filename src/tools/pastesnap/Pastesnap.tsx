@@ -665,8 +665,6 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
             )}
           </section>
 
-          <AdBanner id="adsense-pastesnap-mid" />
-
           {/* ---------------------------------------------------------------- */}
           {/* Cómo funciona                                                    */}
           {/* ---------------------------------------------------------------- */}
@@ -777,7 +775,6 @@ const Pastesnap: React.FC<PastesnapProps> = ({ lang, dictionary }) => {
             )}
           </section>
 
-          <AdBanner id="adsense-pastesnap-bottom" />
         </div>
       </main>
 

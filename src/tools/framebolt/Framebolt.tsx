@@ -910,7 +910,6 @@ export default function Framebolt({ lang, dictionary }: FrameboltProps) {
           )}
         </section>
 
-        <AdBanner id="adsense-framebolt-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

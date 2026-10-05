@@ -604,9 +604,7 @@ export const ZipFlow: React.FC<ZipFlowProps> = ({ lang, dictionary }) => {
         t={t}
       />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          to decide whether the fixed side rails fit. A full-width <main> leaves
-          a zero gap and the rails never render at any screen size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       {/* pt-36 (144px), not pt-32: the header stacks into two rows below md and
           measures 133px there, so 128px of padding slides the hero under it. */}
       <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-36 pb-24 relative z-10 flex flex-col">
@@ -1608,7 +1606,6 @@ export const ZipFlow: React.FC<ZipFlowProps> = ({ lang, dictionary }) => {
           </div>
         </section>
 
-        <AdBanner id="adsense-zip-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={openLegal} />

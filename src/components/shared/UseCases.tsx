@@ -28,7 +28,7 @@ export const UseCases: React.FC<UseCasesProps> = ({
   intro,
   items,
   variant,
-  withAd = true,
+  withAd = false,
   adSenseClient,
   adSenseSlot,
 }) => {

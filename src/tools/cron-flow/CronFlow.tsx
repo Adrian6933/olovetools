@@ -374,9 +374,7 @@ export default function CronFlow({ lang, dictionary }: CronFlowProps) {
         t={t}
       />
 
-      {/* The max width lives on <main> on purpose: AdRail measures this element
-          to decide whether the fixed side rails fit. A w-full <main> leaves a
-          0px gap and the rails never render, at any window size. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-40 md:pt-36 pb-24 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-cron-flow-top" />
 
@@ -788,8 +786,6 @@ export default function CronFlow({ lang, dictionary }: CronFlowProps) {
             </section>
           )}
 
-          <AdBanner id="adsense-cron-flow-mid" />
-
           {/* ================================================================ */}
           {/* Export                                                           */}
           {/* ================================================================ */}
@@ -988,7 +984,6 @@ export default function CronFlow({ lang, dictionary }: CronFlowProps) {
           </section>
         </div>
 
-        <AdBanner id="adsense-cron-flow-bottom" />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />

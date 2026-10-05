@@ -580,10 +580,7 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
         t={t}
       />
 
-      {/* El max-width vive en <main> a propósito: AdRail mide este elemento para
-          decidir si caben los raíles laterales, y reservar 440px a partir de
-          1400px es lo que los mantiene visibles en vez de suprimidos en
-          silencio. Con el max-w-7xl anterior el hueco a 1400px era de 57px. */}
+      {/* Keep the workspace centered within its own maximum width. */}
       <main className="flex-1 flex flex-col items-center pt-32 md:pt-36 pb-28 px-4 md:px-10 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
         <AdBanner id="adsense-watermark-snap-top" />
 
@@ -1127,7 +1124,6 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
           </section>
         </div>
 
-        <AdBanner id="adsense-watermark-snap-bottom" />
       </main>
 
       {/* Progreso del lote */}
