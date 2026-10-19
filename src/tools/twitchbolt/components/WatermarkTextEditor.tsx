@@ -11,7 +11,7 @@
 import React, { useState } from 'react';
 import { Check, PenLine, User, Wand2, AlertCircle } from 'lucide-react';
 import type { WatermarkConfig } from '../types';
-import { CHANNEL_TOKEN, getFontCss } from '../services/watermarkService';
+import { CHANNEL_TOKEN } from '../services/watermarkService';
 
 interface Props {
   config: WatermarkConfig;
@@ -28,19 +28,6 @@ const partir = (template: string) => {
   if (i < 0) return { antes: template, conNombre: false, despues: '' };
   return { antes: template.slice(0, i), conNombre: true, despues: template.slice(i + CHANNEL_TOKEN.length) };
 };
-
-const hexARgba = (hex: string, alfa: number) => {
-  const m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
-  if (!m) return hex;
-  const n = parseInt(m[1], 16);
-  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alfa})`;
-};
-
-const TwitchGlyph: React.FC<{ className?: string; style?: React.CSSProperties }> = ({ className, style }) => (
-  <svg viewBox="0 0 24 24" className={className} style={style} fill="currentColor" aria-hidden="true">
-    <path d="M4.3 3 3 6.4v13.1h4.6V22h2.6l2.4-2.5h3.7l5-5V3H4.3Zm15.5 10.6-2.9 2.9h-4.6L9.8 19v-2.5H6V4.7h13.8v8.9Zm-2.9-5.9v5h-1.7v-5h1.7Zm-4.6 0v5h-1.7v-5h1.7Z" />
-  </svg>
-);
 
 const WatermarkTextEditor: React.FC<Props> = ({ config, onChangeConfig, channelName, multiClip, tr }) => {
   const follow = tr('wm_tpl_follow', 'FOLLOW');
@@ -84,41 +71,16 @@ const WatermarkTextEditor: React.FC<Props> = ({ config, onChangeConfig, channelN
   };
 
   const vacio = !config.template.trim();
-  const transform = config.textTransform && config.textTransform !== 'none' ? config.textTransform : undefined;
 
   return (
-    // Contenedor con consultas propias: el editor vive en columnas de anchos
-    // muy distintos (lateral en escritorio, casi toda la pantalla en móvil).
-    <div className="@container space-y-4">
-      {/* El resultado, con el estilo de verdad: lo primero que se mira. */}
-      <div className="rounded-2xl border border-white/10 bg-[repeating-conic-gradient(#ffffff08_0%_25%,transparent_0%_50%)] [background-size:16px_16px] p-5 flex items-center justify-center min-h-[84px]">
-        {vacio ? (
-          <span className="flex items-center gap-2 text-xs font-bold text-amber-300">
-            <AlertCircle className="w-4 h-4" />
-            {tr('wm_text_empty', 'Write something so the watermark shows up')}
-          </span>
-        ) : (
-          <span
-            className="inline-flex items-center gap-2 max-w-full truncate shadow-lg"
-            style={{
-              background: hexARgba(config.bgColor, config.bgOpacity),
-              color: config.textColor,
-              fontFamily: getFontCss(config.fontFamily),
-              fontWeight: config.fontWeight === '900' ? 900 : config.fontWeight === 'normal' ? 400 : 700,
-              fontStyle: config.fontStyle || 'normal',
-              letterSpacing: `${config.letterSpacing || 0}px`,
-              textTransform: transform as React.CSSProperties['textTransform'],
-              fontSize: 18,
-              padding: '8px 14px',
-              borderRadius: 8,
-              border: config.boxBorder ? `${config.boxBorderWidth || 2}px solid ${config.boxBorderColor || '#fff'}` : undefined,
-            }}
-          >
-            {config.showIcon && <TwitchGlyph className="w-4 h-4 shrink-0" />}
-            <span className="truncate"><Muestra template={config.template} resaltar={false} /></span>
-          </span>
-        )}
-      </div>
+    <div className="space-y-4">
+      <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tr('wm_text_title', 'What the watermark says')}</h4>
+      {vacio && (
+        <p className="flex items-center gap-2 text-xs font-bold text-amber-300">
+          <AlertCircle className="w-4 h-4 shrink-0" />
+          {tr('wm_text_empty', 'Write something so the watermark shows up')}
+        </p>
+      )}
 
       <p className="flex items-start gap-2 text-[11px] leading-relaxed text-gray-400">
         <Wand2 className="w-3.5 h-3.5 text-twitch shrink-0 mt-0.5" />

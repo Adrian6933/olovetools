@@ -14,6 +14,8 @@ export interface ClipData {
   thumbnail: string;
   duration: number; // seconds
   date: string;
+  /** ISO de Twitch: el date de arriba ya viene formateado y no sirve para ordenar. */
+  createdAt?: string;
   views: number;
   resolutions: Resolution[];
 }
@@ -72,17 +74,14 @@ export type ExitEffect =
 
 export type AnimationEasing = 'linear' | 'ease-out' | 'bounce' | 'elastic';
 
-export type FontFamily = 
-  | 'sans' 
-  | 'montserrat' 
-  | 'impact' 
-  | 'bebas'
-  | 'orbitron'
-  | 'righteous'
-  | 'pixel'
-  | 'mono' 
-  | 'serif' 
-  | 'handwriting';
+export type FontFamily =
+  | 'sans' | 'montserrat' | 'oswald' | 'serif' | 'mono'
+  | 'bebas' | 'impact' | 'teko' | 'bungee' | 'bangers'
+  | 'orbitron' | 'audiowide' | 'russo' | 'blackops' | 'pixel' | 'silkscreen'
+  | 'righteous' | 'monoton' | 'rubikglitch' | 'creepster'
+  | 'handwriting' | 'pacifico' | 'lobster' | 'caveat';
+
+export type FontCategory = 'clean' | 'bold' | 'gaming' | 'fun' | 'hand';
 
 export type TextTransform = 'none' | 'uppercase' | 'lowercase' | 'capitalize';
 export type FontWeight = 'normal' | 'bold' | '900';

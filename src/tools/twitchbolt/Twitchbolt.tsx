@@ -18,6 +18,8 @@ import {
 import WatermarkPreview from './components/WatermarkPreview';
 import type { WatermarkConfig, PositionPreset } from './types';
 import ClipSkeleton from './components/ClipSkeleton';
+import ClipOrderList from './components/ClipOrderList';
+import MergePanel from './components/MergePanel';
 import { 
   ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge
 } from 'lucide-react';
@@ -143,6 +145,8 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   /** Cuántos se quedaron por el camino en la última pasada. */
   const [wmAllFallos, setWmAllFallos] = useState(0);
   const [isQualityOpen, setIsQualityOpen] = useState(false);
+  /** Mientras se une el vídeo, el ZIP y la marca en lote esperan. */
+  const [uniendo, setUniendo] = useState(false);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qualityRef = useRef<HTMLDivElement>(null);
@@ -781,7 +785,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
 
         {/* RESULTS AREA */}
         {status === 'success' && (
-          <div id="results-area" className="w-full space-y-12 animate-fade-in max-w-5xl mx-auto">
+          <div id="results-area" className="w-full space-y-8 animate-fade-in max-w-5xl mx-auto">
              <div className="w-full bg-[#111114] border border-white/5 rounded-[2.5rem] p-4 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative z-40">
                 
                 {/* Barra al 88%, margen superior de 4px, centrada horizontalmente */}
@@ -845,7 +849,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                       return (
                         <button
                           onClick={marcaActiva ? descargarZipConMarca : downloadAllAsZip}
-                          disabled={!!zipProgress || !!wmAll || isAnyLoading}
+                          disabled={!!zipProgress || !!wmAll || isAnyLoading || uniendo}
                           className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
                         >
                           {isAnyLoading ? (
@@ -885,7 +889,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                         el ZIP iba a salir con marca hasta que salía. */}
                     <button
                       onClick={() => cambiarMarcaActiva(!marcaActiva)}
-                      disabled={!!wmAll || !!zipProgress || clips.every(c => c.status !== 'success')}
+                      disabled={!!wmAll || !!zipProgress || uniendo || clips.every(c => c.status !== 'success')}
                       role="switch"
                       aria-checked={marcaActiva}
                       title={t.watermarkAllTitle || 'Watermark on every clip'}
@@ -985,20 +989,18 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                  )}
 
                  {wmEditorAbierto && !wmAll && wmAllConfig && primerClipListo && (
-                   <div className="border-t border-white/5 pt-6 -mx-2 sm:mx-0">
-                     <WatermarkPreview
-                       clip={primerClipListo}
-                       config={wmAllConfig}
-                       onChangeConfig={cambiarConfigMarca}
-                       presets={wmAllPresets}
-                       onSavePreset={guardarPresetMarca}
-                       onDeletePreset={borrarPresetMarca}
-                       lang={lang}
-                       dictionary={dictionary}
-                       onClose={() => setWmEditorAbierto(false)}
-                       multiClip
-                     />
-                   </div>
+                   <WatermarkPreview
+                     clip={primerClipListo}
+                     config={wmAllConfig}
+                     onChangeConfig={cambiarConfigMarca}
+                     presets={wmAllPresets}
+                     onSavePreset={guardarPresetMarca}
+                     onDeletePreset={borrarPresetMarca}
+                     lang={lang}
+                     dictionary={dictionary}
+                     onClose={() => setWmEditorAbierto(false)}
+                     multiClip
+                   />
                  )}
                </div>
              )}
@@ -1007,6 +1009,22 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                <div className="w-full rounded-[2rem] border border-amber-500/25 bg-amber-500/5 px-6 py-4 text-xs font-bold text-amber-300">
                  {(t.watermarkAllFailed || '{n} clips could not be processed.').replace('{n}', String(wmAllFallos))}
                </div>
+             )}
+
+             {clips.length > 1 && (
+               <ClipOrderList clips={clips} onReorder={setClips} t={t} lang={lang} />
+             )}
+
+             {clips.filter(c => c.status === 'success').length > 1 && (
+               <MergePanel
+                 clips={clips.filter(c => c.status === 'success' && c.data).map(c => c.data!)}
+                 quality={selectedQuality}
+                 watermarkOn={marcaActiva}
+                 watermarkConfig={wmAllConfig}
+                 t={t}
+                 busy={!!zipProgress || !!wmAll || uniendo || clips.some(c => c.status === 'loading')}
+                 onBusyChange={setUniendo}
+               />
              )}
 
              <div className="grid grid-cols-1 gap-12 relative z-10">

@@ -1,23 +1,12 @@
 // ============================================================================
-// CÓDIGO DORMIDO — NO ESTÁ CONECTADO A LA INTERFAZ (revisado 2026-08-31)
-// ----------------------------------------------------------------------------
-// Este editor de marca de agua está terminado pero NO lo importa nadie: no hay
-// ningún botón en TwitchBolt que lo abra, así que ningún usuario puede llegar a
-// él y no entra en el bundle publicado. Último trabajo real: 2026-07-28.
+// Marca de agua de TwitchBolt: estado guardado, tipografías, animación y
+// dibujo sobre canvas, y el render del vídeo con la marca incrustada.
 //
-// No es un descuido pendiente de arreglar: Adrián decidió el 2026-08-31 dejarlo
-// dormido a propósito, ni conectarlo ni borrarlo.
-//
-// Si algún día se conecta, quedan dos deudas conocidas antes de enseñarlo:
-//   1. Los ~26 textos de la interfaz son ternarios `lang === 'es' ? … : …`, o
-//      sea que los otros siete idiomas verían inglés. Necesita el diccionario.
-//   2. El prop `lang` tiene DEFAULT 'es': sin idioma explícito sale en español.
-//   3. processVideoWithWatermark() graba con MediaRecorder sobre un canvas, o
-//      sea A VELOCIDAD REAL: un clip de 60 s tarda 60 s en procesarse. Antes de
-//      publicarlo hay que avisarlo en pantalla o pasar el encoder a WebCodecs.
+// El render graba con MediaRecorder sobre un canvas, o sea A VELOCIDAD REAL:
+// un clip de 60 s tarda 60 s. La interfaz lo avisa antes de empezar.
 // ============================================================================
 
-import { WatermarkConfig, PositionPreset, FontFamily } from '../types';
+import type { WatermarkConfig, PositionPreset, FontFamily, FontCategory } from '../types';
 
 export const WATERMARK_STORAGE_KEY = 'twitchbolt_watermark_config';
 export const PRESETS_STORAGE_KEY = 'twitchbolt_watermark_presets';
@@ -74,19 +63,92 @@ export const DEFAULT_WATERMARK_CONFIG: WatermarkConfig = {
   boxBorderWidth: 2,
 };
 
+// ---- Tipografías -----------------------------------------------------------
+// Antes el selector ofrecía Bebas, Orbitron, Pixel o Graffiti pero ninguna se
+// cargaba: el vídeo salía con la letra del sistema y todas parecían la misma.
+// Ahora cada una trae su familia de Google Fonts, que se pide solo al abrir el
+// editor (no pesa en la página para quien solo descarga clips).
+export interface FontEntry {
+  id: FontFamily;
+  name: string;
+  /** Familia tal como la nombra Google Fonts; también es el nombre CSS. */
+  family: string;
+  /** Lo que va tras family= en la URL de Google Fonts. */
+  google: string;
+  fallback: string;
+  cat: FontCategory;
+}
+
+export const FONT_CATALOG: FontEntry[] = [
+  { id: 'sans', name: 'Inter', family: 'Inter', google: 'Inter:wght@400;700;900', fallback: 'system-ui, sans-serif', cat: 'clean' },
+  { id: 'montserrat', name: 'Montserrat', family: 'Montserrat', google: 'Montserrat:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'oswald', name: 'Oswald', family: 'Oswald', google: 'Oswald:wght@400;700', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'serif', name: 'Playfair', family: 'Playfair Display', google: 'Playfair+Display:wght@400;700;900', fallback: 'Georgia, serif', cat: 'clean' },
+  { id: 'mono', name: 'JetBrains Mono', family: 'JetBrains Mono', google: 'JetBrains+Mono:wght@400;700', fallback: 'monospace', cat: 'clean' },
+  { id: 'bebas', name: 'Bebas Neue', family: 'Bebas Neue', google: 'Bebas+Neue', fallback: 'Impact, sans-serif', cat: 'bold' },
+  { id: 'impact', name: 'Anton', family: 'Anton', google: 'Anton', fallback: 'Impact, sans-serif', cat: 'bold' },
+  { id: 'teko', name: 'Teko', family: 'Teko', google: 'Teko:wght@400;700', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'bungee', name: 'Bungee', family: 'Bungee', google: 'Bungee', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'bangers', name: 'Bangers', family: 'Bangers', google: 'Bangers', fallback: 'cursive', cat: 'bold' },
+  { id: 'orbitron', name: 'Orbitron', family: 'Orbitron', google: 'Orbitron:wght@400;700;900', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'audiowide', name: 'Audiowide', family: 'Audiowide', google: 'Audiowide', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'russo', name: 'Russo One', family: 'Russo One', google: 'Russo+One', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'blackops', name: 'Black Ops', family: 'Black Ops One', google: 'Black+Ops+One', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'pixel', name: 'Press Start', family: 'Press Start 2P', google: 'Press+Start+2P', fallback: 'monospace', cat: 'gaming' },
+  { id: 'silkscreen', name: 'Silkscreen', family: 'Silkscreen', google: 'Silkscreen:wght@400;700', fallback: 'monospace', cat: 'gaming' },
+  { id: 'righteous', name: 'Righteous', family: 'Righteous', google: 'Righteous', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'monoton', name: 'Monoton', family: 'Monoton', google: 'Monoton', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'rubikglitch', name: 'Rubik Glitch', family: 'Rubik Glitch', google: 'Rubik+Glitch', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'creepster', name: 'Creepster', family: 'Creepster', google: 'Creepster', fallback: 'cursive', cat: 'fun' },
+  { id: 'handwriting', name: 'Permanent Marker', family: 'Permanent Marker', google: 'Permanent+Marker', fallback: 'cursive', cat: 'hand' },
+  { id: 'pacifico', name: 'Pacifico', family: 'Pacifico', google: 'Pacifico', fallback: 'cursive', cat: 'hand' },
+  { id: 'lobster', name: 'Lobster', family: 'Lobster', google: 'Lobster', fallback: 'cursive', cat: 'hand' },
+  { id: 'caveat', name: 'Caveat', family: 'Caveat', google: 'Caveat:wght@400;700', fallback: 'cursive', cat: 'hand' },
+];
+
+const fontEntry = (id: FontFamily): FontEntry =>
+  FONT_CATALOG.find(f => f.id === id) || FONT_CATALOG[0];
+
 export const getFontCss = (fontFamily: FontFamily): string => {
-  switch (fontFamily) {
-    case 'montserrat': return "'Montserrat', sans-serif";
-    case 'impact': return "'Impact', 'Arial Black', sans-serif";
-    case 'bebas': return "'Bebas Neue', 'Impact', sans-serif";
-    case 'orbitron': return "'Orbitron', system-ui, sans-serif";
-    case 'righteous': return "'Righteous', cursive, sans-serif";
-    case 'pixel': return "'Press Start 2P', monospace";
-    case 'mono': return "'Courier New', Courier, monospace";
-    case 'serif': return "Georgia, serif";
-    case 'handwriting': return "'Permanent Marker', 'Caveat', cursive";
-    case 'sans':
-    default: return "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  const f = fontEntry(fontFamily);
+  return `'${f.family}', ${f.fallback}`;
+};
+
+let fontSheet: Promise<void> | null = null;
+
+/** Pide la hoja de Google Fonts una sola vez; resuelve cuando ya está leída. */
+export const loadWatermarkFonts = (): Promise<void> => {
+  if (typeof document === 'undefined') return Promise.resolve();
+  if (fontSheet) return fontSheet;
+  fontSheet = new Promise<void>(resolve => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?${FONT_CATALOG.map(f => 'family=' + f.google).join('&')}&display=swap`;
+    link.onload = () => resolve();
+    // Sin red se sigue con la letra de respaldo en vez de quedarse esperando.
+    link.onerror = () => resolve();
+    document.head.appendChild(link);
+  });
+  return fontSheet;
+};
+
+/**
+ * Espera a que la letra elegida esté de verdad lista. Hace falta antes de
+ * grabar: el canvas no avisa, pinta con la de respaldo los primeros fotogramas
+ * y el clip sale con la letra cambiando a mitad.
+ */
+export const ensureWatermarkFont = async (config: WatermarkConfig): Promise<void> => {
+  if (typeof document === 'undefined' || !document.fonts) return;
+  await loadWatermarkFonts();
+  const f = fontEntry(config.fontFamily);
+  const weight = config.fontWeight === '900' ? '900' : config.fontWeight === 'normal' ? '400' : '700';
+  try {
+    await Promise.race([
+      document.fonts.load(`${config.fontStyle === 'italic' ? 'italic ' : ''}${weight} 40px "${f.family}"`),
+      new Promise(r => setTimeout(r, 5000)),
+    ]);
+  } catch {
+    // Si falla, se dibuja con la de respaldo: mejor eso que no exportar.
   }
 };
 
@@ -252,6 +314,21 @@ export const calculateAnimationState = (
   return { opacity, scale, offsetX, offsetY, rotation, typewriterRatio };
 };
 
+/** El texto final del cartel: plantilla con el nombre y mayúsculas aplicadas. */
+export const formatWatermarkText = (config: WatermarkConfig, channelName: string): string => {
+  // split/join y no replace: replace con cadena solo cambia la primera, y
+  // "{channel} · twitch.tv/{channel}" dejaba la segunda tal cual en el vídeo.
+  let text = config.template.split(CHANNEL_TOKEN).join(channelName);
+  if (config.textTransform === 'uppercase') text = text.toUpperCase();
+  else if (config.textTransform === 'lowercase') text = text.toLowerCase();
+  else if (config.textTransform === 'capitalize') {
+    // \b\w solo ve ASCII: "élite" salía "éLite". Se sube la primera letra de
+    // cada palabra separada por espacios, sea del alfabeto que sea.
+    text = text.replace(/(^|\s)(\S)/gu, (_m, sep: string, c: string) => sep + c.toUpperCase());
+  }
+  return text;
+};
+
 export const drawWatermarkOnCanvas = (
   ctx: CanvasRenderingContext2D,
   config: WatermarkConfig,
@@ -261,20 +338,9 @@ export const drawWatermarkOnCanvas = (
   currentTime: number = 0,
   duration: number = 0
 ) => {
-  // split/join y no replace: replace con cadena solo cambia la primera, y
-  // "{channel} · twitch.tv/{channel}" dejaba la segunda tal cual en el vídeo.
-  let text = config.template.split(CHANNEL_TOKEN).join(channelName);
+  let text = formatWatermarkText(config, channelName);
   if (!text.trim()) return;
 
-  // Apply Text Transformations
-  if (config.textTransform === 'uppercase') text = text.toUpperCase();
-  else if (config.textTransform === 'lowercase') text = text.toLowerCase();
-  else if (config.textTransform === 'capitalize') {
-    // \b\w solo ve ASCII: "élite" salía "éLite". Se sube la primera letra de
-    // cada palabra separada por espacios, sea del alfabeto que sea.
-    text = text.replace(/(^|\s)(\S)/gu, (_m, sep: string, c: string) => sep + c.toUpperCase());
-  }
-  
   // Calculate Position Coordinates
   let x = (config.customX / 100) * width;
   let y = (config.customY / 100) * height;
@@ -328,8 +394,11 @@ export const drawWatermarkOnCanvas = (
   if (config.customY > 70) anchorY = -boxHeight;
   else if (config.customY > 30) anchorY = -boxHeight / 2;
 
-  const finalX = x + anchorX + offsetX;
-  const finalY = y + anchorY + offsetY;
+  // Los desplazamientos de la animación están pensados para 720p: escalados
+  // con el alto, el recorrido se ve igual en un clip de 360p que en uno 1080p.
+  const escalaAnim = height / 720;
+  const finalX = x + anchorX + offsetX * escalaAnim;
+  const finalY = y + anchorY + offsetY * escalaAnim;
 
   ctx.translate(finalX + boxWidth / 2, finalY + boxHeight / 2);
   if (scale !== 1) ctx.scale(scale, scale);
@@ -339,7 +408,7 @@ export const drawWatermarkOnCanvas = (
   // Background Box & Border
   if (config.bgOpacity > 0 || config.boxBorder) {
     ctx.save();
-    const radius = Math.min(config.borderRadius, Math.min(boxWidth, boxHeight) / 2);
+    const radius = Math.min(config.borderRadius * (height / 720), Math.min(boxWidth, boxHeight) / 2);
     ctx.beginPath();
     ctx.roundRect(finalX, finalY, boxWidth, boxHeight, radius);
 
@@ -410,7 +479,7 @@ export const drawWatermarkOnCanvas = (
     ctx.save();
     ctx.strokeStyle = config.strokeColor || '#000000';
     ctx.lineWidth = Math.max(1, Math.round((config.strokeWidth / 720) * height));
-    ctx.lineJoin = 'round';
+    ctx.lineJoin = config.strokeJoin || 'round';
     ctx.strokeText(text, currentX, finalY + boxHeight / 2 + 1);
     ctx.restore();
   }
@@ -452,6 +521,7 @@ export const processVideoWithWatermark = async (
   onProgress?: (p: WatermarkRenderProgress) => void,
   signal?: AbortSignal
 ): Promise<Blob> => {
+  await ensureWatermarkFont(config);
   return new Promise<Blob>((resolve, reject) => {
     const video = document.createElement('video');
     const objectUrl = URL.createObjectURL(originalBlob);

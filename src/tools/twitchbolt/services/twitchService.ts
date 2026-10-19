@@ -109,6 +109,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
     thumbnail: responseData.thumbnailURL,
     duration: responseData.durationSeconds,
     date: new Date(responseData.createdAt).toLocaleDateString(),
+    createdAt: responseData.createdAt,
     views: responseData.viewCount,
     resolutions,
   };

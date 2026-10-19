@@ -372,21 +372,20 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
           </div>
         </div>
 
+        {/* El estudio se abre a pantalla completa por encima de todo. */}
         {wmAbierto && wmConfig && (
-          <div className="border-t border-white/5 p-2 sm:p-6 md:p-8">
-            <WatermarkPreview
-              clip={data}
-              config={wmConfig}
-              onChangeConfig={cambiarWmConfig}
-              presets={wmPresets}
-              onSavePreset={guardarWmPreset}
-              onDeletePreset={borrarWmPreset}
-              lang={lang}
-              dictionary={dictionary}
-              onExport={exportarConMarca}
-              onClose={() => setWmAbierto(false)}
-            />
-          </div>
+          <WatermarkPreview
+            clip={data}
+            config={wmConfig}
+            onChangeConfig={cambiarWmConfig}
+            presets={wmPresets}
+            onSavePreset={guardarWmPreset}
+            onDeletePreset={borrarWmPreset}
+            lang={lang}
+            dictionary={dictionary}
+            onExport={exportarConMarca}
+            onClose={() => setWmAbierto(false)}
+          />
         )}
       </div>
     </div>
