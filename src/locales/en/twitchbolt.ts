@@ -303,15 +303,11 @@ export default {
   "wm_pos_pick": "Tap a spot",
   "wm_fine_tune": "Fine tune",
   "wm_timing": "Timing",
-  "orderTitle": "Clip order",
-  "orderHint": "Drag to reorder. ZIP names and the joined video follow this order.",
   "sortViews": "Most viewed",
   "sortDate": "Newest",
   "sortDuration": "Longest",
   "sortReverse": "Reverse",
   "copyLinks": "Copy links",
-  "moveUp": "Move up",
-  "moveDown": "Move down",
   "mergeTitle": "Join into one video",
   "mergeDesc": "All the clips back to back, in the order above.",
   "mergeNeedTwo": "You need at least two clips",
@@ -322,5 +318,8 @@ export default {
   "mergeDownloading": "Downloading clips",
   "mergeRecording": "Recording clip",
   "mergeDone": "Done! The video is in your downloads.",
-  "mergeError": "Could not build the video. Try again, or with fewer clips."
+  "mergeError": "Could not build the video. Try again, or with fewer clips.",
+  "dragHint": "Hold a clip and drag it to change the order",
+  "dropHere": "Drop here",
+  "dragToMove": "Drag"
 };

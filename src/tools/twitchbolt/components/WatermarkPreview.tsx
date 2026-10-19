@@ -1,10 +1,10 @@
 // ============================================================================
 // Estudio de marca de agua de TwitchBolt
 // ----------------------------------------------------------------------------
-// Se abre siempre a pantalla completa: antes vivía dentro de la tarjeta del
-// clip, con el vídeo diminuto y un menú larguísimo hacia abajo, y para ver el
-// cambio había que subir. Ahora el vídeo ocupa todo lo que puede y los mandos
-// van en un panel lateral de altura fija con pestañas (en móvil, debajo).
+// Se abre en la propia página, en una caja de altura fija: el vídeo a la
+// izquierda tan grande como quepa y los mandos en un panel con pestañas que
+// hace scroll por dentro (antes era un vídeo diminuto y un menú larguísimo
+// hacia abajo). Un botón lo pasa a pantalla completa y otro lo devuelve.
 //
 // El exportado graba con MediaRecorder sobre un canvas y va A VELOCIDAD REAL:
 // un clip de 60 s tarda 60 s. Se avisa antes de empezar y se enseña lo que
@@ -19,7 +19,7 @@ import {
   DEFAULT_WATERMARK_CONFIG,
 } from '../services/watermarkService';
 import {
-  MessageSquareText, Type, Palette, Move, Wand2, Play, Pause, X, Download, RotateCcw, LogIn, LogOut, Check, Sparkles,
+  MessageSquareText, Type, Palette, Move, Wand2, Play, Pause, X, Download, RotateCcw, LogIn, LogOut, Check, Sparkles, Maximize2, Minimize2,
 } from 'lucide-react';
 import WatermarkTextEditor from './WatermarkTextEditor';
 import FontPanel from './watermark/FontPanel';
@@ -70,6 +70,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   }, [dictionary]);
 
   const [pestana, setPestana] = useState<Pestana>('text');
+  const [pantallaCompleta, setPantallaCompleta] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(clip.duration || 10);
@@ -103,19 +104,20 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
     return () => { vivo = false; document.fonts?.removeEventListener?.('loadingdone', alCargar); };
   }, []);
 
-  // Pantalla completa de verdad: sin scroll detrás y Esc para salir.
+  // En pantalla completa: sin scroll detrás y Esc para volver a la página.
   useEffect(() => {
+    if (!pantallaCompleta) return;
     const previo = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     const alTeclear = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !(e.target instanceof HTMLInputElement)) onClose?.();
+      if (e.key === 'Escape' && !(e.target instanceof HTMLInputElement)) setPantallaCompleta(false);
     };
     window.addEventListener('keydown', alTeclear);
     return () => {
       document.body.style.overflow = previo;
       window.removeEventListener('keydown', alTeclear);
     };
-  }, [onClose]);
+  }, [pantallaCompleta]);
 
   // Si se cierra a mitad de un render, el trabajo se aborta.
   useEffect(() => () => abortRef.current?.abort(), []);
@@ -221,16 +223,8 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
     { id: 'fx', icon: <Wand2 className="w-4 h-4" />, label: tr('wm_tab_fx', 'Animation') },
   ];
 
-  if (typeof document === 'undefined') return null;
-
-  return createPortal(
-    // Por encima del reproductor flotante (z-9999), que también va al body.
-    <div
-      className="fixed inset-0 z-[100000] bg-[#07060a] text-white flex flex-col animate-fade-in"
-      role="dialog"
-      aria-modal="true"
-      aria-label={tr('wm_title_full', 'Watermark editor')}
-    >
+  const contenido = (
+    <>
       {/* ---- Cabecera ---- */}
       <header className="h-14 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 border-b border-white/10">
         <div className="flex items-center gap-3 min-w-0">
@@ -255,6 +249,16 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
             <RotateCcw className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">{tr('wm_reset', 'Reset')}</span>
           </button>
+          <button
+            type="button"
+            onClick={() => setPantallaCompleta(v => !v)}
+            title={pantallaCompleta ? tr('wm_exit_fullscreen', 'Exit fullscreen') : tr('wm_fullscreen', 'Fullscreen')}
+            aria-label={pantallaCompleta ? tr('wm_exit_fullscreen', 'Exit fullscreen') : tr('wm_fullscreen', 'Fullscreen')}
+            className="h-9 px-3 rounded-xl border border-white/10 text-gray-300 hover:text-white hover:border-twitch/50 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
+          >
+            {pantallaCompleta ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            <span className="hidden sm:inline">{pantallaCompleta ? tr('wm_exit_fullscreen', 'Exit fullscreen') : tr('wm_fullscreen', 'Fullscreen')}</span>
+          </button>
           {onClose && (
             <button
               type="button"
@@ -272,7 +276,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
       <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
         {/* ---- El vídeo, lo más grande posible ---- */}
         <div className="shrink-0 lg:shrink lg:flex-1 min-w-0 flex flex-col gap-3 p-3 md:p-5">
-          <div className="relative w-full aspect-video max-h-[38vh] lg:max-h-none lg:aspect-auto lg:flex-1 lg:min-h-0 [container-type:size] flex items-center justify-center">
+          <div className="relative w-full aspect-video max-h-[42vh] lg:max-h-none lg:aspect-auto lg:flex-1 lg:min-h-0 [container-type:size] flex items-center justify-center">
             <div
               ref={stageRef}
               onPointerDown={alPulsar}
@@ -348,7 +352,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
         </div>
 
         {/* ---- Panel de mandos ---- */}
-        <aside className="flex-1 lg:flex-none lg:w-[400px] xl:w-[440px] min-h-0 flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 bg-[#0e0d12]">
+        <aside className={`${pantallaCompleta ? 'flex-1' : 'h-[68vh]'} lg:h-auto lg:flex-none ${pantallaCompleta ? 'lg:w-[400px] xl:w-[440px]' : 'lg:w-[340px] xl:w-[360px]'} min-h-0 flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 bg-[#0e0d12]`}>
           <nav className="shrink-0 grid grid-cols-5 gap-1 p-2 border-b border-white/10" role="tablist">
             {pestanas.map(p => (
               <button
@@ -443,8 +447,35 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
           </div>
         </aside>
       </div>
-    </div>,
-    document.body
+    </>
+  );
+
+  if (pantallaCompleta && typeof document !== 'undefined') {
+    return createPortal(
+      // Por encima del reproductor flotante (z-9999), que también va al body.
+      <div
+        className="fixed inset-0 z-[100000] bg-[#07060a] text-white flex flex-col animate-fade-in"
+        role="dialog"
+        aria-modal="true"
+        aria-label={tr('wm_title_full', 'Watermark editor')}
+        data-no-drag
+      >
+        {contenido}
+      </div>,
+      document.body
+    );
+  }
+
+  // En la página: caja de altura fija para que el vídeo y los mandos se vean
+  // a la vez sin tener que subir y bajar.
+  return (
+    <div
+      className="w-full bg-[#07060a] text-white flex flex-col rounded-[1.75rem] border border-twitch/30 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] lg:h-[min(74vh,560px)] animate-fade-in"
+      aria-label={tr('wm_title_full', 'Watermark editor')}
+      data-no-drag
+    >
+      {contenido}
+    </div>
   );
 };
 

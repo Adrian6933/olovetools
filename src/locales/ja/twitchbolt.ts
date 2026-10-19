@@ -303,15 +303,11 @@ export default {
   "wm_pos_pick": "位置をタップ",
   "wm_fine_tune": "微調整",
   "wm_timing": "タイミング",
-  "orderTitle": "クリップの順番",
-  "orderHint": "ドラッグで並べ替え。ZIP のファイル名と結合動画はこの順番になります。",
   "sortViews": "再生数順",
   "sortDate": "新しい順",
   "sortDuration": "長い順",
   "sortReverse": "逆順",
   "copyLinks": "リンクをコピー",
-  "moveUp": "上へ",
-  "moveDown": "下へ",
   "mergeTitle": "1 本の動画に結合",
   "mergeDesc": "すべてのクリップを上の順番で続けて再生。",
   "mergeNeedTwo": "クリップが 2 本以上必要です",
@@ -322,5 +318,8 @@ export default {
   "mergeDownloading": "クリップをダウンロード中",
   "mergeRecording": "クリップを録画中",
   "mergeDone": "完了！動画はダウンロードフォルダにあります。",
-  "mergeError": "動画を作成できませんでした。もう一度、またはクリップを減らして試してください。"
+  "mergeError": "動画を作成できませんでした。もう一度、またはクリップを減らして試してください。",
+  "dragHint": "クリップを長押ししてドラッグすると順番を変えられます",
+  "dropHere": "ここにドロップ",
+  "dragToMove": "ドラッグ"
 };

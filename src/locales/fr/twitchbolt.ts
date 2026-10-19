@@ -303,15 +303,11 @@ export default {
   "wm_pos_pick": "Touche un emplacement",
   "wm_fine_tune": "Réglage fin",
   "wm_timing": "Durées",
-  "orderTitle": "Ordre des clips",
-  "orderHint": "Glisse pour réordonner. Les noms du ZIP et la vidéo assemblée suivent cet ordre.",
   "sortViews": "Plus vus",
   "sortDate": "Plus récents",
   "sortDuration": "Plus longs",
   "sortReverse": "Inverser",
   "copyLinks": "Copier les liens",
-  "moveUp": "Monter",
-  "moveDown": "Descendre",
   "mergeTitle": "Assembler en une vidéo",
   "mergeDesc": "Tous les clips à la suite, dans l’ordre ci-dessus.",
   "mergeNeedTwo": "Il faut au moins deux clips",
@@ -322,5 +318,8 @@ export default {
   "mergeDownloading": "Téléchargement des clips",
   "mergeRecording": "Enregistrement du clip",
   "mergeDone": "Terminé ! La vidéo est dans tes téléchargements.",
-  "mergeError": "Impossible de créer la vidéo. Réessaie, ou avec moins de clips."
+  "mergeError": "Impossible de créer la vidéo. Réessaie, ou avec moins de clips.",
+  "dragHint": "Maintiens un clip appuyé et fais-le glisser pour changer l’ordre",
+  "dropHere": "Dépose ici",
+  "dragToMove": "Déplacer"
 };

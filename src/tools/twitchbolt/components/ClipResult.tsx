@@ -372,8 +372,9 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
           </div>
         </div>
 
-        {/* El estudio se abre a pantalla completa por encima de todo. */}
+        {/* El editor va aquí mismo, bajo el clip; tiene su botón de pantalla completa. */}
         {wmAbierto && wmConfig && (
+          <div className="border-t border-white/5 p-2 sm:p-4">
           <WatermarkPreview
             clip={data}
             config={wmConfig}
@@ -386,6 +387,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
             onExport={exportarConMarca}
             onClose={() => setWmAbierto(false)}
           />
+          </div>
         )}
       </div>
     </div>

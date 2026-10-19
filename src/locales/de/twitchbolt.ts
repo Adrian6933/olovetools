@@ -303,15 +303,11 @@ export default {
   "wm_pos_pick": "Tippe auf eine Stelle",
   "wm_fine_tune": "Feinabstimmung",
   "wm_timing": "Timing",
-  "orderTitle": "Reihenfolge der Clips",
-  "orderHint": "Zum Umsortieren ziehen. ZIP-Namen und das zusammengefügte Video folgen dieser Reihenfolge.",
   "sortViews": "Meistgesehen",
   "sortDate": "Neueste",
   "sortDuration": "Längste",
   "sortReverse": "Umkehren",
   "copyLinks": "Links kopieren",
-  "moveUp": "Nach oben",
-  "moveDown": "Nach unten",
   "mergeTitle": "Zu einem Video zusammenfügen",
   "mergeDesc": "Alle Clips hintereinander, in der Reihenfolge oben.",
   "mergeNeedTwo": "Du brauchst mindestens zwei Clips",
@@ -322,5 +318,8 @@ export default {
   "mergeDownloading": "Clips werden geladen",
   "mergeRecording": "Clip wird aufgenommen",
   "mergeDone": "Fertig! Das Video ist in deinen Downloads.",
-  "mergeError": "Das Video konnte nicht erstellt werden. Versuch es noch einmal oder mit weniger Clips."
+  "mergeError": "Das Video konnte nicht erstellt werden. Versuch es noch einmal oder mit weniger Clips.",
+  "dragHint": "Halte einen Clip gedrückt und ziehe ihn, um die Reihenfolge zu ändern",
+  "dropHere": "Hier ablegen",
+  "dragToMove": "Ziehen"
 };

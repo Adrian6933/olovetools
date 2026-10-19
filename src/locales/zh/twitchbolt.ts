@@ -303,15 +303,11 @@ export default {
   "wm_pos_pick": "点选位置",
   "wm_fine_tune": "微调",
   "wm_timing": "时间",
-  "orderTitle": "剪辑顺序",
-  "orderHint": "拖动以调整顺序。ZIP 文件名和合并视频都按此顺序。",
   "sortViews": "播放最多",
   "sortDate": "最新",
   "sortDuration": "最长",
   "sortReverse": "倒序",
   "copyLinks": "复制链接",
-  "moveUp": "上移",
-  "moveDown": "下移",
   "mergeTitle": "合并成一个视频",
   "mergeDesc": "所有剪辑按上面的顺序连续播放。",
   "mergeNeedTwo": "至少需要两个剪辑",
@@ -322,5 +318,8 @@ export default {
   "mergeDownloading": "正在下载剪辑",
   "mergeRecording": "正在录制剪辑",
   "mergeDone": "完成！视频已在你的下载文件夹中。",
-  "mergeError": "无法生成视频。请重试，或减少剪辑数量。"
+  "mergeError": "无法生成视频。请重试，或减少剪辑数量。",
+  "dragHint": "按住剪辑并拖动即可调整顺序",
+  "dropHere": "放在这里",
+  "dragToMove": "拖动"
 };

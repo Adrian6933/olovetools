@@ -18,7 +18,8 @@ import {
 import WatermarkPreview from './components/WatermarkPreview';
 import type { WatermarkConfig, PositionPreset } from './types';
 import ClipSkeleton from './components/ClipSkeleton';
-import ClipOrderList from './components/ClipOrderList';
+import ClipSortBar from './components/ClipSortBar';
+import SortableClipList from './components/SortableClipList';
 import MergePanel from './components/MergePanel';
 import { 
   ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge
@@ -989,6 +990,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                  )}
 
                  {wmEditorAbierto && !wmAll && wmAllConfig && primerClipListo && (
+                   <div className="-mx-2 sm:mx-0">
                    <WatermarkPreview
                      clip={primerClipListo}
                      config={wmAllConfig}
@@ -1001,6 +1003,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                      onClose={() => setWmEditorAbierto(false)}
                      multiClip
                    />
+                   </div>
                  )}
                </div>
              )}
@@ -1011,9 +1014,6 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                </div>
              )}
 
-             {clips.length > 1 && (
-               <ClipOrderList clips={clips} onReorder={setClips} t={t} lang={lang} />
-             )}
 
              {clips.filter(c => c.status === 'success').length > 1 && (
                <MergePanel
@@ -1027,14 +1027,19 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                />
              )}
 
-             <div className="grid grid-cols-1 gap-12 relative z-10">
-                {clips.map((c, i) => {
+             {clips.length > 1 && <ClipSortBar clips={clips} onReorder={setClips} t={t} />}
+
+             <SortableClipList
+               items={clips}
+               onReorder={setClips}
+               t={t}
+               renderItem={(c, i) => {
                   if (c.status === 'loading') {
-                    return <ClipSkeleton key={c.id} />;
+                    return <ClipSkeleton />;
                   }
                   if (c.status === 'error') {
                     return (
-                      <div key={c.id} className="bg-[#111114]/50 backdrop-blur-3xl border border-red-500/20 rounded-[3rem] p-6 md:p-10 flex items-center justify-between">
+                      <div className="bg-[#111114]/50 backdrop-blur-3xl border border-red-500/20 rounded-[3rem] p-6 md:p-10 flex items-center justify-between">
                         <div className="text-red-400 font-medium">{t.failedToLoad} <span className="text-gray-500 text-sm ml-2">{c.url}</span></div>
                         <button onClick={() => setClips(prev => prev.filter(x => x.id !== c.id))} className="w-10 h-10 bg-red-500/10 hover:bg-red-500/20 rounded-full flex items-center justify-center text-red-400 transition-colors cursor-pointer">
                           <X className="w-5 h-5" />
@@ -1043,11 +1048,11 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                     );
                   }
                   if (c.data) {
-                    return <ClipResult key={c.id} data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} />;
+                    return <ClipResult data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} />;
                   }
                   return null;
-                })}
-             </div>
+               }}
+             />
           </div>
         )}
 
