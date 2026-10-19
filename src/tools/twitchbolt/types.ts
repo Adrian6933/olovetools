@@ -59,7 +59,11 @@ export type EntryEffect =
   | 'rotate-in'
   | 'pop-in'
   | 'flip-x'
-  | 'typewriter';
+  | 'typewriter'
+  | 'drop'
+  | 'spin'
+  | 'stretch'
+  | 'glitch';
 
 export type ExitEffect = 
   | 'none' 
@@ -70,7 +74,17 @@ export type ExitEffect =
   | 'slide-right'
   | 'zoom'
   | 'rotate-out'
-  | 'pop-out';
+  | 'pop-out'
+  | 'drop'
+  | 'spin'
+  | 'shrink'
+  | 'glitch';
+
+/** Movimiento que se repite mientras el cartel está a la vista. */
+export type LoopEffect = 'none' | 'pulse' | 'float' | 'shake' | 'swing' | 'flicker' | 'heartbeat';
+
+/** Adorno del propio texto, independiente de la tarjeta de fondo. */
+export type TextEffect = 'none' | 'gradient' | 'extrude' | 'double' | 'glitch' | 'underline';
 
 export type AnimationEasing = 'linear' | 'ease-out' | 'bounce' | 'elastic';
 
@@ -126,6 +140,10 @@ export interface WatermarkConfig {
   boxBorderWidth?: number;
   // New animation properties
   entryDelay?: number; // seconds to delay entry animation
+  loopEffect?: LoopEffect;
+  textEffect?: TextEffect;
+  /** Segundo color del efecto de texto (fin del degradado, el 3D, el subrayado...). */
+  effectColor?: string;
   animationEasing?: AnimationEasing;
 }
 

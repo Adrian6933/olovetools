@@ -105,6 +105,17 @@ export const BadgePreview = React.forwardRef<HTMLSpanElement, {
 }>(({ config, channelName, size = 14, text, className = '' }, ref) => {
   const contenido = text ?? formatWatermarkText(config, channelName);
   const glow = config.shadow && config.glowMode;
+  const efecto = config.textEffect || 'none';
+  const c2 = config.effectColor || '#9146FF';
+  const px = (v: number) => `${(v * size) / 22}px`;
+  // Lo mismo que pinta el canvas, aproximado con CSS para las miniaturas.
+  const estiloTexto: React.CSSProperties =
+    efecto === 'gradient' ? { backgroundImage: `linear-gradient(180deg, ${config.textColor}, ${c2})`, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent' }
+    : efecto === 'extrude' ? { textShadow: [1, 2, 3, 4].map(i => `${px(i * 0.9)} ${px(i * 0.9)} 0 ${c2}`).join(', ') }
+    : efecto === 'double' ? { WebkitTextStroke: `${px(5)} ${c2}`, paintOrder: 'stroke fill' }
+    : efecto === 'glitch' ? { textShadow: `-${px(1.6)} 0 #00e5ff, ${px(1.6)} 0 #ff0050` }
+    : efecto === 'underline' ? { textDecoration: 'underline', textDecorationColor: c2, textDecorationThickness: px(3), textUnderlineOffset: px(4) }
+    : {};
   return (
     <span
       ref={ref}
@@ -131,7 +142,7 @@ export const BadgePreview = React.forwardRef<HTMLSpanElement, {
       }}
     >
       {config.showIcon && <TwitchGlyph className="shrink-0 w-[1.05em] h-[1.05em]" />}
-      <span className="truncate">{contenido || '…'}</span>
+      <span className="truncate" style={estiloTexto}>{contenido || '…'}</span>
     </span>
   );
 });

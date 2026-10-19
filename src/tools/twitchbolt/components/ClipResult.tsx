@@ -240,7 +240,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   };
 
   return (
-    <div className="w-full relative group animate-fade-in">
+    <div className="@container w-full relative group animate-fade-in">
       <div className="absolute -top-3 -left-3 z-40 bg-twitch text-white font-black text-xs px-4 py-2 rounded-xl shadow-xl ring-4 ring-[#070708]">
           #{index}
       </div>
@@ -253,9 +253,11 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
       </button>
 
       <div className="bg-[#111114]/80 backdrop-blur-xl border border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12">
+        {/* Por el ancho de la tarjeta y no de la ventana: con el panel de
+            orden al lado la tarjeta es más estrecha y se apila antes. */}
+        <div className="grid grid-cols-1 @3xl:grid-cols-12">
           {/* PREVIEW LEFT */}
-          <div className="lg:col-span-7 p-8 md:p-10 border-b lg:border-b-0 lg:border-r border-white/5">
+          <div className="@3xl:col-span-7 p-6 @lg:p-8 @4xl:p-10 border-b @3xl:border-b-0 @3xl:border-r border-white/5">
              <div className="relative rounded-2xl overflow-hidden aspect-video bg-black mb-6 group/video">
                 {isPlaying ? (
                     <video 
@@ -298,7 +300,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
           </div>
 
           {/* DOWNLOADS RIGHT */}
-          <div className="lg:col-span-5 p-8 md:p-10 bg-[#0c0c0e]/50 flex flex-col justify-center gap-4">
+          <div className="@3xl:col-span-5 p-6 @lg:p-8 @4xl:p-10 bg-[#0c0c0e]/50 grid grid-cols-1 @md:grid-cols-2 @3xl:flex @3xl:flex-col justify-center gap-3 @3xl:gap-4">
              {data.resolutions.map((res, i) => {
                 const state = downloadingRes[res.quality];
                 const isDownloading = state !== undefined;
@@ -360,7 +362,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
              <button
                onClick={wmAbierto ? () => setWmAbierto(false) : abrirWatermark}
                aria-expanded={wmAbierto}
-               className={`w-full rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
+               className={`w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
                  wmAbierto
                    ? 'bg-twitch text-white border-twitch shadow-lg shadow-twitch/20'
                    : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-white/10'

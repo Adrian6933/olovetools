@@ -273,10 +273,10 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 flex flex-col lg:flex-row">
+      <div className="flex-1 min-h-0 flex flex-col @4xl:flex-row">
         {/* ---- El vídeo, lo más grande posible ---- */}
-        <div className="shrink-0 lg:shrink lg:flex-1 min-w-0 flex flex-col gap-3 p-3 md:p-5">
-          <div className="relative w-full aspect-video max-h-[42vh] lg:max-h-none lg:aspect-auto lg:flex-1 lg:min-h-0 [container-type:size] flex items-center justify-center">
+        <div className="shrink-0 @4xl:shrink @4xl:flex-1 min-w-0 flex flex-col gap-3 p-3 md:p-5">
+          <div className="relative w-full aspect-video max-h-[42vh] @4xl:max-h-none @4xl:aspect-auto @4xl:flex-1 @4xl:min-h-0 [container-type:size] flex items-center justify-center">
             <div
               ref={stageRef}
               onPointerDown={alPulsar}
@@ -352,7 +352,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
         </div>
 
         {/* ---- Panel de mandos ---- */}
-        <aside className={`${pantallaCompleta ? 'flex-1' : 'h-[68vh]'} lg:h-auto lg:flex-none ${pantallaCompleta ? 'lg:w-[400px] xl:w-[440px]' : 'lg:w-[340px] xl:w-[360px]'} min-h-0 flex flex-col border-t lg:border-t-0 lg:border-l border-white/10 bg-[#0e0d12]`}>
+        <aside className={`${pantallaCompleta ? 'flex-1' : 'h-[68vh]'} @4xl:h-auto @4xl:flex-none ${pantallaCompleta ? '@4xl:w-[400px] @6xl:w-[440px]' : '@4xl:w-[340px] @6xl:w-[360px]'} min-h-0 flex flex-col border-t @4xl:border-t-0 @4xl:border-l border-white/10 bg-[#0e0d12]`}>
           <nav className="shrink-0 grid grid-cols-5 gap-1 p-2 border-b border-white/10" role="tablist">
             {pestanas.map(p => (
               <button
@@ -454,13 +454,13 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
     return createPortal(
       // Por encima del reproductor flotante (z-9999), que también va al body.
       <div
-        className="fixed inset-0 z-[100000] bg-[#07060a] text-white flex flex-col animate-fade-in"
+        className="@container fixed inset-0 z-[100000] bg-[#07060a] text-white animate-fade-in"
         role="dialog"
         aria-modal="true"
         aria-label={tr('wm_title_full', 'Watermark editor')}
         data-no-drag
       >
-        {contenido}
+        <div className="h-full flex flex-col">{contenido}</div>
       </div>,
       document.body
     );
@@ -469,12 +469,15 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   // En la página: caja de altura fija para que el vídeo y los mandos se vean
   // a la vez sin tener que subir y bajar.
   return (
+    // El editor mira su propio ancho, no el de la ventana: dentro de una
+    // tarjeta estrecha (con el panel de orden al lado) se apila en vez de
+    // apretar el vídeo y los mandos lado a lado.
     <div
-      className="w-full bg-[#07060a] text-white flex flex-col rounded-[1.75rem] border border-twitch/30 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] lg:h-[min(74vh,560px)] animate-fade-in"
+      className="@container w-full bg-[#07060a] text-white rounded-[1.75rem] border border-twitch/30 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.6)] animate-fade-in"
       aria-label={tr('wm_title_full', 'Watermark editor')}
       data-no-drag
     >
-      {contenido}
+      <div className="flex flex-col @4xl:h-[min(74vh,560px)]">{contenido}</div>
     </div>
   );
 };

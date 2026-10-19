@@ -198,13 +198,33 @@ export const saveCustomPresets = (presets: PositionPreset[]): void => {
   }
 };
 
+// ---- curvas de animación ----------------------------------------------------
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+/** Rebote al llegar: 0 → 1 con dos botes que se apagan. */
+const rebote = (t: number) => {
+  const n = 7.5625, d = 2.75;
+  if (t < 1 / d) return n * t * t;
+  if (t < 2 / d) return n * (t -= 1.5 / d) * t + 0.75;
+  if (t < 2.5 / d) return n * (t -= 2.25 / d) * t + 0.9375;
+  return n * (t -= 2.625 / d) * t + 0.984375;
+};
+/** Muelle: se pasa un poco y vuelve. */
+const elastico = (t: number) => (t <= 0 ? 0 : t >= 1 ? 1 : Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * ((2 * Math.PI) / 3)) + 1);
+/** Ruido determinista 0-1: el mismo instante da siempre lo mismo, también al exportar. */
+const ruido = (x: number) => {
+  const v = Math.sin(Math.floor(x) * 12.9898) * 43758.5453;
+  return v - Math.floor(v);
+};
+
 export const calculateAnimationState = (
   config: WatermarkConfig, 
   currentTime: number, 
   duration: number
-): { opacity: number; scale: number; offsetX: number; offsetY: number; rotation: number; typewriterRatio: number } => {
+): { opacity: number; scale: number; scaleX: number; offsetX: number; offsetY: number; rotation: number; typewriterRatio: number } => {
   let opacity = 1;
   let scale = 1;
+  // Estirar en horizontal sin tocar el alto (efectos "estirar" y "encoger").
+  let scaleX = 1;
   let offsetX = 0;
   let offsetY = 0;
   let rotation = 0;
@@ -214,7 +234,7 @@ export const calculateAnimationState = (
 
   // Handle entryDelay
   if (entryDelay > 0 && currentTime < entryDelay) {
-    return { opacity: 0, scale: 0, offsetX: 0, offsetY: 0, rotation: 0, typewriterRatio: 0 };
+    return { opacity: 0, scale: 0, scaleX: 1, offsetX: 0, offsetY: 0, rotation: 0, typewriterRatio: 0 };
   }
 
   const effectiveTime = currentTime - entryDelay;
@@ -268,6 +288,30 @@ export const calculateAnimationState = (
         typewriterRatio = progress;
         opacity = progress > 0 ? 1 : 0;
         break;
+      case 'drop': {
+        // Cae desde arriba y rebota dos veces al tocar su sitio.
+        const b = rebote(progress);
+        offsetY = -90 * (1 - b);
+        opacity = Math.min(1, progress * 3);
+        break;
+      }
+      case 'spin':
+        rotation = (1 - easeOut(progress)) * Math.PI * 2;
+        scale = 0.3 + 0.7 * easeOut(progress);
+        opacity = Math.min(1, progress * 2);
+        break;
+      case 'stretch':
+        scaleX = elastico(progress);
+        opacity = Math.min(1, progress * 3);
+        break;
+      case 'glitch': {
+        // Aparece a trompicones: saltos laterales y parpadeo que se calman.
+        const fuerza = 1 - progress;
+        offsetX = (ruido(currentTime * 30) - 0.5) * 50 * fuerza;
+        offsetY = (ruido(currentTime * 30 + 7) - 0.5) * 12 * fuerza;
+        opacity = progress > 0.85 ? 1 : ruido(currentTime * 40 + 3) > 0.35 ? 1 : 0.15;
+        break;
+      }
     }
   }
 
@@ -308,10 +352,63 @@ export const calculateAnimationState = (
         scale *= Math.max(0, progress * 1.15);
         opacity = Math.min(opacity, progress);
         break;
+      case 'drop': {
+        // Se cae: acelera hacia abajo como si lo soltaran.
+        const q = 1 - progress;
+        offsetY += 160 * q * q;
+        opacity = Math.min(opacity, Math.min(1, progress * 2.5));
+        break;
+      }
+      case 'spin':
+        rotation -= (1 - progress) * Math.PI * 2;
+        scale *= 0.2 + 0.8 * progress;
+        opacity = Math.min(opacity, progress);
+        break;
+      case 'shrink':
+        scaleX *= progress;
+        opacity = Math.min(opacity, Math.min(1, progress * 3));
+        break;
+      case 'glitch': {
+        const fuerza = 1 - progress;
+        offsetX += (ruido(currentTime * 30) - 0.5) * 50 * fuerza;
+        opacity = Math.min(opacity, progress < 0.15 ? 0 : ruido(currentTime * 40 + 3) > 0.35 * fuerza ? progress : 0.1);
+        break;
+      }
     }
   }
 
-  return { opacity, scale, offsetX, offsetY, rotation, typewriterRatio };
+  // Movimiento continuo mientras se ve: se suma a lo de entrada y salida.
+  switch (config.loopEffect) {
+    case 'pulse':
+      scale *= 1 + 0.06 * Math.sin(currentTime * Math.PI * 2 * 0.8);
+      break;
+    case 'heartbeat': {
+      // Dos latidos seguidos y una pausa, como un corazón.
+      const f = currentTime % 1.2;
+      const golpe = (c: number) => Math.max(0, 1 - Math.abs(f - c) / 0.09);
+      scale *= 1 + 0.1 * Math.max(golpe(0.1), golpe(0.32));
+      break;
+    }
+    case 'float':
+      offsetY += 6 * Math.sin(currentTime * Math.PI * 2 * 0.5);
+      break;
+    case 'shake':
+      // Tiembla un momento cada tres segundos; temblar siempre cansa.
+      if (currentTime % 3 < 0.45) {
+        offsetX += Math.sin(currentTime * 70) * 5;
+        rotation += Math.sin(currentTime * 55) * 0.03;
+      }
+      break;
+    case 'swing':
+      rotation += Math.sin(currentTime * Math.PI * 2 * 0.6) * 0.07;
+      break;
+    case 'flicker':
+      // Parpadeo de neón: casi siempre encendido, a veces se apaga un instante.
+      if (ruido(Math.floor(currentTime * 12)) > 0.9) opacity *= 0.35;
+      break;
+  }
+
+  return { opacity, scale, scaleX, offsetX, offsetY, rotation, typewriterRatio };
 };
 
 /** El texto final del cartel: plantilla con el nombre y mayúsculas aplicadas. */
@@ -346,7 +443,7 @@ export const drawWatermarkOnCanvas = (
   let y = (config.customY / 100) * height;
 
   // Animation values
-  const { opacity, scale, offsetX, offsetY, rotation, typewriterRatio } = calculateAnimationState(config, currentTime, duration);
+  const { opacity, scale, scaleX, offsetX, offsetY, rotation, typewriterRatio } = calculateAnimationState(config, currentTime, duration);
 
   if (opacity <= 0.01) return;
 
@@ -401,7 +498,7 @@ export const drawWatermarkOnCanvas = (
   const finalY = y + anchorY + offsetY * escalaAnim;
 
   ctx.translate(finalX + boxWidth / 2, finalY + boxHeight / 2);
-  if (scale !== 1) ctx.scale(scale, scale);
+  if (scale !== 1 || scaleX !== 1) ctx.scale(scale * scaleX, scale);
   if (rotation !== 0) ctx.rotate(rotation);
   ctx.translate(-(finalX + boxWidth / 2), -(finalY + boxHeight / 2));
 
@@ -473,8 +570,54 @@ export const drawWatermarkOnCanvas = (
     currentX += iconSize + iconGap;
   }
 
-  // Text Stroke / Contorno
   ctx.textBaseline = 'middle';
+  const tx = currentX;
+  const ty = finalY + boxHeight / 2 + 1;
+  const efecto = config.textEffect || 'none';
+  const colorEfecto = config.effectColor || '#9146FF';
+
+  // ---- Efectos del texto que van por DEBAJO del relleno ----
+  if (efecto === 'extrude') {
+    // Relieve 3D: copias desplazadas en diagonal, sin sombra cada una.
+    ctx.save();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = colorEfecto;
+    const capas = Math.max(3, Math.round(fontSize * 0.14));
+    for (let i = capas; i >= 1; i -= 1) ctx.fillText(text, tx + i, ty + i);
+    ctx.restore();
+  } else if (efecto === 'double') {
+    // Contorno doble: uno ancho de color por fuera, uno fino oscuro dentro.
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = colorEfecto;
+    ctx.lineWidth = Math.max(3, fontSize * 0.3);
+    ctx.strokeText(text, tx, ty);
+    ctx.shadowColor = 'transparent';
+    ctx.strokeStyle = config.strokeColor || '#000000';
+    ctx.lineWidth = Math.max(2, fontSize * 0.14);
+    ctx.strokeText(text, tx, ty);
+    ctx.restore();
+  } else if (efecto === 'glitch') {
+    // Separación de color RGB que tiembla con el tiempo.
+    ctx.save();
+    ctx.shadowColor = 'transparent';
+    const d = Math.max(1.5, fontSize * 0.06) * (1 + 0.8 * (ruido(currentTime * 14) - 0.5));
+    ctx.globalAlpha *= 0.85;
+    ctx.fillStyle = '#00e5ff';
+    ctx.fillText(text, tx - d, ty);
+    ctx.fillStyle = '#ff0050';
+    ctx.fillText(text, tx + d, ty);
+    ctx.restore();
+  } else if (efecto === 'underline') {
+    ctx.save();
+    ctx.shadowColor = 'transparent';
+    ctx.fillStyle = colorEfecto;
+    const grosor = Math.max(2, fontSize * 0.13);
+    ctx.fillRect(tx, ty + fontSize * 0.5, ctx.measureText(text).width, grosor);
+    ctx.restore();
+  }
+
+  // Text Stroke / Contorno
   if (config.stroke && config.strokeWidth && config.strokeWidth > 0) {
     ctx.save();
     ctx.strokeStyle = config.strokeColor || '#000000';
@@ -485,8 +628,16 @@ export const drawWatermarkOnCanvas = (
   }
 
   // Text Fill
-  ctx.fillStyle = config.textColor;
-  ctx.fillText(text, currentX, finalY + boxHeight / 2 + 1);
+  if (efecto === 'gradient') {
+    const g = ctx.createLinearGradient(0, ty - fontSize / 2, 0, ty + fontSize / 2);
+    g.addColorStop(0, config.textColor);
+    g.addColorStop(1, colorEfecto);
+    ctx.fillStyle = g;
+  } else {
+    ctx.fillStyle = config.textColor;
+  }
+  if (efecto === 'extrude' || efecto === 'double' || efecto === 'glitch') ctx.shadowColor = 'transparent';
+  ctx.fillText(text, tx, ty);
 
   ctx.restore();
 };

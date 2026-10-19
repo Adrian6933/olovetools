@@ -19,7 +19,8 @@ import WatermarkPreview from './components/WatermarkPreview';
 import type { WatermarkConfig, PositionPreset } from './types';
 import ClipSkeleton from './components/ClipSkeleton';
 import ClipSortBar from './components/ClipSortBar';
-import SortableClipList from './components/SortableClipList';
+import SortableClipList, { type SortableClipListHandle } from './components/SortableClipList';
+import ClipOrderPanel from './components/ClipOrderPanel';
 import MergePanel from './components/MergePanel';
 import { 
   ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge
@@ -148,6 +149,14 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   const [isQualityOpen, setIsQualityOpen] = useState(false);
   /** Mientras se une el vídeo, el ZIP y la marca en lote esperan. */
   const [uniendo, setUniendo] = useState(false);
+
+  // Cambiar el orden desde fuera de las tarjetas (panel, atajos de orden):
+  // primero se le avisa a la lista para que las tarjetas se deslicen.
+  const listaRef = useRef<SortableClipListHandle>(null);
+  const reordenar = useCallback((next: ClipItem[]) => {
+    listaRef.current?.snapshot();
+    setClips(next);
+  }, []);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const qualityRef = useRef<HTMLDivElement>(null);
@@ -524,7 +533,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#050407] selection:bg-twitch/30 relative overflow-hidden" style={{ backgroundImage: 'linear-gradient(to bottom, #15121e 0%, #0f0d14 25%, #0a080f 50%, #07060a 75%, #050407 100%)' }}>
+    <div className="min-h-screen flex flex-col bg-[#050407] selection:bg-twitch/30 relative overflow-x-clip" style={{ backgroundImage: 'linear-gradient(to bottom, #15121e 0%, #0f0d14 25%, #0a080f 50%, #07060a 75%, #050407 100%)' }}>
       {/* Long Linear Atmospheric Glow */}
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-twitch/[0.05] via-transparent to-transparent pointer-events-none" />
       
@@ -786,8 +795,8 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
 
         {/* RESULTS AREA */}
         {status === 'success' && (
-          <div id="results-area" className="w-full space-y-8 animate-fade-in max-w-5xl mx-auto">
-             <div className="w-full bg-[#111114] border border-white/5 rounded-[2.5rem] p-4 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl relative z-40">
+          <div id="results-area" className={`w-full space-y-8 animate-fade-in mx-auto ${clips.length > 1 ? 'max-w-6xl' : 'max-w-5xl'}`}>
+             <div className="w-full bg-[#111114] border border-white/5 rounded-[2.5rem] p-4 flex flex-col md:flex-row items-center justify-between gap-4 xl:gap-6 shadow-2xl relative z-40">
                 
                 {/* Barra al 88%, margen superior de 4px, centrada horizontalmente */}
                 {zipProgress && (
@@ -796,12 +805,12 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                   </div>
                 )}
                 
-                <div className="flex items-center gap-4 px-6">
+                <div className="flex items-center gap-4 px-2 md:px-4 xl:px-6">
                     <h2 className="text-sm font-black uppercase text-white tracking-widest">{clips.length} {t.clipsFound}</h2>
                 </div>
 
                 {/* CUSTOM SELECT QUALITY */}
-                <div className="relative w-full md:flex-1 md:max-w-xs" ref={qualityRef}>
+                <div className="relative w-full md:flex-1 md:max-w-xs min-w-0" ref={qualityRef}>
                     <button 
                       onClick={() => setIsQualityOpen(!isQualityOpen)}
                       className="relative z-50 w-full bg-dark-950 text-white rounded-2xl p-4 border border-white/5 flex items-center justify-between group hover:border-twitch/30 transition-all cursor-pointer hover:bg-white/[0.03] active:scale-[0.98]"
@@ -844,14 +853,14 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                     )}
                 </div>
 
-                <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto md:px-2">
+                <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto shrink-0">
                     {(() => {
                       const isAnyLoading = clips.some(c => c.status === 'loading');
                       return (
                         <button
                           onClick={marcaActiva ? descargarZipConMarca : downloadAllAsZip}
                           disabled={!!zipProgress || !!wmAll || isAnyLoading || uniendo}
-                          className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
+                          className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-6 xl:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
                         >
                           {isAnyLoading ? (
                             <> <Loader2 className="w-4 h-4 animate-spin" /> {t.loadingClips || 'LOADING CLIPS...'} </>
@@ -901,7 +910,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                       }`}
                     >
                         <Sparkles className="w-4 h-4 shrink-0" />
-                        <span className="hidden lg:inline">{t.watermarkAll || 'Watermark all'}</span>
+                        <span className="hidden xl:inline">{t.watermarkAll || 'Watermark all'}</span>
                         {/* El interruptor de verdad, dibujado: el color solo no
                             distingue "puesto" de "pásame el ratón por encima". */}
                         <span className={`w-8 h-[18px] rounded-full p-[2px] flex shrink-0 transition-colors ${marcaActiva ? 'bg-white/35 justify-end' : 'bg-white/10 justify-start'}`}>
@@ -1027,9 +1036,13 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                />
              )}
 
-             {clips.length > 1 && <ClipSortBar clips={clips} onReorder={setClips} t={t} />}
+             {clips.length > 1 && <ClipSortBar clips={clips} onReorder={reordenar} t={t} />}
 
+             {/* El panel de orden va solo junto a las tarjetas: la barra de
+                 arriba necesita todo el ancho y ahí no hace falta. */}
+             <div className={clips.length > 1 ? 'lg:grid lg:grid-cols-[minmax(0,1fr)_260px] lg:gap-8 lg:items-start' : ''}>
              <SortableClipList
+               ref={listaRef}
                items={clips}
                onReorder={setClips}
                t={t}
@@ -1053,6 +1066,16 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                   return null;
                }}
              />
+
+             {clips.length > 1 && (
+               <ClipOrderPanel
+                 clips={clips}
+                 onReorder={reordenar}
+                 onGo={id => listaRef.current?.irA(id)}
+                 t={t}
+               />
+             )}
+             </div>
           </div>
         )}
 

@@ -6,8 +6,8 @@
 // estilo de cada una por referencia: con estado de React serían doce
 // renderizados por fotograma.
 import React, { useEffect, useRef, useState } from 'react';
-import { Check, LogIn, LogOut, Play } from 'lucide-react';
-import type { EntryEffect, ExitEffect, WatermarkConfig } from '../../types';
+import { Check, LogIn, LogOut, Play, Repeat } from 'lucide-react';
+import type { EntryEffect, ExitEffect, LoopEffect, WatermarkConfig } from '../../types';
 import { calculateAnimationState, formatWatermarkText } from '../../services/watermarkService';
 import { BadgePreview, Section, Segmented, Slider, type Tr } from './ui';
 
@@ -33,6 +33,10 @@ const ENTRADAS: { id: EntryEffect; key: string; fb: string }[] = [
   { id: 'pop-in', key: 'wm_fx_pop_spring', fb: 'Elastic pop' },
   { id: 'flip-x', key: 'wm_fx_flip', fb: 'Flip' },
   { id: 'typewriter', key: 'wm_fx_typewriter', fb: 'Typewriter' },
+  { id: 'drop', key: 'wm_fx_drop', fb: 'Drop and bounce' },
+  { id: 'spin', key: 'wm_fx_spin', fb: 'Spin' },
+  { id: 'stretch', key: 'wm_fx_stretch', fb: 'Stretch' },
+  { id: 'glitch', key: 'wm_fx_glitch', fb: 'Glitch' },
 ];
 
 const SALIDAS: { id: ExitEffect; key: string; fb: string }[] = [
@@ -45,6 +49,20 @@ const SALIDAS: { id: ExitEffect; key: string; fb: string }[] = [
   { id: 'zoom', key: 'wm_fxo_zoom_out', fb: 'Zoom out' },
   { id: 'rotate-out', key: 'wm_fxo_rotate', fb: 'Spin out' },
   { id: 'pop-out', key: 'wm_fxo_pop', fb: 'Elastic out' },
+  { id: 'drop', key: 'wm_fxo_drop', fb: 'Fall' },
+  { id: 'spin', key: 'wm_fxo_spin', fb: 'Spin away' },
+  { id: 'shrink', key: 'wm_fxo_shrink', fb: 'Squeeze' },
+  { id: 'glitch', key: 'wm_fxo_glitch', fb: 'Glitch' },
+];
+
+const BUCLES: { id: LoopEffect; key: string; fb: string }[] = [
+  { id: 'none', key: 'wm_fxl_none', fb: 'Still' },
+  { id: 'pulse', key: 'wm_fxl_pulse', fb: 'Pulse' },
+  { id: 'heartbeat', key: 'wm_fxl_heartbeat', fb: 'Heartbeat' },
+  { id: 'float', key: 'wm_fxl_float', fb: 'Float' },
+  { id: 'swing', key: 'wm_fxl_swing', fb: 'Swing' },
+  { id: 'shake', key: 'wm_fxl_shake', fb: 'Shake' },
+  { id: 'flicker', key: 'wm_fxl_flicker', fb: 'Neon flicker' },
 ];
 
 /** Duración del bucle de cada tarjeta y de la animación dentro de él. */
@@ -54,7 +72,7 @@ const ANIM = 0.8;
 const ESCALA = 0.45;
 
 const EffectPanel: React.FC<Props> = ({ config, onChange, channelName, tr, onTestEntry, onTestExit }) => {
-  const [modo, setModo] = useState<'in' | 'out'>('in');
+  const [modo, setModo] = useState<'in' | 'out' | 'loop'>('in');
   const refs = useRef(new Map<string, HTMLSpanElement>());
   const configRef = useRef(config);
   configRef.current = config;
@@ -70,12 +88,18 @@ const EffectPanel: React.FC<Props> = ({ config, onChange, channelName, tr, onTes
       refs.current.forEach((el, clave) => {
         const [lado, efecto] = clave.split(':');
         const base = configRef.current;
+        // Cada tarjeta enseña SOLO su efecto: lo demás de la configuración no
+        // se mezcla, o todas temblarían si el bucle elegido es "temblar".
         const demo: WatermarkConfig = lado === 'in'
-          ? { ...base, entryEffect: efecto as EntryEffect, entryDuration: ANIM, entryDelay: 0.25, exitEffect: 'none' }
-          : { ...base, entryEffect: 'none', exitEffect: efecto as ExitEffect, exitDuration: ANIM };
-        const s = calculateAnimationState(demo, t, CICLO - 0.25);
+          ? { ...base, entryEffect: efecto as EntryEffect, entryDuration: ANIM, entryDelay: 0.25, exitEffect: 'none', loopEffect: 'none' }
+          : lado === 'out'
+            ? { ...base, entryEffect: 'none', entryDelay: 0, exitEffect: efecto as ExitEffect, exitDuration: ANIM, loopEffect: 'none' }
+            : { ...base, entryEffect: 'none', entryDelay: 0, exitEffect: 'none', loopEffect: efecto as LoopEffect };
+        // Los bucles corren con un reloj que no se reinicia, para que no salten.
+        const tiempo = lado === 'loop' ? (ahora - inicio) / 1000 : t;
+        const s = calculateAnimationState(demo, tiempo, lado === 'loop' ? 1e6 : CICLO - 0.25);
         el.style.opacity = String(Math.max(0, Math.min(1, s.opacity)));
-        el.style.transform = `translate(${s.offsetX * ESCALA}px, ${s.offsetY * ESCALA}px) scale(${Math.max(0, s.scale)}) rotate(${s.rotation}rad)`;
+        el.style.transform = `translate(${s.offsetX * ESCALA}px, ${s.offsetY * ESCALA}px) scale(${Math.max(0, s.scale * s.scaleX)}, ${Math.max(0, s.scale)}) rotate(${s.rotation}rad)`;
         if (lado === 'in' && efecto === 'typewriter') {
           const full = textoRef.current;
           const n = s.typewriterRatio >= 1 ? full.length : Math.max(0, Math.round(full.length * s.typewriterRatio));
@@ -89,19 +113,27 @@ const EffectPanel: React.FC<Props> = ({ config, onChange, channelName, tr, onTes
     return () => cancelAnimationFrame(id);
   }, []);
 
-  const lista = modo === 'in' ? ENTRADAS : SALIDAS;
-  const actual = modo === 'in' ? config.entryEffect : config.exitEffect;
+  const lista: { id: string; key: string; fb: string }[] = modo === 'in' ? ENTRADAS : modo === 'out' ? SALIDAS : BUCLES;
+  const actual = modo === 'in' ? config.entryEffect : modo === 'out' ? config.exitEffect : (config.loopEffect || 'none');
 
   return (
     <div className="space-y-5">
-      <Segmented<'in' | 'out'>
+      <Segmented<'in' | 'out' | 'loop'>
         value={modo}
         onChange={setModo}
         options={[
-          { id: 'in', label: <span className="inline-flex items-center gap-1.5"><LogIn className="w-3.5 h-3.5" />{tr('wm_entry', 'Entrance')}</span> },
-          { id: 'out', label: <span className="inline-flex items-center gap-1.5"><LogOut className="w-3.5 h-3.5" />{tr('wm_exit', 'Exit')}</span> },
+          { id: 'in', label: <span className="inline-flex items-center gap-1"><LogIn className="w-3.5 h-3.5 shrink-0" />{tr('wm_entry_short', 'In')}</span> },
+          { id: 'loop', label: <span className="inline-flex items-center gap-1"><Repeat className="w-3.5 h-3.5 shrink-0" />{tr('wm_loop_short', 'While on')}</span> },
+          { id: 'out', label: <span className="inline-flex items-center gap-1"><LogOut className="w-3.5 h-3.5 shrink-0" />{tr('wm_exit_short', 'Out')}</span> },
         ]}
       />
+      <p className="text-[11px] text-gray-500 -mt-2">
+        {modo === 'in'
+          ? tr('wm_mode_in_hint', 'How the watermark appears at the start.')
+          : modo === 'out'
+            ? tr('wm_mode_out_hint', 'How it leaves at the end of the clip.')
+            : tr('wm_mode_loop_hint', 'A movement that repeats while it is on screen.')}
+      </p>
 
       <div className="grid grid-cols-2 @xs:grid-cols-3 gap-2">
         {lista.map(e => {
@@ -112,9 +144,13 @@ const EffectPanel: React.FC<Props> = ({ config, onChange, channelName, tr, onTes
               key={clave}
               type="button"
               onClick={() => {
-                onChange(modo === 'in' ? { ...config, entryEffect: e.id as EntryEffect } : { ...config, exitEffect: e.id as ExitEffect });
+                onChange(
+                  modo === 'in' ? { ...config, entryEffect: e.id as EntryEffect }
+                  : modo === 'out' ? { ...config, exitEffect: e.id as ExitEffect }
+                  : { ...config, loopEffect: e.id as LoopEffect }
+                );
                 // Al elegir, se ve también en el vídeo grande.
-                if (e.id !== 'none') (modo === 'in' ? onTestEntry : onTestExit)();
+                if (e.id !== 'none' && modo !== 'loop') (modo === 'in' ? onTestEntry : onTestExit)();
               }}
               aria-pressed={activo}
               className={`relative rounded-xl border overflow-hidden text-left transition-all cursor-pointer active:scale-[0.98] ${

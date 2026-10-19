@@ -16,8 +16,8 @@
 //   - En táctil, una pulsación larga y luego preventDefault en touchmove: así
 //     el dedo puede seguir haciendo scroll normal mientras no se mantenga.
 // ============================================================================
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { GripHorizontal } from 'lucide-react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
+import { GripHorizontal, ChevronUp, ChevronDown } from 'lucide-react';
 import type { ClipItem } from '../types';
 
 interface Props {
@@ -39,6 +39,14 @@ interface Arrastre {
   alto: number;
 }
 
+/** Lo que el resto de la página puede pedirle a la lista. */
+export interface SortableClipListHandle {
+  /** Llamar justo antes de cambiar el orden desde fuera, para que se anime. */
+  snapshot: () => void;
+  /** Lleva la vista a una tarjeta y la ilumina un momento. */
+  irA: (id: string) => void;
+}
+
 const PULSACION_MS = 320;
 const INTERACTIVOS = 'button, a, input, select, textarea, video, label, [role="switch"], [data-no-drag]';
 
@@ -49,7 +57,7 @@ const mover = <T,>(arr: T[], de: number, a: number): T[] => {
   return copia;
 };
 
-const SortableClipList: React.FC<Props> = ({ items, onReorder, renderItem, t, disabled }) => {
+const SortableClipList = forwardRef<SortableClipListHandle, Props>(({ items, onReorder, renderItem, t, disabled }, ref) => {
   const [arrastre, setArrastre] = useState<Arrastre | null>(null);
   const arrastreRef = useRef<Arrastre | null>(null);
   arrastreRef.current = arrastre;
@@ -61,6 +69,37 @@ const SortableClipList: React.FC<Props> = ({ items, onReorder, renderItem, t, di
   const antes = useRef(new Map<string, number>());
   const espera = useRef<{ timer: ReturnType<typeof setTimeout>; x: number; y: number } | null>(null);
   const scrollRaf = useRef(0);
+  const [destello, setDestello] = useState<string | null>(null);
+  const destelloTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  const snapshot = useCallback(() => {
+    antes.current.clear();
+    envoltorios.current.forEach((el, id) => antes.current.set(id, el.getBoundingClientRect().top));
+  }, []);
+
+  const irA = useCallback((id: string) => {
+    const el = envoltorios.current.get(id);
+    if (!el) return;
+    // Queda bajo la cabecera fija de la página, no tapado por ella.
+    const y = el.getBoundingClientRect().top + window.scrollY - 140;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+    clearTimeout(destelloTimer.current);
+    setDestello(id);
+    destelloTimer.current = setTimeout(() => setDestello(null), 1400);
+  }, []);
+
+  useImperativeHandle(ref, () => ({ snapshot, irA }), [snapshot, irA]);
+
+  /** Las flechas: un puesto arriba o abajo, animado, y la vista la sigue. */
+  const desplazar = (id: string, paso: -1 | 1) => {
+    const lista = itemsRef.current;
+    const i = lista.findIndex(c => c.id === id);
+    const j = i + paso;
+    if (i < 0 || j < 0 || j >= lista.length) return;
+    snapshot();
+    onReorder(mover(lista, i, j));
+    requestAnimationFrame(() => requestAnimationFrame(() => irA(id)));
+  };
 
   /** Coloca la tarjeta levantada bajo el puntero, esté donde esté su hueco. */
   const colocar = useCallback(() => {
@@ -87,11 +126,10 @@ const SortableClipList: React.FC<Props> = ({ items, onReorder, renderItem, t, di
     }
     if (desde >= 0 && hasta !== desde) {
       // FLIP, primera parte: dónde está cada una antes del cambio.
-      antes.current.clear();
-      envoltorios.current.forEach((el, id) => antes.current.set(id, el.getBoundingClientRect().top));
+      snapshot();
       onReorder(mover(lista, desde, hasta));
     }
-  }, [onReorder]);
+  }, [onReorder, snapshot]);
 
   // FLIP, segunda parte: tras el cambio, cada una vuelve animada a su sitio.
   useLayoutEffect(() => {
@@ -205,6 +243,7 @@ const SortableClipList: React.FC<Props> = ({ items, onReorder, renderItem, t, di
           <div
             key={c.id}
             ref={el => { if (el) envoltorios.current.set(c.id, el); else envoltorios.current.delete(c.id); }}
+            data-clip-id={c.id}
             className="relative"
             style={levantada ? { height: arrastre!.alto } : undefined}
           >
@@ -228,23 +267,49 @@ const SortableClipList: React.FC<Props> = ({ items, onReorder, renderItem, t, di
                 ? 'absolute inset-x-0 top-0 z-50 pointer-events-none rounded-[2.5rem] bg-[#111114] shadow-[0_40px_120px_-20px_rgba(145,70,255,0.55)] ring-2 ring-twitch/70 opacity-95 will-change-transform'
                 : 'relative'}
             >
-              {/* El asa: con ella el arrastre empieza al momento, sin esperar. */}
+              {/* Arriba, en el centro: flechas para subir y bajar un puesto y,
+                  entre ellas, el asa, con la que el arrastre empieza al momento. */}
               {items.length > 1 && !disabled && (
-                <button
-                  type="button"
-                  data-no-drag
-                  onPointerDown={e => {
-                    if (e.button !== 0) return;
-                    e.preventDefault();
-                    levantar(c.id, e.clientX, e.clientY);
-                  }}
-                  aria-label={t.dragToMove || 'Drag to move'}
-                  title={t.dragToMove || 'Drag to move'}
-                  className="absolute -top-3 left-1/2 -translate-x-1/2 z-40 h-7 px-3 rounded-full bg-[#1c1a22] border border-white/10 text-gray-400 hover:text-white hover:border-twitch/50 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest shadow-xl touch-none cursor-grab active:cursor-grabbing ring-4 ring-[#070708]"
-                >
-                  <GripHorizontal className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{t.dragToMove || 'Drag to move'}</span>
-                </button>
+                <div data-no-drag className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-40 h-8 flex items-center rounded-full bg-[#1c1a22] border border-white/10 shadow-xl ring-4 ring-[#070708] overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => desplazar(c.id, -1)}
+                    disabled={i === 0}
+                    aria-label={t.moveUp || 'Move up'}
+                    title={t.moveUp || 'Move up'}
+                    className="h-full px-2.5 text-gray-400 hover:text-white hover:bg-twitch/30 disabled:opacity-25 disabled:hover:bg-transparent disabled:cursor-default cursor-pointer transition-colors"
+                  >
+                    <ChevronUp className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onPointerDown={e => {
+                      if (e.button !== 0) return;
+                      e.preventDefault();
+                      levantar(c.id, e.clientX, e.clientY);
+                    }}
+                    aria-label={t.dragToMove || 'Drag to move'}
+                    title={t.dragToMove || 'Drag to move'}
+                    className="h-full px-2.5 border-x border-white/10 text-gray-400 hover:text-white flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest touch-none cursor-grab active:cursor-grabbing"
+                  >
+                    <GripHorizontal className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{t.dragToMove || 'Drag to move'}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => desplazar(c.id, 1)}
+                    disabled={i === items.length - 1}
+                    aria-label={t.moveDown || 'Move down'}
+                    title={t.moveDown || 'Move down'}
+                    className="h-full px-2.5 text-gray-400 hover:text-white hover:bg-twitch/30 disabled:opacity-25 disabled:hover:bg-transparent disabled:cursor-default cursor-pointer transition-colors"
+                  >
+                    <ChevronDown className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+              {/* Destello al llegar desde las flechas o desde el panel de orden. */}
+              {destello === c.id && !levantada && (
+                <div className="pointer-events-none absolute -inset-1 z-30 rounded-[2.75rem] ring-2 ring-twitch shadow-[0_0_60px_rgba(145,70,255,0.45)] animate-pulse" />
               )}
               {renderItem(c, i)}
             </div>
@@ -253,6 +318,7 @@ const SortableClipList: React.FC<Props> = ({ items, onReorder, renderItem, t, di
       })}
     </div>
   );
-};
+});
+SortableClipList.displayName = 'SortableClipList';
 
 export default SortableClipList;
