@@ -32,6 +32,9 @@ export const DEFAULT_POSITION_PRESETS: PositionPreset[] = [
   { id: 'bottom-right', name: 'Bottom right', x: 95, y: 95, isDefault: true },
 ];
 
+/** Hueco de la plantilla que se cambia por el nombre del streamer de cada clip. */
+export const CHANNEL_TOKEN = '{channel}';
+
 export const DEFAULT_WATERMARK_CONFIG: WatermarkConfig = {
   enabled: false,
   template: '@{channel}',
@@ -258,13 +261,18 @@ export const drawWatermarkOnCanvas = (
   currentTime: number = 0,
   duration: number = 0
 ) => {
-  let text = config.template.replace('{channel}', channelName);
+  // split/join y no replace: replace con cadena solo cambia la primera, y
+  // "{channel} · twitch.tv/{channel}" dejaba la segunda tal cual en el vídeo.
+  let text = config.template.split(CHANNEL_TOKEN).join(channelName);
+  if (!text.trim()) return;
 
   // Apply Text Transformations
   if (config.textTransform === 'uppercase') text = text.toUpperCase();
   else if (config.textTransform === 'lowercase') text = text.toLowerCase();
   else if (config.textTransform === 'capitalize') {
-    text = text.replace(/\b\w/g, c => c.toUpperCase());
+    // \b\w solo ve ASCII: "élite" salía "éLite". Se sube la primera letra de
+    // cada palabra separada por espacios, sea del alfabeto que sea.
+    text = text.replace(/(^|\s)(\S)/gu, (_m, sep: string, c: string) => sep + c.toUpperCase());
   }
   
   // Calculate Position Coordinates

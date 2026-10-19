@@ -18,6 +18,7 @@ import {
   drawWatermarkOnCanvas, 
   getFontCss 
 } from '../services/watermarkService';
+import WatermarkTextEditor from './WatermarkTextEditor';
 import { 
   Palette, Sparkles, Move, Plus, Trash2, RotateCcw, Play, Pause, Check, Wand2, Maximize2, Minimize2, X, ArrowRight, ArrowLeft, Download
 } from 'lucide-react';
@@ -34,6 +35,8 @@ interface WatermarkPreviewProps {
   /** Se muestra el botón de descargar sólo si el padre sabe conseguir el vídeo. */
   onExport?: (calidad: string, config: WatermarkConfig, signal: AbortSignal, onProgress: (fase: 'descarga' | 'render', pct: number, restante: number) => void) => Promise<void>;
   onClose?: () => void;
+  /** La marca va a varios clips: el nombre del streamer cambia en cada uno. */
+  multiClip?: boolean;
 }
 
 const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
@@ -48,7 +51,8 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   lang = 'en',
   dictionary,
   onExport,
-  onClose
+  onClose,
+  multiClip = false
 }) => {
   // Los textos viven en el diccionario de la herramienta. El segundo argumento
   // es el respaldo en inglés, para que un despliegue con el diccionario a medias
@@ -66,7 +70,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isHoveringVideo, setIsHoveringVideo] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'position' | 'style' | 'animation'>('position');
+  const [activeTab, setActiveTab] = useState<'position' | 'style' | 'animation'>('style');
 
   // ---- Exportado --------------------------------------------------------
   const [calidad, setCalidad] = useState(clip.resolutions[0]?.quality || '');
@@ -278,31 +282,22 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
     setTimeout(() => setSaveSuccessMsg(false), 3000);
   };
 
-  // Quick template options
-  const quickTemplates = [
-    { label: '@' + channelName, template: '@{channel}' },
-    { label: 'LIVE: ' + channelName, template: 'LIVE: {channel}' },
-    { label: 'TWITCH.TV/' + channelName, template: 'TWITCH.TV/{channel}' },
-    { label: channelName, template: '{channel}' },
-    { label: tr('wm_tpl_follow', 'FOLLOW') + ' ' + channelName, template: tr('wm_tpl_follow', 'FOLLOW') + ' {channel}' },
-  ];
-
   // Helper render for controls sidebar panel (shared between normal & fullscreen view)
   const renderSidebarControls = () => (
     <div className="flex flex-col gap-5 h-full">
       {/* Tabs with Micro-Animations & Pointer Cursor */}
       <div className="flex bg-dark-950 p-1.5 rounded-2xl border border-white/5 gap-1 shrink-0">
         <button
-          onClick={() => setActiveTab('position')}
-          className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 ${activeTab === 'position' ? 'bg-twitch text-white shadow-lg shadow-twitch/20 ring-1 ring-twitch/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
-        >
-          <Move className="w-3.5 h-3.5" /> {tr('wm_tab_position', 'Position')}
-        </button>
-        <button
           onClick={() => setActiveTab('style')}
           className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 ${activeTab === 'style' ? 'bg-twitch text-white shadow-lg shadow-twitch/20 ring-1 ring-twitch/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
         >
           <Palette className="w-3.5 h-3.5" /> {tr('wm_tab_text', 'Text')}
+        </button>
+        <button
+          onClick={() => setActiveTab('position')}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-1.5 ${activeTab === 'position' ? 'bg-twitch text-white shadow-lg shadow-twitch/20 ring-1 ring-twitch/50' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+        >
+          <Move className="w-3.5 h-3.5" /> {tr('wm_tab_position', 'Position')}
         </button>
         <button
           onClick={() => setActiveTab('animation')}
@@ -362,7 +357,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
               <div className="p-3.5 bg-twitch/10 border border-twitch/40 rounded-2xl space-y-3 animate-fade-in shadow-xl">
                 <div className="text-xs font-bold text-white flex items-center gap-2">
                   <Move className="w-3.5 h-3.5 text-twitch" />
-                  <span>Guardar posición ({config.customX}%, {config.customY}%)</span>
+                  <span>{tr('wm_save_pos_title', 'Save position')} ({config.customX}%, {config.customY}%)</span>
                 </div>
                 <input
                   type="text"
@@ -459,8 +454,21 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
       {/* TAB 2: TEXT & STYLE ENHANCED */}
       {activeTab === 'style' && (
         <div className="space-y-5 animate-fade-in flex-1 overflow-y-auto custom-scrollbar pr-1">
-          {/* Preset Visual Themes */}
           <div>
+            <label className="text-xs font-black uppercase tracking-wider text-gray-400 block mb-3">
+              {tr('wm_text_title', 'What the watermark says')}
+            </label>
+            <WatermarkTextEditor
+              config={config}
+              onChangeConfig={onChangeConfig}
+              channelName={channelName}
+              multiClip={multiClip}
+              tr={tr}
+            />
+          </div>
+
+          {/* Preset Visual Themes */}
+          <div className="pt-4 border-t border-white/5">
             <label className="text-xs font-black uppercase tracking-wider text-gray-400 block mb-2">
               {tr('wm_styles', 'Visual Preset Themes')}
             </label>
@@ -483,60 +491,14 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                     shadowColor: theme.shadowColor || 'rgba(0,0,0,0.7)',
                     stroke: theme.stroke,
                     strokeColor: theme.strokeColor || '#000000',
-                    bgOpacity: theme.name === 'Contorno Only' ? 0.3 : 0.85
+                    // El de contorno es letra con borde: el fondo casi transparente
+                    // es lo que lo distingue. Comparaba con un nombre que no existía.
+                    bgOpacity: theme.name === 'Outline' ? 0.3 : 0.85
                   })}
                   className="p-2.5 rounded-xl border border-white/10 text-[10px] font-black tracking-wide text-white transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md hover:shadow-lg flex items-center justify-center gap-1.5"
                   style={{ backgroundColor: theme.bg, color: theme.text }}
                 >
                   {theme.name}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Quick Template Presets */}
-          <div>
-            <label className="text-xs font-black uppercase tracking-wider text-gray-400 block mb-2">
-              {tr('wm_templates', 'Quick Text Formats')}
-            </label>
-            <div className="flex flex-wrap gap-1.5 mb-3">
-              {quickTemplates.map((t, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => onChangeConfig({ ...config, template: t.template })}
-                  className={`px-3 py-1.5 rounded-xl border text-[11px] font-mono font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${config.template === t.template ? 'bg-twitch text-white border-twitch shadow-md' : 'bg-white/5 border-white/10 text-gray-300 hover:bg-white/10 hover:text-white'}`}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-            <input
-              type="text"
-              value={config.template}
-              onChange={e => onChangeConfig({ ...config, template: e.target.value })}
-              placeholder="@{channel}"
-              className="w-full bg-dark-950 border border-white/10 rounded-2xl px-4 py-2.5 text-xs text-white outline-none focus:border-twitch font-mono"
-            />
-          </div>
-
-          {/* Text Case Transformation */}
-          <div>
-            <label className="text-xs font-black uppercase tracking-wider text-gray-400 block mb-2">
-              {tr('wm_case', 'Text Case')}
-            </label>
-            <div className="grid grid-cols-4 gap-1.5">
-              {[
-                { id: 'none', label: tr('wm_case_original', 'Original') },
-                { id: 'uppercase', label: tr('wm_case_upper', 'UPPER') },
-                { id: 'lowercase', label: tr('wm_case_lower', 'lower') },
-                { id: 'capitalize', label: tr('wm_case_title', 'Title') },
-              ].map(tc => (
-                <button
-                  key={tc.id}
-                  onClick={() => onChangeConfig({ ...config, textTransform: tc.id as TextTransform })}
-                  className={`py-2 rounded-xl border text-[11px] font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer text-center ${config.textTransform === tc.id || (!config.textTransform && tc.id === 'none') ? 'bg-twitch/20 border-twitch text-twitch font-black shadow-sm' : 'bg-white/5 border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
-                >
-                  {tc.label}
                 </button>
               ))}
             </div>
@@ -569,32 +531,6 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                   {font.name}
                 </button>
               ))}
-            </div>
-          </div>
-
-          {/* Weight & Italic options */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="text-xs font-bold text-gray-400 block mb-1.5">{tr('wm_weight', 'Font weight')}</label>
-              <select
-                value={config.fontWeight || 'bold'}
-                onChange={e => onChangeConfig({ ...config, fontWeight: e.target.value as FontWeight })}
-                className="w-full bg-dark-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-twitch cursor-pointer font-bold"
-              >
-                <option value="normal">{tr('wm_weight_normal', 'Normal')}</option>
-                <option value="bold">{tr('wm_weight_bold', 'Bold')}</option>
-                <option value="900">{tr('wm_weight_black', 'Black')}</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-gray-400 block mb-1.5">{tr('wm_italic', 'Italic')}</label>
-              <button
-                onClick={() => onChangeConfig({ ...config, fontStyle: config.fontStyle === 'italic' ? 'normal' : 'italic' })}
-                className={`w-full py-2 rounded-xl border text-xs font-bold italic transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${config.fontStyle === 'italic' ? 'bg-twitch/20 border-twitch text-twitch shadow-sm' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
-              >
-                {config.fontStyle === 'italic' ? 'Italic Activo' : 'Cursiva / Italic'}
-              </button>
             </div>
           </div>
 
@@ -675,206 +611,265 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
             </div>
           </div>
 
-          {/* ADVANCED STROKE / BORDE DE TEXTO */}
-          <div className="pt-3 border-t border-white/5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-300">{tr('wm_stroke', 'Text outline')}</span>
-              <input
-                type="checkbox"
-                checked={config.stroke || false}
-                onChange={e => onChangeConfig({ ...config, stroke: e.target.checked })}
-                className="w-4 h-4 accent-twitch rounded cursor-pointer"
-              />
+          {/* Lo fino, plegado: con todo abierto la pestaña era un muro de
+              mandos y lo importante (el texto) quedaba enterrado. */}
+          <details className="group pt-4 border-t border-white/5">
+            <summary className="flex items-center justify-between cursor-pointer list-none text-xs font-black uppercase tracking-wider text-gray-400 hover:text-white transition-colors">
+              {tr('wm_more_style', 'More style options')}
+              <span className="text-lg leading-none text-twitch transition-transform group-open:rotate-45">+</span>
+            </summary>
+            <div className="space-y-5 pt-4">
+            {/* Text Case Transformation */}
+            <div>
+              <label className="text-xs font-black uppercase tracking-wider text-gray-400 block mb-2">
+                {tr('wm_case', 'Text Case')}
+              </label>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[
+                  { id: 'none', label: tr('wm_case_original', 'Original') },
+                  { id: 'uppercase', label: tr('wm_case_upper', 'UPPER') },
+                  { id: 'lowercase', label: tr('wm_case_lower', 'lower') },
+                  { id: 'capitalize', label: tr('wm_case_title', 'Title') },
+                ].map(tc => (
+                  <button
+                    key={tc.id}
+                    onClick={() => onChangeConfig({ ...config, textTransform: tc.id as TextTransform })}
+                    className={`py-2 rounded-xl border text-[11px] font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer text-center ${config.textTransform === tc.id || (!config.textTransform && tc.id === 'none') ? 'bg-twitch/20 border-twitch text-twitch font-black shadow-sm' : 'bg-white/5 border-white/5 text-gray-400 hover:text-white hover:bg-white/10'}`}
+                  >
+                    {tc.label}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            {config.stroke && (
-              <div className="space-y-3 animate-fade-in p-3.5 bg-white/5 border border-white/10 rounded-2xl">
-                <div className="grid grid-cols-2 gap-4">
+            {/* Weight & Italic options */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-bold text-gray-400 block mb-1.5">{tr('wm_weight', 'Font weight')}</label>
+                <select
+                  value={config.fontWeight || 'bold'}
+                  onChange={e => onChangeConfig({ ...config, fontWeight: e.target.value as FontWeight })}
+                  className="w-full bg-dark-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-twitch cursor-pointer font-bold"
+                >
+                  <option value="normal">{tr('wm_weight_normal', 'Normal')}</option>
+                  <option value="bold">{tr('wm_weight_bold', 'Bold')}</option>
+                  <option value="900">{tr('wm_weight_black', 'Black')}</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-gray-400 block mb-1.5">{tr('wm_italic', 'Italic')}</label>
+                <button
+                  onClick={() => onChangeConfig({ ...config, fontStyle: config.fontStyle === 'italic' ? 'normal' : 'italic' })}
+                  className={`w-full py-2 rounded-xl border text-xs font-bold italic transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${config.fontStyle === 'italic' ? 'bg-twitch/20 border-twitch text-twitch shadow-sm' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}
+                >
+                  {tr('wm_italic', 'Italic')}
+                </button>
+              </div>
+            </div>
+
+            {/* ADVANCED STROKE / BORDE DE TEXTO */}
+            <div className="pt-3 border-t border-white/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-300">{tr('wm_stroke', 'Text outline')}</span>
+                <input
+                  type="checkbox"
+                  checked={config.stroke || false}
+                  onChange={e => onChangeConfig({ ...config, stroke: e.target.checked })}
+                  className="w-4 h-4 accent-twitch rounded cursor-pointer"
+                />
+              </div>
+
+              {config.stroke && (
+                <div className="space-y-3 animate-fade-in p-3.5 bg-white/5 border border-white/10 rounded-2xl">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_stroke_color', 'Outline colour')}</label>
+                      <input
+                        type="color"
+                        value={config.strokeColor || '#000000'}
+                        onChange={e => onChangeConfig({ ...config, strokeColor: e.target.value })}
+                        className="w-full h-8 rounded border-none bg-transparent cursor-pointer"
+                      />
+                    </div>
+                    <div>
+                      <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
+                        <span>{tr('wm_stroke_width', 'Width')}</span>
+                        <span className="text-twitch font-mono font-bold">{config.strokeWidth || 2}px</span>
+                      </div>
+                      <input
+                        type="range"
+                        min="1"
+                        max="10"
+                        value={config.strokeWidth || 2}
+                        onChange={e => onChangeConfig({ ...config, strokeWidth: parseInt(e.target.value) })}
+                        className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
+                      />
+                    </div>
+                  </div>
+
                   <div>
-                    <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_stroke_color', 'Outline colour')}</label>
+                    <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_corner', 'Corner style')}</label>
+                    <div className="grid grid-cols-3 gap-1">
+                      {[
+                        { id: 'round', label: tr('wm_join_round', 'Rounded') },
+                        { id: 'miter', label: tr('wm_join_miter', 'Sharp') },
+                        { id: 'bevel', label: tr('wm_join_bevel', 'Bevelled') }
+                      ].map(j => (
+                        <button
+                          key={j.id}
+                          onClick={() => onChangeConfig({ ...config, strokeJoin: j.id as any })}
+                          className={`py-1.5 rounded-lg border text-[10px] font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${config.strokeJoin === j.id || (!config.strokeJoin && j.id === 'round') ? 'bg-twitch/20 border-twitch text-twitch shadow-sm' : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'}`}
+                        >
+                          {j.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ADVANCED SHADOW & GLOW */}
+            <div className="pt-3 border-t border-white/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-300">{tr('wm_shadow', 'Shadow / neon glow')}</span>
+                <input
+                  type="checkbox"
+                  checked={config.shadow}
+                  onChange={e => onChangeConfig({ ...config, shadow: e.target.checked })}
+                  className="w-4 h-4 accent-twitch rounded cursor-pointer"
+                />
+              </div>
+
+              {config.shadow && (
+                <div className="space-y-3 animate-fade-in p-3.5 bg-white/5 border border-white/10 rounded-2xl">
+                  <div className="flex items-center justify-between pb-2 border-b border-white/5">
+                    <span className="text-[11px] font-bold text-twitch flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" /> {tr('wm_glow', 'Neon glow mode')}
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={config.glowMode || false}
+                      onChange={e => onChangeConfig({ ...config, glowMode: e.target.checked })}
+                      className="w-3.5 h-3.5 accent-twitch rounded cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_shadow_color', 'Shadow colour')}</label>
                     <input
                       type="color"
-                      value={config.strokeColor || '#000000'}
-                      onChange={e => onChangeConfig({ ...config, strokeColor: e.target.value })}
+                      value={config.shadowColor?.startsWith('#') ? config.shadowColor : '#000000'}
+                      onChange={e => onChangeConfig({ ...config, shadowColor: e.target.value })}
+                      className="w-full h-8 rounded border-none bg-transparent cursor-pointer"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
+                      <span>{tr('wm_blur', 'Blur radius')}</span>
+                      <span className="text-twitch font-mono font-bold">{config.shadowBlur ?? 8}px</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="30"
+                      value={config.shadowBlur ?? 8}
+                      onChange={e => onChangeConfig({ ...config, shadowBlur: parseInt(e.target.value) })}
+                      className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
+                    />
+                  </div>
+
+                  {!config.glowMode && (
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
+                          <span>{tr('wm_offset_x', 'Offset X')}</span>
+                          <span className="text-twitch font-mono font-bold">{config.shadowOffsetX ?? 2}px</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="-15"
+                          max="15"
+                          value={config.shadowOffsetX ?? 2}
+                          onChange={e => onChangeConfig({ ...config, shadowOffsetX: parseInt(e.target.value) })}
+                          className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
+                        />
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
+                          <span>{tr('wm_offset_y', 'Offset Y')}</span>
+                          <span className="text-twitch font-mono font-bold">{config.shadowOffsetY ?? 2}px</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="-15"
+                          max="15"
+                          value={config.shadowOffsetY ?? 2}
+                          onChange={e => onChangeConfig({ ...config, shadowOffsetY: parseInt(e.target.value) })}
+                          className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* BOX BORDER CONTROLS */}
+            <div className="pt-3 border-t border-white/5 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-gray-300">{tr('wm_box_border', 'Background card border')}</span>
+                <input
+                  type="checkbox"
+                  checked={config.boxBorder || false}
+                  onChange={e => onChangeConfig({ ...config, boxBorder: e.target.checked })}
+                  className="w-4 h-4 accent-twitch rounded cursor-pointer"
+                />
+              </div>
+
+              {config.boxBorder && (
+                <div className="grid grid-cols-2 gap-4 animate-fade-in p-3.5 bg-white/5 border border-white/10 rounded-2xl">
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_box_border_color', 'Card border colour')}</label>
+                    <input
+                      type="color"
+                      value={config.boxBorderColor || '#ffffff'}
+                      onChange={e => onChangeConfig({ ...config, boxBorderColor: e.target.value })}
                       className="w-full h-8 rounded border-none bg-transparent cursor-pointer"
                     />
                   </div>
                   <div>
                     <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
-                      <span>{tr('wm_stroke_width', 'Width')}</span>
-                      <span className="text-twitch font-mono font-bold">{config.strokeWidth || 2}px</span>
+                      <span>{tr('wm_box_border_width', 'Border width')}</span>
+                      <span className="text-twitch font-mono font-bold">{config.boxBorderWidth || 2}px</span>
                     </div>
                     <input
                       type="range"
                       min="1"
-                      max="10"
-                      value={config.strokeWidth || 2}
-                      onChange={e => onChangeConfig({ ...config, strokeWidth: parseInt(e.target.value) })}
+                      max="8"
+                      value={config.boxBorderWidth || 2}
+                      onChange={e => onChangeConfig({ ...config, boxBorderWidth: parseInt(e.target.value) })}
                       className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
                     />
                   </div>
                 </div>
+              )}
+            </div>
 
-                <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_corner', 'Corner style')}</label>
-                  <div className="grid grid-cols-3 gap-1">
-                    {[
-                      { id: 'round', label: 'Redonda' },
-                      { id: 'miter', label: 'Puntiaguda' },
-                      { id: 'bevel', label: 'Biselada' }
-                    ].map(j => (
-                      <button
-                        key={j.id}
-                        onClick={() => onChangeConfig({ ...config, strokeJoin: j.id as any })}
-                        className={`py-1.5 rounded-lg border text-[10px] font-bold transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer ${config.strokeJoin === j.id || (!config.strokeJoin && j.id === 'round') ? 'bg-twitch/20 border-twitch text-twitch shadow-sm' : 'bg-white/5 border-white/5 text-gray-400 hover:text-white'}`}
-                      >
-                        {j.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* ADVANCED SHADOW & GLOW */}
-          <div className="pt-3 border-t border-white/5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-300">{tr('wm_shadow', 'Shadow / neon glow')}</span>
+            {/* Icon Toggle */}
+            <div className="pt-2 border-t border-white/5 flex items-center justify-between">
+              <span className="text-xs font-bold text-gray-300">{tr('wm_show_icon', 'Show the Twitch icon')}</span>
               <input
                 type="checkbox"
-                checked={config.shadow}
-                onChange={e => onChangeConfig({ ...config, shadow: e.target.checked })}
+                checked={config.showIcon}
+                onChange={e => onChangeConfig({ ...config, showIcon: e.target.checked })}
                 className="w-4 h-4 accent-twitch rounded cursor-pointer"
               />
             </div>
-
-            {config.shadow && (
-              <div className="space-y-3 animate-fade-in p-3.5 bg-white/5 border border-white/10 rounded-2xl">
-                <div className="flex items-center justify-between pb-2 border-b border-white/5">
-                  <span className="text-[11px] font-bold text-twitch flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" /> Modo Resplandor Neon
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={config.glowMode || false}
-                    onChange={e => onChangeConfig({ ...config, glowMode: e.target.checked })}
-                    className="w-3.5 h-3.5 accent-twitch rounded cursor-pointer"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_shadow_color', 'Shadow colour')}</label>
-                  <input
-                    type="color"
-                    value={config.shadowColor?.startsWith('#') ? config.shadowColor : '#000000'}
-                    onChange={e => onChangeConfig({ ...config, shadowColor: e.target.value })}
-                    className="w-full h-8 rounded border-none bg-transparent cursor-pointer"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
-                    <span>{tr('wm_blur', 'Blur radius')}</span>
-                    <span className="text-twitch font-mono font-bold">{config.shadowBlur ?? 8}px</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="30"
-                    value={config.shadowBlur ?? 8}
-                    onChange={e => onChangeConfig({ ...config, shadowBlur: parseInt(e.target.value) })}
-                    className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                  />
-                </div>
-
-                {!config.glowMode && (
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
-                        <span>{tr('wm_offset_x', 'Offset X')}</span>
-                        <span className="text-twitch font-mono font-bold">{config.shadowOffsetX ?? 2}px</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="-15"
-                        max="15"
-                        value={config.shadowOffsetX ?? 2}
-                        onChange={e => onChangeConfig({ ...config, shadowOffsetX: parseInt(e.target.value) })}
-                        className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                      />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
-                        <span>{tr('wm_offset_y', 'Offset Y')}</span>
-                        <span className="text-twitch font-mono font-bold">{config.shadowOffsetY ?? 2}px</span>
-                      </div>
-                      <input
-                        type="range"
-                        min="-15"
-                        max="15"
-                        value={config.shadowOffsetY ?? 2}
-                        onChange={e => onChangeConfig({ ...config, shadowOffsetY: parseInt(e.target.value) })}
-                        className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* BOX BORDER CONTROLS */}
-          <div className="pt-3 border-t border-white/5 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-gray-300">{tr('wm_box_border', 'Background card border')}</span>
-              <input
-                type="checkbox"
-                checked={config.boxBorder || false}
-                onChange={e => onChangeConfig({ ...config, boxBorder: e.target.checked })}
-                className="w-4 h-4 accent-twitch rounded cursor-pointer"
-              />
             </div>
-
-            {config.boxBorder && (
-              <div className="grid grid-cols-2 gap-4 animate-fade-in p-3.5 bg-white/5 border border-white/10 rounded-2xl">
-                <div>
-                  <label className="text-[11px] font-bold text-gray-400 block mb-1">{tr('wm_box_border_color', 'Card border colour')}</label>
-                  <input
-                    type="color"
-                    value={config.boxBorderColor || '#ffffff'}
-                    onChange={e => onChangeConfig({ ...config, boxBorderColor: e.target.value })}
-                    className="w-full h-8 rounded border-none bg-transparent cursor-pointer"
-                  />
-                </div>
-                <div>
-                  <div className="flex justify-between text-[11px] font-bold text-gray-400 mb-1">
-                    <span>{tr('wm_box_border_width', 'Border width')}</span>
-                    <span className="text-twitch font-mono font-bold">{config.boxBorderWidth || 2}px</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="1"
-                    max="8"
-                    value={config.boxBorderWidth || 2}
-                    onChange={e => onChangeConfig({ ...config, boxBorderWidth: parseInt(e.target.value) })}
-                    className="w-full accent-twitch bg-white/10 rounded-lg h-1.5 cursor-pointer"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Icon Toggle */}
-          <div className="pt-2 border-t border-white/5 flex items-center justify-between">
-            <span className="text-xs font-bold text-gray-300">{tr('wm_show_icon', 'Show the Twitch icon')}</span>
-            <input
-              type="checkbox"
-              checked={config.showIcon}
-              onChange={e => onChangeConfig({ ...config, showIcon: e.target.checked })}
-              className="w-4 h-4 accent-twitch rounded cursor-pointer"
-            />
-          </div>
+          </details>
         </div>
       )}
 
@@ -891,19 +886,19 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                 onClick={handleTestEntry}
                 className="px-2.5 py-2.5 bg-twitch text-white hover:bg-twitch-dark font-black text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md shadow-twitch/20 uppercase tracking-wide"
               >
-                <ArrowRight className="w-3.5 h-3.5" /> Entrada
+                <ArrowRight className="w-3.5 h-3.5" /> {tr('wm_test_in_short', 'In')}
               </button>
               <button
                 onClick={handleTestExit}
                 className="px-2.5 py-2.5 bg-twitch/80 text-white hover:bg-twitch-dark font-black text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-md uppercase tracking-wide"
               >
-                <ArrowLeft className="w-3.5 h-3.5" /> Salida
+                <ArrowLeft className="w-3.5 h-3.5" /> {tr('wm_test_out_short', 'Out')}
               </button>
               <button
                 onClick={handleTestFull}
                 className="px-2.5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-black text-[11px] rounded-xl flex items-center justify-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer border border-white/10 uppercase tracking-wide"
               >
-                <Play className="w-3.5 h-3.5" /> Completa
+                <Play className="w-3.5 h-3.5" /> {tr('wm_test_full', 'Full')}
               </button>
             </div>
           </div>
@@ -919,7 +914,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                 onClick={handleTestEntry}
                 className="text-[10px] font-black uppercase tracking-wider text-twitch hover:text-white flex items-center gap-1 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 bg-twitch/10 px-2 py-1 rounded-lg border border-twitch/20"
               >
-                <Play className="w-3 h-3" /> Probar Entrada
+                <Play className="w-3 h-3" /> {tr('wm_test', 'Test')}
               </button>
             </div>
 
@@ -990,7 +985,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                 onClick={handleTestExit}
                 className="text-[10px] font-black uppercase tracking-wider text-twitch hover:text-white flex items-center gap-1 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 bg-twitch/10 px-2 py-1 rounded-lg border border-twitch/20"
               >
-                <Play className="w-3 h-3" /> Probar Salida
+                <Play className="w-3 h-3" /> {tr('wm_test', 'Test')}
               </button>
             </div>
 
@@ -1057,9 +1052,6 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
             <div>
               <h3 className="text-base font-black uppercase tracking-tight text-white flex items-center gap-2">
                 {tr('wm_title_full', 'Watermark Fullscreen Editor')}
-                <span className="text-[9px] bg-twitch/20 text-twitch px-2.5 py-0.5 rounded-full font-bold uppercase tracking-widest border border-twitch/30">
-                  PRO VIEW
-                </span>
               </h3>
             </div>
           </div>
@@ -1082,7 +1074,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
               className="px-3.5 py-2 bg-twitch/20 hover:bg-twitch/30 border border-twitch/40 rounded-xl text-xs font-bold text-twitch flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
             >
               <ArrowRight className="w-3.5 h-3.5" />
-              Entrada
+              {tr('wm_test_in_short', 'In')}
             </button>
 
             <button
@@ -1090,7 +1082,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
               className="px-3.5 py-2 bg-twitch/20 hover:bg-twitch/30 border border-twitch/40 rounded-xl text-xs font-bold text-twitch flex items-center gap-1.5 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer shadow-sm"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Salida
+              {tr('wm_test_out_short', 'Out')}
             </button>
 
             <button
@@ -1172,7 +1164,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
 
   // STANDARD INLINE VIEW LAYOUT
   return (
-    <div className="w-full bg-[#111114]/90 backdrop-blur-2xl border border-twitch/30 rounded-[2.5rem] p-6 md:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] animate-fade-in space-y-8">
+    <div className="w-full bg-[#111114]/90 backdrop-blur-2xl border border-twitch/30 rounded-[2rem] md:rounded-[2.5rem] p-3 sm:p-6 md:p-8 shadow-[0_20px_80px_rgba(0,0,0,0.6)] animate-fade-in space-y-8">
       {/* Cabecera del editor.
           Antes era una fila unica con el titulo, la insignia, la pista de
           arrastrar, las coordenadas, dos botones de prueba, la equis y pantalla

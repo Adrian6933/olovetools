@@ -43,6 +43,31 @@ const formatBytes = (bytes: number, decimals = 2) => {
 
 const RELAY_KEY = 'twitchbolt-allow-relays';
 
+/**
+ * Saca los enlaces de clip de lo que se haya pegado, con o sin https:// y
+ * separados por lo que sea. Antes solo se partía por "http", así que
+ * "clips.twitch.tv/Abc" pegado a pelo era un enlace inválido sin aviso, y dos
+ * formas del mismo clip se descargaban dos veces.
+ */
+const extraerEnlaces = (texto: string): string[] => {
+  const re = /(?:https?:\/\/)?(?:[a-z0-9-]+\.)*twitch\.tv\/[^\s"'<>,;]+/gi;
+  const vistos = new Set<string>();
+  const salida: string[] = [];
+  for (const m of texto.match(re) || []) {
+    const url = /^https?:\/\//i.test(m) ? m : `https://${m}`;
+    // Mismo clip, distinta forma (con ?filter=, con barra final...): uno solo.
+    const clave = url.replace(/^https?:\/\/(www\.|m\.)?/i, '').split(/[?#]/)[0].replace(/\/$/, '');
+    // Un canal o un VOD no es un clip: mejor no contarlo que dar un error luego.
+    const esClip = /^clips\.twitch\.tv\/[^/]+$/i.test(clave) || /\/clip\/[^/]+/i.test(clave);
+    if (!esClip) continue;
+    const slug = clave.includes('/clip/') ? clave.split('/clip/')[1].split('/')[0] : clave.replace(/^clips\.twitch\.tv\//i, '');
+    if (vistos.has(slug)) continue;
+    vistos.add(slug);
+    salida.push(url);
+  }
+  return salida;
+};
+
 interface TwitchboltProps {
   lang: Language;
   dictionary?: any;
@@ -202,6 +227,8 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
     val = val.replace(/([^\s\n])(https?:\/\/)/g, '$1\n$2');
     setInputText(val);
   };
+
+  const enlacesDetectados = extraerEnlaces(inputText);
 
   const processClips = useCallback(async (urls: string[]) => {
     const unique = [...new Set(urls.filter(u => u.trim()))];
@@ -500,7 +527,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
         onReset={handleSoftReset} resetHint={t('resetHint')} currentLang={lang} onLangChange={handleLangChange} />
 
       {/* Keep the workspace centered within its own maximum width. */}
-      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-6 pt-56 md:pt-52 pb-40">
+      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 sm:px-6 pt-56 md:pt-52 pb-40">
         <AdBanner id="adsense-twitchbolt-top" className="mb-12" />
         
         {status !== 'success' && (
@@ -578,19 +605,22 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                     </div>
 
                     <button 
-                      onClick={() => {
-                        const cleanText = inputText.replace(/\s+/g, '');
-                        const urls = cleanText.split(/(?=https?:\/\/)/).filter(u => u.trim());
-                        processClips(urls);
-                      }}
-                      disabled={status === 'loading' || !inputText.trim()}
+                      onClick={() => processClips(enlacesDetectados)}
+                      disabled={status === 'loading' || enlacesDetectados.length === 0}
                       className="w-full h-16 bg-twitch hover:bg-twitch-dark text-white rounded-2xl font-[900] uppercase tracking-[0.2em] flex items-center justify-center gap-3 shadow-[0_20px_40px_rgba(145,70,255,0.3)] transition-all hover:translate-y-[-2px] hover:scale-[1.01] active:translate-y-[1px] active:scale-[0.99] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                     >
                       {status === 'loading' ? <Loader2 className="w-6 h-6 animate-spin" /> : <> {t.processButton} <ArrowRight className="w-5 h-5" /> </>}
                     </button>
-                    {status === 'error' && (
-                      <div className="text-red-400 text-sm font-bold text-center mt-2">
-                        {t.noClipsFound}
+                    {/* Lo que se ha entendido de lo pegado, antes de pulsar: con
+                        texto escrito y cero enlaces el botón estaba gris sin
+                        decir por qué. */}
+                    {inputText.trim() && (
+                      <div className={`-mt-2 text-xs font-bold text-center ${enlacesDetectados.length ? 'text-gray-400' : 'text-amber-300'}`}>
+                        {enlacesDetectados.length
+                          ? (enlacesDetectados.length === 1
+                              ? (t.linksDetectedOne || '1 clip ready to fetch')
+                              : (t.linksDetected || '{n} clips ready to fetch').replace('{n}', String(enlacesDetectados.length)))
+                          : (t.noClipsFound || 'No Twitch clip links found')}
                       </div>
                     )}
                   </div>
@@ -766,7 +796,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                 </div>
 
                 {/* CUSTOM SELECT QUALITY */}
-                <div className="relative flex-1 max-w-xs" ref={qualityRef}>
+                <div className="relative w-full md:flex-1 md:max-w-xs" ref={qualityRef}>
                     <button 
                       onClick={() => setIsQualityOpen(!isQualityOpen)}
                       className="relative z-50 w-full bg-dark-950 text-white rounded-2xl p-4 border border-white/5 flex items-center justify-between group hover:border-twitch/30 transition-all cursor-pointer hover:bg-white/[0.03] active:scale-[0.98]"
@@ -809,14 +839,14 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                     )}
                 </div>
 
-                <div className="flex items-center gap-3 px-2">
+                <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto md:px-2">
                     {(() => {
                       const isAnyLoading = clips.some(c => c.status === 'loading');
                       return (
                         <button
                           onClick={marcaActiva ? descargarZipConMarca : downloadAllAsZip}
                           disabled={!!zipProgress || !!wmAll || isAnyLoading}
-                          className="bg-white text-black font-[900] text-xs px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
+                          className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
                         >
                           {isAnyLoading ? (
                             <> <Loader2 className="w-4 h-4 animate-spin" /> {t.loadingClips || 'LOADING CLIPS...'} </>
@@ -859,7 +889,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                       role="switch"
                       aria-checked={marcaActiva}
                       title={t.watermarkAllTitle || 'Watermark on every clip'}
-                      className={`h-12 px-4 rounded-xl flex items-center gap-2.5 text-xs font-black uppercase tracking-widest transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 border ${
+                      className={`h-12 px-3 sm:px-4 shrink-0 rounded-xl flex items-center gap-2.5 text-xs font-black uppercase tracking-widest transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed active:scale-95 border ${
                         marcaActiva
                           ? 'bg-twitch text-white border-twitch shadow-lg shadow-twitch/25'
                           : 'bg-dark-950 text-gray-400 border-white/10 hover:text-white hover:border-white/25'
@@ -873,7 +903,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                           <span className={`w-[14px] h-[14px] rounded-full transition-colors ${marcaActiva ? 'bg-white' : 'bg-gray-500'}`} />
                         </span>
                     </button>
-                    <button onClick={handleReset} className="w-12 h-12 bg-dark-950 border border-white/5 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer hover:bg-red-500/10 hover:border-red-500/20 active:scale-90">
+                    <button onClick={handleReset} aria-label={t.cancel || 'Close'} className="w-12 h-12 shrink-0 bg-dark-950 border border-white/5 rounded-xl flex items-center justify-center text-gray-500 hover:text-white transition-all cursor-pointer hover:bg-red-500/10 hover:border-red-500/20 active:scale-90">
                         <X className="w-5 h-5" />
                     </button>
                 </div>
@@ -882,7 +912,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
              {/* Panel de "marca en todos": lo que se va a hacer, en cuantos, y
                  con que marca — antes de empezar, no despues. */}
              {(marcaActiva || wmAll) && (
-               <div className="w-full bg-[#111114] border border-twitch/30 rounded-[2rem] p-6 md:p-7 shadow-2xl relative z-30 space-y-5">
+               <div className="w-full bg-[#111114] border border-twitch/30 rounded-[2rem] p-4 sm:p-6 md:p-7 shadow-2xl relative z-30 space-y-5">
                  <div className="flex items-start gap-4">
                    <div className="p-3 bg-twitch/15 border border-twitch/30 rounded-2xl shrink-0">
                      <Sparkles className="w-5 h-5 text-twitch" />
@@ -955,7 +985,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                  )}
 
                  {wmEditorAbierto && !wmAll && wmAllConfig && primerClipListo && (
-                   <div className="border-t border-white/5 pt-6">
+                   <div className="border-t border-white/5 pt-6 -mx-2 sm:mx-0">
                      <WatermarkPreview
                        clip={primerClipListo}
                        config={wmAllConfig}
@@ -966,6 +996,7 @@ const Twitchbolt: React.FC<TwitchboltProps> = ({ lang = 'en', dictionary }) => {
                        lang={lang}
                        dictionary={dictionary}
                        onClose={() => setWmEditorAbierto(false)}
+                       multiClip
                      />
                    </div>
                  )}

@@ -207,7 +207,18 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
           ...prev,
           [quality]: { ...prev[quality], progress: 100, completed: true, preparing: false, speed: 0 }
         }));
-        
+        // El "listo" se va solo a los 3 s. Antes se miraba en el finally el
+        // estado capturado al pulsar, que nunca estaba completado, y el botón
+        // se quedaba en verde para siempre sin dejar volver a descargar.
+        setTimeout(() => {
+          setDownloadingRes(prev => {
+            if (!prev[quality]?.completed) return prev;
+            const next = { ...prev };
+            delete next[quality];
+            return next;
+          });
+        }, 3000);
+
     } catch (error: any) {
         if (error.message !== 'AbortError') {
           console.error("Download failed", error);
@@ -220,15 +231,6 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
     } finally {
         delete abortControllers.current[quality];
         delete speedTrackers.current[quality];
-        if (downloadingRes[quality]?.completed) {
-          setTimeout(() => {
-              setDownloadingRes(prev => {
-                  const next = { ...prev };
-                  delete next[quality];
-                  return next;
-              });
-          }, 3000);
-        }
     }
   };
 
@@ -267,7 +269,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     />
                 ) : (
                     <>
-                        <img src={data.thumbnail} alt={`Miniatura del clip ${data.title} de ${data.broadcaster}`} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60" />
+                        <img src={data.thumbnail} alt={`${data.title} — ${data.broadcaster}`} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-60" />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer" onClick={() => setIsPlaying(true)}>
                             <div className="w-14 h-14 bg-twitch rounded-full flex items-center justify-center shadow-2xl group-hover/video:scale-110 transition-transform">
                                 <Play className="w-6 h-6 text-white fill-current ml-1" />
@@ -282,14 +284,14 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
              <h2 className="text-2xl font-black text-white mb-6 leading-tight">{data.title}</h2>
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <img src={data.broadcasterImg} alt={`Avatar en Twitch de ${data.broadcaster}`} loading="lazy" decoding="async" className="w-12 h-12 rounded-full border-2 border-twitch/50" />
+                    <img src={data.broadcasterImg} alt={data.broadcaster} loading="lazy" decoding="async" className="w-12 h-12 rounded-full border-2 border-twitch/50" />
                     <div>
                         <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-0.5">{t.streamer}</p>
                         <p className="text-lg font-bold text-white leading-none">{data.broadcaster}</p>
                     </div>
                 </div>
                 <div className="text-right space-y-1">
-                    <p className="text-xs font-bold text-gray-500 flex items-center gap-2 justify-end"><Eye className="w-3.5 h-3.5" /> {data.views.toLocaleString()} Views</p>
+                    <p className="text-xs font-bold text-gray-500 flex items-center gap-2 justify-end"><Eye className="w-3.5 h-3.5" /> {data.views.toLocaleString(lang)} {t.views || 'views'}</p>
                     <p className="text-xs font-bold text-gray-500 flex items-center gap-2 justify-end"><Calendar className="w-3.5 h-3.5" /> {data.date}</p>
                 </div>
              </div>
@@ -323,7 +325,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                         <div className="relative z-10 w-full pr-4">
                             <div className="flex justify-between items-end mb-1">
                                 <p className={`text-[10px] font-black uppercase tracking-widest transition-colors ${isCompleted ? 'text-green-500' : (i === 0 ? 'text-twitch' : 'text-gray-500')}`}>
-                                    {isCompleted ? 'READY' : (isDownloading ? (isPreparing ? 'PREPARING...' : `${t.downloading} ${total > 0 ? progress + '%' : ''}`) : (i === 0 ? t.bestQuality : t.availableQualities))}
+                                    {isCompleted ? (t.ready || 'Ready') : (isDownloading ? (isPreparing ? (t.preparing || 'Preparing…') : `${t.downloading} ${total > 0 ? progress + '%' : ''}`) : (i === 0 ? t.bestQuality : t.availableQualities))}
                                 </p>
                                 {isDownloading && !isCompleted && !isPreparing && (
                                     <p className="text-[10px] font-bold text-gray-400">
@@ -332,7 +334,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                                 )}
                             </div>
                             <div className="flex justify-between items-center">
-                                <p className="text-xl font-black text-white">{res.quality} <span className="text-sm font-medium opacity-40">({res.fps}fps)</span></p>
+                                <p className="text-xl font-black text-white">{res.quality}{res.fps > 0 && <span className="text-sm font-medium opacity-40"> ({res.fps}fps)</span>}</p>
                                 {isDownloading && !isCompleted && !isPreparing && (
                                     <p className="text-xs font-medium text-gray-400">
                                         {formatBytes(loaded)} {total > 0 ? `/ ${formatBytes(total)}` : ''}
@@ -371,7 +373,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
         </div>
 
         {wmAbierto && wmConfig && (
-          <div className="border-t border-white/5 p-6 md:p-8">
+          <div className="border-t border-white/5 p-2 sm:p-6 md:p-8">
             <WatermarkPreview
               clip={data}
               config={wmConfig}
