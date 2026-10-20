@@ -13,7 +13,7 @@
 //   - El audio va por un único AudioContext hacia el grabador; cada clip se
 //     engancha a él con su propio createMediaElementSource.
 // ============================================================================
-import type { WatermarkConfig } from '../types';
+import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 
 export interface MergeItem {

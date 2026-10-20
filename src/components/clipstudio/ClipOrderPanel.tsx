@@ -12,7 +12,8 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { GripVertical, ChevronUp, ChevronDown, ListOrdered, X, Clock } from 'lucide-react';
-import type { ClipItem } from '../types';
+import type { ClipItem } from './types';
+import { useBrand } from './brand';
 
 interface Props {
   clips: ClipItem[];
@@ -179,6 +180,7 @@ const Lista: React.FC<Props & { visible: string | null; onElegido?: () => void }
 
 const ClipOrderPanel: React.FC<Props> = (props) => {
   const { clips, t } = props;
+  const brand = useBrand();
   const [visible, setVisible] = useState<string | null>(null);
   const [hoja, setHoja] = useState(false);
   const total = clips.reduce((s, c) => s + (c.data?.duration || 0), 0);
@@ -259,7 +261,7 @@ const ClipOrderPanel: React.FC<Props> = (props) => {
 
       {/* Móvil: botón flotante y panel que sube desde abajo. */}
       {typeof document !== 'undefined' && createPortal(
-        <div className="lg:hidden">
+        <div className="lg:hidden" style={brand.cssVars}>
           <button
             type="button"
             onClick={() => setHoja(true)}

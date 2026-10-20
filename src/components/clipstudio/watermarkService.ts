@@ -6,10 +6,20 @@
 // un clip de 60 s tarda 60 s. La interfaz lo avisa antes de empezar.
 // ============================================================================
 
-import type { WatermarkConfig, PositionPreset, FontFamily, FontCategory } from '../types';
+import type { WatermarkConfig, PositionPreset, FontFamily, FontCategory } from './types';
+import { BRAND_ICON_PATHS, type BrandId } from './brand';
 
-export const WATERMARK_STORAGE_KEY = 'twitchbolt_watermark_config';
-export const PRESETS_STORAGE_KEY = 'twitchbolt_watermark_presets';
+/**
+ * Lo que identifica a la herramienta al guardar: cada plataforma tiene su
+ * propia marca guardada ("twitchbolt_watermark_config", "kickbolt_..."), así
+ * que el cartel verde de Kick no aparece al abrir TwitchBolt ni al revés.
+ */
+export interface BrandKey {
+  id: BrandId;
+  storagePrefix: string;
+}
+
+const clave = (b: BrandKey, nombre: string) => `${b.storagePrefix}_${nombre}`;
 
 export const DEFAULT_POSITION_PRESETS: PositionPreset[] = [
   { id: 'top-left', name: 'Top left', x: 5, y: 5, isDefault: true },
@@ -152,49 +162,55 @@ export const ensureWatermarkFont = async (config: WatermarkConfig): Promise<void
   }
 };
 
-export const loadStoredWatermarkConfig = (): WatermarkConfig => {
-  if (typeof window === 'undefined') return DEFAULT_WATERMARK_CONFIG;
+/** La marca de fábrica de cada plataforma, con sus colores. */
+export const defaultWatermarkConfig = (b: BrandKey): WatermarkConfig => ({
+  ...DEFAULT_WATERMARK_CONFIG,
+  brand: b.id,
+  ...(b.id === 'kick' ? { bgColor: '#53FC18', textColor: '#000000' } : {}),
+});
+
+export const loadStoredWatermarkConfig = (b: BrandKey): WatermarkConfig => {
+  const base = defaultWatermarkConfig(b);
+  if (typeof window === 'undefined') return base;
   try {
-    const saved = localStorage.getItem(WATERMARK_STORAGE_KEY);
-    if (saved) {
-      return { ...DEFAULT_WATERMARK_CONFIG, ...JSON.parse(saved) };
-    }
+    const saved = localStorage.getItem(clave(b, 'watermark_config'));
+    // brand va al final: lo guardado nunca decide de qué plataforma es.
+    if (saved) return { ...base, ...JSON.parse(saved), brand: b.id };
   } catch (e) {
-    console.warn("Error reading watermark config from localStorage", e);
+    console.warn('Error reading watermark config from localStorage', e);
   }
-  return DEFAULT_WATERMARK_CONFIG;
+  return base;
 };
 
-export const saveStoredWatermarkConfig = (config: WatermarkConfig): void => {
+export const saveStoredWatermarkConfig = (b: BrandKey, config: WatermarkConfig): void => {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(WATERMARK_STORAGE_KEY, JSON.stringify(config));
+    localStorage.setItem(clave(b, 'watermark_config'), JSON.stringify(config));
   } catch (e) {
-    console.warn("Error saving watermark config to localStorage", e);
+    console.warn('Error saving watermark config to localStorage', e);
   }
 };
 
-export const loadStoredPresets = (): PositionPreset[] => {
+export const loadStoredPresets = (b: BrandKey): PositionPreset[] => {
   if (typeof window === 'undefined') return DEFAULT_POSITION_PRESETS;
   try {
-    const saved = localStorage.getItem(PRESETS_STORAGE_KEY);
+    const saved = localStorage.getItem(clave(b, 'watermark_presets'));
     if (saved) {
       const custom: PositionPreset[] = JSON.parse(saved);
       return [...DEFAULT_POSITION_PRESETS, ...custom.filter(c => !DEFAULT_POSITION_PRESETS.some(d => d.id === c.id))];
     }
   } catch (e) {
-    console.warn("Error reading custom position presets from localStorage", e);
+    console.warn('Error reading custom position presets from localStorage', e);
   }
   return DEFAULT_POSITION_PRESETS;
 };
 
-export const saveCustomPresets = (presets: PositionPreset[]): void => {
+export const saveCustomPresets = (b: BrandKey, presets: PositionPreset[]): void => {
   if (typeof window === 'undefined') return;
   try {
-    const customOnly = presets.filter(p => !p.isDefault);
-    localStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(customOnly));
+    localStorage.setItem(clave(b, 'watermark_presets'), JSON.stringify(presets.filter(p => !p.isDefault)));
   } catch (e) {
-    console.warn("Error saving custom presets to localStorage", e);
+    console.warn('Error saving custom presets to localStorage', e);
   }
 };
 
@@ -548,23 +564,11 @@ export const drawWatermarkOnCanvas = (
     const s = iconSize / 24;
     const ix = currentX;
     const iy = iconY;
-    // Twitch SVG path
-    ctx.moveTo(ix + 4.5 * s, iy + 2 * s);
-    ctx.lineTo(ix + 2 * s, iy + 4.5 * s);
-    ctx.lineTo(ix + 2 * s, iy + 19.5 * s);
-    ctx.lineTo(ix + 7 * s, iy + 19.5 * s);
-    ctx.lineTo(ix + 7 * s, iy + 22.5 * s);
-    ctx.lineTo(ix + 10 * s, iy + 19.5 * s);
-    ctx.lineTo(ix + 13.5 * s, iy + 19.5 * s);
-    ctx.lineTo(ix + 22 * s, iy + 11 * s);
-    ctx.lineTo(ix + 22 * s, iy + 2 * s);
-    ctx.closePath();
-    ctx.fill();
-
-    // Inner eyes
-    ctx.fillStyle = config.bgColor || '#9146FF';
-    ctx.fillRect(ix + 11.5 * s, iy + 6.5 * s, 2 * s, 6 * s);
-    ctx.fillRect(ix + 16.5 * s, iy + 6.5 * s, 2 * s, 6 * s);
+    // El mismo trazo que el icono de la interfaz, para que lo que se ve en
+    // las miniaturas sea lo que sale en el vídeo.
+    ctx.translate(ix, iy);
+    ctx.scale(s, s);
+    ctx.fill(new Path2D(BRAND_ICON_PATHS[config.brand || 'twitch']));
     ctx.restore();
 
     currentX += iconSize + iconGap;
@@ -1015,52 +1019,42 @@ export const renderTextOverlayVideo = async (
 };
 
 // ---------------------------------------------------------------------------
-// Exportar un clip con la marca incrustada
+// Preferencias guardadas
 // ---------------------------------------------------------------------------
 
-export const QUALITY_STORAGE_KEY = 'twitchbolt_quality';
-
-/** Calidad elegida en la barra de resultados, para no volver a ponerla cada vez. */
-export const loadStoredQuality = (fallback: string): string => {
+// La calidad elegida y el interruptor de "marca en todos" se recuerdan entre
+// visitas, cada herramienta los suyos.
+export const loadStoredQuality = (b: BrandKey, fallback: string): string => {
   if (typeof window === 'undefined') return fallback;
   try {
-    return localStorage.getItem(QUALITY_STORAGE_KEY) || fallback;
+    return localStorage.getItem(clave(b, 'quality')) || fallback;
   } catch {
     return fallback;
   }
 };
 
-export const saveStoredQuality = (quality: string): void => {
-  if (typeof window === 'undefined') return;
+export const saveStoredQuality = (b: BrandKey, quality: string): void => {
   try {
-    localStorage.setItem(QUALITY_STORAGE_KEY, quality);
+    localStorage.setItem(clave(b, 'quality'), quality);
   } catch {
-    /* almacenamiento lleno o bloqueado: la sesión sigue, sólo no se recuerda */
+    // Sin almacenamiento, la elección dura lo que la visita.
   }
 };
 
-export const WATERMARK_ALL_STORAGE_KEY = 'twitchbolt_watermark_all';
-
-/**
- * Si la marca de agua va puesta en la descarga en lote. Se recuerda porque es
- * una decisión de las que se toman una vez ("mis clips llevan mi marca") y no
- * una por cada tanda de enlaces que se pega.
- */
-export const loadStoredWatermarkAll = (): boolean => {
+export const loadStoredWatermarkAll = (b: BrandKey): boolean => {
   if (typeof window === 'undefined') return false;
   try {
-    return localStorage.getItem(WATERMARK_ALL_STORAGE_KEY) === '1';
+    return localStorage.getItem(clave(b, 'watermark_all')) === '1';
   } catch {
     return false;
   }
 };
 
-export const saveStoredWatermarkAll = (activa: boolean): void => {
-  if (typeof window === 'undefined') return;
+export const saveStoredWatermarkAll = (b: BrandKey, activa: boolean): void => {
   try {
-    localStorage.setItem(WATERMARK_ALL_STORAGE_KEY, activa ? '1' : '0');
+    localStorage.setItem(clave(b, 'watermark_all'), activa ? '1' : '0');
   } catch {
-    /* almacenamiento lleno o bloqueado: la sesión sigue, sólo no se recuerda */
+    // Sin almacenamiento, el interruptor dura lo que la visita.
   }
 };
 

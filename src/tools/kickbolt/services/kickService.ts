@@ -1,5 +1,6 @@
 import { ClipData, Resolution } from "../types";
 import { noteRoute, usableProxies } from "./route";
+import { tsToMp4 } from "../../../components/clipstudio/tsToMp4";
 
 // Backend at the same origin (src/pages/api/kick.ts, src/pages/proxy.ts, run
 // as Vercel serverless functions): /api/kick?action=clip fetches clip info
@@ -98,7 +99,12 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
             const res = await fetch(makeProxyUrl(masterUrl), { signal: AbortSignal.timeout(10_000) });
             if (res.ok) {
                 const text = await res.text();
-                if (text.includes('#EXT-X-STREAM-INF')) {
+                // Cualquier lista HLS válida vale. Antes solo se aceptaba una
+                // maestra (#EXT-X-STREAM-INF); los clips que traen una lista
+                // simple (playlist.m3u8) seguían probando TODOS los relés
+                // públicos, con 10 s de espera cada uno, y un clip tardaba
+                // ~20 s en aparecer aunque el primer relé ya hubiera contestado.
+                if (text.includes('#EXTM3U')) {
                     masterPlaylistText = text;
                     activeUrl = masterUrl;
                     break;
@@ -190,6 +196,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
     thumbnail: responseData.thumbnail_url || "",
     duration: responseData.duration || 0,
     date: new Date(responseData.created_at || Date.now()).toLocaleDateString(),
+    createdAt: responseData.created_at,
     views: responseData.views || 0,
     resolutions,
   };
@@ -332,7 +339,17 @@ const fetchHLSBlob = async (url: string, onProgress: (loaded: number, total: num
 
 export const fetchMovieBlob = async (url: string, onProgress: (loaded: number, total: number) => void, signal?: AbortSignal): Promise<Blob> => {
   if (url.includes('.m3u8')) {
-    return fetchHLSBlob(url, onProgress, signal);
+    const ts = await fetchHLSBlob(url, onProgress, signal);
+    // Los trozos de Kick son MPEG-TS: se pasan a MP4 para que el archivo se
+    // abra en cualquier sitio y para que la marca de agua y el vídeo unido
+    // (que lo reproducen en un <video>) puedan leerlo. Si la conversión
+    // fallara, mejor el .ts que nada.
+    try {
+      return await tsToMp4(ts);
+    } catch (e) {
+      console.warn('TS → MP4 failed, keeping the raw stream', e);
+      return ts;
+    }
   }
 
   for (const makeUrl of usableProxies(DOWNLOAD_PROXIES)) {

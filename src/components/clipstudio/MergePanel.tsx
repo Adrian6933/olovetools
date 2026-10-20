@@ -7,10 +7,10 @@
 // ============================================================================
 import React, { useEffect, useRef, useState } from 'react';
 import { Clapperboard, Loader2, X, Sparkles, Blend, Download } from 'lucide-react';
-import type { ClipData, WatermarkConfig } from '../types';
-import { fetchMovieBlob } from '../services/twitchService';
-import { mergeClipsToVideo } from '../services/mergeService';
-import { loadStoredWatermarkConfig } from '../services/watermarkService';
+import type { ClipData, WatermarkConfig } from './types';
+import { useBrand } from './brand';
+import { mergeClipsToVideo } from './mergeService';
+import { loadStoredWatermarkConfig } from './watermarkService';
 
 interface Props {
   clips: ClipData[];
@@ -36,6 +36,7 @@ type Estado =
   | { fase: 'render'; index: number; total: number; elapsed: number; duration: number; pct: number };
 
 const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkConfig, t, busy, onBusyChange }) => {
+  const brand = useBrand();
   const [abierto, setAbierto] = useState(false);
   const [fundido, setFundido] = useState(true);
   const [conMarca, setConMarca] = useState(watermarkOn);
@@ -68,14 +69,14 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
       for (let i = 0; i < clips.length; i += 3) {
         await Promise.all(clips.slice(i, i + 3).map(async (c, k) => {
           const res = elegirResolucion(c);
-          blobs[i + k] = await fetchMovieBlob(res.url, () => {}, ctrl.signal);
+          blobs[i + k] = await brand.fetchMovieBlob(res.url, () => {}, ctrl.signal);
           hechos += 1;
           setEstado({ fase: 'descarga', hechos, total: clips.length });
         }));
         if (ctrl.signal.aborted) throw new DOMException('Cancelled', 'AbortError');
       }
 
-      const marca = conMarca ? (watermarkConfig ?? loadStoredWatermarkConfig()) : null;
+      const marca = conMarca ? (watermarkConfig ?? loadStoredWatermarkConfig(brand)) : null;
       const video = await mergeClipsToVideo(
         clips.map((c, i) => ({ blob: blobs[i], channelName: c.broadcaster || 'Streamer' })),
         { watermark: marca, fade: fundido, height: alto },
@@ -87,7 +88,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
       const url = URL.createObjectURL(video);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `twitchbolt_compilation_${clips.length}clips_${Date.now()}.${ext}`;
+      a.download = `${brand.storagePrefix}_compilation_${clips.length}clips_${Date.now()}.${ext}`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -187,7 +188,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
               type="button"
               onClick={empezar}
               disabled={busy}
-              className="h-12 px-6 rounded-xl bg-twitch hover:bg-twitch-dark text-white text-xs font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 disabled:opacity-50 active:scale-[0.98] transition-all"
+              className="h-12 px-6 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 disabled:opacity-50 active:scale-[0.98] transition-all"
             >
               <Download className="w-4 h-4" />
               {t.mergeGo || 'Create the video'}

@@ -7,8 +7,8 @@
 // renderizados por fotograma.
 import React, { useEffect, useRef, useState } from 'react';
 import { Check, LogIn, LogOut, Play, Repeat } from 'lucide-react';
-import type { EntryEffect, ExitEffect, LoopEffect, WatermarkConfig } from '../../types';
-import { calculateAnimationState, formatWatermarkText } from '../../services/watermarkService';
+import type { EntryEffect, ExitEffect, LoopEffect, WatermarkConfig } from '../types';
+import { calculateAnimationState, formatWatermarkText } from '../watermarkService';
 import { BadgePreview, Section, Segmented, Slider, type Tr } from './ui';
 
 interface Props {
@@ -170,7 +170,7 @@ const EffectPanel: React.FC<Props> = ({ config, onChange, channelName, tr, onTes
                   />
                 )}
               </span>
-              <span className={`block px-2 py-1.5 text-[10px] font-bold truncate ${activo ? 'bg-twitch text-white' : 'bg-white/[0.03] text-gray-300'}`}>
+              <span className={`block px-2 py-1.5 text-[10px] font-bold truncate ${activo ? 'bg-twitch text-[var(--color-accent-ink)]' : 'bg-white/[0.03] text-gray-300'}`}>
                 {tr(e.key, e.fb)}
               </span>
               {activo && <Check className="absolute top-1.5 right-1.5 w-3.5 h-3.5 text-twitch" />}

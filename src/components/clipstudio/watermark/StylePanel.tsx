@@ -2,7 +2,8 @@
 // colores y los efectos del texto y de la tarjeta.
 import React from 'react';
 import { Check, Sparkles } from 'lucide-react';
-import type { TextEffect, WatermarkConfig } from '../../types';
+import type { TextEffect, WatermarkConfig } from '../types';
+import { useBrand } from '../brand';
 import { BadgePreview, ColorField, Section, Segmented, Slider, Toggle, type Tr } from './ui';
 
 interface Props {
@@ -47,6 +48,18 @@ const TEMAS_TEXTO: Tema[] = [
   { id: 't-minimal', ...sinFondo, textColor: '#ffffff', stroke: false, shadow: true, glowMode: false, shadowColor: 'rgba(0,0,0,0.55)', shadowBlur: 3, shadowOffsetX: 1, shadowOffsetY: 1, textEffect: 'none', fontWeight: 'normal' },
 ];
 
+/**
+ * Los temas están pensados con el morado de Twitch; en Kick ese morado pasa a
+ * ser su verde, y el tema de la marca lleva letra negra porque el blanco
+ * sobre ese verde no se lee.
+ */
+const conAcento = (temas: Tema[], acento: string, kick: boolean): Tema[] =>
+  temas.map(t => {
+    const r = Object.fromEntries(Object.entries(t).map(([k, v]) => [k, v === '#9146FF' ? acento : v])) as Tema;
+    if (kick && t.id === 'twitch') r.textColor = '#000000';
+    return r;
+  });
+
 /** Un tema está puesto si todo lo que define coincide con la configuración. */
 const coincide = (tema: Tema, c: WatermarkConfig) =>
   Object.entries(tema).every(([k, v]) => k === 'id' || (c as any)[k] === v);
@@ -64,8 +77,12 @@ const EFECTOS: { id: TextEffect; key: string; fb: string }[] = [
 const FONDO_FOTO = 'bg-[linear-gradient(120deg,#7c8aa5_0%,#2b2f3a_45%,#c9b8a0_100%)]';
 
 const StylePanel: React.FC<Props> = ({ config, onChange, channelName, tr }) => {
+  const brand = useBrand();
+  const kick = brand.id === 'kick';
+  const temasFondo = conAcento(TEMAS_FONDO, brand.accent, kick);
+  const temasTexto = conAcento(TEMAS_TEXTO, brand.accent, kick);
   const set = (parche: Partial<WatermarkConfig>) => onChange({ ...config, ...parche });
-  const temaActivo = [...TEMAS_TEXTO, ...TEMAS_FONDO].find(t => coincide(t, config))?.id;
+  const temaActivo = [...temasTexto, ...temasFondo].find(t => coincide(t, config))?.id;
 
   const rejilla = (temas: Tema[], fondo: string) => (
     <div className="grid grid-cols-2 gap-2">
@@ -92,11 +109,11 @@ const StylePanel: React.FC<Props> = ({ config, onChange, channelName, tr }) => {
   return (
     <div className="space-y-6">
       <Section title={tr('wm_styles_text', 'Text only')}>
-        {rejilla(TEMAS_TEXTO, FONDO_FOTO)}
+        {rejilla(temasTexto, FONDO_FOTO)}
       </Section>
 
       <Section title={tr('wm_styles', 'With background')}>
-        {rejilla(TEMAS_FONDO, 'bg-[linear-gradient(135deg,#2a2438,#0d0b12)]')}
+        {rejilla(temasFondo, 'bg-[linear-gradient(135deg,#2a2438,#0d0b12)]')}
       </Section>
 
       <Section title={tr('wm_text_effect', 'Text effect')}>
@@ -114,13 +131,13 @@ const StylePanel: React.FC<Props> = ({ config, onChange, channelName, tr }) => {
                 <span className={`h-12 flex items-center justify-center ${FONDO_FOTO}`}>
                   <BadgePreview config={{ ...config, bgOpacity: 0, boxBorder: false, showIcon: false, textEffect: e.id }} channelName={channelName} size={15} text="Aa" />
                 </span>
-                <span className={`block px-1 py-1 text-[10px] font-bold truncate ${activo ? 'bg-twitch text-white' : 'bg-white/[0.03] text-gray-300'}`}>{tr(e.key, e.fb)}</span>
+                <span className={`block px-1 py-1 text-[10px] font-bold truncate ${activo ? 'bg-twitch text-[var(--color-accent-ink)]' : 'bg-white/[0.03] text-gray-300'}`}>{tr(e.key, e.fb)}</span>
               </button>
             );
           })}
         </div>
         {config.textEffect && config.textEffect !== 'none' && config.textEffect !== 'glitch' && (
-          <ColorField label={tr('wm_effect_color', 'Effect colour')} value={config.effectColor || '#9146FF'} onChange={v => set({ effectColor: v })} />
+          <ColorField label={tr('wm_effect_color', 'Effect colour')} value={config.effectColor || brand.accent} onChange={v => set({ effectColor: v })} />
         )}
       </Section>
 
@@ -194,7 +211,7 @@ const StylePanel: React.FC<Props> = ({ config, onChange, channelName, tr }) => {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-3">
-          <Toggle label={tr('wm_show_icon', 'Twitch icon')} checked={config.showIcon} onChange={v => set({ showIcon: v })} />
+          <Toggle label={tr('wm_show_icon', `${brand.name} icon`)} checked={config.showIcon} onChange={v => set({ showIcon: v })} />
         </div>
       </Section>
     </div>

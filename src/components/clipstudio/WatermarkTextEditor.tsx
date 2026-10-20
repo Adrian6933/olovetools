@@ -10,8 +10,9 @@
 // ============================================================================
 import React, { useState } from 'react';
 import { Check, PenLine, User, Wand2, AlertCircle } from 'lucide-react';
-import type { WatermarkConfig } from '../types';
-import { CHANNEL_TOKEN } from '../services/watermarkService';
+import type { WatermarkConfig } from './types';
+import { CHANNEL_TOKEN } from './watermarkService';
+import { useBrand } from './brand';
 
 interface Props {
   config: WatermarkConfig;
@@ -30,11 +31,12 @@ const partir = (template: string) => {
 };
 
 const WatermarkTextEditor: React.FC<Props> = ({ config, onChangeConfig, channelName, multiClip, tr }) => {
+  const brand = useBrand();
   const follow = tr('wm_tpl_follow', 'FOLLOW');
   const formatos = [
     `@${CHANNEL_TOKEN}`,
     CHANNEL_TOKEN,
-    `twitch.tv/${CHANNEL_TOKEN}`,
+    `${brand.domain}/${CHANNEL_TOKEN}`,
     `LIVE: ${CHANNEL_TOKEN}`,
     `${follow} ${CHANNEL_TOKEN}`,
   ];
@@ -145,7 +147,7 @@ const WatermarkTextEditor: React.FC<Props> = ({ config, onChangeConfig, channelN
                   className="flex-1 min-w-0 bg-transparent px-2 py-1.5 text-sm text-white @2xs:text-right placeholder-gray-600 outline-none"
                 />
                 <span
-                  className="shrink-0 self-start @2xs:self-auto max-w-full @2xs:max-w-[45%] h-8 px-2.5 rounded-lg bg-twitch text-white text-sm font-black flex items-center gap-1.5 shadow-lg shadow-twitch/25"
+                  className="shrink-0 self-start @2xs:self-auto max-w-full @2xs:max-w-[45%] h-8 px-2.5 rounded-lg bg-twitch text-[var(--color-accent-ink)] text-sm font-black flex items-center gap-1.5 shadow-lg shadow-twitch/25"
                   title={tr('wm_text_name_hint', "Replaced with the streamer's name")}
                 >
                   <User className="w-3.5 h-3.5 shrink-0" />

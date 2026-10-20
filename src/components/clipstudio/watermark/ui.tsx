@@ -1,8 +1,9 @@
 // Piezas pequeñas que repiten todos los paneles del editor de marca: así cada
 // deslizador, interruptor y color se ve y se comporta igual en todas partes.
 import React from 'react';
-import type { WatermarkConfig } from '../../types';
-import { formatWatermarkText, getFontCss } from '../../services/watermarkService';
+import type { WatermarkConfig } from '../types';
+import { formatWatermarkText, getFontCss } from '../watermarkService';
+import { BrandGlyph } from '../brand';
 
 export type Tr = (clave: string, respaldo: string) => string;
 
@@ -73,7 +74,7 @@ export function Segmented<T extends string>({ value, options, onChange }: {
           onClick={() => onChange(o.id)}
           aria-pressed={value === o.id}
           className={`flex-1 min-w-0 py-2 px-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer truncate ${
-            value === o.id ? 'bg-twitch text-white shadow-md shadow-twitch/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
+            value === o.id ? 'bg-twitch text-[var(--color-accent-ink)] shadow-md shadow-twitch/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
           }`}
         >
           {o.label}
@@ -90,12 +91,6 @@ const hexARgba = (hex: string, alfa: number) => {
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alfa})`;
 };
 
-export const TwitchGlyph: React.FC<{ className?: string }> = ({ className }) => (
-  <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
-    <path d="M4.3 3 3 6.4v13.1h4.6V22h2.6l2.4-2.5h3.7l5-5V3H4.3Zm15.5 10.6-2.9 2.9h-4.6L9.8 19v-2.5H6V4.7h13.8v8.9Zm-2.9-5.9v5h-1.7v-5h1.7Zm-4.6 0v5h-1.7v-5h1.7Z" />
-  </svg>
-);
-
 /**
  * El cartel en pequeño, con el estilo de verdad, para las tarjetas de letra,
  * estilos y animaciones: se elige mirando cómo queda, no leyendo un nombre.
@@ -106,7 +101,7 @@ export const BadgePreview = React.forwardRef<HTMLSpanElement, {
   const contenido = text ?? formatWatermarkText(config, channelName);
   const glow = config.shadow && config.glowMode;
   const efecto = config.textEffect || 'none';
-  const c2 = config.effectColor || '#9146FF';
+  const c2 = config.effectColor || (config.brand === 'kick' ? '#53FC18' : '#9146FF');
   const px = (v: number) => `${(v * size) / 22}px`;
   // Lo mismo que pinta el canvas, aproximado con CSS para las miniaturas.
   const estiloTexto: React.CSSProperties =
@@ -141,7 +136,7 @@ export const BadgePreview = React.forwardRef<HTMLSpanElement, {
         paintOrder: 'stroke fill',
       }}
     >
-      {config.showIcon && <TwitchGlyph className="shrink-0 w-[1.05em] h-[1.05em]" />}
+      {config.showIcon && <BrandGlyph brand={config.brand || 'twitch'} className="shrink-0 w-[1.05em] h-[1.05em]" />}
       <span className="truncate" style={estiloTexto}>{contenido || '…'}</span>
     </span>
   );

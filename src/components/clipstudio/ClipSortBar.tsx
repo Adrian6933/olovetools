@@ -3,7 +3,7 @@
 // vídeo unido.
 import React, { useState } from 'react';
 import { Hand, ArrowDownUp, Clock, Eye, CalendarDays, Copy, Check } from 'lucide-react';
-import type { ClipItem } from '../types';
+import type { ClipItem } from './types';
 
 interface Props {
   clips: ClipItem[];

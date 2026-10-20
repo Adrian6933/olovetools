@@ -2,8 +2,8 @@
 // ella, agrupadas por estilo, y debajo el tamaño y los retoques.
 import React, { useState } from 'react';
 import { Check } from 'lucide-react';
-import type { FontCategory, FontWeight, TextTransform, WatermarkConfig } from '../../types';
-import { FONT_CATALOG, formatWatermarkText, getFontCss } from '../../services/watermarkService';
+import type { FontCategory, FontWeight, TextTransform, WatermarkConfig } from '../types';
+import { FONT_CATALOG, formatWatermarkText, getFontCss } from '../watermarkService';
 import { Section, Segmented, Slider, type Tr } from './ui';
 
 interface Props {

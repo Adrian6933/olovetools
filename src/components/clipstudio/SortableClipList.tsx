@@ -18,7 +18,7 @@
 // ============================================================================
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react';
 import { GripHorizontal, ChevronUp, ChevronDown } from 'lucide-react';
-import type { ClipItem } from '../types';
+import type { ClipItem } from './types';
 
 interface Props {
   items: ClipItem[];
@@ -264,7 +264,7 @@ const SortableClipList = forwardRef<SortableClipListHandle, Props>(({ items, onR
               onPointerCancel={cancelarEspera}
               onContextMenu={e => { if (espera.current || arrastre) e.preventDefault(); }}
               className={levantada
-                ? 'absolute inset-x-0 top-0 z-50 pointer-events-none rounded-[2.5rem] bg-[#111114] shadow-[0_40px_120px_-20px_rgba(145,70,255,0.55)] ring-2 ring-twitch/70 opacity-95 will-change-transform'
+                ? 'absolute inset-x-0 top-0 z-50 pointer-events-none rounded-[2.5rem] bg-[#111114] shadow-[0_40px_120px_-20px_rgba(var(--color-accent-rgb),0.55)] ring-2 ring-twitch/70 opacity-95 will-change-transform'
                 : 'relative'}
             >
               {/* Arriba, en el centro: flechas para subir y bajar un puesto y,
@@ -309,7 +309,7 @@ const SortableClipList = forwardRef<SortableClipListHandle, Props>(({ items, onR
               )}
               {/* Destello al llegar desde las flechas o desde el panel de orden. */}
               {destello === c.id && !levantada && (
-                <div className="pointer-events-none absolute -inset-1 z-30 rounded-[2.75rem] ring-2 ring-twitch shadow-[0_0_60px_rgba(145,70,255,0.45)] animate-pulse" />
+                <div className="pointer-events-none absolute -inset-1 z-30 rounded-[2.75rem] ring-2 ring-twitch shadow-[0_0_60px_rgba(var(--color-accent-rgb),0.45)] animate-pulse" />
               )}
               {renderItem(c, i)}
             </div>

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ClipData, Resolution } from '../types';
+import { ClipData, Resolution } from './types';
 import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
-import { downloadBlob, fetchMovieBlob } from '../services/twitchService';
+import { attachVideo, useBrand } from './brand';
 import WatermarkPreview from './WatermarkPreview';
-import { WatermarkConfig, PositionPreset } from '../types';
+import { WatermarkConfig, PositionPreset } from './types';
 import {
   loadStoredWatermarkConfig,
   saveStoredWatermarkConfig,
@@ -11,7 +11,7 @@ import {
   saveCustomPresets,
   processVideoWithWatermark,
   nombreDeArchivo,
-} from '../services/watermarkService';
+} from './watermarkService';
 
 interface ClipResultProps {
   data: ClipData;
@@ -21,7 +21,6 @@ interface ClipResultProps {
   dictionary?: any;
 }
 
-const STORAGE_KEY = 'twitchbolt_volume_prefs';
 
 const formatBytes = (bytes: number, decimals = 2) => {
     if (!+bytes) return '0 Bytes';
@@ -36,6 +35,8 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadingRes, setDownloadingRes] = useState<Record<string, { progress: number, completed: boolean, preparing: boolean, loaded: number, total: number, speed: number }>>({});
   const t = dictionary || {};
+  const brand = useBrand();
+  const STORAGE_KEY = `${brand.storagePrefix}_volume_prefs`;
 
   // ---- Editor de marca de agua -------------------------------------------
   // La configuración se carga al abrir, no al montar: así dos clips abiertos a
@@ -45,20 +46,20 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   const [wmPresets, setWmPresets] = useState<PositionPreset[]>([]);
 
   const abrirWatermark = () => {
-    setWmConfig(loadStoredWatermarkConfig());
-    setWmPresets(loadStoredPresets());
+    setWmConfig(loadStoredWatermarkConfig(brand));
+    setWmPresets(loadStoredPresets(brand));
     setWmAbierto(true);
   };
 
   const cambiarWmConfig = (siguiente: WatermarkConfig) => {
     setWmConfig(siguiente);
-    saveStoredWatermarkConfig(siguiente);
+    saveStoredWatermarkConfig(brand, siguiente);
   };
 
   const guardarWmPreset = (nuevo: PositionPreset) => {
     setWmPresets((prev) => {
       const siguiente = [...prev, nuevo];
-      saveCustomPresets(siguiente.filter((x) => !x.isDefault));
+      saveCustomPresets(brand, siguiente);
       return siguiente;
     });
   };
@@ -66,7 +67,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   const borrarWmPreset = (id: string) => {
     setWmPresets((prev) => {
       const siguiente = prev.filter((x) => x.id !== id);
-      saveCustomPresets(siguiente.filter((x) => !x.isDefault));
+      saveCustomPresets(brand, siguiente);
       return siguiente;
     });
   };
@@ -83,7 +84,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
     const res = data.resolutions.find((r) => r.quality === quality) || data.resolutions[0];
     if (!res) throw new Error('No resolution available');
 
-    const original = await fetchMovieBlob(res.url, (loaded, total) => {
+    const original = await brand.fetchMovieBlob(res.url, (loaded, total) => {
       onProgress('descarga', total > 0 ? Math.round((loaded / total) * 100) : 0, 0);
     }, signal);
 
@@ -119,6 +120,14 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
       (Object.values(abortControllers.current) as AbortController[]).forEach(ctrl => ctrl.abort());
     };
   }, []);
+
+  // El vídeo se engancha a mano: Kick da listas HLS que hay que reproducir con
+  // hls.js; un src a pelo solo vale para los MP4 de Twitch.
+  useEffect(() => {
+    if (!isPlaying || !videoRef.current) return;
+    const soltar = attachVideo(brand, videoRef.current, data.resolutions[0].url);
+    return () => { soltar?.(); };
+  }, [isPlaying, brand, data.resolutions]);
 
   useEffect(() => {
     if (isPlaying && videoRef.current) {
@@ -170,7 +179,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
     try {
         const safeTitle = nombreDeArchivo(data.title, data.broadcaster, data.id);
         
-        await downloadBlob(res.url, `${safeTitle}_${res.quality}.mp4`, (loaded, total) => {
+        await brand.downloadBlob(res.url, `${safeTitle}_${res.quality}.mp4`, (loaded, total) => {
             const percentage = total > 0 ? Math.round((loaded / total) * 100) : 0;
             const now = Date.now();
             const tracker = speedTrackers.current[quality];
@@ -241,7 +250,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
 
   return (
     <div className="@container w-full relative group animate-fade-in">
-      <div className="absolute -top-3 -left-3 z-40 bg-twitch text-white font-black text-xs px-4 py-2 rounded-xl shadow-xl ring-4 ring-[#070708]">
+      <div className="absolute -top-3 -left-3 z-40 bg-twitch text-[var(--color-accent-ink)] font-black text-xs px-4 py-2 rounded-xl shadow-xl ring-4 ring-[#070708]">
           #{index}
       </div>
 
@@ -262,7 +271,6 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                 {isPlaying ? (
                     <video 
                       ref={videoRef}
-                      src={data.resolutions[0].url} 
                       controls 
                       autoPlay 
                       className="w-full h-full" 
@@ -344,7 +352,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                                 )}
                             </div>
                         </div>
-                        <div className={`relative z-10 p-3 bg-white/5 rounded-xl transition-all duration-300 shrink-0 ${isDownloading ? (isCompleted ? 'bg-green-500' : 'bg-twitch shadow-[0_0_15px_rgba(145,70,255,0.4)]') : 'group-hover/btn:bg-twitch'}`}>
+                        <div className={`relative z-10 p-3 bg-white/5 rounded-xl transition-all duration-300 shrink-0 ${isDownloading ? (isCompleted ? 'bg-green-500' : 'bg-twitch shadow-[0_0_15px_rgba(var(--color-accent-rgb),0.4)]') : 'group-hover/btn:bg-twitch'}`}>
                             {isCompleted ? (
                                 <CheckCircle2 className="w-5 h-5 text-white animate-in zoom-in duration-300" />
                             ) : (
@@ -364,7 +372,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                aria-expanded={wmAbierto}
                className={`w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
                  wmAbierto
-                   ? 'bg-twitch text-white border-twitch shadow-lg shadow-twitch/20'
+                   ? 'bg-twitch text-[var(--color-accent-ink)] border-twitch shadow-lg shadow-twitch/20'
                    : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-white/10'
                }`}
              >

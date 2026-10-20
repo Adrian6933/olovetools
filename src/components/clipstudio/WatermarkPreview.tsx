@@ -12,12 +12,13 @@
 // ============================================================================
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import type { ClipData, WatermarkConfig, PositionPreset } from '../types';
+import type { ClipData, WatermarkConfig, PositionPreset } from './types';
 import {
   drawWatermarkOnCanvas,
   loadWatermarkFonts,
-  DEFAULT_WATERMARK_CONFIG,
-} from '../services/watermarkService';
+  defaultWatermarkConfig,
+} from './watermarkService';
+import { attachVideo, useBrand } from './brand';
 import {
   MessageSquareText, Type, Palette, Move, Wand2, Play, Pause, X, Download, RotateCcw, LogIn, LogOut, Check, Sparkles, Maximize2, Minimize2,
 } from 'lucide-react';
@@ -64,6 +65,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
 }) => {
   // Los textos viven en el diccionario de la herramienta; el segundo argumento
   // es el respaldo en inglés para un despliegue con el diccionario a medias.
+  const brand = useBrand();
   const tr = useCallback((clave: string, respaldo: string): string => {
     const v = dictionary?.[clave];
     return typeof v === 'string' && v ? v : respaldo;
@@ -93,6 +95,16 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
 
   const channelName = clip.broadcaster || 'Streamer';
   const videoUrl = clip.resolutions[0]?.url;
+
+  // La fuente se engancha a mano: Kick da HLS y necesita hls.js. Se vuelve a
+  // enganchar al pasar a pantalla completa porque el <video> es otro.
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v || !videoUrl) return;
+    const soltar = attachVideo(brand, v, videoUrl);
+    v.play().catch(() => {});
+    return () => { soltar?.(); };
+  }, [brand, videoUrl, pantallaCompleta]);
 
   // Las tipografías se piden al abrir el estudio; cuando llegan hay que volver
   // a pintar, porque con el vídeo en pausa nadie más lo haría.
@@ -241,7 +253,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           <button
             type="button"
-            onClick={() => onChangeConfig({ ...DEFAULT_WATERMARK_CONFIG })}
+            onClick={() => onChangeConfig(defaultWatermarkConfig(brand))}
             title={tr('wm_reset', 'Reset')}
             aria-label={tr('wm_reset', 'Reset')}
             className="h-9 px-3 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:border-white/25 text-xs font-bold flex items-center gap-1.5 cursor-pointer"
@@ -288,7 +300,6 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
             >
               <video
                 ref={videoRef}
-                src={videoUrl}
                 autoPlay
                 loop
                 muted
@@ -362,7 +373,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                 aria-selected={pestana === p.id}
                 onClick={() => setPestana(p.id)}
                 className={`flex flex-col items-center gap-1 py-2 rounded-xl text-[10px] font-bold transition-colors cursor-pointer min-w-0 ${
-                  pestana === p.id ? 'bg-twitch text-white shadow-lg shadow-twitch/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  pestana === p.id ? 'bg-twitch text-[var(--color-accent-ink)] shadow-lg shadow-twitch/25' : 'text-gray-400 hover:text-white hover:bg-white/5'
                 }`}
               >
                 {p.icon}
@@ -419,7 +430,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                     <button
                       type="button"
                       onClick={lanzarExport}
-                      className="flex-1 h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 active:scale-[0.98] transition-all"
+                      className="flex-1 h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 active:scale-[0.98] transition-all"
                     >
                       <Download className="w-4 h-4" />
                       {tr('wm_export_go', 'Render and download')}
@@ -435,7 +446,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-twitch/25"
+                className="w-full h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-twitch/25"
               >
                 <Check className="w-4 h-4" />
                 {tr('wm_done', 'Done')}
@@ -455,6 +466,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
       // Por encima del reproductor flotante (z-9999), que también va al body.
       <div
         className="@container fixed inset-0 z-[100000] bg-[#07060a] text-white animate-fade-in"
+        style={brand.cssVars}
         role="dialog"
         aria-modal="true"
         aria-label={tr('wm_title_full', 'Watermark editor')}

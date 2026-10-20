@@ -3,7 +3,7 @@
 // también mueve el cartel; esto es para quien prefiere tocar un sitio.
 import React, { useState } from 'react';
 import { Plus, Trash2, Move } from 'lucide-react';
-import type { PositionPreset, WatermarkConfig } from '../../types';
+import type { PositionPreset, WatermarkConfig } from '../types';
 import { Section, Slider, type Tr } from './ui';
 
 interface Props {
@@ -95,7 +95,7 @@ const PositionPanel: React.FC<Props> = ({ config, onChange, presets, onSavePrese
               autoFocus
               className="flex-1 min-w-0 bg-dark-950 border border-white/10 rounded-xl px-3 py-2 text-xs text-white placeholder-gray-600 outline-none focus:border-twitch"
             />
-            <button type="button" onClick={guardar} className="px-3 rounded-xl bg-twitch text-white text-xs font-black cursor-pointer hover:bg-twitch-dark">
+            <button type="button" onClick={guardar} className="px-3 rounded-xl bg-twitch text-[var(--color-accent-ink)] text-xs font-black cursor-pointer hover:bg-twitch-dark">
               {tr('wm_save', 'Save')}
             </button>
           </div>
