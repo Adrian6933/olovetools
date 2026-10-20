@@ -1587,23 +1587,6 @@ export const ZipFlow: React.FC<ZipFlowProps> = ({ lang, dictionary }) => {
               ))}
             </div>
           </div>
-
-          {/* Keywords */}
-          <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
-            <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-              {t.seoKeywordsTitle || 'Keywords'}
-            </h2>
-            <div className="flex flex-wrap justify-center gap-2">
-              {(t.seoKeywords || []).map((keyword: string, idx: number) => (
-                <span
-                  key={idx}
-                  className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-amber-500/10 hover:border-amber-500/20 hover:text-amber-400 transition-all cursor-default"
-                >
-                  {keyword}
-                </span>
-              ))}
-            </div>
-          </div>
         </section>
 
       </main>

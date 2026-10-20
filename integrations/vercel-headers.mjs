@@ -38,6 +38,13 @@ const rutas = () => [
     continue: true,
   },
   {
+    // El relay de vídeo y la API no son páginas. Si alguien enlaza una URL
+    // suya, que Google no la indexe como contenido de olovetools.com.
+    src: '^/(proxy|api)(/.*)?$',
+    headers: { 'X-Robots-Tag': 'noindex, nofollow' },
+    continue: true,
+  },
+  {
     // Imágenes e iconos de /public: NO llevan hash en el nombre, así que no
     // pueden ser immutable — un año de caché dejaría una imagen OG vieja
     // congelada en los navegadores. Un día, revalidando en segundo plano.

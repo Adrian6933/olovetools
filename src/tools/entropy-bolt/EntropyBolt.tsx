@@ -356,9 +356,9 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
               <ShieldCheck className="w-3.5 h-3.5" />
               {t.heroBadge || 'Nothing leaves this tab'}
             </span>
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
               {t.seoHeroTitle || 'EntropyBolt'}
-            </h2>
+            </h1>
             <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl">{t.seoHeroText}</p>
           </div>
           <HeroArt className="w-full h-auto max-w-md mx-auto" />

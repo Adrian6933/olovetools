@@ -1393,7 +1393,7 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div className="space-y-5">
               <div className="inline-block px-4 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-300 text-[11px] font-black uppercase tracking-[0.2em] border border-indigo-500/20">
-                {t.seoKeywords?.[0] || 'Lottie'}
+                {t.title}
               </div>
               <h2 className="text-2xl md:text-4xl font-black text-white leading-tight tracking-tighter">
                 {t.seoBrowserSpeedTitle}
@@ -1443,24 +1443,6 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
                     </summary>
                     <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{item.answer}</p>
                   </details>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {Array.isArray(t.seoKeywords) && (
-            <div className="max-w-4xl mx-auto w-full space-y-4 opacity-55 text-center">
-              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-                {t.seoKeywordsTitle || 'Keywords'}
-              </h2>
-              <div className="flex flex-wrap justify-center gap-2">
-                {t.seoKeywords.map((keyword: string, index: number) => (
-                  <span
-                    key={index}
-                    className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400"
-                  >
-                    {keyword}
-                  </span>
                 ))}
               </div>
             </div>

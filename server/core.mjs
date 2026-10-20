@@ -26,19 +26,45 @@ export const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit
 
 // Hosts the /proxy relay may fetch. Twitch VOD/clip infra + Kick clip CDN only,
 // so the relay can't be used as an open proxy for arbitrary sites.
+//
+// Each entry matches that exact host or a subdomain of it. The old check also
+// accepted any host that merely *contained* an entry, so
+// "cloudfront.net.example.com" or "video-weaver.example.com" passed and
+// olovetools.com would serve someone else's pages under its own URL.
 const ALLOWED_HOST_SUFFIXES = [
-  'usher.ttvnw.net',
-  '.hls.ttvnw.net',
-  'ttvnw.net',
-  'video-weaver.',
-  'cloudfront.net',
-  'clips.kick.com',
+  'ttvnw.net', // usher, *.hls.ttvnw.net, video-weaver.*.hls.ttvnw.net
   'twitchcdn.net',
   'clips-media-assets2.twitch.tv',
+  // Twitch VOD buckets (d2nvs31859zcd8.cloudfront.net…). Anyone can open a
+  // CloudFront distribution, which is why the relay also refuses anything
+  // that isn't media (see isRelayableType).
+  'cloudfront.net',
+  'clips.kick.com',
 ];
 
-export const isAllowedProxyHost = (hostname) =>
-  ALLOWED_HOST_SUFFIXES.some((suffix) => hostname === suffix || hostname.endsWith(suffix) || hostname.includes(suffix));
+export const isAllowedProxyHost = (hostname) => {
+  const host = String(hostname).toLowerCase().replace(/\.$/, '');
+  return ALLOWED_HOST_SUFFIXES.some((suffix) => host === suffix || host.endsWith(`.${suffix}`));
+};
+
+// The relay only carries video, audio, HLS playlists and images. An HTML page,
+// a script or an SVG from an allowed host is refused, so it can never show up
+// as a page of olovetools.com.
+const MEDIA_TYPE_PREFIXES = ['video/', 'audio/', 'image/'];
+const MEDIA_TYPES = new Set([
+  'application/vnd.apple.mpegurl',
+  'application/x-mpegurl',
+  'application/mp4',
+  'application/octet-stream',
+  'binary/octet-stream',
+]);
+
+export const isRelayableType = (contentType) => {
+  const type = String(contentType || '').split(';')[0].trim().toLowerCase();
+  if (!type) return true;
+  if (type === 'image/svg+xml') return false;
+  return MEDIA_TYPES.has(type) || MEDIA_TYPE_PREFIXES.some((prefix) => type.startsWith(prefix));
+};
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -146,7 +172,18 @@ export async function handleProxy(url, rangeHeader, method = 'GET') {
     return text(502, `Upstream fetch failed: ${e.message}`);
   }
 
-  const headers = { ...CORS_HEADERS };
+  // Errors keep their status but not their body: a CDN's error page is still a page.
+  if (!upstream.ok) {
+    upstream.body?.cancel().catch(() => {});
+    return text(upstream.status, `Upstream responded ${upstream.status}`);
+  }
+  const upstreamType = upstream.headers.get('content-type');
+  if (!isRelayableType(upstreamType)) {
+    upstream.body?.cancel().catch(() => {});
+    return text(415, `Not a media response: ${upstreamType}`);
+  }
+
+  const headers = { ...CORS_HEADERS, 'content-type': 'application/octet-stream' };
   for (const key of ['content-type', 'content-length', 'content-range', 'accept-ranges']) {
     const value = upstream.headers.get(key);
     if (value) headers[key] = value;

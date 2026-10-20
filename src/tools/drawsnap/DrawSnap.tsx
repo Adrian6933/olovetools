@@ -212,7 +212,7 @@ export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
               <div className="space-y-6">
                 <div className="inline-block px-4 py-1.5 rounded-lg bg-purple-500/10 text-purple-300 text-[11px] font-black uppercase tracking-[0.2em] border border-purple-500/20">
-                  {t.seoKeywords?.[0] || 'Online whiteboard'}
+                  {t.badge}
                 </div>
                 <h2 className="text-2xl md:text-4xl font-black text-white leading-tight tracking-tight">
                   {t.seoBrowserSpeedTitle}
@@ -281,25 +281,6 @@ export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
                 ))}
               </div>
             </div>
-
-            {/* Keywords */}
-            {Array.isArray(t.seoKeywords) && (
-              <div className="max-w-4xl mx-auto w-full space-y-4 opacity-55 text-center">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-                  {t.seoKeywordsTitle || 'Related searches'}
-                </h2>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {t.seoKeywords.map((keyword: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-purple-500/10 hover:border-purple-500/20 hover:text-purple-300 transition-all cursor-default"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </section>
         </div>
 

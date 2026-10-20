@@ -1036,7 +1036,7 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
               <div className="space-y-7">
                 <div className="inline-block px-4 py-1.5 rounded-lg bg-amber-500/10 text-amber-400 text-[11px] font-black uppercase tracking-[0.2em] border border-amber-500/20">
-                  {t.seoKeywords?.[0]}
+                  {t.badge}
                 </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
                   {t.seoBrowserSpeedTitle}
@@ -1106,18 +1106,6 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
                     </summary>
                     <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
                   </details>
-                ))}
-              </div>
-            </div>
-
-            {/* Palabras clave */}
-            <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
-              <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">{t.seoKeywordsTitle}</h2>
-              <div className="flex flex-wrap justify-center gap-2">
-                {(t.seoKeywords || []).map((keyword: string, idx: number) => (
-                  <span key={idx} className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400">
-                    {keyword}
-                  </span>
                 ))}
               </div>
             </div>

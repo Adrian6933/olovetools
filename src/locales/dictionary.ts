@@ -1451,7 +1451,14 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     tool === 'clip-editor' ? clipEditorDictionary :
     hubDictionary;
     
-  const currentDict = dictionaryObj[lang] || dictionaryObj['en'];
+  const fullDict = dictionaryObj[lang] || dictionaryObj['en'];
+
+  // seoKeywords se pintaba al pie de casi todas las herramientas, en los 9
+  // idiomas, como una lista de frases de búsqueda a la vista: para Google eso es
+  // relleno de palabras clave. Se deja de entregar aquí, en un solo sitio; los
+  // componentes ocultan su bloque cuando la lista llega vacía. Los textos siguen
+  // en los locales por si sirven de referencia, pero no salen en la página.
+  const currentDict = { ...fullDict, seoKeywords: [] };
 
   return { t: createTranslator(currentDict), lang, dictionary: currentDict };
 };

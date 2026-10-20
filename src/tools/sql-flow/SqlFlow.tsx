@@ -425,9 +425,9 @@ export default function SqlFlow({ lang, dictionary }: SqlFlowProps) {
               <Sparkles className="w-3.5 h-3.5" />
               {tx('hero_badge', 'SQL workbench')}
             </span>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.1]">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-white leading-[1.1]">
               {tx('seoHeroTitle', 'Format, check and understand any SQL query.')}
-            </h2>
+            </h1>
             <p className="text-stone-400 text-sm md:text-base leading-relaxed max-w-xl">
               {tx(
                 'seoHeroText',
