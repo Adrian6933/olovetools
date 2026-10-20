@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from './types';
-import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles } from 'lucide-react';
+import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles, Scissors } from 'lucide-react';
 import { attachVideo, useBrand } from './brand';
 import WatermarkPreview from './WatermarkPreview';
 import { WatermarkConfig, PositionPreset } from './types';
@@ -19,6 +19,8 @@ interface ClipResultProps {
   onReset: () => void;
   lang: string;
   dictionary?: any;
+  /** Abre el editor con este clip elegido. */
+  onEdit?: () => void;
 }
 
 
@@ -31,7 +33,7 @@ const formatBytes = (bytes: number, decimals = 2) => {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 
-const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dictionary }) => {
+const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dictionary, onEdit }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadingRes, setDownloadingRes] = useState<Record<string, { progress: number, completed: boolean, preparing: boolean, loaded: number, total: number, speed: number }>>({});
   const t = dictionary || {};
@@ -366,6 +368,16 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     </button>
                 );
              })}
+
+             {onEdit && (
+               <button
+                 onClick={onEdit}
+                 className="w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40"
+               >
+                 <Scissors className="w-4 h-4 text-twitch" />
+                 {t.ed_open_clip || 'Trim / edit'}
+               </button>
+             )}
 
              <button
                onClick={wmAbierto ? () => setWmAbierto(false) : abrirWatermark}

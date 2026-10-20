@@ -27,9 +27,11 @@ import ClipSortBar from './ClipSortBar';
 import SortableClipList, { type SortableClipListHandle } from './SortableClipList';
 import ClipOrderPanel from './ClipOrderPanel';
 import MergePanel from './MergePanel';
+import ClipEditor from './editor/ClipEditor';
+import type { Pieza } from './editor/model';
 import { BrandContext, type ClipBrand } from './brand';
 import {
-  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge
+  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
@@ -163,6 +165,16 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   /** Mientras se une el vídeo, el ZIP y la marca en lote esperan. */
   const [uniendo, setUniendo] = useState(false);
 
+  // ---- editor de clips ----------------------------------------------------
+  // Las piezas viven aquí y no en el editor: cerrarlo y volver a abrirlo
+  // conserva los recortes.
+  const [editor, setEditor] = useState<{ enfoque: string | null } | null>(null);
+  const clipsListos = React.useMemo(
+    () => clips.filter(c => c.status === 'success' && c.data).map(c => c.data!),
+    [clips],
+  );
+  const [piezasEditor, setPiezasEditor] = useState<Pieza[]>([]);
+
   // Cambiar el orden desde fuera de las tarjetas (panel, atajos de orden):
   // primero se le avisa a la lista para que las tarjetas se deslicen.
   const listaRef = useRef<SortableClipListHandle>(null);
@@ -232,6 +244,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   // function it was a new value on every render, so the popstate listener was
   // torn down and re-attached on each one.
   const handleReset = useCallback(() => {
+    setEditor(null);
+    setPiezasEditor([]);
     resolveRequestRef.current += 1;
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -1039,6 +1053,24 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
              )}
 
 
+             {clipsListos.length > 0 && (
+               <button
+                 type="button"
+                 onClick={() => setEditor({ enfoque: null })}
+                 disabled={!!zipProgress || !!wmAll || uniendo}
+                 className="w-full rounded-[2rem] border border-twitch/40 bg-[linear-gradient(120deg,rgba(var(--color-accent-rgb),0.16),rgba(var(--color-accent-rgb),0.04))] hover:bg-twitch/[0.14] p-5 flex items-center gap-4 text-left transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
+               >
+                 <span className="p-3 rounded-2xl bg-twitch text-[var(--color-accent-ink)] shrink-0 group-hover:scale-105 transition-transform shadow-lg shadow-twitch/25">
+                   <Scissors className="w-5 h-5" />
+                 </span>
+                 <span className="min-w-0 flex-1">
+                   <span className="block text-sm font-black uppercase tracking-widest text-white">{t.ed_title || 'Clip editor'}</span>
+                   <span className="block text-xs text-gray-400 mt-0.5">{t.ed_card || 'Trim, split, reorder, change speed or volume and export, without leaving this page.'}</span>
+                 </span>
+                 <ArrowRight className="w-5 h-5 text-twitch shrink-0 group-hover:translate-x-1 transition-transform" />
+               </button>
+             )}
+
              {/* Con un solo clip también: se le puede añadir una intro o un cierre propio. */}
              {clips.some(c => c.status === 'success') && (
                <MergePanel
@@ -1077,7 +1109,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                     );
                   }
                   if (c.data) {
-                    return <ClipResult data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} />;
+                    return <ClipResult data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} onEdit={() => setEditor({ enfoque: c.data!.id })} />;
                   }
                   return null;
                }}
@@ -1102,6 +1134,19 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       <LegalModal type={activeLegal} lang={lang} dictionary={dictionary} onClose={() => setActiveLegal(null)} />
 
       <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 hover:-translate-y-2 active:scale-95 z-50 cursor-pointer group`}><ArrowUp className="w-6 h-6 group-hover:scale-110 transition-transform" /></button>
+      {editor && (
+        <ClipEditor
+          clips={clipsListos}
+          piezas={piezasEditor}
+          setPiezas={setPiezasEditor}
+          enfoque={editor.enfoque}
+          quality={selectedQuality}
+          watermarkOn={marcaActiva}
+          watermarkConfig={wmAllConfig}
+          t={t}
+          onClose={() => setEditor(null)}
+        />
+      )}
     </div>
     </BrandContext.Provider>
   );

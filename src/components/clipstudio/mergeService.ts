@@ -26,6 +26,13 @@ export interface MergeItem {
   propio?: boolean;
   /** Si es una imagen: cuántos segundos se queda en pantalla. */
   imagenSegundos?: number;
+  /** Recorte, en segundos del vídeo original (sin nada: entero). */
+  inicio?: number;
+  fin?: number;
+  /** 0-1 (1 = como viene). */
+  volumen?: number;
+  /** 0.5 = a cámara lenta, 2 = al doble. El tono de la voz se conserva. */
+  velocidad?: number;
 }
 
 export interface MergeOptions {
@@ -86,7 +93,14 @@ export const mergeClipsToVideo = async (
   if (opts.watermark) await ensureWatermarkFont(opts.watermark);
 
   const urls = items.map(i => URL.createObjectURL(i.blob));
-  const duraciones = await Promise.all(urls.map((u, i) => items[i].imagenSegundos ?? leerDuracion(u)));
+  // Lo que dura cada tramo EN EL VÍDEO FINAL: recortado y a su velocidad.
+  const duraciones = await Promise.all(urls.map(async (u, i) => {
+    const it = items[i];
+    if (it.imagenSegundos !== undefined) return it.imagenSegundos;
+    const vel = it.velocidad || 1;
+    const fin = it.fin ?? await leerDuracion(u);
+    return Math.max(0, fin - (it.inicio || 0)) / vel;
+  }));
   const total = duraciones.reduce((a, b) => a + b, 0) || 1;
 
   const height = opts.height || 1080;
@@ -210,14 +224,28 @@ export const mergeClipsToVideo = async (
       const fuente = audioCtx.createMediaElementSource(v);
       const ganancia = audioCtx.createGain();
       fuente.connect(ganancia).connect(destino);
+      const it = items[i];
+      const vel = it.velocidad || 1;
+      const volumen = it.volumen ?? 1;
+      const desde = it.inicio || 0;
+      ganancia.gain.value = volumen;
       // Lo medido antes manda: un WebM sin cabecera dice Infinity aquí.
-      const dur = duraciones[i] || (isFinite(v.duration) ? v.duration : 0);
+      const dur = duraciones[i] || (isFinite(v.duration) ? (v.duration - desde) / vel : 0);
+      /** Hasta dónde se reproduce, en segundos del original. */
+      const hasta = it.fin ?? (desde + dur * vel);
       let ultimoT = 0;
 
+      if (desde > 0) {
+        await new Promise<void>((resolve) => {
+          v.onseeked = () => resolve();
+          v.currentTime = desde;
+        });
+      }
+      v.playbackRate = vel;
       await v.play();
       await new Promise<void>((resolve) => {
         const id = setInterval(() => {
-          if (cancelado || v.ended || (dur > 0 && v.currentTime >= dur - 0.02)) {
+          if (cancelado || v.ended || (hasta > 0 && v.currentTime >= hasta - 0.02)) {
             clearInterval(id);
             resolve();
             return;
@@ -231,10 +259,11 @@ export const mergeClipsToVideo = async (
             resolve();
             return;
           }
-          const t = v.currentTime;
+          // Tiempo dentro del tramo final, no del vídeo original.
+          const t = Math.max(0, (v.currentTime - desde) / vel);
           ultimoT = t;
           dibujarEncajado(v, v.videoWidth, v.videoHeight);
-          if (opts.watermark && !items[i].propio) {
+          if (opts.watermark && !it.propio) {
             drawWatermarkOnCanvas(ctx, opts.watermark, items[i].channelName, width, height, t, dur);
           }
           if (opts.fade && dur > FUNDIDO * 2) {
@@ -244,7 +273,7 @@ export const mergeClipsToVideo = async (
               ctx.fillStyle = `rgba(0,0,0,${Math.min(1, a)})`;
               ctx.fillRect(0, 0, width, height);
             }
-            ganancia.gain.value = 1 - Math.min(1, a);
+            ganancia.gain.value = volumen * (1 - Math.min(1, a));
           }
           if (pistaManual) pistaManual.requestFrame();
           onProgress?.({
