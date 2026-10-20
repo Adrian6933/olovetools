@@ -43,7 +43,8 @@ export const durFinal = (p: Pieza) =>
 export const nuevoId = () => `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`;
 
 export const mmss = (seg: number, decimas = false) => {
-  const s = Math.max(0, seg);
+  // Sin décimas se redondea: 6,99 s es "0:07", no "0:06".
+  const s = decimas ? Math.max(0, seg) : Math.round(Math.max(0, seg));
   const m = Math.floor(s / 60);
   const r = s - m * 60;
   return decimas ? `${m}:${r.toFixed(1).padStart(4, '0')}` : `${m}:${String(Math.floor(r)).padStart(2, '0')}`;

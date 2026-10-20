@@ -175,6 +175,12 @@ export const mergeClipsToVideo = async (
   try {
     if (signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
     recorder.start(250);
+    // Mientras se carga y se busca el punto de cada pieza no se graba: antes
+    // esa espera salía como ~0,7 s de imagen congelada al principio y entre
+    // cortes, y el vídeo duraba más de lo recortado.
+    const grabar = () => { if (recorder.state === 'paused') recorder.resume(); };
+    const esperar = () => { if (recorder.state === 'recording') recorder.pause(); };
+    esperar();
     let acumulado = 0;
 
     for (let i = 0; i < items.length; i += 1) {
@@ -184,6 +190,10 @@ export const mergeClipsToVideo = async (
       const segs = items[i].imagenSegundos;
       if (segs !== undefined) {
         const img = await createImageBitmap(items[i].blob);
+        dibujarEncajado(img, img.width, img.height);
+        if (opts.fade && segs > FUNDIDO * 2) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height); }
+        if (pistaManual) pistaManual.requestFrame();
+        grabar();
         const inicio = performance.now();
         await new Promise<void>((resolve) => {
           const id = setInterval(() => {
@@ -207,6 +217,7 @@ export const mergeClipsToVideo = async (
             });
           }, 1000 / 30);
         });
+        esperar();
         img.close();
         acumulado += segs;
         continue;
@@ -242,6 +253,12 @@ export const mergeClipsToVideo = async (
         });
       }
       v.playbackRate = vel;
+      // El primer fotograma de la pieza ya en el lienzo antes de volver a grabar.
+      dibujarEncajado(v, v.videoWidth, v.videoHeight);
+      // Con fundidos la pieza empieza en negro: sin esto asomaba un fotograma.
+      if (opts.fade && dur > FUNDIDO * 2) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height); }
+      if (pistaManual) pistaManual.requestFrame();
+      grabar();
       await v.play();
       await new Promise<void>((resolve) => {
         const id = setInterval(() => {
@@ -285,6 +302,7 @@ export const mergeClipsToVideo = async (
           });
         }, 1000 / 60);
       });
+      esperar();
       try { v.pause(); } catch { /* */ }
       fuente.disconnect();
       v.removeAttribute('src');

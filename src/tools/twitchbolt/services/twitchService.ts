@@ -1,13 +1,19 @@
 import { ClipData, Resolution } from "../types";
 import { noteRoute, usableProxies } from "./route";
 
+// El de la web de Twitch va primero: en octubre de 2026 los otros cuatro
+// devuelven 400, y probarlos antes llenaba la consola de errores rojos y
+// retrasaba cada clip. Se quedan de reserva por si ese deja de valer.
 const CLIENT_IDS = [
+    "kimne78kx3ncx6brgo4mv6wki5h1ko",
     "ue6666qo983sx6so1c0vnaz41db287",
     "kd1unb4r3yd4g17k2488dbw3v89usf",
-    "kimne78kx3ncx6brgo4mv6wki5h1ko",
     "jzkbprff40iqj646a697cyrvl0zt2m6",
     "7tk7hk3hyx098935r20s880r66e92b"
 ];
+/** El último que funcionó se prueba primero en el siguiente clip. */
+let clientIdBueno: string | null = null;
+const idsEnOrden = () => clientIdBueno ? [clientIdBueno, ...CLIENT_IDS.filter(id => id !== clientIdBueno)] : CLIENT_IDS;
 
 const GQL_ENDPOINT = "https://gql.twitch.tv/gql";
 
@@ -66,7 +72,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   // preguntando a los demás relés, que darían la misma respuesta.
   let confirmedMissing = false;
   for (const makeProxyUrl of usableProxies(GQL_PROXIES)) {
-      for (const clientId of CLIENT_IDS) {
+      for (const clientId of idsEnOrden()) {
           try {
               const res = await fetch(makeProxyUrl(GQL_ENDPOINT), {
                   method: 'POST',
@@ -79,7 +85,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
               if (res.ok) {
                   const json = await res.json();
                   const data = json.contents ? JSON.parse(json.contents) : json;
-                  if (data.data?.clip) { responseData = data.data.clip; break; }
+                  if (data.data?.clip) { responseData = data.data.clip; clientIdBueno = clientId; break; }
                   if (data.data && data.data.clip === null && !data.errors) { confirmedMissing = true; break; }
               }
           } catch (e) {}
