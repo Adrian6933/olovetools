@@ -606,6 +606,15 @@ import ru_framebolt from './ru/framebolt';
 import hi_framebolt from './hi/framebolt';
 import ja_framebolt from './ja/framebolt';
 import zh_framebolt from './zh/framebolt';
+import en_clipEditor from './en/clip-editor';
+import es_clipEditor from './es/clip-editor';
+import fr_clipEditor from './fr/clip-editor';
+import de_clipEditor from './de/clip-editor';
+import pt_clipEditor from './pt/clip-editor';
+import ru_clipEditor from './ru/clip-editor';
+import hi_clipEditor from './hi/clip-editor';
+import ja_clipEditor from './ja/clip-editor';
+import zh_clipEditor from './zh/clip-editor';
 
 export const hubDictionary: Record<string, any> = {
   en: en_hub,
@@ -1363,7 +1372,19 @@ export const frameboltDictionary: Record<string, any> = {
   zh: zh_framebolt,
 };
 
-export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'entropy-bolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow' | 'jwt-bolt' | 'qr-reader' | 'framebolt') => {
+export const clipEditorDictionary: Record<string, any> = {
+  en: en_clipEditor,
+  es: es_clipEditor,
+  fr: fr_clipEditor,
+  de: de_clipEditor,
+  pt: pt_clipEditor,
+  ru: ru_clipEditor,
+  hi: hi_clipEditor,
+  ja: ja_clipEditor,
+  zh: zh_clipEditor,
+};
+
+export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'kickbolt' | 'hub' | 'pastesnap' | 'formatflow' | 'compresssnap' | 'backgroundremover' | 'pdf-flow' | 'recordsnap' | 'qr-bolt' | 'codecard' | 'cropsnap' | 'css-designer' | 'json-flow' | 'socialbolt' | 'tts-bolt' | 'gif-bolt' | 'audiosnap' | 'drawsnap' | 'diffsnap' | 'watermark-snap' | 'favicon-bolt' | 'exif-clear' | 'meme-bolt' | 'wordflow' | 'markdown-live' | 'hash-bolt' | 'zip-flow' | 'regex-flow' | 'lottie-viewer' | 'svg-optimizer' | 'graph-flow' | 'url-bolt' | 'base64-bolt' | 'uuid-generator' | 'list-mixer' | 'html-sanitizer' | 'colorsnap' | 'hex-to-rgb' | 'aspect-ratio' | 'unitflow' | 'sql-flow' | 'cron-flow' | 'xml-json' | 'binary-flow' | 'morse-flow' | 'epoch-flow' | 'time-bolt' | 'device-test' | 'lorem-flow' | 'key-doctor' | 'whiteboard-flow' | 'subtitles-bolt' | 'entropy-bolt' | 'whois-bolt' | 'framesnap' | 'cleansnap' | 'klipy' | 'clip-flow' | 'jwt-bolt' | 'qr-reader' | 'framebolt' | 'clip-editor') => {
   const dictionaryObj = 
     tool === 'clipy' ? clipyDictionary : 
     tool === 'twitchbolt' ? twitchboltDictionary : 
@@ -1427,6 +1448,7 @@ export const useTranslation = (lang: Language, tool: 'clipy' | 'twitchbolt' | 'k
     tool === 'jwt-bolt' ? jwtBoltDictionary :
     tool === 'qr-reader' ? qrReaderDictionary :
     tool === 'framebolt' ? frameboltDictionary :
+    tool === 'clip-editor' ? clipEditorDictionary :
     hubDictionary;
     
   const currentDict = dictionaryObj[lang] || dictionaryObj['en'];

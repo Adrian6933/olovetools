@@ -268,8 +268,8 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
             orden al lado la tarjeta es más estrecha y se apila antes. */}
         <div className="grid grid-cols-1 @3xl:grid-cols-12">
           {/* PREVIEW LEFT */}
-          <div className="@3xl:col-span-7 p-6 @lg:p-8 @4xl:p-10 border-b @3xl:border-b-0 @3xl:border-r border-white/5">
-             <div className="relative rounded-2xl overflow-hidden aspect-video bg-black mb-6 group/video">
+          <div className="@3xl:col-span-7 p-5 @lg:p-6 @4xl:p-7 border-b @3xl:border-b-0 @3xl:border-r border-white/5">
+             <div className="relative rounded-2xl overflow-hidden aspect-video bg-black mb-5 group/video">
                 {isPlaying ? (
                     <video 
                       ref={videoRef}
@@ -293,10 +293,10 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     </>
                 )}
              </div>
-             <h2 className="text-2xl font-black text-white mb-6 leading-tight">{data.title}</h2>
+             <h2 className="text-xl font-black text-white mb-4 leading-tight">{data.title}</h2>
              <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                    <img src={data.broadcasterImg} alt={data.broadcaster} loading="lazy" decoding="async" className="w-12 h-12 rounded-full border-2 border-twitch/50" />
+                    <img src={data.broadcasterImg} alt={data.broadcaster} loading="lazy" decoding="async" className="w-10 h-10 rounded-full border-2 border-twitch/50" />
                     <div>
                         <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-0.5">{t.streamer}</p>
                         <p className="text-lg font-bold text-white leading-none">{data.broadcaster}</p>
@@ -307,10 +307,37 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     <p className="text-xs font-bold text-gray-500 flex items-center gap-2 justify-end"><Calendar className="w-3.5 h-3.5" /> {data.date}</p>
                 </div>
              </div>
+             {/* Editar a la izquierda y marca de agua a la derecha, bajo el
+                 canal: la columna de la derecha queda solo para descargar. */}
+             <div className="flex items-center justify-between gap-3 mt-5 pt-5 border-t border-white/5">
+               {onEdit ? (
+                 <button
+                   type="button"
+                   onClick={onEdit}
+                   className="h-10 px-4 rounded-xl flex items-center gap-2 border text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40"
+                 >
+                   <Scissors className="w-4 h-4 text-twitch" />
+                   {t.ed_open_clip || 'Trim / edit'}
+                 </button>
+               ) : <span />}
+               <button
+                 type="button"
+                 onClick={wmAbierto ? () => setWmAbierto(false) : abrirWatermark}
+                 aria-expanded={wmAbierto}
+                 className={`h-10 px-4 rounded-xl flex items-center gap-2 border text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
+                   wmAbierto
+                     ? 'bg-twitch text-[var(--color-accent-ink)] border-twitch shadow-lg shadow-twitch/20'
+                     : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-white/10'
+                 }`}
+               >
+                 <Sparkles className="w-4 h-4" />
+                 {t.watermarkOpen || 'Add a watermark'}
+               </button>
+             </div>
           </div>
 
           {/* DOWNLOADS RIGHT */}
-          <div className="@3xl:col-span-5 p-6 @lg:p-8 @4xl:p-10 bg-[#0c0c0e]/50 grid grid-cols-1 @md:grid-cols-2 @3xl:flex @3xl:flex-col justify-center gap-3 @3xl:gap-4">
+          <div className="@3xl:col-span-5 p-5 @lg:p-6 @4xl:p-7 bg-[#0c0c0e]/50 grid grid-cols-1 @md:grid-cols-2 @3xl:flex @3xl:flex-col justify-center gap-3">
              {data.resolutions.map((res, i) => {
                 const state = downloadingRes[res.quality];
                 const isDownloading = state !== undefined;
@@ -325,7 +352,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     <button
                         key={res.quality}
                         onClick={() => isDownloading ? handleCancelDownload(res.quality) : handleDownload(res)}
-                        className={`w-full group/btn relative rounded-2xl p-5 text-left flex items-center justify-between border border-white/5 transition-all overflow-hidden cursor-pointer active:scale-[0.98] ${i === 0 ? 'bg-twitch/5 border-twitch/20 shadow-lg shadow-twitch/5 hover:bg-twitch/10' : 'bg-dark-700 hover:bg-dark-600 hover:border-white/10'}`}
+                        className={`w-full group/btn relative rounded-2xl p-4 text-left flex items-center justify-between border border-white/5 transition-all overflow-hidden cursor-pointer active:scale-[0.98] ${i === 0 ? 'bg-twitch/5 border-twitch/20 shadow-lg shadow-twitch/5 hover:bg-twitch/10' : 'bg-dark-700 hover:bg-dark-600 hover:border-white/10'}`}
                     >
                         {isDownloading && (
                             <div 
@@ -369,28 +396,6 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                 );
              })}
 
-             {onEdit && (
-               <button
-                 onClick={onEdit}
-                 className="w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40"
-               >
-                 <Scissors className="w-4 h-4 text-twitch" />
-                 {t.ed_open_clip || 'Trim / edit'}
-               </button>
-             )}
-
-             <button
-               onClick={wmAbierto ? () => setWmAbierto(false) : abrirWatermark}
-               aria-expanded={wmAbierto}
-               className={`w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-4 flex items-center justify-center gap-2.5 border text-xs font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
-                 wmAbierto
-                   ? 'bg-twitch text-[var(--color-accent-ink)] border-twitch shadow-lg shadow-twitch/20'
-                   : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-white/10'
-               }`}
-             >
-               <Sparkles className="w-4 h-4" />
-               {t.watermarkOpen || 'Add a watermark'}
-             </button>
           </div>
         </div>
 

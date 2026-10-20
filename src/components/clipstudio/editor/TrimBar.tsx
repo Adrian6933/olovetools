@@ -1,6 +1,7 @@
 // La barra de recorte: el vídeo entero en fotogramas, dos tiradores para el
 // tramo que se queda, lo descartado en sombra y una línea donde va el vídeo.
-// Pulsar en la barra lleva el vídeo a ese punto.
+// Pulsar en la barra lleva el vídeo a ese punto. El tramo marcado con
+// entrada y salida (para quitarlo o quedarse con él) va en rojo.
 import React, { useRef, useState } from 'react';
 import { mmss } from './model';
 
@@ -11,6 +12,11 @@ interface Props {
   /** Dónde va el vídeo, en segundos del original. */
   actual: number;
   frames: string[];
+  /** Entrada y salida marcadas (I / O), o null. */
+  marcaA?: number | null;
+  marcaB?: number | null;
+  /** Al coger un tirador: para que deshacer cuente el arrastre como un paso. */
+  onStart?: () => void;
   onChange: (inicio: number, fin: number) => void;
   onSeek: (t: number) => void;
   etiquetaInicio: string;
@@ -19,7 +25,7 @@ interface Props {
 
 const MIN = 0.3;
 
-const TrimBar: React.FC<Props> = ({ total, inicio, fin, actual, frames, onChange, onSeek, etiquetaInicio, etiquetaFin }) => {
+const TrimBar: React.FC<Props> = ({ total, inicio, fin, actual, frames, marcaA = null, marcaB = null, onStart, onChange, onSeek, etiquetaInicio, etiquetaFin }) => {
   const barra = useRef<HTMLDivElement>(null);
   const [cogido, setCogido] = useState<'inicio' | 'fin' | 'cursor' | null>(null);
 
@@ -48,6 +54,7 @@ const TrimBar: React.FC<Props> = ({ total, inicio, fin, actual, frames, onChange
     e.preventDefault();
     e.stopPropagation();
     setCogido(que);
+    if (que !== 'cursor') onStart?.();
     try { (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId); } catch { /* puntero ya suelto */ }
     mover(e.clientX, que);
   };
@@ -62,17 +69,27 @@ const TrimBar: React.FC<Props> = ({ total, inicio, fin, actual, frames, onChange
         onPointerMove={e => { if (cogido) mover(e.clientX, cogido); }}
         onPointerUp={() => setCogido(null)}
         onPointerCancel={() => setCogido(null)}
-        className="relative h-14 rounded-xl overflow-hidden bg-black border border-white/10 cursor-pointer touch-none"
+        className="relative h-14 mx-2 rounded-xl bg-black border border-white/10 cursor-pointer touch-none"
       >
         {/* Fotogramas */}
-        <div className="absolute inset-0 flex">
+        <div className="absolute inset-0 flex rounded-[inherit] overflow-hidden">
           {frames.length > 0
             ? frames.map((f, i) => <img key={i} src={f} alt="" draggable={false} className="h-full flex-1 min-w-0 object-cover" />)
             : <div className="flex-1 bg-white/5 animate-pulse" />}
         </div>
         {/* Lo que se descarta, en sombra */}
-        <div className="absolute inset-y-0 left-0 bg-black/70" style={{ width: pct(inicio) }} />
-        <div className="absolute inset-y-0 right-0 bg-black/70" style={{ width: `calc(100% - ${pct(fin)})` }} />
+        <div className="absolute inset-y-0 left-0 bg-black/75 rounded-l-[inherit]" style={{ width: pct(inicio) }} />
+        <div className="absolute inset-y-0 right-0 bg-black/75 rounded-r-[inherit]" style={{ width: `calc(100% - ${pct(fin)})` }} />
+        {/* Tramo marcado */}
+        {marcaA !== null && marcaB !== null && (
+          <div
+            className="absolute inset-y-0 bg-red-500/35 border-x-2 border-red-400 pointer-events-none bg-[repeating-linear-gradient(135deg,transparent_0_6px,rgba(0,0,0,0.25)_6px_12px)]"
+            style={{ left: pct(Math.min(marcaA, marcaB)), width: `calc(${pct(Math.max(marcaA, marcaB))} - ${pct(Math.min(marcaA, marcaB))})` }}
+          />
+        )}
+        {[marcaA, marcaB].map((m, i) => m !== null && (marcaA === null || marcaB === null) && (
+          <div key={i} className="absolute inset-y-0 w-0.5 bg-red-400 pointer-events-none" style={{ left: pct(m) }} />
+        ))}
         {/* El tramo que se queda */}
         <div className="absolute inset-y-0 border-y-[3px] border-twitch pointer-events-none" style={{ left: pct(inicio), width: `calc(${pct(fin)} - ${pct(inicio)})` }} />
         {/* Tiradores */}
@@ -90,13 +107,15 @@ const TrimBar: React.FC<Props> = ({ total, inicio, fin, actual, frames, onChange
               const d = e.key === 'ArrowLeft' ? -paso : e.key === 'ArrowRight' ? paso : 0;
               if (!d) return;
               e.preventDefault();
+              e.stopPropagation();
+              onStart?.();
               if (lado === 'inicio') onChange(Math.max(0, Math.min(fin - MIN, inicio + d)), fin);
               else onChange(inicio, Math.min(total, Math.max(inicio + MIN, fin + d)));
             }}
             onPointerDown={e => empezar(e, lado)}
             onPointerMove={e => { if (cogido === lado) mover(e.clientX, lado); }}
             onPointerUp={() => setCogido(null)}
-            className={`absolute inset-y-0 w-4 -ml-2 z-10 flex items-center justify-center cursor-ew-resize touch-none outline-none group`}
+            className={`absolute -inset-y-1 w-6 -ml-3 z-10 flex items-center justify-center cursor-ew-resize touch-none outline-none group`}
             style={{ left: pct(lado === 'inicio' ? inicio : fin) }}
           >
             <span className={`h-full w-3 rounded-md bg-twitch flex items-center justify-center shadow-lg group-focus-visible:ring-2 ring-white ${cogido === lado ? 'scale-x-125' : ''}`}>
@@ -107,7 +126,7 @@ const TrimBar: React.FC<Props> = ({ total, inicio, fin, actual, frames, onChange
         {/* Dónde va el vídeo */}
         <div className="absolute inset-y-0 w-0.5 bg-white shadow-[0_0_6px_rgba(0,0,0,0.9)] pointer-events-none z-20" style={{ left: pct(actual) }} />
       </div>
-      <div className="flex justify-between text-[11px] font-mono font-bold">
+      <div className="flex justify-between text-[11px] font-mono font-bold px-2">
         <span className="text-twitch">{mmss(inicio, true)}</span>
         <span className="text-gray-500">{mmss(fin - inicio, true)}</span>
         <span className="text-twitch">{mmss(fin, true)}</span>

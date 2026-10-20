@@ -1,0 +1,172 @@
+export default {
+  "title": "Clip Editor",
+  "tagline": "Trim, split, reorder and join your own videos and images, change the speed or the volume of each piece and export one video or a ZIP. It runs in your browser: no install, no account, nothing uploaded.",
+  "heroBadge": "No install, no account, no upload",
+  "resetHint": "Start over",
+  "seo_title": "Clip Editor | Free Online Video Editor: Trim, Split and Join",
+  "seo_description": "Free online video editor in your browser: trim, split, reorder and join videos and images, change speed and volume, and export one MP4 or a ZIP. No upload, no account, no watermark.",
+  "seoHeroTitle": "A small video editor that opens instantly",
+  "seoHeroText": "For the edits that do not need CapCut or Premiere: cut the boring start of a recording, join three clips with a title card in between, speed up a slow part or mute a noisy one. Drop the files, edit on a timeline and download the result.",
+  "seoHeroList": [
+    "Trim and split",
+    "Speed 0.5x to 2x",
+    "Images as title cards",
+    "One video or a ZIP"
+  ],
+  "seoBrowserSpeedTitle": "Everything happens on your machine",
+  "seoBrowserSpeedText": "Your browser decodes the files, plays the preview and records the export. There is no queue on a server and no file size limit set by an upload form: the only limits are your memory and your patience.",
+  "seoUseCaseTitle": "What people use it for",
+  "seoUseCaseText": "Highlight reels from stream clips, joining phone videos into one, cutting a screen recording before sending it, adding an intro image or an outro, making a slideshow of photos, or splitting one long clip into several short ones for social media.",
+  "seoPrivacyTitle": "Nothing is uploaded",
+  "seoPrivacyText": "The videos never leave your device. There is no account, no project stored on a server and no watermark on the result. Close the tab and the edit is gone from everywhere.",
+  "seoKeywordsTitle": "Related searches",
+  "seoKeywords": [
+    "online video editor",
+    "trim video online",
+    "join videos online",
+    "cut video in browser",
+    "free video editor no watermark",
+    "CapCut alternative"
+  ],
+  "features": [
+    {
+      "title": "Trim and split",
+      "text": "Drag the handles on a strip of frames, or set the start and end at the playhead. Split a piece in two at the exact point and keep both halves."
+    },
+    {
+      "title": "Timeline you can reorder",
+      "text": "Every video and image is a piece on the timeline. Drag them into any order, duplicate one or remove it, and play the whole edit back to back."
+    },
+    {
+      "title": "Speed and volume",
+      "text": "Each piece has its own speed, from 0.5x to 2x, its own volume and a mute button, so a loud clip and a quiet one end up balanced."
+    },
+    {
+      "title": "Images as cards",
+      "text": "Add a photo, a logo or a title card and choose how many seconds it stays on screen, from 1 to 30. Good for intros, outros and slideshows."
+    },
+    {
+      "title": "One video or a ZIP",
+      "text": "Export everything as a single 1080p video with optional fades between pieces, or every piece as its own file inside a ZIP."
+    },
+    {
+      "title": "Private by design",
+      "text": "No upload, no sign-up and no watermark. The files stay in your browser and the result goes straight to your downloads."
+    }
+  ],
+  "faqTitle": "Frequently asked questions",
+  "faq": [
+    {
+      "question": "Is it really free, with no watermark?",
+      "answer": "Yes. There is no paid tier, no account and nothing stamped on your video. The page is paid for by the ads around the tool, never by marking your result."
+    },
+    {
+      "question": "Are my videos uploaded anywhere?",
+      "answer": "No. The files are opened by your own browser and the export is recorded on your machine. There is no server that receives them, so nothing can be kept, viewed or leaked."
+    },
+    {
+      "question": "Which formats can I add?",
+      "answer": "Any video your browser can play, which in practice means MP4 (H.264), WebM and, in most browsers, MOV. Images can be PNG, JPEG, WebP, GIF or AVIF. If a file cannot be read, the editor tells you which one."
+    },
+    {
+      "question": "What format does the export come out in?",
+      "answer": "MP4 in Chrome, Edge and Safari, and WebM in browsers that cannot record MP4, such as Firefox. The picture is 1920×1080; videos with another shape are fitted inside with black bars instead of being cropped."
+    },
+    {
+      "question": "Why does exporting take as long as the video?",
+      "answer": "The browser records the result while it plays it, in real time, because that is the only way to re-encode video in a web page without a heavy download. A two-minute edit takes about two minutes. Keep the tab visible: browsers pause hidden tabs."
+    },
+    {
+      "question": "How do I cut a part out of the middle?",
+      "answer": "Move the playhead to where the unwanted part starts and press Split (or S), move to where it ends and split again, then select the piece in between and remove it."
+    },
+    {
+      "question": "Can I use it on a phone?",
+      "answer": "Yes, the editor adapts to small screens. Recording the export needs a recent browser and some memory, so long edits are more comfortable on a computer."
+    },
+    {
+      "question": "Does it keep my edit if I close the editor?",
+      "answer": "While the tab stays open, yes: close the editor and open it again and every trim is still there. Reloading or closing the tab clears it, because nothing is saved anywhere else."
+    },
+    {
+      "question": "Can I send clips here from TwitchBolt or KickBolt?",
+      "answer": "Yes. Once your clips are loaded in TwitchBolt or KickBolt, the Open in Clip Editor button passes them over directly, with no download and re-upload in between."
+    }
+  ],
+  "footer_seo_title": "A browser video editor for quick, private edits",
+  "footer_seo_paragraph1": "Clip Editor is the editor built into TwitchBolt and KickBolt, opened up for any file. Drop several videos and images at once and they land on the timeline in that order. From there each piece can be trimmed with handles on a strip of thumbnails, split at the playhead, duplicated, moved earlier or later, sped up or slowed down, made quieter or muted. Play everything to check the result before exporting.",
+  "footer_seo_paragraph2": "The export uses the browser itself: a canvas draws each piece at 1080p and the MediaRecorder API records it with the sound mixed in. That is why it costs nothing and why your files never travel, and also why it is not meant for multi-track projects, colour grading or 4K masters. For those, a desktop editor is still the right tool. For the everyday cut, join and send, this is quicker.",
+  "footerTagline": "Trim, split and join videos in your browser. Nothing uploaded.",
+  "footerCredit": "Part of the oLoveTools suite",
+  "emailCopied": "Copied!",
+  "contactForIdeas": "Contact for ideas and comments:",
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "ui_drop": "Drop your videos and images here, or click to pick them",
+  "ui_formats": "MP4, WebM, MOV and images. Pick several at once: they go onto the timeline in that order. Nothing leaves your device.",
+  "ui_reading": "Reading your files…",
+  "ui_notMedia": "{f} is not a video or an image.",
+  "ui_project": "{n} pieces · {d}",
+  "ui_projectHint": "Your edit stays here while this tab is open. Close the editor and come back to it whenever you want.",
+  "ui_open": "Open the editor",
+  "ui_reset": "Start over",
+  "ctaTwitch": "Bring clips from Twitch",
+  "ctaKick": "Bring clips from Kick",
+  "ed_title": "Clip Editor",
+  "ed_loading": "Loading…",
+  "mergeRecording": "Recording piece",
+  "failedToLoad": "Could not load this file",
+  "wm_close": "Close",
+  "wm_export_paused": "The browser paused the clip to save power and the render stopped. Keep this tab visible and try again.",
+  "cancel": "Cancel",
+  "mergeDone": "Done! The video is in your downloads.",
+  "mergeError": "Could not build the video. Try again, or with fewer clips.",
+  "mergeAddOwn": "Add your own video or image",
+  "mergeImageSecs": "Seconds on screen",
+  "mergeOwnBad": "This browser can't read {f}. Try an MP4 or WebM.",
+  "ed_summary": "{n} pieces · {d}",
+  "ed_keys": "Space play · S split · I start · O end",
+  "ed_empty": "The timeline is empty. Add a video or an image.",
+  "ed_prev": "Previous piece",
+  "ed_next": "Next piece",
+  "ed_play_all": "Play everything",
+  "ed_piece": "Piece {n}",
+  "ed_move_left": "Move earlier",
+  "ed_move_right": "Move later",
+  "ed_trim": "Trim",
+  "ed_start": "Start",
+  "ed_end": "End",
+  "ed_set_start": "Start here",
+  "ed_set_end": "End here",
+  "ed_split": "Split at the playhead",
+  "ed_reset_trim": "Undo the trim",
+  "ed_audio": "Sound",
+  "ed_unmute": "Unmute",
+  "ed_mute": "Mute",
+  "ed_volume": "Volume",
+  "ed_speed": "Speed",
+  "ed_duplicate": "Duplicate",
+  "ed_delete": "Remove",
+  "ed_preparing": "Preparing",
+  "ed_one_video": "One video",
+  "ed_separate": "Separate (ZIP)",
+  "ed_fades": "Fades",
+  "ed_watermark": "Watermark",
+  "ed_export": "Export",
+  "ed_export_hint": "It records in real time, so it takes about as long as the result. Keep this tab open.",
+  "ed_timeline": "Timeline",
+  "ed_kept": "Kept: {d}",
+  "ed_back_1s": "Back 1 second",
+  "ed_back_frame": "Back 1 frame",
+  "ed_fwd_frame": "Forward 1 frame",
+  "ed_fwd_1s": "Forward 1 second",
+  "ed_cut_before": "Remove before",
+  "ed_cut_after": "Remove after",
+  "ed_mark_hint": "Mark where a part starts and where it ends, then remove it or keep only that.",
+  "ed_mark_in": "Mark start",
+  "ed_mark_out": "Mark end",
+  "ed_remove_marked": "Remove this part",
+  "ed_keep_marked": "Keep only this",
+  "ed_clear_marks": "Clear the marks",
+  "ed_keys2": "Space play · ←/→ frame · Q/W remove before/after · I/O mark · S split",
+  "ed_undo": "Undo"
+};

@@ -6,9 +6,10 @@ import { hasPendingHandoff, takeHandoff } from './handoff';
  * feeds it to the tool's normal intake path, then clears the `?handoff=1` flag
  * so a refresh behaves like a plain visit.
  *
- * Safe to call unconditionally: it no-ops when nothing is waiting.
+ * Safe to call unconditionally: it no-ops when nothing is waiting. `more`
+ * holds any extra files (empty unless the sender passed several).
  */
-export function useHandoffIntake(onFile: (file: File, from: string) => void): void {
+export function useHandoffIntake(onFile: (file: File, from: string, more: File[]) => void): void {
   const handler = useRef(onFile);
   handler.current = onFile;
 
@@ -17,7 +18,7 @@ export function useHandoffIntake(onFile: (file: File, from: string) => void): vo
     let cancelled = false;
     takeHandoff().then(result => {
       if (cancelled) return;
-      if (result) handler.current(result.file, result.from);
+      if (result) handler.current(result.file, result.from, result.more);
       window.history.replaceState({}, '', window.location.pathname);
     });
     return () => {

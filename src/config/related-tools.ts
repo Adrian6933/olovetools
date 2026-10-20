@@ -7,10 +7,10 @@
  */
 export const RELATED_TOOLS: Record<string, string[]> = {
   'clipy': ['recordsnap', 'tts-bolt', 'audiosnap', 'subtitles-bolt', 'framesnap', 'klipy'],
-  'twitchbolt': ['kickbolt', 'socialbolt', 'clip-flow'],
+  'twitchbolt': ['kickbolt', 'clip-editor', 'socialbolt', 'clip-flow'],
   'formatflow': ['unitflow', 'codecard', 'css-designer', 'json-flow', 'diffsnap', 'favicon-bolt'],
   'pastesnap': ['compresssnap', 'backgroundremover', 'qr-bolt', 'cropsnap', 'gif-bolt', 'drawsnap'],
-  'kickbolt': ['twitchbolt', 'socialbolt', 'clip-flow'],
+  'kickbolt': ['twitchbolt', 'clip-editor', 'socialbolt', 'clip-flow'],
   'compresssnap': ['pastesnap', 'backgroundremover', 'qr-bolt', 'cropsnap', 'gif-bolt', 'drawsnap'],
   'backgroundremover': ['pastesnap', 'compresssnap', 'qr-bolt', 'cropsnap', 'gif-bolt', 'drawsnap'],
   'pdf-flow': ['zip-flow', 'time-bolt', 'whiteboard-flow', 'formatflow', 'unitflow', 'pastesnap'],
@@ -65,5 +65,6 @@ export const RELATED_TOOLS: Record<string, string[]> = {
   'framesnap': ['clipy', 'recordsnap', 'tts-bolt', 'audiosnap', 'subtitles-bolt', 'klipy'],
   'cleansnap': ['pastesnap', 'compresssnap', 'backgroundremover', 'qr-bolt', 'cropsnap', 'gif-bolt'],
   'klipy': ['clipy', 'recordsnap', 'tts-bolt', 'audiosnap', 'subtitles-bolt', 'framesnap'],
-  'clip-flow': ['twitchbolt', 'kickbolt', 'socialbolt'],
+  'clip-flow': ['twitchbolt', 'kickbolt', 'socialbolt', 'clip-editor'],
+  'clip-editor': ['twitchbolt', 'kickbolt', 'clip-flow', 'framebolt', 'gif-bolt', 'subtitles-bolt'],
 };

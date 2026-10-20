@@ -17,6 +17,7 @@ import JSZip from 'jszip';
 import {
   Scissors, X, Play, Pause, SkipBack, SkipForward, ListVideo, Plus, Copy, Trash2, ChevronLeft, ChevronRight,
   Volume2, VolumeX, RotateCcw, Download, Loader2, Blend, Sparkles, Film, Package, AlertCircle,
+  ChevronsLeft, ChevronsRight, ArrowLeftToLine, ArrowRightToLine, Crop, Undo2,
 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from '../types';
 import { useBrand } from '../brand';
@@ -41,15 +42,29 @@ interface Props {
   watermarkConfig: WatermarkConfig | null;
   t: any;
   onClose: () => void;
+  /**
+   * Sin marca de agua (el editor suelto, con vídeos propios): no hay canal ni
+   * plataforma que firmar, así que el interruptor no se enseña.
+   */
+  sinMarca?: boolean;
 }
 
 const VELOCIDADES = [0.5, 0.75, 1, 1.5, 2];
+/** Lo más corto que puede quedar un trozo al cortar o recortar. */
+const MIN_TRAMO = 0.3;
+const FOTOGRAMA = 1 / 30;
+/** m:ss.cc — con centésimas, para que se note avanzar un fotograma. */
+const reloj = (seg: number) => {
+  const s = Math.max(0, seg);
+  const m = Math.floor(s / 60);
+  return `${m}:${(s - m * 60).toFixed(2).padStart(5, '0')}`;
+};
 
 type Export =
   | { fase: 'preparando'; pct: number }
   | { fase: 'grabando'; pieza: number; total: number; pct: number; queda: number };
 
-const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, quality, watermarkOn, watermarkConfig, t, onClose }) => {
+const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, quality, watermarkOn, watermarkConfig, t, onClose, sinMarca = false }) => {
   const brand = useBrand();
   const tx = (k: string, fb: string) => (typeof t?.[k] === 'string' && t[k]) || fb;
 
@@ -120,6 +135,9 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
 
   const lista = (p: Pieza | null) => !!p && !!fuenteLista(p);
   const pendientesCarga = clips.filter(c => !fuenteLista({ clipId: c.id } as Pieza)).length;
+  // Solo importa si la pieza elegida ya está: el progreso de las demás no
+  // debe recargarla (antes el cursor volvía al inicio con cada avance).
+  const selLista = lista(sel);
 
   // ---- tira de fotogramas de la pieza elegida ----------------------------
   const [frames, setFrames] = useState<string[]>([]);
@@ -131,7 +149,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     let vivo = true;
     tiraDeFotogramas(f.url, sel.total).then(fr => { if (vivo) setFrames(fr); }).catch(() => {});
     return () => { vivo = false; };
-  }, [sel?.id, sel?.total, cargas]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sel?.id, sel?.total, selLista]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ---- reproductor --------------------------------------------------------
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -165,8 +183,8 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
 
   // Al elegir otra pieza (o al terminar de descargarse), se muestra.
   useEffect(() => {
-    if (sel && lista(sel)) cargar(sel);
-  }, [sel?.id, cargas]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (sel && selLista) cargar(sel);
+  }, [sel?.id, selLista]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Volumen y velocidad se aplican al momento mientras suena.
   useEffect(() => {
@@ -187,7 +205,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     if (p.tipo === 'imagen') { imagenDesde.current = performance.now() - (tiempo - p.inicio) * 1000; return; }
     const v = videoRef.current;
     if (!v) return;
-    if (v.currentTime >= p.fin - 0.06) v.currentTime = p.inicio;
+    if (v.currentTime >= p.fin - 0.06 || v.currentTime < p.inicio - 0.01) v.currentTime = p.inicio;
     v.play().catch(() => setReproduciendo(false));
   };
 
@@ -268,29 +286,102 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   };
 
   // ---- edición ------------------------------------------------------------
-  const cambiar = (id: string, parche: Partial<Pieza>) =>
-    setPiezas(prev => prev.map(p => (p.id === id ? { ...p, ...parche } : p)));
+  // Deshacer: antes de cada edición se guarda la lista como estaba. Arrastrar
+  // un tirador guarda una sola vez, al cogerlo, y no en cada movimiento.
+  const historial = useRef<Pieza[][]>([]);
+  const [hayDeshacer, setHayDeshacer] = useState(false);
+  const piezasRef = useRef(piezas);
+  piezasRef.current = piezas;
+  const ultimoGuardado = useRef(0);
+  const guardar = useCallback((agrupar = false) => {
+    const ahora = performance.now();
+    const seguido = agrupar && ahora - ultimoGuardado.current < 700;
+    ultimoGuardado.current = ahora;
+    if (seguido) return;
+    historial.current.push(piezasRef.current);
+    if (historial.current.length > 60) historial.current.shift();
+    setHayDeshacer(true);
+  }, []);
+  const deshacer = () => {
+    const previo = historial.current.pop();
+    setHayDeshacer(historial.current.length > 0);
+    if (!previo) return;
+    parar();
+    setPiezas(previo);
+  };
+  const editar = (fn: (prev: Pieza[]) => Pieza[]) => { guardar(); setPiezas(fn); };
 
-  const puedeCortar = !!sel && sel.tipo !== 'imagen' && tiempo > sel.inicio + 0.3 && tiempo < sel.fin - 0.3;
+  const cambiarSinGuardar = (id: string, parche: Partial<Pieza>) =>
+    setPiezas(prev => prev.map(p => (p.id === id ? { ...p, ...parche } : p)));
+  const cambiar = (id: string, parche: Partial<Pieza>) => { guardar(); cambiarSinGuardar(id, parche); };
+  /** Para deslizadores: varios cambios seguidos se deshacen de una vez. */
+  const cambiarAgrupado = (id: string, parche: Partial<Pieza>) => { guardar(true); cambiarSinGuardar(id, parche); };
+
+  const esVideo = !!sel && sel.tipo !== 'imagen';
+  /** Copia de la pieza que apunta al mismo original (cortar, duplicar). */
+  const hermana = (p: Pieza, parche: Partial<Pieza>): Pieza =>
+    ({ ...p, ...parche, id: nuevoId(), fuente: p.fuente || (p.clipId ? undefined : p.id) });
+
+  const puedeCortar = esVideo && tiempo > sel!.inicio + MIN_TRAMO && tiempo < sel!.fin - MIN_TRAMO;
   const cortar = () => {
     if (!sel || !puedeCortar) return;
     const a = { ...sel, fin: tiempo };
-    const b = { ...sel, id: nuevoId(), inicio: tiempo, fuente: sel.fuente || (sel.clipId ? undefined : sel.id) };
-    setPiezas(prev => prev.flatMap(p => (p.id === sel.id ? [a, b] : [p])));
+    const b = hermana(sel, { inicio: tiempo });
+    editar(prev => prev.flatMap(p => (p.id === sel.id ? [a, b] : [p])));
     setSelId(b.id);
   };
-  const marcarInicio = () => { if (sel && sel.tipo !== 'imagen' && tiempo < sel.fin - 0.3) cambiar(sel.id, { inicio: tiempo }); };
-  const marcarFin = () => { if (sel && sel.tipo !== 'imagen' && tiempo > sel.inicio + 0.3) cambiar(sel.id, { fin: tiempo }); };
+  // "Quitar lo de antes / lo de después" del cursor: el recorte de toda la
+  // vida (Q y W, como en Premiere).
+  const puedeAntes = esVideo && tiempo > sel!.inicio + 0.01 && tiempo < sel!.fin - MIN_TRAMO;
+  const puedeDespues = esVideo && tiempo < sel!.fin - 0.01 && tiempo > sel!.inicio + MIN_TRAMO;
+  const quitarAntes = () => { if (sel && puedeAntes) cambiar(sel.id, { inicio: tiempo }); };
+  const quitarDespues = () => { if (sel && puedeDespues) cambiar(sel.id, { fin: tiempo }); };
+
+  // Tramo marcado con entrada (I) y salida (O): se quita o se deja solo él.
+  const [marcas, setMarcas] = useState<{ a: number | null; b: number | null }>({ a: null, b: null });
+  useEffect(() => { setMarcas({ a: null, b: null }); }, [selId]);
+  const dentro = (t: number) => (sel ? Math.max(sel.inicio, Math.min(sel.fin, t)) : t);
+  const marcarEntrada = () => { if (esVideo) setMarcas(m => ({ ...m, a: dentro(tiempo) })); };
+  const marcarSalida = () => { if (esVideo) setMarcas(m => ({ ...m, b: dentro(tiempo) })); };
+  const tramo = marcas.a !== null && marcas.b !== null && Math.abs(marcas.b - marcas.a) >= 0.1
+    ? { a: Math.min(marcas.a, marcas.b), b: Math.max(marcas.a, marcas.b) }
+    : null;
+  const quitarTramo = () => {
+    if (!sel || !tramo) return;
+    const izq = tramo.a - sel.inicio >= MIN_TRAMO ? { ...sel, fin: tramo.a } : null;
+    const der = sel.fin - tramo.b >= MIN_TRAMO ? hermana(sel, { inicio: tramo.b }) : null;
+    const quedan = [izq, der].filter(Boolean) as Pieza[];
+    editar(prev => prev.flatMap(p => (p.id === sel.id ? quedan : [p])));
+    setMarcas({ a: null, b: null });
+    parar();
+    if (der) setSelId(der.id);
+    else if (izq) setSelId(izq.id);
+    else { const vecina = piezas[selIdx + 1] || piezas[selIdx - 1]; setSelId(vecina?.id ?? null); }
+  };
+  const quedarseConTramo = () => {
+    if (!sel || !tramo) return;
+    cambiar(sel.id, { inicio: tramo.a, fin: tramo.b });
+    setMarcas({ a: null, b: null });
+    buscarEnPieza(tramo.a);
+  };
+
+  /** Mover el cursor a mano: fotograma a fotograma o de segundo en segundo. */
+  const paso = (seg: number) => {
+    if (!sel || sel.tipo === 'imagen') return;
+    if (reproduciendo) parar();
+    buscarEnPieza(tiempo + seg);
+  };
+
   const duplicar = () => {
     if (!sel) return;
-    const copia = { ...sel, id: nuevoId(), fuente: sel.fuente || (sel.clipId ? undefined : sel.id) };
-    setPiezas(prev => prev.flatMap(p => (p.id === sel.id ? [p, copia] : [p])));
+    const copia = hermana(sel, {});
+    editar(prev => prev.flatMap(p => (p.id === sel.id ? [p, copia] : [p])));
     setSelId(copia.id);
   };
   const borrar = () => {
     if (!sel) return;
     const i = selIdx;
-    setPiezas(prev => prev.filter(p => p.id !== sel.id));
+    editar(prev => prev.filter(p => p.id !== sel.id));
     const vecina = piezas[i + 1] || piezas[i - 1];
     setSelId(vecina?.id ?? null);
     parar();
@@ -299,7 +390,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     if (selIdx < 0) return;
     const j = selIdx + paso;
     if (j < 0 || j >= piezas.length) return;
-    setPiezas(prev => {
+    editar(prev => {
       const c = prev.slice();
       [c[selIdx], c[j]] = [c[j], c[selIdx]];
       return c;
@@ -336,7 +427,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   // ---- exportar -----------------------------------------------------------
   const [modo, setModo] = useState<'uno' | 'separado'>('uno');
   const [fundido, setFundido] = useState(true);
-  const [conMarca, setConMarca] = useState(watermarkOn);
+  const [conMarca, setConMarca] = useState(watermarkOn && !sinMarca);
   const [exp, setExp] = useState<Export | null>(null);
   const [errorExp, setErrorExp] = useState<string | null>(null);
   const [hecho, setHecho] = useState(false);
@@ -420,10 +511,17 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
       const en = e.target as HTMLElement;
       if (exp || en?.closest('input, textarea, select, [role="slider"]')) return;
       if (e.key === 'Escape') { onClose(); return; }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); deshacer(); return; }
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.code === 'Space') { e.preventDefault(); reproduciendo ? parar() : reproducir(false); }
       else if (e.key === 's' || e.key === 'S') cortar();
-      else if (e.key === 'i' || e.key === 'I') marcarInicio();
-      else if (e.key === 'o' || e.key === 'O') marcarFin();
+      else if (e.key === 'i' || e.key === 'I') marcarEntrada();
+      else if (e.key === 'o' || e.key === 'O') marcarSalida();
+      else if (e.key === 'q' || e.key === 'Q') quitarAntes();
+      else if (e.key === 'w' || e.key === 'W') quitarDespues();
+      else if (e.key === 'Delete' || e.key === 'Backspace') { if (tramo) quitarTramo(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); paso(e.shiftKey ? -1 : -FOTOGRAMA); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); paso(e.shiftKey ? 1 : FOTOGRAMA); }
     };
     window.addEventListener('keydown', alTeclear);
     return () => window.removeEventListener('keydown', alTeclear);
@@ -455,7 +553,10 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="hidden lg:block text-[10px] text-gray-500 font-bold">{tx('ed_keys', 'Space play · S split · I start · O end')}</span>
+          <span className="hidden xl:block text-[10px] text-gray-500 font-bold">{tx('ed_keys2', 'Space play · ←/→ frame · Q/W remove before/after · I/O mark · S split')}</span>
+          <button type="button" onClick={deshacer} disabled={!hayDeshacer} className="h-9 px-3 rounded-xl border border-white/10 text-xs font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" title="Ctrl+Z">
+            <Undo2 className="w-4 h-4" /><span className="hidden sm:inline">{tx('ed_undo', 'Undo')}</span>
+          </button>
           <button type="button" onClick={onClose} aria-label={tx('wm_close', 'Close')} className="w-9 h-9 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-red-500/15 hover:border-red-500/30 flex items-center justify-center cursor-pointer">
             <X className="w-4 h-4" />
           </button>
@@ -528,35 +629,83 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                   {sel.tipo === 'imagen' ? (
                     <label className="block">
                       <span className="flex justify-between text-xs font-bold text-gray-300 mb-2"><span>{tx('mergeImageSecs', 'Seconds on screen')}</span><span className="font-mono text-twitch">{sel.total}s</span></span>
-                      <input type="range" min={1} max={30} value={sel.total} onChange={e => { const v = parseInt(e.target.value, 10); cambiar(sel.id, { total: v, fin: v }); }} className="w-full accent-twitch h-1.5 cursor-pointer" />
+                      <input type="range" min={1} max={30} value={sel.total} onChange={e => { const v = parseInt(e.target.value, 10); cambiarAgrupado(sel.id, { total: v, fin: v }); }} className="w-full accent-twitch h-1.5 cursor-pointer" />
                     </label>
                   ) : (
                     <>
                       <section className="space-y-3">
-                        <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tx('ed_trim', 'Trim')}</h4>
+                        <div className="flex items-center justify-between gap-2">
+                          <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tx('ed_trim', 'Trim')}</h4>
+                          <span className="text-[10px] font-bold text-gray-500">{tx('ed_kept', 'Kept: {d}').replace('{d}', mmss(sel.fin - sel.inicio, true))}</span>
+                        </div>
                         <TrimBar
                           total={sel.total}
                           inicio={sel.inicio}
                           fin={sel.fin}
                           actual={tiempo}
                           frames={frames}
-                          onChange={(a, b) => cambiar(sel.id, { inicio: a, fin: b })}
+                          marcaA={marcas.a}
+                          marcaB={marcas.b}
+                          onStart={() => guardar()}
+                          onChange={(a, b) => cambiarSinGuardar(sel.id, { inicio: a, fin: b })}
                           onSeek={buscarEnPieza}
                           etiquetaInicio={tx('ed_start', 'Start')}
                           etiquetaFin={tx('ed_end', 'End')}
                         />
+
+                        {/* Dónde está el cursor, y moverlo con precisión */}
+                        <div className="flex items-center gap-1.5">
+                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(-1)} disabled={!selLista} aria-label={tx('ed_back_1s', 'Back 1 second')} title={tx('ed_back_1s', 'Back 1 second') + ' (Shift+←)'}><ChevronsLeft className="w-4 h-4" /></button>
+                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(-FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_back_frame', 'Back 1 frame')} title={tx('ed_back_frame', 'Back 1 frame') + ' (←)'}><ChevronLeft className="w-4 h-4" /></button>
+                          <span className="flex-1 h-9 rounded-xl bg-dark-950 border border-white/10 flex items-center justify-center text-sm font-mono font-black text-white tabular-nums">{reloj(tiempo)}</span>
+                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_fwd_frame', 'Forward 1 frame')} title={tx('ed_fwd_frame', 'Forward 1 frame') + ' (→)'}><ChevronRight className="w-4 h-4" /></button>
+                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(1)} disabled={!selLista} aria-label={tx('ed_fwd_1s', 'Forward 1 second')} title={tx('ed_fwd_1s', 'Forward 1 second') + ' (Shift+→)'}><ChevronsRight className="w-4 h-4" /></button>
+                        </div>
+
+                        {/* Recorte rápido: lo de antes o lo de después del cursor */}
                         <div className="grid grid-cols-2 gap-2">
-                          <button type="button" className={boton + ' justify-center'} onClick={marcarInicio} disabled={!lista(sel)}>[ {tx('ed_set_start', 'Start here')}</button>
-                          <button type="button" className={boton + ' justify-center'} onClick={marcarFin} disabled={!lista(sel)}>{tx('ed_set_end', 'End here')} ]</button>
-                          <button type="button" className={boton + ' justify-center col-span-2 !border-twitch/40 !text-white'} onClick={cortar} disabled={!puedeCortar}>
+                          <button type="button" className={boton + ' justify-center'} onClick={quitarAntes} disabled={!selLista || !puedeAntes} title="Q">
+                            <ArrowLeftToLine className="w-4 h-4 text-twitch" />{tx('ed_cut_before', 'Remove before')}
+                          </button>
+                          <button type="button" className={boton + ' justify-center'} onClick={quitarDespues} disabled={!selLista || !puedeDespues} title="W">
+                            {tx('ed_cut_after', 'Remove after')}<ArrowRightToLine className="w-4 h-4 text-twitch" />
+                          </button>
+                          <button type="button" className={boton + ' justify-center col-span-2 !border-twitch/40 !text-white'} onClick={cortar} disabled={!selLista || !puedeCortar} title="S">
                             <Scissors className="w-4 h-4 text-twitch" />{tx('ed_split', 'Split at the playhead')}
                           </button>
-                          {(sel.inicio > 0.01 || sel.fin < sel.total - 0.01) && (
-                            <button type="button" className={boton + ' justify-center col-span-2'} onClick={() => cambiar(sel.id, { inicio: 0, fin: sel.total })}>
-                              <RotateCcw className="w-3.5 h-3.5" />{tx('ed_reset_trim', 'Undo the trim')}
+                        </div>
+
+                        {/* Tramo marcado: entrada y salida, y qué hacer con él */}
+                        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-2.5 space-y-2">
+                          <p className="text-[11px] font-bold text-gray-400 leading-snug">{tx('ed_mark_hint', 'Mark where a part starts and where it ends, then remove it or keep only that.')}</p>
+                          <div className="grid grid-cols-2 gap-2">
+                            <button type="button" className={boton + ' justify-center' + (marcas.a !== null ? ' !border-red-400/50 !text-white' : '')} onClick={marcarEntrada} disabled={!selLista} title="I">
+                              [ {tx('ed_mark_in', 'Mark start')}{marcas.a !== null && <span className="font-mono text-red-300">{mmss(marcas.a, true)}</span>}
                             </button>
+                            <button type="button" className={boton + ' justify-center' + (marcas.b !== null ? ' !border-red-400/50 !text-white' : '')} onClick={marcarSalida} disabled={!selLista} title="O">
+                              {tx('ed_mark_out', 'Mark end')}{marcas.b !== null && <span className="font-mono text-red-300">{mmss(marcas.b, true)}</span>} ]
+                            </button>
+                          </div>
+                          {tramo && (
+                            <div className="grid grid-cols-2 gap-2">
+                              <button type="button" className={boton + ' justify-center !border-red-400/40 !text-red-200 hover:!bg-red-500/15'} onClick={quitarTramo} title="Supr">
+                                <Trash2 className="w-3.5 h-3.5" />{tx('ed_remove_marked', 'Remove this part')}
+                              </button>
+                              <button type="button" className={boton + ' justify-center'} onClick={quedarseConTramo}>
+                                <Crop className="w-3.5 h-3.5 text-twitch" />{tx('ed_keep_marked', 'Keep only this')}
+                              </button>
+                              <button type="button" className="col-span-2 text-[11px] font-bold text-gray-500 hover:text-white cursor-pointer" onClick={() => setMarcas({ a: null, b: null })}>
+                                {tx('ed_clear_marks', 'Clear the marks')} · {mmss(tramo.b - tramo.a, true)}
+                              </button>
+                            </div>
                           )}
                         </div>
+
+                        {(sel.inicio > 0.01 || sel.fin < sel.total - 0.01) && (
+                          <button type="button" className={boton + ' justify-center w-full'} onClick={() => cambiar(sel.id, { inicio: 0, fin: sel.total })}>
+                            <RotateCcw className="w-3.5 h-3.5" />{tx('ed_reset_trim', 'Undo the trim')}
+                          </button>
+                        )}
                       </section>
 
                       <section className="space-y-3">
@@ -565,7 +714,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                           <button type="button" onClick={() => cambiar(sel.id, { silencio: !sel.silencio })} aria-label={sel.silencio ? tx('ed_unmute', 'Unmute') : tx('ed_mute', 'Mute')} className={`w-9 h-9 rounded-xl border flex items-center justify-center cursor-pointer shrink-0 ${sel.silencio ? 'border-red-400/50 text-red-300 bg-red-500/10' : 'border-white/10 text-gray-300 hover:text-white'}`}>
                             {sel.silencio ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                           </button>
-                          <input type="range" min={0} max={100} value={Math.round(sel.volumen * 100)} disabled={sel.silencio} onChange={e => cambiar(sel.id, { volumen: parseInt(e.target.value, 10) / 100 })} aria-label={tx('ed_volume', 'Volume')} className="flex-1 accent-twitch h-1.5 cursor-pointer disabled:opacity-30" />
+                          <input type="range" min={0} max={100} value={Math.round(sel.volumen * 100)} disabled={sel.silencio} onChange={e => cambiarAgrupado(sel.id, { volumen: parseInt(e.target.value, 10) / 100 })} aria-label={tx('ed_volume', 'Volume')} className="flex-1 accent-twitch h-1.5 cursor-pointer disabled:opacity-30" />
                           <span className="w-10 text-right text-xs font-mono font-bold text-twitch">{sel.silencio ? '0' : Math.round(sel.volumen * 100)}%</span>
                         </div>
                       </section>
@@ -615,7 +764,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                   <div className="flex gap-2">
                     {[
                       { on: fundido, set: setFundido, icon: <Blend className="w-3.5 h-3.5" />, label: tx('ed_fades', 'Fades') },
-                      { on: conMarca, set: setConMarca, icon: <Sparkles className="w-3.5 h-3.5" />, label: tx('ed_watermark', 'Watermark') },
+                      ...(sinMarca ? [] : [{ on: conMarca, set: setConMarca, icon: <Sparkles className="w-3.5 h-3.5" />, label: tx('ed_watermark', 'Watermark') }]),
                     ].map((o, i) => (
                       <button key={i} type="button" role="switch" aria-checked={o.on} onClick={() => o.set(!o.on)} className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border text-[11px] font-bold cursor-pointer ${o.on ? 'border-twitch/50 bg-twitch/10 text-white' : 'border-white/10 text-gray-500 hover:text-white'}`}>
                         {o.icon}{o.label}
@@ -653,7 +802,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
             piezas={piezas}
             seleccionada={selId}
             onSelect={id => { parar(); setSelId(id); }}
-            onReorder={setPiezas}
+            onReorder={next => { guardar(true); setPiezas(next); }}
             posicion={posicion}
             onSeek={tg => { parar(); saltarGlobal(tg); }}
           />

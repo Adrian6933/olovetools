@@ -21,6 +21,8 @@ export interface HandoffRecord {
   /** Slug of the tool that produced the file. */
   from: string;
   createdAt: number;
+  /** Further files, for targets that take several (Clip Editor). */
+  more?: Array<{ blob: Blob; name: string }>;
 }
 
 function openDb(): Promise<IDBDatabase> {
@@ -48,8 +50,13 @@ function tx<T>(mode: IDBTransactionMode, run: (store: IDBObjectStore) => IDBRequ
 }
 
 /** Parks a file for the next tool. Resolves before navigation. */
-export async function putHandoff(blob: Blob, name: string, from: string): Promise<void> {
-  const record: HandoffRecord = { blob, name, from, createdAt: Date.now() };
+export async function putHandoff(
+  blob: Blob,
+  name: string,
+  from: string,
+  more?: Array<{ blob: Blob; name: string }>
+): Promise<void> {
+  const record: HandoffRecord = { blob, name, from, createdAt: Date.now(), more };
   await tx('readwrite', s => s.put(record, KEY));
 }
 
@@ -57,7 +64,7 @@ export async function putHandoff(blob: Blob, name: string, from: string): Promis
  * Reads and clears the pending file. Returns null when there is nothing waiting
  * (or when it is stale), so callers can always run it unconditionally.
  */
-export async function takeHandoff(): Promise<{ file: File; from: string } | null> {
+export async function takeHandoff(): Promise<{ file: File; from: string; more: File[] } | null> {
   try {
     const record = (await tx<HandoffRecord | undefined>('readonly', s => s.get(KEY))) as
       | HandoffRecord
@@ -65,11 +72,11 @@ export async function takeHandoff(): Promise<{ file: File; from: string } | null
     await tx('readwrite', s => s.delete(KEY));
     if (!record?.blob) return null;
     if (Date.now() - record.createdAt > MAX_AGE_MS) return null;
-    const file = new File([record.blob], record.name, {
-      type: record.blob.type || 'image/png',
-      lastModified: Date.now(),
-    });
-    return { file, from: record.from };
+    const toFile = (blob: Blob, name: string) =>
+      new File([blob], name, { type: blob.type || 'image/png', lastModified: Date.now() });
+    const file = toFile(record.blob, record.name);
+    const more = (record.more || []).map(m => toFile(m.blob, m.name));
+    return { file, from: record.from, more };
   } catch {
     // Private-mode Safari and hardened browsers can refuse IndexedDB entirely.
     return null;
@@ -88,10 +95,11 @@ export async function sendToTool(
   lang: string,
   blob: Blob,
   name: string,
-  from: string
+  from: string,
+  more?: Array<{ blob: Blob; name: string }>
 ): Promise<void> {
   try {
-    await putHandoff(blob, name, from);
+    await putHandoff(blob, name, from, more);
     window.location.href = `/${lang.toLowerCase()}/${targetSlug}/?handoff=1`;
   } catch {
     // Without storage we still send the user there; they can re-upload.

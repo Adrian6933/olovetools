@@ -30,6 +30,7 @@ export const TOOL_CTAS: Record<string, ToolCta[]> = {
     { target: 'clip-flow', labels: { en: 'Cut a Twitch clip', es: 'Corta un clip de Twitch', fr: 'Découpez un clip Twitch', de: 'Twitch-Clip zuschneiden', pt: 'Corte um clipe da Twitch', ru: 'Обрежьте клип Twitch', hi: 'Twitch क्लिप काटें', ja: 'Twitchクリップをカット', zh: '剪辑 Twitch 片段' } },
   ],
   twitchbolt: [
+    { target: 'clip-editor', labels: { en: 'Edit and join the clips', es: 'Edita y une los clips', fr: 'Montez et assemblez les clips', de: 'Clips schneiden und verbinden', pt: 'Edite e junte os clipes', ru: 'Смонтируйте и склейте клипы', hi: 'क्लिप एडिट करें और जोड़ें', ja: 'クリップを編集してつなぐ', zh: '编辑并合并片段' } },
     { target: 'clip-flow', labels: { en: 'Cut fragments from the clip', es: 'Corta fragmentos del clip', fr: 'Découpez des fragments du clip', de: 'Fragmente aus dem Clip schneiden', pt: 'Corte trechos do clipe', ru: 'Вырежьте фрагменты клипа', hi: 'क्लिप से हिस्से काटें', ja: 'クリップの一部を切り出す', zh: '从片段中剪出片断' } },
     { target: 'clipy', labels: { en: 'Find popular clips', es: 'Encuentra clips populares', fr: 'Trouvez des clips populaires', de: 'Beliebte Clips finden', pt: 'Encontre clipes populares', ru: 'Найдите популярные клипы', hi: 'लोकप्रिय क्लिप खोजें', ja: '人気クリップを探す', zh: '查找热门片段' } },
   ],
@@ -37,11 +38,16 @@ export const TOOL_CTAS: Record<string, ToolCta[]> = {
     { target: 'kickbolt', labels: { en: 'Download Kick clips', es: 'Descarga clips de Kick', fr: 'Téléchargez des clips Kick', de: 'Kick-Clips herunterladen', pt: 'Baixe clipes do Kick', ru: 'Скачайте клипы Kick', hi: 'Kick क्लिप डाउनलोड करें', ja: 'Kickクリップをダウンロード', zh: '下载 Kick 片段' } },
   ],
   kickbolt: [
+    { target: 'clip-editor', labels: { en: 'Edit and join the clips', es: 'Edita y une los clips', fr: 'Montez et assemblez les clips', de: 'Clips schneiden und verbinden', pt: 'Edite e junte os clipes', ru: 'Смонтируйте и склейте клипы', hi: 'क्लिप एडिट करें और जोड़ें', ja: 'クリップを編集してつなぐ', zh: '编辑并合并片段' } },
     { target: 'klipy', labels: { en: 'Explore Kick clips', es: 'Explora clips de Kick', fr: 'Explorez les clips Kick', de: 'Kick-Clips entdecken', pt: 'Explore clipes do Kick', ru: 'Смотрите клипы Kick', hi: 'Kick क्लिप देखें', ja: 'Kickクリップを探す', zh: '浏览 Kick 片段' } },
   ],
   'clip-flow': [
     { target: 'twitchbolt', labels: { en: 'Download the full clip', es: 'Descarga el clip completo', fr: 'Téléchargez le clip complet', de: 'Kompletten Clip herunterladen', pt: 'Baixe o clipe completo', ru: 'Скачайте клип целиком', hi: 'पूरी क्लिप डाउनलोड करें', ja: 'クリップ全体をダウンロード', zh: '下载完整片段' } },
     { target: 'clipy', labels: { en: 'Find popular clips', es: 'Encuentra clips populares', fr: 'Trouvez des clips populaires', de: 'Beliebte Clips finden', pt: 'Encontre clipes populares', ru: 'Найдите популярные клипы', hi: 'लोकप्रिय क्लिप खोजें', ja: '人気クリップを探す', zh: '查找热门片段' } },
+  ],
+  'clip-editor': [
+    { target: 'gif-bolt', labels: { en: 'Turn it into a GIF', es: 'Conviértelo en GIF', fr: 'Transformez-la en GIF', de: 'Als GIF speichern', pt: 'Transforme em GIF', ru: 'Сделайте GIF', hi: 'इसे GIF बनाएं', ja: 'GIFに変換', zh: '转成 GIF' } },
+    { target: 'framebolt', labels: { en: 'Extract the frames', es: 'Saca los fotogramas', fr: 'Extrayez les images', de: 'Einzelbilder extrahieren', pt: 'Extraia os quadros', ru: 'Извлеките кадры', hi: 'फ़्रेम निकालें', ja: 'フレームを書き出す', zh: '提取视频帧' } },
   ],
   framesnap: [
     { target: 'compresssnap', labels: { en: 'Compress the frame', es: 'Comprime el fotograma', fr: "Compressez l'image", de: 'Frame komprimieren', pt: 'Comprima o quadro', ru: 'Сожмите кадр', hi: 'फ़्रेम संपीड़ित करें', ja: 'フレームを圧縮', zh: '压缩帧图像' } },
