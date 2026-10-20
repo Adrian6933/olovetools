@@ -295,7 +295,7 @@ export default {
   "wm_fontcat_clean": "Schlicht",
   "wm_fontcat_fun": "Verspielt",
   "wm_fontcat_hand": "Handschrift",
-  "wm_style_upright": "Normal",
+  "wm_style_upright": "Gerade",
   "wm_colors": "Farben",
   "wm_radius": "Eckenrundung",
   "wm_effects_text": "Texteffekte",
@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "Ausgang",
   "wm_mode_in_hint": "Wie das Wasserzeichen am Anfang erscheint.",
   "wm_mode_out_hint": "Wie es am Ende des Clips verschwindet.",
-  "wm_mode_loop_hint": "Eine Bewegung, die sich wiederholt, solange es zu sehen ist."
+  "wm_mode_loop_hint": "Eine Bewegung, die sich wiederholt, solange es zu sehen ist.",
+  "wm_fontcat_upright": "Gerade",
+  "mergeAddOwn": "Eigenes Video oder Bild hinzufügen",
+  "mergeOwnHint": "Ein Intro, eine „Abonnieren“-Karte, ein Outro … dann mit den Pfeilen platzieren.",
+  "mergeSequence": "Reihenfolge im Video",
+  "mergeClipN": "Clip {n}",
+  "mergeOwnBadge": "Deins",
+  "mergeAtStart": "Am Anfang",
+  "mergeAtEnd": "Am Ende",
+  "mergeAfterClip": "Nach Clip {n}",
+  "mergeImageSecs": "Sekunden im Bild",
+  "mergeRemove": "Entfernen",
+  "mergeOwnBad": "Dieser Browser kann {f} nicht lesen. Versuch es mit MP4 oder WebM."
 };

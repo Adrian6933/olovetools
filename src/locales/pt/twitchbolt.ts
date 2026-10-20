@@ -295,7 +295,7 @@ export default {
   "wm_fontcat_clean": "Limpas",
   "wm_fontcat_fun": "Divertidas",
   "wm_fontcat_hand": "À mão",
-  "wm_style_upright": "Normal",
+  "wm_style_upright": "Reta",
   "wm_colors": "Cores",
   "wm_radius": "Arredondamento dos cantos",
   "wm_effects_text": "Efeitos do texto",
@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "Saída",
   "wm_mode_in_hint": "Como a marca aparece no início.",
   "wm_mode_out_hint": "Como ela sai no fim do clip.",
-  "wm_mode_loop_hint": "Um movimento que se repete enquanto está na tela."
+  "wm_mode_loop_hint": "Um movimento que se repete enquanto está na tela.",
+  "wm_fontcat_upright": "Retas",
+  "mergeAddOwn": "Adicionar seu vídeo ou imagem",
+  "mergeOwnHint": "Uma intro, um “inscreva-se”, um encerramento… e depois posicione com as setas.",
+  "mergeSequence": "Ordem do vídeo",
+  "mergeClipN": "Clip {n}",
+  "mergeOwnBadge": "Seu",
+  "mergeAtStart": "No início",
+  "mergeAtEnd": "No final",
+  "mergeAfterClip": "Depois do clip {n}",
+  "mergeImageSecs": "Segundos na tela",
+  "mergeRemove": "Remover",
+  "mergeOwnBad": "Este navegador não consegue ler {f}. Tente um MP4 ou WebM."
 };

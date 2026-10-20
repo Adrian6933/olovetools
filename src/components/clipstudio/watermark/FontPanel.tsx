@@ -14,19 +14,25 @@ interface Props {
 }
 
 const FontPanel: React.FC<Props> = ({ config, onChange, channelName, tr }) => {
-  const [cat, setCat] = useState<FontCategory | 'all'>('all');
+  const [cat, setCat] = useState<FontCategory | 'all' | 'upright'>('all');
   const muestra = formatWatermarkText(config, channelName) || channelName;
   const peso = config.fontWeight === '900' ? 900 : config.fontWeight === 'normal' ? 400 : 700;
 
-  const cats: { id: FontCategory | 'all'; label: string }[] = [
+  const cats: { id: FontCategory | 'all' | 'upright'; label: string }[] = [
     { id: 'all', label: tr('wm_fontcat_all', 'All') },
+    { id: 'upright', label: tr('wm_fontcat_upright', 'Upright') },
     { id: 'gaming', label: tr('wm_fontcat_gaming', 'Gaming') },
     { id: 'bold', label: tr('wm_fontcat_bold', 'Bold') },
     { id: 'clean', label: tr('wm_fontcat_clean', 'Clean') },
     { id: 'fun', label: tr('wm_fontcat_fun', 'Fun') },
     { id: 'hand', label: tr('wm_fontcat_hand', 'Handwritten') },
   ];
-  const lista = cat === 'all' ? FONT_CATALOG : FONT_CATALOG.filter(f => f.cat === cat);
+  // Las inclinadas de diseño (a mano, cómic) van al final: entre tantas
+  // seguidas parecía que todo el catálogo estaba en cursiva.
+  const ordenadas = [...FONT_CATALOG.filter(f => !f.slanted), ...FONT_CATALOG.filter(f => f.slanted)];
+  const lista = cat === 'all' ? ordenadas
+    : cat === 'upright' ? ordenadas.filter(f => !f.slanted)
+    : ordenadas.filter(f => f.cat === cat);
 
   return (
     <div className="space-y-6">
@@ -61,7 +67,9 @@ const FontPanel: React.FC<Props> = ({ config, onChange, channelName, tr }) => {
               >
                 <span
                   className="block w-full truncate text-white text-xl leading-tight pt-1"
-                  style={{ fontFamily: getFontCss(f.id), fontWeight: peso, fontStyle: config.fontStyle || 'normal' }}
+                  // Siempre rectas: aquí se elige la letra; la cursiva es un ajuste aparte
+                  // y, puesta, inclinaba TODAS las muestras.
+                  style={{ fontFamily: getFontCss(f.id), fontWeight: peso, fontStyle: 'normal' }}
                 >
                   {muestra}
                 </span>

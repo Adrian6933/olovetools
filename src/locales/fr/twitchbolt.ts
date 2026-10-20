@@ -295,7 +295,7 @@ export default {
   "wm_fontcat_clean": "Sobres",
   "wm_fontcat_fun": "Fun",
   "wm_fontcat_hand": "Manuscrites",
-  "wm_style_upright": "Droit",
+  "wm_style_upright": "Droite",
   "wm_colors": "Couleurs",
   "wm_radius": "Arrondi des coins",
   "wm_effects_text": "Effets du texte",
@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "Sortie",
   "wm_mode_in_hint": "Comment le filigrane apparaît au début.",
   "wm_mode_out_hint": "Comment il part à la fin du clip.",
-  "wm_mode_loop_hint": "Un mouvement qui se répète tant qu’il est à l’écran."
+  "wm_mode_loop_hint": "Un mouvement qui se répète tant qu’il est à l’écran.",
+  "wm_fontcat_upright": "Droites",
+  "mergeAddOwn": "Ajouter ta vidéo ou ton image",
+  "mergeOwnHint": "Une intro, un « abonne-toi », une fin… puis place-la avec les flèches.",
+  "mergeSequence": "Ordre de la vidéo",
+  "mergeClipN": "Clip {n}",
+  "mergeOwnBadge": "À toi",
+  "mergeAtStart": "Au début",
+  "mergeAtEnd": "À la fin",
+  "mergeAfterClip": "Après le clip {n}",
+  "mergeImageSecs": "Secondes à l’écran",
+  "mergeRemove": "Retirer",
+  "mergeOwnBad": "Ce navigateur ne peut pas lire {f}. Essaie un MP4 ou un WebM."
 };

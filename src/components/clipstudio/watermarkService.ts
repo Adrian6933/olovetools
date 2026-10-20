@@ -87,6 +87,8 @@ export interface FontEntry {
   google: string;
   fallback: string;
   cat: FontCategory;
+  /** Inclinada o de trazo a mano por diseño, aunque no se pida cursiva. */
+  slanted?: boolean;
 }
 
 export const FONT_CATALOG: FontEntry[] = [
@@ -99,7 +101,7 @@ export const FONT_CATALOG: FontEntry[] = [
   { id: 'impact', name: 'Anton', family: 'Anton', google: 'Anton', fallback: 'Impact, sans-serif', cat: 'bold' },
   { id: 'teko', name: 'Teko', family: 'Teko', google: 'Teko:wght@400;700', fallback: 'sans-serif', cat: 'bold' },
   { id: 'bungee', name: 'Bungee', family: 'Bungee', google: 'Bungee', fallback: 'sans-serif', cat: 'bold' },
-  { id: 'bangers', name: 'Bangers', family: 'Bangers', google: 'Bangers', fallback: 'cursive', cat: 'bold' },
+  { id: 'bangers', name: 'Bangers', family: 'Bangers', google: 'Bangers', fallback: 'cursive', cat: 'bold', slanted: true },
   { id: 'orbitron', name: 'Orbitron', family: 'Orbitron', google: 'Orbitron:wght@400;700;900', fallback: 'sans-serif', cat: 'gaming' },
   { id: 'audiowide', name: 'Audiowide', family: 'Audiowide', google: 'Audiowide', fallback: 'sans-serif', cat: 'gaming' },
   { id: 'russo', name: 'Russo One', family: 'Russo One', google: 'Russo+One', fallback: 'sans-serif', cat: 'gaming' },
@@ -110,10 +112,55 @@ export const FONT_CATALOG: FontEntry[] = [
   { id: 'monoton', name: 'Monoton', family: 'Monoton', google: 'Monoton', fallback: 'sans-serif', cat: 'fun' },
   { id: 'rubikglitch', name: 'Rubik Glitch', family: 'Rubik Glitch', google: 'Rubik+Glitch', fallback: 'sans-serif', cat: 'fun' },
   { id: 'creepster', name: 'Creepster', family: 'Creepster', google: 'Creepster', fallback: 'cursive', cat: 'fun' },
-  { id: 'handwriting', name: 'Permanent Marker', family: 'Permanent Marker', google: 'Permanent+Marker', fallback: 'cursive', cat: 'hand' },
-  { id: 'pacifico', name: 'Pacifico', family: 'Pacifico', google: 'Pacifico', fallback: 'cursive', cat: 'hand' },
-  { id: 'lobster', name: 'Lobster', family: 'Lobster', google: 'Lobster', fallback: 'cursive', cat: 'hand' },
-  { id: 'caveat', name: 'Caveat', family: 'Caveat', google: 'Caveat:wght@400;700', fallback: 'cursive', cat: 'hand' },
+  { id: 'handwriting', name: 'Permanent Marker', family: 'Permanent Marker', google: 'Permanent+Marker', fallback: 'cursive', cat: 'hand', slanted: true },
+  { id: 'pacifico', name: 'Pacifico', family: 'Pacifico', google: 'Pacifico', fallback: 'cursive', cat: 'hand', slanted: true },
+  { id: 'lobster', name: 'Lobster', family: 'Lobster', google: 'Lobster', fallback: 'cursive', cat: 'hand', slanted: true },
+  { id: 'caveat', name: 'Caveat', family: 'Caveat', google: 'Caveat:wght@400;700', fallback: 'cursive', cat: 'hand', slanted: true },
+  // ---- rectas añadidas: limpias, contundentes, gaming, serif y mono ----
+  { id: 'roboto', name: 'Roboto', family: 'Roboto', google: 'Roboto:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'poppins', name: 'Poppins', family: 'Poppins', google: 'Poppins:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'lexend', name: 'Lexend', family: 'Lexend', google: 'Lexend:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'outfit', name: 'Outfit', family: 'Outfit', google: 'Outfit:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'spacegrotesk', name: 'Space Grotesk', family: 'Space Grotesk', google: 'Space+Grotesk:wght@400;700', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'sora', name: 'Sora', family: 'Sora', google: 'Sora:wght@400;700', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'rubik', name: 'Rubik', family: 'Rubik', google: 'Rubik:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'archivo', name: 'Archivo', family: 'Archivo', google: 'Archivo:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'kanit', name: 'Kanit', family: 'Kanit', google: 'Kanit:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'worksans', name: 'Work Sans', family: 'Work Sans', google: 'Work+Sans:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'dmsans', name: 'DM Sans', family: 'DM Sans', google: 'DM+Sans:wght@400;700;900', fallback: 'sans-serif', cat: 'clean' },
+  { id: 'robotoslab', name: 'Roboto Slab', family: 'Roboto Slab', google: 'Roboto+Slab:wght@400;700;900', fallback: 'serif', cat: 'clean' },
+  { id: 'zillaslab', name: 'Zilla Slab', family: 'Zilla Slab', google: 'Zilla+Slab:wght@400;700', fallback: 'serif', cat: 'clean' },
+  { id: 'cinzel', name: 'Cinzel', family: 'Cinzel', google: 'Cinzel:wght@400;700;900', fallback: 'serif', cat: 'clean' },
+  { id: 'dmserif', name: 'DM Serif', family: 'DM Serif Display', google: 'DM+Serif+Display', fallback: 'serif', cat: 'clean' },
+  { id: 'spacemono', name: 'Space Mono', family: 'Space Mono', google: 'Space+Mono:wght@400;700', fallback: 'monospace', cat: 'clean' },
+  { id: 'plexmono', name: 'IBM Plex Mono', family: 'IBM Plex Mono', google: 'IBM+Plex+Mono:wght@400;700', fallback: 'monospace', cat: 'clean' },
+  { id: 'archivoblack', name: 'Archivo Black', family: 'Archivo Black', google: 'Archivo+Black', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'staatliches', name: 'Staatliches', family: 'Staatliches', google: 'Staatliches', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'fjalla', name: 'Fjalla One', family: 'Fjalla One', google: 'Fjalla+One', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'spartan', name: 'League Spartan', family: 'League Spartan', google: 'League+Spartan:wght@400;700;900', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'passion', name: 'Passion One', family: 'Passion One', google: 'Passion+One:wght@400;700;900', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'barlowcond', name: 'Barlow Condensed', family: 'Barlow Condensed', google: 'Barlow+Condensed:wght@400;700;900', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'bigshoulders', name: 'Big Shoulders', family: 'Big Shoulders Display', google: 'Big+Shoulders+Display:wght@400;700;900', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'unbounded', name: 'Unbounded', family: 'Unbounded', google: 'Unbounded:wght@400;700;900', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'alfaslab', name: 'Alfa Slab One', family: 'Alfa Slab One', google: 'Alfa+Slab+One', fallback: 'serif', cat: 'bold' },
+  { id: 'blackhan', name: 'Black Han Sans', family: 'Black Han Sans', google: 'Black+Han+Sans', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'bowlby', name: 'Bowlby One', family: 'Bowlby One', google: 'Bowlby+One', fallback: 'sans-serif', cat: 'bold' },
+  { id: 'squada', name: 'Squada One', family: 'Squada One', google: 'Squada+One', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'chakra', name: 'Chakra Petch', family: 'Chakra Petch', google: 'Chakra+Petch:wght@400;700', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'exo', name: 'Exo 2', family: 'Exo 2', google: 'Exo+2:wght@400;700;900', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'rajdhani', name: 'Rajdhani', family: 'Rajdhani', google: 'Rajdhani:wght@400;700', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'saira', name: 'Saira', family: 'Saira', google: 'Saira:wght@400;700;900', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'titillium', name: 'Titillium', family: 'Titillium Web', google: 'Titillium+Web:wght@400;700;900', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'oxanium', name: 'Oxanium', family: 'Oxanium', google: 'Oxanium:wght@400;700', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'michroma', name: 'Michroma', family: 'Michroma', google: 'Michroma', fallback: 'sans-serif', cat: 'gaming' },
+  { id: 'sharetech', name: 'Share Tech Mono', family: 'Share Tech Mono', google: 'Share+Tech+Mono', fallback: 'monospace', cat: 'gaming' },
+  { id: 'vt323', name: 'VT323', family: 'VT323', google: 'VT323', fallback: 'monospace', cat: 'gaming' },
+  { id: 'lilita', name: 'Lilita One', family: 'Lilita One', google: 'Lilita+One', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'luckiest', name: 'Luckiest Guy', family: 'Luckiest Guy', google: 'Luckiest+Guy', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'sigmar', name: 'Sigmar One', family: 'Sigmar One', google: 'Sigmar+One', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'titan', name: 'Titan One', family: 'Titan One', google: 'Titan+One', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'fredoka', name: 'Fredoka', family: 'Fredoka', google: 'Fredoka:wght@400;700', fallback: 'sans-serif', cat: 'fun' },
+  { id: 'rubikmono', name: 'Rubik Mono One', family: 'Rubik Mono One', google: 'Rubik+Mono+One', fallback: 'sans-serif', cat: 'fun' },
 ];
 
 const fontEntry = (id: FontFamily): FontEntry =>

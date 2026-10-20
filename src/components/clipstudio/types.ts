@@ -88,12 +88,8 @@ export type TextEffect = 'none' | 'gradient' | 'extrude' | 'double' | 'glitch' |
 
 export type AnimationEasing = 'linear' | 'ease-out' | 'bounce' | 'elastic';
 
-export type FontFamily =
-  | 'sans' | 'montserrat' | 'oswald' | 'serif' | 'mono'
-  | 'bebas' | 'impact' | 'teko' | 'bungee' | 'bangers'
-  | 'orbitron' | 'audiowide' | 'russo' | 'blackops' | 'pixel' | 'silkscreen'
-  | 'righteous' | 'monoton' | 'rubikglitch' | 'creepster'
-  | 'handwriting' | 'pacifico' | 'lobster' | 'caveat';
+/** Id de una tipografía del catálogo (FONT_CATALOG en watermarkService). */
+export type FontFamily = string;
 
 export type FontCategory = 'clean' | 'bold' | 'gaming' | 'fun' | 'hand';
 

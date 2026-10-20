@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "Исчезновение",
   "wm_mode_in_hint": "Как знак появляется в начале.",
   "wm_mode_out_hint": "Как он уходит в конце клипа.",
-  "wm_mode_loop_hint": "Движение, которое повторяется, пока знак на экране."
+  "wm_mode_loop_hint": "Движение, которое повторяется, пока знак на экране.",
+  "wm_fontcat_upright": "Прямые",
+  "mergeAddOwn": "Добавить своё видео или картинку",
+  "mergeOwnHint": "Интро, призыв подписаться, концовка… затем расставьте стрелками.",
+  "mergeSequence": "Порядок в видео",
+  "mergeClipN": "Клип {n}",
+  "mergeOwnBadge": "Ваше",
+  "mergeAtStart": "В начале",
+  "mergeAtEnd": "В конце",
+  "mergeAfterClip": "После клипа {n}",
+  "mergeImageSecs": "Секунд на экране",
+  "mergeRemove": "Убрать",
+  "mergeOwnBad": "Этот браузер не может прочитать {f}. Попробуйте MP4 или WebM."
 };

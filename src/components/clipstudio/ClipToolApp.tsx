@@ -1039,7 +1039,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
              )}
 
 
-             {clips.filter(c => c.status === 'success').length > 1 && (
+             {/* Con un solo clip también: se le puede añadir una intro o un cierre propio. */}
+             {clips.some(c => c.status === 'success') && (
                <MergePanel
                  clips={clips.filter(c => c.status === 'success' && c.data).map(c => c.data!)}
                  quality={selectedQuality}

@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "निकास",
   "wm_mode_in_hint": "शुरुआत में वॉटरमार्क कैसे आता है।",
   "wm_mode_out_hint": "क्लिप के अंत में कैसे जाता है।",
-  "wm_mode_loop_hint": "स्क्रीन पर रहते हुए दोहराने वाली हरकत।"
+  "wm_mode_loop_hint": "स्क्रीन पर रहते हुए दोहराने वाली हरकत।",
+  "wm_fontcat_upright": "सीधे",
+  "mergeAddOwn": "अपना वीडियो या इमेज जोड़ें",
+  "mergeOwnHint": "इंट्रो, \"सब्सक्राइब\" कार्ड, आउट्रो... फिर तीरों से जगह तय करें।",
+  "mergeSequence": "वीडियो का क्रम",
+  "mergeClipN": "क्लिप {n}",
+  "mergeOwnBadge": "आपका",
+  "mergeAtStart": "शुरुआत में",
+  "mergeAtEnd": "अंत में",
+  "mergeAfterClip": "क्लिप {n} के बाद",
+  "mergeImageSecs": "स्क्रीन पर सेकंड",
+  "mergeRemove": "हटाएँ",
+  "mergeOwnBad": "यह ब्राउज़र {f} नहीं पढ़ सकता। MP4 या WebM आज़माएँ।"
 };

@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "Out",
   "wm_mode_in_hint": "How the watermark appears at the start.",
   "wm_mode_out_hint": "How it leaves at the end of the clip.",
-  "wm_mode_loop_hint": "A movement that repeats while it is on screen."
+  "wm_mode_loop_hint": "A movement that repeats while it is on screen.",
+  "wm_fontcat_upright": "Upright",
+  "mergeAddOwn": "Add your own video or image",
+  "mergeOwnHint": "An intro, a \"subscribe\" card, an outro... then place it with the arrows.",
+  "mergeSequence": "Video order",
+  "mergeClipN": "Clip {n}",
+  "mergeOwnBadge": "Yours",
+  "mergeAtStart": "At the start",
+  "mergeAtEnd": "At the end",
+  "mergeAfterClip": "After clip {n}",
+  "mergeImageSecs": "Seconds on screen",
+  "mergeRemove": "Remove",
+  "mergeOwnBad": "This browser can't read {f}. Try an MP4 or WebM."
 };

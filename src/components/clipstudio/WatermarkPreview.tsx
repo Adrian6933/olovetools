@@ -285,7 +285,10 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
         </div>
       </header>
 
-      <div className="flex-1 min-h-0 flex flex-col @4xl:flex-row">
+      {/* Apilado (pantallas estrechas o bajas) todo hace scroll junto: antes el
+          vídeo y los botones se comían la altura y los ajustes quedaban en
+          una franja de pocos píxeles. Lado a lado, cada columna va fija. */}
+      <div className="flex-1 min-h-0 flex flex-col overflow-y-auto @4xl:overflow-hidden @4xl:flex-row">
         {/* ---- El vídeo, lo más grande posible ---- */}
         <div className="shrink-0 @4xl:shrink @4xl:flex-1 min-w-0 flex flex-col gap-3 p-3 md:p-5">
           <div className="relative w-full aspect-video max-h-[42vh] @4xl:max-h-none @4xl:aspect-auto @4xl:flex-1 @4xl:min-h-0 [container-type:size] flex items-center justify-center">
@@ -363,7 +366,7 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
         </div>
 
         {/* ---- Panel de mandos ---- */}
-        <aside className={`${pantallaCompleta ? 'flex-1' : 'h-[68vh]'} @4xl:h-auto @4xl:flex-none ${pantallaCompleta ? '@4xl:w-[400px] @6xl:w-[440px]' : '@4xl:w-[340px] @6xl:w-[360px]'} min-h-0 flex flex-col border-t @4xl:border-t-0 @4xl:border-l border-white/10 bg-[#0e0d12]`}>
+        <aside className={`${pantallaCompleta ? 'flex-1 min-h-[75vh]' : 'h-[68vh]'} @4xl:min-h-0 @4xl:h-auto @4xl:flex-none ${pantallaCompleta ? '@4xl:w-[400px] @6xl:w-[440px]' : '@4xl:w-[340px] @6xl:w-[360px]'} min-h-0 flex flex-col border-t @4xl:border-t-0 @4xl:border-l border-white/10 bg-[#0e0d12]`}>
           <nav className="shrink-0 grid grid-cols-5 gap-1 p-2 border-b border-white/10" role="tablist">
             {pestanas.map(p => (
               <button

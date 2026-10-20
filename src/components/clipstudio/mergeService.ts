@@ -19,6 +19,13 @@ import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 export interface MergeItem {
   blob: Blob;
   channelName: string;
+  /**
+   * Vídeo o imagen que pone la persona (una intro, un "suscríbete"...): no es
+   * de ningún streamer, así que no lleva su marca de agua.
+   */
+  propio?: boolean;
+  /** Si es una imagen: cuántos segundos se queda en pantalla. */
+  imagenSegundos?: number;
 }
 
 export interface MergeOptions {
@@ -42,14 +49,32 @@ export interface MergeProgress {
 
 const FUNDIDO = 0.35;
 
-const leerDuracion = (url: string) =>
+/**
+ * La duración de un vídeo, también cuando la cabecera no la trae. Los WebM
+ * grabados en el navegador (y algunos de OBS) dicen Infinity hasta que se
+ * salta al final: entonces el navegador recorre el archivo y la calcula.
+ */
+export const duracionDe = (v: HTMLVideoElement) =>
   new Promise<number>((resolve) => {
-    const v = document.createElement('video');
-    v.preload = 'metadata';
-    v.onloadedmetadata = () => resolve(isFinite(v.duration) ? v.duration : 0);
-    v.onerror = () => resolve(0);
-    v.src = url;
+    let hecho = false;
+    const fin = (d: number) => { if (!hecho) { hecho = true; resolve(d); } };
+    const mirar = () => {
+      if (isFinite(v.duration) && v.duration > 0) return fin(v.duration);
+      v.ondurationchange = () => { if (isFinite(v.duration) && v.duration > 0) fin(v.duration); };
+      v.currentTime = 1e101;
+    };
+    if (v.readyState >= 1) mirar(); else v.addEventListener('loadedmetadata', mirar, { once: true });
+    v.addEventListener('error', () => fin(0), { once: true });
+    setTimeout(() => fin(0), 8000);
   });
+
+const leerDuracion = (url: string) => {
+  const v = document.createElement('video');
+  v.preload = 'metadata';
+  v.muted = true;
+  v.src = url;
+  return duracionDe(v);
+};
 
 export const mergeClipsToVideo = async (
   items: MergeItem[],
@@ -61,7 +86,7 @@ export const mergeClipsToVideo = async (
   if (opts.watermark) await ensureWatermarkFont(opts.watermark);
 
   const urls = items.map(i => URL.createObjectURL(i.blob));
-  const duraciones = await Promise.all(urls.map(leerDuracion));
+  const duraciones = await Promise.all(urls.map((u, i) => items[i].imagenSegundos ?? leerDuracion(u)));
   const total = duraciones.reduce((a, b) => a + b, 0) || 1;
 
   const height = opts.height || 1080;
@@ -121,10 +146,10 @@ export const mergeClipsToVideo = async (
     audioCtx.close().catch(() => { /* ya cerrado */ });
   };
 
-  /** Encaja el fotograma dentro del lienzo 16:9 sin deformarlo. */
-  const dibujarEncajado = (v: HTMLVideoElement) => {
-    const vw = v.videoWidth || width;
-    const vh = v.videoHeight || height;
+  /** Encaja el fotograma (o la imagen) dentro del lienzo 16:9 sin deformarlo. */
+  const dibujarEncajado = (v: CanvasImageSource, vw0: number, vh0: number) => {
+    const vw = vw0 || width;
+    const vh = vh0 || height;
     const k = Math.min(width / vw, height / vh);
     const dw = vw * k;
     const dh = vh * k;
@@ -140,6 +165,39 @@ export const mergeClipsToVideo = async (
 
     for (let i = 0; i < items.length; i += 1) {
       if (cancelado) break;
+
+      // ---- una imagen: se queda quieta los segundos pedidos, en silencio ----
+      const segs = items[i].imagenSegundos;
+      if (segs !== undefined) {
+        const img = await createImageBitmap(items[i].blob);
+        const inicio = performance.now();
+        await new Promise<void>((resolve) => {
+          const id = setInterval(() => {
+            const t = (performance.now() - inicio) / 1000;
+            if (cancelado || t >= segs) { clearInterval(id); resolve(); return; }
+            dibujarEncajado(img, img.width, img.height);
+            if (opts.fade && segs > FUNDIDO * 2) {
+              const a = t < FUNDIDO ? 1 - t / FUNDIDO : t > segs - FUNDIDO ? 1 - (segs - t) / FUNDIDO : 0;
+              if (a > 0) {
+                ctx.fillStyle = `rgba(0,0,0,${Math.min(1, a)})`;
+                ctx.fillRect(0, 0, width, height);
+              }
+            }
+            if (pistaManual) pistaManual.requestFrame();
+            onProgress?.({
+              index: i + 1,
+              total: items.length,
+              elapsed: acumulado + t,
+              duration: total,
+              pct: Math.min(100, Math.round(((acumulado + t) / total) * 100)),
+            });
+          }, 1000 / 30);
+        });
+        img.close();
+        acumulado += segs;
+        continue;
+      }
+
       const v = document.createElement('video');
       actual = v;
       v.src = urls[i];
@@ -152,7 +210,9 @@ export const mergeClipsToVideo = async (
       const fuente = audioCtx.createMediaElementSource(v);
       const ganancia = audioCtx.createGain();
       fuente.connect(ganancia).connect(destino);
-      const dur = v.duration || duraciones[i] || 0;
+      // Lo medido antes manda: un WebM sin cabecera dice Infinity aquí.
+      const dur = duraciones[i] || (isFinite(v.duration) ? v.duration : 0);
+      let ultimoT = 0;
 
       await v.play();
       await new Promise<void>((resolve) => {
@@ -172,8 +232,9 @@ export const mergeClipsToVideo = async (
             return;
           }
           const t = v.currentTime;
-          dibujarEncajado(v);
-          if (opts.watermark) {
+          ultimoT = t;
+          dibujarEncajado(v, v.videoWidth, v.videoHeight);
+          if (opts.watermark && !items[i].propio) {
             drawWatermarkOnCanvas(ctx, opts.watermark, items[i].channelName, width, height, t, dur);
           }
           if (opts.fade && dur > FUNDIDO * 2) {
@@ -199,7 +260,7 @@ export const mergeClipsToVideo = async (
       fuente.disconnect();
       v.removeAttribute('src');
       v.load();
-      acumulado += dur;
+      acumulado += dur || ultimoT;
     }
   } finally {
     if (recorder.state !== 'inactive') recorder.stop();

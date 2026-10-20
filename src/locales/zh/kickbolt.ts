@@ -295,7 +295,7 @@ export default {
   "wm_fontcat_clean": "简洁",
   "wm_fontcat_fun": "趣味",
   "wm_fontcat_hand": "手写",
-  "wm_style_upright": "常规",
+  "wm_style_upright": "正体",
   "wm_colors": "颜色",
   "wm_radius": "圆角",
   "wm_effects_text": "文字效果",
@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "退出",
   "wm_mode_in_hint": "水印在开头如何出现。",
   "wm_mode_out_hint": "剪辑结束时如何离开。",
-  "wm_mode_loop_hint": "显示期间重复的动作。"
+  "wm_mode_loop_hint": "显示期间重复的动作。",
+  "wm_fontcat_upright": "正体",
+  "mergeAddOwn": "添加你自己的视频或图片",
+  "mergeOwnHint": "片头、“订阅”卡片、片尾……然后用箭头调整位置。",
+  "mergeSequence": "视频顺序",
+  "mergeClipN": "剪辑 {n}",
+  "mergeOwnBadge": "你的",
+  "mergeAtStart": "开头",
+  "mergeAtEnd": "结尾",
+  "mergeAfterClip": "剪辑 {n} 之后",
+  "mergeImageSecs": "显示秒数",
+  "mergeRemove": "移除",
+  "mergeOwnBad": "此浏览器无法读取 {f}。请尝试 MP4 或 WebM。"
 };

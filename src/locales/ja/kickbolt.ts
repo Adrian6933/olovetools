@@ -295,7 +295,7 @@ export default {
   "wm_fontcat_clean": "シンプル",
   "wm_fontcat_fun": "ポップ",
   "wm_fontcat_hand": "手書き",
-  "wm_style_upright": "標準",
+  "wm_style_upright": "直立",
   "wm_colors": "色",
   "wm_radius": "角の丸み",
   "wm_effects_text": "テキスト効果",
@@ -355,5 +355,17 @@ export default {
   "wm_exit_short": "退場",
   "wm_mode_in_hint": "最初にどう現れるか。",
   "wm_mode_out_hint": "クリップの最後にどう消えるか。",
-  "wm_mode_loop_hint": "表示中にくり返す動き。"
+  "wm_mode_loop_hint": "表示中にくり返す動き。",
+  "wm_fontcat_upright": "直立",
+  "mergeAddOwn": "自分の動画や画像を追加",
+  "mergeOwnHint": "イントロや「チャンネル登録してね」、エンディングなど。矢印で位置を調整できます。",
+  "mergeSequence": "動画の順番",
+  "mergeClipN": "クリップ {n}",
+  "mergeOwnBadge": "自分の素材",
+  "mergeAtStart": "最初",
+  "mergeAtEnd": "最後",
+  "mergeAfterClip": "クリップ {n} の後",
+  "mergeImageSecs": "表示秒数",
+  "mergeRemove": "削除",
+  "mergeOwnBad": "このブラウザでは {f} を読み込めません。MP4 か WebM をお試しください。"
 };
