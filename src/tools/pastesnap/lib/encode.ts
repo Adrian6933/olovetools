@@ -28,14 +28,18 @@ export interface EncodeResult {
 
 let worker: Worker | null = null;
 let workerBroken = false;
+let encoderVersion = 0;
 
 function getWorker(): Worker | null {
   if (workerBroken) return null;
   if (!worker) {
     try {
-      worker = new Worker(new URL('./encode.worker.ts', import.meta.url), { type: 'module' });
-      worker.onerror = () => {
+      const instance = new Worker(new URL('./encode.worker.ts', import.meta.url), { type: 'module' });
+      worker = instance;
+      instance.onerror = () => {
+        if (worker !== instance) return;
         workerBroken = true;
+        instance.terminate();
         worker = null;
       };
     } catch {
@@ -73,6 +77,7 @@ async function encodeOnMainThread(bitmap: ImageBitmap, options: EncodeOptions): 
     canvas.toBlob(resolve, format.mime, format.lossy ? options.quality : undefined)
   );
   if (!blob) throw new Error('encode-failed');
+  if (blob.type !== format.mime) throw new Error('unsupported-format');
   return { blob, width: size.width, height: size.height };
 }
 
@@ -83,43 +88,88 @@ let requestCounter = 0;
  * se puede reutilizar después: quien necesite varias salidas debe decodificar
  * una vez por salida.
  */
-export function encodeBitmap(bitmap: ImageBitmap, options: EncodeOptions): Promise<EncodeResult> {
+export async function encodeBitmap(bitmap: ImageBitmap, options: EncodeOptions): Promise<EncodeResult> {
   const format = getFormat(options.format);
   const instance = getWorker();
   if (!instance) return encodeOnMainThread(bitmap, options);
 
+  // Keep the source alive until the worker succeeds. A worker can fail after
+  // postMessage (CSP, unavailable OffscreenCanvas, a failed module download),
+  // when its transferred bitmap can no longer be recovered.
+  let transferable: ImageBitmap;
+  const version = encoderVersion;
+  try { transferable = await createImageBitmap(bitmap); }
+  catch { return encodeOnMainThread(bitmap, options); }
+  if (version !== encoderVersion) {
+    transferable.close();
+    bitmap.close();
+    throw new DOMException('Encoder disposed', 'AbortError');
+  }
+  if (instance !== worker || workerBroken) {
+    transferable.close();
+    return encodeOnMainThread(bitmap, options);
+  }
   const id = `enc-${++requestCounter}`;
-  return new Promise<EncodeResult>((resolve, reject) => {
-    const onMessage = (event: MessageEvent<EncodeResponse>) => {
-      if (event.data.id !== id) return;
-      instance.removeEventListener('message', onMessage);
-      if (event.data.ok && event.data.blob) {
-        resolve({
-          blob: event.data.blob,
-          width: event.data.width || 0,
-          height: event.data.height || 0,
-        });
-      } else {
-        reject(new Error(event.data.error || 'encode-failed'));
-      }
-    };
-    instance.addEventListener('message', onMessage);
+  try {
+    const result = await new Promise<EncodeResult>((resolve, reject) => {
+      const cleanup = () => {
+        instance.removeEventListener('message', onMessage);
+        instance.removeEventListener('error', onError);
+        instance.removeEventListener('messageerror', onError);
+        pending.delete(id);
+      };
+      const fail = (error: Error) => { cleanup(); reject(error); };
+      const onError = () => {
+        if (worker === instance) { workerBroken = true; instance.terminate(); worker = null; }
+        fail(new Error('worker-failed'));
+      };
+      const onMessage = (event: MessageEvent<EncodeResponse>) => {
+        if (event.data.id !== id) return;
+        cleanup();
+        if (event.data.ok && event.data.blob?.type === format.mime) {
+          resolve({
+            blob: event.data.blob,
+            width: event.data.width || 0,
+            height: event.data.height || 0,
+          });
+        } else {
+          reject(new Error(event.data.error || 'encode-failed'));
+        }
+      };
+      instance.addEventListener('message', onMessage);
+      instance.addEventListener('error', onError);
+      instance.addEventListener('messageerror', onError);
+      pending.set(id, fail);
 
-    const request: EncodeRequest = {
-      id,
-      bitmap,
-      mime: format.mime,
-      quality: format.lossy ? options.quality : 1,
-      maxDimension: options.maxDimension,
-      flatten: format.needsFlatten ? options.background : null,
-    };
-    // El bitmap viaja transferido: cero copias de píxeles entre hilos.
-    instance.postMessage(request, [bitmap]);
-  });
+      const request: EncodeRequest = {
+        id,
+        bitmap: transferable,
+        mime: format.mime,
+        quality: format.lossy ? options.quality : 1,
+        maxDimension: options.maxDimension,
+        flatten: format.needsFlatten ? options.background : null,
+      };
+      // El bitmap viaja transferido: cero copias de píxeles entre hilos.
+      try { instance.postMessage(request, [transferable]); }
+      catch { transferable.close(); fail(new Error('worker-failed')); }
+    });
+    bitmap.close();
+    return result;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      bitmap.close();
+      throw error;
+    }
+    return encodeOnMainThread(bitmap, options);
+  }
 }
+
+const pending = new Map<string, (error: Error) => void>();
 
 /** Cierra el worker. Útil al desmontar para no dejar el hilo vivo. */
 export function disposeEncoder(): void {
+  encoderVersion++;
+  for (const fail of [...pending.values()]) fail(new DOMException('Encoder disposed', 'AbortError'));
   worker?.terminate();
   worker = null;
   workerBroken = false;

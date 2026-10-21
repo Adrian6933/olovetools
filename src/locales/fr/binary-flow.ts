@@ -124,5 +124,6 @@ export default {
   "feat5Text": "Quatre encodages de texte, et un dump hexadécimal de tout fichier déposé — lu seulement quand vous le demandez.",
   "feat6Title": "Ne quitte jamais la page",
   "feat6Text": "Toutes les conversions se font dans votre navigateur. Rien n'est téléversé ni stocké.",
-  "scrollTop": "Retour en haut"
+  "scrollTop": "Retour en haut",
+  "operationLimit": "Les décalages à gauche sans largeur fixe sont limités à 65 536 bits pour garder la page réactive. Choisissez une largeur fixe pour les décalages plus grands."
 };

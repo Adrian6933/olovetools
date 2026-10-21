@@ -65,12 +65,12 @@ export default {
   "err_download_failed": "O arquivo não pôde ser baixado. O link dele pode ter expirado: analise a publicação de novo.",
   "err_cancelled": "Cancelado.",
   "err_missing_url": "Nenhum link foi enviado.",
-  "warn_youtube_video": "Do YouTube só há aqui os metadados e as miniaturas: baixar a faixa de vídeo exige decifrar uma assinatura que nenhum navegador resolve de graça.",
+  "warn_youtube_video": "YouTube: miniaturas e dados disponíveis. Este servidor ainda não tem a transferência de vídeo e áudio ativada.",
   "warn_no_media": "Nenhuma mídia encontrada nesta publicação.",
   "supportTitle": "O que funciona de verdade, sem enfeite",
   "supportTiktok": "Completo: vídeo em HD, vídeo sem marca d’água, o original com marca, áudio em MP3, capa, avatar do autor e todas as fotos de um carrossel.",
   "supportTwitter": "Completo: todos os bitrates do vídeo, GIFs animados, fotos na resolução original e o quadro de capa.",
-  "supportYoutube": "Parcial: título, canal e miniaturas em todas as resoluções. A faixa de vídeo em si não está disponível; o cartão explica o motivo.",
+  "supportYoutube": "YouTube: miniaturas e dados disponíveis. Este servidor ainda não tem a transferência de vídeo e áudio ativada.",
   "supportInstagram": "Melhor esforço: o Instagram bloqueia pedidos vindos de servidores, então só algumas publicações públicas se resolvem.",
   "howTitle": "Como funciona",
   "howSteps": [
@@ -106,7 +106,7 @@ export default {
     },
     {
       "title": "Seu link fica aqui",
-      "text": "O endereço vai para a nossa própria função e para mais lugar nenhum: sem proxies CORS de terceiros, sem rastreio e sem guardar nada depois da resposta."
+      "text": "A ligação é enviada ao nosso servidor e à plataforma ou serviço necessário para obter os ficheiros. Não são usados proxies CORS públicos."
     },
     {
       "title": "Encadeado com as outras ferramentas",
@@ -159,7 +159,7 @@ export default {
     },
     {
       "question": "Por que não dá para baixar vídeos do YouTube?",
-      "answer": "Porque não dá para fazer de graça em um navegador nem em um servidor pequeno: as faixas do YouTube vêm protegidas por uma assinatura que muda o tempo todo e precisa do próprio reprodutor para ser decifrada. Em vez de fingir, o SocialBolt entrega os metadados e as miniaturas."
+      "answer": "YouTube: miniaturas e dados disponíveis. Este servidor ainda não tem a transferência de vídeo e áudio ativada."
     },
     {
       "question": "E o Instagram?",
@@ -175,5 +175,22 @@ export default {
     }
   ],
   "footerTagline": "Ferramentas limpas, honestas e rápidas para criadores.",
-  "footerCredit": "Parte da suíte oLoveTools"
+  "footerCredit": "Parte da suíte oLoveTools",
+  "youtubeMode": "Saída do YouTube",
+  "modeVideo": "Vídeo + áudio",
+  "modeAudio": "Áudio (MP3)",
+  "modeMetadata": "Apenas miniaturas",
+  "qualityLabel": "Qualidade máxima do vídeo",
+  "qualityMax": "A melhor disponível",
+  "youtubeAvailable": "A extração de vídeo e áudio está ativada. A disponibilidade depende da fonte.",
+  "youtubeLimited": "YouTube: miniaturas e dados disponíveis. Este servidor ainda não tem a transferência de vídeo e áudio ativada.",
+  "invalidLines": "Reveja estas entradas não suportadas",
+  "duplicatesRemoved": "Ligações duplicadas removidas",
+  "queueLimit": "A fila aceita até 30 ligações. Esvazie-a antes de adicionar mais.",
+  "downloadQueue": "Transferir seleção da fila",
+  "retryFailed": "Tentar novamente as falhadas",
+  "batchDone": "Transferência pronta",
+  "batchFailed": "O lote falhou. Não foi guardado um ZIP incompleto. Tente novamente o ficheiro assinalado.",
+  "saveMetadata": "Guardar dados (.json)",
+  "openOriginal": "Abrir original"
 };

@@ -40,7 +40,7 @@ export function makeStep(op: OpId, alt: boolean): Step {
   const id = nextId(op);
   switch (op) {
     case 'sort':
-      return { id, enabled: true, op: 'sort', kind: 'text', desc: alt, ignoreCase: true };
+      return { id, enabled: true, op: 'sort', kind: 'numeric', desc: alt, ignoreCase: true };
     case 'reverse':
       return { id, enabled: true, op: 'reverse' };
     case 'shuffle':

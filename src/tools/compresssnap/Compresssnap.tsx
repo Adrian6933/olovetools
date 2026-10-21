@@ -31,6 +31,8 @@ import {
   StepChoose, StepDrop, StepRun, StepTake,
 } from './components/Illustrations';
 import { SettingsPanel } from './components/SettingsPanel';
+import { SavedSettings } from '../../components/shared/SavedSettings';
+import { isCompressRecipe } from '../../lib/imageRecipes';
 import { CompareStage } from './components/CompareStage';
 import { NextStepBar } from './components/NextStepBar';
 
@@ -646,6 +648,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
             </div>
 
             <div className="lg:col-span-5 min-w-0 space-y-5">
+              <SavedSettings tool="compresssnap" lang={lang} value={settings} validate={isCompressRecipe} onApply={setSettings} disabled={running} />
               <div className="glass-card rounded-3xl p-5 md:p-6 border border-white/5">
                 <SettingsPanel
                   settings={settings}

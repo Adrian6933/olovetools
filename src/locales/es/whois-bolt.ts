@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "¿Se envía mi consulta a un servidor?",
-      "answer": "Sí, y no puede ser de otra forma. El DNS vive en la red, así que el nombre que escribes viaja por HTTPS al resolutor público que hayas elegido: Google, Cloudflare o DNS.SB. Lo que no ocurre es que la vea ningún servidor nuestro: la petición va directa de tu navegador a ese resolutor y aquí no se guarda nada. El resto de herramientas de este sitio sí son offline de verdad; esta no puede serlo, y lo dice."
+      "answer": "Sí, y no puede ser de otra forma. El DNS vive en la red, así que el nombre que escribes viaja por HTTPS al resolutor público que hayas elegido: Google, Cloudflare o DNS.SB. Lo que no ocurre es que la vea ningún servidor nuestro: la petición va directa de tu navegador a ese resolutor y aquí no se guarda nada. El resto de herramientas de este sitio sí son offline de verdad; esta no puede serlo, y lo dice. Escribe el dominio registrado (example.com). Esta consulta opcional pasa por nuestro servidor hacia IANA y el registro oficial. Se omiten los datos de contacto."
     },
     {
       "question": "¿Por qué el mismo dominio da respuestas distintas?",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google, Cloudflare o DNS.SB, cada uno con el nombre de su operador para que elijas con criterio.",
   "feat6Title": "Honesta con la red",
   "feat6Text": "El DNS no se puede responder sin conexión. La consulta va directa de tu navegador al resolutor que elijas, sin ningún servidor nuestro por medio.",
-  "scrollTop": "Volver arriba"
+  "scrollTop": "Volver arriba",
+  "registrationTitle": "Registro del dominio · RDAP",
+  "registrationLookup": "Consultar registro",
+  "registrationHint": "Escribe el dominio registrado (example.com). Esta consulta opcional pasa por nuestro servidor hacia IANA y el registro oficial. Se omiten los datos de contacto.",
+  "registrationInvalid": "Introduce primero un dominio registrado.",
+  "registrationMissing": "No se ha devuelto un registro. Comprueba que has escrito el dominio registrado, sin subdominios.",
+  "registrationFailed": "El registro no responde o esta extensión no publica RDAP. Inténtalo más tarde.",
+  "registrarLabel": "Registrador",
+  "createdLabel": "Fecha de registro",
+  "expiresLabel": "Caducidad",
+  "updatedLabel": "Último cambio",
+  "registrationUnsigned": "Delegación sin firmar",
+  "registrationSave": "Guardar registro (.json)",
+  "registrationSource": "Fuente oficial",
+  "registrationSigned": "Delegación firmada"
 };

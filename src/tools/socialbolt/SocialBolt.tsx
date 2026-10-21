@@ -33,7 +33,7 @@ import {
   X,
 } from 'lucide-react';
 import { legalTranslations } from '../../locales/legal';
-import type { Asset, AssetKind, Job, Platform, ResolvedMedia, Transfer } from './types';
+import type { Asset, AssetKind, Job, Platform, ResolvedMedia, Transfer, ResolveOptions } from './types';
 import {
   detectPlatform,
   directResult,
@@ -47,7 +47,7 @@ import {
   resolveLink,
   saveBlob,
   splitLinks,
-  zipFiles,
+  inspectLinks,
 } from './lib/socialApi';
 
 interface SocialBoltProps {
@@ -87,6 +87,13 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
   const [manualOpen, setManualOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
+  const [options, setOptions] = useState<ResolveOptions>({ mode: 'auto', quality: '1080' });
+  const [youtubeMedia, setYoutubeMedia] = useState(false);
+  const [batchBusy, setBatchBusy] = useState(false);
+  const [batchMessage, setBatchMessage] = useState('');
+  const batchAbort = useRef<AbortController | null>(null);
+  const operationEpoch = useRef(0);
+  const removedJobs = useRef(new Set<string>());
 
   const resolveAbort = useRef<AbortController | null>(null);
   const transferAborts = useRef<Map<string, AbortController>>(new Map());
@@ -98,7 +105,8 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
 
   // Derivado, no espejado: la versión anterior guardaba esto en estado con un
   // useEffect y provocaba un render extra por cada tecla.
-  const pendingLinks = useMemo(() => splitLinks(input), [input]);
+  const intake = useMemo(() => inspectLinks(input), [input]);
+  const pendingLinks = intake.links;
   const pendingPlatforms = useMemo(() => pendingLinks.map(detectPlatform), [pendingLinks]);
 
   useEffect(() => {
@@ -107,12 +115,21 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch('/api/social?action=capabilities', { signal: controller.signal })
+      .then(r => r.ok ? r.json() : null).then(d => setYoutubeMedia(d?.youtubeMedia === true)).catch(() => {});
+    return () => controller.abort();
+  }, []);
+
   // Al desmontar: nada de peticiones huérfanas escribiendo en estado muerto.
   useEffect(
     () => () => {
       resolveAbort.current?.abort();
       transferAborts.current.forEach(controller => controller.abort());
       transferAborts.current.clear();
+      batchAbort.current?.abort();
+      operationEpoch.current++;
     },
     []
   );
@@ -147,10 +164,12 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
 
       for (const [index, job] of queued.entries()) {
         if (controller.signal.aborted) break;
+        if (removedJobs.current.has(job.key)) continue;
         patchJob(job.key, { status: 'resolving' });
 
         try {
-          const result = await resolveLink(job.url, controller.signal);
+          const result = await resolveLink(job.url, controller.signal, job.options);
+          if (controller.signal.aborted) break;
           patchJob(job.key, {
             status: 'ready',
             result,
@@ -179,9 +198,11 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
   /** Nada se resuelve al pegar: esto solo corre cuando el usuario pulsa el botón. */
   const handleAnalyze = (e?: React.FormEvent) => {
     e?.preventDefault();
+    if (busy) return;
     setFormError('');
 
     const links = splitLinks(input);
+    if (links.length + jobs.length > 30) { setFormError(t.queueLimit); return; }
     if (!links.length) {
       setFormError(t.error_invalid_url || 'Paste a link first.');
       return;
@@ -196,7 +217,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
       known.add(url);
       const platform = detectPlatform(url);
       if (platform === 'unknown') continue;
-      const job: Job = { key: nextJobKey(), url, platform, status: 'queued', selected: [] };
+      const job: Job = { key: nextJobKey(), url, platform, status: 'queued', selected: [], options: { ...options } };
       // Un enlace directo de CDN no necesita resolutor: ya es el archivo.
       if (platform === 'direct') {
         const result = directResult(url);
@@ -212,7 +233,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
     }
 
     setJobs(prev => [...prev, ...directOnes, ...fresh]);
-    setInput('');
+    setInput(intake.invalid.join('\n'));
     if (fresh.length) void runResolve(fresh);
   };
 
@@ -229,6 +250,9 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
   };
 
   const removeJob = (key: string) => {
+    removedJobs.current.add(key);
+    for (const [id, controller] of transferAborts.current) if (id.startsWith(`${key}:`)) controller.abort();
+    batchAbort.current?.abort();
     setJobs(prev => prev.filter(job => job.key !== key));
     setTransfers(prev => {
       const next = { ...prev };
@@ -238,13 +262,19 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
   };
 
   const clearAll = () => {
+    operationEpoch.current++;
     resolveAbort.current?.abort();
+    resolveAbort.current = null;
+    batchAbort.current?.abort();
+    batchAbort.current = null;
     transferAborts.current.forEach(c => c.abort());
     transferAborts.current.clear();
     setJobs([]);
     setTransfers({});
     setBusy(false);
     setFormError('');
+    setBatchMessage('');
+    setBatchBusy(false);
   };
 
   const pasteFromClipboard = async () => {
@@ -278,6 +308,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
       const result = job.result!;
       const name = filenameFor(result, asset);
       const id = `${job.key}:${asset.id}`;
+      if (transferAborts.current.has(id) || removedJobs.current.has(job.key)) return null;
       const controller = new AbortController();
       transferAborts.current.set(id, controller);
 
@@ -297,6 +328,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
         setTransfers(prev =>
           prev[id] ? { ...prev, [id]: { ...prev[id], status: 'done', received: blob.size, total: blob.size } } : prev
         );
+        if (controller.signal.aborted || removedJobs.current.has(job.key)) return null;
         return { blob, name };
       } catch (e) {
         const cancelled = (e as Error).name === 'AbortError';
@@ -305,35 +337,55 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
         );
         return null;
       } finally {
-        transferAborts.current.delete(id);
+        if (transferAborts.current.get(id) === controller) transferAborts.current.delete(id);
       }
     },
     []
   );
 
   const downloadAsset = async (job: Job, asset: Asset) => {
+    const epoch = operationEpoch.current;
     const file = await downloadOne(job, asset);
-    if (file) saveBlob(file.blob, file.name);
+    if (file && epoch === operationEpoch.current) saveBlob(file.blob, file.name);
   };
 
-  const downloadSelected = async (job: Job) => {
-    const result = job.result;
-    if (!result) return;
-    const chosen = result.assets.filter(a => job.selected.includes(a.id));
+  const downloadBatch = async (selection: Job[]) => {
+    if (batchAbort.current || transferAborts.current.size) return;
+    const chosen = selection.flatMap(job => (job.result?.assets || []).filter(a => job.selected.includes(a.id)).map(asset => ({ job, asset })));
     if (!chosen.length) return;
-
-    if (chosen.length === 1) {
-      await downloadAsset(job, chosen[0]);
-      return;
-    }
-
+    const controller = new AbortController();
+    batchAbort.current = controller;
+    setBatchBusy(true);
+    setBatchMessage('');
     const files: { name: string; blob: Blob }[] = [];
-    for (const asset of chosen) {
-      const file = await downloadOne(job, asset);
-      if (file) files.push(file);
+    try {
+      for (const { job, asset } of chosen) {
+        if (controller.signal.aborted) return;
+        const file = await downloadOne(job, asset);
+        if (controller.signal.aborted) return;
+        if (!file) { setBatchMessage(t.batchFailed); return; }
+        files.push(file);
+        setBatchMessage(`${files.length} / ${chosen.length}`);
+      }
+      if (files.length === 1) saveBlob(files[0].blob, files[0].name);
+      else {
+        // Build before saving so clearing/cancelling the queue cannot trigger
+        // a delayed unwanted download while JSZip is still working.
+        const { default: JSZip } = await import('jszip');
+        const zip = new JSZip();
+        files.forEach((file, i) => zip.file(`${String(i + 1).padStart(2, '0')}-${file.name}`, file.blob));
+        const blob = await zip.generateAsync({ type: 'blob' });
+        if (!controller.signal.aborted) saveBlob(blob, 'socialbolt.zip');
+      }
+      if (!controller.signal.aborted) setBatchMessage(t.batchDone);
+    } catch { if (!controller.signal.aborted) setBatchMessage(t.batchFailed); }
+    finally {
+      if (batchAbort.current === controller) { batchAbort.current = null; setBatchBusy(false); }
     }
-    if (files.length) await zipFiles(files, `${result.platform}-${result.baseName || result.id}.zip`.toLowerCase());
   };
+
+  const downloadSelected = (job: Job) => { void downloadBatch([job]); };
+  const selectedCount = jobs.reduce((n, j) => n + (j.status === 'ready' ? j.selected.length : 0), 0);
 
   const cancelTransfer = (id: string) => transferAborts.current.get(id)?.abort();
 
@@ -417,6 +469,22 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
               placeholder={t.placeholder}
               className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-slate-200 outline-none focus:border-indigo-500/60 placeholder:text-slate-600 font-mono text-xs sm:text-sm leading-relaxed resize-y"
             />
+
+            <div className="grid sm:grid-cols-2 gap-3 rounded-2xl bg-indigo-500/5 border border-indigo-500/15 p-4">
+              <label className="text-xs text-slate-400 space-y-2">{t.youtubeMode}
+                <select value={options.mode} onChange={e => setOptions(p => ({ ...p, mode: e.target.value as ResolveOptions['mode'] }))} className="block w-full bg-[#121222] border border-white/10 rounded-xl p-2.5 text-slate-200">
+                  <option value="auto">{t.modeVideo}</option><option value="audio" disabled={!youtubeMedia}>{t.modeAudio}</option><option value="metadata">{t.modeMetadata}</option>
+                </select>
+              </label>
+              <label className="text-xs text-slate-400 space-y-2">{t.qualityLabel}
+                <select value={options.quality} disabled={!youtubeMedia || options.mode !== 'auto'} onChange={e => setOptions(p => ({ ...p, quality: e.target.value as ResolveOptions['quality'] }))} className="block w-full bg-[#121222] border border-white/10 rounded-xl p-2.5 text-slate-200 disabled:opacity-40">
+                  <option value="max">{t.qualityMax}</option>{['2160', '1080', '720', '480', '360'].map(q => <option key={q} value={q}>{q}p</option>)}
+                </select>
+              </label>
+              <p className="sm:col-span-2 text-xs leading-relaxed text-amber-200/80">{youtubeMedia ? t.youtubeAvailable : t.youtubeLimited}</p>
+            </div>
+            {intake.invalid.length > 0 && <div role="status" className="text-xs text-amber-300 border border-amber-500/20 bg-amber-500/5 p-3 rounded-xl break-all"><p>{t.invalidLines} · {intake.invalid.length}</p><ul className="mt-2 space-y-1">{intake.invalid.slice(0, 5).map((s, i) => <li key={i}>{s.slice(0, 160)}</li>)}</ul></div>}
+            {intake.duplicates > 0 && <p className="text-xs text-slate-400">{t.duplicatesRemoved} · {intake.duplicates}</p>}
 
             {/* Detección en vivo, sin lanzar nada */}
             {pendingLinks.length > 0 && (
@@ -521,17 +589,24 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
         {/* Cola de resultados                                               */}
         {/* ================================================================ */}
         {jobs.length > 0 && (
-          <section className="space-y-5">
+          <section className="space-y-5" aria-label={t.queueTitle}>
             <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
               {t.queueTitle} · {jobs.length}
             </h2>
+            <div className="flex flex-wrap gap-3 items-center p-4 rounded-2xl border border-indigo-500/20 bg-indigo-500/5">
+              <span className="text-xs text-emerald-300">{t.status_ready} · {jobs.filter(j => j.status === 'ready').length} / {jobs.length}</span>
+              <button disabled={batchBusy || !selectedCount || Object.values(transfers).some(x => x.status === 'active')} onClick={() => void downloadBatch(jobs)} className="px-4 py-2 bg-indigo-600 rounded-xl text-xs font-bold disabled:opacity-40">{batchBusy ? t.btn_fetching : t.downloadQueue} · {selectedCount}</button>
+              <button disabled={busy || !jobs.some(j => j.status === 'error')} onClick={() => void runResolve(jobs.filter(j => j.status === 'error'))} className="text-xs text-indigo-300 disabled:opacity-40">{t.retryFailed}</button>
+              {batchBusy && <button onClick={() => { batchAbort.current?.abort(); transferAborts.current.forEach(c => c.abort()); setBatchMessage(t.err_cancelled); }} className="text-xs text-red-300">{t.btn_cancel}</button>}
+              <span role="status" className="text-xs text-slate-400">{batchMessage}</span>
+            </div>
             {jobs.map(job => (
               <JobCard
                 key={job.key}
                 job={job}
                 t={t}
                 lang={lang}
-                busy={busy}
+                busy={busy || batchBusy}
                 transfers={transfers}
                 assetLabel={assetLabel}
                 errorText={errorText}
@@ -557,7 +632,7 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
             {[
               { key: 'supportTiktok', platform: 'tiktok' as Platform, full: true },
               { key: 'supportTwitter', platform: 'twitter' as Platform, full: true },
-              { key: 'supportYoutube', platform: 'youtube' as Platform, full: false },
+              { key: youtubeMedia ? 'youtubeAvailable' : 'supportYoutube', platform: 'youtube' as Platform, full: youtubeMedia },
               { key: 'supportInstagram', platform: 'instagram' as Platform, full: false },
             ].map(row => (
               <div key={row.key} className="flex items-start gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5">
@@ -836,7 +911,8 @@ const JobCard: React.FC<JobCardProps> = ({
   const style = PLATFORM_STYLE[job.platform];
   const result = job.result;
   const primary = result?.assets.find(a => job.selected.includes(a.id)) || result?.assets[0];
-  const previewVideo = result?.assets.find(a => a.kind === 'video' && !a.external);
+  const previewVideo = primary?.kind === 'video' && !primary.external ? primary : result?.assets.find(a => a.kind === 'video' && !a.external);
+  const downloading = busy || Object.entries(transfers).some(([id, x]) => id.startsWith(`${job.key}:`) && x.status === 'active');
 
   return (
     <article className="glass-card rounded-3xl border border-white/10 overflow-hidden">
@@ -887,7 +963,7 @@ const JobCard: React.FC<JobCardProps> = ({
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Vista previa */}
             <div className="w-full lg:w-64 shrink-0 space-y-3">
-              {previewVideo ? (
+              {primary?.kind === 'audio' ? <audio controls preload="none" src={primary.url} className="w-full" /> : previewVideo ? (
                 <video
                   src={previewVideo.url}
                   poster={result.thumbnail || undefined}
@@ -1038,13 +1114,15 @@ const JobCard: React.FC<JobCardProps> = ({
               <div className="flex flex-wrap gap-2.5 pt-1">
                 <button
                   onClick={() => onDownloadSelected(job)}
-                  disabled={!job.selected.length}
+                  disabled={!job.selected.length || downloading}
                   className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-black text-xs tracking-wide transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
                 >
                   <Download className="w-4 h-4" />
                   {job.selected.length > 1 ? t.btn_download_zip : t.btn_download_selected}
                   {job.selected.length > 0 && <span className="opacity-70">· {job.selected.length}</span>}
                 </button>
+                <button onClick={() => saveBlob(new Blob([JSON.stringify({ source: job.url, title: result.title, author: result.author, duration: result.duration, stats: result.stats, files: result.assets.map(({ url: _url, ...asset }) => asset) }, null, 2)], { type: 'application/json' }), `${result.platform}-${result.id || 'media'}.json`)} className="px-4 py-2 rounded-xl border border-white/10 text-xs text-slate-300 hover:bg-white/5">{t.saveMetadata}</button>
+                <a href={job.url} target="_blank" rel="noopener noreferrer" className="px-4 py-2 rounded-xl border border-white/10 text-xs text-slate-300 hover:bg-white/5">{t.openOriginal}</a>
               </div>
             </div>
           </div>

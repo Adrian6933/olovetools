@@ -748,7 +748,7 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
               <p className="text-[11px] text-slate-500">
                 {fill(t.wordlistNote || 'List of {n} words · {bits} bits per word', {
                   n: new Intl.NumberFormat(lang || 'en').format(words.length),
-                  bits: Math.log2(words.length).toFixed(2),
+                  bits: new Intl.NumberFormat(lang, { maximumFractionDigits: 2 }).format(Math.log2(words.length)),
                 })}
               </p>
             )}
@@ -838,7 +838,7 @@ export default function EntropyBolt({ lang, dictionary }: EntropyBoltProps) {
             <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
               <div className="text-[10px] tracking-[0.25em] uppercase text-slate-500 font-bold mb-1">{t.entropyLabel || 'Entropy'}</div>
               <div className="text-2xl font-black text-emerald-300 tabular-nums">
-                {analysis.bits.toFixed(1)}
+                {new Intl.NumberFormat(lang, { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(analysis.bits)}
                 <span className="text-sm text-slate-500 font-bold ml-1">{t.bitsShort || 'bits'}</span>
               </div>
               <div className="text-[10px] text-slate-600 mt-1">

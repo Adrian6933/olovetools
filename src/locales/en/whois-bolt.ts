@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "Is my query sent to a server?",
-      "answer": "Yes — it has to be. DNS lives on the network, so the name you type goes over HTTPS to the public resolver you picked: Google, Cloudflare or DNS.SB. What does not happen is any server of ours seeing it: the request goes straight from your browser to that resolver, and nothing is stored here. The rest of the tools on this site really are offline; this one cannot be, and says so."
+      "answer": "Yes — it has to be. DNS lives on the network, so the name you type goes over HTTPS to the public resolver you picked: Google, Cloudflare or DNS.SB. What does not happen is any server of ours seeing it: the request goes straight from your browser to that resolver, and nothing is stored here. The rest of the tools on this site really are offline; this one cannot be, and says so. Enter the registered domain (example.com). This optional query goes through our server to IANA and the authoritative registry. Contact details are omitted."
     },
     {
       "question": "Why does the same domain give different answers?",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google, Cloudflare or DNS.SB, each named with its operator so the choice is informed.",
   "feat6Title": "Honest about the network",
   "feat6Text": "DNS cannot be answered offline. The query goes straight from your browser to the resolver you chose, with no server of ours in between.",
-  "scrollTop": "Back to top"
+  "scrollTop": "Back to top",
+  "registrationTitle": "Domain registration · RDAP",
+  "registrationLookup": "Look up registration",
+  "registrationHint": "Enter the registered domain (example.com). This optional query goes through our server to IANA and the authoritative registry. Contact details are omitted.",
+  "registrationInvalid": "Enter a registered domain first.",
+  "registrationMissing": "No registration was returned. Check that you entered the registered domain, without a subdomain.",
+  "registrationFailed": "The registry is unavailable or this domain extension does not publish RDAP. Try again later.",
+  "registrarLabel": "Registrar",
+  "createdLabel": "Registered",
+  "expiresLabel": "Expires",
+  "updatedLabel": "Last changed",
+  "registrationUnsigned": "Delegation not signed",
+  "registrationSave": "Save registration (.json)",
+  "registrationSource": "Authoritative source",
+  "registrationSigned": "Delegation signed"
 };

@@ -198,10 +198,15 @@ export default function BinaryFlow({ lang, dictionary }: BinaryFlowProps) {
   }, [fitted.raw, precision, signedness]);
 
   const parsedB = useMemo(() => parseInBase(opB, inputBase), [opB, inputBase]);
-  const opResult = useMemo(
-    () => applyOp(fitted.raw, parsedB.error ? 0n : parsedB.value, op, effectiveWidth),
+  const opEvaluation = useMemo(
+    () => {
+      if (parsedB.error && op !== 'not') return { value: 0n, error: 'operand' };
+      try { return { value: applyOp(fitted.raw, parsedB.value, op, effectiveWidth), error: '' }; }
+      catch { return { value: 0n, error: 'limit' }; }
+    },
     [fitted.raw, parsedB, op, effectiveWidth]
   );
+  const opResult = opEvaluation.value;
 
   const numberOutputs = useMemo(() => {
     const shown = signedness === 'signed' && effectiveWidth !== 0 ? fitted.signed : fitted.raw;
@@ -632,14 +637,16 @@ export default function BinaryFlow({ lang, dictionary }: BinaryFlowProps) {
                   )}
                   <button
                     onClick={() => setRaw(opResult)}
+                    disabled={!!opEvaluation.error || !!parsed.error}
                     className="px-3 py-2 rounded-lg bg-blue-500 text-[#020610] text-xs font-black hover:bg-blue-400 transition-colors cursor-pointer"
                   >
                     {t.applyOp || 'Apply'}
                   </button>
                 </div>
                 <div className="font-mono text-sm text-white break-all select-all">
-                  {group(toBits(fit(opResult, effectiveWidth).raw, effectiveWidth), 8)}
+                  {opEvaluation.error || parsed.error ? '—' : group(toBits(fit(opResult, effectiveWidth).raw, effectiveWidth), 8)}
                 </div>
+                {opEvaluation.error === 'limit' && <p role="alert" className="text-xs text-amber-300">{t.operationLimit}</p>}
                 <p className="text-[11px] text-slate-500">
                   {t.bitwiseNote ||
                     'Everything stays in BigInt at the width you picked, so nothing is silently truncated to 32 bits the way JavaScript operators do.'}

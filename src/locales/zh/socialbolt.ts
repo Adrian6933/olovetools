@@ -65,12 +65,12 @@ export default {
   "err_download_failed": "文件没能下载下来。它的链接可能已经过期，重新解析一次这条内容。",
   "err_cancelled": "已取消。",
   "err_missing_url": "没有收到链接。",
-  "warn_youtube_video": "YouTube 在这里只提供信息和缩略图：要取视频流得解开一层不断变化的签名，浏览器免费做不到。",
+  "warn_youtube_video": "YouTube：可获取缩略图和信息。此服务器尚未启用视频和音频下载。",
   "warn_no_media": "这条内容里没找到文件。",
   "supportTitle": "老实说，哪些真的能用",
   "supportTiktok": "完整支持：HD 视频、无水印视频、带水印原片、MP3 音轨、封面、作者头像，以及图集里的每一张照片。",
   "supportTwitter": "完整支持：视频的全部码率、动图 GIF、原始分辨率照片和封面帧。",
-  "supportYoutube": "部分支持：标题、频道和各种分辨率的缩略图。视频流本身拿不到，卡片上写了原因。",
+  "supportYoutube": "YouTube：可获取缩略图和信息。此服务器尚未启用视频和音频下载。",
   "supportInstagram": "尽力而为：Instagram 屏蔽来自服务器的请求，只有部分公开内容能解析出来。",
   "howTitle": "怎么用",
   "howSteps": [
@@ -106,7 +106,7 @@ export default {
     },
     {
       "title": "你的链接只留在这里",
-      "text": "地址只发往我们自己的函数：没有第三方 CORS 中转，没有追踪，回应之后什么都不留。"
+      "text": "链接会发送至我们的服务器，以及获取文件所需的平台或解析服务。不使用公共CORS代理。"
     },
     {
       "title": "和其他工具串起来",
@@ -159,7 +159,7 @@ export default {
     },
     {
       "question": "为什么下载不了 YouTube 视频？",
-      "answer": "因为在浏览器或小服务器上免费做不到：YouTube 的流用一层不断变化的签名保护，只有它自己的播放器才能解开。与其假装能做，SocialBolt 直接给你信息和缩略图。"
+      "answer": "YouTube：可获取缩略图和信息。此服务器尚未启用视频和音频下载。"
     },
     {
       "question": "Instagram 呢？",
@@ -175,5 +175,22 @@ export default {
     }
   ],
   "footerTagline": "给创作者的干净、诚实又快的工具。",
-  "footerCredit": "oLoveTools 工具集的一部分"
+  "footerCredit": "oLoveTools 工具集的一部分",
+  "youtubeMode": "YouTube 输出",
+  "modeVideo": "视频＋音频",
+  "modeAudio": "音频（MP3）",
+  "modeMetadata": "仅缩略图",
+  "qualityLabel": "视频最高画质",
+  "qualityMax": "最佳可用画质",
+  "youtubeAvailable": "已启用视频和音频提取。能否获取取决于来源。",
+  "youtubeLimited": "YouTube：可获取缩略图和信息。此服务器尚未启用视频和音频下载。",
+  "invalidLines": "请检查这些不支持的输入",
+  "duplicatesRemoved": "已移除重复链接",
+  "queueLimit": "队列最多容纳30个链接。添加更多链接前请清空队列。",
+  "downloadQueue": "下载队列中的所选项目",
+  "retryFailed": "重试失败的链接",
+  "batchDone": "下载已就绪",
+  "batchFailed": "批量处理失败，未保存不完整的ZIP。请重试标记的文件。",
+  "saveMetadata": "保存信息（.json）",
+  "openOriginal": "打开原始页面"
 };

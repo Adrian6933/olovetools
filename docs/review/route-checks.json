@@ -1,0 +1,737 @@
+{
+  "date": "2026-10-21",
+  "desktop": [
+    {
+      "controls": 15,
+      "h1": "AudioSnap",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/audiosnap"
+    },
+    {
+      "controls": 8,
+      "h1": "Background Remover",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/backgroundremover"
+    },
+    {
+      "controls": 34,
+      "h1": "Base64 Encoder, Decoder & Inspector",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/base64-bolt"
+    },
+    {
+      "controls": 47,
+      "h1": "BinaryFlow",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/binary-flow"
+    },
+    {
+      "controls": 7,
+      "h1": "Pinta encima de lo que sobra. El resto de la foto lo rellena.",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/cleansnap"
+    },
+    {
+      "controls": 9,
+      "h1": "Corta VODs de Twitch en Clips MP4 de Varios Fragmentos",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/clip-flow"
+    },
+    {
+      "controls": 7,
+      "h1": "Clip Editor",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/clip-editor"
+    },
+    {
+      "controls": 34,
+      "h1": "CodeCard",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/codecard"
+    },
+    {
+      "controls": 7,
+      "h1": "ColorSnap",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/colorsnap"
+    },
+    {
+      "controls": 24,
+      "h1": "CompressSnap",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/compresssnap"
+    },
+    {
+      "controls": 119,
+      "h1": "CronFlow",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/cron-flow"
+    },
+    {
+      "controls": 10,
+      "h1": "CropSnap",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/cropsnap"
+    },
+    {
+      "controls": 71,
+      "h1": "Genera efectos CSS de forma visual y rápida.",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/css-designer"
+    },
+    {
+      "controls": 16,
+      "h1": "Prueba tu cámara, micro y pantalla con los números de verdad",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/device-test"
+    },
+    {
+      "controls": 30,
+      "h1": "Ve exactamente qué cambió entre dos versiones.",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/diffsnap"
+    },
+    {
+      "controls": 56,
+      "h1": "Dibuja, calca y exporta sin salir del navegador",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/drawsnap"
+    },
+    {
+      "controls": 23,
+      "h1": "EntropyBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/entropy-bolt"
+    },
+    {
+      "controls": 32,
+      "h1": "EpochFlow",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/epoch-flow"
+    },
+    {
+      "controls": 17,
+      "h1": "EXIF Cleaner",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/exif-clear"
+    },
+    {
+      "controls": 54,
+      "h1": "Crea favicons e iconos de web app al instante",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/favicon-bolt"
+    },
+    {
+      "controls": 4,
+      "h1": "Convierte imágenes al formato que necesitas, y mira lo que ha costado",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/formatflow"
+    },
+    {
+      "controls": 7,
+      "h1": "FrameBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/framebolt"
+    },
+    {
+      "controls": 7,
+      "h1": "Extrae el fotograma perfecto de cualquier vídeo",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/framesnap"
+    },
+    {
+      "controls": 7,
+      "h1": "Convierte un vídeo o un montón de imágenes en un GIF, en el propio navegador",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/gif-bolt"
+    },
+    {
+      "controls": 17,
+      "h1": "Convierte una hoja de cálculo en un gráfico presentable",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/graph-flow"
+    },
+    {
+      "controls": 34,
+      "h1": "HashBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/hash-bolt"
+    },
+    {
+      "controls": 78,
+      "h1": "Estudio de conversión de color",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/hex-to-rgb"
+    },
+    {
+      "controls": 19,
+      "h1": "Limpiador y sanitizador de HTML",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/html-sanitizer"
+    },
+    {
+      "controls": 40,
+      "h1": "Formatea, explora y convierte JSON con seguridad.",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/json-flow"
+    },
+    {
+      "controls": 23,
+      "h1": "Decodificador y verificador de JSON Web Token",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/jwt-bolt"
+    },
+    {
+      "controls": 24,
+      "h1": "Inspector de teclas",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/key-doctor"
+    },
+    {
+      "controls": 42,
+      "h1": "Explora juegos populares",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/klipy"
+    },
+    {
+      "controls": 63,
+      "h1": "Ordenador, deduplicador y mezclador de listas",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/list-mixer"
+    },
+    {
+      "controls": 31,
+      "h1": "LoremFlow",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/lorem-flow"
+    },
+    {
+      "controls": 12,
+      "h1": "Reproductor, editor de color y optimizador de Lottie, todo en local",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/lottie-viewer"
+    },
+    {
+      "controls": 56,
+      "h1": "Editor de Markdown online gratis con vista previa en vivo",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/markdown-live"
+    },
+    {
+      "controls": 46,
+      "h1": "MemeBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/meme-bolt"
+    },
+    {
+      "controls": 98,
+      "h1": "Traductor de código morse y decodificador de audio",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/morse-flow"
+    },
+    {
+      "controls": 5,
+      "h1": "PasteSnapUtilidad de Portapapeles Online",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/pastesnap"
+    },
+    {
+      "controls": 25,
+      "h1": "PDFFlow",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/pdf-flow"
+    },
+    {
+      "controls": 30,
+      "h1": "QRBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/qr-bolt"
+    },
+    {
+      "controls": 12,
+      "h1": "QR Reader",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/qr-reader"
+    },
+    {
+      "controls": 24,
+      "h1": "RecordSnap",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/recordsnap"
+    },
+    {
+      "controls": 46,
+      "h1": "Probador, depurador y explicador de expresiones regulares online",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/regex-flow"
+    },
+    {
+      "controls": 12,
+      "h1": "SocialBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/socialbolt"
+    },
+    {
+      "controls": 39,
+      "h1": "Formatea, revisa y entiende cualquier consulta SQL.",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/sql-flow"
+    },
+    {
+      "controls": 24,
+      "h1": "Estudio de Subtítulos",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/subtitles-bolt"
+    },
+    {
+      "controls": 11,
+      "h1": "SVG Optimizer: el svgo de verdad, en tu navegador",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/svg-optimizer"
+    },
+    {
+      "controls": 144,
+      "h1": "TimeBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/time-bolt"
+    },
+    {
+      "controls": 26,
+      "h1": "Convierte cualquier texto en un MP3 narrado con subtítulos",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/tts-bolt"
+    },
+    {
+      "controls": 89,
+      "h1": "El conversor que no redondea a tus espaldas",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/unitflow"
+    },
+    {
+      "controls": 27,
+      "h1": "Codificador, decodificador e inspector de URLs",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/url-bolt"
+    },
+    {
+      "controls": 41,
+      "h1": "Generador de UUID",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/uuid-generator"
+    },
+    {
+      "controls": 5,
+      "h1": "Marca de agua por lotes, segura y en local",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/watermark-snap"
+    },
+    {
+      "controls": 47,
+      "h1": "WhiteboardFlow",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/whiteboard-flow"
+    },
+    {
+      "controls": 12,
+      "h1": "WhoisBolt",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/whois-bolt"
+    },
+    {
+      "controls": 53,
+      "h1": "Análisis de texto avanzado y contador de palabras",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/wordflow"
+    },
+    {
+      "controls": 37,
+      "h1": "XML to JSON",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/xml-json"
+    },
+    {
+      "controls": 21,
+      "h1": "Comprime y descomprime ZIP sin subir nada a ningún sitio",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/zip-flow"
+    },
+    {
+      "controls": 25,
+      "h1": "Cada proporción, y lo que te cuesta",
+      "hydrated": true,
+      "overflow": false,
+      "url": "/es/aspect-ratio"
+    }
+  ],
+  "mobile": [
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/audiosnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/backgroundremover"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/base64-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/binary-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/cleansnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/clip-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/clip-editor"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/codecard"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/colorsnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/compresssnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/cron-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/cropsnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/css-designer"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/device-test"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/diffsnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/drawsnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/entropy-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/epoch-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/exif-clear"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/favicon-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/formatflow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/framebolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/framesnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/gif-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/graph-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/hash-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/hex-to-rgb"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/html-sanitizer"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/json-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/jwt-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/key-doctor"
+    },
+    {
+      "clipped": [
+        "#League of Legends",
+        "#GTA V",
+        "#Valorant",
+        "#Counter-Strike 2"
+      ],
+      "overflow": false,
+      "url": "/es/klipy"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/list-mixer"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/lorem-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/lottie-viewer"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/markdown-live"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/meme-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/morse-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/pastesnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/pdf-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/qr-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/qr-reader"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/recordsnap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/regex-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/socialbolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/sql-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/subtitles-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/svg-optimizer"
+    },
+    {
+      "clipped": [
+        "Madrid 09:00",
+        "Madrid 10:00",
+        "Madrid 11:00",
+        "Madrid 12:00"
+      ],
+      "overflow": false,
+      "url": "/es/time-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/tts-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/unitflow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/url-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/uuid-generator"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/watermark-snap"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/whiteboard-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/whois-bolt"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/wordflow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/xml-json"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/zip-flow"
+    },
+    {
+      "clipped": [],
+      "overflow": false,
+      "url": "/es/aspect-ratio"
+    }
+  ]
+}

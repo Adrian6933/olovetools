@@ -124,5 +124,6 @@ export default {
   "feat5Text": "Quatro codificações de texto e um dump hexadecimal de qualquer ficheiro que largues, lido só quando pedires.",
   "feat6Title": "Nunca sai da página",
   "feat6Text": "Todas as conversões acontecem no teu navegador. Nada é carregado nem guardado.",
-  "scrollTop": "Voltar ao topo"
+  "scrollTop": "Voltar ao topo",
+  "operationLimit": "Os deslocamentos à esquerda sem largura fixa estão limitados a 65.536 bits para manter a página responsiva. Escolha uma largura fixa para deslocamentos maiores."
 };

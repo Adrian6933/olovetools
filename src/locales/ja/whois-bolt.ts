@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "入力した内容はサーバーへ送られますか？",
-      "answer": "はい。そうしないと成り立ちません。DNS はネットワーク上にあるため、入力した名前は選んだ公開リゾルバー（Google・Cloudflare・DNS.SB）へ HTTPS で送られます。ただし当サイトのサーバーがそれを見ることはありません。リクエストはブラウザーからそのリゾルバーへ直接送られ、ここには何も保存されません。このサイトのほかのツールは本当にオフラインで動きますが、これだけはそうできないので、そのことを明記しています。"
+      "answer": "はい。そうしないと成り立ちません。DNS はネットワーク上にあるため、入力した名前は選んだ公開リゾルバー（Google・Cloudflare・DNS.SB）へ HTTPS で送られます。ただし当サイトのサーバーがそれを見ることはありません。リクエストはブラウザーからそのリゾルバーへ直接送られ、ここには何も保存されません。このサイトのほかのツールは本当にオフラインで動きますが、これだけはそうできないので、そのことを明記しています。 登録済みドメイン（example.com）を入力してください。この任意の照会は当社サーバーからIANAと公式レジストリに送信されます。連絡先情報は表示しません。"
     },
     {
       "question": "同じドメインなのに答えが違うのはなぜですか？",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google・Cloudflare・DNS.SB から選べます。運営者名も併記しているので、納得して選べます。",
   "feat6Title": "通信について正直",
   "feat6Text": "DNS はオフラインでは解決できません。問い合わせはブラウザーから選んだリゾルバーへ直接送られ、当サイトのサーバーは介在しません。",
-  "scrollTop": "先頭に戻る"
+  "scrollTop": "先頭に戻る",
+  "registrationTitle": "ドメイン登録 · RDAP",
+  "registrationLookup": "登録情報を取得",
+  "registrationHint": "登録済みドメイン（example.com）を入力してください。この任意の照会は当社サーバーからIANAと公式レジストリに送信されます。連絡先情報は表示しません。",
+  "registrationInvalid": "登録済みドメインを入力してください。",
+  "registrationMissing": "登録情報が返されませんでした。サブドメインを除いた登録済みドメインを確認してください。",
+  "registrationFailed": "レジストリが利用できないか、この拡張子はRDAPに対応していません。後で再試行してください。",
+  "registrarLabel": "レジストラ",
+  "createdLabel": "登録日",
+  "expiresLabel": "有効期限",
+  "updatedLabel": "最終変更",
+  "registrationUnsigned": "委任は未署名",
+  "registrationSave": "登録情報を保存（.json）",
+  "registrationSource": "公式の情報源",
+  "registrationSigned": "委任は署名済み"
 };

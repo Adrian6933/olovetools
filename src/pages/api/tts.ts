@@ -82,7 +82,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
     return envelope({ marks, voice, bytes: audio.length }, audio);
   } catch (e: any) {
-    const status = ['missing_text', 'missing_voice', 'text_too_long'].includes(e?.code) ? 400 : 502;
+    const status = ['missing_text', 'missing_voice', 'text_too_long', 'invalid_voice', 'invalid_settings'].includes(e?.code) ? 400 : 502;
     return json(status, { error: e?.code || 'synthesis_failed', message: e?.message, maxLength: MAX_TEXT_LENGTH });
   }
 };

@@ -74,22 +74,28 @@ export function decompose(raw: bigint, precision: Precision): FloatParts {
  */
 export function exactDecimal(value: number): string {
   if (!Number.isFinite(value)) return String(value);
-  if (Number.isInteger(value) && Math.abs(value) < 1e21) return value.toLocaleString('en-US', { useGrouping: false });
-  // toFixed caps at 100 digits, which is enough for every double: the smallest
-  // subnormal needs 1074 fractional digits, so that one is reported as such.
-  const abs = Math.abs(value);
-  if (abs > 0 && abs < 1e-100) return value.toExponential(20) + ' (too small to print in full)';
-  const fixed = value.toFixed(100).replace(/0+$/, '');
-  return fixed.endsWith('.') ? fixed.slice(0, -1) : fixed;
+  if (Object.is(value, -0)) return '-0';
+  const raw = floatToBits(value, 64);
+  const exponent = Number((raw >> 52n) & 0x7ffn);
+  const fraction = raw & ((1n << 52n) - 1n);
+  const mantissa = exponent ? (1n << 52n) | fraction : fraction;
+  const power = (exponent ? exponent - 1023 : -1022) - 52;
+  const sign = value < 0 ? '-' : '';
+  if (power >= 0) return sign + (mantissa << BigInt(power)).toString();
+  // m / 2^k = m * 5^k / 10^k. At most 1074 decimal places,
+  // including the smallest subnormal; no rounding and no English fallback.
+  const places = -power;
+  const digits = (mantissa * 5n ** BigInt(places)).toString().padStart(places + 1, '0');
+  const fractional = digits.slice(-places).replace(/0+$/, '');
+  return sign + digits.slice(0, -places) + (fractional ? '.' + fractional : '');
 }
 
 /** Distance to the next representable neighbour, i.e. the local precision. */
 export function ulp(value: number, precision: Precision): number {
   if (!Number.isFinite(value)) return NaN;
-  const bits = floatToBits(value, precision);
-  const next = bitsToFloat(bits + 1n, precision);
-  const diff = Math.abs(next - value);
-  return Number.isFinite(diff) ? diff : NaN;
+  const parts = decompose(floatToBits(Math.abs(value), precision), precision);
+  if (parts.kind === 'infinity') return NaN;
+  return 2 ** ((parts.kind === 'zero' || parts.kind === 'subnormal' ? 1 - SPEC[precision].bias : parts.exponent) - parts.mantissaBits);
 }
 
 export const FIELD_LABELS = ['sign', 'exponent', 'mantissa'] as const;

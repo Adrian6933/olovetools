@@ -236,6 +236,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const cropperRef = useRef<any>(null);
+  const cropperRunRef = useRef(0);
   const resultUrlRef = useRef<string | null>(null);
   const listenersRef = useRef<Array<() => void>>([]);
   const restoringRef = useRef(false);
@@ -271,6 +272,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
   }, []);
 
   const destroyCropper = useCallback(() => {
+    cropperRunRef.current++;
     detachListeners();
     try {
       cropperRef.current?.destroy();
@@ -609,10 +611,13 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
   const initCropper = useCallback(
     async (img: HTMLImageElement, item: BatchItem) => {
       destroyCropper();
+      const run = cropperRunRef.current;
+      setCropPx({ width: 0, height: 0 });
       // Nothing that happens between here and the end of `$ready` is the user
       // re-framing anything, so none of it may flag the image as customised.
       seedingRef.current = true;
       const CropperClass = (await import('cropperjs')).default;
+      if (cropperRunRef.current !== run || !img.isConnected) return;
       // The template is the only configuration surface in v2, and the library
       // default leaves wheel-zoom and keyboard support switched off.
       const cropper = new CropperClass(img, { template: CROPPER_TEMPLATE });
@@ -653,11 +658,14 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
         image.addEventListener('transform', onTransform);
         listenersRef.current.push(() => image.removeEventListener('transform', onTransform));
 
-        image.$ready(() => {
+        await image.$ready();
+        if (cropperRunRef.current !== run) return;
+        {
           // The default selection is 85% of the *canvas*, which overflows the
           // letterboxed image and reads a stale scale. Sit it on the image
           // instead, once the initial fit transform has actually been applied.
           window.setTimeout(() => {
+            if (cropperRunRef.current !== run) return;
             const canvasEl = cropper.getCropperCanvas();
             if (selection && canvasEl) {
               // An image the queue already has a framing for opens with it;
@@ -689,10 +697,10 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
             // Past the 260 ms history debounce, so the seeding change above has
             // been filed before hand-made changes start counting again.
             window.setTimeout(() => {
-              seedingRef.current = false;
+              if (cropperRunRef.current === run) seedingRef.current = false;
             }, 400);
           }, 0);
-        });
+        }
       }
     },
     [destroyCropper]
@@ -704,9 +712,14 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
   // replaying a pose needs a cropper that starts at 0° and unmirrored.
   useEffect(() => {
     if (!source || !imageRef.current) return;
-    void initCropper(imageRef.current, source);
-    return () => destroyCropper();
-  }, [source, reinitKey, initCropper, destroyCropper]);
+    let live = true;
+    void initCropper(imageRef.current, source).catch(() => {
+      if (!live) return;
+      setStatus('error');
+      setError(t.errorLoad || 'That image could not be read. Try a different file.');
+    });
+    return () => { live = false; destroyCropper(); };
+  }, [source, reinitKey, initCropper, destroyCropper, t.errorLoad]);
 
   // The composition guides live on <cropper-grid>; the golden ratio is just a
   // different number of rows and columns on the same element.
@@ -2153,7 +2166,7 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
                     <div className="pt-2 border-t border-white/5 space-y-2">
                       <button
                         onClick={generate}
-                        disabled={status === 'exporting'}
+                        disabled={status === 'loading' || status === 'exporting' || cropPx.width <= 0 || cropPx.height <= 0}
                         className="w-full py-4 bg-rose-600 hover:bg-rose-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black text-xs uppercase tracking-widest rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer shadow-[0_0_25px_rgba(244,63,94,0.25)]"
                       >
                         {status === 'exporting' ? (
@@ -2169,14 +2182,14 @@ export const Cropsnap: React.FC<CropsnapProps> = ({ lang, dictionary }) => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <SmallButton
                           onClick={exportAllSizes}
-                          disabled={status === 'exporting'}
+                          disabled={status === 'loading' || status === 'exporting' || cropPx.width <= 0 || cropPx.height <= 0}
                           icon={<Layers className="w-3.5 h-3.5" />}
                         >
                           {t.exportAllSizesBtn || 'All sizes (ZIP)'}
                         </SmallButton>
                         <SmallButton
                           onClick={exportBatch}
-                          disabled={status === 'exporting' || sources.length < 2}
+                          disabled={status === 'loading' || status === 'exporting' || cropPx.width <= 0 || cropPx.height <= 0 || sources.length < 2}
                           icon={<Package className="w-3.5 h-3.5" />}
                         >
                           {(t.exportBatchBtn || 'Batch of {0} (ZIP)').replace('{0}', String(sources.length))}

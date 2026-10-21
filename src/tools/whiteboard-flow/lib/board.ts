@@ -275,6 +275,20 @@ export function fromJSON(text: string): { doc: BoardDoc | null; error: string } 
     return { doc: null, error: 'parse' };
   }
   if (!parsed || !Array.isArray(parsed.nodes)) return { doc: null, error: 'shape' };
+  // Imported coordinates feed both the viewport and PNG canvas bounds. Reject
+  // non-finite or unbounded geometry instead of creating an enormous canvas.
+  if (parsed.nodes.length > 2000 || parsed.nodes.some((n: any) => {
+    if (!n || typeof n.text !== 'string' || n.text.length > 100_000) return true;
+    for (const key of ['x', 'y', 'z', 'w', 'h']) {
+      if (n[key] === undefined) continue;
+      const value = Number(n[key]);
+      if (!Number.isFinite(value)) return true;
+      if ((key === 'w' || key === 'h') ? value <= 0 || value > 4096 : Math.abs(value) > 1_000_000) return true;
+    }
+    return false;
+  })) return { doc: null, error: 'shape' };
+  const importedIds = parsed.nodes.filter((n: any) => typeof n.id === 'string').map((n: any) => n.id);
+  if (new Set(importedIds).size !== importedIds.length) return { doc: null, error: 'shape' };
   const doc = emptyDoc();
   doc.layout = parsed.layout === 'free' ? 'free' : 'kanban';
   doc.nodes = parsed.nodes

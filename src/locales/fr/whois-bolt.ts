@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "Ma requête est-elle envoyée à un serveur ?",
-      "answer": "Oui — c'est inévitable. Le DNS vit sur le réseau, donc le nom saisi part en HTTPS vers le résolveur public choisi : Google, Cloudflare ou DNS.SB. Ce qui n'arrive pas, c'est qu'un serveur à nous la voie : la requête va directement de votre navigateur à ce résolveur, et rien n'est stocké ici. Les autres outils du site sont réellement hors ligne ; celui-ci ne peut pas l'être, et le dit."
+      "answer": "Oui — c'est inévitable. Le DNS vit sur le réseau, donc le nom saisi part en HTTPS vers le résolveur public choisi : Google, Cloudflare ou DNS.SB. Ce qui n'arrive pas, c'est qu'un serveur à nous la voie : la requête va directement de votre navigateur à ce résolveur, et rien n'est stocké ici. Les autres outils du site sont réellement hors ligne ; celui-ci ne peut pas l'être, et le dit. Saisissez le domaine enregistré (example.com). Cette requête facultative passe par notre serveur vers IANA et le registre officiel. Les coordonnées sont omises."
     },
     {
       "question": "Pourquoi le même domaine donne-t-il des réponses différentes ?",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google, Cloudflare ou DNS.SB, chacun avec le nom de son opérateur pour un choix éclairé.",
   "feat6Title": "Honnête sur le réseau",
   "feat6Text": "Le DNS ne peut pas être résolu hors ligne. La requête part directement de votre navigateur vers le résolveur choisi, sans aucun serveur à nous au milieu.",
-  "scrollTop": "Retour en haut"
+  "scrollTop": "Retour en haut",
+  "registrationTitle": "Enregistrement du domaine · RDAP",
+  "registrationLookup": "Consulter le registre",
+  "registrationHint": "Saisissez le domaine enregistré (example.com). Cette requête facultative passe par notre serveur vers IANA et le registre officiel. Les coordonnées sont omises.",
+  "registrationInvalid": "Saisissez d’abord un domaine enregistré.",
+  "registrationMissing": "Aucun enregistrement reçu. Vérifiez le domaine enregistré, sans sous-domaine.",
+  "registrationFailed": "Le registre ne répond pas ou cette extension ne publie pas de RDAP. Réessayez plus tard.",
+  "registrarLabel": "Bureau d’enregistrement",
+  "createdLabel": "Date d’enregistrement",
+  "expiresLabel": "Expiration",
+  "updatedLabel": "Dernière modification",
+  "registrationUnsigned": "Délégation non signée",
+  "registrationSave": "Enregistrer le registre (.json)",
+  "registrationSource": "Source officielle",
+  "registrationSigned": "Délégation signée"
 };

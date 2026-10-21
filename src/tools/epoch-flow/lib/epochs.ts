@@ -26,12 +26,26 @@ export function parseStamp(input: string, system: System, unit: Unit): ParsedSta
   const tick = system === 'unix' ? UNIT_NS[unit] : spec.tickNs;
 
   let ns: bigint;
-  if (spec.fractional || cleaned.includes('.')) {
+  if (spec.fractional || /[.eE]/.test(cleaned)) {
     // Excel serials and Julian days are fractional by nature, and people also
     // paste "1700000000.123" for Unix seconds.
-    const asNumber = Number(cleaned);
-    if (!Number.isFinite(asNumber)) return { ns: 0n, error: 'nan' };
-    ns = BigInt(Math.round(asNumber * Number(tick)));
+    // Never pass decimal timestamps through Number: 1700000000.123456789
+    // seconds would lose the final nanoseconds before the multiplication.
+    const normalized = cleaned.replace(/^([+-]?)\./, (_whole, sign) => sign + '0.');
+    const match = /^([+-]?)(\d+)(?:\.(\d*))?(?:e([+-]?\d+))?$/i.exec(normalized);
+    if (!match) return { ns: 0n, error: 'nan' };
+    const exponent = Number(match[4] || 0) - (match[3]?.length || 0);
+    if (cleaned.length > 4096 || !Number.isSafeInteger(exponent) || Math.abs(exponent) > 4096) return { ns: 0n, error: 'range' };
+    let numerator = BigInt(match[2] + (match[3] || '')) * tick;
+    if (match[1] === '-') numerator = -numerator;
+    if (exponent >= 0) ns = numerator * 10n ** BigInt(exponent);
+    else {
+      const denominator = 10n ** BigInt(-exponent);
+      const q = numerator / denominator, r = numerator % denominator;
+      // Match Math.round for fractions smaller than one nanosecond, including
+      // negative ties, while preserving every digit of representable stamps.
+      ns = q + (r > 0n && r * 2n >= denominator ? 1n : r < 0n && -r * 2n > denominator ? -1n : 0n);
+    }
   } else {
     if (!DIGITS.test(cleaned)) return { ns: 0n, error: 'nan' };
     ns = BigInt(cleaned) * tick;
@@ -42,8 +56,8 @@ export function parseStamp(input: string, system: System, unit: Unit): ParsedSta
   // Date cannot represent instants outside ±100 000 000 days from the epoch,
   // so anything beyond that is reported rather than silently shown as
   // "Invalid Date".
-  const ms = ns / 1_000_000n;
-  if (ms > BigInt(MAX_DATE_MS) || ms < BigInt(-MAX_DATE_MS)) return { ns, error: 'range' };
+  const limit = BigInt(MAX_DATE_MS) * 1_000_000n;
+  if (ns > limit || ns < -limit) return { ns, error: 'range' };
 
   return { ns, error: '' };
 }

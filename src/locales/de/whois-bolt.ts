@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "Wird meine Anfrage an einen Server gesendet?",
-      "answer": "Ja — anders geht es nicht. DNS lebt im Netz, also geht der eingetippte Name per HTTPS an den gewählten öffentlichen Resolver: Google, Cloudflare oder DNS.SB. Was nicht passiert: dass ein Server von uns sie sieht. Die Anfrage geht direkt von deinem Browser zu diesem Resolver, und hier wird nichts gespeichert. Die übrigen Tools dieser Seite sind wirklich offline; dieses kann es nicht sein und sagt das auch."
+      "answer": "Ja — anders geht es nicht. DNS lebt im Netz, also geht der eingetippte Name per HTTPS an den gewählten öffentlichen Resolver: Google, Cloudflare oder DNS.SB. Was nicht passiert: dass ein Server von uns sie sieht. Die Anfrage geht direkt von deinem Browser zu diesem Resolver, und hier wird nichts gespeichert. Die übrigen Tools dieser Seite sind wirklich offline; dieses kann es nicht sein und sagt das auch. Die registrierte Domain eingeben (example.com). Diese optionale Abfrage geht über unseren Server an IANA und die zuständige Registry. Kontaktdaten werden ausgelassen."
     },
     {
       "question": "Warum liefert dieselbe Domain unterschiedliche Antworten?",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google, Cloudflare oder DNS.SB, jeweils mit dem Betreiber genannt, damit die Wahl informiert ist.",
   "feat6Title": "Ehrlich zum Netzwerk",
   "feat6Text": "DNS lässt sich nicht offline beantworten. Die Anfrage geht direkt von deinem Browser an den gewählten Resolver, ohne einen Server von uns dazwischen.",
-  "scrollTop": "Nach oben"
+  "scrollTop": "Nach oben",
+  "registrationTitle": "Domainregistrierung · RDAP",
+  "registrationLookup": "Registrierung abfragen",
+  "registrationHint": "Die registrierte Domain eingeben (example.com). Diese optionale Abfrage geht über unseren Server an IANA und die zuständige Registry. Kontaktdaten werden ausgelassen.",
+  "registrationInvalid": "Zuerst eine registrierte Domain eingeben.",
+  "registrationMissing": "Kein Eintrag zurückgegeben. Die registrierte Domain ohne Subdomain prüfen.",
+  "registrationFailed": "Die Registry ist nicht erreichbar oder diese Endung bietet kein RDAP. Später erneut versuchen.",
+  "registrarLabel": "Registrar",
+  "createdLabel": "Registriert am",
+  "expiresLabel": "Läuft ab",
+  "updatedLabel": "Zuletzt geändert",
+  "registrationUnsigned": "Delegation nicht signiert",
+  "registrationSave": "Registrierung speichern (.json)",
+  "registrationSource": "Offizielle Quelle",
+  "registrationSigned": "Delegation signiert"
 };

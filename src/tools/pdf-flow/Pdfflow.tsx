@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { parsePageRange } from './lib/pageRange';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload,
@@ -150,6 +151,9 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const thumbRunRef = useRef(0);
+  const intakeRunRef = useRef(0);
+  const processRunRef = useRef(0);
+  useEffect(() => () => { intakeRunRef.current++; processRunRef.current++; }, []);
 
   // -------------------------------------------------------------------------
   // Chrome
@@ -229,7 +233,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   // -------------------------------------------------------------------------
   const formatRangeFromPages = (pages: number[]): string => {
     if (pages.length === 0) return '';
-    const sorted = [...pages].sort((a, b) => a - b);
+    const sorted = [...pages];
     const parts: string[] = [];
     let start = sorted[0];
     let prev = sorted[0];
@@ -243,31 +247,14 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   };
 
   const parseRangeToPages = (range: string, total: number): number[] => {
-    const pages = new Set<number>();
-    range.split(',').forEach(part => {
-      const trimmed = part.trim();
-      if (!trimmed) return;
-      if (trimmed.includes('-')) {
-        const [a, b] = trimmed.split('-');
-        const start = parseInt(a, 10);
-        const end = parseInt(b, 10);
-        if (!isNaN(start) && !isNaN(end)) {
-          for (let i = start; i <= end; i++) if (i >= 1 && i <= total) pages.add(i - 1);
-        }
-      } else {
-        const n = parseInt(trimmed, 10);
-        if (!isNaN(n) && n >= 1 && n <= total) pages.add(n - 1);
-      }
-    });
-    return Array.from(pages);
+    return parsePageRange(range, total).pages;
   };
 
   const togglePageSelection = (pageIndex: number) => {
-    setSelectedPages(prev => {
-      const next = prev.includes(pageIndex) ? prev.filter(p => p !== pageIndex) : [...prev, pageIndex];
-      setSplitRange(formatRangeFromPages(next));
-      return next;
-    });
+    const next = selectedPages.includes(pageIndex) ? selectedPages.filter(p => p !== pageIndex) : [...selectedPages, pageIndex];
+    setSelectedPages(next);
+    setSplitRange(formatRangeFromPages(next));
+    clearResult();
   };
 
   const handleSplitRangeInput = (value: string) => {
@@ -282,6 +269,9 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   // Intake
   // -------------------------------------------------------------------------
   const clearResult = () => {
+    processRunRef.current++;
+    setStatus('idle');
+    setProgress(null);
     setResult(prev => {
       if (prev) {
         URL.revokeObjectURL(prev.url);
@@ -290,6 +280,10 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
       return null;
     });
   };
+
+  // Output settings are part of the result identity. Changing them must never
+  // leave a download for an older watermark, quality or page arrangement.
+  useEffect(() => { clearResult(); }, [files, activeMode, splitType, splitRange, pageOps, compressQuality, compressDpi, compressGray, imgFormat, imgDpi, quality, pageSize, orientation, margin, wmText, wmSize, wmOpacity, wmRotation, wmColor, wmAnchor, wmBold, pnPosition, pnFormat, pnSize, pnStartAt, pnFromPage, extractFormat]);
 
   const addFiles = useCallback(
     async (incoming: File[], modeOverride?: ToolMode) => {
@@ -300,15 +294,17 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
       clearResult();
 
       const wantsImages = mode === 'jpg2pdf';
+      if (SINGLE_FILE_MODES.includes(mode)) intakeRunRef.current++;
+      const intakeRun = intakeRunRef.current;
       const isValid = (f: File) =>
         wantsImages
           ? f.type.startsWith('image/')
           : f.type === 'application/pdf' || f.name.toLowerCase().endsWith('.pdf');
 
-      const valid = incoming.filter(isValid);
+      const valid = incoming.filter(file => isValid(file) && file.size > 0);
       if (valid.length < incoming.length) {
         setStatus('error');
-        setErrorMessage(t.invalidFormatError);
+        setErrorMessage(!wantsImages && incoming.some(f => f.size === 0) ? t.fileReadError : t.invalidFormatError);
       }
       if (valid.length === 0) return;
 
@@ -319,6 +315,8 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           setNotice((t.singleFileNotice || 'This mode works on one PDF at a time — using {name}.').replace('{name}', valid[0].name));
         }
         const count = await getPageCount(valid[0]);
+        if (intakeRunRef.current !== intakeRun) return;
+        if (!count) { setStatus('error'); setErrorMessage(t.fileReadError); return; }
         setPageCount(count);
         setSelectedPages([]);
         setSplitRange('');
@@ -336,18 +334,21 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
 
       const items: PdfItem[] = [];
       for (const file of valid) {
+        const count = wantsImages ? undefined : await getPageCount(file);
+        if (intakeRunRef.current !== intakeRun) return;
+        if (!wantsImages && !count) { setStatus('error'); setErrorMessage(t.fileReadError); continue; }
         items.push({
           id: Math.random().toString(36).substring(2, 9),
           file,
           name: file.name,
           size: file.size,
           status: 'idle',
-          pageCount: wantsImages ? undefined : await getPageCount(file),
+          pageCount: count,
         });
       }
       setFiles(prev => [...prev, ...items]);
     },
-    [activeMode, t.invalidFormatError, t.singleFileNotice]
+    [activeMode, t.invalidFormatError, t.singleFileNotice, t.fileReadError]
   );
 
   // An image arriving from another tool is only useful for images → PDF, so
@@ -411,6 +412,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
    */
   const handleModeSwitch = async (mode: ToolMode) => {
     if (mode === activeMode) return;
+    const intakeRun = ++intakeRunRef.current;
     setStatus('idle');
     setErrorMessage('');
     setNotice('');
@@ -434,6 +436,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
         setNotice((t.singleFileNotice || 'This mode works on one PDF at a time — using {name}.').replace('{name}', keep.name));
       }
       const count = keep.pageCount ?? (await getPageCount(keep.file));
+      if (intakeRunRef.current !== intakeRun) return;
       setFiles([{ ...keep, pageCount: count }]);
       setPageCount(count);
       setPageOps(Array.from({ length: count }, (_, i) => ({ index: i, rotation: 0 })));
@@ -444,6 +447,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   };
 
   const resetApp = () => {
+    intakeRunRef.current++;
     setFiles([]);
     setPageCount(0);
     setPageOps([]);
@@ -501,28 +505,20 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
   /** Characters the PDF standard fonts cannot draw, dropped silently otherwise. */
   const wmDropped = useMemo(() => sanitiseForStandardFont(wmText).dropped, [wmText]);
 
-  const publishResult = (blob: Blob, filename: string, kind: PdfResult['kind'], originalSize?: number) => {
-    const url = URL.createObjectURL(blob);
-    setResult({
-      blob,
-      url,
-      filename,
-      size: blob.size,
-      originalSize,
-      previewUrl: kind === 'pdf' ? url : undefined,
-      kind,
-    });
-    setStatus('done');
-  };
-
   const handleProcess = async () => {
     if (!canProcess) return;
+    clearResult();
+    const run = processRunRef.current;
     setStatus('processing');
     setErrorMessage('');
-    clearResult();
-    setProgress(null);
+    const publishResult = (blob: Blob, filename: string, kind: PdfResult['kind'], originalSize?: number) => {
+      if (processRunRef.current !== run) return;
+      const url = URL.createObjectURL(blob);
+      setResult({ blob, url, filename, size: blob.size, originalSize, previewUrl: kind === 'pdf' ? url : undefined, kind });
+      setStatus('done');
+    };
 
-    const onProgress = (done: number, total: number) => setProgress({ done, total });
+    const onProgress = (done: number, total: number) => { if (processRunRef.current === run) setProgress({ done, total }); };
 
     try {
       if (activeMode === 'merge') {
@@ -536,7 +532,7 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
           const blob = await splitToZip(source, onProgress);
           publishResult(blob, `${base}_pages.zip`, 'zip');
         } else {
-          const indices = parseRangeToPages(splitRange, pageCount).sort((a, b) => a - b);
+          const indices = parseRangeToPages(splitRange, pageCount);
           if (indices.length === 0) throw new Error(t.invalidRangeError || 'Select at least one page.');
           const blob = await extractPages(source, indices);
           publishResult(blob, `${base}_extracted.pdf`, 'pdf');
@@ -624,16 +620,17 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
         const text =
           extractFormat === 'md' ? pagesToMarkdown(pages, t.pageLabel || 'Page') : pagesToPlainText(pages);
         if (!text.trim()) throw new Error(t.noTextError || 'This PDF has no text layer — it is a scan. Text extraction needs OCR, which this tool does not do.');
-        setExtractPreview(text.slice(0, 4000));
+        if (processRunRef.current === run) setExtractPreview(text.slice(0, 4000));
         const blob = new Blob([text], { type: extractFormat === 'md' ? 'text/markdown' : 'text/plain' });
         publishResult(blob, `${source.name.replace(/\.pdf$/i, '')}.${extractFormat}`, 'text');
       }
     } catch (e: any) {
+      if (processRunRef.current !== run) return;
       console.error(e);
       setStatus('error');
       setErrorMessage(e?.message || t.statusError);
     } finally {
-      setProgress(null);
+      if (processRunRef.current === run) setProgress(null);
     }
   };
 
@@ -990,10 +987,11 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                             </div>
 
                             <div className="space-y-2">
-                              <label className="block text-[11px] font-black text-slate-500 uppercase tracking-widest">{t.splitRangeLabel}</label>
+                              <label htmlFor="pdf-page-range" className="block text-[11px] font-black text-slate-500 uppercase tracking-widest">{t.splitRangeLabel}</label>
                               <input
                                 type="text"
-                                placeholder="1-3, 5"
+                                id="pdf-page-range"
+                                placeholder="3, 1, 5-2"
                                 value={splitRange}
                                 onChange={e => handleSplitRangeInput(e.target.value)}
                                 aria-invalid={splitRange.trim() !== '' && selectedPages.length === 0}
@@ -1001,9 +999,10 @@ export const Pdfflow: React.FC<PdfflowProps> = ({ lang, dictionary }) => {
                               />
                               {splitRange.trim() !== '' && selectedPages.length === 0 && (
                                 <p className="text-[11px] font-bold text-amber-300">
-                                  {(t.rangeNoPages || 'None of those pages exist: this document has {n}.').replace('{n}', String(pageCount))}
+                                  {(t.rangeInvalid || 'Use page numbers from 1 to {n}, separated by commas or ranges.').replace('{n}', String(pageCount))}
                                 </p>
                               )}
+                              <p className="text-[11px] text-slate-400">{t.rangeOrderHint}</p>
                             </div>
                           </div>
                         )}

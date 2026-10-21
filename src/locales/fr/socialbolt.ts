@@ -65,12 +65,12 @@ export default {
   "err_download_failed": "Le fichier n’a pas pu être téléchargé. Son lien a peut-être expiré : analysez à nouveau la publication.",
   "err_cancelled": "Annulé.",
   "err_missing_url": "Aucun lien envoyé.",
-  "warn_youtube_video": "Pour YouTube, seules les métadonnées et les miniatures sont disponibles ici : télécharger le flux vidéo suppose de déchiffrer une signature qu'aucun navigateur ne peut résoudre gratuitement.",
+  "warn_youtube_video": "YouTube : miniatures et informations disponibles. Le téléchargement vidéo et audio n’est pas activé sur ce serveur.",
   "warn_no_media": "Aucun média trouvé dans cette publication.",
   "supportTitle": "Ce qui marche vraiment, sans détour",
   "supportTiktok": "Complet : vidéo en HD, vidéo sans filigrane, l'original filigrané, audio MP3, couverture, avatar de l'auteur et toutes les photos d'un carrousel.",
   "supportTwitter": "Complet : tous les débits de la vidéo, GIF animés, photos en résolution d'origine et image de couverture.",
-  "supportYoutube": "Partiel : titre, chaîne et miniatures dans toutes les résolutions. Le flux vidéo lui-même n'est pas disponible ; la carte explique pourquoi.",
+  "supportYoutube": "YouTube : miniatures et informations disponibles. Le téléchargement vidéo et audio n’est pas activé sur ce serveur.",
   "supportInstagram": "Au mieux : Instagram bloque les demandes venant de serveurs, seules certaines publications publiques se résolvent.",
   "howTitle": "Comment ça marche",
   "howSteps": [
@@ -106,7 +106,7 @@ export default {
     },
     {
       "title": "Votre lien reste ici",
-      "text": "L'adresse va vers notre propre fonction et nulle part ailleurs : pas de proxy CORS tiers, pas de pistage, rien de conservé après la réponse."
+      "text": "Le lien est envoyé à notre serveur et à la plateforme ou au résolveur nécessaire pour récupérer les fichiers. Aucun proxy CORS public n’est utilisé."
     },
     {
       "title": "Enchaîné aux autres outils",
@@ -159,7 +159,7 @@ export default {
     },
     {
       "question": "Pourquoi ne puis-je pas télécharger de vidéos YouTube ?",
-      "answer": "Parce que ce n'est pas faisable gratuitement depuis un navigateur ou un petit serveur : les flux YouTube sont protégés par une signature qui change sans arrêt et qui exige son propre lecteur pour être déchiffrée. Plutôt que de faire semblant, SocialBolt vous donne les métadonnées et les miniatures."
+      "answer": "YouTube : miniatures et informations disponibles. Le téléchargement vidéo et audio n’est pas activé sur ce serveur."
     },
     {
       "question": "Et Instagram ?",
@@ -175,5 +175,22 @@ export default {
     }
   ],
   "footerTagline": "Des outils propres, honnêtes et rapides pour les créateurs.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "youtubeMode": "Sortie YouTube",
+  "modeVideo": "Vidéo + audio",
+  "modeAudio": "Audio (MP3)",
+  "modeMetadata": "Miniatures uniquement",
+  "qualityLabel": "Qualité vidéo maximale",
+  "qualityMax": "La meilleure disponible",
+  "youtubeAvailable": "L’extraction vidéo et audio est activée. La disponibilité dépend de la source.",
+  "youtubeLimited": "YouTube : miniatures et informations disponibles. Le téléchargement vidéo et audio n’est pas activé sur ce serveur.",
+  "invalidLines": "Vérifiez ces entrées non prises en charge",
+  "duplicatesRemoved": "Liens en double supprimés",
+  "queueLimit": "La file accepte 30 liens au maximum. Videz-la avant d’en ajouter.",
+  "downloadQueue": "Télécharger la sélection de la file",
+  "retryFailed": "Réessayer les liens en échec",
+  "batchDone": "Téléchargement prêt",
+  "batchFailed": "Le lot a échoué. Aucun ZIP incomplet n’a été enregistré. Réessayez le fichier signalé.",
+  "saveMetadata": "Enregistrer les données (.json)",
+  "openOriginal": "Ouvrir l’original"
 };

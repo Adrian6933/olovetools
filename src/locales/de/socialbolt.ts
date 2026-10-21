@@ -65,12 +65,12 @@ export default {
   "err_download_failed": "Die Datei konnte nicht geladen werden. Ihr Link ist womöglich abgelaufen — analysiere den Beitrag erneut.",
   "err_cancelled": "Abgebrochen.",
   "err_missing_url": "Es wurde kein Link gesendet.",
-  "warn_youtube_video": "Von YouTube gibt es hier nur die Metadaten und die Vorschaubilder: die Videospur zu laden verlangt das Entschlüsseln einer Signatur, was kein Browser kostenlos schafft.",
+  "warn_youtube_video": "YouTube: Vorschaubilder und Angaben sind verfügbar. Video- und Audiodownloads sind auf diesem Server nicht aktiviert.",
   "warn_no_media": "In diesem Beitrag wurden keine Medien gefunden.",
   "supportTitle": "Was wirklich funktioniert, ehrlich gesagt",
   "supportTiktok": "Vollständig: Video in HD, Video ohne Wasserzeichen, das Original mit Wasserzeichen, MP3-Audio, Titelbild, Avatar des Autors und alle Fotos einer Bildfolge.",
   "supportTwitter": "Vollständig: alle Bitraten des Videos, animierte GIFs, Fotos in Originalauflösung und das Vorschaubild.",
-  "supportYoutube": "Teilweise: Titel, Kanal und Vorschaubilder in allen Auflösungen. Die Videospur selbst ist nicht verfügbar; die Karte erklärt warum.",
+  "supportYoutube": "YouTube: Vorschaubilder und Angaben sind verfügbar. Video- und Audiodownloads sind auf diesem Server nicht aktiviert.",
   "supportInstagram": "Nach bestem Bemühen: Instagram sperrt Anfragen von Servern, deshalb lassen sich nur manche öffentlichen Beiträge auflösen.",
   "howTitle": "So funktioniert es",
   "howSteps": [
@@ -106,7 +106,7 @@ export default {
     },
     {
       "title": "Dein Link bleibt hier",
-      "text": "Die Adresse geht an unsere eigene Funktion und sonst nirgendwohin: keine fremden CORS-Proxys, kein Tracking, nichts bleibt nach der Antwort übrig."
+      "text": "Der Link wird an unseren Server und die zum Abruf nötige Plattform oder den Resolver gesendet. Öffentliche CORS-Proxys werden nicht verwendet."
     },
     {
       "title": "Verkettet mit den anderen Werkzeugen",
@@ -159,7 +159,7 @@ export default {
     },
     {
       "question": "Warum kann ich keine YouTube-Videos laden?",
-      "answer": "Weil es kostenlos weder im Browser noch auf einem kleinen Server geht: die Streams von YouTube sind mit einer Signatur geschützt, die sich ständig ändert und nur mit dem eigenen Player entschlüsselt werden kann. Statt so zu tun als ob, gibt SocialBolt dir die Metadaten und die Vorschaubilder."
+      "answer": "YouTube: Vorschaubilder und Angaben sind verfügbar. Video- und Audiodownloads sind auf diesem Server nicht aktiviert."
     },
     {
       "question": "Und Instagram?",
@@ -175,5 +175,22 @@ export default {
     }
   ],
   "footerTagline": "Saubere, ehrliche und schnelle Werkzeuge für Creator.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "youtubeMode": "YouTube-Ausgabe",
+  "modeVideo": "Video + Audio",
+  "modeAudio": "Audio (MP3)",
+  "modeMetadata": "Nur Vorschaubilder",
+  "qualityLabel": "Maximale Videoqualität",
+  "qualityMax": "Beste verfügbare",
+  "youtubeAvailable": "Video- und Audioextraktion ist aktiviert. Die Verfügbarkeit hängt von der Quelle ab.",
+  "youtubeLimited": "YouTube: Vorschaubilder und Angaben sind verfügbar. Video- und Audiodownloads sind auf diesem Server nicht aktiviert.",
+  "invalidLines": "Diese nicht unterstützten Einträge prüfen",
+  "duplicatesRemoved": "Doppelte Links entfernt",
+  "queueLimit": "Die Warteschlange fasst höchstens 30 Links. Vor weiteren Links bitte leeren.",
+  "downloadQueue": "Auswahl der Warteschlange herunterladen",
+  "retryFailed": "Fehlgeschlagene Links wiederholen",
+  "batchDone": "Download bereit",
+  "batchFailed": "Der Stapel ist fehlgeschlagen. Es wurde kein unvollständiges ZIP gespeichert. Die markierte Datei erneut versuchen.",
+  "saveMetadata": "Angaben speichern (.json)",
+  "openOriginal": "Original öffnen"
 };

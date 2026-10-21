@@ -5,7 +5,7 @@
 // serverless cuando no. Así la mayoría de las descargas no gastan ni un byte
 // de ancho de banda del despliegue, que es el recurso caro del plan gratis.
 
-import type { Asset, Platform, ResolvedMedia } from '../types';
+import type { Asset, Platform, ResolvedMedia, ResolveOptions } from '../types';
 
 const API = '/api/social';
 
@@ -15,7 +15,9 @@ export function detectPlatform(rawUrl: string): Platform {
   if (!value) return 'unknown';
   let host: string;
   try {
-    host = new URL(value).hostname.toLowerCase().replace(/^www\./, '');
+    const parsed = new URL(value);
+    if (!/^https?:$/.test(parsed.protocol) || parsed.username || parsed.password || (parsed.port && !['80', '443'].includes(parsed.port))) return 'unknown';
+    host = parsed.hostname.toLowerCase().replace(/^www\./, '');
   } catch {
     return 'unknown';
   }
@@ -54,10 +56,11 @@ export class ResolveError extends Error {
   }
 }
 
-export async function resolveLink(url: string, signal?: AbortSignal): Promise<ResolvedMedia> {
+export async function resolveLink(url: string, signal?: AbortSignal, options?: ResolveOptions): Promise<ResolvedMedia> {
   let res: Response;
   try {
-    res = await fetch(`${API}?action=resolve&url=${encodeURIComponent(url)}`, { signal });
+    const query = new URLSearchParams({ action: 'resolve', url, mode: options?.mode || 'auto', quality: options?.quality || '1080' });
+    res = await fetch(`${API}?${query}`, { signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(60_000)]) : AbortSignal.timeout(60_000) });
   } catch (e) {
     if ((e as Error).name === 'AbortError') throw e;
     throw new ResolveError('network');
@@ -76,21 +79,22 @@ export function proxyUrl(mediaUrl: string, filename: string): string {
 
 /** Modo manual: una URL de CDN pegada a mano se convierte en un resultado sin resolver nada. */
 export function directResult(url: string): ResolvedMedia {
-  let path = '';
+  let ext = '';
   try {
-    path = new URL(url).pathname;
+    const parsed = new URL(url);
+    ext = (parsed.searchParams.get('format') || parsed.pathname.match(/\.([a-z0-9]+)$/i)?.[1] || '').toLowerCase();
   } catch {
     /* ya validado por isDirectMediaUrl */
   }
-  const ext = (path.split('.').pop() || '').toLowerCase().slice(0, 5);
+  const mimes: Record<string, string> = {mp4:'video/mp4', mov:'video/quicktime', webm:'video/webm', m4v:'video/mp4', mp3:'audio/mpeg', m4a:'audio/mp4', aac:'audio/aac', wav:'audio/wav', ogg:'audio/ogg', jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', webp:'image/webp', gif:'image/gif', heic:'image/heic', avif:'image/avif'};
+  if (!mimes[ext]) ext = 'mp4';
   const kind: Asset['kind'] = /^(mp4|mov|webm|m4v)$/.test(ext)
     ? 'video'
     : /^(mp3|m4a|aac|wav|ogg)$/.test(ext)
       ? 'audio'
-      : /^(jpg|jpeg|png|webp|gif|heic)$/.test(ext)
+      : /^(jpg|jpeg|png|webp|gif|heic|avif)$/.test(ext)
         ? 'image'
         : 'video';
-  const finalExt = ext && /^[a-z0-9]{2,5}$/.test(ext) ? ext : kind === 'video' ? 'mp4' : kind === 'audio' ? 'mp3' : 'jpg';
 
   return {
     platform: 'direct',
@@ -107,8 +111,8 @@ export function directResult(url: string): ResolvedMedia {
         kind,
         labelKey: 'assetDirect',
         url,
-        ext: finalExt,
-        mime: kind === 'video' ? 'video/mp4' : kind === 'audio' ? 'audio/mpeg' : 'image/jpeg',
+        ext,
+        mime: mimes[ext],
         primary: true,
       },
     ],
@@ -132,6 +136,7 @@ export interface FetchOptions {
  * si CORS lo impide vuelve a intentarlo por el relay propio.
  */
 export async function fetchAsset(asset: Asset, filename: string, opts: FetchOptions = {}): Promise<Blob> {
+  opts.signal?.throwIfAborted();
   const attempts = asset.external ? [proxyUrl(asset.url, filename)] : [asset.url, proxyUrl(asset.url, filename)];
 
   let lastError: unknown;
@@ -139,6 +144,10 @@ export async function fetchAsset(asset: Asset, filename: string, opts: FetchOpti
     try {
       const res = await fetch(href, { signal: opts.signal, mode: index === 0 && href === asset.url ? 'cors' : undefined });
       if (!res.ok) throw new ResolveError('download_failed', `http ${res.status}`);
+      if (/text\/html|application\/json/i.test(res.headers.get('content-type') || '')) {
+        await res.body?.cancel();
+        throw new ResolveError('download_failed', 'Upstream returned a page instead of media');
+      }
       return await readWithProgress(res, opts.onProgress);
     } catch (e) {
       if ((e as Error).name === 'AbortError') throw e;
@@ -153,6 +162,7 @@ async function readWithProgress(res: Response, onProgress?: FetchOptions['onProg
   const type = res.headers.get('content-type') || 'application/octet-stream';
   if (!res.body || !onProgress) {
     const blob = await res.blob();
+    if (!blob.size) throw new ResolveError('download_failed', 'Empty media response');
     onProgress?.(blob.size, blob.size);
     return blob;
   }
@@ -160,7 +170,7 @@ async function readWithProgress(res: Response, onProgress?: FetchOptions['onProg
   const reader = res.body.getReader();
   const chunks: Uint8Array[] = [];
   let received = 0;
-  for (;;) {
+  try { for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
     if (value) {
@@ -168,7 +178,8 @@ async function readWithProgress(res: Response, onProgress?: FetchOptions['onProg
       received += value.length;
       onProgress(received, total);
     }
-  }
+  } } finally { reader.releaseLock(); }
+  if (!received) throw new ResolveError('download_failed', 'Empty media response');
   onProgress(received, received);
   return new Blob(chunks as BlobPart[], { type });
 }
@@ -230,8 +241,46 @@ export function formatCount(value: number | null | undefined): string {
 
 /** Separa un pegado multilínea en enlaces individuales. */
 export function splitLinks(raw: string): string[] {
-  return raw
-    .split(/[\s,]+/)
-    .map(s => s.trim())
-    .filter(s => /^https?:\/\//i.test(s));
+  return inspectLinks(raw).links;
+}
+
+/** Preserve commas in signed URLs; discard tracking parameters only on post URLs. */
+export function canonicalLink(raw: string): string {
+  try {
+    const u = new URL(raw);
+    const platform = detectPlatform(raw);
+    if (platform === 'youtube') {
+      const id = u.hostname === 'youtu.be' ? u.pathname.slice(1).split('/')[0] : u.searchParams.get('v') || u.pathname.match(/^\/(?:shorts|embed|live|v)\/([\w-]+)/)?.[1];
+      if (id && /^[\w-]{11}$/.test(id)) return `https://www.youtube.com/watch?v=${id}`;
+    }
+    if (platform === 'twitter') {
+      const id = u.pathname.match(/\/status(?:es)?\/(\d+)/)?.[1];
+      if (id) return `https://x.com/i/status/${id}`;
+    }
+    if (platform !== 'direct' && platform !== 'unknown') {
+      u.hash = '';
+      for (const key of [...u.searchParams.keys()]) {
+        if (/^(utm_|si$|feature$|igsh$)/.test(key)) u.searchParams.delete(key);
+      }
+    }
+    return u.href;
+  } catch { return raw; }
+}
+
+export function inspectLinks(raw: string): { links: string[]; invalid: string[]; duplicates: number } {
+  const links: string[] = [], invalid: string[] = [];
+  const seen = new Set<string>();
+  let duplicates = 0;
+  for (const line of raw.split(/\r?\n/).map(s => s.trim()).filter(Boolean)) {
+    const candidates = line.match(/https?:\/\/[^\s<>"\u201c\u201d]+/gi) || [];
+    if (!candidates.length) { invalid.push(line); continue; }
+    for (const candidate of candidates) {
+      const value = candidate.replace(/[)\].;]+$/, '');
+      if (detectPlatform(value) === 'unknown') { invalid.push(value); continue; }
+      const url = canonicalLink(value);
+      if (seen.has(url)) { duplicates++; continue; }
+      seen.add(url); links.push(url);
+    }
+  }
+  return { links, invalid, duplicates };
 }

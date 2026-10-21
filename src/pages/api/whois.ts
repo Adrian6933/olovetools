@@ -3,6 +3,7 @@
 // a browser) rather than an HTTP API.
 import type { APIRoute } from 'astro';
 import { lookupWhois } from '../../../server/whoisLookup.mjs';
+import { lookupRdap } from '../../../server/rdapLookup.mjs';
 
 export const prerender = false;
 
@@ -23,12 +24,12 @@ const DOMAIN_PATTERN = /^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]
 
 export const GET: APIRoute = async ({ url }) => {
   const domainParam = (url.searchParams.get('domain') || '').trim().toLowerCase();
-  if (!domainParam || !DOMAIN_PATTERN.test(domainParam)) {
+  if (!domainParam || domainParam.length > 253 || !DOMAIN_PATTERN.test(domainParam)) {
     return json(400, { error: 'invalid_domain' });
   }
 
   try {
-    const result = await lookupWhois(domainParam);
+    const result = url.searchParams.get('mode') === 'rdap' ? await lookupRdap(domainParam) : await lookupWhois(domainParam);
     return json(200, result);
   } catch (e: any) {
     const status = ['invalid_domain', 'tld_not_supported'].includes(e?.code) ? 400 : 502;

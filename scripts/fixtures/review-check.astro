@@ -7,10 +7,10 @@ window.__vite_plugin_react_preamble_installed__ = true;
 </script><script>
 import lottie from 'lottie-web';
 import JSZip from 'jszip';
-import { exportFramePng, exportFrameSequenceZip } from '../tools/lottie-viewer/utils/exporters';
-import { optimizeLottie, DEFAULT_OPTIMIZE } from '../tools/lottie-viewer/utils/optimize';
-import { frameForRatio } from '../tools/aspect-ratio/lib/ratio';
-import { paintFrame } from '../tools/aspect-ratio/components/RatioCanvas';
+import { exportFramePng, exportFrameSequenceZip } from '@/tools/lottie-viewer/utils/exporters';
+import { optimizeLottie, DEFAULT_OPTIMIZE } from '@/tools/lottie-viewer/utils/optimize';
+import { frameForRatio } from '@/tools/aspect-ratio/lib/ratio';
+import { paintFrame } from '@/tools/aspect-ratio/components/RatioCanvas';
 const lines: string[]=[];
 function report(s:string){lines.push(s);document.querySelector('#result')!.textContent=lines.join('\n');}
 async function pixels(blob:Blob){const bmp=await createImageBitmap(blob);const c=document.createElement('canvas');c.width=bmp.width;c.height=bmp.height;const ctx=c.getContext('2d')!;ctx.drawImage(bmp,0,0);bmp.close();return {w:c.width,h:c.height,data:ctx.getImageData(0,0,c.width,c.height).data};}

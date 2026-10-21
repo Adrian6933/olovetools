@@ -162,6 +162,8 @@ export function applyOp(a: bigint, b: bigint, op: BitOp, width: Width): bigint {
       // back to the arbitrary-precision definition.
       return width === 0 ? -a - 1n : clip(~a);
     case 'shl':
+      if (width !== 0 && b >= BigInt(width)) return 0n;
+      if (b > 65536n) throw new RangeError('shift_limit');
       return clip(a << (b < 0n ? 0n : b));
     case 'shr':
       return a >> (b < 0n ? 0n : b);

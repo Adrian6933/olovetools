@@ -8,7 +8,7 @@ import { loadEnv } from 'vite';
 // ya vienen puestas y este bloque no las pisa.
 {
   const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
-  for (const clave of ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN']) {
+  for (const clave of ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'COBALT_API_URL', 'COBALT_API_KEY']) {
     if (!process.env[clave] && env[clave]) process.env[clave] = env[clave];
   }
 }

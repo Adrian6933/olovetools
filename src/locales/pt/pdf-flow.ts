@@ -189,5 +189,8 @@ export default {
   "viewerError": "Não foi possível abrir este PDF.",
   "unsupportedCharsNotice": "{n} caractere(s) não podem ser desenhados com as fontes internas e serão descartados.",
   "extractScanNotice": "Só funciona com PDFs que têm camada de texto. Digitalizações são imagens e precisariam de OCR, que esta ferramenta não faz.",
-  "noTextError": "Este PDF não tem camada de texto — é uma digitalização. Extrair o texto exigiria OCR, que esta ferramenta não faz."
+  "noTextError": "Este PDF não tem camada de texto — é uma digitalização. Extrair o texto exigiria OCR, que esta ferramenta não faz.",
+  "rangeInvalid": "Use páginas de 1 a {n}, separadas por vírgulas ou intervalos. Todas devem existir.",
+  "rangeOrderHint": "A ordem é mantida: 3, 1 exporta primeiro a página 3. Use 5-2 para inverter um intervalo.",
+  "fileReadError": "Não foi possível ler este PDF. Pode estar vazio, danificado ou precisar de uma palavra-passe."
 };

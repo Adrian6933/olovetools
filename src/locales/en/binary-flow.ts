@@ -124,5 +124,6 @@ export default {
   "feat5Text": "Four text encodings, and a hex dump of any file you drop — read only when you ask.",
   "feat6Title": "Never leaves the page",
   "feat6Text": "Every conversion runs in your browser. Nothing is uploaded and nothing is stored.",
-  "scrollTop": "Back to top"
+  "scrollTop": "Back to top",
+  "operationLimit": "Unlimited left shifts are limited to 65,536 bits to keep the page responsive. Choose a fixed width for larger shifts."
 };

@@ -4,6 +4,7 @@ import { AlertTriangle, ArrowUp, Check, Copy, Download, Globe, Loader2, Search, 
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
+import { RegistrationPanel } from './components/RegistrationPanel';
 import {
   HeroArt,
   IconDnssec,
@@ -67,6 +68,7 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
+  const compareAbort = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const onScroll = () => setShowScrollTop(window.scrollY > 700);
@@ -83,7 +85,7 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
 
   // A pending lookup is abandoned when a new one starts, so a slow resolver
   // cannot overwrite fresher results.
-  useEffect(() => () => abortRef.current?.abort(), []);
+  useEffect(() => () => { abortRef.current?.abort(); compareAbort.current?.abort(); }, []);
 
   const copy = useCallback((key: string, value: string) => {
     if (!value) return;
@@ -106,6 +108,8 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
     }
 
     abortRef.current?.abort();
+    compareAbort.current?.abort();
+    setComparing(false);
     const controller = new AbortController();
     abortRef.current = controller;
 
@@ -134,13 +138,15 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
 
   const runCompare = useCallback(async () => {
     if (!queried) return;
+    compareAbort.current?.abort();
+    const controller = new AbortController(); compareAbort.current = controller;
     setComparing(true);
     setViews(null);
     try {
-      const v = await compareResolvers(queried, compareType);
-      setViews(v);
+      const v = await compareResolvers(queried, compareType, controller.signal);
+      if (!controller.signal.aborted) setViews(v);
     } finally {
-      setComparing(false);
+      if (!controller.signal.aborted) setComparing(false);
     }
   }, [queried, compareType]);
 
@@ -224,6 +230,8 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
    * El scroll arriba lo pone withScrollToTop en el propio Header.
    */
   const handleSoftReset = () => {
+    abortRef.current?.abort();
+    compareAbort.current?.abort();
     setDomainInput('');
     setQueried('');
     setResults(null);
@@ -328,6 +336,7 @@ export default function WhoisBolt({ lang, dictionary }: WhoisBoltProps) {
           )}
 
           {/* results */}
+          <RegistrationPanel domain={sanitizeDomain(domainInput)} lang={lang} t={t} />
           {results && queried && (
             <div className="space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">

@@ -124,5 +124,6 @@ export default {
   "feat5Text": "Vier Textkodierungen und ein Hexdump jeder Datei, die du hineinziehst — gelesen erst, wenn du es sagst.",
   "feat6Title": "Verlässt die Seite nie",
   "feat6Text": "Jede Umrechnung läuft in deinem Browser. Nichts wird hochgeladen und nichts gespeichert.",
-  "scrollTop": "Nach oben"
+  "scrollTop": "Nach oben",
+  "operationLimit": "Linksverschiebungen ohne feste Breite sind auf 65.536 Bit begrenzt, damit die Seite reagiert. Für größere Verschiebungen eine feste Breite wählen."
 };

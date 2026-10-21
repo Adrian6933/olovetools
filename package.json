@@ -10,7 +10,10 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "check": "tsc --noEmit",
+    "test:tools": "node scripts/test-tool-review.mjs && node scripts/test-suite-engines.mjs && node scripts/test-review-regressions.cjs",
+    "test:media:prepare": "node scripts/create-review-fixtures.mjs artifacts/review --browser"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
@@ -39,7 +42,7 @@
     "lottie-web": "^5.13.0",
     "lucide-react": "^0.555.0",
     "mediabunny": "1.61.3",
-    "msedge-tts": "^2.0.7",
+    "msedge-tts": "2.1.0",
     "mux.js": "^6.3.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.1.200",

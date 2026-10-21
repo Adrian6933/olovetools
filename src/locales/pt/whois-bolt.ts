@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "A minha consulta é enviada para um servidor?",
-      "answer": "Sim — não pode ser de outra forma. O DNS vive na rede, por isso o nome que escreves vai por HTTPS para o resolvedor público que escolheste: Google, Cloudflare ou DNS.SB. O que não acontece é algum servidor nosso vê-la: o pedido vai diretamente do teu navegador para esse resolvedor, e aqui nada é guardado. As restantes ferramentas do site são mesmo offline; esta não pode ser, e di-lo."
+      "answer": "Sim — não pode ser de outra forma. O DNS vive na rede, por isso o nome que escreves vai por HTTPS para o resolvedor público que escolheste: Google, Cloudflare ou DNS.SB. O que não acontece é algum servidor nosso vê-la: o pedido vai diretamente do teu navegador para esse resolvedor, e aqui nada é guardado. As restantes ferramentas do site são mesmo offline; esta não pode ser, e di-lo. Introduza o domínio registado (example.com). Esta consulta opcional passa pelo nosso servidor para a IANA e o registo oficial. Os contactos são omitidos."
     },
     {
       "question": "Porque é que o mesmo domínio dá respostas diferentes?",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google, Cloudflare ou DNS.SB, cada um com o nome do operador para escolheres com critério.",
   "feat6Title": "Honesta quanto à rede",
   "feat6Text": "O DNS não pode ser respondido offline. A consulta vai diretamente do teu navegador para o resolvedor escolhido, sem nenhum servidor nosso pelo meio.",
-  "scrollTop": "Voltar ao topo"
+  "scrollTop": "Voltar ao topo",
+  "registrationTitle": "Registo do domínio · RDAP",
+  "registrationLookup": "Consultar registo",
+  "registrationHint": "Introduza o domínio registado (example.com). Esta consulta opcional passa pelo nosso servidor para a IANA e o registo oficial. Os contactos são omitidos.",
+  "registrationInvalid": "Introduza primeiro um domínio registado.",
+  "registrationMissing": "Não foi devolvido um registo. Verifique o domínio registado, sem subdomínios.",
+  "registrationFailed": "O registo não responde ou esta extensão não publica RDAP. Tente mais tarde.",
+  "registrarLabel": "Entidade registadora",
+  "createdLabel": "Data de registo",
+  "expiresLabel": "Validade",
+  "updatedLabel": "Última alteração",
+  "registrationUnsigned": "Delegação não assinada",
+  "registrationSave": "Guardar registo (.json)",
+  "registrationSource": "Fonte oficial",
+  "registrationSigned": "Delegação assinada"
 };

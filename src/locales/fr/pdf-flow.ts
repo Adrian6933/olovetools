@@ -189,5 +189,8 @@ export default {
   "viewerError": "Impossible d'ouvrir ce PDF.",
   "unsupportedCharsNotice": "{n} caractère(s) ne peuvent pas être tracés avec les polices intégrées et seront ignorés.",
   "extractScanNotice": "Ne fonctionne qu'avec les PDF qui contiennent une couche de texte. Les scans sont des images et nécessiteraient de l'OCR, que cet outil ne fait pas.",
-  "noTextError": "Ce PDF n'a pas de couche de texte : c'est un scan. En extraire le texte nécessiterait de l'OCR, que cet outil ne fait pas."
+  "noTextError": "Ce PDF n'a pas de couche de texte : c'est un scan. En extraire le texte nécessiterait de l'OCR, que cet outil ne fait pas.",
+  "rangeInvalid": "Utilisez des pages de 1 à {n}, séparées par des virgules ou des plages. Toutes doivent exister.",
+  "rangeOrderHint": "L’ordre est conservé : 3, 1 exporte la page 3 en premier. Utilisez 5-2 pour inverser une plage.",
+  "fileReadError": "Ce PDF n’a pas pu être lu. Il peut être vide, endommagé ou protégé par un mot de passe."
 };

@@ -189,5 +189,8 @@ export default {
   "viewerError": "无法打开这个 PDF。",
   "unsupportedCharsNotice": "有 {n} 个字符内置字体无法绘制，将被丢弃。",
   "extractScanNotice": "仅适用于带文字层的 PDF。扫描件是图片，需要 OCR，而本工具不做 OCR。",
-  "noTextError": "这个 PDF 没有文字层——它是扫描件。提取文字需要 OCR，而本工具不做 OCR。"
+  "noTextError": "这个 PDF 没有文字层——它是扫描件。提取文字需要 OCR，而本工具不做 OCR。",
+  "rangeInvalid": "请输入1至{n}的页码，用逗号或范围分隔。所有页面都必须存在。",
+  "rangeOrderHint": "保留输入顺序：3, 1将先导出第3页。用5-2可反向排列范围。",
+  "fileReadError": "无法读取此PDF。文件可能为空、损坏或需要密码。"
 };

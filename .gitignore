@@ -52,6 +52,8 @@ dist/
 dist-ssr/
 
 # Temporary
+artifacts/review/
+public/review-local.html
 *.tmp
 *.bak
 *.swp

@@ -69,13 +69,14 @@ import { Footer as PdfFlowFooter } from '../../../tools/pdf-flow/components/Foot
 import { Footer as CodecardFooter } from '../../../tools/codecard/components/Footer';
 import { Footer as PastesnapFooter } from '../../../tools/pastesnap/components/Footer';
 import { CookieBanner } from '../../../components/CookieBanner';
+import { ToolNavigator } from '../../../components/shared/ToolNavigator';
 import { ToolPlaceholder } from '../../../components/ToolPlaceholder';
 import { AdSlot } from '../../../components/shared/AdSlot';
 import { RELATED_TOOLS } from '../../../config/related-tools';
 import { TOOL_CTAS, CTA_HEADING } from '../../../config/tool-ctas';
 import { useTranslation, Language } from '../../../locales/dictionary';
 import { ClientRouter } from 'astro:transitions';
-import { TOOL_FAVICONS, TOOL_THEME_COLORS } from '../../../constants';
+import { TOOL_FAVICONS, TOOL_THEME_COLORS, MOCK_PROJECTS } from '../../../constants';
 import Analytics from '../../../components/Analytics.astro';
 import '../../../styles/global.css';
 import { resolveOgImage } from '../../../lib/ogImage';
@@ -96,6 +97,11 @@ export function getStaticPaths() {
 const { lang, tool } = Astro.params;
 const castLang = lang as Language;
 const { t, dictionary } = useTranslation(castLang, tool as any);
+const hub = useTranslation(castLang, 'hub');
+const navigatorTools = MOCK_PROJECTS.map(project => {
+  const key = `projects.${project.id}.description`, translated = hub.t(key);
+  return { slug: project.slug, name: project.name, description: translated === key ? project.description : translated };
+});
 
 const langs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
 const baseUrl = 'https://olovetools.com';
@@ -2339,5 +2345,6 @@ const appSchema = {
     {tool === 'pastesnap' && <PastesnapFooter lang={castLang} t={dictionary} client:load />}
 
     <CookieBanner lang={castLang} client:load />
+    {!['clipy', 'kickbolt', 'twitchbolt'].includes(tool as string) && <ToolNavigator lang={castLang} tools={navigatorTools} current={tool as string} client:idle />}
   </body>
 </html>

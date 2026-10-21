@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { SavedSettings } from '../../components/shared/SavedSettings';
+import { isFormatRecipe } from '../../lib/imageRecipes';
 import {
   ArrowUp, Check, Download, FileArchive, Home, Keyboard, Layers, Loader2, Mail, Play, X,
 } from 'lucide-react';
@@ -503,6 +505,7 @@ const Formatflow: React.FC<FormatflowProps> = ({ lang, dictionary: propDictionar
 
               {/* Panel de mandos */}
               <aside className="w-full lg:w-[360px] xl:w-[380px] shrink-0 glass-card rounded-3xl p-6 lg:sticky lg:top-24">
+                <div className="mb-5"><SavedSettings tool="formatflow" lang={language} value={effectiveSettings} validate={isFormatRecipe} onApply={next => overrideOn && active ? setItemSettings(active.id, next) : setSettings(next)} disabled={busy} /></div>
                 {items.length > 1 && active && (
                   <label className="flex items-center justify-between gap-3 mb-6 pb-5 border-b border-slate-800 cursor-pointer">
                     <span className="text-xs font-bold text-slate-300 leading-snug">

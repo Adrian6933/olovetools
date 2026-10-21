@@ -32,10 +32,11 @@ export function getAllowThirdParty(): boolean {
 }
 
 export function classifyRoute(builtUrl: string): RouteUse {
-  if (builtUrl.startsWith('/proxy')) return { kind: 'own', host: 'olovetools.com' };
+  if (/^\/proxy(?:[/?#]|$)/.test(builtUrl)) return { kind: 'own', host: 'olovetools.com' };
   try {
     const host = new URL(builtUrl, 'https://placeholder.invalid').host;
-    if (host.endsWith('ttvnw.net') || host.endsWith('twitch.tv') || host.endsWith('cloudfront.net')) {
+    const hostname = new URL(builtUrl, 'https://placeholder.invalid').hostname;
+    if (['ttvnw.net', 'twitch.tv', 'cloudfront.net'].some(domain => hostname === domain || hostname.endsWith(`.${domain}`))) {
       return { kind: 'direct', host };
     }
     return { kind: 'thirdParty', host };

@@ -65,12 +65,12 @@ export default {
   "err_download_failed": "The file could not be downloaded. Its link may have expired — analyse the post again.",
   "err_cancelled": "Cancelled.",
   "err_missing_url": "No link was sent.",
-  "warn_youtube_video": "For YouTube only the metadata and the thumbnails are available here: downloading the video stream needs signature decryption that no browser can do for free.",
+  "warn_youtube_video": "YouTube: thumbnails and details are available. Video and audio downloads are not enabled on this server.",
   "warn_no_media": "No media found in this post.",
   "supportTitle": "What actually works, honestly",
   "supportTiktok": "Complete: video in HD, video without watermark, the watermarked original, MP3 audio, cover art, author avatar and every photo of a slideshow.",
   "supportTwitter": "Complete: every bitrate of the video, animated GIFs, photos at original resolution and the poster frame.",
-  "supportYoutube": "Partial: title, channel and thumbnails in every resolution. The video stream itself is not available — the card explains why.",
+  "supportYoutube": "YouTube: thumbnails and details are available. Video and audio downloads are not enabled on this server.",
   "supportInstagram": "Best effort: Instagram blocks requests coming from servers, so only some public posts resolve.",
   "howTitle": "How it works",
   "howSteps": [
@@ -106,7 +106,7 @@ export default {
     },
     {
       "title": "Your link stays here",
-      "text": "The address travels to our own function and nowhere else — no third-party CORS proxies, no tracking, nothing kept after the answer."
+      "text": "The link goes to our server and the platform or resolver needed to retrieve the media. No public CORS proxies are used."
     },
     {
       "title": "Chained to the other tools",
@@ -159,7 +159,7 @@ export default {
     },
     {
       "question": "Why can I not download YouTube videos?",
-      "answer": "Because it cannot be done for free from a browser or a small server: YouTube's streams are protected by a signature that changes constantly and needs its own player to be decrypted. Rather than pretend, SocialBolt gives you the metadata and the thumbnails."
+      "answer": "YouTube: thumbnails and details are available. Video and audio downloads are not enabled on this server."
     },
     {
       "question": "And Instagram?",
@@ -175,5 +175,22 @@ export default {
     }
   ],
   "footerTagline": "Clean, honest, fast tools for social creators.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "youtubeMode": "YouTube output",
+  "modeVideo": "Video + audio",
+  "modeAudio": "Audio (MP3)",
+  "modeMetadata": "Thumbnails only",
+  "qualityLabel": "Maximum video quality",
+  "qualityMax": "Best available",
+  "youtubeAvailable": "Video and audio extraction is enabled. Availability depends on the source.",
+  "youtubeLimited": "YouTube: thumbnails and details are available. Video and audio downloads are not enabled on this server.",
+  "invalidLines": "Review these unsupported entries",
+  "duplicatesRemoved": "Duplicate links removed",
+  "queueLimit": "The queue holds up to 30 links. Clear it before adding more.",
+  "downloadQueue": "Download queue selection",
+  "retryFailed": "Retry failed links",
+  "batchDone": "Download ready",
+  "batchFailed": "The batch failed. No incomplete ZIP was saved. Retry the marked file.",
+  "saveMetadata": "Save details (.json)",
+  "openOriginal": "Open original"
 };

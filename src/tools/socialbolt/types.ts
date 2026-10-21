@@ -2,6 +2,11 @@ export type Platform = 'tiktok' | 'instagram' | 'youtube' | 'twitter' | 'direct'
 
 export type AssetKind = 'video' | 'audio' | 'image';
 
+export interface ResolveOptions {
+  mode: 'auto' | 'audio' | 'metadata';
+  quality: 'max' | '2160' | '1080' | '720' | '480' | '360';
+}
+
 /** Una descarga concreta ofrecida por un enlace ya resuelto. */
 export interface Asset {
   id: string;
@@ -60,6 +65,7 @@ export interface Job {
   errorDetail?: string;
   /** Ids de los assets marcados para descargar. */
   selected: string[];
+  options?: ResolveOptions;
 }
 
 export interface Transfer {

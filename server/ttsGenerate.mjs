@@ -126,7 +126,7 @@ export async function synthesizeSpeech({
   format = 'mp3-96',
   boundaries = true,
 }) {
-  const trimmed = (text || '').trim();
+  const trimmed = typeof text === 'string' ? text.trim() : '';
   if (!trimmed) {
     throw Object.assign(new Error('Text is required'), { code: 'missing_text' });
   }
@@ -136,9 +136,15 @@ export async function synthesizeSpeech({
   if (!voice) {
     throw Object.assign(new Error('voice is required'), { code: 'missing_voice' });
   }
-  const outputFormat = FORMATS[format] || FORMATS['mp3-96'];
+  if (typeof voice !== 'string' || !/^[a-z]{2,3}-[A-Z]{2}-[A-Za-z0-9-]{1,100}$/.test(voice)) {
+    throw Object.assign(new Error('Invalid voice identifier'), { code: 'invalid_voice' });
+  }
+  if (!Number.isFinite(rate) || rate < .5 || rate > 2 || !Number.isFinite(pitch) || pitch < .5 || pitch > 2 || !Number.isFinite(volume) || volume < 0 || volume > 100) {
+    throw Object.assign(new Error('Invalid voice settings'), { code: 'invalid_settings' });
+  }
+  const outputFormat = Object.hasOwn(FORMATS, format) ? FORMATS[format] : FORMATS['mp3-96'];
 
-  const tts = new MsEdgeTTS();
+  const tts = new MsEdgeTTS({ connectionTimeoutMs: 10000, synthesisTimeoutMs: 45000 });
   try {
     await tts.setMetadata(voice, outputFormat, {
       wordBoundaryEnabled: !!boundaries,
@@ -170,7 +176,9 @@ export async function synthesizeSpeech({
     const chunks = [];
     for await (const chunk of audioStream) chunks.push(chunk);
 
-    return { audio: Buffer.concat(chunks), marks: parseMarks(metaMessages) };
+    const audio = Buffer.concat(chunks);
+    if (!audio.length) throw Object.assign(new Error('Speech provider returned no audio'), { code: 'synthesis_failed' });
+    return { audio, marks: parseMarks(metaMessages) };
   } finally {
     tts.close();
   }

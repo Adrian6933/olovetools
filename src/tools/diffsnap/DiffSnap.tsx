@@ -947,7 +947,7 @@ export const DiffSnap: React.FC<DiffSnapProps> = ({ lang, dictionary }) => {
                     [t.stat_blocks || 'Blocks', formatCount(stats!.hunks), 'text-slate-200'],
                     [
                       t.stat_similarity || 'Identical',
-                      `${(stats!.similarity * 100).toFixed(1)}%`,
+                      new Intl.NumberFormat(lang, { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(stats!.similarity),
                       'text-cyan-300',
                     ],
                   ] as [string, string, string][]
@@ -964,7 +964,7 @@ export const DiffSnap: React.FC<DiffSnapProps> = ({ lang, dictionary }) => {
                   {formatCount(stats!.linesA)} → {formatCount(stats!.linesB)} {t.stat_lines || 'lines'}
                 </span>
                 <span className="opacity-40">·</span>
-                <span>{stats!.ms.toFixed(stats!.ms < 10 ? 1 : 0)} ms</span>
+                <span>{new Intl.NumberFormat(lang, { maximumFractionDigits: stats!.ms < 10 ? 1 : 0 }).format(stats!.ms)} ms</span>
                 {compare.offThread && (
                   <>
                     <span className="opacity-40">·</span>

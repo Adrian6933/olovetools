@@ -65,12 +65,12 @@ export default {
   "err_download_failed": "ファイルを取得できませんでした。リンクの期限切れかもしれません。投稿を解析し直してください。",
   "err_cancelled": "中止しました。",
   "err_missing_url": "リンクが送られていません。",
-  "warn_youtube_video": "YouTube はここでは情報とサムネイルだけです。動画本体を取るには署名の解読が必要で、無料でこなせるブラウザーはありません。",
+  "warn_youtube_video": "YouTube：サムネイルと情報を取得できます。このサーバーでは動画・音声のダウンロードは有効になっていません。",
   "warn_no_media": "この投稿にファイルは見つかりませんでした。",
   "supportTitle": "正直に、実際に動くもの",
   "supportTiktok": "完全対応：HD の動画、透かしなしの動画、透かし入りの原本、MP3 の音声、カバー、投稿者のアイコン、スライドショーの全写真。",
   "supportTwitter": "完全対応：動画の全ビットレート、アニメ GIF、原寸の写真、カバー画像。",
-  "supportYoutube": "一部対応：題名、チャンネル名、各解像度のサムネイル。動画本体は取得できません。理由はカードに出ます。",
+  "supportYoutube": "YouTube：サムネイルと情報を取得できます。このサーバーでは動画・音声のダウンロードは有効になっていません。",
   "supportInstagram": "可能な範囲：Instagram はサーバーからの要求を遮断するため、一部の公開投稿しか解析できません。",
   "howTitle": "使い方",
   "howSteps": [
@@ -106,7 +106,7 @@ export default {
     },
     {
       "title": "リンクはここで止まる",
-      "text": "アドレスが行くのは自前の関数だけ。第三者の CORS 中継も、追跡も、応答後に残るものもありません。"
+      "text": "リンクは当社サーバーと、ファイル取得に必要な配信元または解決サービスに送信されます。公開CORSプロキシは使用しません。"
     },
     {
       "title": "ほかの道具とつながる",
@@ -159,7 +159,7 @@ export default {
     },
     {
       "question": "なぜ YouTube の動画は落とせないのですか。",
-      "answer": "ブラウザーでも小さなサーバーでも無料では不可能だからです。YouTube の配信は絶えず変わる署名で守られ、解くには専用の再生器が要ります。できるふりをする代わりに、SocialBolt は情報とサムネイルを渡します。"
+      "answer": "YouTube：サムネイルと情報を取得できます。このサーバーでは動画・音声のダウンロードは有効になっていません。"
     },
     {
       "question": "Instagram はどうですか。",
@@ -175,5 +175,22 @@ export default {
     }
   ],
   "footerTagline": "制作者のための、素直で速い道具。",
-  "footerCredit": "oLoveTools シリーズの一部"
+  "footerCredit": "oLoveTools シリーズの一部",
+  "youtubeMode": "YouTubeの出力",
+  "modeVideo": "動画＋音声",
+  "modeAudio": "音声（MP3）",
+  "modeMetadata": "サムネイルのみ",
+  "qualityLabel": "動画の最高画質",
+  "qualityMax": "利用可能な最高画質",
+  "youtubeAvailable": "動画と音声の抽出が有効です。取得できるかどうかは配信元によります。",
+  "youtubeLimited": "YouTube：サムネイルと情報を取得できます。このサーバーでは動画・音声のダウンロードは有効になっていません。",
+  "invalidLines": "未対応の入力を確認してください",
+  "duplicatesRemoved": "重複リンクを削除しました",
+  "queueLimit": "キューには最大30件まで追加できます。追加する前にキューを空にしてください。",
+  "downloadQueue": "キューの選択項目をダウンロード",
+  "retryFailed": "失敗したリンクを再試行",
+  "batchDone": "ダウンロードの準備ができました",
+  "batchFailed": "一括処理に失敗しました。不完全なZIPは保存されていません。印の付いたファイルを再試行してください。",
+  "saveMetadata": "情報を保存（.json）",
+  "openOriginal": "元のページを開く"
 };

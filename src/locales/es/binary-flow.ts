@@ -124,5 +124,6 @@ export default {
   "feat5Text": "Cuatro codificaciones de texto y un volcado hexadecimal de cualquier archivo que sueltes, leído solo cuando tú lo pidas.",
   "feat6Title": "Nunca sale de la página",
   "feat6Text": "Todas las conversiones se hacen en tu navegador. No se sube nada ni se guarda nada.",
-  "scrollTop": "Volver arriba"
+  "scrollTop": "Volver arriba",
+  "operationLimit": "Los desplazamientos a la izquierda sin ancho fijo se limitan a 65.536 bits para que la página siga respondiendo. Elige un ancho fijo para desplazamientos mayores."
 };

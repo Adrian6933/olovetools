@@ -189,5 +189,8 @@ export default {
   "viewerError": "Dieses PDF konnte nicht geöffnet werden.",
   "unsupportedCharsNotice": "{n} Zeichen lassen sich mit den eingebauten Schriften nicht zeichnen und entfallen.",
   "extractScanNotice": "Funktioniert nur bei PDFs mit Textebene. Scans sind Bilder und bräuchten OCR, was dieses Tool nicht macht.",
-  "noTextError": "Dieses PDF hat keine Textebene — es ist ein Scan. Den Text herauszuholen bräuchte OCR, was dieses Tool nicht macht."
+  "noTextError": "Dieses PDF hat keine Textebene — es ist ein Scan. Den Text herauszuholen bräuchte OCR, was dieses Tool nicht macht.",
+  "rangeInvalid": "Seiten von 1 bis {n} mit Kommas oder Bereichen eingeben. Jede Seite muss existieren.",
+  "rangeOrderHint": "Die Reihenfolge bleibt erhalten: 3, 1 exportiert zuerst Seite 3. Mit 5-2 einen Bereich umkehren.",
+  "fileReadError": "Dieses PDF konnte nicht gelesen werden. Es ist möglicherweise leer, beschädigt oder benötigt ein Passwort."
 };

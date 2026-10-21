@@ -1,0 +1,78 @@
+[
+  {
+    "tool": "audiosnap: decode, silence trim, speed, WAV 16/24/32",
+    "passed": true
+  },
+  {
+    "tool": "cropsnap: rotation, mirror, PNG/WebP encoding",
+    "passed": true
+  },
+  {
+    "tool": "pastesnap: worker resize and JPEG",
+    "passed": true
+  },
+  {
+    "tool": "pastesnap: worker startup failure recovers on main thread",
+    "passed": true
+  },
+  {
+    "tool": "favicon-bolt: ICO directory and embedded PNG",
+    "passed": true
+  },
+  {
+    "tool": "gif-bolt: palette, LZW, animation container and browser decoding",
+    "passed": true
+  },
+  {
+    "tool": "exif-clear: remove JPEG comment without changing pixels",
+    "passed": true
+  },
+  {
+    "tool": "backgroundremover: manual erasure, alpha and undo mask",
+    "passed": true
+  },
+  {
+    "tool": "cleansnap: fill selected pixels, preserve surrounding image",
+    "passed": true
+  },
+  {
+    "tool": "svg-optimizer: optimize valid SVG and remove scripts",
+    "passed": true
+  },
+  {
+    "tool": "html-sanitizer: scripts, events and obfuscated dangerous URLs",
+    "passed": true
+  },
+  {
+    "tool": "framesnap + framebolt: real video decode and exact seeking",
+    "passed": true
+  },
+  {
+    "tool": "meme-bolt: captions render into export canvas",
+    "passed": true
+  },
+  {
+    "tool": "watermark-snap: text layer compositing and export",
+    "passed": true
+  },
+  {
+    "tool": "css-designer: all five canvas exports",
+    "passed": true
+  },
+  {
+    "tool": "codecard: actual PNG and SVG export",
+    "passed": true
+  },
+  {
+    "tool": "recordsnap: codec selection and synthetic canvas recording",
+    "passed": true
+  },
+  {
+    "tool": "key-doctor: physical keyboard layouts",
+    "passed": true
+  },
+  {
+    "tool": "device-test: browser system diagnostics",
+    "passed": true
+  }
+]

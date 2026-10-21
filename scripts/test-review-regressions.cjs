@@ -57,7 +57,9 @@ async function main() {
   const restored = JSON.parse(JSON.stringify(optimized));
   assert.equal(restored.layers[0].bm, 1);
   assert.equal(restored.layers[0].ks.o.ix, 11);
-  assert.equal(restored.layers[0].nm, undefined);
+  assert.equal(restored.layers[0].nm, 'Layer');
+  const stripped = optimizeLottie(original, { ...DEFAULT_OPTIMIZE, dropNames: true }).json;
+  assert.equal(stripped.layers[0].nm, undefined);
   assert.equal(original.layers[0].nm, 'Layer');
   console.log('PASS: UUID/ULID large batches and clock rollback; exact bounded frames; Lottie rendering properties survive JSON export.');
 }

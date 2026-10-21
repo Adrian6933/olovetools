@@ -189,5 +189,8 @@ export default {
   "viewerError": "No se ha podido abrir este PDF.",
   "unsupportedCharsNotice": "{n} carácter(es) no se pueden dibujar con las fuentes incorporadas y se descartarán.",
   "extractScanNotice": "Solo funciona con PDFs que llevan capa de texto. Los escaneos son imágenes y harían falta OCR, que esta herramienta no hace.",
-  "noTextError": "Este PDF no tiene capa de texto: es un escaneo. Sacarle el texto necesitaría OCR, que esta herramienta no hace."
+  "noTextError": "Este PDF no tiene capa de texto: es un escaneo. Sacarle el texto necesitaría OCR, que esta herramienta no hace.",
+  "rangeInvalid": "Usa páginas de la 1 a la {n}, separadas por comas o rangos. Todas deben existir.",
+  "rangeOrderHint": "Se conserva el orden: 3, 1 exporta primero la página 3. Usa 5-2 para invertir un rango.",
+  "fileReadError": "No se ha podido leer este PDF. Puede estar vacío, dañado o necesitar una contraseña."
 };

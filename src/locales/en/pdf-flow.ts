@@ -189,5 +189,8 @@ export default {
   "viewerError": "Could not open this PDF.",
   "unsupportedCharsNotice": "{n} character(s) cannot be drawn with the built-in fonts and will be dropped.",
   "extractScanNotice": "Only works on PDFs that carry a text layer. Scans are images and would need OCR, which this tool does not do.",
-  "noTextError": "This PDF has no text layer — it is a scan. Extracting its text would need OCR, which this tool does not do."
+  "noTextError": "This PDF has no text layer — it is a scan. Extracting its text would need OCR, which this tool does not do.",
+  "rangeInvalid": "Use page numbers from 1 to {n}, separated by commas or ranges. Every page must exist.",
+  "rangeOrderHint": "The order is preserved: 3, 1 exports page 3 first. Use 5-2 to reverse a range.",
+  "fileReadError": "This PDF could not be read. It may be empty, damaged or require a password."
 };

@@ -47,7 +47,7 @@ export default {
   "faq": [
     {
       "question": "我的查询会发送到服务器吗？",
-      "answer": "会 — 而且必须如此。DNS 本来就在网络上，所以你输入的名称会通过 HTTPS 发往你选定的公共解析服务器：Google、Cloudflare 或 DNS.SB。不会发生的是我们的服务器看到它：请求直接从你的浏览器发到该解析服务器，这里什么都不保存。本站其他工具是真正离线的；这一个做不到，也如实说明。"
+      "answer": "会 — 而且必须如此。DNS 本来就在网络上，所以你输入的名称会通过 HTTPS 发往你选定的公共解析服务器：Google、Cloudflare 或 DNS.SB。不会发生的是我们的服务器看到它：请求直接从你的浏览器发到该解析服务器，这里什么都不保存。本站其他工具是真正离线的；这一个做不到，也如实说明。 请输入注册域名（example.com）。此可选查询通过我们的服务器发送至IANA和官方注册局。不返回联系信息。"
     },
     {
       "question": "为什么同一个域名给出的答案不一样？",
@@ -113,5 +113,19 @@ export default {
   "feat5Text": "Google、Cloudflare 或 DNS.SB，每个都注明运营方，让你选得明白。",
   "feat6Title": "对联网这件事诚实",
   "feat6Text": "DNS 无法离线解析。查询直接从你的浏览器发往你选定的解析服务器，中间没有我们的任何服务器。",
-  "scrollTop": "回到顶部"
+  "scrollTop": "回到顶部",
+  "registrationTitle": "域名注册 · RDAP",
+  "registrationLookup": "查询注册信息",
+  "registrationHint": "请输入注册域名（example.com）。此可选查询通过我们的服务器发送至IANA和官方注册局。不返回联系信息。",
+  "registrationInvalid": "请先输入注册域名。",
+  "registrationMissing": "未返回注册信息。请检查是否输入了不含子域名的注册域名。",
+  "registrationFailed": "注册局暂不可用，或此后缀不提供RDAP。请稍后重试。",
+  "registrarLabel": "注册商",
+  "createdLabel": "注册日期",
+  "expiresLabel": "到期日期",
+  "updatedLabel": "最后变更",
+  "registrationUnsigned": "委派未签名",
+  "registrationSave": "保存注册信息（.json）",
+  "registrationSource": "官方来源",
+  "registrationSigned": "委派已签名"
 };
