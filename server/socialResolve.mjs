@@ -100,7 +100,7 @@ export function detectPlatform(rawUrl) {
 
 const sanitizeName = (name, fallback = 'socialbolt') => {
   const clean = String(name || '')
-    .replace(/[\u0000-<>:"/\\|?*]+/g, ' ')
+    .replace(/[\u0000-\u001f<>:"/\\|?*]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();
   const ext = clean.match(/\.[a-z0-9]{1,5}$/i)?.[0] || '';

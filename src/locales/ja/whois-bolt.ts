@@ -114,12 +114,12 @@ export default {
   "feat6Title": "通信について正直",
   "feat6Text": "DNS はオフラインでは解決できません。問い合わせはブラウザーから選んだリゾルバーへ直接送られ、当サイトのサーバーは介在しません。",
   "scrollTop": "先頭に戻る",
-  "registrationTitle": "ドメイン登録 · RDAP",
+  "registrationTitle": "ドメイン登録 · RDAP / WHOIS",
   "registrationLookup": "登録情報を取得",
   "registrationHint": "登録済みドメイン（example.com）を入力してください。この任意の照会は当社サーバーからIANAと公式レジストリに送信されます。連絡先情報は表示しません。",
   "registrationInvalid": "登録済みドメインを入力してください。",
   "registrationMissing": "登録情報が返されませんでした。サブドメインを除いた登録済みドメインを確認してください。",
-  "registrationFailed": "レジストリが利用できないか、この拡張子はRDAPに対応していません。後で再試行してください。",
+  "registrationFailed": "レジストリが現在応答していません。後で再試行してください。",
   "registrarLabel": "レジストラ",
   "createdLabel": "登録日",
   "expiresLabel": "有効期限",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "委任は未署名",
   "registrationSave": "登録情報を保存（.json）",
   "registrationSource": "公式の情報源",
-  "registrationSigned": "委任は署名済み"
+  "registrationSigned": "委任は署名済み",
+  "registrationRestricted": "この拡張子のレジストリは第三者からの自動照会に応答しません。ドメインはレジストリの公式サイトで確認できます。",
+  "registrationRegistryLink": "レジストリのサイトを開く"
 };

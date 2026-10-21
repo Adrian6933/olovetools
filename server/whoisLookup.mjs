@@ -18,7 +18,10 @@ const CONNECT_TIMEOUT_MS = 8000;
 function queryRaw(server, query, port = 43) {
   return new Promise((resolve, reject) => {
     const socket = net.createConnection({ host: server, port });
-    let data = '';
+    // Buffers, not strings: decoding chunk by chunk splits the multi-byte
+    // characters of .cn/.jp records that fall on a packet boundary.
+    const chunks = [];
+    const text = () => Buffer.concat(chunks).toString('utf8');
     let settled = false;
     const finish = (fn, value) => {
       if (settled) return;
@@ -28,9 +31,9 @@ function queryRaw(server, query, port = 43) {
     };
     socket.setTimeout(CONNECT_TIMEOUT_MS);
     socket.on('connect', () => socket.write(query + '\r\n'));
-    socket.on('data', (chunk) => { data += chunk.toString('utf8'); });
-    socket.on('end', () => finish(resolve, data));
-    socket.on('close', () => finish(resolve, data));
+    socket.on('data', (chunk) => { chunks.push(chunk); });
+    socket.on('end', () => finish(resolve, text()));
+    socket.on('close', () => finish(resolve, text()));
     socket.on('timeout', () => finish(reject, new Error(`WHOIS query to ${server} timed out`)));
     socket.on('error', (err) => finish(reject, err));
   });
@@ -86,6 +89,113 @@ function parseWhoisText(raw) {
     statuses: extractAll(raw, '^[ \\t]*Domain Status:[ \\t]*(.+)$'),
     nameServers: extractAll(raw, '^[ \\t]*Name Server:[ \\t]*(.+)$'),
   };
+}
+
+// ---------------------------------------------------------------------------
+// Registration facts over port 43, for the extensions that publish no RDAP
+// (.es, .de, .it, .jp, .ru, .cn, .io, .pt, .eu… — about half the ccTLDs).
+// Returns the same shape as rdapLookup.mjs and nothing else: the raw text
+// carries registrant names and e-mails (.cn, .co), and the panel promises to
+// leave contact details out.
+// ---------------------------------------------------------------------------
+
+const ianaCache = new Map();
+
+async function ianaFor(tld) {
+  if (ianaCache.has(tld)) return ianaCache.get(tld);
+  const text = await queryRaw('whois.iana.org', tld);
+  const info = {
+    // IANA left .uk with an empty "whois:" line although whois.nic.uk answers.
+    server: extractReferralServer(text),
+    // "remarks: Registration information: http://www.nic.es/" — the registry's
+    // own web lookup, for the registries that refuse port-43 queries.
+    registryUrl: /^[ \t]*remarks:[ \t]*Registration information:[ \t]*(https?:\/\/\S+)/im.exec(text)?.[1] || null,
+  };
+  ianaCache.set(tld, info);
+  return info;
+}
+
+// JPRS answers in Japanese unless the query ends in /e; DENIC needs -T to
+// return anything besides the status.
+const QUERY_FORMAT = { jp: (d) => `${d}/e`, de: (d) => `-T dn,ace ${d}` };
+
+/** Lines indented under a bare heading ("Nameservers", "Registrar:") in .it/.eu records. */
+function blockLines(text, heading) {
+  const match = new RegExp(`^${heading}:?[ \\t]*\\r?\\n((?:[ \\t]+\\S.*\\r?\\n?)+)`, 'im').exec(text);
+  return match ? match[1].split(/\r?\n/).map((l) => l.trim()).filter(Boolean) : [];
+}
+
+function toIsoDate(value) {
+  if (!value) return null;
+  const v = value.trim();
+  let m = /^(\d{1,2})[./](\d{1,2})[./](\d{4})/.exec(v); // 28/02/2027 (.pt)
+  if (m) return `${m[3]}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
+  m = /^(\d{4})[/.-](\d{2})[/.-](\d{2})(?:[ T](\d{2}:\d{2}(?::\d{2})?)?(Z|[+-]\d{2}:?\d{2})?)?/.exec(v);
+  if (!m) return null;
+  // With an explicit zone the instant is kept; otherwise only the calendar
+  // date, which the panel shows in UTC — a bare "1999-12-10 00:00:00" is
+  // read as local time and could slip a day.
+  return m[4] && m[5] ? `${m[1]}-${m[2]}-${m[3]}T${m[4]}${m[5].length === 5 ? m[5].slice(0, 3) + ':' + m[5].slice(3) : m[5]}` : `${m[1]}-${m[2]}-${m[3]}`;
+}
+
+export function parseRegistration(raw, domain, server) {
+  const field = (labels) => extractField(raw, labels.map((l) => new RegExp(`^[ \\t]*(?:[a-z]\\.[ \\t]*)?${l}[ \\t]*(\\S.*)$`, 'im')));
+  const host = (value) => value.split(/[\s|,]+/).map((t) => t.replace(/\.$/, '').toLowerCase()).find((t) => /^[a-z0-9.-]+\.[a-z]{2,}$/.test(t)) || '';
+
+  const registrar = field(['Registrar:', 'Sponsoring Registrar:', 'Registrar Name:'])
+    || blockLines(raw, 'Registrar').map((l) => /^(?:Organization|Name):[ \t]*(.+)$/i.exec(l)?.[1]).find(Boolean)
+    || null;
+
+  const state = field(['\\[State\\]']); // JPRS: "Connected (2027/03/31)"
+  // "state:" is the domain status only in the .ru/.su records; elsewhere
+  // (.mx, registrar records) "State:" is the registrant's province.
+  const tld = domain.split('.').pop();
+  const statusLabels = ['ru', 'su', 'xn--p1ai'].includes(tld) ? 'Domain Status|Status|state' : 'Domain Status|Status';
+  const statuses = [
+    ...extractAll(raw, `^[ \\t]*(?:${statusLabels}):[ \\t]*(\\S.*)$`),
+    ...extractAll(raw, '^[ \\t]*(?:\\[State\\]|\\[Lock Status\\])[ \\t]+(\\S.*)$'),
+  ].flatMap((s) => s.split(/,\s*/)).map((s) => s.replace(/\s*\(?https?:\/\/\S+\)?/, '').replace(/\s*\(.*\)$/, '').trim()).filter(Boolean);
+
+  const nameservers = [
+    ...extractAll(raw, '^[ \\t]*(?:[a-z]\\.[ \\t]*)?(?:Name Server|nserver|\\[Name Server\\]):?[ \\t]+(\\S.*)$'),
+    ...blockLines(raw, 'Name ?servers'),
+  ].map(host).filter(Boolean);
+
+  const dnssec = field(['DNSSEC:']);
+  return {
+    domain: (field(['Domain Name:', 'Domain:', '\\[Domain Name\\]']) || domain).toLowerCase(),
+    source: `whois://${server}`,
+    checkedAt: new Date().toISOString(),
+    registrar,
+    created: toIsoDate(field(['Creation Date:', 'Created On:', 'Created:', 'Registration Time:', 'Registered on:', '\\[Registered Date\\]', 'Registered:'])),
+    expires: toIsoDate(field(['Registry Expiry Date:', 'Registrar Registration Expiration Date:', 'Expiration Date:', 'Expiry Date:', 'Expire Date:', 'Expires On:', 'Expiration Time:', 'paid-till:', '\\[Expires on\\]'])
+      || /\((\d{4}\/\d{2}\/\d{2})\)/.exec(state || '')?.[1]),
+    updated: toIsoDate(field(['Updated Date:', 'Last Updated On:', 'Last Update:', 'Last Modified:', 'Changed:', '\\[Last Update\\]'])),
+    statuses: [...new Set(statuses)],
+    nameservers: [...new Set(nameservers)],
+    dnssec: dnssec ? /^(yes|signed|signeddelegation)/i.test(dnssec) : null,
+  };
+}
+
+export async function lookupRegistrationWhois(domain) {
+  const tld = domain.split('.').pop();
+  const iana = await ianaFor(tld);
+  const servers = [iana.server, `whois.nic.${tld}`].filter((s, i, all) => s && all.indexOf(s) === i);
+  for (const server of servers) {
+    let text;
+    try {
+      text = await queryRaw(server, (QUERY_FORMAT[tld] || ((d) => d))(domain));
+    } catch {
+      continue; // .es only answers whitelisted IPs: the socket opens and stays silent
+    }
+    if (!text.trim()) continue;
+    if (/^[ \t%#]*(no match|not found|no entries found|no data found|status:[ \t]*(?:free|available)|available for registration|object does not exist)/im.test(text)) {
+      throw Object.assign(new Error('registration_not_found'), { code: 'registration_not_found' });
+    }
+    const parsed = parseRegistration(text, domain, server);
+    if (parsed.registrar || parsed.created || parsed.expires || parsed.nameservers.length) return parsed;
+  }
+  throw Object.assign(new Error('registry_restricted'), { code: 'registry_restricted', registryUrl: iana.registryUrl });
 }
 
 export async function lookupWhois(domain) {

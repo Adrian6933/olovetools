@@ -114,12 +114,12 @@ export default {
   "feat6Title": "नेटवर्क को लेकर ईमानदार",
   "feat6Text": "DNS का जवाब ऑफ़लाइन नहीं दिया जा सकता। क्वेरी सीधे आपके ब्राउज़र से चुने हुए रिज़ॉल्वर तक जाती है, बीच में हमारा कोई सर्वर नहीं।",
   "scrollTop": "ऊपर जाएँ",
-  "registrationTitle": "डोमेन पंजीकरण · RDAP",
+  "registrationTitle": "डोमेन पंजीकरण · RDAP / WHOIS",
   "registrationLookup": "पंजीकरण देखें",
   "registrationHint": "पंजीकृत डोमेन लिखें (example.com)। यह वैकल्पिक अनुरोध हमारे सर्वर से IANA और आधिकारिक रजिस्ट्री को जाता है। संपर्क जानकारी शामिल नहीं होती।",
   "registrationInvalid": "पहले पंजीकृत डोमेन लिखें।",
   "registrationMissing": "पंजीकरण नहीं मिला। उपडोमेन के बिना पंजीकृत डोमेन की जाँच करें।",
-  "registrationFailed": "रजिस्ट्री उपलब्ध नहीं है या यह एक्सटेंशन RDAP प्रकाशित नहीं करता। बाद में फिर कोशिश करें।",
+  "registrationFailed": "रजिस्ट्री अभी जवाब नहीं दे रही है। बाद में फिर कोशिश करें।",
   "registrarLabel": "रजिस्ट्रार",
   "createdLabel": "पंजीकरण तिथि",
   "expiresLabel": "समाप्ति तिथि",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "डेलिगेशन हस्ताक्षरित नहीं",
   "registrationSave": "पंजीकरण सहेजें (.json)",
   "registrationSource": "आधिकारिक स्रोत",
-  "registrationSigned": "डेलिगेशन हस्ताक्षरित है"
+  "registrationSigned": "डेलिगेशन हस्ताक्षरित है",
+  "registrationRestricted": "इस एक्सटेंशन की रजिस्ट्री तीसरे पक्ष की स्वचालित क्वेरी का जवाब नहीं देती। आप डोमेन को रजिस्ट्री की आधिकारिक वेबसाइट पर देख सकते हैं।",
+  "registrationRegistryLink": "रजिस्ट्री की वेबसाइट खोलें"
 };

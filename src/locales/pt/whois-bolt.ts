@@ -114,12 +114,12 @@ export default {
   "feat6Title": "Honesta quanto à rede",
   "feat6Text": "O DNS não pode ser respondido offline. A consulta vai diretamente do teu navegador para o resolvedor escolhido, sem nenhum servidor nosso pelo meio.",
   "scrollTop": "Voltar ao topo",
-  "registrationTitle": "Registo do domínio · RDAP",
+  "registrationTitle": "Registo do domínio · RDAP / WHOIS",
   "registrationLookup": "Consultar registo",
   "registrationHint": "Introduza o domínio registado (example.com). Esta consulta opcional passa pelo nosso servidor para a IANA e o registo oficial. Os contactos são omitidos.",
   "registrationInvalid": "Introduza primeiro um domínio registado.",
   "registrationMissing": "Não foi devolvido um registo. Verifique o domínio registado, sem subdomínios.",
-  "registrationFailed": "O registo não responde ou esta extensão não publica RDAP. Tente mais tarde.",
+  "registrationFailed": "O registo não responde neste momento. Tente mais tarde.",
   "registrarLabel": "Entidade registadora",
   "createdLabel": "Data de registo",
   "expiresLabel": "Validade",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "Delegação não assinada",
   "registrationSave": "Guardar registo (.json)",
   "registrationSource": "Fonte oficial",
-  "registrationSigned": "Delegação assinada"
+  "registrationSigned": "Delegação assinada",
+  "registrationRestricted": "O registo desta extensão não responde a consultas automáticas de terceiros. Pode consultar o domínio no site oficial do registo.",
+  "registrationRegistryLink": "Abrir o site do registo"
 };

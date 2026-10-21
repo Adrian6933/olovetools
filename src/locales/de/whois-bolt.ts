@@ -114,12 +114,12 @@ export default {
   "feat6Title": "Ehrlich zum Netzwerk",
   "feat6Text": "DNS lässt sich nicht offline beantworten. Die Anfrage geht direkt von deinem Browser an den gewählten Resolver, ohne einen Server von uns dazwischen.",
   "scrollTop": "Nach oben",
-  "registrationTitle": "Domainregistrierung · RDAP",
+  "registrationTitle": "Domainregistrierung · RDAP / WHOIS",
   "registrationLookup": "Registrierung abfragen",
   "registrationHint": "Die registrierte Domain eingeben (example.com). Diese optionale Abfrage geht über unseren Server an IANA und die zuständige Registry. Kontaktdaten werden ausgelassen.",
   "registrationInvalid": "Zuerst eine registrierte Domain eingeben.",
   "registrationMissing": "Kein Eintrag zurückgegeben. Die registrierte Domain ohne Subdomain prüfen.",
-  "registrationFailed": "Die Registry ist nicht erreichbar oder diese Endung bietet kein RDAP. Später erneut versuchen.",
+  "registrationFailed": "Die Registry antwortet gerade nicht. Später erneut versuchen.",
   "registrarLabel": "Registrar",
   "createdLabel": "Registriert am",
   "expiresLabel": "Läuft ab",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "Delegation nicht signiert",
   "registrationSave": "Registrierung speichern (.json)",
   "registrationSource": "Offizielle Quelle",
-  "registrationSigned": "Delegation signiert"
+  "registrationSigned": "Delegation signiert",
+  "registrationRestricted": "Die Registry dieser Endung beantwortet keine automatisierten Abfragen Dritter. Die Domain lässt sich auf ihrer offiziellen Website abfragen.",
+  "registrationRegistryLink": "Website der Registry öffnen"
 };

@@ -114,12 +114,12 @@ export default {
   "feat6Title": "对联网这件事诚实",
   "feat6Text": "DNS 无法离线解析。查询直接从你的浏览器发往你选定的解析服务器，中间没有我们的任何服务器。",
   "scrollTop": "回到顶部",
-  "registrationTitle": "域名注册 · RDAP",
+  "registrationTitle": "域名注册 · RDAP / WHOIS",
   "registrationLookup": "查询注册信息",
   "registrationHint": "请输入注册域名（example.com）。此可选查询通过我们的服务器发送至IANA和官方注册局。不返回联系信息。",
   "registrationInvalid": "请先输入注册域名。",
   "registrationMissing": "未返回注册信息。请检查是否输入了不含子域名的注册域名。",
-  "registrationFailed": "注册局暂不可用，或此后缀不提供RDAP。请稍后重试。",
+  "registrationFailed": "注册局暂时没有响应，请稍后重试。",
   "registrarLabel": "注册商",
   "createdLabel": "注册日期",
   "expiresLabel": "到期日期",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "委派未签名",
   "registrationSave": "保存注册信息（.json）",
   "registrationSource": "官方来源",
-  "registrationSigned": "委派已签名"
+  "registrationSigned": "委派已签名",
+  "registrationRestricted": "此后缀的注册局不响应第三方的自动查询。你可以在注册局官网上查询该域名。",
+  "registrationRegistryLink": "打开注册局网站"
 };

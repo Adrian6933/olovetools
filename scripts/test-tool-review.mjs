@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { build } from 'esbuild';
 import { handleSocial, handleSocialMedia, isAllowedRelayUrl, youtubeIdFrom } from '../server/socialResolve.mjs';
 import { parseRdap } from '../server/rdapLookup.mjs';
+import { parseRegistration } from '../server/whoisLookup.mjs';
 import { synthesizeSpeech } from '../server/ttsGenerate.mjs';
 
 async function load(file) {
@@ -91,9 +92,17 @@ try {
 const registration = parseRdap({ ldhName:'EXAMPLE.COM', objectClassName:'domain', entities:[{ roles:['registrar'], vcardArray:['vcard', [['fn', {}, 'text', 'Example Registrar']]] }], events:[{eventAction:'registration',eventDate:'2000-01-01T00:00:00Z'}], status:['active'], nameservers:[{ldhName:'NS.EXAMPLE.COM'}], secureDNS:{delegationSigned:false} }, 'https://registry.example/domain/example.com');
 assert.equal(registration.registrar, 'Example Registrar'); assert.equal(registration.expires, null); assert.equal(registration.dnssec, false);
 assert.equal('entities' in registration, false);
+// Port-43 fallback for the extensions without RDAP: same shape, no contacts.
+const itRecord = parseRegistration('Domain:             google.it\nStatus:             ok\nCreated:            1999-12-10 00:00:00\nLast Update:        2026-06-09 23:13:34\nExpire Date:        2027-04-21\n\nRegistrant\n  Organization:     Google Ireland Holdings\n  Created:          2018-03-02 19:04:02\n\nRegistrar\n  Organization:     MarkMonitor International Limited\n  Name:             MARKMONITOR-REG\n\nNameservers\n  ns1.google.com\n  ns2.google.com\n', 'google.it', 'whois.nic.it');
+assert.deepEqual([itRecord.registrar, itRecord.created, itRecord.expires, itRecord.updated, itRecord.nameservers.length], ['MarkMonitor International Limited', '1999-12-10', '2027-04-21', '2026-06-09', 2]);
+const jpRecord = parseRegistration('a. [Domain Name]                GOOGLE.CO.JP\r\ng. [Organization]               Google Japan G.K.\r\np. [Name Server]                ns1.google.com\r\n[State]                         Connected (2027/03/31)\r\n[Registered Date]               2001/03/22\r\n', 'google.co.jp', 'whois.jprs.jp');
+assert.deepEqual([jpRecord.domain, jpRecord.created, jpRecord.expires, jpRecord.statuses[0], jpRecord.registrar], ['google.co.jp', '2001-03-22', '2027-03-31', 'Connected', null]);
+const mxRecord = parseRegistration('Domain Name:       google.com.mx\nCreated On:        2003-02-24\nExpiration Date:   2027-02-23\nRegistrar:         Markmonitor\nRegistrant:\n   Name:           Google LLC\n   City:           Mountain View\n   State:          California\n', 'google.com.mx', 'whois.mx');
+assert.deepEqual(mxRecord.statuses, []); assert.equal(JSON.stringify(mxRecord).includes('California'), false);
+assert.equal(parseRegistration('Domain: x.pt\nCreation Date: 09/01/2003 00:00:00\n', 'x.pt', 'whois.dns.pt').created, '2003-01-09');
 const recipes = await load('src/lib/imageRecipes.ts');
 const { DEFAULT_SETTINGS: compress } = await load('src/tools/compresssnap/lib/types.ts');
 const { DEFAULT_SETTINGS: format } = await load('src/tools/formatflow/lib/types.ts');
 assert.equal(recipes.isCompressRecipe(compress), true); assert.equal(recipes.isFormatRecipe(format), true);
 for (const invalid of [null, {}, { ...compress, width: 100000000 }, { ...compress, quality: NaN }, { ...compress, format: 'text/html' }]) assert.equal(recipes.isCompressRecipe(invalid), false);
-console.log('PASS: exact IEEE-754 decimals and shifts; ordered strict PDF ranges; social intake, relay redirects and Unicode filenames; RDAP parsing; persisted image recipe validation.');
+console.log('PASS: exact IEEE-754 decimals and shifts; ordered strict PDF ranges; social intake, relay redirects and Unicode filenames; RDAP and port-43 registration parsing; persisted image recipe validation.');

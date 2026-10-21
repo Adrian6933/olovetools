@@ -470,19 +470,24 @@ export const SocialBolt: React.FC<SocialBoltProps> = ({ lang, dictionary }) => {
               className="w-full px-4 py-3 bg-black/40 border border-white/10 rounded-2xl text-slate-200 outline-none focus:border-indigo-500/60 placeholder:text-slate-600 font-mono text-xs sm:text-sm leading-relaxed resize-y"
             />
 
-            <div className="grid sm:grid-cols-2 gap-3 rounded-2xl bg-indigo-500/5 border border-indigo-500/15 p-4">
+            {/* Only once a YouTube link is pasted; without an extractor the
+                quality and audio pickers would offer outputs that never come. */}
+            {pendingPlatforms.includes('youtube') && !youtubeMedia && (
+              <p role="status" className="text-xs leading-relaxed text-amber-200/80 rounded-2xl bg-amber-500/5 border border-amber-500/15 p-3">{t.youtubeLimited}</p>
+            )}
+            {pendingPlatforms.includes('youtube') && youtubeMedia && <div className="grid sm:grid-cols-2 gap-3 rounded-2xl bg-indigo-500/5 border border-indigo-500/15 p-4">
               <label className="text-xs text-slate-400 space-y-2">{t.youtubeMode}
                 <select value={options.mode} onChange={e => setOptions(p => ({ ...p, mode: e.target.value as ResolveOptions['mode'] }))} className="block w-full bg-[#121222] border border-white/10 rounded-xl p-2.5 text-slate-200">
-                  <option value="auto">{t.modeVideo}</option><option value="audio" disabled={!youtubeMedia}>{t.modeAudio}</option><option value="metadata">{t.modeMetadata}</option>
+                  <option value="auto">{t.modeVideo}</option><option value="audio">{t.modeAudio}</option><option value="metadata">{t.modeMetadata}</option>
                 </select>
               </label>
               <label className="text-xs text-slate-400 space-y-2">{t.qualityLabel}
-                <select value={options.quality} disabled={!youtubeMedia || options.mode !== 'auto'} onChange={e => setOptions(p => ({ ...p, quality: e.target.value as ResolveOptions['quality'] }))} className="block w-full bg-[#121222] border border-white/10 rounded-xl p-2.5 text-slate-200 disabled:opacity-40">
+                <select value={options.quality} disabled={options.mode !== 'auto'} onChange={e => setOptions(p => ({ ...p, quality: e.target.value as ResolveOptions['quality'] }))} className="block w-full bg-[#121222] border border-white/10 rounded-xl p-2.5 text-slate-200 disabled:opacity-40">
                   <option value="max">{t.qualityMax}</option>{['2160', '1080', '720', '480', '360'].map(q => <option key={q} value={q}>{q}p</option>)}
                 </select>
               </label>
-              <p className="sm:col-span-2 text-xs leading-relaxed text-amber-200/80">{youtubeMedia ? t.youtubeAvailable : t.youtubeLimited}</p>
-            </div>
+              <p className="sm:col-span-2 text-xs leading-relaxed text-amber-200/80">{t.youtubeAvailable}</p>
+            </div>}
             {intake.invalid.length > 0 && <div role="status" className="text-xs text-amber-300 border border-amber-500/20 bg-amber-500/5 p-3 rounded-xl break-all"><p>{t.invalidLines} · {intake.invalid.length}</p><ul className="mt-2 space-y-1">{intake.invalid.slice(0, 5).map((s, i) => <li key={i}>{s.slice(0, 160)}</li>)}</ul></div>}
             {intake.duplicates > 0 && <p className="text-xs text-slate-400">{t.duplicatesRemoved} · {intake.duplicates}</p>}
 

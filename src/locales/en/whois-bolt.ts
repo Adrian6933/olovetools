@@ -114,12 +114,12 @@ export default {
   "feat6Title": "Honest about the network",
   "feat6Text": "DNS cannot be answered offline. The query goes straight from your browser to the resolver you chose, with no server of ours in between.",
   "scrollTop": "Back to top",
-  "registrationTitle": "Domain registration · RDAP",
+  "registrationTitle": "Domain registration · RDAP / WHOIS",
   "registrationLookup": "Look up registration",
   "registrationHint": "Enter the registered domain (example.com). This optional query goes through our server to IANA and the authoritative registry. Contact details are omitted.",
   "registrationInvalid": "Enter a registered domain first.",
   "registrationMissing": "No registration was returned. Check that you entered the registered domain, without a subdomain.",
-  "registrationFailed": "The registry is unavailable or this domain extension does not publish RDAP. Try again later.",
+  "registrationFailed": "The registry is not answering right now. Try again later.",
   "registrarLabel": "Registrar",
   "createdLabel": "Registered",
   "expiresLabel": "Expires",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "Delegation not signed",
   "registrationSave": "Save registration (.json)",
   "registrationSource": "Authoritative source",
-  "registrationSigned": "Delegation signed"
+  "registrationSigned": "Delegation signed",
+  "registrationRestricted": "This extension's registry does not answer automated lookups from third parties. You can check the domain on the registry's own website.",
+  "registrationRegistryLink": "Open the registry's website"
 };

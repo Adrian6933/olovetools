@@ -114,12 +114,12 @@ export default {
   "feat6Title": "Honnête sur le réseau",
   "feat6Text": "Le DNS ne peut pas être résolu hors ligne. La requête part directement de votre navigateur vers le résolveur choisi, sans aucun serveur à nous au milieu.",
   "scrollTop": "Retour en haut",
-  "registrationTitle": "Enregistrement du domaine · RDAP",
+  "registrationTitle": "Enregistrement du domaine · RDAP / WHOIS",
   "registrationLookup": "Consulter le registre",
   "registrationHint": "Saisissez le domaine enregistré (example.com). Cette requête facultative passe par notre serveur vers IANA et le registre officiel. Les coordonnées sont omises.",
   "registrationInvalid": "Saisissez d’abord un domaine enregistré.",
   "registrationMissing": "Aucun enregistrement reçu. Vérifiez le domaine enregistré, sans sous-domaine.",
-  "registrationFailed": "Le registre ne répond pas ou cette extension ne publie pas de RDAP. Réessayez plus tard.",
+  "registrationFailed": "Le registre ne répond pas pour le moment. Réessayez plus tard.",
   "registrarLabel": "Bureau d’enregistrement",
   "createdLabel": "Date d’enregistrement",
   "expiresLabel": "Expiration",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "Délégation non signée",
   "registrationSave": "Enregistrer le registre (.json)",
   "registrationSource": "Source officielle",
-  "registrationSigned": "Délégation signée"
+  "registrationSigned": "Délégation signée",
+  "registrationRestricted": "Le registre de cette extension ne répond pas aux requêtes automatisées de tiers. Vous pouvez consulter le domaine sur son site officiel.",
+  "registrationRegistryLink": "Ouvrir le site du registre"
 };

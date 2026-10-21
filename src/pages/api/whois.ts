@@ -2,8 +2,18 @@
 // server/whoisLookup.mjs for why this needs raw TCP sockets (impossible from
 // a browser) rather than an HTTP API.
 import type { APIRoute } from 'astro';
-import { lookupWhois } from '../../../server/whoisLookup.mjs';
+import { lookupWhois, lookupRegistrationWhois } from '../../../server/whoisLookup.mjs';
 import { lookupRdap } from '../../../server/rdapLookup.mjs';
+
+/** RDAP first; the extensions without it (or with it down) fall back to port 43. */
+async function lookupRegistration(domain: string) {
+  try {
+    return await lookupRdap(domain);
+  } catch (e: any) {
+    if (e?.code !== 'tld_not_supported' && e?.code !== 'rdap_unavailable') throw e;
+    return lookupRegistrationWhois(domain);
+  }
+}
 
 export const prerender = false;
 
@@ -29,11 +39,11 @@ export const GET: APIRoute = async ({ url }) => {
   }
 
   try {
-    const result = url.searchParams.get('mode') === 'rdap' ? await lookupRdap(domainParam) : await lookupWhois(domainParam);
+    const result = url.searchParams.get('mode') === 'rdap' ? await lookupRegistration(domainParam) : await lookupWhois(domainParam);
     return json(200, result);
   } catch (e: any) {
-    const status = ['invalid_domain', 'tld_not_supported'].includes(e?.code) ? 400 : 502;
-    return json(status, { error: e?.code || 'whois_failed', message: e?.message });
+    const status = ['invalid_domain', 'tld_not_supported'].includes(e?.code) ? 400 : e?.code === 'registration_not_found' ? 404 : 502;
+    return json(status, { error: e?.code || 'whois_failed', message: e?.message, registryUrl: e?.registryUrl || undefined });
   }
 };
 

@@ -114,12 +114,12 @@ export default {
   "feat6Title": "Honesta con la red",
   "feat6Text": "El DNS no se puede responder sin conexión. La consulta va directa de tu navegador al resolutor que elijas, sin ningún servidor nuestro por medio.",
   "scrollTop": "Volver arriba",
-  "registrationTitle": "Registro del dominio · RDAP",
+  "registrationTitle": "Registro del dominio · RDAP / WHOIS",
   "registrationLookup": "Consultar registro",
   "registrationHint": "Escribe el dominio registrado (example.com). Esta consulta opcional pasa por nuestro servidor hacia IANA y el registro oficial. Se omiten los datos de contacto.",
   "registrationInvalid": "Introduce primero un dominio registrado.",
   "registrationMissing": "No se ha devuelto un registro. Comprueba que has escrito el dominio registrado, sin subdominios.",
-  "registrationFailed": "El registro no responde o esta extensión no publica RDAP. Inténtalo más tarde.",
+  "registrationFailed": "El registro no responde ahora mismo. Inténtalo más tarde.",
   "registrarLabel": "Registrador",
   "createdLabel": "Fecha de registro",
   "expiresLabel": "Caducidad",
@@ -127,5 +127,7 @@ export default {
   "registrationUnsigned": "Delegación sin firmar",
   "registrationSave": "Guardar registro (.json)",
   "registrationSource": "Fuente oficial",
-  "registrationSigned": "Delegación firmada"
+  "registrationSigned": "Delegación firmada",
+  "registrationRestricted": "El registro de esta extensión no responde a consultas automáticas de terceros. Puedes consultar el dominio en su web oficial.",
+  "registrationRegistryLink": "Abrir la web del registro"
 };
