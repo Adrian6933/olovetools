@@ -73,8 +73,8 @@ export default {
       "answer": "En MP4 dans Chrome, Edge et Safari, et en WebM dans les navigateurs qui ne savent pas enregistrer en MP4, comme Firefox. L’image fait 1920×1080 ; les vidéos d’une autre forme sont placées dedans avec des bandes noires au lieu d’être recadrées."
     },
     {
-      "question": "Pourquoi l’export dure-t-il autant que la vidéo ?",
-      "answer": "Le navigateur enregistre le résultat pendant qu’il le lit, en temps réel, car c’est le seul moyen de réencoder une vidéo dans une page web sans téléchargement lourd. Un montage de deux minutes prend environ deux minutes. Gardez l’onglet visible : les navigateurs mettent en pause les onglets cachés."
+      "question": "Combien de temps prend l’export ?",
+      "answer": "En général moins que la durée de la vidéo : votre propre navigateur décode, dessine et encode chaque image avec WebCodecs, sans attendre de la lire. Un montage d’une minute prend souvent 20 à 40 secondes. Les morceaux à une vitesse autre que 1x sont toujours enregistrés en temps réel, pour que la voix garde sa hauteur. Gardez l’onglet ouvert jusqu’à la fin."
     },
     {
       "question": "Comment retirer un passage au milieu ?",
@@ -95,7 +95,7 @@ export default {
   ],
   "footer_seo_title": "Un éditeur vidéo dans le navigateur pour des montages rapides et privés",
   "footer_seo_paragraph1": "Clip Editor est l’éditeur intégré à TwitchBolt et KickBolt, ouvert à n’importe quel fichier. Déposez plusieurs vidéos et images d’un coup et elles arrivent sur la timeline dans cet ordre. Ensuite, chaque morceau peut être coupé avec des poignées sur une bande de miniatures, scindé à la tête de lecture, dupliqué, déplacé avant ou après, accéléré ou ralenti, baissé ou rendu muet. Lisez le tout pour vérifier avant d’exporter.",
-  "footer_seo_paragraph2": "L’export utilise le navigateur lui-même : un canvas dessine chaque morceau en 1080p et l’API MediaRecorder l’enregistre avec le son mixé. C’est pour cela qu’il ne coûte rien et que vos fichiers ne voyagent pas, et aussi pour cela qu’il n’est pas fait pour les projets multipistes, l’étalonnage ou les masters 4K ; pour ceux-là, un logiciel de bureau reste le bon outil. Pour couper, assembler et envoyer au quotidien, ceci va plus vite.",
+  "footer_seo_paragraph2": "L’export utilise le navigateur lui-même : chaque image est décodée avec WebCodecs, dessinée en 1080p et encodée en H.264, et le son est mixé et encodé en même temps. C’est pour cela qu’il ne coûte rien et que vos fichiers ne voyagent pas, et aussi pour cela qu’il n’est pas fait pour les projets multipistes, l’étalonnage ou les masters 4K ; pour ceux-là, un logiciel de bureau reste le bon outil. Pour couper, assembler et envoyer au quotidien, ceci va plus vite.",
   "footerTagline": "Coupez, scindez et assemblez des vidéos dans votre navigateur. Aucun envoi.",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailCopied": "Copié !",
@@ -152,7 +152,7 @@ export default {
   "ed_fades": "Fondus",
   "ed_watermark": "Filigrane",
   "ed_export": "Exporter",
-  "ed_export_hint": "L’enregistrement se fait en temps réel, donc ça dure à peu près autant que le résultat. Garde cet onglet ouvert.",
+  "ed_export_hint": "Le traitement se fait image par image dans votre navigateur, en général plus vite que la durée du résultat. Gardez cet onglet ouvert.",
   "ed_timeline": "Timeline",
   "ed_kept": "Conservé : {d}",
   "ed_back_1s": "Reculer d’1 seconde",
@@ -168,5 +168,15 @@ export default {
   "ed_keep_marked": "Garder seulement ceci",
   "ed_clear_marks": "Effacer les marques",
   "ed_keys2": "Espace lecture · ←/→ image · Q/W retirer avant/après · I/O marquer · S scinder",
-  "ed_undo": "Annuler"
+  "ed_undo": "Annuler",
+  "ed_redo": "Rétablir",
+  "ed_split_short": "Scinder",
+  "ed_add": "Ajouter",
+  "ed_tl_hint": "Cliquez sur un clip pour y placer la tête de lecture · tirez ses bords blancs pour couper · tirez un clip pour le déplacer · Ctrl + molette pour zoomer",
+  "ed_tl_trim": "Tirez pour couper",
+  "ed_keys3": "Espace lecture · Ctrl+B scinder · Q/W supprimer à gauche/à droite · Suppr supprimer · ↑/↓ coupes · Ctrl+Z annuler",
+  "ed_zoom": "Zoom",
+  "ed_zoom_in": "Zoom avant",
+  "ed_zoom_out": "Zoom arrière",
+  "ed_zoom_fit": "Voir toute la vidéo"
 };

@@ -7,6 +7,7 @@
 // ============================================================================
 
 import type { WatermarkConfig, PositionPreset, FontFamily, FontCategory } from './types';
+import { bitrateDeGrabacion, formatoDeGrabacion } from './recorder';
 import { BRAND_ICON_PATHS, type BrandId } from './brand';
 
 /**
@@ -724,6 +725,24 @@ export const processVideoWithWatermark = async (
   signal?: AbortSignal
 ): Promise<Blob> => {
   await ensureWatermarkFont(config);
+
+  // Primero, fotograma a fotograma y al tamaño del clip (exportOffline.ts):
+  // no se recomprime en tiempo real, que es lo que le quitaba nitidez.
+  {
+    const offline = await import('./exportOffline');
+    const pieza = [{ blob: originalBlob, channelName }];
+    if (await offline.sePuedeSinTiempoReal(pieza, 1920, 1080)) {
+      try {
+        return await offline.exportarSinTiempoReal(pieza, { watermark: config }, p => {
+          onProgress?.({ pct: p.pct, elapsed: p.elapsed, total: p.duration });
+        }, signal);
+      } catch (e: any) {
+        if (e?.name === 'AbortError' || signal?.aborted) throw new DOMException('Render cancelado', 'AbortError');
+        console.warn('Watermark frame by frame failed; recording in real time instead', e);
+      }
+    }
+  }
+
   return new Promise<Blob>((resolve, reject) => {
     const video = document.createElement('video');
     const objectUrl = URL.createObjectURL(originalBlob);
@@ -842,15 +861,10 @@ export const processVideoWithWatermark = async (
           console.warn('No se pudo llevar el audio al grabador; el vídeo saldrá mudo', e);
         }
 
-        let mimeType = 'video/mp4;codecs=avc1.42E01E,mp4a.40.2';
-        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/mp4';
-        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp9,opus';
-        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8,opus';
-        if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
-
+        const mimeType = formatoDeGrabacion();
         recorder = new MediaRecorder(canvasStream, {
           mimeType: mimeType || undefined,
-          videoBitsPerSecond: 15000000,
+          videoBitsPerSecond: bitrateDeGrabacion(height),
           audioBitsPerSecond: 192000,
         });
         const chunks: BlobPart[] = [];

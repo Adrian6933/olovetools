@@ -73,8 +73,8 @@ export default {
       "answer": "En MP4 en Chrome, Edge y Safari, y en WebM en los navegadores que no saben grabar MP4, como Firefox. La imagen es de 1920×1080; los vídeos con otra forma se encajan dentro con franjas negras en vez de recortarse."
     },
     {
-      "question": "¿Por qué exportar tarda lo mismo que el vídeo?",
-      "answer": "El navegador graba el resultado mientras lo reproduce, a tiempo real, porque es la única forma de recodificar vídeo en una página web sin descargar algo pesado. Una edición de dos minutos tarda unos dos minutos. Deja la pestaña a la vista: los navegadores pausan las pestañas ocultas."
+      "question": "¿Cuánto tarda en exportar?",
+      "answer": "Normalmente menos de lo que dura el vídeo: tu propio navegador decodifica, dibuja y codifica cada fotograma con WebCodecs, sin esperar a reproducirlo. Una edición de un minuto suele tardar de 20 a 40 segundos. Las piezas a una velocidad distinta de 1x se siguen grabando a tiempo real, para que la voz conserve su tono. Deja la pestaña abierta hasta que termine."
     },
     {
       "question": "¿Cómo quito un trozo del medio?",
@@ -95,7 +95,7 @@ export default {
   ],
   "footer_seo_title": "Un editor de vídeo en el navegador para ediciones rápidas y privadas",
   "footer_seo_paragraph1": "Clip Editor es el editor que llevan dentro TwitchBolt y KickBolt, abierto a cualquier archivo. Suelta varios vídeos e imágenes a la vez y entran en la línea de tiempo en ese orden. Desde ahí cada pieza se puede recortar con tiradores sobre una tira de miniaturas, cortar donde está el cursor, duplicar, mover antes o después, acelerar o ralentizar, bajar de volumen o silenciar. Reproduce todo para comprobar el resultado antes de exportar.",
-  "footer_seo_paragraph2": "La exportación usa el propio navegador: un canvas dibuja cada pieza en 1080p y la API MediaRecorder lo graba con el sonido mezclado. Por eso no cuesta nada y tus archivos no viajan, y también por eso no está pensado para proyectos de varias pistas, corrección de color ni másteres en 4K; para eso sigue siendo mejor un editor de escritorio. Para el día a día de cortar, unir y enviar, esto es más rápido.",
+  "footer_seo_paragraph2": "La exportación usa el propio navegador: cada fotograma se decodifica con WebCodecs, se dibuja en 1080p y se codifica en H.264, y el sonido se mezcla y se codifica a la vez. Por eso no cuesta nada y tus archivos no viajan, y también por eso no está pensado para proyectos de varias pistas, corrección de color ni másteres en 4K; para eso sigue siendo mejor un editor de escritorio. Para el día a día de cortar, unir y enviar, esto es más rápido.",
   "footerTagline": "Recorta, corta y une vídeos en tu navegador. Sin subir nada.",
   "footerCredit": "Parte de la suite oLoveTools",
   "emailCopied": "¡Copiado!",
@@ -152,7 +152,7 @@ export default {
   "ed_fades": "Fundidos",
   "ed_watermark": "Marca de agua",
   "ed_export": "Exportar",
-  "ed_export_hint": "Se graba a velocidad real, así que tarda más o menos lo que dura el resultado. Deja esta pestaña abierta.",
+  "ed_export_hint": "Se procesa fotograma a fotograma en tu navegador, normalmente en menos de lo que dura el resultado. Deja esta pestaña abierta.",
   "ed_timeline": "Línea de tiempo",
   "ed_kept": "Se queda: {d}",
   "ed_back_1s": "Atrás 1 segundo",
@@ -168,5 +168,15 @@ export default {
   "ed_keep_marked": "Quedarme solo con esto",
   "ed_clear_marks": "Borrar las marcas",
   "ed_keys2": "Espacio reproducir · ←/→ fotograma · Q/W quitar antes/después · I/O marcar · S cortar",
-  "ed_undo": "Deshacer"
+  "ed_undo": "Deshacer",
+  "ed_redo": "Rehacer",
+  "ed_split_short": "Cortar",
+  "ed_add": "Añadir",
+  "ed_tl_hint": "Pulsa un clip para poner ahí el cursor · arrastra sus bordes blancos para recortar · arrastra un clip para moverlo · Ctrl + rueda para el zoom",
+  "ed_tl_trim": "Arrastra para recortar",
+  "ed_keys3": "Espacio reproducir · Ctrl+B cortar · Q/W quitar izquierda/derecha · Supr quitar · ↑/↓ cortes · Ctrl+Z deshacer",
+  "ed_zoom": "Zoom",
+  "ed_zoom_in": "Acercar",
+  "ed_zoom_out": "Alejar",
+  "ed_zoom_fit": "Ver todo el vídeo"
 };

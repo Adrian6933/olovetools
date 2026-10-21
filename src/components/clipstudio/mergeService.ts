@@ -15,6 +15,7 @@
 // ============================================================================
 import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
+import { alPresentarFotograma, bitrateDeGrabacion, formatoDeGrabacion, suavizar } from './recorder';
 
 export interface MergeItem {
   blob: Blob;
@@ -92,6 +93,22 @@ export const mergeClipsToVideo = async (
   if (items.length === 0) throw new Error('Nothing to merge');
   if (opts.watermark) await ensureWatermarkFont(opts.watermark);
 
+  // Primero, fotograma a fotograma (exportOffline.ts): mejor calidad, sin
+  // tirones y más rápido que el tiempo real. Se carga solo al exportar.
+  {
+    const alto = opts.height || 1080;
+    const ancho = Math.round((alto * 16) / 9);
+    const offline = await import('./exportOffline');
+    if (await offline.sePuedeSinTiempoReal(items, ancho, alto)) {
+      try {
+        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, watermark: opts.watermark, fade: opts.fade }, onProgress, signal);
+      } catch (e: any) {
+        if (e?.name === 'AbortError' || signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
+        console.warn('Export frame by frame failed; recording in real time instead', e);
+      }
+    }
+  }
+
   const urls = items.map(i => URL.createObjectURL(i.blob));
   // Lo que dura cada tramo EN EL VÍDEO FINAL: recortado y a su velocidad.
   const duraciones = await Promise.all(urls.map(async (u, i) => {
@@ -110,6 +127,7 @@ export const mergeClipsToVideo = async (
   canvas.height = height;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas not available');
+  suavizar(ctx);
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, width, height);
 
@@ -131,17 +149,12 @@ export const mergeClipsToVideo = async (
   // entonces el vídeo sale mudo.
   await audioCtx.resume().catch(() => { /* sin audio, pero sigue */ });
 
-  let mimeType = 'video/mp4;codecs=avc1.42E01E,mp4a.40.2';
-  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/mp4';
-  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp9,opus';
-  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm;codecs=vp8,opus';
-  if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = '';
-
+  const mimeType = formatoDeGrabacion();
   const recorder = new MediaRecorder(stream, {
     mimeType: mimeType || undefined,
-    // Medido: a 12 Mbps fijos 32 s de 1080p pesaban 103 MB. Escalado con el
-    // alto sigue viéndose limpio y el archivo se puede subir a cualquier lado.
-    videoBitsPerSecond: height >= 1080 ? 8_000_000 : height >= 720 ? 5_000_000 : 2_000_000,
+    // H.264 High y holgado: recomprimir justo es lo que se veía "menos nítido"
+    // que en Twitch (ver recorder.ts).
+    videoBitsPerSecond: bitrateDeGrabacion(height),
     audioBitsPerSecond: 192_000,
   });
   const chunks: BlobPart[] = [];
@@ -261,21 +274,23 @@ export const mergeClipsToVideo = async (
       grabar();
       await v.play();
       await new Promise<void>((resolve) => {
+        // Pintar va con cada fotograma del vídeo (recorder.ts); el reloj solo
+        // vigila cuándo acaba el tramo o si el navegador lo ha parado.
+        let dejarDePintar = () => { /* aún no */ };
+        let terminado = false;
+        const acabar = () => { terminado = true; clearInterval(id); dejarDePintar(); resolve(); };
         const id = setInterval(() => {
-          if (cancelado || v.ended || (hasta > 0 && v.currentTime >= hasta - 0.02)) {
-            clearInterval(id);
-            resolve();
-            return;
-          }
+          if (cancelado || v.ended || (hasta > 0 && v.currentTime >= hasta - 0.02)) { acabar(); return; }
           if (v.paused) {
             // El navegador lo ha parado por ahorro de energía: se dice, no se
             // entrega un vídeo cortado que parece bueno.
             pausadoFuera = true;
             cancelado = true;
-            clearInterval(id);
-            resolve();
-            return;
+            acabar();
           }
+        }, 1000 / 120);
+        const parar = alPresentarFotograma(v, () => {
+          if (cancelado || v.paused) return;
           // Tiempo dentro del tramo final, no del vídeo original.
           const t = Math.max(0, (v.currentTime - desde) / vel);
           ultimoT = t;
@@ -300,7 +315,9 @@ export const mergeClipsToVideo = async (
             duration: total,
             pct: Math.min(100, Math.round(((acumulado + t) / total) * 100)),
           });
-        }, 1000 / 60);
+        });
+        dejarDePintar = parar;
+        if (terminado) parar();
       });
       esperar();
       try { v.pause(); } catch { /* */ }

@@ -17,7 +17,7 @@ import JSZip from 'jszip';
 import {
   Scissors, X, Play, Pause, SkipBack, SkipForward, ListVideo, Plus, Copy, Trash2, ChevronLeft, ChevronRight,
   Volume2, VolumeX, RotateCcw, Download, Loader2, Blend, Sparkles, Film, Package, AlertCircle,
-  ChevronsLeft, ChevronsRight, ArrowLeftToLine, ArrowRightToLine, Crop, Undo2,
+  ChevronsLeft, ChevronsRight, ArrowLeftToLine, ArrowRightToLine, Crop, Undo2, Redo2,
 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from '../types';
 import { useBrand } from '../brand';
@@ -289,7 +289,9 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   // Deshacer: antes de cada edición se guarda la lista como estaba. Arrastrar
   // un tirador guarda una sola vez, al cogerlo, y no en cada movimiento.
   const historial = useRef<Pieza[][]>([]);
+  const rehechos = useRef<Pieza[][]>([]);
   const [hayDeshacer, setHayDeshacer] = useState(false);
+  const [hayRehacer, setHayRehacer] = useState(false);
   const piezasRef = useRef(piezas);
   piezasRef.current = piezas;
   const ultimoGuardado = useRef(0);
@@ -300,14 +302,40 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     if (seguido) return;
     historial.current.push(piezasRef.current);
     if (historial.current.length > 60) historial.current.shift();
+    // Una edición nueva tira lo que se podía rehacer.
+    rehechos.current = [];
+    setHayRehacer(false);
     setHayDeshacer(true);
   }, []);
   const deshacer = () => {
     const previo = historial.current.pop();
     setHayDeshacer(historial.current.length > 0);
     if (!previo) return;
+    rehechos.current.push(piezasRef.current);
+    setHayRehacer(true);
     parar();
     setPiezas(previo);
+  };
+  const rehacer = () => {
+    const siguiente = rehechos.current.pop();
+    setHayRehacer(rehechos.current.length > 0);
+    if (!siguiente) return;
+    historial.current.push(piezasRef.current);
+    setHayDeshacer(true);
+    parar();
+    setPiezas(siguiente);
+  };
+  /** Saltar al corte anterior o siguiente (↑ / ↓, como en CapCut). */
+  const irACorte = (dir: -1 | 1) => {
+    const cortes = [0];
+    for (const x of piezas) cortes.push(cortes[cortes.length - 1] + durFinal(x));
+    const destino = dir < 0
+      ? [...cortes].reverse().find(c => c < posicion - 0.05)
+      : cortes.find(c => c > posicion + 0.05);
+    if (destino === undefined) return;
+    parar();
+    // Justo en un corte se elige la pieza que empieza ahí.
+    saltarGlobal(Math.min(totalFinal - 0.01, destino + 0.001));
   };
   const editar = (fn: (prev: Pieza[]) => Pieza[]) => { guardar(); setPiezas(fn); };
 
@@ -511,15 +539,22 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
       const en = e.target as HTMLElement;
       if (exp || en?.closest('input, textarea, select, [role="slider"]')) return;
       if (e.key === 'Escape') { onClose(); return; }
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); deshacer(); return; }
-      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      const ctrl = e.ctrlKey || e.metaKey;
+      if (ctrl && (e.key === 'z' || e.key === 'Z')) { e.preventDefault(); e.shiftKey ? rehacer() : deshacer(); return; }
+      if (ctrl && (e.key === 'y' || e.key === 'Y')) { e.preventDefault(); rehacer(); return; }
+      if (ctrl && (e.key === 'b' || e.key === 'B')) { e.preventDefault(); cortar(); return; }
+      if (ctrl || e.altKey) return;
       if (e.code === 'Space') { e.preventDefault(); reproduciendo ? parar() : reproducir(false); }
-      else if (e.key === 's' || e.key === 'S') cortar();
+      else if (e.key === 's' || e.key === 'S' || e.key === 'b' || e.key === 'B') cortar();
       else if (e.key === 'i' || e.key === 'I') marcarEntrada();
       else if (e.key === 'o' || e.key === 'O') marcarSalida();
       else if (e.key === 'q' || e.key === 'Q') quitarAntes();
       else if (e.key === 'w' || e.key === 'W') quitarDespues();
-      else if (e.key === 'Delete' || e.key === 'Backspace') { if (tramo) quitarTramo(); }
+      else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); if (tramo) quitarTramo(); else borrar(); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); irACorte(-1); }
+      else if (e.key === 'ArrowDown') { e.preventDefault(); irACorte(1); }
+      else if (e.key === 'Home') { e.preventDefault(); parar(); saltarGlobal(0); }
+      else if (e.key === 'End') { e.preventDefault(); parar(); saltarGlobal(Math.max(0, totalFinal - 0.05)); }
       else if (e.key === 'ArrowLeft') { e.preventDefault(); paso(e.shiftKey ? -1 : -FOTOGRAMA); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); paso(e.shiftKey ? 1 : FOTOGRAMA); }
     };
@@ -537,6 +572,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
 
   const carga = sel ? cargas[claveFuente(sel)] : undefined;
   const boton = 'h-9 px-3 rounded-xl border border-white/10 text-xs font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
+  const herramienta = 'h-8 px-2.5 rounded-lg border border-white/10 text-[11px] font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
 
   return createPortal(
     <div className="fixed inset-0 z-[100000] bg-[#07060a] text-white flex flex-col animate-fade-in" style={brand.cssVars} role="dialog" aria-modal="true" aria-label={tx('ed_title', 'Clip editor')}>
@@ -553,10 +589,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span className="hidden xl:block text-[10px] text-gray-500 font-bold">{tx('ed_keys2', 'Space play · ←/→ frame · Q/W remove before/after · I/O mark · S split')}</span>
-          <button type="button" onClick={deshacer} disabled={!hayDeshacer} className="h-9 px-3 rounded-xl border border-white/10 text-xs font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" title="Ctrl+Z">
-            <Undo2 className="w-4 h-4" /><span className="hidden sm:inline">{tx('ed_undo', 'Undo')}</span>
-          </button>
+          <span className="hidden xl:block text-[10px] text-gray-500 font-bold">{tx('ed_keys3', 'Space play · Ctrl+B split · Q/W delete left/right · Del delete · ↑/↓ cuts · Ctrl+Z undo')}</span>
           <button type="button" onClick={onClose} aria-label={tx('wm_close', 'Close')} className="w-9 h-9 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-red-500/15 hover:border-red-500/30 flex items-center justify-center cursor-pointer">
             <X className="w-4 h-4" />
           </button>
@@ -660,19 +693,6 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                           <span className="flex-1 h-9 rounded-xl bg-dark-950 border border-white/10 flex items-center justify-center text-sm font-mono font-black text-white tabular-nums">{reloj(tiempo)}</span>
                           <button type="button" className={boton + ' !px-2'} onClick={() => paso(FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_fwd_frame', 'Forward 1 frame')} title={tx('ed_fwd_frame', 'Forward 1 frame') + ' (→)'}><ChevronRight className="w-4 h-4" /></button>
                           <button type="button" className={boton + ' !px-2'} onClick={() => paso(1)} disabled={!selLista} aria-label={tx('ed_fwd_1s', 'Forward 1 second')} title={tx('ed_fwd_1s', 'Forward 1 second') + ' (Shift+→)'}><ChevronsRight className="w-4 h-4" /></button>
-                        </div>
-
-                        {/* Recorte rápido: lo de antes o lo de después del cursor */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <button type="button" className={boton + ' justify-center'} onClick={quitarAntes} disabled={!selLista || !puedeAntes} title="Q">
-                            <ArrowLeftToLine className="w-4 h-4 text-twitch" />{tx('ed_cut_before', 'Remove before')}
-                          </button>
-                          <button type="button" className={boton + ' justify-center'} onClick={quitarDespues} disabled={!selLista || !puedeDespues} title="W">
-                            {tx('ed_cut_after', 'Remove after')}<ArrowRightToLine className="w-4 h-4 text-twitch" />
-                          </button>
-                          <button type="button" className={boton + ' justify-center col-span-2 !border-twitch/40 !text-white'} onClick={cortar} disabled={!selLista || !puedeCortar} title="S">
-                            <Scissors className="w-4 h-4 text-twitch" />{tx('ed_split', 'Split at the playhead')}
-                          </button>
                         </div>
 
                         {/* Tramo marcado: entrada y salida, y qué hacer con él */}
@@ -788,24 +808,48 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
           </aside>
         </div>
 
-        {/* ---- línea de tiempo ---- */}
+        {/* ---- línea de tiempo (estilo CapCut: herramientas encima) ---- */}
         <div className="shrink-0 border-t border-white/10 bg-[#0b0a0f] px-3 md:px-5 pt-2 pb-3">
-          <div className="flex items-center justify-between gap-2 mb-1">
-            <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tx('ed_timeline', 'Timeline')}</h4>
-            <input ref={inputRef} type="file" accept="video/*,image/*" multiple className="hidden" onChange={e => { anadir(e.target.files); e.target.value = ''; }} />
-            <button type="button" className={boton} onClick={() => inputRef.current?.click()}>
-              <Plus className="w-4 h-4 text-twitch" />{tx('mergeAddOwn', 'Add your own video or image')}
-            </button>
-          </div>
+          <input ref={inputRef} type="file" accept="video/*,image/*" multiple className="hidden" onChange={e => { anadir(e.target.files); e.target.value = ''; }} />
           {errorPropio && <p className="text-[11px] font-bold text-red-400 mb-1">{errorPropio}</p>}
           <Timeline
             piezas={piezas}
             seleccionada={selId}
-            onSelect={id => { parar(); setSelId(id); }}
-            onReorder={next => { guardar(true); setPiezas(next); }}
             posicion={posicion}
+            reproduciendo={reproduciendo}
+            marcas={marcas}
+            version={Object.values(cargas).filter(c => c.pct === 100).length}
+            tx={tx}
+            onSelect={(id, tg) => { parar(); saltarGlobal(tg); setSelId(id); }}
             onSeek={tg => { parar(); saltarGlobal(tg); }}
+            onReorder={next => { guardar(true); setPiezas(next); }}
+            onTrimStart={() => { parar(); guardar(); }}
+            onTrim={cambiarSinGuardar}
+            onPreview={(id, t) => { if (id === selId) buscarEnPieza(t); }}
+            herramientas={<>
+              <button type="button" className={herramienta} onClick={deshacer} disabled={!hayDeshacer} title={tx('ed_undo', 'Undo') + ' (Ctrl+Z)'} aria-label={tx('ed_undo', 'Undo')}><Undo2 className="w-4 h-4" /></button>
+              <button type="button" className={herramienta} onClick={rehacer} disabled={!hayRehacer} title={tx('ed_redo', 'Redo') + ' (Ctrl+Shift+Z)'} aria-label={tx('ed_redo', 'Redo')}><Redo2 className="w-4 h-4" /></button>
+              <span className="w-px h-6 bg-white/10 mx-0.5" />
+              <button type="button" className={herramienta + ' !border-twitch/40 !text-white'} onClick={cortar} disabled={!selLista || !puedeCortar} title={tx('ed_split', 'Split at the playhead') + ' (Ctrl+B)'}>
+                <Scissors className="w-4 h-4 text-twitch" /><span className="hidden md:inline">{tx('ed_split_short', 'Split')}</span>
+              </button>
+              <button type="button" className={herramienta} onClick={quitarAntes} disabled={!selLista || !puedeAntes} title={tx('ed_cut_before', 'Remove before') + ' (Q)'}>
+                <ArrowLeftToLine className="w-4 h-4 text-twitch" /><span className="hidden lg:inline">{tx('ed_cut_before', 'Remove before')}</span>
+              </button>
+              <button type="button" className={herramienta} onClick={quitarDespues} disabled={!selLista || !puedeDespues} title={tx('ed_cut_after', 'Remove after') + ' (W)'}>
+                <span className="hidden lg:inline">{tx('ed_cut_after', 'Remove after')}</span><ArrowRightToLine className="w-4 h-4 text-twitch" />
+              </button>
+              <button type="button" className={herramienta + ' hover:!text-red-300 hover:!border-red-400/40'} onClick={() => (tramo ? quitarTramo() : borrar())} disabled={!sel} title={(tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')) + ' (Supr)'}>
+                <Trash2 className="w-4 h-4" /><span className="hidden md:inline">{tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')}</span>
+              </button>
+              <span className="w-px h-6 bg-white/10 mx-0.5" />
+              <button type="button" className={herramienta} onClick={() => inputRef.current?.click()} title={tx('mergeAddOwn', 'Add your own video or image')}>
+                <Plus className="w-4 h-4 text-twitch" /><span className="hidden sm:inline">{tx('ed_add', 'Add media')}</span>
+              </button>
+              <span className="ml-1 text-[11px] font-mono font-bold text-gray-500 tabular-nums hidden sm:inline">{mmss(posicion, true)} / {mmss(totalFinal, true)}</span>
+            </>}
           />
+          <p className="mt-1 text-[10px] font-bold text-gray-600 hidden md:block">{tx('ed_tl_hint', 'Click a clip to put the playhead there · drag its white edges to trim · drag a clip to move it · Ctrl + wheel to zoom')}</p>
         </div>
       </div>
     </div>,

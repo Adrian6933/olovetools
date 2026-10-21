@@ -1,24 +1,50 @@
-// La línea de tiempo del editor: cada pieza es un bloque tan ancho como lo que
-// dura en el vídeo final. Se elige pulsando, se reordena arrastrando (los
-// demás bloques se apartan) y pulsar en la regla lleva a ese momento.
-import React, { useLayoutEffect, useRef, useState } from 'react';
-import { Film, ImageIcon, VolumeX, Gauge } from 'lucide-react';
-import { durFinal, mmss, type Pieza } from './model';
+// ============================================================================
+// La línea de tiempo del editor, al estilo de CapCut
+// ----------------------------------------------------------------------------
+// Una sola pista: cada pieza ocupa lo que dura en el vídeo final, pegada a la
+// anterior (al quitar o recortar, lo de detrás se corre solo). Arriba, una
+// regla con los segundos; encima de todo, el cursor de reproducción, que se
+// arrastra para buscar.
+//
+//   - Pulsar una pieza la elige y pone el cursor en ese punto.
+//   - Arrastrar una pieza la cambia de sitio.
+//   - Arrastrar los bordes de la elegida la recorta (el vídeo enseña el
+//     fotograma del borde mientras tanto).
+//   - Pulsar o arrastrar en la regla (o en hueco) mueve el cursor.
+//   - Ctrl + rueda, o los botones, acercan y alejan.
+//
+// Las herramientas (cortar, quitar…) llegan del editor por `herramientas`: es
+// él quien sabe hacerlas; aquí solo se colocan a la izquierda del zoom.
+// ============================================================================
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { ImageIcon, VolumeX, Gauge, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { durFinal, fuenteLista, mmss, tiraDeFotogramas, type Pieza } from './model';
 
 interface Props {
   piezas: Pieza[];
   seleccionada: string | null;
-  onSelect: (id: string) => void;
-  onReorder: (next: Pieza[]) => void;
-  /** Segundo del vídeo final por donde va la reproducción. */
+  /** Segundo del vídeo final por donde va el cursor. */
   posicion: number;
-  onSeek: (t: number) => void;
+  reproduciendo: boolean;
+  /** Tramo marcado (I / O) de la pieza elegida, en segundos del original. */
+  marcas?: { a: number | null; b: number | null };
+  /** Cambia cuando termina de bajarse algún clip (para pintar sus fotogramas). */
+  version: number;
+  herramientas?: React.ReactNode;
+  onSeek: (tGlobal: number) => void;
+  onSelect: (id: string, tGlobal: number) => void;
+  onReorder: (next: Pieza[]) => void;
+  /** Antes de recortar arrastrando (para que deshacer lo cuente como un paso). */
+  onTrimStart: () => void;
+  onTrim: (id: string, parche: Partial<Pieza>) => void;
+  /** Enseñar en el reproductor el fotograma del borde que se arrastra. */
+  onPreview: (id: string, tOriginal: number) => void;
+  tx: (k: string, fb: string) => string;
 }
 
-const PX_SEG = 14;
-const ANCHO_MIN = 84;
-
-const anchoDe = (p: Pieza) => Math.max(ANCHO_MIN, durFinal(p) * PX_SEG);
+const MIN_TRAMO = 0.3;
+const ALTO_PISTA = 64;
+const MARGEN = 12;
 
 const mover = <T,>(arr: T[], de: number, a: number) => {
   const c = arr.slice();
@@ -27,135 +53,362 @@ const mover = <T,>(arr: T[], de: number, a: number) => {
   return c;
 };
 
-const Timeline: React.FC<Props> = ({ piezas, seleccionada, onSelect, onReorder, posicion, onSeek }) => {
-  const bloques = useRef(new Map<string, HTMLDivElement>());
-  const antes = useRef(new Map<string, number>());
-  const [arrastrando, setArrastrando] = useState<string | null>(null);
-  const pulsado = useRef<{ id: string; x: number } | null>(null);
+/** Paso de las marcas de la regla según el zoom: una etiqueta cada ~80 px. */
+const pasoRegla = (pxSeg: number) => [0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300].find(p => p * pxSeg >= 80) || 600;
+
+type Gesto =
+  | { tipo: 'pulsado'; id: string; x0: number; tx0: number }
+  | { tipo: 'arrastre'; id: string; agarre: number }
+  | { tipo: 'borde'; id: string; lado: 'izq' | 'der'; x0: number; inicio: number; fin: number; total: number }
+  | { tipo: 'buscar' };
+
+const Timeline: React.FC<Props> = ({
+  piezas, seleccionada, posicion, reproduciendo, marcas, version, herramientas,
+  onSeek, onSelect, onReorder, onTrimStart, onTrim, onPreview, tx,
+}) => {
+  const scroller = useRef<HTMLDivElement>(null);
+  const lienzo = useRef<HTMLDivElement>(null);
+  const [ancho, setAncho] = useState(800);
+  const [zoom, setZoom] = useState(1);
+  const gesto = useRef<Gesto | null>(null);
+  const [arrastrando, setArrastrando] = useState<{ id: string; x: number } | null>(null);
   const piezasRef = useRef(piezas);
   piezasRef.current = piezas;
 
-  // Los bloques se deslizan a su sitio nuevo en vez de saltar.
+  // ---- medidas -------------------------------------------------------------
   useLayoutEffect(() => {
-    if (!antes.current.size) return;
-    bloques.current.forEach((el, id) => {
-      const prev = antes.current.get(id);
-      if (prev === undefined || id === arrastrando) return;
-      const dx = prev - el.getBoundingClientRect().left;
-      if (!dx) return;
-      el.style.transition = 'none';
-      el.style.transform = `translateX(${dx}px)`;
-      void el.offsetWidth;
-      el.style.transition = 'transform 220ms cubic-bezier(.2,.8,.2,1)';
-      el.style.transform = '';
-    });
-    antes.current.clear();
-  }, [piezas, arrastrando]);
+    const el = scroller.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setAncho(el.clientWidth));
+    ro.observe(el);
+    setAncho(el.clientWidth);
+    return () => ro.disconnect();
+  }, []);
+
+  const total = piezas.reduce((s, p) => s + durFinal(p), 0);
+  // Zoom 1 = todo el vídeo cabe a lo ancho. Hasta ~400 px por segundo.
+  const pxAjuste = Math.max(4, (ancho - MARGEN * 2) / Math.max(total, 1));
+  const zoomMax = Math.max(1, 400 / pxAjuste);
+  const pxSeg = pxAjuste * Math.min(zoom, zoomMax);
+  const anchoTotal = Math.max(ancho, total * pxSeg + MARGEN * 2);
+
+  const inicios = useMemo(() => {
+    const r: number[] = [];
+    let acc = 0;
+    for (const p of piezas) { r.push(acc); acc += durFinal(p); }
+    return r;
+  }, [piezas]);
+
+  const xDe = (t: number) => MARGEN + t * pxSeg;
+  const tDe = (clientX: number) => {
+    const r = lienzo.current?.getBoundingClientRect();
+    if (!r) return 0;
+    return Math.max(0, Math.min(total, (clientX - r.left - MARGEN) / pxSeg));
+  };
+
+  // ---- zoom con Ctrl + rueda (no pasivo: si no, preventDefault no vale) ----
+  const zoomRef = useRef({ zoom, zoomMax, pxSeg });
+  zoomRef.current = { zoom, zoomMax, pxSeg };
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    const alRodar = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const { zoom: z, zoomMax: zm } = zoomRef.current;
+      setZoom(Math.max(1, Math.min(zm, z * (e.deltaY < 0 ? 1.25 : 0.8))));
+    };
+    el.addEventListener('wheel', alRodar, { passive: false });
+    return () => el.removeEventListener('wheel', alRodar);
+  }, []);
+
+  // Ctrl + / Ctrl - (Ctrl 0 ajusta), como en los editores de escritorio.
+  useEffect(() => {
+    const alTeclear = (e: KeyboardEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) return;
+      if ((e.target as HTMLElement)?.closest?.('input, textarea, select')) return;
+      if (e.key === '+' || e.key === '=') { e.preventDefault(); setZoom(z => Math.min(zoomRef.current.zoomMax, z * 1.5)); }
+      else if (e.key === '-') { e.preventDefault(); setZoom(z => Math.max(1, z / 1.5)); }
+      else if (e.key === '0') { e.preventDefault(); setZoom(1); }
+    };
+    window.addEventListener('keydown', alTeclear);
+    return () => window.removeEventListener('keydown', alTeclear);
+  }, []);
+
+  // Al acercar, el cursor se queda a la vista.
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el) return;
+    el.scrollLeft = Math.max(0, xDe(posicion) - el.clientWidth / 2);
+  }, [zoom]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reproduciendo, la vista sigue al cursor.
+  useEffect(() => {
+    const el = scroller.current;
+    if (!el || !reproduciendo) return;
+    const x = xDe(posicion);
+    if (x < el.scrollLeft + 20 || x > el.scrollLeft + el.clientWidth - 40) el.scrollLeft = Math.max(0, x - 60);
+  }, [posicion, reproduciendo]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---- tiras de fotogramas por pieza ----------------------------------------
+  const [tiras, setTiras] = useState<Record<string, string[]>>({});
+  useEffect(() => {
+    let vivo = true;
+    for (const p of piezas) {
+      if (p.tipo === 'imagen') continue;
+      const f = fuenteLista(p);
+      if (!f || p.total <= 0 || tiras[f.url]) continue;
+      const n = Math.max(6, Math.min(40, Math.ceil(p.total / 1.5)));
+      tiraDeFotogramas(f.url, p.total, n)
+        .then(fr => { if (vivo) setTiras(prev => (prev[f.url] ? prev : { ...prev, [f.url]: fr })); })
+        .catch(() => { /* sin tira: se queda la miniatura */ });
+    }
+    return () => { vivo = false; };
+  }, [piezas, version]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ---- gestos ----------------------------------------------------------------
+  const capturar = (e: React.PointerEvent) => {
+    try { lienzo.current?.setPointerCapture(e.pointerId); } catch { /* puntero ya suelto */ }
+  };
+
+  const alPulsarFondo = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    gesto.current = { tipo: 'buscar' };
+    capturar(e);
+    onSeek(tDe(e.clientX));
+  };
+
+  const alPulsarPieza = (e: React.PointerEvent, p: Pieza) => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    gesto.current = { tipo: 'pulsado', id: p.id, x0: e.clientX, tx0: tDe(e.clientX) };
+    capturar(e);
+  };
+
+  const alPulsarBorde = (e: React.PointerEvent, p: Pieza, lado: 'izq' | 'der') => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    onTrimStart();
+    gesto.current = { tipo: 'borde', id: p.id, lado, x0: e.clientX, inicio: p.inicio, fin: p.fin, total: p.total };
+    capturar(e);
+  };
 
   const alMover = (e: React.PointerEvent) => {
-    const p = pulsado.current;
-    if (p && !arrastrando && Math.abs(e.clientX - p.x) > 6) {
-      setArrastrando(p.id);
+    const g = gesto.current;
+    if (!g) return;
+    if (g.tipo === 'buscar') { onSeek(tDe(e.clientX)); return; }
+    if (g.tipo === 'pulsado') {
+      if (Math.abs(e.clientX - g.x0) < 6) return;
+      const i = piezasRef.current.findIndex(x => x.id === g.id);
+      const agarre = e.clientX - (lienzo.current?.getBoundingClientRect().left || 0) - xDe(inicios[i] ?? 0);
+      gesto.current = { tipo: 'arrastre', id: g.id, agarre };
+      setArrastrando({ id: g.id, x: e.clientX });
       return;
     }
-    if (!arrastrando) return;
-    const lista = piezasRef.current;
-    const desde = lista.findIndex(x => x.id === arrastrando);
-    let hasta = 0;
-    for (const x of lista) {
-      if (x.id === arrastrando) continue;
-      const r = bloques.current.get(x.id)?.getBoundingClientRect();
-      if (r && e.clientX > r.left + r.width / 2) hasta += 1;
+    if (g.tipo === 'arrastre') {
+      setArrastrando({ id: g.id, x: e.clientX });
+      // Se cambia de sitio al pasar la mitad de la vecina.
+      const lista = piezasRef.current;
+      const desde = lista.findIndex(x => x.id === g.id);
+      const t = tDe(e.clientX);
+      let hasta = 0;
+      let acc = 0;
+      for (const x of lista) {
+        if (x.id === g.id) continue;
+        const d = durFinal(x);
+        if (t > acc + d / 2) hasta += 1;
+        acc += d;
+      }
+      if (desde >= 0 && hasta !== desde) onReorder(mover(lista, desde, hasta));
+      return;
     }
-    if (desde >= 0 && hasta !== desde) {
-      antes.current.clear();
-      bloques.current.forEach((el, id) => antes.current.set(id, el.getBoundingClientRect().left));
-      onReorder(mover(lista, desde, hasta));
+    if (g.tipo === 'borde') {
+      const p = piezasRef.current.find(x => x.id === g.id);
+      if (!p) return;
+      const dSeg = (e.clientX - g.x0) / pxSeg;
+      if (p.tipo === 'imagen') {
+        // Una imagen no tiene "original": los bordes cambian cuánto se ve.
+        const base = g.fin - g.inicio;
+        const nuevo = Math.round(Math.max(0.5, Math.min(60, base + (g.lado === 'der' ? dSeg : -dSeg))) * 10) / 10;
+        onTrim(p.id, { total: nuevo, inicio: 0, fin: nuevo });
+        return;
+      }
+      const vel = p.velocidad || 1;
+      if (g.lado === 'izq') {
+        const inicio = Math.max(0, Math.min(g.fin - MIN_TRAMO, g.inicio + dSeg * vel));
+        onTrim(p.id, { inicio });
+        onPreview(p.id, inicio);
+      } else {
+        const fin = Math.min(g.total, Math.max(g.inicio + MIN_TRAMO, g.fin + dSeg * vel));
+        onTrim(p.id, { fin });
+        onPreview(p.id, Math.max(g.inicio, fin - 0.04));
+      }
     }
   };
 
-  const soltar = () => {
-    if (!arrastrando && pulsado.current) onSelect(pulsado.current.id);
-    pulsado.current = null;
+  const alSoltar = (e: React.PointerEvent) => {
+    const g = gesto.current;
+    gesto.current = null;
     setArrastrando(null);
+    if (g?.tipo === 'pulsado') onSelect(g.id, g.tx0);
+    try { lienzo.current?.releasePointerCapture(e.pointerId); } catch { /* ya suelto */ }
   };
 
-  // Regla y cursor: el cursor se coloca por posición acumulada de bloques.
-  let acumulado = 0;
-  let cursorX = 0;
-  for (const p of piezas) {
-    const d = durFinal(p);
-    const w = anchoDe(p);
-    if (posicion >= acumulado && posicion <= acumulado + d + 1e-6) {
-      cursorX += d > 0 ? ((posicion - acumulado) / d) * w : 0;
-      break;
-    }
-    acumulado += d;
-    cursorX += w + 6;
-  }
+  // ---- dibujo ----------------------------------------------------------------
+  const paso = pasoRegla(pxSeg);
+  const marcasRegla: number[] = [];
+  for (let s = 0; s <= total + 1e-6; s += paso) marcasRegla.push(s);
 
-  const alPulsarRegla = (e: React.MouseEvent<HTMLDivElement>) => {
-    const x = e.clientX - e.currentTarget.getBoundingClientRect().left;
-    let izq = 0;
-    let t = 0;
-    for (const p of piezas) {
-      const w = anchoDe(p);
-      if (x <= izq + w) { t += (Math.max(0, x - izq) / w) * durFinal(p); break; }
-      izq += w + 6;
-      t += durFinal(p);
-    }
-    onSeek(t);
-  };
+  const selIdx = piezas.findIndex(p => p.id === seleccionada);
+  const sel = selIdx >= 0 ? piezas[selIdx] : null;
+  // El tramo marcado, pasado a tiempo del vídeo final.
+  const marcado = (() => {
+    if (!sel || !marcas) return null;
+    const vel = sel.velocidad || 1;
+    const g = (t: number) => inicios[selIdx] + (t - sel.inicio) / vel;
+    const a = marcas.a !== null ? g(marcas.a) : null;
+    const b = marcas.b !== null ? g(marcas.b) : null;
+    return { a, b };
+  })();
+
+  const botonZoom = 'w-8 h-8 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:border-white/25 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed';
 
   return (
-    <div className="overflow-x-auto custom-scrollbar pb-2">
-      <div className="relative inline-flex flex-col gap-2 min-w-full px-1">
-        {/* Regla: pulsar lleva a ese momento del vídeo final */}
-        <div className="relative h-5 cursor-pointer" onClick={alPulsarRegla}>
-          <div className="absolute inset-x-0 bottom-0 h-px bg-white/10" />
-          <div className="absolute top-0 bottom-0 w-0.5 bg-white rounded-full pointer-events-none" style={{ left: cursorX }}>
-            <span className="absolute -top-1 -left-[5px] w-3 h-3 rounded-full bg-white" />
-          </div>
+    <div className="flex flex-col gap-1.5 select-none">
+      {/* Herramientas (del editor) y zoom */}
+      <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0">{herramientas}</div>
+        <div className="flex items-center gap-1 shrink-0">
+          <button type="button" className={botonZoom} onClick={() => setZoom(z => Math.max(1, z / 1.5))} disabled={zoom <= 1} title={tx('ed_zoom_out', 'Zoom out') + ' (Ctrl −)'} aria-label={tx('ed_zoom_out', 'Zoom out')}><ZoomOut className="w-4 h-4" /></button>
+          <input
+            type="range" min={0} max={100} step={1}
+            value={Math.round((Math.log(Math.min(zoom, zoomMax)) / Math.log(Math.max(zoomMax, 1.0001))) * 100)}
+            onChange={e => setZoom(Math.exp((parseInt(e.target.value, 10) / 100) * Math.log(Math.max(zoomMax, 1.0001))))}
+            aria-label={tx('ed_zoom', 'Zoom')}
+            className="w-20 sm:w-28 accent-twitch h-1 cursor-pointer"
+          />
+          <button type="button" className={botonZoom} onClick={() => setZoom(z => Math.min(zoomMax, z * 1.5))} disabled={zoom >= zoomMax} title={tx('ed_zoom_in', 'Zoom in') + ' (Ctrl +)'} aria-label={tx('ed_zoom_in', 'Zoom in')}><ZoomIn className="w-4 h-4" /></button>
+          <button type="button" className={botonZoom} onClick={() => setZoom(1)} title={tx('ed_zoom_fit', 'Fit the whole video') + ' (Ctrl 0)'} aria-label={tx('ed_zoom_fit', 'Fit the whole video')}><Maximize2 className="w-3.5 h-3.5" /></button>
         </div>
+      </div>
+
+      <div ref={scroller} className="overflow-x-auto overflow-y-hidden custom-scrollbar rounded-xl bg-black/30 border border-white/5">
         <div
-          className="flex gap-1.5 select-none"
+          ref={lienzo}
+          className="relative touch-none"
+          style={{ width: anchoTotal, height: ALTO_PISTA + 34 }}
+          onPointerDown={alPulsarFondo}
           onPointerMove={alMover}
-          onPointerUp={soltar}
-          onPointerCancel={soltar}
-          onPointerLeave={() => { if (!arrastrando) pulsado.current = null; }}
+          onPointerUp={alSoltar}
+          onPointerCancel={alSoltar}
         >
-          {piezas.map((p, i) => {
-            const sel = p.id === seleccionada;
-            const drag = p.id === arrastrando;
-            return (
-              <div
-                key={p.id}
-                ref={el => { if (el) bloques.current.set(p.id, el); else bloques.current.delete(p.id); }}
-                onPointerDown={e => {
-                  if (e.button !== 0) return;
-                  pulsado.current = { id: p.id, x: e.clientX };
-                  try { (e.currentTarget.parentElement as HTMLElement).setPointerCapture(e.pointerId); } catch { /* puntero ya suelto */ }
-                }}
-                className={`relative h-16 shrink-0 rounded-xl overflow-hidden border-2 cursor-grab active:cursor-grabbing transition-[box-shadow,opacity] ${
-                  sel ? 'border-twitch shadow-[0_0_0_3px_rgba(var(--color-accent-rgb),0.25)]' : 'border-white/10 hover:border-white/30'
-                } ${drag ? 'opacity-80 z-10 shadow-2xl scale-[1.03]' : ''}`}
-                style={{ width: anchoDe(p), backgroundImage: `url(${p.thumb})`, backgroundSize: 'auto 100%', backgroundRepeat: 'repeat-x' }}
-                title={p.nombre}
-              >
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/40" />
-                <span className="absolute top-1 left-1.5 text-[10px] font-black text-white/90 tabular-nums">{i + 1}</span>
-                <span className="absolute top-1 right-1.5 flex gap-1 text-white/90">
-                  {p.tipo === 'imagen' ? <ImageIcon className="w-3 h-3" /> : p.tipo === 'video' ? <Film className="w-3 h-3" /> : null}
-                  {p.silencio && <VolumeX className="w-3 h-3 text-red-300" />}
-                  {p.velocidad !== 1 && <span className="flex items-center gap-0.5 text-[9px] font-black"><Gauge className="w-3 h-3" />{p.velocidad}x</span>}
-                </span>
-                <span className="absolute bottom-1 left-1.5 right-1.5 flex items-end justify-between gap-1">
-                  <span className="text-[10px] font-bold text-white truncate">{p.nombre}</span>
-                  <span className="text-[9px] font-mono font-bold text-white/80 shrink-0">{mmss(durFinal(p))}</span>
-                </span>
+          {/* Regla */}
+          <div className="absolute inset-x-0 top-0 h-6 cursor-pointer border-b border-white/10">
+            {marcasRegla.map(s => (
+              <div key={s} className="absolute top-0 h-full" style={{ left: xDe(s) }}>
+                <div className="absolute bottom-0 w-px h-2 bg-white/30" />
+                <span className="absolute top-0.5 left-1 text-[9px] font-mono font-bold text-gray-500 whitespace-nowrap">{mmss(s)}</span>
+                {/* Marcas pequeñas entre medias */}
+                {[1, 2, 3, 4].map(k => (
+                  <div key={k} className="absolute bottom-0 w-px h-1 bg-white/15" style={{ left: (paso * pxSeg * k) / 5 }} />
+                ))}
               </div>
-            );
-          })}
+            ))}
+          </div>
+
+          {/* Pista */}
+          <div className="absolute inset-x-0" style={{ top: 30, height: ALTO_PISTA }}>
+            {piezas.map((p, i) => {
+              const d = durFinal(p);
+              const izq = xDe(inicios[i]);
+              const w = Math.max(2, d * pxSeg);
+              const elegida = p.id === seleccionada;
+              const movida = arrastrando?.id === p.id;
+              const f = fuenteLista(p);
+              const tira = f ? tiras[f.url] : undefined;
+              // Fotogramas que tocan a esta pieza: uno por "casilla" de 16:9.
+              const casilla = ALTO_PISTA * 16 / 9;
+              const n = Math.max(1, Math.ceil(w / casilla));
+              const vel = p.velocidad || 1;
+              let desplaza = 0;
+              if (movida && lienzo.current) {
+                const r = lienzo.current.getBoundingClientRect();
+                const g = gesto.current;
+                const agarre = g && g.tipo === 'arrastre' ? g.agarre : 0;
+                desplaza = arrastrando!.x - r.left - agarre - izq;
+              }
+              return (
+                <div
+                  key={p.id}
+                  onPointerDown={e => alPulsarPieza(e, p)}
+                  className={`absolute top-0 h-full rounded-lg overflow-hidden cursor-grab active:cursor-grabbing bg-[#1a1822] ${
+                    elegida ? 'ring-2 ring-white z-10' : 'ring-1 ring-inset ring-black/60 hover:ring-white/40'
+                  } ${movida ? 'opacity-80 z-20 shadow-2xl' : ''}`}
+                  style={{ left: izq, width: w, transform: desplaza ? `translateX(${desplaza}px)` : undefined }}
+                  title={`${p.nombre} · ${mmss(d, true)}`}
+                >
+                  <div className="absolute inset-0 flex">
+                    {p.tipo === 'imagen' || !tira
+                      ? <div className="absolute inset-0" style={{ backgroundImage: `url(${p.thumb})`, backgroundSize: 'auto 100%', backgroundRepeat: 'repeat-x' }} />
+                      : Array.from({ length: n }, (_, k) => {
+                        const tOrig = p.inicio + Math.min(d, (k + 0.5) * (casilla / pxSeg)) * vel;
+                        const idx = Math.max(0, Math.min(tira.length - 1, Math.floor((tOrig / Math.max(p.total, 0.001)) * tira.length)));
+                        return <img key={k} src={tira[idx]} alt="" draggable={false} className="h-full object-cover shrink-0" style={{ width: casilla }} />;
+                      })}
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none" />
+                  {w > 46 && (
+                    <span className="absolute top-1 left-1.5 right-1.5 flex items-center gap-1 text-white/90 pointer-events-none">
+                      {p.tipo === 'imagen' && <ImageIcon className="w-3 h-3 shrink-0" />}
+                      {p.silencio && <VolumeX className="w-3 h-3 text-red-300 shrink-0" />}
+                      {vel !== 1 && <span className="flex items-center gap-0.5 text-[9px] font-black shrink-0"><Gauge className="w-3 h-3" />{vel}x</span>}
+                    </span>
+                  )}
+                  {w > 70 && (
+                    <span className="absolute bottom-1 left-1.5 right-1.5 flex items-end justify-between gap-1 pointer-events-none">
+                      <span className="text-[10px] font-bold text-white truncate">{p.nombre}</span>
+                      <span className="text-[9px] font-mono font-bold text-white/80 shrink-0">{mmss(d, true)}</span>
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Tramo marcado con I / O */}
+            {marcado && marcado.a !== null && marcado.b !== null && (
+              <div
+                className="absolute top-0 h-full bg-red-500/30 border-x-2 border-red-400 pointer-events-none z-20 bg-[repeating-linear-gradient(135deg,transparent_0_6px,rgba(0,0,0,0.25)_6px_12px)]"
+                style={{ left: xDe(Math.min(marcado.a, marcado.b)), width: Math.abs(marcado.b - marcado.a) * pxSeg }}
+              />
+            )}
+            {marcado && [marcado.a, marcado.b].map((m, k) => m !== null && (marcado.a === null || marcado.b === null) && (
+              <div key={k} className="absolute top-0 h-full w-0.5 bg-red-400 pointer-events-none z-20" style={{ left: xDe(m) }} />
+            ))}
+
+            {/* Bordes de la elegida, para recortar arrastrando */}
+            {sel && !arrastrando && (['izq', 'der'] as const).map(lado => {
+              const x = lado === 'izq' ? xDe(inicios[selIdx]) : xDe(inicios[selIdx] + durFinal(sel));
+              return (
+                <div
+                  key={lado}
+                  onPointerDown={e => alPulsarBorde(e, sel, lado)}
+                  className="absolute top-0 h-full w-3.5 z-30 cursor-ew-resize flex items-center justify-center group"
+                  style={{ left: lado === 'izq' ? x : x - 14 }}
+                  title={tx('ed_tl_trim', 'Drag to trim')}
+                >
+                  <span className={`h-full w-2.5 bg-white flex items-center justify-center shadow-lg ${lado === 'izq' ? 'rounded-l-lg' : 'rounded-r-lg'}`}>
+                    <span className="w-0.5 h-5 rounded-full bg-black/60" />
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Cursor */}
+          <div className="absolute top-0 bottom-0 z-40 pointer-events-none" style={{ left: xDe(posicion) }}>
+            <div className="absolute top-0 bottom-0 -left-px w-0.5 bg-white shadow-[0_0_6px_rgba(0,0,0,0.9)]" />
+            <div className="absolute -top-0 -left-[6px] w-3 h-3.5 bg-white [clip-path:polygon(0_0,100%_0,100%_60%,50%_100%,0_60%)]" />
+          </div>
         </div>
       </div>
     </div>

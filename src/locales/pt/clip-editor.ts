@@ -73,8 +73,8 @@ export default {
       "answer": "Em MP4 no Chrome, Edge e Safari, e em WebM nos navegadores que não gravam MP4, como o Firefox. A imagem tem 1920×1080; vídeos com outro formato são encaixados com faixas pretas em vez de cortados."
     },
     {
-      "question": "Por que exportar demora o mesmo que o vídeo?",
-      "answer": "O navegador grava o resultado enquanto o reproduz, em tempo real, porque essa é a única forma de recodificar vídeo numa página web sem baixar algo pesado. Uma edição de dois minutos leva uns dois minutos. Deixe a aba visível: os navegadores pausam abas ocultas."
+      "question": "Quanto tempo demora a exportação?",
+      "answer": "Normalmente menos do que dura o vídeo: o seu próprio navegador decodifica, desenha e codifica cada quadro com WebCodecs, sem esperar para reproduzi-lo. Uma edição de um minuto costuma levar de 20 a 40 segundos. Partes com velocidade diferente de 1x continuam sendo gravadas em tempo real, para a voz manter o tom. Deixe a aba aberta até terminar."
     },
     {
       "question": "Como tiro um trecho do meio?",
@@ -95,7 +95,7 @@ export default {
   ],
   "footer_seo_title": "Um editor de vídeo no navegador para edições rápidas e privadas",
   "footer_seo_paragraph1": "O Clip Editor é o editor que vem dentro do TwitchBolt e do KickBolt, aberto para qualquer arquivo. Solte vários vídeos e imagens de uma vez e eles entram na linha do tempo nessa ordem. A partir daí cada parte pode ser cortada com alças sobre uma faixa de miniaturas, dividida no cursor, duplicada, movida para antes ou depois, acelerada ou desacelerada, abaixada ou silenciada. Assista a tudo para conferir o resultado antes de exportar.",
-  "footer_seo_paragraph2": "A exportação usa o próprio navegador: um canvas desenha cada parte em 1080p e a API MediaRecorder grava com o som mixado. Por isso não custa nada e os seus arquivos não viajam, e também por isso não serve para projetos com várias faixas, correção de cor ou masters em 4K; para isso um editor de desktop continua sendo o certo. Para o dia a dia de cortar, juntar e enviar, isto é mais rápido.",
+  "footer_seo_paragraph2": "A exportação usa o próprio navegador: cada quadro é decodificado com WebCodecs, desenhado em 1080p e codificado em H.264, e o som é mixado e codificado junto. Por isso não custa nada e os seus arquivos não viajam, e também por isso não serve para projetos com várias faixas, correção de cor ou masters em 4K; para isso um editor de desktop continua sendo o certo. Para o dia a dia de cortar, juntar e enviar, isto é mais rápido.",
   "footerTagline": "Corte, divida e junte vídeos no navegador. Sem upload.",
   "footerCredit": "Parte da suíte oLoveTools",
   "emailCopied": "Copiado!",
@@ -152,7 +152,7 @@ export default {
   "ed_fades": "Transições",
   "ed_watermark": "Marca d’água",
   "ed_export": "Exportar",
-  "ed_export_hint": "A gravação é em tempo real, então demora mais ou menos o que dura o resultado. Deixe esta aba aberta.",
+  "ed_export_hint": "É processado quadro a quadro no seu navegador, normalmente em menos tempo do que dura o resultado. Deixe esta aba aberta.",
   "ed_timeline": "Linha do tempo",
   "ed_kept": "Fica: {d}",
   "ed_back_1s": "Voltar 1 segundo",
@@ -168,5 +168,15 @@ export default {
   "ed_keep_marked": "Ficar só com isto",
   "ed_clear_marks": "Limpar as marcas",
   "ed_keys2": "Espaço tocar · ←/→ quadro · Q/W tirar antes/depois · I/O marcar · S dividir",
-  "ed_undo": "Desfazer"
+  "ed_undo": "Desfazer",
+  "ed_redo": "Refazer",
+  "ed_split_short": "Dividir",
+  "ed_add": "Adicionar",
+  "ed_tl_hint": "Clique num clipe para pôr o cursor ali · arraste as bordas brancas para cortar · arraste um clipe para movê-lo · Ctrl + roda para o zoom",
+  "ed_tl_trim": "Arraste para cortar",
+  "ed_keys3": "Espaço tocar · Ctrl+B dividir · Q/W apagar à esquerda/direita · Del apagar · ↑/↓ cortes · Ctrl+Z desfazer",
+  "ed_zoom": "Zoom",
+  "ed_zoom_in": "Aproximar",
+  "ed_zoom_out": "Afastar",
+  "ed_zoom_fit": "Ver o vídeo inteiro"
 };

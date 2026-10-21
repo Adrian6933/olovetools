@@ -73,8 +73,8 @@ export default {
       "answer": "MP4 in Chrome, Edge and Safari, and WebM in browsers that cannot record MP4, such as Firefox. The picture is 1920×1080; videos with another shape are fitted inside with black bars instead of being cropped."
     },
     {
-      "question": "Why does exporting take as long as the video?",
-      "answer": "The browser records the result while it plays it, in real time, because that is the only way to re-encode video in a web page without a heavy download. A two-minute edit takes about two minutes. Keep the tab visible: browsers pause hidden tabs."
+      "question": "How long does exporting take?",
+      "answer": "Usually less than the video lasts: each frame is decoded, drawn and encoded by your own browser with WebCodecs, without waiting for it to play. A one-minute edit typically takes 20 to 40 seconds. Pieces at a speed other than 1x are still recorded in real time, so the voice keeps its pitch. Keep the tab open until it finishes."
     },
     {
       "question": "How do I cut a part out of the middle?",
@@ -95,7 +95,7 @@ export default {
   ],
   "footer_seo_title": "A browser video editor for quick, private edits",
   "footer_seo_paragraph1": "Clip Editor is the editor built into TwitchBolt and KickBolt, opened up for any file. Drop several videos and images at once and they land on the timeline in that order. From there each piece can be trimmed with handles on a strip of thumbnails, split at the playhead, duplicated, moved earlier or later, sped up or slowed down, made quieter or muted. Play everything to check the result before exporting.",
-  "footer_seo_paragraph2": "The export uses the browser itself: a canvas draws each piece at 1080p and the MediaRecorder API records it with the sound mixed in. That is why it costs nothing and why your files never travel, and also why it is not meant for multi-track projects, colour grading or 4K masters. For those, a desktop editor is still the right tool. For the everyday cut, join and send, this is quicker.",
+  "footer_seo_paragraph2": "The export uses the browser itself: each frame is decoded with WebCodecs, drawn at 1080p and encoded to H.264, and the sound is mixed and encoded alongside. That is why it costs nothing and why your files never travel, and also why it is not meant for multi-track projects, colour grading or 4K masters. For those, a desktop editor is still the right tool. For the everyday cut, join and send, this is quicker.",
   "footerTagline": "Trim, split and join videos in your browser. Nothing uploaded.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailCopied": "Copied!",
@@ -152,7 +152,7 @@ export default {
   "ed_fades": "Fades",
   "ed_watermark": "Watermark",
   "ed_export": "Export",
-  "ed_export_hint": "It records in real time, so it takes about as long as the result. Keep this tab open.",
+  "ed_export_hint": "It is processed frame by frame in your browser, usually faster than the result lasts. Keep this tab open.",
   "ed_timeline": "Timeline",
   "ed_kept": "Kept: {d}",
   "ed_back_1s": "Back 1 second",
@@ -168,5 +168,15 @@ export default {
   "ed_keep_marked": "Keep only this",
   "ed_clear_marks": "Clear the marks",
   "ed_keys2": "Space play · ←/→ frame · Q/W remove before/after · I/O mark · S split",
-  "ed_undo": "Undo"
+  "ed_undo": "Undo",
+  "ed_redo": "Redo",
+  "ed_split_short": "Split",
+  "ed_add": "Add media",
+  "ed_tl_hint": "Click a clip to put the playhead there · drag its white edges to trim · drag a clip to move it · Ctrl + wheel to zoom",
+  "ed_tl_trim": "Drag to trim",
+  "ed_keys3": "Space play · Ctrl+B split · Q/W delete left/right · Del delete · ↑/↓ cuts · Ctrl+Z undo",
+  "ed_zoom": "Zoom",
+  "ed_zoom_in": "Zoom in",
+  "ed_zoom_out": "Zoom out",
+  "ed_zoom_fit": "Fit the whole video"
 };

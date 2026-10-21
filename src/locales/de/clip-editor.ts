@@ -73,8 +73,8 @@ export default {
       "answer": "Als MP4 in Chrome, Edge und Safari und als WebM in Browsern, die kein MP4 aufnehmen können, etwa Firefox. Das Bild ist 1920×1080; Videos mit anderem Seitenverhältnis werden mit schwarzen Balken eingepasst statt beschnitten."
     },
     {
-      "question": "Warum dauert der Export so lange wie das Video?",
-      "answer": "Der Browser nimmt das Ergebnis auf, während er es abspielt, in Echtzeit, denn nur so lässt sich Video in einer Webseite ohne schweren Download neu kodieren. Ein Zwei-Minuten-Schnitt braucht etwa zwei Minuten. Lass den Tab sichtbar: Browser pausieren versteckte Tabs."
+      "question": "Wie lange dauert der Export?",
+      "answer": "Meist kürzer als das Video: Dein eigener Browser dekodiert, zeichnet und kodiert jedes Bild mit WebCodecs, ohne es abzuspielen. Ein einminütiger Schnitt dauert meist 20 bis 40 Sekunden. Stücke mit anderem Tempo als 1x werden weiterhin in Echtzeit aufgenommen, damit die Stimme ihre Tonhöhe behält. Lass den Tab offen, bis es fertig ist."
     },
     {
       "question": "Wie schneide ich ein Stück aus der Mitte heraus?",
@@ -95,7 +95,7 @@ export default {
   ],
   "footer_seo_title": "Ein Browser-Videoeditor für schnelle, private Schnitte",
   "footer_seo_paragraph1": "Clip Editor ist der Editor aus TwitchBolt und KickBolt, geöffnet für jede Datei. Lege mehrere Videos und Bilder gleichzeitig ab, und sie landen in dieser Reihenfolge auf der Zeitleiste. Dort lässt sich jedes Stück mit Griffen auf einem Miniaturstreifen kürzen, am Abspielkopf teilen, duplizieren, nach vorn oder hinten verschieben, beschleunigen oder verlangsamen, leiser stellen oder stummschalten. Spiele alles ab, um das Ergebnis vor dem Export zu prüfen.",
-  "footer_seo_paragraph2": "Der Export nutzt den Browser selbst: Ein Canvas zeichnet jedes Stück in 1080p, und die MediaRecorder-API nimmt es mit gemischtem Ton auf. Deshalb kostet er nichts und deine Dateien reisen nicht, und deshalb ist er auch nicht für Mehrspurprojekte, Farbkorrektur oder 4K-Master gedacht; dafür bleibt ein Desktop-Editor das richtige Werkzeug. Für das alltägliche Schneiden, Verbinden und Verschicken geht es hiermit schneller.",
+  "footer_seo_paragraph2": "Der Export nutzt den Browser selbst: Jedes Bild wird mit WebCodecs dekodiert, in 1080p gezeichnet und in H.264 kodiert, und der Ton wird dabei gemischt und mitkodiert. Deshalb kostet er nichts und deine Dateien reisen nicht, und deshalb ist er auch nicht für Mehrspurprojekte, Farbkorrektur oder 4K-Master gedacht; dafür bleibt ein Desktop-Editor das richtige Werkzeug. Für das alltägliche Schneiden, Verbinden und Verschicken geht es hiermit schneller.",
   "footerTagline": "Videos im Browser kürzen, teilen und zusammenfügen. Ohne Upload.",
   "footerCredit": "Teil der oLoveTools-Suite",
   "emailCopied": "Kopiert!",
@@ -152,7 +152,7 @@ export default {
   "ed_fades": "Überblendungen",
   "ed_watermark": "Wasserzeichen",
   "ed_export": "Exportieren",
-  "ed_export_hint": "Es wird in Echtzeit aufgenommen und dauert etwa so lange wie das Ergebnis. Lass diesen Tab offen.",
+  "ed_export_hint": "Es wird Bild für Bild in deinem Browser verarbeitet, meist schneller als das Ergebnis dauert. Lass diesen Tab offen.",
   "ed_timeline": "Zeitleiste",
   "ed_kept": "Bleibt: {d}",
   "ed_back_1s": "1 Sekunde zurück",
@@ -168,5 +168,15 @@ export default {
   "ed_keep_marked": "Nur das behalten",
   "ed_clear_marks": "Markierungen löschen",
   "ed_keys2": "Leertaste abspielen · ←/→ Bild · Q/W davor/danach entfernen · I/O markieren · S teilen",
-  "ed_undo": "Rückgängig"
+  "ed_undo": "Rückgängig",
+  "ed_redo": "Wiederholen",
+  "ed_split_short": "Teilen",
+  "ed_add": "Hinzufügen",
+  "ed_tl_hint": "Klicke auf einen Clip, um den Abspielkopf dorthin zu setzen · ziehe seine weißen Ränder zum Kürzen · ziehe einen Clip, um ihn zu verschieben · Strg + Mausrad zum Zoomen",
+  "ed_tl_trim": "Zum Kürzen ziehen",
+  "ed_keys3": "Leertaste abspielen · Strg+B teilen · Q/W links/rechts löschen · Entf löschen · ↑/↓ Schnitte · Strg+Z rückgängig",
+  "ed_zoom": "Zoom",
+  "ed_zoom_in": "Vergrößern",
+  "ed_zoom_out": "Verkleinern",
+  "ed_zoom_fit": "Ganzes Video zeigen"
 };

@@ -73,8 +73,8 @@ export default {
       "answer": "在 Chrome、Edge 和 Safari 中是 MP4，在无法录制 MP4 的浏览器（如 Firefox）中是 WebM。画面为 1920×1080；比例不同的视频会加黑边放进去，而不是被裁剪。"
     },
     {
-      "question": "为什么导出的时间和视频一样长？",
-      "answer": "浏览器是一边播放一边实时录制结果的，因为这是在网页里不下载大型组件就能重新编码视频的唯一方法。两分钟的剪辑大约需要两分钟。请保持标签页可见：浏览器会暂停隐藏的标签页。"
+      "question": "导出要多长时间？",
+      "answer": "通常比视频本身更短：你的浏览器用 WebCodecs 逐帧解码、绘制并编码，无需等待播放。一分钟的剪辑一般需要 20 到 40 秒。速度不是 1x 的片段仍按实时录制，以保持人声音调不变。完成前请保持标签页打开。"
     },
     {
       "question": "怎样去掉中间的一段？",
@@ -95,7 +95,7 @@ export default {
   ],
   "footer_seo_title": "用于快速、私密剪辑的浏览器视频编辑器",
   "footer_seo_paragraph1": "Clip Editor 就是 TwitchBolt 和 KickBolt 里内置的编辑器，现在对任何文件开放。一次拖入多个视频和图片，它们会按顺序进入时间线。之后每一段都可以用缩略图条上的手柄剪辑、在播放头处分割、复制、前后移动、加速或减速、调低音量或静音。导出前先完整播放一遍检查结果。",
-  "footer_seo_paragraph2": "导出直接使用浏览器本身：canvas 以 1080p 绘制每一段，MediaRecorder API 连同混合后的声音一起录制。所以它不花一分钱，你的文件也不会外传；也正因如此，它不适合多轨项目、调色或 4K 母版，那些仍然该用桌面剪辑软件。对于日常的剪、接、发，用它更快。",
+  "footer_seo_paragraph2": "导出直接使用浏览器本身：每一帧用 WebCodecs 解码，以 1080p 绘制并编码为 H.264，声音同时混合并编码。所以它不花一分钱，你的文件也不会外传；也正因如此，它不适合多轨项目、调色或 4K 母版，那些仍然该用桌面剪辑软件。对于日常的剪、接、发，用它更快。",
   "footerTagline": "在浏览器中剪辑、分割和合并视频。不上传。",
   "footerCredit": "oLoveTools 工具套件的一部分",
   "emailCopied": "已复制！",
@@ -152,7 +152,7 @@ export default {
   "ed_fades": "淡入淡出",
   "ed_watermark": "水印",
   "ed_export": "导出",
-  "ed_export_hint": "按实时速度录制，所以大约需要与成品等长的时间。请保持此标签页打开。",
+  "ed_export_hint": "在你的浏览器中逐帧处理，通常比成品的时长更快。请保持此标签页打开。",
   "ed_timeline": "时间轴",
   "ed_kept": "保留：{d}",
   "ed_back_1s": "后退 1 秒",
@@ -168,5 +168,15 @@ export default {
   "ed_keep_marked": "只保留这段",
   "ed_clear_marks": "清除标记",
   "ed_keys2": "空格 播放 · ←/→ 逐帧 · Q/W 删除前/后 · I/O 标记 · S 分割",
-  "ed_undo": "撤销"
+  "ed_undo": "撤销",
+  "ed_redo": "重做",
+  "ed_split_short": "分割",
+  "ed_add": "添加",
+  "ed_tl_hint": "点击片段把播放头移到那里 · 拖动白色边缘来裁剪 · 拖动片段来移动 · Ctrl + 滚轮缩放",
+  "ed_tl_trim": "拖动来裁剪",
+  "ed_keys3": "空格 播放 · Ctrl+B 分割 · Q/W 删除左/右 · Del 删除 · ↑/↓ 跳到剪切点 · Ctrl+Z 撤销",
+  "ed_zoom": "缩放",
+  "ed_zoom_in": "放大",
+  "ed_zoom_out": "缩小",
+  "ed_zoom_fit": "显示整个视频"
 };
