@@ -1,9 +1,9 @@
 export default {
   "resetHint": "Neu anfangen",
   "heroTitle": "TWITCH CLIPS DOWNLOADEN",
-  "seo_title": "TWITCH CLIPS DOWNLOADEN",
+  "seo_title": "TwitchBolt | Twitch-Clips im Stapel laden, ohne Konto",
   "heroDesc": "Das ultimative Tool zum Speichern von Twitch-Momenten. Schnell, zuverlässig und ohne Anmeldung. Lade ganze Listen auf einmal herunter.",
-  "seo_description": "Das ultimative Tool zum Speichern von Twitch-Momenten. Schnell, zuverlässig und ohne Anmeldung. Lade ganze Listen auf einmal herunter.",
+  "seo_description": "Füge einen Twitch-Clip-Link oder fünfzig ein oder lade eine .txt-Liste hoch. Wähle Original, 720p oder 360p und speichere jedes MP4 einzeln oder alles als ZIP. Ohne Konto.",
   "uploadTxt": ".TXT LISTE HOCHLADEN",
   "pastePlaceholder": "Füge deine Twitch-Links hier ein (einer pro Zeile)...",
   "processButton": "CLIPS FINDEN",

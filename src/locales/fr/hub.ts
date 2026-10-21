@@ -1,13 +1,13 @@
 export default {
-  "seo_title": "oLoveTools | Univers Numérique",
-  "seo_description": "Une collection de mes projets Web, outils et expériences créatives. Construit avec passion, disponible pour tous.",
-  "heroTitle": "Explorez mon",
-  "heroHighlight": "Univers Numérique",
-  "heroSubtitle": "Une collection de mes projets Web, outils et expériences créatives.",
+  "seo_title": "oLoveTools | Outils gratuits pour images, vidéo, PDF et code",
+  "seo_description": "Plus de 60 outils gratuits dans votre navigateur : compresser des images, modifier des PDF, lire des QR codes, formater du code, trouver des clips Twitch et Kick.",
+  "heroTitle": "Des outils gratuits qui",
+  "heroHighlight": "tournent dans votre navigateur",
+  "heroSubtitle": "Compressez une image, fusionnez un PDF, lisez un QR code ou trouvez un clip Twitch. Plus de 60 outils en neuf langues, sans compte, et la plupart n'envoient jamais vos fichiers.",
   "searchPlaceholder": "Rechercher des outils, des tags...",
   "showing": "Affichage de",
-  "projectsText": "projets",
-  "noProjects": "Aucun projet trouvé",
+  "projectsText": "outils",
+  "noProjects": "Aucun outil trouvé",
   "tryAdjusting": "Essayez d'ajuster votre recherche ou le filtre de catégorie.",
   "openTool": "Ouvrir l'outil",
   "categories": {
@@ -25,7 +25,7 @@ export default {
   },
   "projects": {
     "1": {
-      "description": "Un outil puissant pour chasser et organiser vos clips et vidéos préférés."
+      "description": "Trouvez des clips Twitch par jeu, streamer ou mots du titre, filtrez-les par date et vues, puis envoyez-les à TwitchBolt."
     },
     "2": {
       "description": "Téléchargeur de clips Twitch rapide. Enregistrez vos moments instantanément."

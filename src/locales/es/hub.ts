@@ -1,13 +1,13 @@
 export default {
-  "seo_title": "oLoveTools | Universo Digital",
-  "seo_description": "Una colección cuidada de mis proyectos web, herramientas y experimentos creativos. Construido con pasión, disponible para todos.",
-  "heroTitle": "Explora mi",
-  "heroHighlight": "Universo Digital",
-  "heroSubtitle": "Una colección cuidada de mis proyectos web, herramientas y experimentos creativos.",
+  "seo_title": "oLoveTools | Herramientas gratis para imágenes, vídeo, PDF y código",
+  "seo_description": "Más de 60 herramientas gratis en tu navegador: comprime imágenes, edita PDF, lee códigos QR, formatea código y busca clips de Twitch y Kick. Sin cuenta.",
+  "heroTitle": "Herramientas gratis que",
+  "heroHighlight": "funcionan en tu navegador",
+  "heroSubtitle": "Comprime una imagen, une un PDF, lee un código QR o encuentra un clip de Twitch. Más de 60 herramientas en nueve idiomas, sin cuenta, y la mayoría nunca sube tus archivos.",
   "searchPlaceholder": "Buscar herramientas, descripciones...",
   "showing": "Mostrando",
-  "projectsText": "proyectos",
-  "noProjects": "No se encontraron proyectos",
+  "projectsText": "herramientas",
+  "noProjects": "No se encontraron herramientas",
   "tryAdjusting": "Intenta ajustando el buscador o la categoría.",
   "openTool": "Abrir Herramienta",
   "categories": {
@@ -25,7 +25,7 @@ export default {
   },
   "projects": {
     "1": {
-      "description": "Buscador avanzado para descubrir y organizar tus clips y videos favoritos al instante."
+      "description": "Encuentra clips de Twitch por juego, streamer o palabras del título, fíltralos por fecha y visitas y pásalos a TwitchBolt."
     },
     "2": {
       "description": "Descarga clips de Twitch rápido. Guarda y colecciona tus momentos al instante sin esperas."

@@ -1,9 +1,9 @@
 export default {
   "resetHint": "Recommencer",
   "heroTitle": "TÉLÉCHARGER CLIPS TWITCH",
-  "seo_title": "TÉLÉCHARGER CLIPS TWITCH",
+  "seo_title": "TwitchBolt | Téléchargez des clips Twitch en lot, sans compte",
   "heroDesc": "L'outil ultime pour sauvegarder les moments Twitch. Rapide, fiable et sans inscription. Téléchargez des listes entières de clips en une seule fois.",
-  "seo_description": "L'outil ultime pour sauvegarder les moments Twitch. Rapide, fiable et sans inscription. Téléchargez des listes entières de clips en une seule fois.",
+  "seo_description": "Collez un lien de clip Twitch ou cinquante, ou importez une liste .txt. Choisissez la qualité d'origine, 720p ou 360p et enregistrez chaque MP4 ou tout dans un ZIP. Sans compte.",
   "uploadTxt": "CHARGER LISTE .TXT",
   "pastePlaceholder": "Collez vos liens Twitch ici (un par ligne)...",
   "processButton": "TROUVER CLIPS",

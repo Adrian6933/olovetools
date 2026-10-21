@@ -749,7 +749,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                     <p className="text-sm text-gray-500 font-medium leading-relaxed">{t.ctaDesc}</p>
                   </div>
                   <a 
-                    href={`/${lang}/clipy`} 
+                    href={`/${lang}/${brand.id === 'kick' ? 'klipy' : 'clipy'}/`}
                     className="bg-twitch text-[var(--color-accent-ink)] px-10 py-4 rounded-xl font-[900] uppercase text-xs tracking-widest hover:bg-twitch-dark transition-all shadow-xl shadow-twitch/10 hover:scale-105 whitespace-nowrap"
                   >
                     {t.ctaButton}

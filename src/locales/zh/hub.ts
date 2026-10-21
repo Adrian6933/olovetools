@@ -1,13 +1,13 @@
 export default {
-  "seo_title": "oLoveTools | 数字宇宙",
-  "seo_description": "我的 Web 项目、工具和创意实验的精选合集。倾情打造，每个人都可使用。",
-  "heroTitle": "探索我的",
-  "heroHighlight": "数字宇宙",
-  "heroSubtitle": "我的 Web 项目、工具 and 创意实验的精选合集。倾情打造，每个人都可使用。",
+  "seo_title": "oLoveTools | 免费在线工具：图片、视频、PDF 与代码",
+  "seo_description": "60 多款在浏览器里运行的免费工具：压缩和转换图片、编辑 PDF、读取二维码、格式化代码、查找和下载 Twitch 与 Kick 剪辑。无需账号。",
+  "heroTitle": "在浏览器里运行的",
+  "heroHighlight": "免费工具",
+  "heroSubtitle": "压缩图片、合并 PDF、读取二维码，或找一段 Twitch 剪辑。60 多款工具，支持九种语言，无需账号，大多数工具从不上传你的文件。",
   "searchPlaceholder": "搜索工具、标签或描述...",
   "showing": "正在显示",
-  "projectsText": "个项目",
-  "noProjects": "未找到项目",
+  "projectsText": "个工具",
+  "noProjects": "未找到工具",
   "tryAdjusting": "请尝试调整搜索词或分类过滤器。",
   "openTool": "打开工具",
   "categories": {
@@ -25,7 +25,7 @@ export default {
   },
   "projects": {
     "1": {
-      "description": "一个功能强大的工具，可搜索、发现和整理您喜爱的剪辑和视频。"
+      "description": "按游戏、主播或标题关键词查找 Twitch 剪辑，按日期和观看次数筛选，再发送到 TwitchBolt。"
     },
     "2": {
       "description": "快速简便的 Twitch 剪辑下载器。立即保存您喜爱的时刻。"

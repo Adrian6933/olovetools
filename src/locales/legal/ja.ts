@@ -59,22 +59,30 @@ export default {
   },
   about: {
     title: "oLoveToolsについて",
-    description: "私たちの使命と私たちが提供するツールについて。",
+    description: "oLoveToolsを作っている人、サーバーを使うツール、サイトの運営費、連絡先について。",
     content: `
-      <h2>私たちの使命</h2>
-      <p>oLoveToolsは、開発者、デザイナー、コンテンツクリエーター、日常のユーザーの日常的なタスクを簡素化するように設計された、無料で高品質なオンラインユーティリティの包括的なスイートです。私たちの使命は、インストールや登録を必要とせずに、ブラウザから直接アクセスできる、高速で安全な強力なツールを提供することです。</p>
-      <br/>
-      <h2>私たちの哲学</h2>
-      <p>私たちはプライバシーと効率を信じています。可能な限り、私たちのツールはデバイス上でローカルにデータを処理するように設計されています。これは、ファイル、画像、およびコードスニペットがコンピューターから離れることはなく、最大限のプライバシーと超高速のパフォーマンスを保証することを意味します。</p>
-      <br/>
-      <h2>ツール</h2>
+      <h2>運営者</h2>
+      <p>oLoveToolsは個人のプロジェクトです。すべてのツールは、スペインを拠点とする開発者 Adrián González が設計・開発・保守しています。</p>
+      <h2>どこで処理されるか</h2>
+      <p>ほとんどのツールはブラウザの中だけで動きます。画像の圧縮、PDFの結合、QRコードの読み取り、JSONの整形はお使いの端末上で行われ、ファイルがアップロードされることはありません。</p>
+      <p>いくつかのツールはその方法では動かせず、各ページにその旨を記載しています。</p>
       <ul>
-        <li><strong>Clipy & TwitchBolt:</strong> お気に入りのTwitchクリップを簡単に見つけ、整理し、ダウンロードします。</li>
-        <li><strong>FormatFlow:</strong> さまざまな種類のコードとデータをフォーマットおよび変換するための多目的ツール。</li>
-        <li><strong>PasteSnap:</strong> クリップボードの画像を高品質ですばやくキャプチャして管理します。</li>
+        <li>Twitch・Kick・TikTok・Xのクリップツールは、各プラットフォームがブラウザからの直接取得を許可していないため、このサイトを経由してリクエストを中継します。</li>
+        <li>音声読み上げは、入力したテキストをこのサイト経由でMicrosoftの音声サービスに送ります。</li>
+        <li>WHOIS検索とFormatFlowの一部の変換は、このサイトのサーバーで行います。</li>
       </ul>
-      <br/>
-      <p>私たちは常に進化しており、プラットフォームに新機能を追加しています。oLoveToolsをお選びいただきありがとうございます！</p>
+      <p>処理した内容のコピーはサイトに残りません。数えているのは各ツールが開かれた回数だけで、Cookieや識別子は使いません。</p>
+      <h2>運営費について</h2>
+      <p>ツールは無料で、アカウントも不要です。サイトにはGoogle AdSenseの広告が表示されます。初回訪問時にバナーで同意内容を選べます。詳しくは<a href="/ja/cookies/">Cookieポリシー</a>をご覧ください。</p>
+      <h2>おすすめのツール</h2>
+      <ul>
+        <li>画像: <a href="/ja/compresssnap/">CompressSnap</a>, <a href="/ja/formatflow/">FormatFlow</a>, <a href="/ja/backgroundremover/">Background Remover</a></li>
+        <li>ドキュメントとQRコード: <a href="/ja/pdf-flow/">PDFFlow</a>, <a href="/ja/qr-bolt/">QRBolt</a>, <a href="/ja/qr-reader/">QR Reader</a></li>
+        <li>クリップ: Twitchは<a href="/ja/clipy/">Clipy</a>と<a href="/ja/twitchbolt/">TwitchBolt</a>、Kickは<a href="/ja/klipy/">Klipy</a>と<a href="/ja/kickbolt/">KickBolt</a></li>
+        <li>コード: <a href="/ja/json-flow/">JSONFlow</a>, <a href="/ja/regex-flow/">RegexFlow</a>, <a href="/ja/uuid-generator/">UUID Generator</a></li>
+      </ul>
+      <h2>お問い合わせ</h2>
+      <p>不具合、アイデア、欲しいツールなどは <a href="mailto:adrian.contact.me.69@gmail.com">adrian.contact.me.69@gmail.com</a> までお送りください。</p>
     `
   },
   nav: {

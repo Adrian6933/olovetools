@@ -59,22 +59,30 @@ export default {
   },
   about: {
     title: "About oLoveTools",
-    description: "Learn more about our mission and the tools we provide.",
+    description: "Who makes oLoveTools, which tools use a server, how the site is paid for and how to get in touch.",
     content: `
-      <h2>Our Mission</h2>
-      <p>oLoveTools is a comprehensive suite of free, high-quality online utilities designed to simplify the daily tasks of developers, designers, content creators, and everyday users. Our mission is to provide powerful tools that are fast, secure, and accessible directly from your browser without the need for installations or registrations.</p>
-      <br/>
-      <h2>Our Philosophy</h2>
-      <p>We believe in privacy and efficiency. Whenever possible, our tools are designed to process data locally on your device. This means your files, images, and code snippets never leave your computer, ensuring maximum privacy and blazing-fast performance.</p>
-      <br/>
-      <h2>The Tools</h2>
+      <h2>Who is behind it</h2>
+      <p>oLoveTools is a one-person project. Every tool is designed, written and maintained by Adrián González, a developer based in Spain.</p>
+      <h2>What runs where</h2>
+      <p>Most tools work entirely inside your browser: compressing an image, merging a PDF, reading a QR code or formatting JSON happens on your own device, and the file is never uploaded.</p>
+      <p>A few tools cannot work that way, and they say so on their own page:</p>
       <ul>
-        <li><strong>Clipy & TwitchBolt:</strong> Discover, organize, and download your favorite Twitch clips easily.</li>
-        <li><strong>FormatFlow:</strong> A versatile tool for formatting and converting various types of code and data.</li>
-        <li><strong>PasteSnap:</strong> Instantly capture and manage your clipboard images with high quality.</li>
+        <li>The Twitch, Kick, TikTok and X clip tools relay requests through this site, because those platforms do not let a browser fetch their videos directly.</li>
+        <li>Text to speech sends your text to Microsoft's speech service through this site.</li>
+        <li>WHOIS lookups and some FormatFlow conversions run on this site's server.</li>
       </ul>
-      <br/>
-      <p>We are constantly evolving and adding new features to our platform. Thank you for choosing oLoveTools!</p>
+      <p>The site keeps no copy of what you process. The only thing it counts is how many times each tool is opened, with no cookie or identifier attached.</p>
+      <h2>How it is paid for</h2>
+      <p>The tools are free and need no account. The site shows ads from Google AdSense; you choose what you consent to in the banner on your first visit, and the <a href="/en/cookies/">cookie policy</a> explains the details.</p>
+      <h2>Some places to start</h2>
+      <ul>
+        <li>Images: <a href="/en/compresssnap/">CompressSnap</a>, <a href="/en/formatflow/">FormatFlow</a>, <a href="/en/backgroundremover/">Background Remover</a></li>
+        <li>Documents and QR codes: <a href="/en/pdf-flow/">PDFFlow</a>, <a href="/en/qr-bolt/">QRBolt</a>, <a href="/en/qr-reader/">QR Reader</a></li>
+        <li>Clips: <a href="/en/clipy/">Clipy</a> and <a href="/en/twitchbolt/">TwitchBolt</a> for Twitch, <a href="/en/klipy/">Klipy</a> and <a href="/en/kickbolt/">KickBolt</a> for Kick</li>
+        <li>Code: <a href="/en/json-flow/">JSONFlow</a>, <a href="/en/regex-flow/">RegexFlow</a>, <a href="/en/uuid-generator/">UUID Generator</a></li>
+      </ul>
+      <h2>Contact</h2>
+      <p>Bugs, ideas or a tool you are missing: write to <a href="mailto:adrian.contact.me.69@gmail.com">adrian.contact.me.69@gmail.com</a>.</p>
     `
   },
   nav: {

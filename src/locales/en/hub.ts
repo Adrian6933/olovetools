@@ -1,13 +1,13 @@
 export default {
-  "seo_title": "oLoveTools | Digital Universe",
-  "seo_description": "A curated collection of my web projects, tools, and creative experiments. Built with passion, available for everyone.",
-  "heroTitle": "Explore my",
-  "heroHighlight": "Digital Universe",
-  "heroSubtitle": "A curated collection of my web projects, tools, and creative experiments. Built with passion, available for everyone.",
+  "seo_title": "oLoveTools | Free online tools for images, video, PDF and code",
+  "seo_description": "60+ free tools that run in your browser: compress images, edit PDFs, read QR codes, format code, and find and download Twitch and Kick clips. No account.",
+  "heroTitle": "Free tools that",
+  "heroHighlight": "run in your browser",
+  "heroSubtitle": "Compress an image, merge a PDF, read a QR code or find a Twitch clip. More than 60 tools in nine languages, no account, and most of them never upload your files.",
   "searchPlaceholder": "Search tools, tags, or descriptions...",
   "showing": "Showing",
-  "projectsText": "projects",
-  "noProjects": "No projects found",
+  "projectsText": "tools",
+  "noProjects": "No tools found",
   "tryAdjusting": "Try adjusting your search or category filter.",
   "openTool": "Open Tool",
   "categories": {
@@ -25,7 +25,7 @@ export default {
   },
   "projects": {
     "1": {
-      "description": "A powerful tool to hunt, discover, and organize your favorite clips and videos."
+      "description": "Find Twitch clips by game, streamer or words in the title, filter them by date and views, and send them to TwitchBolt."
     },
     "2": {
       "description": "Fast and easy Twitch clip downloader. Save your favorite moments instantly."

@@ -1,13 +1,13 @@
 export default {
-  "seo_title": "oLoveTools | デジタルユニバース",
-  "seo_description": "ウェブプロジェクト、ツール、クリエイティブな実験の選りすぐりのコレクション。",
-  "heroTitle": "私の",
-  "heroHighlight": "デジタルユニバースを探索する",
-  "heroSubtitle": "ウェブプロジェクト、ツール、クリエイティブな実験の厳選されたコレクション。",
+  "seo_title": "oLoveTools | 画像・動画・PDF・コード向けの無料オンラインツール",
+  "seo_description": "ブラウザで動く60以上の無料ツール。画像の圧縮と変換、PDFの編集、QRコードの読み取り、コードの整形、TwitchやKickのクリップ検索とダウンロード。アカウント不要。",
+  "heroTitle": "ブラウザで動く",
+  "heroHighlight": "無料ツール",
+  "heroSubtitle": "画像の圧縮、PDFの結合、QRコードの読み取り、Twitchクリップ探しまで。9言語・60以上のツールをアカウントなしで使え、ほとんどはファイルをアップロードしません。",
   "searchPlaceholder": "ツール、タグ、または説明を検索...",
   "showing": "表示中:",
-  "projectsText": "個のプロジェクト",
-  "noProjects": "プロジェクトが見つかりません",
+  "projectsText": "個のツール",
+  "noProjects": "ツールが見つかりません",
   "tryAdjusting": "検索またはカテゴリフィルターを調整してみてください。",
   "openTool": "ツールを開く",
   "categories": {
@@ -25,7 +25,7 @@ export default {
   },
   "projects": {
     "1": {
-      "description": "お気に入りのクリップやビデオを検索して整理するための強力なツール。"
+      "description": "ゲーム、配信者、タイトルの単語でTwitchクリップを検索し、日付や再生数で絞り込んでTwitchBoltに送れます。"
     },
     "2": {
       "description": "高速で簡単なTwitchクリップダウンローダー。お気に入りの瞬間を即座に保存。"

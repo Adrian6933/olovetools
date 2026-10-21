@@ -1,9 +1,9 @@
 export default {
   "resetHint": "重新开始",
   "heroTitle": "下载 TWITCH 剪辑",
-  "seo_title": "下载 TWITCH 剪辑",
+  "seo_title": "TwitchBolt | 免账号批量下载 Twitch 剪辑",
   "heroDesc": "保存 Twitch 精彩瞬间的终极工具。快速、可靠且无需注册。一次性下载整个剪辑列表。",
-  "seo_description": "保存 Twitch 精彩瞬间的终极工具。快速、可靠且无需注册。一次性下载整个剪辑列表。",
+  "seo_description": "粘贴一个或五十个 Twitch 剪辑链接，或上传 .txt 列表。选择原画、720p 或 360p，逐个保存 MP4 或打包成一个 ZIP。无需账号。",
   "uploadTxt": "上传 .TXT 列表",
   "pastePlaceholder": "在此处粘贴 Twitch 链接（每行一个）...",
   "processButton": "查找剪辑",
