@@ -7,6 +7,7 @@ import { ClientRouter } from 'astro:transitions';
 import Analytics from '../../components/Analytics.astro';
 import '../../styles/global.css';
 import { resolveOgImage } from '../../lib/ogImage';
+import { isIndexedLang } from '../../config/search-languages.mjs';
 const og = resolveOgImage();
 
 
@@ -24,6 +25,8 @@ const castLang = lang as Language;
 const { t, dictionary } = useTranslation(castLang, 'hub');
 
 const langs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+// Solo los idiomas que se ofrecen a Google se anuncian como alternativas.
+const searchLangs = langs.filter(isIndexedLang);
 const baseUrl = 'https://olovetools.com';
 
 const ogLocaleMap: Record<string, string> = { en: 'en_US', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', pt: 'pt_BR', ru: 'ru_RU', hi: 'hi_IN', ja: 'ja_JP', zh: 'zh_CN' };
@@ -71,11 +74,11 @@ const organizationSchema = {
     <meta name="twitter:description" content={t('seo_description')} />
     <meta name="twitter:image" content={`${baseUrl}/og-image.png`} />
     <link rel="canonical" href={hubUrl} />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="robots" content={isIndexedLang(lang) ? 'index, follow, max-image-preview:large, max-snippet:-1' : 'noindex, follow'} />
     <meta name="author" content="oLoveTools" />
     <meta property="og:site_name" content="oLoveTools" />
     <meta property="og:locale" content={currentOgLocale} />
-    {langs.filter(l => l !== lang).map(l => (
+    {searchLangs.filter(l => l !== lang).map(l => (
       <meta property="og:locale:alternate" content={ogLocaleMap[l] || l} />
     ))}
     <meta name="twitter:site" content="@olovetools" />
@@ -94,7 +97,7 @@ const organizationSchema = {
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
     <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     
-    {langs.map(l => (
+    {searchLangs.map(l => (
       <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/`} />
     ))}
     <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en/`} />

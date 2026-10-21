@@ -18,6 +18,7 @@ import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import vercelHeaders from './integrations/vercel-headers.mjs';
+import { NOINDEX_LANGS } from './src/config/search-languages.mjs';
 
 // output: 'server' + the Vercel adapter turns src/pages/proxy.ts and
 // src/pages/api/** into real serverless functions (same origin as the site —
@@ -35,20 +36,18 @@ export default defineConfig({
     sitemap({
       // La raíz "/" es una página noindex de redirección por idioma: fuera del
       // sitemap (además duplicaba hreflang="en" en los clusters de los hubs).
-      filter: (page) => page !== 'https://olovetools.com/',
+      // Los idiomas de NOINDEX_LANGS tampoco entran, ni como URL ni como
+      // alternativa de idioma de las demás.
+      filter: (page) =>
+        page !== 'https://olovetools.com/' &&
+        !NOINDEX_LANGS.some((l) => page.startsWith(`https://olovetools.com/${l}/`)),
       i18n: {
         defaultLocale: 'en',
-        locales: {
-          en: 'en',
-          es: 'es',
-          hi: 'hi',
-          de: 'de',
-          fr: 'fr',
-          pt: 'pt',
-          ru: 'ru',
-          ja: 'ja',
-          zh: 'zh'
-        }
+        locales: Object.fromEntries(
+          ['en', 'es', 'hi', 'de', 'fr', 'pt', 'ru', 'ja', 'zh']
+            .filter((l) => !NOINDEX_LANGS.includes(l))
+            .map((l) => [l, l])
+        )
       }
     })
   ],

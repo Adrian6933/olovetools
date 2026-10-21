@@ -80,6 +80,7 @@ import { TOOL_FAVICONS, TOOL_THEME_COLORS, MOCK_PROJECTS } from '../../../consta
 import Analytics from '../../../components/Analytics.astro';
 import '../../../styles/global.css';
 import { resolveOgImage } from '../../../lib/ogImage';
+import { isIndexedLang } from '../../../config/search-languages.mjs';
 
 export const prerender = true;
 
@@ -104,6 +105,8 @@ const navigatorTools = MOCK_PROJECTS.map(project => {
 });
 
 const langs = ['en', 'es', 'fr', 'de', 'pt', 'ru', 'hi', 'ja', 'zh'];
+// Solo los idiomas que se ofrecen a Google se anuncian como alternativas.
+const searchLangs = langs.filter(isIndexedLang);
 const baseUrl = 'https://olovetools.com';
 
 const currentFavicon = TOOL_FAVICONS[tool] || TOOL_FAVICONS.default;
@@ -267,11 +270,11 @@ const appSchema = {
     <meta name="twitter:description" content={t('seo_description')} />
     <meta name="twitter:image" content={ogImage} />
     <link rel="canonical" href={toolUrl} />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="robots" content={isIndexedLang(lang) ? 'index, follow, max-image-preview:large, max-snippet:-1' : 'noindex, follow'} />
     <meta name="author" content="oLoveTools" />
     <meta property="og:site_name" content="oLoveTools" />
     <meta property="og:locale" content={currentOgLocale} />
-    {langs.filter(l => l !== lang).map(l => (
+    {searchLangs.filter(l => l !== lang).map(l => (
       <meta property="og:locale:alternate" content={ogLocaleMap[l] || l} />
     ))}
     <meta name="twitter:site" content="@olovetools" />
@@ -299,7 +302,7 @@ const appSchema = {
       </>
     )}
 
-    {langs.map(l => (
+    {searchLangs.map(l => (
       <link rel="alternate" hreflang={l} href={`${baseUrl}/${l}/${tool}/`} />
     ))}
     <link rel="alternate" hreflang="x-default" href={`${baseUrl}/en/${tool}/`} />
