@@ -28,6 +28,7 @@ import SortableClipList, { type SortableClipListHandle } from './SortableClipLis
 import ClipOrderPanel from './ClipOrderPanel';
 import MergePanel from './MergePanel';
 import ClipEditor from './editor/ClipEditor';
+import { FUERZA, leerCalidad } from './nitidez';
 import { obtenerFuente, type Pieza } from './editor/model';
 import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
@@ -526,12 +527,15 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
             setWmAll({ ...base, fase: 'descarga', pct: total > 0 ? Math.round((loaded / total) * 100) : 0 });
           }, abort.signal);
 
+          // La nitidez y el alto elegidos (nitidez.ts) valen también aquí.
+          const calidadGuardada = leerCalidad(brand.storagePrefix);
           const conMarca = await processVideoWithWatermark(
             original,
             clip.broadcaster || 'Streamer',
             config,
             ({ pct }) => setWmAll({ ...base, fase: 'render', pct }),
             abort.signal,
+            { nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto },
           );
 
           const nombre = nombreDeArchivo(clip.title, clip.broadcaster, clip.id);

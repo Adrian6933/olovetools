@@ -14,6 +14,8 @@ import { Clapperboard, Loader2, X, Sparkles, Blend, Download, Plus, ChevronUp, C
 import type { ClipData, WatermarkConfig } from './types';
 import { useBrand } from './brand';
 import { mergeClipsToVideo } from './mergeService';
+import CalidadSelector from './CalidadSelector';
+import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from './nitidez';
 import { prepararVideo } from './editor/ownMedia';
 import { loadStoredWatermarkConfig } from './watermarkService';
 
@@ -122,7 +124,9 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
     posDe(p) === 0 ? (t.mergeAtStart || 'At the start')
     : posDe(p) === n ? (t.mergeAtEnd || 'At the end')
     : (t.mergeAfterClip || 'After clip {n}').replace('{n}', String(posDe(p)));
-  const alto = quality === '360' ? 360 : quality === '720' ? 720 : 1080;
+  const [calidad, setCalidad] = useState<CalidadExport>(() => leerCalidad(brand.storagePrefix));
+  const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
+  const alto = calidad.alto === 1440 ? 1440 : quality === '360' ? 360 : quality === '720' ? 720 : 1080;
 
   const elegirResolucion = (c: ClipData) =>
     quality === 'max'
@@ -155,7 +159,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
         secuencia.map(x => x.tipo === 'clip'
           ? { blob: blobs[x.i], channelName: x.clip.broadcaster || 'Streamer' }
           : { blob: x.p.file, channelName: '', propio: true, imagenSegundos: x.p.tipo === 'imagen' ? x.p.dur : undefined }),
-        { watermark: marca, fade: fundido, height: alto },
+        { watermark: marca, fade: fundido, height: alto, nitidez: FUERZA[calidad.nitidez] },
         p => setEstado({ fase: 'render', ...p }),
         ctrl.signal,
       );
@@ -341,6 +345,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
               </button>
             ))}
           </div>
+          <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"

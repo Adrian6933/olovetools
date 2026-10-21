@@ -24,6 +24,8 @@ import { useBrand } from '../brand';
 import { duracionDe, mergeClipsToVideo } from '../mergeService';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from '../watermarkService';
 import { prepararVideo } from './ownMedia';
+import CalidadSelector from '../CalidadSelector';
+import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from '../nitidez';
 import TrimBar from './TrimBar';
 import Timeline from './Timeline';
 import {
@@ -461,7 +463,9 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   const [hecho, setHecho] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   useEffect(() => () => abortRef.current?.abort(), []);
-  const alto = quality === '360' ? 360 : quality === '720' ? 720 : 1080;
+  const [calidad, setCalidad] = useState<CalidadExport>(() => leerCalidad(brand.storagePrefix));
+  const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
+  const alto = calidad.alto === 1440 ? 1440 : quality === '360' ? 360 : quality === '720' ? 720 : 1080;
 
   const descargar = (blob: Blob, nombre: string) => {
     const url = URL.createObjectURL(blob);
@@ -494,7 +498,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
         setExp({ fase: 'preparando', pct: Math.round((listas / clips.length) * 100) });
       }
       const marca = conMarca ? (watermarkConfig ?? loadStoredWatermarkConfig(brand)) : null;
-      const opts = { watermark: marca, fade: fundido, height: alto };
+      const opts = { watermark: marca, fade: fundido, height: alto, nitidez: FUERZA[calidad.nitidez] };
       const items = piezas.map(aMergeItem);
 
       if (modo === 'uno') {
@@ -781,6 +785,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                       <button key={id} type="button" onClick={() => setModo(id)} aria-pressed={modo === id} className={`flex-1 py-2 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer ${modo === id ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>{icono}{txt}</button>
                     ))}
                   </div>
+                  <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
                   <div className="flex gap-2">
                     {[
                       { on: fundido, set: setFundido, icon: <Blend className="w-3.5 h-3.5" />, label: tx('ed_fades', 'Fades') },

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from './types';
-import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles, Scissors } from 'lucide-react';
+import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles, Scissors, Wand2 } from 'lucide-react';
 import { attachVideo, useBrand } from './brand';
 import WatermarkPreview from './WatermarkPreview';
+import MejoraPanel from './MejoraPanel';
+import { FUERZA, leerCalidad } from './nitidez';
 import { WatermarkConfig, PositionPreset } from './types';
 import {
   loadStoredWatermarkConfig,
@@ -44,6 +46,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   // La configuración se carga al abrir, no al montar: así dos clips abiertos a
   // la vez no arrastran cada uno una copia distinta de lo que hay guardado.
   const [wmAbierto, setWmAbierto] = useState(false);
+  const [mejoraAbierta, setMejoraAbierta] = useState(false);
   const [wmConfig, setWmConfig] = useState<WatermarkConfig | null>(null);
   const [wmPresets, setWmPresets] = useState<PositionPreset[]>([]);
 
@@ -90,12 +93,14 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
       onProgress('descarga', total > 0 ? Math.round((loaded / total) * 100) : 0, 0);
     }, signal);
 
+    const calidad = leerCalidad(brand.storagePrefix);
     const conMarca = await processVideoWithWatermark(
       original,
       data.broadcaster || 'Streamer',
       config,
       ({ pct, elapsed, total }) => onProgress('render', pct, Math.max(0, total - elapsed)),
-      signal
+      signal,
+      { nitidez: FUERZA[calidad.nitidez], alto: calidad.alto },
     );
 
     const safeTitle = nombreDeArchivo(data.title, data.broadcaster, data.id);
@@ -396,8 +401,22 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                 );
              })}
 
+             {/* La descarga normal es el archivo tal cual; esta lo afila (y escala). */}
+             <button
+               type="button"
+               onClick={() => { setMejoraAbierta(v => !v); setWmAbierto(false); }}
+               aria-expanded={mejoraAbierta}
+               className={`w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-3.5 flex items-center justify-center gap-2 border text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
+                 mejoraAbierta ? 'bg-twitch text-[var(--color-accent-ink)] border-twitch' : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40'
+               }`}
+             >
+               <Wand2 className="w-4 h-4" />
+               {t.en_btn || 'Sharper (HD)'}
+             </button>
           </div>
         </div>
+
+        {mejoraAbierta && <MejoraPanel data={data} t={t} onClose={() => setMejoraAbierta(false)} />}
 
         {/* El editor va aquí mismo, bajo el clip; tiene su botón de pantalla completa. */}
         {wmAbierto && wmConfig && (

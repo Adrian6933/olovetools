@@ -28,6 +28,7 @@ import {
 import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 import { bitrateDeGrabacion, suavizar } from './recorder';
+import { crearNitidez } from './nitidez';
 
 export interface PiezaOffline {
   blob: Blob;
@@ -46,8 +47,15 @@ export interface OpcionesOffline {
   /** Tamaño de salida; sin él, el del primer vídeo (la marca de un solo clip). */
   width?: number;
   height?: number;
+  /**
+   * Alto de salida conservando la forma del primer vídeo (1440 para escalar).
+   * Solo cuenta si no se da width/height.
+   */
+  alto?: number;
   watermark?: WatermarkConfig | null;
   fade?: boolean;
+  /** Nitidez CAS de 0 (nada) a 1 (fuerte); ver nitidez.ts. */
+  nitidez?: number;
 }
 
 export interface ProgresoOffline {
@@ -95,7 +103,7 @@ export const exportarSinTiempoReal = async (
   // ---- abrir cada pieza y saber cuánto dura y a cuántos fps va -------------
   const abiertas = await Promise.all(piezas.map(async p => {
     if (p.imagenSegundos !== undefined) {
-      return { p, input: null as Input | null, video: null as any, audio: null as any, desde: 0, hasta: p.imagenSegundos, dur: p.imagenSegundos, fps: 0 };
+      return { p, input: null as Input | null, video: null as any, audio: null as any, desde: 0, hasta: p.imagenSegundos, dur: p.imagenSegundos, fps: 0, bps: 0, area: 0 };
     }
     const input = new Input({ source: new BlobSource(p.blob), formats: ALL_FORMATS });
     const video = await input.getPrimaryVideoTrack();
@@ -105,8 +113,14 @@ export const exportarSinTiempoReal = async (
     const desde = Math.max(0, p.inicio || 0);
     const hasta = Math.min(total, p.fin ?? total);
     let fps = 30;
-    try { fps = (await video.computePacketStats(120)).averagePacketRate || 30; } catch { /* 30 */ }
-    return { p, input, video, audio: audio && (await audio.canDecode()) ? audio : null, desde, hasta, dur: Math.max(0, hasta - desde), fps };
+    let bps = 0;
+    try {
+      const est = await video.computePacketStats(240);
+      fps = est.averagePacketRate || 30;
+      bps = est.averageBitrate || 0;
+    } catch { /* 30 fps, bitrate desconocido */ }
+    const area = (await video.getDisplayWidth()) * (await video.getDisplayHeight());
+    return { p, input, video, audio: audio && (await audio.canDecode()) ? audio : null, desde, hasta, dur: Math.max(0, hasta - desde), fps, bps, area };
   }));
   // El vídeo final va al ritmo del clip más fluido, sin pasar de 60.
   const fps = Math.min(60, Math.max(24, Math.round(Math.max(30, ...abiertas.map(a => a.fps)))));
@@ -114,8 +128,11 @@ export const exportarSinTiempoReal = async (
   const primero = abiertas.find(a => a.video);
   // H.264 pide medidas pares.
   const par = (n: number) => Math.max(2, Math.round(n / 2) * 2);
-  const width = par(opts.width ?? (primero ? await primero.video.getDisplayWidth() : 1920));
-  const height = par(opts.height ?? (primero ? await primero.video.getDisplayHeight() : 1080));
+  const anchoOriginal = primero ? await primero.video.getDisplayWidth() : 1920;
+  const altoOriginal = primero ? await primero.video.getDisplayHeight() : 1080;
+  const escala = !opts.width && !opts.height && opts.alto ? opts.alto / altoOriginal : 1;
+  const width = par(opts.width ?? anchoOriginal * escala);
+  const height = par(opts.height ?? altoOriginal * escala);
 
   // ---- salida ----------------------------------------------------------------
   const canvas = document.createElement('canvas');
@@ -124,6 +141,33 @@ export const exportarSinTiempoReal = async (
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) throw new Error('Canvas not available');
   suavizar(ctx);
+  // Sin WebGL no hay nitidez, pero se exporta igual.
+  const fuerza = Math.max(0, Math.min(1, opts.nitidez || 0));
+  const filtro = fuerza > 0 ? crearNitidez(width, height) : null;
+  /** Afila lo que hay en el lienzo (el fotograma), antes de la marca y los fundidos. */
+  const afilar = () => { if (filtro) ctx.drawImage(filtro.aplicar(canvas, fuerza), 0, 0); };
+  /** Encaja una imagen o fotograma en el lienzo, escalando con suavizado alto. */
+  const encajar = (src: CanvasImageSource, w: number, h: number) => {
+    const k = Math.min(width / w, height / h);
+    ctx.drawImage(src, (width - w * k) / 2, (height - h * k) / 2, w * k, h * k);
+  };
+
+  /**
+   * Bitrate de salida: el del clip original por píxel, escalado al tamaño de
+   * salida y con margen (x1,5) para que recomprimir no se note; algo más si se
+   * afila, porque la nitidez añade detalle fino que también cuesta bits.
+   * Medido con un clip de Rust (7,5 Mbps, mucha hierba): x2,2 pesaba un 50 %
+   * más sin diferencia visible (45 dB entre una y otra), y x1,5 pierde 0,35 dB
+   * frente al cuantizador 20 ocupando la mitad. Sin dato del original, la
+   * tabla de recorder.ts.
+   */
+  function bitrateDeSalida() {
+    const conDato = abiertas.filter(a => a.bps > 0 && a.area > 0);
+    if (!conDato.length) return bitrateDeGrabacion(height);
+    const porPixel = Math.max(...conDato.map(a => a.bps / a.area));
+    const objetivo = porPixel * width * height * 1.5 * (fuerza > 0 ? 1.25 : 1);
+    return Math.round(Math.max(6_000_000, Math.min(45_000_000, objetivo)));
+  }
 
   const aac = await canEncodeAudio('aac', { numberOfChannels: 2, sampleRate: FRECUENCIA }).catch(() => false);
   const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() });
@@ -131,7 +175,7 @@ export const exportarSinTiempoReal = async (
     codec: 'avc',
     // Calidad constante (como el CRF de ffmpeg); si el codificador no la
     // admite, una tasa holgada para que recomprimir no se note.
-    quality: new Quality({ quantizer: 20, bitrate: bitrateDeGrabacion(height) }),
+    quality: new Quality({ bitrate: bitrateDeSalida() }),
     keyFrameInterval: 2,
   });
   const fuenteAudio = new AudioBufferSource({ codec: aac ? 'aac' : 'opus', quality: new Quality({ bitrate: 192_000 }) });
@@ -166,12 +210,12 @@ export const exportarSinTiempoReal = async (
       // ---- imagen ----
       if (!a.video) {
         const img = await createImageBitmap(p.blob);
-        const k = Math.min(width / img.width, height / img.height);
         for (let f = 0; f < fotogramas; f += 1) {
           if (signal?.aborted) throw abortado();
           const t = f / fps;
           negro();
-          ctx.drawImage(img, (width - img.width * k) / 2, (height - img.height * k) / 2, img.width * k, img.height * k);
+          encajar(img, img.width, img.height);
+          afilar();
           pintarEncima(t);
           await fuenteVideo.add(acumulado + t, 1 / fps);
           if (f % 15 === 0) avisar(t);
@@ -183,14 +227,17 @@ export const exportarSinTiempoReal = async (
       }
 
       // ---- vídeo: el fotograma exacto de cada instante del resultado ----
-      const sink = new CanvasSink(a.video, { width, height, fit: 'contain', poolSize: 2 });
+      // A su tamaño: el escalado (p. ej. a 1440p) lo hace encajar() con
+      // suavizado alto, que deja mejor base para la nitidez.
+      const sink = new CanvasSink(a.video, { poolSize: 2 });
       const instantes = (function* () { for (let f = 0; f < fotogramas; f += 1) yield a.desde + f / fps; })();
       let f = 0;
       for await (const envuelto of sink.canvasesAtTimestamps(instantes)) {
         if (signal?.aborted) throw abortado();
         const t = f / fps;
         negro();
-        if (envuelto) ctx.drawImage(envuelto.canvas, 0, 0);
+        if (envuelto) encajar(envuelto.canvas, envuelto.canvas.width, envuelto.canvas.height);
+        afilar();
         pintarEncima(t);
         await fuenteVideo.add(acumulado + t, 1 / fps);
         if (f % 15 === 0) avisar(t);
@@ -237,6 +284,7 @@ export const exportarSinTiempoReal = async (
     await cancelar();
     throw e;
   } finally {
+    filtro?.liberar();
     abiertas.forEach(a => { try { a.input?.dispose(); } catch { /* ya cerrado */ } });
   }
 };

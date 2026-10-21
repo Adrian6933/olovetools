@@ -722,7 +722,9 @@ export const processVideoWithWatermark = async (
   channelName: string,
   config: WatermarkConfig,
   onProgress?: (p: WatermarkRenderProgress) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  /** Nitidez (0-1) y alto de salida (1440 escala); ver nitidez.ts. */
+  calidad?: { nitidez?: number; alto?: number },
 ): Promise<Blob> => {
   await ensureWatermarkFont(config);
 
@@ -733,7 +735,11 @@ export const processVideoWithWatermark = async (
     const pieza = [{ blob: originalBlob, channelName }];
     if (await offline.sePuedeSinTiempoReal(pieza, 1920, 1080)) {
       try {
-        return await offline.exportarSinTiempoReal(pieza, { watermark: config }, p => {
+        return await offline.exportarSinTiempoReal(pieza, {
+          watermark: config,
+          nitidez: calidad?.nitidez,
+          alto: calidad?.alto && calidad.alto > 1080 ? calidad.alto : undefined,
+        }, p => {
           onProgress?.({ pct: p.pct, elapsed: p.elapsed, total: p.duration });
         }, signal);
       } catch (e: any) {

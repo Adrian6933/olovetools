@@ -43,6 +43,8 @@ export interface MergeOptions {
   fade?: boolean;
   /** Alto de salida; el ancho sale de 16:9. */
   height?: number;
+  /** Nitidez CAS 0-1 (solo fotograma a fotograma; ver nitidez.ts). */
+  nitidez?: number;
 }
 
 export interface MergeProgress {
@@ -101,7 +103,7 @@ export const mergeClipsToVideo = async (
     const offline = await import('./exportOffline');
     if (await offline.sePuedeSinTiempoReal(items, ancho, alto)) {
       try {
-        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, watermark: opts.watermark, fade: opts.fade }, onProgress, signal);
+        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, watermark: opts.watermark, fade: opts.fade, nitidez: opts.nitidez }, onProgress, signal);
       } catch (e: any) {
         if (e?.name === 'AbortError' || signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
         console.warn('Export frame by frame failed; recording in real time instead', e);
