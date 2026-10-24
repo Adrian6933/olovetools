@@ -9,6 +9,7 @@
 import type { WatermarkConfig, PositionPreset, FontFamily, FontCategory } from './types';
 import { bitrateDeGrabacion, formatoDeGrabacion } from './recorder';
 import { BRAND_ICON_PATHS, type BrandId } from './brand';
+import type { Encaje, Formato } from './formato';
 
 /**
  * Lo que identifica a la herramienta al guardar: cada plataforma tiene su
@@ -724,7 +725,7 @@ export const processVideoWithWatermark = async (
   onProgress?: (p: WatermarkRenderProgress) => void,
   signal?: AbortSignal,
   /** Nitidez (0-1) y alto de salida (1440 escala); ver nitidez.ts. */
-  calidad?: { nitidez?: number; alto?: number },
+  calidad?: { nitidez?: number; alto?: number; formato?: Formato; encaje?: Encaje },
 ): Promise<Blob> => {
   await ensureWatermarkFont(config);
 
@@ -739,6 +740,8 @@ export const processVideoWithWatermark = async (
           watermark: config,
           nitidez: calidad?.nitidez,
           alto: calidad?.alto && calidad.alto > 1080 ? calidad.alto : undefined,
+          formato: calidad?.formato,
+          encaje: calidad?.encaje,
         }, p => {
           onProgress?.({ pct: p.pct, elapsed: p.elapsed, total: p.duration });
         }, signal);

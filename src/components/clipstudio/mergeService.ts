@@ -16,6 +16,7 @@
 import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 import { alPresentarFotograma, bitrateDeGrabacion, formatoDeGrabacion, suavizar } from './recorder';
+import { medidasDe, type Encaje, type Formato } from './formato';
 
 export interface MergeItem {
   blob: Blob;
@@ -41,8 +42,11 @@ export interface MergeOptions {
   watermark?: WatermarkConfig | null;
   /** Fundido a negro de entrada y salida en cada corte. */
   fade?: boolean;
-  /** Alto de salida; el ancho sale de 16:9. */
+  /** Lado corto de la salida (1080, 1440...). */
   height?: number;
+  /** 16:9 (también "original") o 9:16; ver formato.ts. */
+  formato?: Formato;
+  encaje?: Encaje;
   /** Nitidez CAS 0-1 (solo fotograma a fotograma; ver nitidez.ts). */
   nitidez?: number;
 }
@@ -78,12 +82,27 @@ export const duracionDe = (v: HTMLVideoElement) =>
     setTimeout(() => fin(0), 8000);
   });
 
-const leerDuracion = (url: string) => {
+const leerDuracion = async (url: string) => {
   const v = document.createElement('video');
   v.preload = 'metadata';
   v.muted = true;
   v.src = url;
-  return duracionDe(v);
+  try {
+    return await duracionDe(v);
+  } finally {
+    soltarVideo(v);
+  }
+};
+
+/**
+ * Suelta el decodificador de un <video> que ya no se usa. Sin esto se queda
+ * vivo hasta que pase el recolector, y con muchos clips se nota en la RAM
+ * (duracionDe salta al final, así que cada uno deja un fotograma decodificado).
+ */
+export const soltarVideo = (v: HTMLVideoElement) => {
+  v.ondurationchange = null;
+  v.removeAttribute('src');
+  v.load();
 };
 
 export const mergeClipsToVideo = async (
@@ -98,12 +117,11 @@ export const mergeClipsToVideo = async (
   // Primero, fotograma a fotograma (exportOffline.ts): mejor calidad, sin
   // tirones y más rápido que el tiempo real. Se carga solo al exportar.
   {
-    const alto = opts.height || 1080;
-    const ancho = Math.round((alto * 16) / 9);
+    const { width: ancho, height: alto } = medidasDe(opts.formato === '9:16' ? '9:16' : '16:9', 1920, 1080, opts.height || 1080);
     const offline = await import('./exportOffline');
     if (await offline.sePuedeSinTiempoReal(items, ancho, alto)) {
       try {
-        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, watermark: opts.watermark, fade: opts.fade, nitidez: opts.nitidez }, onProgress, signal);
+        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, encaje: opts.encaje, watermark: opts.watermark, fade: opts.fade, nitidez: opts.nitidez }, onProgress, signal);
       } catch (e: any) {
         if (e?.name === 'AbortError' || signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
         console.warn('Export frame by frame failed; recording in real time instead', e);
@@ -122,8 +140,9 @@ export const mergeClipsToVideo = async (
   }));
   const total = duraciones.reduce((a, b) => a + b, 0) || 1;
 
-  const height = opts.height || 1080;
-  const width = Math.round((height * 16) / 9);
+  // En tiempo real el vertical sale con franjas: el encaje solo lo hace la
+  // exportación fotograma a fotograma, que es la que usa casi todo navegador.
+  const { width, height } = medidasDe(opts.formato === '9:16' ? '9:16' : '16:9', 1920, 1080, opts.height || 1080);
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;

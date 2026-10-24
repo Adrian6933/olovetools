@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from '../types';
 import { useBrand } from '../brand';
-import { duracionDe, mergeClipsToVideo } from '../mergeService';
+import { duracionDe, mergeClipsToVideo, soltarVideo } from '../mergeService';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from '../watermarkService';
 import { prepararVideo } from './ownMedia';
 import CalidadSelector from '../CalidadSelector';
@@ -119,6 +119,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
           v.preload = 'metadata';
           v.src = f.url;
           const real = await duracionDe(v);
+          soltarVideo(v);
           if (vivo && real > 0) {
             setPiezas(prev => prev.map(p => p.clipId === c.id
               ? { ...p, total: real, fin: Math.abs(p.fin - p.total) < 0.01 || p.fin > real ? real : p.fin }

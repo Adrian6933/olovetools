@@ -18,7 +18,6 @@ import {
   loadStoredWatermarkAll,
   saveStoredWatermarkAll,
   nombreDeArchivo,
-  processVideoWithWatermark,
 } from './watermarkService';
 import WatermarkPreview from './WatermarkPreview';
 import type { WatermarkConfig, PositionPreset, ClipData, ClipItem, LoadingState } from './types';
@@ -26,18 +25,20 @@ import ClipSkeleton from './ClipSkeleton';
 import ClipSortBar from './ClipSortBar';
 import SortableClipList, { type SortableClipListHandle } from './SortableClipList';
 import ClipOrderPanel from './ClipOrderPanel';
-import MergePanel from './MergePanel';
+import MergePanel, { type MergePanelHandle } from './MergePanel';
 import ClipEditor from './editor/ClipEditor';
 import { FUERZA, leerCalidad } from './nitidez';
-import { obtenerFuente, type Pieza } from './editor/model';
+import { obtenerFuente, soltarFuentes, type Pieza } from './editor/model';
 import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
 import {
-  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink
+  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink, Clapperboard, Layers
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
 import JSZip from 'jszip';
+import { FORMATOS, sufijoFormato, type Encaje, type Formato } from './formato';
+import { DESCARGAS_A_LA_VEZ, procesarClips, resolucionDe, semaforo, soltarDescarga, type ProgresoLote } from './lotes';
 
 type Ilustracion = React.FC<{ className?: string }>;
 
@@ -152,20 +153,54 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     });
   };
 
-  const [wmAll, setWmAll] = useState<{
-    indice: number;
-    total: number;
-    titulo: string;
-    fase: 'descarga' | 'render' | 'zip';
-    pct: number;
-    fallos: number;
-  } | null>(null);
+  const [wmAll, setWmAll] = useState<(ProgresoLote & { fase: 'trabajo' | 'zip' }) | null>(null);
   const wmAllAbort = useRef<AbortController | null>(null);
   /** Cuántos se quedaron por el camino en la última pasada. */
   const [wmAllFallos, setWmAllFallos] = useState(0);
   const [isQualityOpen, setIsQualityOpen] = useState(false);
   /** Mientras se une el vídeo, el ZIP y la marca en lote esperan. */
   const [uniendo, setUniendo] = useState(false);
+
+  // ---- qué sale al pulsar el botón grande -----------------------------------
+  // Los clips sueltos en un ZIP, todos seguidos en un vídeo, o las dos cosas
+  // (el vídeo largo y cada clip aparte, en un ZIP). El vídeo lo arma el panel
+  // de unir, que tiene sus opciones (fundido, lo propio, calidad).
+  type ModoDescarga = 'clips' | 'video' | 'ambos';
+  const MODO_KEY = `${brand.storagePrefix}_download_mode`;
+  const [modoGuardado, setModoGuardado] = useState<ModoDescarga>('clips');
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(MODO_KEY);
+      if (v === 'video' || v === 'ambos') setModoGuardado(v);
+    } catch { /* sin almacenamiento, el de serie */ }
+  }, []);
+  const cambiarModo = (m: ModoDescarga) => {
+    setModoGuardado(m);
+    try { localStorage.setItem(MODO_KEY, m); } catch { /* vale para esta visita */ }
+  };
+  const mergeRef = useRef<MergePanelHandle>(null);
+
+  // Forma de lo que se exporta: por separado para el vídeo unido y para los
+  // clips (p. ej. el vídeo en 16:9 y los clips en vertical para el móvil).
+  const FORMATO_KEY = `${brand.storagePrefix}_export_format`;
+  const [formatoVideo, setFormatoVideo] = useState<Formato>('original');
+  const [formatoClips, setFormatoClips] = useState<Formato>('original');
+  const [encaje, setEncaje] = useState<Encaje>('recortar');
+  useEffect(() => {
+    try {
+      const v = JSON.parse(localStorage.getItem(FORMATO_KEY) || 'null');
+      if (v && FORMATOS.includes(v.video)) setFormatoVideo(v.video);
+      if (v && FORMATOS.includes(v.clips)) setFormatoClips(v.clips);
+      if (v && (v.encaje === 'recortar' || v.encaje === 'difuminar')) setEncaje(v.encaje);
+    } catch { /* el de serie */ }
+  }, []);
+  const guardarFormato = (cambio: Partial<{ video: Formato; clips: Formato; encaje: Encaje }>) => {
+    const siguiente = { video: formatoVideo, clips: formatoClips, encaje, ...cambio };
+    setFormatoVideo(siguiente.video);
+    setFormatoClips(siguiente.clips);
+    setEncaje(siguiente.encaje);
+    try { localStorage.setItem(FORMATO_KEY, JSON.stringify(siguiente)); } catch { /* vale para esta visita */ }
+  };
 
   // ---- editor de clips ----------------------------------------------------
   // Las piezas viven aquí y no en el editor: cerrarlo y volver a abrirlo
@@ -275,6 +310,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const handleReset = useCallback(() => {
     setEditor(null);
     setPiezasEditor([]);
+    soltarFuentes();
     resolveRequestRef.current += 1;
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -385,8 +421,10 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     setZipProgress({ current: 0, total: validClips.length, percentage: 0, loadedBytes: 0, totalBytes: 0, speed: 0 });
     const zip = new JSZip();
     
-    const CONCURRENCY_LIMIT = 5; // Increased concurrency for faster downloads
     let completedCount = 0;
+    // Antes un clip que fallaba se quedaba fuera del ZIP sin decir nada.
+    let fallidos = 0;
+    setWmAllFallos(0);
     let globalLoaded = 0;
     let globalTotal = 0;
     let lastTime = Date.now();
@@ -417,12 +455,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       const downloadTask = async (clip: ClipData, index: number) => {
         if (signal.aborted) return;
 
-        let chosenRes = clip.resolutions[0];
-        if (selectedQuality !== 'max') {
-          const target = selectedQuality + 'p';
-          const found = clip.resolutions.find(r => r.quality === target) || clip.resolutions.find(r => r.quality.startsWith(selectedQuality));
-          if (found) chosenRes = found;
-        }
+        const chosenRes = resolucionDe(clip, selectedQuality);
 
         let clipLoaded = 0;
         let clipTotal = 0;
@@ -442,6 +475,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
         } catch (err: any) {
           if (err.message !== "AbortError") {
             console.error(`Error downloading clip ${clip.id}`, err);
+            if (!signal.aborted) fallidos += 1;
           }
         } finally {
           if (!signal.aborted) {
@@ -451,28 +485,19 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
         }
       };
 
-      for (let i = 0; i < validClips.length; i += CONCURRENCY_LIMIT) {
-        if (signal.aborted) break;
-        const batch = validClips.slice(i, i + CONCURRENCY_LIMIT);
-        await Promise.all(batch.map((clip, idx) => downloadTask(clip, i + idx)));
-      }
+      // Una cola y no tandas: en tandas de cinco, un clip lento dejaba a los
+      // otros cuatro huecos parados hasta que acababa.
+      const turno = semaforo(DESCARGAS_A_LA_VEZ);
+      await Promise.all(validClips.map((clip, i) => turno(() => downloadTask(clip, i))));
 
       if (signal.aborted) throw new Error("AbortError");
+      setWmAllFallos(fallidos);
+      if (fallidos === validClips.length) throw new Error('Nothing downloaded');
 
       setZipProgress(prev => prev ? { ...prev, preparingZip: true } : null);
 
       const content = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
-      const zipName = `${slug}_${selectedQuality}_pack_${new Date().getTime()}.zip`;
-      const url = URL.createObjectURL(content);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = zipName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      // Revoked on a timer: a clip pack is large, and Safari cancels a download
-      // whose object URL is revoked in the same tick as the click.
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      soltarDescarga(content, `${slug}_${selectedQuality}_pack_${new Date().getTime()}.zip`);
       setLastRouteHost(getLastRoute()?.host ?? null);
     } catch (error: any) {
       if (error.message !== "AbortError") {
@@ -489,88 +514,61 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   /**
    * El mismo ZIP de siempre, pero con la marca incrustada en cada clip.
    *
-   * Aquí no hay descargas en paralelo como en el ZIP normal: incrustar la marca
-   * es grabar el vídeo mientras se reproduce, o sea tiempo real, y cinco a la
-   * vez se pelean por la tarjeta gráfica y acaban tardando más que uno detrás
-   * de otro. Así además solo hay un vídeo en memoria cada vez.
+   * Bajar y marcar van en cadena (lotes.ts): mientras se marca un clip ya se
+   * bajan los siguientes, y con exportación fotograma a fotograma se marcan dos
+   * a la vez. Antes iba de uno en uno y la red y el render se esperaban.
    */
   const descargarZipConMarca = useCallback(async () => {
     const listos = clips.filter(c => c.status === 'success' && c.data).map(c => c.data!);
     if (listos.length === 0 || wmAll || zipProgress) return;
-    const config = wmAllConfig ?? loadStoredWatermarkConfig(brand);
+    // También sin marca, si hay que cambiarles la forma.
+    const config = marcaActiva ? (wmAllConfig ?? loadStoredWatermarkConfig(brand)) : null;
 
     const abort = new AbortController();
     wmAllAbort.current = abort;
     setWmAllFallos(0);
-    const zip = new JSZip();
     let fallos = 0;
-    let metidos = 0;
+    setWmAll({ hechos: 0, total: listos.length, pct: 0, bajando: 0, marcando: 0, fallos: 0, fase: 'trabajo' });
 
     try {
-      for (let i = 0; i < listos.length; i += 1) {
-        if (abort.signal.aborted) break;
-        const clip = listos[i];
-        const base = { indice: i + 1, total: listos.length, titulo: clip.title, fallos };
-        setWmAll({ ...base, fase: 'descarga', pct: 0 });
+      // La nitidez y el alto elegidos (nitidez.ts) valen también aquí.
+      const calidadGuardada = leerCalidad(brand.storagePrefix);
+      const resultados = await procesarClips(listos, {
+        quality: selectedQuality,
+        fetchMovieBlob,
+        marca: config ? { config, nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto } : null,
+        formato: formatoClips,
+        encaje,
+        calidad: { nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto },
+        signal: abort.signal,
+        onProgress: p => { fallos = p.fallos; setWmAll({ ...p, fase: 'trabajo' }); },
+      });
 
-        // Se elige la resolucion igual que la descarga en lote: la pedida si
-        // esta, y si no la mejor que tenga ese clip.
-        const objetivo = selectedQuality === 'max'
-          ? clip.resolutions[0]
-          : clip.resolutions.find(r => r.quality === `${selectedQuality}p`)
-            || clip.resolutions.find(r => r.quality.startsWith(selectedQuality))
-            || clip.resolutions[0];
-        if (!objetivo) { fallos += 1; continue; }
-
-        try {
-          const original = await fetchMovieBlob(objetivo.url, (loaded, total) => {
-            setWmAll({ ...base, fase: 'descarga', pct: total > 0 ? Math.round((loaded / total) * 100) : 0 });
-          }, abort.signal);
-
-          // La nitidez y el alto elegidos (nitidez.ts) valen también aquí.
-          const calidadGuardada = leerCalidad(brand.storagePrefix);
-          const conMarca = await processVideoWithWatermark(
-            original,
-            clip.broadcaster || 'Streamer',
-            config,
-            ({ pct }) => setWmAll({ ...base, fase: 'render', pct }),
-            abort.signal,
-            { nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto },
-          );
-
-          const nombre = nombreDeArchivo(clip.title, clip.broadcaster, clip.id);
-          const ext = conMarca.type.includes('webm') ? 'webm' : 'mp4';
-          zip.file(`${i + 1}_${nombre}_${objetivo.quality}_watermark.${ext}`, conMarca);
-          metidos += 1;
-        } catch (e) {
-          // Un clip que falla no puede llevarse por delante a los otros nueve.
-          if (abort.signal.aborted) break;
-          fallos += 1;
-        }
-      }
-
-      // Cancelar a mitad no deja medio ZIP: o sale entero o no sale.
-      if (abort.signal.aborted || metidos === 0) return;
+      const zip = new JSZip();
+      let metidos = 0;
+      resultados.forEach(({ clip, res, final }, i) => {
+        if (!final) return;
+        const nombre = nombreDeArchivo(clip.title, clip.broadcaster, clip.id);
+        const ext = final.type.includes('webm') ? 'webm' : 'mp4';
+        zip.file(`${i + 1}_${nombre}_${res.quality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}.${ext}`, final);
+        metidos += 1;
+      });
+      if (metidos === 0) return;
 
       setWmAll(prev => prev ? { ...prev, fase: 'zip', pct: 100 } : prev);
       const contenido = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
-      const url = URL.createObjectURL(contenido);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${slug}_${selectedQuality}_watermark_pack_${Date.now()}.zip`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      // Con retardo y generoso: son archivos grandes y Safari cancela la
-      // descarga si la object URL desaparece antes de tiempo.
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      soltarDescarga(contenido, `${slug}_${selectedQuality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}_pack_${Date.now()}.zip`);
       setLastRouteHost(getLastRoute()?.host ?? null);
+    } catch {
+      // Cancelar a mitad no deja medio ZIP: o sale entero o no sale.
     } finally {
       wmAllAbort.current = null;
       setWmAll(null);
-      setWmAllFallos(fallos);
+      setWmAllFallos(abort.signal.aborted ? 0 : fallos);
     }
-  }, [clips, wmAll, wmAllConfig, zipProgress, selectedQuality]);
+  }, [clips, wmAll, wmAllConfig, zipProgress, selectedQuality, marcaActiva, formatoClips, encaje]);
+
+  const modo: 'clips' | 'video' | 'ambos' = clipsListos.length > 1 ? modoGuardado : 'clips';
 
   const activeOption = qualityOptions.find(o => o.id === selectedQuality) || qualityOptions[0];
 
@@ -919,19 +917,24 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                       const isAnyLoading = clips.some(c => c.status === 'loading');
                       return (
                         <button
-                          onClick={marcaActiva ? descargarZipConMarca : downloadAllAsZip}
+                          onClick={modo === 'clips'
+                            ? (marcaActiva || formatoClips !== 'original' ? descargarZipConMarca : downloadAllAsZip)
+                            : () => mergeRef.current?.empezar()}
                           disabled={!!zipProgress || !!wmAll || isAnyLoading || uniendo}
                           className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-6 xl:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
                         >
                           {isAnyLoading ? (
                             <> <Loader2 className="w-4 h-4 animate-spin" /> {t.loadingClips || 'LOADING CLIPS...'} </>
+                          ) : uniendo ? (
+                            // El detalle va en el panel de unir, que se abre solo.
+                            <> <Loader2 className="w-4 h-4 animate-spin" /> {t.mergeBusy || 'Creating the video...'} </>
                           ) : wmAll ? (
                             // Con marca el ZIP tarda: el detalle de por dónde va
                             // está en el panel de abajo, aquí basta el recuento.
                             wmAll.fase === 'zip' ? (
                               <> <Loader2 className="w-4 h-4 animate-spin" /> {t.preparingZip || 'PREPARING ZIP...'} </>
                             ) : (
-                              <> <Loader2 className="w-4 h-4 animate-spin" /> {wmAll.indice}/{wmAll.total} ({wmAll.pct}%) </>
+                              <> <Loader2 className="w-4 h-4 animate-spin" /> {wmAll.hechos}/{wmAll.total} ({wmAll.pct}%) </>
                             )
                           ) : zipProgress ? (
                             zipProgress.preparingZip ? (
@@ -939,7 +942,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                             ) : (
                               <div className="flex flex-col items-center">
                                 <div className="flex items-center gap-2">
-                                  <Loader2 className="w-4 h-4 animate-spin" /> 
+                                  <Loader2 className="w-4 h-4 animate-spin" />
                                   <span>{zipProgress.current}/{zipProgress.total} ({zipProgress.percentage}%)</span>
                                 </div>
                                 {zipProgress.speed > 0 && (
@@ -949,6 +952,10 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                                 )}
                               </div>
                             )
+                          ) : modo === 'video' ? (
+                            <> <Clapperboard className="w-4 h-4" /> {t.mergeGo || 'Create the video'} </>
+                          ) : modo === 'ambos' ? (
+                            <> <Layers className="w-4 h-4" /> {t.mergeGoBoth || 'Create video + clips'} </>
                           ) : (
                             <> <FolderDown className="w-4 h-4" /> {t.downloadZip || 'Download ZIP'} </>
                           )}
@@ -984,6 +991,80 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                 </div>
              </div>
              
+             {/* Qué descargar y en qué forma. Con un clip solo no hay vídeo que unir. */}
+             {clipsListos.length > 0 && (() => {
+               const pastilla = (activa: boolean) => `px-2 sm:px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center leading-tight transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                 activa ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white'
+               }`;
+               const ocupado = !!zipProgress || !!wmAll || uniendo;
+               const etiquetaFormato: Record<Formato, string> = {
+                 original: t.fmtOriginal || 'Original',
+                 '16:9': t.fmt169 || '16:9',
+                 '9:16': t.fmt916 || '9:16 vertical',
+               };
+               const filaFormato = (titulo: string, valor: Formato, cambiar: (f: Formato) => void) => (
+                 <div className="flex items-center gap-2">
+                   <span className="w-14 shrink-0 text-right text-[10px] font-black uppercase tracking-widest text-gray-500">{titulo}</span>
+                   <div role="radiogroup" aria-label={titulo} className="grid grid-cols-3 flex-1 sm:flex-none p-1 rounded-2xl bg-[#111114] border border-white/5">
+                     {FORMATOS.map(f => (
+                       <button key={f} type="button" role="radio" aria-checked={valor === f} onClick={() => cambiar(f)} disabled={ocupado} className={pastilla(valor === f)}>
+                         {etiquetaFormato[f]}
+                       </button>
+                     ))}
+                   </div>
+                 </div>
+               );
+               const usaVideo = modo !== 'clips';
+               const usaClips = modo !== 'video';
+               const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && formatoClips === '9:16');
+               return (
+                 <div className="!mt-3 flex flex-col items-stretch sm:items-end gap-2 px-2">
+                   {clipsListos.length > 1 && (
+                     <div className="flex flex-col sm:flex-row items-center gap-2">
+                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">{t.modeLabel || 'Download as'}</span>
+                       <div role="radiogroup" aria-label={t.modeLabel || 'Download as'} className="grid grid-cols-3 w-full sm:w-auto p-1 rounded-2xl bg-[#111114] border border-white/5">
+                         {([
+                           { id: 'clips', icon: <FolderDown className="w-3.5 h-3.5" />, label: t.modeClips || 'Separate clips', hint: t.modeClipsHint || 'Each clip on its own, in a ZIP' },
+                           { id: 'video', icon: <Clapperboard className="w-3.5 h-3.5" />, label: t.modeVideo || 'One video', hint: t.modeVideoHint || 'All the clips back to back, in the order of the list' },
+                           { id: 'ambos', icon: <Layers className="w-3.5 h-3.5" />, label: t.modeBoth || 'Both', hint: t.modeBothHint || 'The long video and each clip on its own, in one ZIP' },
+                         ] as const).map(o => (
+                           <button
+                             key={o.id}
+                             type="button"
+                             role="radio"
+                             aria-checked={modo === o.id}
+                             title={o.hint}
+                             onClick={() => cambiarModo(o.id)}
+                             disabled={ocupado}
+                             className={pastilla(modo === o.id)}
+                           >
+                             <span className="shrink-0">{o.icon}</span>{o.label}
+                           </button>
+                         ))}
+                       </div>
+                     </div>
+                   )}
+                   {usaVideo && filaFormato(t.fmtVideo || 'Video', formatoVideo, f => guardarFormato({ video: f }))}
+                   {usaClips && filaFormato(t.fmtClips || 'Clips', formatoClips, f => guardarFormato({ clips: f }))}
+                   {hayVertical && (
+                     <div className="flex items-center gap-2">
+                       <span className="w-14 shrink-0 text-right text-[10px] font-black uppercase tracking-widest text-gray-500">{t.fitLabel || 'Vertical'}</span>
+                       <div role="radiogroup" aria-label={t.fitLabel || 'Vertical'} className="grid grid-cols-2 flex-1 sm:flex-none p-1 rounded-2xl bg-[#111114] border border-white/5">
+                         {([
+                           { id: 'recortar', label: t.fitCrop || 'Crop the centre', hint: t.fitCropHint || 'The centre fills the screen; what is at the sides is cut off' },
+                           { id: 'difuminar', label: t.fitBlur || 'Blurred background', hint: t.fitBlurHint || 'The whole clip in the middle, with a blurred copy behind it' },
+                         ] as const).map(o => (
+                           <button key={o.id} type="button" role="radio" aria-checked={encaje === o.id} title={o.hint} onClick={() => guardarFormato({ encaje: o.id })} disabled={ocupado} className={pastilla(encaje === o.id)}>
+                             {o.label}
+                           </button>
+                         ))}
+                       </div>
+                     </div>
+                   )}
+                 </div>
+               );
+             })()}
+
              {/* Panel de "marca en todos": lo que se va a hacer, en cuantos, y
                  con que marca — antes de empezar, no despues. */}
              {(marcaActiva || wmAll) && (
@@ -1007,15 +1088,17 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                    <div className="space-y-3">
                      <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-bold">
                        <span className="text-white tabular-nums">
-                         {wmAll.indice} / {wmAll.total}
-                         <span className="text-gray-500 font-medium ml-2 truncate">{wmAll.titulo}</span>
+                         {wmAll.hechos} / {wmAll.total}
+                         <span className="text-gray-500 font-medium ml-2">{t.watermarkAllDone || 'ready'}</span>
                        </span>
                        <span className="text-twitch uppercase tracking-widest">
-                         {wmAll.fase === 'descarga'
-                           ? `${t.watermarkAllDownloading || 'Downloading'} · ${wmAll.pct}%`
-                           : wmAll.fase === 'render'
-                             ? `${t.watermarkAllRendering || 'Burning in'} · ${wmAll.pct}%`
-                             : (t.preparingZip || 'PREPARING ZIP...')}
+                         {wmAll.fase === 'zip'
+                           ? (t.preparingZip || 'PREPARING ZIP...')
+                           : [
+                               wmAll.bajando > 0 ? `${t.watermarkAllDownloading || 'Downloading'} ${wmAll.bajando}` : '',
+                               wmAll.marcando > 0 ? `${t.watermarkAllRendering || 'Burning in'} ${wmAll.marcando}` : '',
+                               `${wmAll.pct}%`,
+                             ].filter(Boolean).join(' · ')}
                        </span>
                      </div>
                      <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
@@ -1123,6 +1206,12 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
              {/* Con un solo clip también: se le puede añadir una intro o un cierre propio. */}
              {clips.some(c => c.status === 'success') && (
                <MergePanel
+                 ref={mergeRef}
+                 formatoVideo={formatoVideo}
+                 formatoClips={formatoClips}
+                 encaje={encaje}
+                 conClips={modo === 'ambos'}
+                 onConClips={v => cambiarModo(v ? 'ambos' : 'video')}
                  clips={clips.filter(c => c.status === 'success' && c.data).map(c => c.data!)}
                  quality={selectedQuality}
                  watermarkOn={marcaActiva}

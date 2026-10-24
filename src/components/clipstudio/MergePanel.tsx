@@ -1,23 +1,29 @@
 // ============================================================================
 // Unir todos los clips en un solo vídeo, en el orden de la lista.
 // ----------------------------------------------------------------------------
-// Primero se descargan (3 a la vez, como el ZIP) y luego se graban seguidos.
-// La grabación va a velocidad real, así que se dice cuánto va a tardar antes de
-// empezar, y después cuánto queda.
+// Primero se descargan (varios a la vez, como el ZIP) y luego se exportan
+// seguidos. Con "vídeo + clips" sale un ZIP con el vídeo unido y cada clip
+// suelto al lado (con la marca, si va puesta), para quien quiera los dos.
+//
+// El botón grande de arriba (ClipToolApp) también lo arranca: por eso empezar()
+// se expone por ref.
 //
 // Se pueden meter vídeos o imágenes propios entre los clips (una intro, un
 // "suscríbete", un cierre). Se colocan por hueco: "después del clip 2" sigue
 // siendo después del clip 2 aunque luego se reordenen los clips.
 // ============================================================================
-import React, { useEffect, useRef, useState } from 'react';
-import { Clapperboard, Loader2, X, Sparkles, Blend, Download, Plus, ChevronUp, ChevronDown, ImageIcon, Film } from 'lucide-react';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import JSZip from 'jszip';
+import { Clapperboard, Loader2, X, Sparkles, Blend, Download, Plus, ChevronUp, ChevronDown, ImageIcon, Film, FolderDown } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from './types';
 import { useBrand } from './brand';
 import { mergeClipsToVideo } from './mergeService';
 import CalidadSelector from './CalidadSelector';
 import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from './nitidez';
 import { prepararVideo } from './editor/ownMedia';
-import { loadStoredWatermarkConfig } from './watermarkService';
+import { loadStoredWatermarkConfig, nombreDeArchivo } from './watermarkService';
+import { procesarClips, soltarDescarga, type ProgresoLote } from './lotes';
+import { sufijoFormato, type Encaje, type Formato } from './formato';
 
 interface Props {
   clips: ClipData[];
@@ -28,6 +34,18 @@ interface Props {
   t: any;
   busy: boolean;
   onBusyChange: (busy: boolean) => void;
+  /** Con los clips sueltos al lado del vídeo unido, en un ZIP. */
+  conClips: boolean;
+  onConClips: (v: boolean) => void;
+  /** Forma del vídeo unido y de los clips sueltos (formato.ts). */
+  formatoVideo: Formato;
+  formatoClips: Formato;
+  encaje: Encaje;
+}
+
+export interface MergePanelHandle {
+  /** Abre el panel y arranca con lo que tenga puesto. */
+  empezar: () => void;
 }
 
 const mmss = (seg: number) => {
@@ -53,14 +71,18 @@ interface Propio {
 }
 
 type Estado =
-  | { fase: 'descarga'; hechos: number; total: number }
-  | { fase: 'render'; index: number; total: number; elapsed: number; duration: number; pct: number };
+  | ({ fase: 'descarga' } & ProgresoLote)
+  | { fase: 'render'; index: number; total: number; elapsed: number; duration: number; pct: number }
+  | { fase: 'zip' };
 
-const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkConfig, t, busy, onBusyChange }) => {
+const MergePanel = forwardRef<MergePanelHandle, Props>(({ clips, quality, watermarkOn, watermarkConfig, t, busy, onBusyChange, conClips, onConClips, formatoVideo, formatoClips, encaje }, ref) => {
   const brand = useBrand();
   const [abierto, setAbierto] = useState(false);
   const [fundido, setFundido] = useState(true);
   const [conMarca, setConMarca] = useState(watermarkOn);
+  // Sigue al interruptor de arriba: encenderlo con el panel ya abierto
+  // también cuenta. Aquí se puede quitar solo para el vídeo unido.
+  useEffect(() => { setConMarca(watermarkOn); }, [watermarkOn]);
   const [estado, setEstado] = useState<Estado | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [hecho, setHecho] = useState(false);
@@ -128,10 +150,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
   const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
   const alto = calidad.alto === 1440 ? 1440 : quality === '360' ? 360 : quality === '720' ? 720 : 1080;
 
-  const elegirResolucion = (c: ClipData) =>
-    quality === 'max'
-      ? c.resolutions[0]
-      : c.resolutions.find(r => r.quality === `${quality}p`) || c.resolutions.find(r => r.quality.startsWith(quality)) || c.resolutions[0];
+  const panelRef = useRef<HTMLDivElement>(null);
 
   const empezar = async () => {
     if (piezas < 2 || estado) return;
@@ -141,39 +160,52 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
     abortRef.current = ctrl;
     onBusyChange(true);
     try {
-      setEstado({ fase: 'descarga', hechos: 0, total: clips.length });
-      const blobs: Blob[] = new Array(clips.length);
-      let hechos = 0;
-      for (let i = 0; i < clips.length; i += 3) {
-        await Promise.all(clips.slice(i, i + 3).map(async (c, k) => {
-          const res = elegirResolucion(c);
-          blobs[i + k] = await brand.fetchMovieBlob(res.url, () => {}, ctrl.signal);
-          hechos += 1;
-          setEstado({ fase: 'descarga', hechos, total: clips.length });
-        }));
-        if (ctrl.signal.aborted) throw new DOMException('Cancelled', 'AbortError');
-      }
-
       const marca = conMarca ? (watermarkConfig ?? loadStoredWatermarkConfig(brand)) : null;
+      const nitidez = FUERZA[calidad.nitidez];
+      setEstado({ fase: 'descarga', hechos: 0, total: clips.length, pct: 0, bajando: 0, marcando: 0, fallos: 0 });
+      // Con los clips sueltos y marca, se marcan aquí mismo mientras bajan
+      // los demás; el vídeo unido parte de los originales (pone su propia
+      // marca, con los fundidos encima).
+      const resultados = await procesarClips(clips, {
+        quality,
+        fetchMovieBlob: brand.fetchMovieBlob,
+        marca: conClips && marca ? { config: marca, nitidez, alto: calidad.alto } : null,
+        formato: conClips ? formatoClips : 'original',
+        encaje,
+        calidad: { nitidez, alto: calidad.alto },
+        guardarOriginal: true,
+        signal: ctrl.signal,
+        onProgress: p => setEstado({ fase: 'descarga', ...p }),
+      });
+      // Al vídeo unido no le puede faltar un trozo.
+      if (resultados.some(r => !r.original)) throw new Error('Download failed');
+
       const video = await mergeClipsToVideo(
         secuencia.map(x => x.tipo === 'clip'
-          ? { blob: blobs[x.i], channelName: x.clip.broadcaster || 'Streamer' }
+          ? { blob: resultados[x.i].original!, channelName: x.clip.broadcaster || 'Streamer' }
           : { blob: x.p.file, channelName: '', propio: true, imagenSegundos: x.p.tipo === 'imagen' ? x.p.dur : undefined }),
-        { watermark: marca, fade: fundido, height: alto, nitidez: FUERZA[calidad.nitidez] },
+        { watermark: marca, fade: fundido, height: alto, nitidez, formato: formatoVideo, encaje },
         p => setEstado({ fase: 'render', ...p }),
         ctrl.signal,
       );
 
       const ext = video.type.includes('webm') ? 'webm' : 'mp4';
-      const url = URL.createObjectURL(video);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${brand.storagePrefix}_compilation_${piezas}parts_${Date.now()}.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      // Con retardo: Safari cancela la descarga si la URL desaparece ya.
-      setTimeout(() => URL.revokeObjectURL(url), 60000);
+      const sello = Date.now();
+      if (conClips) {
+        setEstado({ fase: 'zip' });
+        const zip = new JSZip();
+        zip.file(`${brand.storagePrefix}_compilation_${piezas}parts${sufijoFormato(formatoVideo)}.${ext}`, video);
+        const carpeta = zip.folder('clips')!;
+        resultados.forEach(({ clip, res, final }, i) => {
+          if (!final) return;
+          const e = final.type.includes('webm') ? 'webm' : 'mp4';
+          carpeta.file(`${i + 1}_${nombreDeArchivo(clip.title, clip.broadcaster, clip.id)}_${res.quality}${marca ? '_watermark' : ''}${final === resultados[i].original ? '' : sufijoFormato(formatoClips)}.${e}`, final);
+        });
+        const contenido = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+        soltarDescarga(contenido, `${brand.storagePrefix}_${quality}_video_and_clips_${sello}.zip`);
+      } else {
+        soltarDescarga(video, `${brand.storagePrefix}_compilation_${piezas}parts${sufijoFormato(formatoVideo)}_${sello}.${ext}`);
+      }
       setHecho(true);
     } catch (e: any) {
       if (e?.name !== 'AbortError' && e?.message !== 'AbortError') {
@@ -190,17 +222,21 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
     }
   };
 
-  const pct = estado
-    ? estado.fase === 'descarga'
-      ? Math.round((estado.hechos / estado.total) * 100)
-      : estado.pct
-    : 0;
+  useImperativeHandle(ref, () => ({
+    empezar: () => {
+      setAbierto(true);
+      requestAnimationFrame(() => panelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      empezar();
+    },
+  }));
+
+  const pct = estado ? (estado.fase === 'zip' ? 100 : estado.pct) : 0;
 
   if (!abierto) {
     return (
       <button
         type="button"
-        onClick={() => { setConMarca(watermarkOn); setAbierto(true); }}
+        onClick={() => setAbierto(true)}
         disabled={busy || clips.length < 1}
         title={clips.length < 2 ? (t.mergeNeedTwo || 'You need at least two clips') : undefined}
         className="w-full rounded-[2rem] border border-dashed border-twitch/40 bg-twitch/[0.06] hover:bg-twitch/[0.12] p-5 flex items-center gap-4 text-left transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
@@ -219,7 +255,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
   }
 
   return (
-    <div className="w-full rounded-[2rem] border border-twitch/30 bg-[#111114] p-5 sm:p-6 space-y-5 shadow-2xl">
+    <div ref={panelRef} className="w-full rounded-[2rem] border border-twitch/30 bg-[#111114] p-5 sm:p-6 space-y-5 shadow-2xl">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-4 min-w-0">
           <span className="p-3 rounded-2xl bg-twitch/20 border border-twitch/30 shrink-0">
@@ -329,6 +365,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
             {[
               { on: fundido, set: setFundido, icon: <Blend className="w-4 h-4" />, label: t.mergeFade || 'Fade between clips' },
               { on: conMarca, set: setConMarca, icon: <Sparkles className="w-4 h-4" />, label: t.mergeWatermark || "Each streamer's name on their clip" },
+              { on: conClips, set: onConClips, icon: <FolderDown className="w-4 h-4" />, label: t.mergeAlsoClips || 'Also each clip on its own (ZIP)' },
             ].map((o, i) => (
               <button
                 key={i}
@@ -349,15 +386,15 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
-              onClick={empezar}
+              onClick={() => empezar()}
               disabled={busy || piezas < 2}
               title={piezas < 2 ? (t.mergeNeedTwo || 'You need at least two clips') : undefined}
               className="h-12 px-6 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 disabled:opacity-50 active:scale-[0.98] transition-all"
             >
               <Download className="w-4 h-4" />
-              {t.mergeGo || 'Create the video'}
+              {conClips ? (t.mergeGoBoth || 'Create video + clips') : (t.mergeGo || 'Create the video')}
             </button>
-            <span className="text-[11px] font-bold text-gray-500">{alto}p · 16:9</span>
+            <span className="text-[11px] font-bold text-gray-500">{alto}p · {formatoVideo === '9:16' ? '9:16' : '16:9'}</span>
           </div>
         </>
       )}
@@ -368,8 +405,10 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
             <span className="text-twitch uppercase tracking-widest flex items-center gap-2">
               <Loader2 className="w-3.5 h-3.5 animate-spin" />
               {estado.fase === 'descarga'
-                ? `${t.mergeDownloading || 'Downloading clips'} ${estado.hechos}/${estado.total}`
-                : `${t.mergeRecording || 'Recording clip'} ${estado.index}/${estado.total}`}
+                ? `${estado.marcando > 0 ? (t.watermarkAllRendering || 'Burning in') : (t.mergeDownloading || 'Downloading clips')} ${estado.hechos}/${estado.total}`
+                : estado.fase === 'zip'
+                  ? (t.preparingZip || 'PREPARING ZIP...')
+                  : `${t.mergeRecording || 'Recording clip'} ${estado.index}/${estado.total}`}
             </span>
             <span className="text-gray-400 tabular-nums">
               {pct}%{estado.fase === 'render' ? ` · ${mmss(Math.max(0, estado.duration - estado.elapsed))}` : ''}
@@ -392,6 +431,7 @@ const MergePanel: React.FC<Props> = ({ clips, quality, watermarkOn, watermarkCon
       {error && <p className="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/25 rounded-xl px-3 py-2">{error}</p>}
     </div>
   );
-};
+});
+MergePanel.displayName = 'MergePanel';
 
 export default MergePanel;

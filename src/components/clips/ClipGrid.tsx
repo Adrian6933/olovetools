@@ -13,6 +13,19 @@ const THUMB_SIZES = '(min-width: 2240px) 560px, (min-width: 1800px) 25vw, (min-w
 
 // Construir un Intl.NumberFormat es caro y aquí se hacía uno por tarjeta y por
 // render. Con 500 clips en pantalla eso son 500 constructores en cada repintado.
+/**
+ * Tarjetas que se montan de entrada, y cuántas más cada vez que se baja.
+ * Múltiplo de 2 y de 3 para que la última fila salga llena.
+ *
+ * Antes se montaban todos los clips cargados de golpe. Con el modo eco, el
+ * barrido trae miles; al quitarlo, o al quitar una palabra clave que dejaba
+ * diez, aparecían de golpe miles de tarjetas (cada una con su portada) y el
+ * navegador se ahogaba. Ahora la rejilla vuelve a empezar por arriba y va
+ * montando por tandas según se baja: lo cargado sigue en memoria (son datos,
+ * pesan poco), lo que cuesta es pintarlo.
+ */
+const TANDA = 48;
+
 const VIEW_FORMATTER = new Intl.NumberFormat('en-US', {
   notation: 'compact',
   maximumFractionDigits: 1,
@@ -42,6 +55,12 @@ interface ClipGridProps {
    * lista se alcanza casi al hacer scroll una vez, así que ahí la carga en
    * segundo plano la dispara Clipy directamente en vez de esto. */
   autoLoadOnScroll?: boolean;
+  /**
+   * Cuando cambia, la rejilla vuelve a montar solo la primera tanda: al
+   * activar o quitar el modo eco, o al cambiar palabras clave, idiomas o la
+   * agrupación. Lo que solo AÑADE clips al final no debe cambiarlo.
+   */
+  resetKey?: string;
 }
 
 const ClipCard: React.FC<{
@@ -210,20 +229,48 @@ const ClipCard: React.FC<{
 ClipCard.displayName = 'ClipCard';
 
 const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
-  clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, onBlockStreamer, onAddToLists, t, autoLoadOnScroll = true
+  clips, isLoading, hasMore, onLoadMore, onLoadAll, onClipClick, savedClipIds, onToggleSave, onDownloadExternal, onBlockStreamer, onAddToLists, t, autoLoadOnScroll = true, resetKey = ''
 }, ref) => {
   const observerTarget = useRef<HTMLDivElement>(null);
+
+  // Con el modo eco la lista ya llega en páginas de 50: ahí no se recorta.
+  const [montados, setMontados] = useState(TANDA);
+  useEffect(() => { setMontados(TANDA); }, [resetKey]);
+  const limite = autoLoadOnScroll ? montados : Infinity;
+  const visibles = clips.length > limite ? clips.slice(0, limite) : clips;
+  /** Hay clips ya cargados que aún no se han pintado. */
+  const quedanSinMontar = visibles.length < clips.length;
+  const clipsRef = useRef(clips);
+  clipsRef.current = clips;
+
+  /** Lo siguiente al llegar abajo: pintar lo ya cargado y, si no queda, pedir más. */
+  const siguiente = () => {
+    if (quedanSinMontar) setMontados(m => m + TANDA);
+    else if (hasMore && !isLoading) onLoadMore();
+  };
+
+  const resaltar = (element: HTMLElement) => {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    element.classList.add('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50', 'transition-all', 'duration-500');
+    setTimeout(() => {
+      element.classList.remove('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50');
+    }, 1500);
+  };
 
   useImperativeHandle(ref, () => ({
     /** `false` si ese clip no está en la rejilla: quien llama decide qué hacer. */
     scrollToClip: (clipId: string) => {
       const element = document.getElementById(`clip-card-${clipId}`);
-      if (!element) return false;
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      element.classList.add('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50', 'transition-all', 'duration-500');
+      if (element) { resaltar(element); return true; }
+      // Cargado pero aún sin pintar (más abajo de lo montado): se monta hasta
+      // él y se va cuando ya está en la página.
+      const idx = clipsRef.current.findIndex(c => c.id === clipId);
+      if (idx < 0) return false;
+      setMontados(Math.ceil((idx + 1) / TANDA) * TANDA);
       setTimeout(() => {
-        element.classList.remove('ring-4', 'ring-twitch-base/20', 'scale-105', 'z-50');
-      }, 1500);
+        const el = document.getElementById(`clip-card-${clipId}`);
+        if (el) resaltar(el);
+      }, 50);
       return true;
     },
   }), []);
@@ -241,9 +288,9 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
       : 1200;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoading) {
-          onLoadMore();
-        }
+        if (!entries[0].isIntersecting) return;
+        if (quedanSinMontar) setMontados(m => m + TANDA);
+        else if (hasMore && !isLoading) onLoadMore();
       },
       // Sólo hacia abajo: ensanchar por arriba haría que el centinela contara
       // como visible mientras subes, que no es cuando hace falta cargar nada.
@@ -251,7 +298,9 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
     );
     if (observerTarget.current) observer.observe(observerTarget.current);
     return () => { if (observerTarget.current) observer.unobserve(observerTarget.current); };
-  }, [hasMore, isLoading, onLoadMore, autoLoadOnScroll]);
+    // `visibles.length`: tras montar una tanda el centinela se vuelve a
+    // observar, y si sigue a la vista (pantalla alta) se monta la siguiente.
+  }, [hasMore, isLoading, onLoadMore, autoLoadOnScroll, quedanSinMontar, visibles.length]);
 
   if (isLoading && clips.length === 0) {
     return (
@@ -272,7 +321,7 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
   return (
     <>
       <div className={GRID_CLASSNAME}>
-        {clips.map((clip, i) => {
+        {visibles.map((clip) => {
           return (
             <React.Fragment key={clip.id}>
               <ClipCard
@@ -286,9 +335,9 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
       </div>
       <div ref={observerTarget} className="h-10 w-full opacity-0 pointer-events-none"></div>
       <div className="w-full flex justify-center mt-16 md:mt-24 mb-16 md:mb-24">
-        {!isLoading && hasMore && (
+        {!isLoading && (hasMore || quedanSinMontar) && (
           <div className="flex flex-col sm:flex-row gap-4 md:gap-6 w-full max-w-2xl px-2 sm:px-6">
-            <button onClick={onLoadMore} className="flex-1 min-w-0 bg-[#1a1a24] hover:bg-[#2c2c36] text-white font-black text-sm md:text-base py-4 md:py-6 px-5 md:px-10 rounded-3xl md:rounded-[2rem] border border-white/5 transition-premium active:scale-95 flex items-center justify-center gap-3 shadow-2xl cursor-pointer">
+            <button onClick={siguiente} className="flex-1 min-w-0 bg-[#1a1a24] hover:bg-[#2c2c36] text-white font-black text-sm md:text-base py-4 md:py-6 px-5 md:px-10 rounded-3xl md:rounded-[2rem] border border-white/5 transition-premium active:scale-95 flex items-center justify-center gap-3 shadow-2xl cursor-pointer">
               <ArrowDownCircle className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 text-twitch-base/30" /> <span className="truncate">{t('load_more')}</span>
             </button>
             <button onClick={onLoadAll} className="flex-1 min-w-0 bg-twitch-base/60 hover:bg-twitch-base/80 text-[var(--color-accent-ink)] font-black text-sm md:text-base py-4 md:py-6 px-5 md:px-10 rounded-3xl md:rounded-[2rem] transition-premium shadow-xl shadow-twitch-base/5 active:scale-95 flex items-center justify-center gap-3 cursor-pointer">
@@ -297,7 +346,7 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
           </div>
         )}
         {isLoading && clips.length > 0 && <div className="flex items-center gap-3 md:gap-4 text-twitch-base font-black text-sm md:text-base bg-[#1a1a24] px-6 md:px-12 py-4 md:py-6 rounded-3xl md:rounded-[2rem] shadow-2xl"><Loader2 className="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 animate-spin" /> {t('loading_results')}</div>}
-        {!isLoading && !hasMore && clips.length > 0 && (
+        {!isLoading && !hasMore && !quedanSinMontar && clips.length > 0 && (
           <div className="flex items-center gap-3 text-gray-500 font-bold text-xs md:text-sm text-center px-4 md:px-8 py-4">
             <CheckCircle2 className="w-5 h-5 flex-shrink-0 text-twitch-base/60" /> {t('all_clips_loaded')}
           </div>

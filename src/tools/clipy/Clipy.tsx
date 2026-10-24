@@ -1913,6 +1913,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
               onAddToLists={handleOpenListPicker}
               t={t}
               autoLoadOnScroll={!perfMode}
+              // Al cambiar el modo eco o los filtros la rejilla vuelve a empezar
+              // por arriba, en vez de pintar de golpe todo lo ya cargado.
+              resetKey={JSON.stringify([perfMode, categoryId, state.timeFilter, state.sortType, state.anchorTime, groupByChannel, keywordNeedles, activeOnlyLanguages, activeExcludeLanguages])}
             />
             <div ref={clipsEndRef} />
             {perfMode && totalRenderPages > 1 && (

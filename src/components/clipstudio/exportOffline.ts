@@ -29,6 +29,7 @@ import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 import { bitrateDeGrabacion, suavizar } from './recorder';
 import { crearNitidez } from './nitidez';
+import { crearEncaje, medidasDe, type Encaje, type Formato } from './formato';
 
 export interface PiezaOffline {
   blob: Blob;
@@ -52,6 +53,10 @@ export interface OpcionesOffline {
    * Solo cuenta si no se da width/height.
    */
   alto?: number;
+  /** Horizontal, vertical o como el clip (formato.ts). Solo sin width/height. */
+  formato?: Formato;
+  /** Cómo se llena el hueco si la forma no coincide (por defecto, difuminado). */
+  encaje?: Encaje;
   watermark?: WatermarkConfig | null;
   fade?: boolean;
   /** Nitidez CAS de 0 (nada) a 1 (fuerte); ver nitidez.ts. */
@@ -130,9 +135,9 @@ export const exportarSinTiempoReal = async (
   const par = (n: number) => Math.max(2, Math.round(n / 2) * 2);
   const anchoOriginal = primero ? await primero.video.getDisplayWidth() : 1920;
   const altoOriginal = primero ? await primero.video.getDisplayHeight() : 1080;
-  const escala = !opts.width && !opts.height && opts.alto ? opts.alto / altoOriginal : 1;
-  const width = par(opts.width ?? anchoOriginal * escala);
-  const height = par(opts.height ?? altoOriginal * escala);
+  const propias = medidasDe(opts.formato || 'original', anchoOriginal, altoOriginal, opts.alto);
+  const width = par(opts.width ?? propias.width);
+  const height = par(opts.height ?? propias.height);
 
   // ---- salida ----------------------------------------------------------------
   const canvas = document.createElement('canvas');
@@ -147,10 +152,7 @@ export const exportarSinTiempoReal = async (
   /** Afila lo que hay en el lienzo (el fotograma), antes de la marca y los fundidos. */
   const afilar = () => { if (filtro) ctx.drawImage(filtro.aplicar(canvas, fuerza), 0, 0); };
   /** Encaja una imagen o fotograma en el lienzo, escalando con suavizado alto. */
-  const encajar = (src: CanvasImageSource, w: number, h: number) => {
-    const k = Math.min(width / w, height / h);
-    ctx.drawImage(src, (width - w * k) / 2, (height - h * k) / 2, w * k, h * k);
-  };
+  const encajar = crearEncaje(ctx, width, height, opts.encaje);
 
   /**
    * Bitrate de salida: el del clip original por píxel, escalado al tamaño de

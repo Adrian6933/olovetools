@@ -76,6 +76,8 @@ export interface Fuente {
 
 const fuentes = new Map<string, Fuente>();
 const enCurso = new Map<string, Promise<Fuente>>();
+/** Tiras de fotogramas ya sacadas, por URL de la fuente. */
+const tiras = new Map<string, string[]>();
 
 /** La fuente de una pieza: por clip (clipId) o por pieza propia (id). */
 export const claveFuente = (p: Pieza) => p.clipId ? `clip:${p.clipId}` : `propio:${p.fuente || p.id}`;
@@ -88,6 +90,17 @@ export const registrarFuente = (clave: string, blob: Blob): Fuente => {
   const f = { blob, url: URL.createObjectURL(blob) };
   fuentes.set(clave, f);
   return f;
+};
+
+/**
+ * Olvida todos los vídeos guardados (al empezar con otra lista de clips).
+ * Cada clip está entero en memoria: sin soltarlos, cada búsqueda nueva iba
+ * sumando RAM hasta cerrar la pestaña.
+ */
+export const soltarFuentes = () => {
+  fuentes.forEach(f => URL.revokeObjectURL(f.url));
+  fuentes.clear();
+  tiras.clear();
 };
 
 export const obtenerFuente = (clave: string, descargar: () => Promise<Blob>): Promise<Fuente> => {
@@ -121,8 +134,6 @@ export const aMergeItem = (p: Pieza): MergeItem => {
 };
 
 // ---- Tira de fotogramas para recortar --------------------------------------
-
-const tiras = new Map<string, string[]>();
 
 /** N fotogramas repartidos por el vídeo, como miniaturas JPEG. */
 export const tiraDeFotogramas = async (url: string, total: number, n = 10): Promise<string[]> => {
