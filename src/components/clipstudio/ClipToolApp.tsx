@@ -32,7 +32,7 @@ import { obtenerFuente, soltarFuentes, type Pieza } from './editor/model';
 import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
 import {
-  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink, Clapperboard, Layers
+  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink, Clapperboard, Layers, Download, Crop, Blend
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
@@ -991,74 +991,117 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                 </div>
              </div>
              
-             {/* Qué descargar y en qué forma. Con un clip solo no hay vídeo que unir. */}
+             {/* Qué descargar y en qué forma, en una tarjeta como la barra de
+                 arriba: en pantalla ancha todo en una fila, cada grupo con su
+                 título; en móvil, uno debajo de otro. Con un clip solo no hay
+                 vídeo que unir, así que solo sale el formato de los clips. */}
              {clipsListos.length > 0 && (() => {
-               const pastilla = (activa: boolean) => `px-2 sm:px-3 py-2 rounded-xl flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center leading-tight transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
-                 activa ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white'
-               }`;
                const ocupado = !!zipProgress || !!wmAll || uniendo;
-               const etiquetaFormato: Record<Formato, string> = {
+               const usaVideo = modo !== 'clips';
+               const usaClips = modo !== 'video';
+               const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && formatoClips === '9:16');
+
+               /** El dibujo de la forma: un rectángulo tumbado o de pie. */
+               const forma = (f: Formato) => f === 'original'
+                 ? <Film className="w-3.5 h-3.5 shrink-0" />
+                 : <span aria-hidden="true" className={`shrink-0 rounded-[3px] border-[1.5px] border-current ${f === '16:9' ? 'w-[17px] h-[10px]' : 'w-[10px] h-[17px]'}`} />;
+               const tituloFormato: Record<Formato, string> = {
                  original: t.fmtOriginal || 'Original',
                  '16:9': t.fmt169 || '16:9',
                  '9:16': t.fmt916 || '9:16 vertical',
                };
-               const filaFormato = (titulo: string, valor: Formato, cambiar: (f: Formato) => void) => (
-                 <div className="flex items-center gap-2">
-                   <span className="w-14 shrink-0 text-right text-[10px] font-black uppercase tracking-widest text-gray-500">{titulo}</span>
-                   <div role="radiogroup" aria-label={titulo} className="grid grid-cols-3 flex-1 sm:flex-none p-1 rounded-2xl bg-[#111114] border border-white/5">
-                     {FORMATOS.map(f => (
-                       <button key={f} type="button" role="radio" aria-checked={valor === f} onClick={() => cambiar(f)} disabled={ocupado} className={pastilla(valor === f)}>
-                         {etiquetaFormato[f]}
+
+               type Opcion = { id: string; icon: React.ReactNode; label: string; hint?: string };
+               type Grupo = { id: string; titulo: string; icono: React.ReactNode; opciones: Opcion[]; valor: string; elegir: (id: string) => void; ancho: string };
+               const grupos: Grupo[] = [];
+               if (clipsListos.length > 1) grupos.push({
+                 id: 'modo', titulo: t.modeLabel || 'Download as', icono: <Download className="w-3.5 h-3.5" />, ancho: 'xl:flex-[1.5]',
+                 valor: modo, elegir: id => cambiarModo(id as ModoDescarga),
+                 opciones: [
+                   { id: 'clips', icon: <FolderDown className="w-4 h-4 shrink-0" />, label: t.modeClips || 'Separate clips', hint: t.modeClipsHint || 'Each clip on its own, in a ZIP' },
+                   { id: 'video', icon: <Clapperboard className="w-4 h-4 shrink-0" />, label: t.modeVideo || 'One video', hint: t.modeVideoHint || 'All the clips back to back, in the order of the list' },
+                   { id: 'ambos', icon: <Layers className="w-4 h-4 shrink-0" />, label: t.modeBoth || 'Both', hint: t.modeBothHint || 'The long video and each clip on its own, in one ZIP' },
+                 ],
+               });
+               const opcionesFormato: Opcion[] = FORMATOS.map(f => ({ id: f, icon: forma(f), label: f === 'original' ? tituloFormato.original : f, hint: tituloFormato[f] }));
+               if (usaVideo) grupos.push({
+                 id: 'video', titulo: t.fmtSectionVideo || 'Video format', icono: <Clapperboard className="w-3.5 h-3.5" />, ancho: 'xl:flex-1',
+                 valor: formatoVideo, elegir: id => guardarFormato({ video: id as Formato }), opciones: opcionesFormato,
+               });
+               if (usaClips) grupos.push({
+                 id: 'clips', titulo: t.fmtSectionClips || 'Clips format', icono: <FolderDown className="w-3.5 h-3.5" />, ancho: 'xl:flex-1',
+                 valor: formatoClips, elegir: id => guardarFormato({ clips: id as Formato }), opciones: opcionesFormato,
+               });
+               const encajeGrupo: Grupo | null = !hayVertical ? null : {
+                 id: 'encaje', titulo: t.fitLabel || 'Vertical', icono: forma('9:16'), ancho: 'xl:flex-[1.2]',
+                 valor: encaje, elegir: id => guardarFormato({ encaje: id as Encaje }),
+                 opciones: [
+                   { id: 'recortar', icon: <Crop className="w-4 h-4 shrink-0" />, label: t.fitCrop || 'Crop the centre', hint: t.fitCropHint || 'The centre fills the screen; what is at the sides is cut off' },
+                   { id: 'difuminar', icon: <Blend className="w-4 h-4 shrink-0" />, label: t.fitBlur || 'Blurred background', hint: t.fitBlurHint || 'The whole clip in the middle, with a blurred copy behind it' },
+                 ],
+               };
+
+               // Debajo, en una línea, qué va a salir: lo que antes solo estaba
+               // en el title de cada botón y no se veía sin pasar el ratón.
+               const resumen = [
+                 grupos.find(g => g.id === 'modo')?.opciones.find(o => o.id === modo)?.hint,
+                 encajeGrupo?.opciones.find(o => o.id === encaje)?.hint,
+               ].filter(Boolean).join(' · ');
+
+               const selector = (g: Grupo, extra = '') => (
+                 <div role="radiogroup" aria-label={g.titulo} className={`flex gap-1 p-1 rounded-2xl bg-dark-950 border border-white/10 ${extra}`}>
+                   {g.opciones.map(o => {
+                     const activa = g.valor === o.id;
+                     return (
+                       <button
+                         key={o.id}
+                         type="button"
+                         role="radio"
+                         aria-checked={activa}
+                         title={o.hint}
+                         onClick={() => g.elegir(o.id)}
+                         disabled={ocupado}
+                         className={`flex-1 min-w-0 min-h-[40px] px-2.5 py-2 rounded-xl flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center leading-tight sm:whitespace-nowrap transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                           activa
+                             ? 'bg-twitch text-[var(--color-accent-ink)] shadow-lg shadow-twitch/20'
+                             : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
+                         }`}
+                       >
+                         {o.icon}<span className="min-w-0">{o.label}</span>
                        </button>
-                     ))}
-                   </div>
+                     );
+                   })}
                  </div>
                );
-               const usaVideo = modo !== 'clips';
-               const usaClips = modo !== 'video';
-               const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && formatoClips === '9:16');
+
                return (
-                 <div className="!mt-3 flex flex-col items-stretch sm:items-end gap-2 px-2">
-                   {clipsListos.length > 1 && (
-                     <div className="flex flex-col sm:flex-row items-center gap-2">
-                       <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">{t.modeLabel || 'Download as'}</span>
-                       <div role="radiogroup" aria-label={t.modeLabel || 'Download as'} className="grid grid-cols-3 w-full sm:w-auto p-1 rounded-2xl bg-[#111114] border border-white/5">
-                         {([
-                           { id: 'clips', icon: <FolderDown className="w-3.5 h-3.5" />, label: t.modeClips || 'Separate clips', hint: t.modeClipsHint || 'Each clip on its own, in a ZIP' },
-                           { id: 'video', icon: <Clapperboard className="w-3.5 h-3.5" />, label: t.modeVideo || 'One video', hint: t.modeVideoHint || 'All the clips back to back, in the order of the list' },
-                           { id: 'ambos', icon: <Layers className="w-3.5 h-3.5" />, label: t.modeBoth || 'Both', hint: t.modeBothHint || 'The long video and each clip on its own, in one ZIP' },
-                         ] as const).map(o => (
-                           <button
-                             key={o.id}
-                             type="button"
-                             role="radio"
-                             aria-checked={modo === o.id}
-                             title={o.hint}
-                             onClick={() => cambiarModo(o.id)}
-                             disabled={ocupado}
-                             className={pastilla(modo === o.id)}
-                           >
-                             <span className="shrink-0">{o.icon}</span>{o.label}
-                           </button>
-                         ))}
+                 <div className="!mt-3 w-full bg-[#111114] border border-white/5 rounded-[2rem] p-3 sm:p-4 shadow-2xl relative z-30">
+                   <div className="flex flex-col xl:flex-row gap-3 xl:gap-0">
+                     {grupos.map((g, i) => (
+                       <div
+                         key={g.id}
+                         className={`min-w-0 flex flex-col sm:flex-row xl:flex-col gap-2 sm:items-center xl:items-stretch ${g.ancho} ${i > 0 ? 'xl:pl-4 xl:ml-4 xl:border-l xl:border-white/5' : ''}`}
+                       >
+                         <span className="sm:w-44 xl:w-auto shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                           <span className="text-twitch flex">{g.icono}</span>{g.titulo}
+                         </span>
+                         {selector(g, 'flex-1')}
                        </div>
-                     </div>
-                   )}
-                   {usaVideo && filaFormato(t.fmtVideo || 'Video', formatoVideo, f => guardarFormato({ video: f }))}
-                   {usaClips && filaFormato(t.fmtClips || 'Clips', formatoClips, f => guardarFormato({ clips: f }))}
-                   {hayVertical && (
-                     <div className="flex items-center gap-2">
-                       <span className="w-14 shrink-0 text-right text-[10px] font-black uppercase tracking-widest text-gray-500">{t.fitLabel || 'Vertical'}</span>
-                       <div role="radiogroup" aria-label={t.fitLabel || 'Vertical'} className="grid grid-cols-2 flex-1 sm:flex-none p-1 rounded-2xl bg-[#111114] border border-white/5">
-                         {([
-                           { id: 'recortar', label: t.fitCrop || 'Crop the centre', hint: t.fitCropHint || 'The centre fills the screen; what is at the sides is cut off' },
-                           { id: 'difuminar', label: t.fitBlur || 'Blurred background', hint: t.fitBlurHint || 'The whole clip in the middle, with a blurred copy behind it' },
-                         ] as const).map(o => (
-                           <button key={o.id} type="button" role="radio" aria-checked={encaje === o.id} title={o.hint} onClick={() => guardarFormato({ encaje: o.id })} disabled={ocupado} className={pastilla(encaje === o.id)}>
-                             {o.label}
-                           </button>
-                         ))}
-                       </div>
+                     ))}
+                   </div>
+                   {/* Abajo, cómo llenar el vertical (solo si algo sale en vertical) y
+                       en una línea qué va a salir. */}
+                   {(resumen || encajeGrupo) && (
+                     <div className="mt-3 pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                       {encajeGrupo && (
+                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 shrink-0">
+                           <span className="flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                             <span className="text-twitch flex">{encajeGrupo.icono}</span>{encajeGrupo.titulo}
+                           </span>
+                           {selector(encajeGrupo)}
+                         </div>
+                       )}
+                       {resumen && <p className="px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
                      </div>
                    )}
                  </div>

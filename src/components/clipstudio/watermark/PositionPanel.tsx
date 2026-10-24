@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Move } from 'lucide-react';
 import type { PositionPreset, WatermarkConfig } from '../types';
 import { Section, Slider, type Tr } from './ui';
+import { POS_MAX, POS_MIN } from '../watermarkService';
 
 interface Props {
   config: WatermarkConfig;
@@ -62,7 +63,7 @@ const PositionPanel: React.FC<Props> = ({ config, onChange, presets, onSavePrese
           {config.positionId === 'custom' || !fabrica.some(p => p.id === config.positionId) ? (
             <span
               className="absolute -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-twitch ring-4 ring-twitch/30 pointer-events-none"
-              style={{ left: `${config.customX}%`, top: `${config.customY}%` }}
+              style={{ left: `${Math.min(100, Math.max(0, config.customX))}%`, top: `${Math.min(100, Math.max(0, config.customY))}%` }}
             />
           ) : null}
         </div>
@@ -126,8 +127,8 @@ const PositionPanel: React.FC<Props> = ({ config, onChange, presets, onSavePrese
       </Section>
 
       <Section title={tr('wm_fine_tune', 'Fine tune')}>
-        <Slider label={tr('wm_pos_x', 'Horizontal')} value={config.customX} min={3} max={97} unit="%" onChange={v => onChange({ ...config, positionId: 'custom', customX: v })} />
-        <Slider label={tr('wm_pos_y', 'Vertical')} value={config.customY} min={3} max={97} unit="%" onChange={v => onChange({ ...config, positionId: 'custom', customY: v })} />
+        <Slider label={tr('wm_pos_x', 'Horizontal')} value={config.customX} min={POS_MIN} max={POS_MAX} unit="%" onChange={v => onChange({ ...config, positionId: 'custom', customX: v })} />
+        <Slider label={tr('wm_pos_y', 'Vertical')} value={config.customY} min={POS_MIN} max={POS_MAX} unit="%" onChange={v => onChange({ ...config, positionId: 'custom', customY: v })} />
       </Section>
     </div>
   );

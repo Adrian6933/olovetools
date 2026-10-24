@@ -473,5 +473,7 @@ export default {
   "fitCrop": "Mitte zuschneiden",
   "fitCropHint": "Die Mitte füllt den Bildschirm; was an den Seiten ist, wird abgeschnitten",
   "fitBlur": "Unscharfer Hintergrund",
-  "fitBlurHint": "Der ganze Clip in der Mitte, dahinter eine unscharfe Kopie"
+  "fitBlurHint": "Der ganze Clip in der Mitte, dahinter eine unscharfe Kopie",
+  "fmtSectionVideo": "Videoformat",
+  "fmtSectionClips": "Clip-Format"
 };

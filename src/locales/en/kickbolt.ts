@@ -473,5 +473,7 @@ export default {
   "fitCrop": "Crop the centre",
   "fitCropHint": "The centre fills the screen; what is at the sides is cut off",
   "fitBlur": "Blurred background",
-  "fitBlurHint": "The whole clip in the middle, with a blurred copy behind it"
+  "fitBlurHint": "The whole clip in the middle, with a blurred copy behind it",
+  "fmtSectionVideo": "Video format",
+  "fmtSectionClips": "Clips format"
 };

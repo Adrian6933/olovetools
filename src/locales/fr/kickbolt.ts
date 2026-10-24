@@ -473,5 +473,7 @@ export default {
   "fitCrop": "Recadrer au centre",
   "fitCropHint": "Le centre remplit l’écran ; ce qui est sur les côtés est coupé",
   "fitBlur": "Fond flouté",
-  "fitBlurHint": "Le clip entier au milieu, avec une copie floutée derrière"
+  "fitBlurHint": "Le clip entier au milieu, avec une copie floutée derrière",
+  "fmtSectionVideo": "Format de la vidéo",
+  "fmtSectionClips": "Format des clips"
 };

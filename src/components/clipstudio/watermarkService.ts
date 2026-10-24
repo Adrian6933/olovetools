@@ -24,14 +24,23 @@ export interface BrandKey {
 const clave = (b: BrandKey, nombre: string) => `${b.storagePrefix}_${nombre}`;
 
 export const DEFAULT_POSITION_PRESETS: PositionPreset[] = [
-  { id: 'top-left', name: 'Top left', x: 5, y: 5, isDefault: true },
-  { id: 'top-center', name: 'Top centre', x: 50, y: 5, isDefault: true },
-  { id: 'top-right', name: 'Top right', x: 95, y: 5, isDefault: true },
+  // Con la posición continua (drawWatermarkOnCanvas) 3 % ya es casi pegado al
+  // borde, con un respiro para que no roce el marco.
+  { id: 'top-left', name: 'Top left', x: 3, y: 3, isDefault: true },
+  { id: 'top-center', name: 'Top centre', x: 50, y: 3, isDefault: true },
+  { id: 'top-right', name: 'Top right', x: 97, y: 3, isDefault: true },
   { id: 'center', name: 'Centre', x: 50, y: 50, isDefault: true },
-  { id: 'bottom-left', name: 'Bottom left', x: 5, y: 95, isDefault: true },
-  { id: 'bottom-center', name: 'Bottom centre', x: 50, y: 95, isDefault: true },
-  { id: 'bottom-right', name: 'Bottom right', x: 95, y: 95, isDefault: true },
+  { id: 'bottom-left', name: 'Bottom left', x: 3, y: 97, isDefault: true },
+  { id: 'bottom-center', name: 'Bottom centre', x: 50, y: 97, isDefault: true },
+  { id: 'bottom-right', name: 'Bottom right', x: 97, y: 97, isDefault: true },
 ];
+
+/**
+ * Límites de la posición en %: por debajo de 0 o por encima de 100 el cartel
+ * se sale de la pantalla (hasta medio fuera y algo más, si se quiere).
+ */
+export const POS_MIN = -10;
+export const POS_MAX = 110;
 
 /** Hueco de la plantilla que se cambia por el nombre del streamer de cada clip. */
 export const CHANNEL_TOKEN = '{channel}';
@@ -40,8 +49,8 @@ export const DEFAULT_WATERMARK_CONFIG: WatermarkConfig = {
   enabled: false,
   template: '@{channel}',
   positionId: 'top-right',
-  customX: 95,
-  customY: 5,
+  customX: 97,
+  customY: 3,
   fontFamily: 'sans',
   fontSize: 22,
   textColor: '#ffffff',
@@ -503,10 +512,6 @@ export const drawWatermarkOnCanvas = (
   let text = formatWatermarkText(config, channelName);
   if (!text.trim()) return;
 
-  // Calculate Position Coordinates
-  let x = (config.customX / 100) * width;
-  let y = (config.customY / 100) * height;
-
   // Animation values
   const { opacity, scale, scaleX, offsetX, offsetY, rotation, typewriterRatio } = calculateAnimationState(config, currentTime, duration);
 
@@ -547,20 +552,26 @@ export const drawWatermarkOnCanvas = (
   const boxWidth = textWidth + paddingX * 2 + (config.showIcon ? iconSize + iconGap : 0);
   const boxHeight = textHeight + paddingY * 2;
 
-  // Adjust anchor alignment based on percentage so it doesn't overflow edge
-  let anchorX = 0;
-  if (config.customX > 70) anchorX = -boxWidth;
-  else if (config.customX > 30) anchorX = -boxWidth / 2;
-
-  let anchorY = 0;
-  if (config.customY > 70) anchorY = -boxHeight;
-  else if (config.customY > 30) anchorY = -boxHeight / 2;
+  // Posición continua: 0 % es el cartel pegado al borde (arriba o a la
+  // izquierda), 100 % pegado al de enfrente y 50 % centrado. Por debajo de 0 o
+  // por encima de 100 se sale de la pantalla, por si se quiere medio fuera.
+  // Antes el punto de agarre saltaba en el 30 % y el 70 % y el control no
+  // bajaba del 3 %, así que "arriba del todo" dejaba siempre un buen margen.
+  // Lo que pasa del borde se cuenta en tamaños del cartel, no de la pantalla:
+  // al tope (-10 / 110) queda el 60 % fuera, y la palabra aún se adivina.
+  const eje = (pct: number, total: number, caja: number) => {
+    if (pct < 0) return (pct / -POS_MIN) * caja * 0.6;
+    if (pct > 100) return total - caja + ((pct - 100) / (POS_MAX - 100)) * caja * 0.6;
+    return (pct / 100) * (total - caja);
+  };
+  const x = eje(config.customX, width, boxWidth);
+  const y = eje(config.customY, height, boxHeight);
 
   // Los desplazamientos de la animación están pensados para 720p: escalados
   // con el alto, el recorrido se ve igual en un clip de 360p que en uno 1080p.
   const escalaAnim = height / 720;
-  const finalX = x + anchorX + offsetX * escalaAnim;
-  const finalY = y + anchorY + offsetY * escalaAnim;
+  const finalX = x + offsetX * escalaAnim;
+  const finalY = y + offsetY * escalaAnim;
 
   ctx.translate(finalX + boxWidth / 2, finalY + boxHeight / 2);
   if (scale !== 1 || scaleX !== 1) ctx.scale(scale * scaleX, scale);

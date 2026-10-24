@@ -473,5 +473,7 @@ export default {
   "fitCrop": "中央を切り抜く",
   "fitCropHint": "中央で画面を埋めます。左右ははみ出た分が切れます",
   "fitBlur": "ぼかし背景",
-  "fitBlurHint": "クリップ全体を中央に、後ろにぼかしたコピーを置きます"
+  "fitBlurHint": "クリップ全体を中央に、後ろにぼかしたコピーを置きます",
+  "fmtSectionVideo": "動画の形式",
+  "fmtSectionClips": "クリップの形式"
 };

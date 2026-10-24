@@ -101,6 +101,7 @@ export const soltarFuentes = () => {
   fuentes.forEach(f => URL.revokeObjectURL(f.url));
   fuentes.clear();
   tiras.clear();
+  tirasEnCurso.clear();
 };
 
 export const obtenerFuente = (clave: string, descargar: () => Promise<Blob>): Promise<Fuente> => {
@@ -135,40 +136,67 @@ export const aMergeItem = (p: Pieza): MergeItem => {
 
 // ---- Tira de fotogramas para recortar --------------------------------------
 
-/** N fotogramas repartidos por el vídeo, como miniaturas JPEG. */
-export const tiraDeFotogramas = async (url: string, total: number, n = 10): Promise<string[]> => {
+/** Tiras a medio sacar: pedir la misma otra vez espera a esta. */
+const tirasEnCurso = new Map<string, Promise<string[]>>();
+/** Una tira detrás de otra: cada una es un <video> decodificando el clip. */
+let colaTiras: Promise<unknown> = Promise.resolve();
+
+/**
+ * N fotogramas repartidos por el vídeo, como miniaturas JPEG.
+ *
+ * La línea de tiempo la pide otra vez cada vez que cambian las piezas (y al
+ * bajar cada clip cambian todas, porque se corrige su duración). Antes solo se
+ * recordaba al terminar, así que mientras tanto cada petición abría OTRO
+ * <video> con el clip entero a 1080p: con varios clips se juntaban decenas y
+ * la RAM se disparaba. Ahora una petición por tira y de una en una.
+ */
+export const tiraDeFotogramas = (url: string, total: number, n = 10): Promise<string[]> => {
   const clave = `${url}#${n}`;
   const ya = tiras.get(clave);
-  if (ya) return ya;
+  if (ya) return Promise.resolve(ya);
+  const pendiente = tirasEnCurso.get(clave);
+  if (pendiente) return pendiente;
+  const p = colaTiras.then(() => sacarTira(url, total, n)).then(salida => {
+    tiras.set(clave, salida);
+    return salida;
+  }).finally(() => tirasEnCurso.delete(clave));
+  colaTiras = p.catch(() => undefined);
+  tirasEnCurso.set(clave, p);
+  return p;
+};
+
+const sacarTira = async (url: string, total: number, n: number): Promise<string[]> => {
   const v = document.createElement('video');
   v.muted = true;
   v.preload = 'auto';
   v.src = url;
-  await new Promise<void>((resolve, reject) => {
-    v.onloadeddata = () => resolve();
-    v.onerror = () => reject(new Error('unreadable'));
+  // Con tiempo límite: un salto que no llega dejaba el <video> vivo para siempre.
+  const esperar = (prep: (listo: () => void, fallo: () => void) => void) => new Promise<void>((resolve, reject) => {
+    const reloj = setTimeout(() => reject(new Error('timeout')), 8000);
+    prep(() => { clearTimeout(reloj); resolve(); }, () => { clearTimeout(reloj); reject(new Error('unreadable')); });
   });
-  const c = document.createElement('canvas');
-  c.width = 96;
-  c.height = 54;
-  const x = c.getContext('2d')!;
-  const salida: string[] = [];
-  for (let i = 0; i < n; i += 1) {
-    const t = Math.min(Math.max(0, total - 0.05), ((i + 0.5) / n) * total);
-    await new Promise<void>(resolve => {
-      v.onseeked = () => resolve();
-      v.currentTime = t;
-    });
-    x.fillStyle = '#000';
-    x.fillRect(0, 0, 96, 54);
-    const k = Math.min(96 / (v.videoWidth || 96), 54 / (v.videoHeight || 54));
-    const w = (v.videoWidth || 96) * k;
-    const h = (v.videoHeight || 54) * k;
-    x.drawImage(v, (96 - w) / 2, (54 - h) / 2, w, h);
-    salida.push(c.toDataURL('image/jpeg', 0.6));
+  try {
+    await esperar((listo, fallo) => { v.onloadeddata = listo; v.onerror = fallo; });
+    const c = document.createElement('canvas');
+    c.width = 96;
+    c.height = 54;
+    const x = c.getContext('2d')!;
+    const salida: string[] = [];
+    for (let i = 0; i < n; i += 1) {
+      const t = Math.min(Math.max(0, total - 0.05), ((i + 0.5) / n) * total);
+      await esperar(listo => { v.onseeked = listo; v.currentTime = t; });
+      x.fillStyle = '#000';
+      x.fillRect(0, 0, 96, 54);
+      const k = Math.min(96 / (v.videoWidth || 96), 54 / (v.videoHeight || 54));
+      const w = (v.videoWidth || 96) * k;
+      const h = (v.videoHeight || 54) * k;
+      x.drawImage(v, (96 - w) / 2, (54 - h) / 2, w, h);
+      salida.push(c.toDataURL('image/jpeg', 0.6));
+    }
+    return salida;
+  } finally {
+    v.onloadeddata = v.onerror = v.onseeked = null;
+    v.removeAttribute('src');
+    v.load();
   }
-  v.removeAttribute('src');
-  v.load();
-  tiras.set(clave, salida);
-  return salida;
 };

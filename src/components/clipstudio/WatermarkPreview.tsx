@@ -15,6 +15,8 @@ import { createPortal } from 'react-dom';
 import type { ClipData, WatermarkConfig, PositionPreset } from './types';
 import {
   drawWatermarkOnCanvas,
+  POS_MAX,
+  POS_MIN,
   loadWatermarkFonts,
   defaultWatermarkConfig,
 } from './watermarkService';
@@ -181,8 +183,10 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   const moverA = (e: React.PointerEvent) => {
     const r = stageRef.current?.getBoundingClientRect();
     if (!r) return;
-    const x = Math.max(3, Math.min(97, Math.round(((e.clientX - r.left) / r.width) * 100)));
-    const y = Math.max(3, Math.min(97, Math.round(((e.clientY - r.top) / r.height) * 100)));
+    // Arrastrando fuera del vídeo se puede dejar medio cartel fuera (ver
+    // drawWatermarkOnCanvas: 0 % es pegado al borde).
+    const x = Math.max(POS_MIN, Math.min(POS_MAX, Math.round(((e.clientX - r.left) / r.width) * 100)));
+    const y = Math.max(POS_MIN, Math.min(POS_MAX, Math.round(((e.clientY - r.top) / r.height) * 100)));
     onChangeConfig({ ...config, positionId: 'custom', customX: x, customY: y });
   };
   const alPulsar = (e: React.PointerEvent) => {

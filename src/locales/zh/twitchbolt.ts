@@ -473,5 +473,7 @@ export default {
   "fitCrop": "裁剪中间",
   "fitCropHint": "中间部分铺满屏幕，两侧会被裁掉",
   "fitBlur": "模糊背景",
-  "fitBlurHint": "完整的剪辑放在中间，背后是模糊的副本"
+  "fitBlurHint": "完整的剪辑放在中间，背后是模糊的副本",
+  "fmtSectionVideo": "视频格式",
+  "fmtSectionClips": "剪辑格式"
 };

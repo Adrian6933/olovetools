@@ -473,5 +473,7 @@ export default {
   "fitCrop": "Cortar o centro",
   "fitCropHint": "O centro preenche a tela; o que está nas laterais é cortado",
   "fitBlur": "Fundo desfocado",
-  "fitBlurHint": "O clipe inteiro no meio, com uma cópia desfocada atrás"
+  "fitBlurHint": "O clipe inteiro no meio, com uma cópia desfocada atrás",
+  "fmtSectionVideo": "Formato do vídeo",
+  "fmtSectionClips": "Formato dos clipes"
 };
