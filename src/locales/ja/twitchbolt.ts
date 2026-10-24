@@ -475,5 +475,8 @@ export default {
   "fitBlur": "ぼかし背景",
   "fitBlurHint": "クリップ全体を中央に、後ろにぼかしたコピーを置きます",
   "fmtSectionVideo": "動画の形式",
-  "fmtSectionClips": "クリップの形式"
+  "fmtSectionClips": "クリップの形式",
+  "mergeSummary": "{n} クリップ · {d}",
+  "ed_drop": "ドロップしてタイムラインに追加",
+  "ed_drop_hint": "動画と画像"
 };

@@ -200,5 +200,7 @@ export default {
   "en_working": "Wird verarbeitet… {p} %",
   "en_done": "Fertig, es ist in deinen Downloads.",
   "en_error": "Der Clip konnte nicht verarbeitet werden.",
-  "en_unsupported": "Dein Browser kann Video so nicht verarbeiten. Versuche Chrome oder Edge."
+  "en_unsupported": "Dein Browser kann Video so nicht verarbeiten. Versuche Chrome oder Edge.",
+  "ed_drop": "Loslassen, um es zur Zeitleiste hinzuzufügen",
+  "ed_drop_hint": "Videos und Bilder"
 };

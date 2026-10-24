@@ -12,7 +12,12 @@
 //     fotograma del borde mientras tanto).
 //   - Pulsar o arrastrar en la regla (o en hueco) mueve el cursor.
 //   - Ctrl + rueda, o los botones, acercan y alejan.
+//   - Imán, como en CapCut: buscando, el cursor se pega a los cortes; al
+//     recortar, el borde se pega al cursor. Una línea amarilla avisa de que
+//     se ha pegado.
 //
+// Entre pieza y pieza queda un hueco a la vista (solo dibujado: en el vídeo
+// final van pegadas) para distinguirlas de un vistazo.
 // Las herramientas (cortar, quitar…) llegan del editor por `herramientas`: es
 // él quien sabe hacerlas; aquí solo se colocan a la izquierda del zoom.
 // ============================================================================
@@ -43,8 +48,12 @@ interface Props {
 }
 
 const MIN_TRAMO = 0.3;
-const ALTO_PISTA = 64;
+const ALTO_PISTA = 68;
 const MARGEN = 12;
+/** Media separación dibujada entre piezas, en px. */
+const HUECO = 2.5;
+/** A cuántos px de un corte (o del cursor) se pega lo que se arrastra. */
+const IMAN = 10;
 
 const mover = <T,>(arr: T[], de: number, a: number) => {
   const c = arr.slice();
@@ -72,6 +81,8 @@ const Timeline: React.FC<Props> = ({
   const [zoom, setZoom] = useState(1);
   const gesto = useRef<Gesto | null>(null);
   const [arrastrando, setArrastrando] = useState<{ id: string; x: number } | null>(null);
+  /** Dónde se ha pegado lo que se arrastra (segundo del vídeo final), para la guía. */
+  const [guia, setGuia] = useState<number | null>(null);
   const piezasRef = useRef(piezas);
   piezasRef.current = piezas;
 
@@ -171,11 +182,22 @@ const Timeline: React.FC<Props> = ({
     try { lienzo.current?.setPointerCapture(e.pointerId); } catch { /* puntero ya suelto */ }
   };
 
+  /** Los cortes: inicio de cada pieza y el final del vídeo. */
+  const cortes = useMemo(() => [...inicios, total], [inicios, total]);
+
+  /** Buscar con imán: cerca de un corte, al corte justo. */
+  const buscarCon = (clientX: number) => {
+    const t = tDe(clientX);
+    const cerca = cortes.find(c => Math.abs(c - t) * pxSeg < IMAN);
+    setGuia(cerca ?? null);
+    onSeek(cerca ?? t);
+  };
+
   const alPulsarFondo = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
     gesto.current = { tipo: 'buscar' };
     capturar(e);
-    onSeek(tDe(e.clientX));
+    buscarCon(e.clientX);
   };
 
   const alPulsarPieza = (e: React.PointerEvent, p: Pieza) => {
@@ -196,7 +218,7 @@ const Timeline: React.FC<Props> = ({
   const alMover = (e: React.PointerEvent) => {
     const g = gesto.current;
     if (!g) return;
-    if (g.tipo === 'buscar') { onSeek(tDe(e.clientX)); return; }
+    if (g.tipo === 'buscar') { buscarCon(e.clientX); return; }
     if (g.tipo === 'pulsado') {
       if (Math.abs(e.clientX - g.x0) < 6) return;
       const i = piezasRef.current.findIndex(x => x.id === g.id);
@@ -239,7 +261,17 @@ const Timeline: React.FC<Props> = ({
         onTrim(p.id, { inicio });
         onPreview(p.id, inicio);
       } else {
-        const fin = Math.min(g.total, Math.max(g.inicio + MIN_TRAMO, g.fin + dSeg * vel));
+        let fin = Math.min(g.total, Math.max(g.inicio + MIN_TRAMO, g.fin + dSeg * vel));
+        // Imán: el borde derecho se pega al cursor si pasa cerca.
+        const i = piezasRef.current.findIndex(x => x.id === p.id);
+        const borde = (inicios[i] ?? 0) + (fin - p.inicio) / vel;
+        const alCursor = p.inicio + (posicion - (inicios[i] ?? 0)) * vel;
+        if (Math.abs(borde - posicion) * pxSeg < IMAN && alCursor > p.inicio + MIN_TRAMO && alCursor <= g.total) {
+          fin = alCursor;
+          setGuia(posicion);
+        } else {
+          setGuia(null);
+        }
         onTrim(p.id, { fin });
         onPreview(p.id, Math.max(g.inicio, fin - 0.04));
       }
@@ -250,6 +282,7 @@ const Timeline: React.FC<Props> = ({
     const g = gesto.current;
     gesto.current = null;
     setArrastrando(null);
+    setGuia(null);
     if (g?.tipo === 'pulsado') onSelect(g.id, g.tx0);
     try { lienzo.current?.releasePointerCapture(e.pointerId); } catch { /* ya suelto */ }
   };
@@ -341,10 +374,10 @@ const Timeline: React.FC<Props> = ({
                 <div
                   key={p.id}
                   onPointerDown={e => alPulsarPieza(e, p)}
-                  className={`absolute top-0 h-full rounded-lg overflow-hidden cursor-grab active:cursor-grabbing bg-[#1a1822] ${
-                    elegida ? 'ring-2 ring-white z-10' : 'ring-1 ring-inset ring-black/60 hover:ring-white/40'
-                  } ${movida ? 'opacity-80 z-20 shadow-2xl' : ''}`}
-                  style={{ left: izq, width: w, transform: desplaza ? `translateX(${desplaza}px)` : undefined }}
+                  className={`absolute top-0 h-full rounded-xl overflow-hidden cursor-grab active:cursor-grabbing bg-[#1a1822] transition-shadow ${
+                    elegida ? 'ring-2 ring-twitch shadow-[0_0_0_4px_rgba(var(--color-accent-rgb),0.18)] z-10' : 'ring-1 ring-inset ring-white/10 hover:ring-white/40'
+                  } ${movida ? 'opacity-80 z-20 shadow-2xl scale-y-105' : ''}`}
+                  style={{ left: izq + HUECO, width: Math.max(2, w - HUECO * 2), transform: desplaza ? `translateX(${desplaza}px)` : undefined }}
                   title={`${p.nombre} · ${mmss(d, true)}`}
                 >
                   <div className="absolute inset-0 flex">
@@ -393,10 +426,10 @@ const Timeline: React.FC<Props> = ({
                   key={lado}
                   onPointerDown={e => alPulsarBorde(e, sel, lado)}
                   className="absolute top-0 h-full w-3.5 z-30 cursor-ew-resize flex items-center justify-center group"
-                  style={{ left: lado === 'izq' ? x : x - 14 }}
+                  style={{ left: lado === 'izq' ? x + HUECO : x - HUECO - 14 }}
                   title={tx('ed_tl_trim', 'Drag to trim')}
                 >
-                  <span className={`h-full w-2.5 bg-white flex items-center justify-center shadow-lg ${lado === 'izq' ? 'rounded-l-lg' : 'rounded-r-lg'}`}>
+                  <span className={`h-full w-2.5 bg-twitch flex items-center justify-center shadow-lg group-hover:brightness-125 ${lado === 'izq' ? 'rounded-l-xl' : 'rounded-r-xl'}`}>
                     <span className="w-0.5 h-5 rounded-full bg-black/60" />
                   </span>
                 </div>
@@ -404,10 +437,17 @@ const Timeline: React.FC<Props> = ({
             })}
           </div>
 
-          {/* Cursor */}
+          {/* Guía del imán */}
+          {guia !== null && (
+            <div className="absolute top-0 bottom-0 z-[35] w-px bg-amber-300 shadow-[0_0_8px_rgba(252,211,77,0.9)] pointer-events-none" style={{ left: xDe(guia) }} />
+          )}
+
+          {/* Cursor, con el tiempo encima */}
           <div className="absolute top-0 bottom-0 z-40 pointer-events-none" style={{ left: xDe(posicion) }}>
             <div className="absolute top-0 bottom-0 -left-px w-0.5 bg-white shadow-[0_0_6px_rgba(0,0,0,0.9)]" />
-            <div className="absolute -top-0 -left-[6px] w-3 h-3.5 bg-white [clip-path:polygon(0_0,100%_0,100%_60%,50%_100%,0_60%)]" />
+            <div className="absolute top-0 left-0 -translate-x-1/2 px-1.5 h-[18px] rounded-md bg-white text-black text-[9px] font-mono font-black flex items-center whitespace-nowrap shadow-lg">
+              {mmss(posicion, true)}
+            </div>
           </div>
         </div>
       </div>

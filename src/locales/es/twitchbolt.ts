@@ -475,5 +475,8 @@ export default {
   "fitBlur": "Fondo difuminado",
   "fitBlurHint": "El clip entero en medio, con una copia desenfocada detrás",
   "fmtSectionVideo": "Formato del vídeo",
-  "fmtSectionClips": "Formato de los clips"
+  "fmtSectionClips": "Formato de los clips",
+  "mergeSummary": "{n} clips · {d}",
+  "ed_drop": "Suéltalo para añadirlo a la línea de tiempo",
+  "ed_drop_hint": "Vídeos e imágenes"
 };

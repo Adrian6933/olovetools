@@ -200,5 +200,7 @@ export default {
   "en_working": "Processing… {p}%",
   "en_done": "Done, it is in your downloads.",
   "en_error": "Could not process the clip.",
-  "en_unsupported": "Your browser can't process video this way. Try Chrome or Edge."
+  "en_unsupported": "Your browser can't process video this way. Try Chrome or Edge.",
+  "ed_drop": "Drop to add it to the timeline",
+  "ed_drop_hint": "Videos and images"
 };

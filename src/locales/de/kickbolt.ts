@@ -475,5 +475,8 @@ export default {
   "fitBlur": "Unscharfer Hintergrund",
   "fitBlurHint": "Der ganze Clip in der Mitte, dahinter eine unscharfe Kopie",
   "fmtSectionVideo": "Videoformat",
-  "fmtSectionClips": "Clip-Format"
+  "fmtSectionClips": "Clip-Format",
+  "mergeSummary": "{n} Clips · {d}",
+  "ed_drop": "Loslassen, um es zur Zeitleiste hinzuzufügen",
+  "ed_drop_hint": "Videos und Bilder"
 };

@@ -274,12 +274,22 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     return 0;
   }, [piezas, sel?.id, tiempo]);
 
-  const saltarGlobal = (tg: number) => {
+  /**
+   * Lleva el cursor a un segundo del vídeo final. Justo en un corte manda la
+   * pieza que EMPIEZA ahí (antes mandaba la que acababa, y se veía su último
+   * fotograma). Con `id`, la pieza es esa y el tiempo se encaja en ella: al
+   * pulsar una pieza cerca de su borde, el tiempo caía al otro lado del corte
+   * y el reproductor cargaba la vecina con la pulsada elegida.
+   */
+  const saltarGlobal = (tg: number, id?: string) => {
     let acc = 0;
-    for (const p of piezas) {
+    for (let i = 0; i < piezas.length; i += 1) {
+      const p = piezas[i];
       const d = durFinal(p);
-      if (tg <= acc + d) {
-        const tOrig = p.inicio + (tg - acc) * (p.tipo === 'imagen' ? 1 : p.velocidad);
+      const ultima = i === piezas.length - 1;
+      if (id ? p.id === id : tg < acc + d || ultima) {
+        const local = Math.max(0, Math.min(d - 0.01, tg - acc));
+        const tOrig = p.inicio + local * (p.tipo === 'imagen' ? 1 : p.velocidad);
         setSelId(p.id);
         cargar(p, tOrig);
         return;
@@ -337,8 +347,8 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
       : cortes.find(c => c > posicion + 0.05);
     if (destino === undefined) return;
     parar();
-    // Justo en un corte se elige la pieza que empieza ahí.
-    saltarGlobal(Math.min(totalFinal - 0.01, destino + 0.001));
+    // Justo en un corte se elige la pieza que empieza ahí (saltarGlobal).
+    saltarGlobal(Math.min(totalFinal - 0.01, destino));
   };
   const editar = (fn: (prev: Pieza[]) => Pieza[]) => { guardar(); setPiezas(fn); };
 
@@ -453,6 +463,36 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
         }
       }
     }
+  };
+
+  // ---- arrastrar archivos del ordenador ------------------------------------
+  // Soltar vídeos o imágenes en cualquier parte del editor los añade al final,
+  // igual que el botón. El contador evita el parpadeo del aviso al pasar por
+  // encima de los hijos (cada uno lanza su dragenter/dragleave).
+  const [soltando, setSoltando] = useState(false);
+  const capas = useRef(0);
+  const conArchivos = (e: React.DragEvent) => Array.from(e.dataTransfer?.types || []).includes('Files');
+  const alEntrarArchivo = (e: React.DragEvent) => {
+    if (!conArchivos(e)) return;
+    e.preventDefault();
+    capas.current += 1;
+    setSoltando(true);
+  };
+  const alSalirArchivo = (e: React.DragEvent) => {
+    if (!conArchivos(e)) return;
+    capas.current = Math.max(0, capas.current - 1);
+    if (capas.current === 0) setSoltando(false);
+  };
+  const alSoltarArchivo = (e: React.DragEvent) => {
+    if (!conArchivos(e)) return;
+    e.preventDefault();
+    capas.current = 0;
+    setSoltando(false);
+    const validos = Array.from(e.dataTransfer.files).filter(f => /^(video|image)\//.test(f.type) || /\.(mp4|webm|mov|m4v|mkv)$/i.test(f.name));
+    if (!validos.length) return;
+    const dt = new DataTransfer();
+    validos.forEach(f => dt.items.add(f));
+    anadir(dt.files);
   };
 
   // ---- exportar -----------------------------------------------------------
@@ -580,7 +620,24 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   const herramienta = 'h-8 px-2.5 rounded-lg border border-white/10 text-[11px] font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
 
   return createPortal(
-    <div className="fixed inset-0 z-[100000] bg-[#07060a] text-white flex flex-col animate-fade-in" style={brand.cssVars} role="dialog" aria-modal="true" aria-label={tx('ed_title', 'Clip editor')}>
+    <div
+      className="fixed inset-0 z-[100000] bg-[#07060a] text-white flex flex-col animate-fade-in"
+      style={brand.cssVars}
+      role="dialog"
+      aria-modal="true"
+      aria-label={tx('ed_title', 'Clip editor')}
+      onDragEnter={alEntrarArchivo}
+      onDragOver={e => { if (conArchivos(e)) e.preventDefault(); }}
+      onDragLeave={alSalirArchivo}
+      onDrop={alSoltarArchivo}
+    >
+      {soltando && (
+        <div className="absolute inset-3 z-[60] rounded-3xl border-2 border-dashed border-twitch bg-twitch/10 backdrop-blur-sm flex flex-col items-center justify-center gap-3 pointer-events-none">
+          <span className="p-4 rounded-2xl bg-twitch text-[var(--color-accent-ink)] shadow-2xl shadow-twitch/40"><Plus className="w-8 h-8" /></span>
+          <p className="text-lg font-black text-white">{tx('ed_drop', 'Drop to add it to the timeline')}</p>
+          <p className="text-xs font-bold text-gray-300">{tx('ed_drop_hint', 'Videos and images')}</p>
+        </div>
+      )}
       {/* ---- cabecera ---- */}
       <header className="h-14 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 border-b border-white/10">
         <div className="flex items-center gap-3 min-w-0">
@@ -826,7 +883,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
             marcas={marcas}
             version={Object.values(cargas).filter(c => c.pct === 100).length}
             tx={tx}
-            onSelect={(id, tg) => { parar(); saltarGlobal(tg); setSelId(id); }}
+            onSelect={(id, tg) => { parar(); saltarGlobal(tg, id); }}
             onSeek={tg => { parar(); saltarGlobal(tg); }}
             onReorder={next => { guardar(true); setPiezas(next); }}
             onTrimStart={() => { parar(); guardar(); }}
@@ -849,7 +906,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                 <Trash2 className="w-4 h-4" /><span className="hidden md:inline">{tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')}</span>
               </button>
               <span className="w-px h-6 bg-white/10 mx-0.5" />
-              <button type="button" className={herramienta} onClick={() => inputRef.current?.click()} title={tx('mergeAddOwn', 'Add your own video or image')}>
+              <button type="button" className={herramienta + ' !border-twitch/40 !text-white bg-twitch/10'} onClick={() => inputRef.current?.click()} title={`${tx('mergeAddOwn', 'Add your own video or image')} · ${tx('ed_drop_hint', 'Videos and images')}`}>
                 <Plus className="w-4 h-4 text-twitch" /><span className="hidden sm:inline">{tx('ed_add', 'Add media')}</span>
               </button>
               <span className="ml-1 text-[11px] font-mono font-bold text-gray-500 tabular-nums hidden sm:inline">{mmss(posicion, true)} / {mmss(totalFinal, true)}</span>

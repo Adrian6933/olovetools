@@ -88,7 +88,7 @@ export interface OpcionesLote {
   /** Pasarlos a 16:9 o 9:16 (formato.ts); 'original' o nada, tal cual. */
   formato?: Formato;
   encaje?: Encaje;
-  /** Nitidez y alto cuando se recodifica solo por el formato. */
+  /** Nitidez y alto; si piden algo (nitidez > 0 o más de 1080), se recodifica. */
   calidad?: { nitidez?: number; alto?: number };
   guardarOriginal?: boolean;
   signal?: AbortSignal;
@@ -103,10 +103,12 @@ export interface OpcionesLote {
 export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise<ResultadoClip[]> => {
   const bajar = semaforo(DESCARGAS_A_LA_VEZ);
   const reformatear = !!o.formato && o.formato !== 'original';
-  // Cambiar el formato sin marca solo se puede fotograma a fotograma; donde
-  // no hay WebCodecs, salen tal cual en vez de no salir.
-  const aLaVez = o.marca || reformatear ? await rendersALaVez() : 1;
-  const procesar = !!o.marca || (reformatear && aLaVez > 1);
+  // Nitidez o 1440p también obligan a recodificar, aunque no haya marca.
+  const mejorar = (o.calidad?.nitidez ?? 0) > 0 || (o.calidad?.alto ?? 0) > 1080;
+  // Cambiar el formato o mejorar sin marca solo se puede fotograma a
+  // fotograma; donde no hay WebCodecs, salen tal cual en vez de no salir.
+  const aLaVez = o.marca || reformatear || mejorar ? await rendersALaVez() : 1;
+  const procesar = !!o.marca || ((reformatear || mejorar) && aLaVez > 1);
   const marcar = semaforo(aLaVez);
   // Con marca, bajar es una parte pequeña del trabajo de cada clip.
   const pesoBajada = procesar ? 0.25 : 1;

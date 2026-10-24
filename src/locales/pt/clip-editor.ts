@@ -200,5 +200,7 @@ export default {
   "en_working": "Processando… {p}%",
   "en_done": "Pronto, está nos seus downloads.",
   "en_error": "Não foi possível processar o clipe.",
-  "en_unsupported": "Seu navegador não consegue processar vídeo assim. Tente o Chrome ou o Edge."
+  "en_unsupported": "Seu navegador não consegue processar vídeo assim. Tente o Chrome ou o Edge.",
+  "ed_drop": "Solte para adicionar à linha do tempo",
+  "ed_drop_hint": "Vídeos e imagens"
 };

@@ -200,5 +200,7 @@ export default {
   "en_working": "处理中… {p}%",
   "en_done": "完成，已在你的下载文件夹中。",
   "en_error": "无法处理此片段。",
-  "en_unsupported": "你的浏览器无法这样处理视频。请试试 Chrome 或 Edge。"
+  "en_unsupported": "你的浏览器无法这样处理视频。请试试 Chrome 或 Edge。",
+  "ed_drop": "松开即可添加到时间线",
+  "ed_drop_hint": "视频和图片"
 };

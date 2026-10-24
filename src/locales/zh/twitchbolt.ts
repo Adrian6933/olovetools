@@ -475,5 +475,8 @@ export default {
   "fitBlur": "模糊背景",
   "fitBlurHint": "完整的剪辑放在中间，背后是模糊的副本",
   "fmtSectionVideo": "视频格式",
-  "fmtSectionClips": "剪辑格式"
+  "fmtSectionClips": "剪辑格式",
+  "mergeSummary": "{n} 个剪辑 · {d}",
+  "ed_drop": "松开即可添加到时间线",
+  "ed_drop_hint": "视频和图片"
 };

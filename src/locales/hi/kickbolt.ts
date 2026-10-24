@@ -475,5 +475,8 @@ export default {
   "fitBlur": "धुंधला बैकग्राउंड",
   "fitBlurHint": "पूरी क्लिप बीच में, पीछे उसकी धुंधली कॉपी",
   "fmtSectionVideo": "वीडियो फ़ॉर्मैट",
-  "fmtSectionClips": "क्लिप फ़ॉर्मैट"
+  "fmtSectionClips": "क्लिप फ़ॉर्मैट",
+  "mergeSummary": "{n} क्लिप · {d}",
+  "ed_drop": "टाइमलाइन में जोड़ने के लिए छोड़ें",
+  "ed_drop_hint": "वीडियो और इमेज"
 };

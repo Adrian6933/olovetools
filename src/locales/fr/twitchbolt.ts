@@ -475,5 +475,8 @@ export default {
   "fitBlur": "Fond flouté",
   "fitBlurHint": "Le clip entier au milieu, avec une copie floutée derrière",
   "fmtSectionVideo": "Format de la vidéo",
-  "fmtSectionClips": "Format des clips"
+  "fmtSectionClips": "Format des clips",
+  "mergeSummary": "{n} clips · {d}",
+  "ed_drop": "Déposez pour l’ajouter à la timeline",
+  "ed_drop_hint": "Vidéos et images"
 };

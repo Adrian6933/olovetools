@@ -475,5 +475,8 @@ export default {
   "fitBlur": "Blurred background",
   "fitBlurHint": "The whole clip in the middle, with a blurred copy behind it",
   "fmtSectionVideo": "Video format",
-  "fmtSectionClips": "Clips format"
+  "fmtSectionClips": "Clips format",
+  "mergeSummary": "{n} clips · {d}",
+  "ed_drop": "Drop to add it to the timeline",
+  "ed_drop_hint": "Videos and images"
 };

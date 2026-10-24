@@ -475,5 +475,8 @@ export default {
   "fitBlur": "Размытый фон",
   "fitBlurHint": "Весь клип посередине, а за ним размытая копия",
   "fmtSectionVideo": "Формат видео",
-  "fmtSectionClips": "Формат клипов"
+  "fmtSectionClips": "Формат клипов",
+  "mergeSummary": "{n} клипов · {d}",
+  "ed_drop": "Отпустите, чтобы добавить на таймлайн",
+  "ed_drop_hint": "Видео и изображения"
 };

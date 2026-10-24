@@ -200,5 +200,7 @@ export default {
   "en_working": "処理中… {p}%",
   "en_done": "完了しました。ダウンロードフォルダにあります。",
   "en_error": "クリップを処理できませんでした。",
-  "en_unsupported": "このブラウザではこの方法で動画を処理できません。Chrome か Edge をお試しください。"
+  "en_unsupported": "このブラウザではこの方法で動画を処理できません。Chrome か Edge をお試しください。",
+  "ed_drop": "ドロップしてタイムラインに追加",
+  "ed_drop_hint": "動画と画像"
 };

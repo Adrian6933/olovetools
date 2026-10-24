@@ -27,7 +27,8 @@ import SortableClipList, { type SortableClipListHandle } from './SortableClipLis
 import ClipOrderPanel from './ClipOrderPanel';
 import MergePanel, { type MergePanelHandle } from './MergePanel';
 import ClipEditor from './editor/ClipEditor';
-import { FUERZA, leerCalidad } from './nitidez';
+import { CALIDAD_POR_DEFECTO, FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from './nitidez';
+import CalidadSelector from './CalidadSelector';
 import { obtenerFuente, soltarFuentes, type Pieza } from './editor/model';
 import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
@@ -179,6 +180,13 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     try { localStorage.setItem(MODO_KEY, m); } catch { /* vale para esta visita */ }
   };
   const mergeRef = useRef<MergePanelHandle>(null);
+
+  // Nitidez y resolución de todo lo que se recodifica (la misma preferencia
+  // que usan el editor y la mejora de cada clip). Se lee tras montar, por la
+  // hidratación.
+  const [calidad, setCalidad] = useState<CalidadExport>(CALIDAD_POR_DEFECTO);
+  useEffect(() => { setCalidad(leerCalidad(brand.storagePrefix)); }, []);
+  const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
 
   // Forma de lo que se exporta: por separado para el vídeo unido y para los
   // clips (p. ej. el vídeo en 16:9 y los clips en vertical para el móvil).
@@ -532,7 +540,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
 
     try {
       // La nitidez y el alto elegidos (nitidez.ts) valen también aquí.
-      const calidadGuardada = leerCalidad(brand.storagePrefix);
+      const calidadGuardada = calidad;
       const resultados = await procesarClips(listos, {
         quality: selectedQuality,
         fetchMovieBlob,
@@ -566,7 +574,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       setWmAll(null);
       setWmAllFallos(abort.signal.aborted ? 0 : fallos);
     }
-  }, [clips, wmAll, wmAllConfig, zipProgress, selectedQuality, marcaActiva, formatoClips, encaje]);
+  }, [clips, wmAll, wmAllConfig, zipProgress, selectedQuality, marcaActiva, formatoClips, encaje, calidad]);
 
   const modo: 'clips' | 'video' | 'ambos' = clipsListos.length > 1 ? modoGuardado : 'clips';
 
@@ -918,7 +926,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                       return (
                         <button
                           onClick={modo === 'clips'
-                            ? (marcaActiva || formatoClips !== 'original' ? descargarZipConMarca : downloadAllAsZip)
+                            ? (marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off' || calidad.alto > 1080 ? descargarZipConMarca : downloadAllAsZip)
                             : () => mergeRef.current?.empezar()}
                           disabled={!!zipProgress || !!wmAll || isAnyLoading || uniendo}
                           className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-6 xl:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
@@ -1089,21 +1097,42 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                        </div>
                      ))}
                    </div>
-                   {/* Abajo, cómo llenar el vertical (solo si algo sale en vertical) y
-                       en una línea qué va a salir. */}
-                   {(resumen || encajeGrupo) && (
-                     <div className="mt-3 pt-3 border-t border-white/5 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                   {/* Abajo: a la izquierda lo del vídeo (cómo llenar el vertical, el
+                       fundido, el progreso de unir) y a la derecha la nitidez y
+                       la resolución, que valen para todo lo que se recodifica.
+                       Antes el vídeo unido era un panel aparte al final de la
+                       página, con sus propios interruptores repetidos. */}
+                   <div className="mt-3 pt-3 border-t border-white/5 flex flex-col lg:flex-row gap-4">
+                     <div className="lg:flex-1 min-w-0 space-y-3 empty:hidden">
                        {encajeGrupo && (
-                         <div className="flex flex-col sm:flex-row sm:items-center gap-2 shrink-0">
-                           <span className="flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                           <span className="sm:w-44 lg:w-auto shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
                              <span className="text-twitch flex">{encajeGrupo.icono}</span>{encajeGrupo.titulo}
                            </span>
-                           {selector(encajeGrupo)}
+                           {selector(encajeGrupo, 'flex-1')}
                          </div>
                        )}
-                       {resumen && <p className="px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
+                       <MergePanel
+                         ref={mergeRef}
+                         mostrarOpciones={modo !== 'clips'}
+                         calidad={calidad}
+                         formatoVideo={formatoVideo}
+                         formatoClips={formatoClips}
+                         encaje={encaje}
+                         conClips={modo === 'ambos'}
+                         clips={clipsListos}
+                         quality={selectedQuality}
+                         watermarkOn={marcaActiva}
+                         watermarkConfig={wmAllConfig}
+                         t={t}
+                         onBusyChange={setUniendo}
+                       />
                      </div>
-                   )}
+                     <div className={`min-w-0 ${ocupado ? 'opacity-50 pointer-events-none' : ''} lg:flex-1`}>
+                       <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
+                     </div>
+                   </div>
+                   {resumen && <p className="mt-3 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
                  </div>
                );
              })()}
@@ -1244,25 +1273,6 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                    : (t.ed_send_title || 'Open in Clip Editor')}
                </button>
                </div>
-             )}
-
-             {/* Con un solo clip también: se le puede añadir una intro o un cierre propio. */}
-             {clips.some(c => c.status === 'success') && (
-               <MergePanel
-                 ref={mergeRef}
-                 formatoVideo={formatoVideo}
-                 formatoClips={formatoClips}
-                 encaje={encaje}
-                 conClips={modo === 'ambos'}
-                 onConClips={v => cambiarModo(v ? 'ambos' : 'video')}
-                 clips={clips.filter(c => c.status === 'success' && c.data).map(c => c.data!)}
-                 quality={selectedQuality}
-                 watermarkOn={marcaActiva}
-                 watermarkConfig={wmAllConfig}
-                 t={t}
-                 busy={!!zipProgress || !!wmAll || uniendo || clips.some(c => c.status === 'loading')}
-                 onBusyChange={setUniendo}
-               />
              )}
 
              {clips.length > 1 && <ClipSortBar clips={clips} onReorder={reordenar} t={t} />}

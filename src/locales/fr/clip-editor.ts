@@ -200,5 +200,7 @@ export default {
   "en_working": "Traitement… {p} %",
   "en_done": "C’est fait, c’est dans vos téléchargements.",
   "en_error": "Impossible de traiter le clip.",
-  "en_unsupported": "Votre navigateur ne peut pas traiter la vidéo ainsi. Essayez Chrome ou Edge."
+  "en_unsupported": "Votre navigateur ne peut pas traiter la vidéo ainsi. Essayez Chrome ou Edge.",
+  "ed_drop": "Déposez pour l’ajouter à la timeline",
+  "ed_drop_hint": "Vidéos et images"
 };
