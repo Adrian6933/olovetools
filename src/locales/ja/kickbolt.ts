@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "クリップの形式",
   "mergeSummary": "{n} クリップ · {d}",
   "ed_drop": "ドロップしてタイムラインに追加",
-  "ed_drop_hint": "動画と画像"
+  "ed_drop_hint": "動画と画像",
+  "ed_play": "再生"
 };

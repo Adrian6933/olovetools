@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "Clip-Format",
   "mergeSummary": "{n} Clips · {d}",
   "ed_drop": "Loslassen, um es zur Zeitleiste hinzuzufügen",
-  "ed_drop_hint": "Videos und Bilder"
+  "ed_drop_hint": "Videos und Bilder",
+  "ed_play": "Abspielen"
 };

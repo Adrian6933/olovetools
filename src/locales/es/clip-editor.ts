@@ -202,5 +202,6 @@ export default {
   "en_error": "No se pudo procesar el clip.",
   "en_unsupported": "Tu navegador no puede procesar vídeo así. Prueba con Chrome o Edge.",
   "ed_drop": "Suéltalo para añadirlo a la línea de tiempo",
-  "ed_drop_hint": "Vídeos e imágenes"
+  "ed_drop_hint": "Vídeos e imágenes",
+  "ed_play": "Reproducir"
 };

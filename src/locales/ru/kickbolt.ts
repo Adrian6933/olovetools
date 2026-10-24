@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "Формат клипов",
   "mergeSummary": "{n} клипов · {d}",
   "ed_drop": "Отпустите, чтобы добавить на таймлайн",
-  "ed_drop_hint": "Видео и изображения"
+  "ed_drop_hint": "Видео и изображения",
+  "ed_play": "Воспроизвести"
 };

@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "剪辑格式",
   "mergeSummary": "{n} 个剪辑 · {d}",
   "ed_drop": "松开即可添加到时间线",
-  "ed_drop_hint": "视频和图片"
+  "ed_drop_hint": "视频和图片",
+  "ed_play": "播放"
 };

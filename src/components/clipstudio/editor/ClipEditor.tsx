@@ -18,6 +18,7 @@ import {
   Scissors, X, Play, Pause, SkipBack, SkipForward, ListVideo, Plus, Copy, Trash2, ChevronLeft, ChevronRight,
   Volume2, VolumeX, RotateCcw, Download, Loader2, Blend, Sparkles, Film, Package, AlertCircle,
   ChevronsLeft, ChevronsRight, ArrowLeftToLine, ArrowRightToLine, Crop, Undo2, Redo2,
+  Clock, Gauge, Keyboard, ChevronDown, Image as ImageIcon,
 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from '../types';
 import { useBrand } from '../brand';
@@ -497,6 +498,18 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
 
   // ---- exportar -----------------------------------------------------------
   const [modo, setModo] = useState<'uno' | 'separado'>('uno');
+  // Exportar vive en un panel que se abre desde la barra de arriba, como en
+  // CapCut; se cierra al pulsar fuera.
+  const [exportAbierto, setExportAbierto] = useState(false);
+  const cabeceraRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!exportAbierto) return;
+    const fuera = (e: MouseEvent) => { if (!cabeceraRef.current?.contains(e.target as Node)) setExportAbierto(false); };
+    document.addEventListener('mousedown', fuera);
+    return () => document.removeEventListener('mousedown', fuera);
+  }, [exportAbierto]);
+  /** Pestaña del panel de la pieza. */
+  const [pestana, setPestana] = useState<'recorte' | 'sonido' | 'velocidad'>('recorte');
   const [fundido, setFundido] = useState(true);
   const [conMarca, setConMarca] = useState(watermarkOn && !sinMarca);
   const [exp, setExp] = useState<Export | null>(null);
@@ -616,8 +629,19 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   if (typeof document === 'undefined') return null;
 
   const carga = sel ? cargas[claveFuente(sel)] : undefined;
-  const boton = 'h-9 px-3 rounded-xl border border-white/10 text-xs font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
-  const herramienta = 'h-8 px-2.5 rounded-lg border border-white/10 text-[11px] font-bold text-gray-300 hover:text-white hover:border-white/25 flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
+  const boton = 'h-9 px-3 rounded-xl border border-white/10 text-xs font-bold text-gray-300 hover:text-white hover:border-white/25 hover:bg-white/[0.04] flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-30 disabled:cursor-not-allowed';
+  /** Botón de icono de las barras (transporte, cabecera de la pieza). */
+  const icono = 'w-9 h-9 rounded-xl text-gray-400 hover:text-white hover:bg-white/[0.06] flex items-center justify-center cursor-pointer transition-colors disabled:opacity-25 disabled:cursor-not-allowed';
+  const herramienta = 'h-8 px-2.5 rounded-lg text-[11px] font-bold text-gray-300 hover:text-white hover:bg-white/[0.06] flex items-center gap-1.5 cursor-pointer transition-colors disabled:opacity-25 disabled:cursor-not-allowed';
+  const titulo = 'text-[10px] font-black uppercase tracking-widest text-gray-500';
+  const pestanas = sel?.tipo === 'imagen'
+    ? [{ id: 'recorte' as const, label: tx('mergeImageSecs', 'Seconds on screen'), icon: <Clock className="w-3.5 h-3.5" /> }]
+    : [
+      { id: 'recorte' as const, label: tx('ed_trim', 'Trim'), icon: <Scissors className="w-3.5 h-3.5" /> },
+      { id: 'sonido' as const, label: tx('ed_audio', 'Sound'), icon: <Volume2 className="w-3.5 h-3.5" /> },
+      { id: 'velocidad' as const, label: tx('ed_speed', 'Speed'), icon: <Gauge className="w-3.5 h-3.5" /> },
+    ];
+  const pestanaActiva = pestanas.some(p => p.id === pestana) ? pestana : 'recorte';
 
   return createPortal(
     <div
@@ -638,241 +662,295 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
           <p className="text-xs font-bold text-gray-300">{tx('ed_drop_hint', 'Videos and images')}</p>
         </div>
       )}
-      {/* ---- cabecera ---- */}
-      <header className="h-14 shrink-0 flex items-center justify-between gap-3 px-3 md:px-5 border-b border-white/10">
+
+      {/* ---- barra de arriba: qué es, atajos y exportar (como en CapCut) ---- */}
+      <header ref={cabeceraRef} className="relative h-14 shrink-0 flex items-center justify-between gap-3 px-3 md:px-4 border-b border-white/[0.06] bg-[#0e0d13]">
         <div className="flex items-center gap-3 min-w-0">
-          <span className="p-2 rounded-xl bg-twitch/20 border border-twitch/30 shrink-0"><Scissors className="w-4 h-4 text-twitch" /></span>
+          <span className="w-9 h-9 rounded-xl bg-twitch text-[var(--color-accent-ink)] flex items-center justify-center shrink-0 shadow-lg shadow-twitch/25"><Scissors className="w-4 h-4" /></span>
           <div className="min-w-0">
-            <h3 className="text-sm font-black uppercase tracking-tight truncate">{tx('ed_title', 'Clip editor')}</h3>
-            <p className="text-[11px] text-gray-500 truncate">
+            <h3 className="text-sm font-black tracking-tight truncate">{tx('ed_title', 'Clip editor')}</h3>
+            <p className="text-[11px] text-gray-500 truncate tabular-nums">
               {tx('ed_summary', '{n} pieces · {d}').replace('{n}', String(piezas.length)).replace('{d}', mmss(totalFinal))}
               {pendientesCarga > 0 && <span className="text-twitch"> · {tx('ed_loading', 'Loading clips…')} {clips.length - pendientesCarga}/{clips.length}</span>}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="hidden xl:block text-[10px] text-gray-500 font-bold">{tx('ed_keys3', 'Space play · Ctrl+B split · Q/W delete left/right · Del delete · ↑/↓ cuts · Ctrl+Z undo')}</span>
-          <button type="button" onClick={onClose} aria-label={tx('wm_close', 'Close')} className="w-9 h-9 rounded-xl border border-white/10 text-gray-400 hover:text-white hover:bg-red-500/15 hover:border-red-500/30 flex items-center justify-center cursor-pointer">
+        <div className="flex items-center gap-1.5 shrink-0">
+          <span className={icono + ' hidden md:flex !cursor-help'} title={tx('ed_keys3', 'Space play · Ctrl+B split · Q/W delete left/right · Del delete · ↑/↓ cuts · Ctrl+Z undo')}>
+            <Keyboard className="w-4 h-4" />
+          </span>
+          <button
+            type="button"
+            onClick={() => setExportAbierto(v => !v)}
+            aria-expanded={exportAbierto}
+            className="relative h-9 pl-3.5 pr-3 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 overflow-hidden"
+          >
+            {exp && <span className="absolute inset-y-0 left-0 bg-black/20" style={{ width: `${exp.pct}%` }} />}
+            <span className="relative flex items-center gap-2">
+              {exp ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              {exp ? `${exp.pct}%` : tx('ed_export', 'Export')}
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform ${exportAbierto ? 'rotate-180' : ''}`} />
+            </span>
+          </button>
+          <button type="button" onClick={onClose} aria-label={tx('wm_close', 'Close')} className={icono + ' hover:!bg-red-500/15 hover:!text-red-300'}>
             <X className="w-4 h-4" />
           </button>
         </div>
+
+        {/* ---- panel de exportar ---- */}
+        {exportAbierto && (
+          <div className="absolute right-3 top-[60px] z-50 w-[min(360px,calc(100vw-24px))] rounded-2xl border border-white/10 bg-[#131218] shadow-[0_24px_60px_-12px_rgba(0,0,0,0.9)] p-3.5 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className={titulo}>{tx('ed_export', 'Export')}</span>
+              <span className="text-[11px] font-mono font-bold text-gray-500 tabular-nums">{mmss(totalFinal)} · {alto}p</span>
+            </div>
+            {exp ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-[11px] font-bold">
+                  <span className="text-twitch uppercase tracking-widest flex items-center gap-1.5">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    {exp.fase === 'preparando' ? tx('ed_preparing', 'Preparing') : `${tx('mergeRecording', 'Recording clip')} ${exp.pieza}/${exp.total}`}
+                  </span>
+                  <span className="text-gray-400 tabular-nums">{exp.pct}%{exp.fase === 'grabando' ? ` · ${mmss(exp.queda)}` : ''}</span>
+                </div>
+                <div className="h-2 rounded-full bg-white/5 overflow-hidden"><div className="h-full bg-twitch transition-[width] duration-300" style={{ width: `${Math.max(2, exp.pct)}%` }} /></div>
+                <button type="button" onClick={() => abortRef.current?.abort()} className="w-full py-2 rounded-xl border border-white/10 text-[11px] font-bold text-gray-400 hover:text-white cursor-pointer">{tx('cancel', 'Cancel')}</button>
+              </div>
+            ) : (
+              <>
+                <div className="flex p-1 rounded-xl bg-dark-950 border border-white/10 gap-1">
+                  {([['uno', <Film key="f" className="w-3.5 h-3.5" />, tx('ed_one_video', 'One video')], ['separado', <Package key="p" className="w-3.5 h-3.5" />, tx('ed_separate', 'Separate (ZIP)')]] as const).map(([id, ic, txt]) => (
+                    <button key={id} type="button" onClick={() => setModo(id)} aria-pressed={modo === id} className={`flex-1 py-2 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer ${modo === id ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>{ic}{txt}</button>
+                  ))}
+                </div>
+                <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
+                <div className="flex gap-2">
+                  {[
+                    { on: fundido, set: setFundido, icon: <Blend className="w-3.5 h-3.5" />, label: tx('ed_fades', 'Fades') },
+                    ...(sinMarca ? [] : [{ on: conMarca, set: setConMarca, icon: <Sparkles className="w-3.5 h-3.5" />, label: tx('ed_watermark', 'Watermark') }]),
+                  ].map((o, i) => (
+                    <button key={i} type="button" role="switch" aria-checked={o.on} onClick={() => o.set(!o.on)} className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border text-[11px] font-bold cursor-pointer ${o.on ? 'border-twitch/50 bg-twitch/10 text-white' : 'border-white/10 text-gray-500 hover:text-white'}`}>
+                      {o.icon}{o.label}
+                    </button>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={exportar}
+                  disabled={!piezas.length}
+                  className="w-full h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 disabled:opacity-40 active:scale-[0.98] transition-all"
+                >
+                  <Download className="w-4 h-4" />{tx('ed_export', 'Export')} · {mmss(totalFinal)}
+                </button>
+              </>
+            )}
+            {hecho && !exp && <p className="text-[11px] font-bold text-green-400">{tx('mergeDone', 'Done! The video is in your downloads.')}</p>}
+            {errorExp && <p className="text-[11px] font-bold text-red-400 bg-red-500/10 border border-red-500/25 rounded-xl px-3 py-2">{errorExp}</p>}
+          </div>
+        )}
       </header>
 
       <div className="flex-1 min-h-0 flex flex-col overflow-y-auto lg:overflow-hidden">
         <div className="lg:flex-1 lg:min-h-0 flex flex-col lg:flex-row">
-          {/* ---- reproductor ---- */}
-          <div className="shrink-0 lg:shrink lg:flex-1 min-w-0 flex flex-col gap-3 p-3 md:p-5">
-            <div className="relative w-full aspect-video max-h-[46vh] lg:max-h-none lg:aspect-auto lg:flex-1 lg:min-h-0 [container-type:size] flex items-center justify-center">
-              <div className="relative aspect-video bg-black rounded-2xl overflow-hidden border border-white/10 shadow-2xl" style={{ width: 'min(100cqw, calc(100cqh * 16 / 9))' }}>
-                <video
-                  ref={videoRef}
-                  playsInline
-                  className={`w-full h-full object-contain ${sel?.tipo === 'imagen' ? 'hidden' : ''}`}
-                  onPause={() => { if (!todo) setReproduciendo(false); }}
-                />
-                {sel?.tipo === 'imagen' && fuenteLista(sel) && (
-                  <img src={fuenteLista(sel)!.url} alt="" className="absolute inset-0 w-full h-full object-contain" />
-                )}
-                {sel && !lista(sel) && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs font-bold text-gray-400">
-                    {carga?.error
-                      ? <><AlertCircle className="w-6 h-6 text-red-400" />{tx('failedToLoad', 'Could not load the clip')}</>
-                      : <><Loader2 className="w-6 h-6 animate-spin text-twitch" />{tx('ed_loading', 'Loading clips…')} {carga?.pct ?? 0}%</>}
-                  </div>
-                )}
-                {!sel && (
-                  <div className="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-500">{tx('ed_empty', 'The timeline is empty. Add a video or an image.')}</div>
-                )}
+          {/* ---- visor ---- */}
+          <div className="shrink-0 lg:shrink lg:flex-1 min-w-0 flex flex-col bg-[#09080c]">
+            <div className="relative w-full aspect-video max-h-[46vh] lg:max-h-none lg:aspect-auto lg:flex-1 lg:min-h-0 p-3 md:p-6">
+              <div className="w-full h-full [container-type:size] flex items-center justify-center">
+                <div className="relative aspect-video bg-black rounded-xl overflow-hidden ring-1 ring-white/10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.9)]" style={{ width: 'min(100cqw, calc(100cqh * 16 / 9))' }}>
+                  <video
+                    ref={videoRef}
+                    playsInline
+                    className={`w-full h-full object-contain ${sel?.tipo === 'imagen' ? 'hidden' : ''}`}
+                    onPause={() => { if (!todo) setReproduciendo(false); }}
+                  />
+                  {sel?.tipo === 'imagen' && fuenteLista(sel) && (
+                    <img src={fuenteLista(sel)!.url} alt="" className="absolute inset-0 w-full h-full object-contain" />
+                  )}
+                  {sel && !lista(sel) && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs font-bold text-gray-400">
+                      {carga?.error
+                        ? <><AlertCircle className="w-6 h-6 text-red-400" />{tx('failedToLoad', 'Could not load the clip')}</>
+                        : <><Loader2 className="w-6 h-6 animate-spin text-twitch" />{tx('ed_loading', 'Loading clips…')} {carga?.pct ?? 0}%</>}
+                    </div>
+                  )}
+                  {!sel && (
+                    <button type="button" onClick={() => inputRef.current?.click()} className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-xs font-bold text-gray-400 hover:text-white cursor-pointer">
+                      <span className="p-3 rounded-2xl bg-twitch/15 border border-twitch/30"><Plus className="w-6 h-6 text-twitch" /></span>
+                      {tx('ed_empty', 'The timeline is empty. Add a video or an image.')}
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
-            {/* transporte */}
-            <div className="flex items-center gap-2 flex-wrap">
-              <button type="button" className={boton} onClick={() => selIdx > 0 && setSelId(piezas[selIdx - 1].id)} disabled={selIdx <= 0} aria-label={tx('ed_prev', 'Previous piece')}><SkipBack className="w-4 h-4" /></button>
-              <button
-                type="button"
-                onClick={() => (reproduciendo ? parar() : reproducir(false))}
-                disabled={!lista(sel)}
-                aria-label={reproduciendo ? 'Pause' : 'Play'}
-                className="w-11 h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] flex items-center justify-center cursor-pointer disabled:opacity-40 shadow-lg shadow-twitch/25"
-              >
-                {reproduciendo ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-              </button>
-              <button type="button" className={boton} onClick={() => selIdx < piezas.length - 1 && setSelId(piezas[selIdx + 1].id)} disabled={selIdx < 0 || selIdx >= piezas.length - 1} aria-label={tx('ed_next', 'Next piece')}><SkipForward className="w-4 h-4" /></button>
-              <button type="button" className={boton} onClick={reproducirTodo} disabled={!piezas.length || pendientesCarga > 0}>
-                <ListVideo className="w-4 h-4 text-twitch" />{tx('ed_play_all', 'Play everything')}
-              </button>
-              <span className="ml-auto text-xs font-mono font-bold text-gray-400 tabular-nums">{mmss(posicion, true)} / {mmss(totalFinal, true)}</span>
+            {/* transporte: tiempo a la izquierda, reproducir en el centro */}
+            <div className="h-14 shrink-0 grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-3 md:px-5 border-t border-white/[0.06]">
+              <span className="text-[11px] sm:text-xs font-mono font-bold tabular-nums whitespace-nowrap">
+                <span className="text-white">{mmss(posicion, true)}</span>
+                <span className="text-gray-600"> / {mmss(totalFinal, true)}</span>
+              </span>
+              <div className="flex items-center gap-1">
+                <button type="button" className={icono} onClick={() => irACorte(-1)} disabled={!piezas.length} title={tx('ed_prev', 'Previous piece') + ' (↑)'} aria-label={tx('ed_prev', 'Previous piece')}><SkipBack className="w-4 h-4" /></button>
+                <button
+                  type="button"
+                  onClick={() => (reproduciendo ? parar() : reproducir(false))}
+                  disabled={!lista(sel)}
+                  aria-label={reproduciendo ? 'Pause' : 'Play'}
+                  title={tx('ed_play', 'Play') + ' (Space)'}
+                  className="w-11 h-11 rounded-full bg-white hover:bg-gray-200 text-black flex items-center justify-center cursor-pointer disabled:opacity-30 shadow-lg mx-1 transition-colors"
+                >
+                  {reproduciendo ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
+                </button>
+                <button type="button" className={icono} onClick={() => irACorte(1)} disabled={!piezas.length} title={tx('ed_next', 'Next piece') + ' (↓)'} aria-label={tx('ed_next', 'Next piece')}><SkipForward className="w-4 h-4" /></button>
+              </div>
+              <div className="flex justify-end">
+                <button type="button" className={boton + ' !h-8 !border-transparent'} onClick={reproducirTodo} disabled={!piezas.length || pendientesCarga > 0}>
+                  <ListVideo className="w-4 h-4 text-twitch" /><span className="hidden sm:inline">{tx('ed_play_all', 'Play everything')}</span>
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* ---- panel de la pieza ---- */}
-          <aside className="lg:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-white/10 bg-[#0e0d12] flex flex-col min-h-0">
-            <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-5">
-              {sel ? (
-                <>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-twitch">{tx('ed_piece', 'Piece {n}').replace('{n}', String(selIdx + 1))}</p>
-                      <p className="text-sm font-bold text-white truncate">{sel.nombre}</p>
-                    </div>
-                    <div className="flex gap-1 shrink-0">
-                      <button type="button" className={boton} onClick={() => desplazar(-1)} disabled={selIdx <= 0} aria-label={tx('ed_move_left', 'Move earlier')}><ChevronLeft className="w-4 h-4" /></button>
-                      <button type="button" className={boton} onClick={() => desplazar(1)} disabled={selIdx >= piezas.length - 1} aria-label={tx('ed_move_right', 'Move later')}><ChevronRight className="w-4 h-4" /></button>
-                    </div>
+          {/* ---- propiedades de la pieza, por pestañas ---- */}
+          <aside className="lg:w-[360px] shrink-0 border-t lg:border-t-0 lg:border-l border-white/[0.06] bg-[#0e0d13] flex flex-col min-h-0">
+            {sel ? (
+              <>
+                <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
+                  <span className="relative w-14 aspect-video rounded-lg overflow-hidden bg-black ring-1 ring-white/10 shrink-0">
+                    {sel.thumb && <img src={sel.thumb} alt="" className="w-full h-full object-cover" />}
+                    <span className="absolute bottom-0.5 left-0.5 px-1 rounded bg-black/75 text-[8px] font-black text-white tabular-nums">{selIdx + 1}</span>
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-twitch flex items-center gap-1">
+                      {sel.tipo === 'imagen' ? <ImageIcon className="w-3 h-3" /> : <Film className="w-3 h-3" />}
+                      {tx('ed_piece', 'Piece {n}').replace('{n}', String(selIdx + 1))}
+                      <span className="text-gray-500 font-mono normal-case tracking-normal">· {mmss(durFinal(sel), true)}</span>
+                    </p>
+                    <p className="text-sm font-bold text-white truncate">{sel.nombre}</p>
                   </div>
+                  <div className="flex items-center shrink-0 -mr-1.5">
+                    <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => desplazar(-1)} disabled={selIdx <= 0} title={tx('ed_move_left', 'Move earlier')} aria-label={tx('ed_move_left', 'Move earlier')}><ChevronLeft className="w-4 h-4" /></button>
+                    <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => desplazar(1)} disabled={selIdx >= piezas.length - 1} title={tx('ed_move_right', 'Move later')} aria-label={tx('ed_move_right', 'Move later')}><ChevronRight className="w-4 h-4" /></button>
+                    <button type="button" className={icono + ' !w-8 !h-8'} onClick={duplicar} title={tx('ed_duplicate', 'Duplicate')} aria-label={tx('ed_duplicate', 'Duplicate')}><Copy className="w-3.5 h-3.5" /></button>
+                    <button type="button" className={icono + ' !w-8 !h-8 hover:!text-red-300 hover:!bg-red-500/10'} onClick={borrar} title={tx('ed_delete', 'Remove')} aria-label={tx('ed_delete', 'Remove')}><Trash2 className="w-3.5 h-3.5" /></button>
+                  </div>
+                </div>
 
+                <div role="tablist" className="shrink-0 flex gap-1 px-3 pt-2 border-b border-white/[0.06]">
+                  {pestanas.map(p => (
+                    <button
+                      key={p.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={pestanaActiva === p.id}
+                      onClick={() => setPestana(p.id)}
+                      className={`relative flex-1 flex items-center justify-center gap-1.5 px-2 pb-2.5 pt-1.5 text-[11px] font-bold cursor-pointer transition-colors ${pestanaActiva === p.id ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                    >
+                      <span className={pestanaActiva === p.id ? 'text-twitch' : ''}>{p.icon}</span>{p.label}
+                      {pestanaActiva === p.id && <span className="absolute bottom-0 inset-x-2 h-0.5 rounded-full bg-twitch" />}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-4">
                   {sel.tipo === 'imagen' ? (
                     <label className="block">
                       <span className="flex justify-between text-xs font-bold text-gray-300 mb-2"><span>{tx('mergeImageSecs', 'Seconds on screen')}</span><span className="font-mono text-twitch">{sel.total}s</span></span>
                       <input type="range" min={1} max={30} value={sel.total} onChange={e => { const v = parseInt(e.target.value, 10); cambiarAgrupado(sel.id, { total: v, fin: v }); }} className="w-full accent-twitch h-1.5 cursor-pointer" />
                     </label>
-                  ) : (
+                  ) : pestanaActiva === 'recorte' ? (
                     <>
-                      <section className="space-y-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tx('ed_trim', 'Trim')}</h4>
-                          <span className="text-[10px] font-bold text-gray-500">{tx('ed_kept', 'Kept: {d}').replace('{d}', mmss(sel.fin - sel.inicio, true))}</span>
-                        </div>
-                        <TrimBar
-                          total={sel.total}
-                          inicio={sel.inicio}
-                          fin={sel.fin}
-                          actual={tiempo}
-                          frames={frames}
-                          marcaA={marcas.a}
-                          marcaB={marcas.b}
-                          onStart={() => guardar()}
-                          onChange={(a, b) => cambiarSinGuardar(sel.id, { inicio: a, fin: b })}
-                          onSeek={buscarEnPieza}
-                          etiquetaInicio={tx('ed_start', 'Start')}
-                          etiquetaFin={tx('ed_end', 'End')}
-                        />
+                      <div className="flex items-center justify-between gap-2">
+                        <span className={titulo}>{tx('ed_trim', 'Trim')}</span>
+                        <span className="text-[10px] font-bold text-gray-500 tabular-nums">{tx('ed_kept', 'Kept: {d}').replace('{d}', mmss(sel.fin - sel.inicio, true))}</span>
+                      </div>
+                      <TrimBar
+                        total={sel.total}
+                        inicio={sel.inicio}
+                        fin={sel.fin}
+                        actual={tiempo}
+                        frames={frames}
+                        marcaA={marcas.a}
+                        marcaB={marcas.b}
+                        onStart={() => guardar()}
+                        onChange={(a, b) => cambiarSinGuardar(sel.id, { inicio: a, fin: b })}
+                        onSeek={buscarEnPieza}
+                        etiquetaInicio={tx('ed_start', 'Start')}
+                        etiquetaFin={tx('ed_end', 'End')}
+                      />
 
-                        {/* Dónde está el cursor, y moverlo con precisión */}
-                        <div className="flex items-center gap-1.5">
-                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(-1)} disabled={!selLista} aria-label={tx('ed_back_1s', 'Back 1 second')} title={tx('ed_back_1s', 'Back 1 second') + ' (Shift+←)'}><ChevronsLeft className="w-4 h-4" /></button>
-                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(-FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_back_frame', 'Back 1 frame')} title={tx('ed_back_frame', 'Back 1 frame') + ' (←)'}><ChevronLeft className="w-4 h-4" /></button>
-                          <span className="flex-1 h-9 rounded-xl bg-dark-950 border border-white/10 flex items-center justify-center text-sm font-mono font-black text-white tabular-nums">{reloj(tiempo)}</span>
-                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_fwd_frame', 'Forward 1 frame')} title={tx('ed_fwd_frame', 'Forward 1 frame') + ' (→)'}><ChevronRight className="w-4 h-4" /></button>
-                          <button type="button" className={boton + ' !px-2'} onClick={() => paso(1)} disabled={!selLista} aria-label={tx('ed_fwd_1s', 'Forward 1 second')} title={tx('ed_fwd_1s', 'Forward 1 second') + ' (Shift+→)'}><ChevronsRight className="w-4 h-4" /></button>
-                        </div>
+                      {/* Dónde está el cursor, y moverlo con precisión */}
+                      <div className="flex items-center gap-1 p-1 rounded-xl bg-dark-950 border border-white/10">
+                        <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => paso(-1)} disabled={!selLista} aria-label={tx('ed_back_1s', 'Back 1 second')} title={tx('ed_back_1s', 'Back 1 second') + ' (Shift+←)'}><ChevronsLeft className="w-4 h-4" /></button>
+                        <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => paso(-FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_back_frame', 'Back 1 frame')} title={tx('ed_back_frame', 'Back 1 frame') + ' (←)'}><ChevronLeft className="w-4 h-4" /></button>
+                        <span className="flex-1 text-center text-sm font-mono font-black text-white tabular-nums">{reloj(tiempo)}</span>
+                        <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => paso(FOTOGRAMA)} disabled={!selLista} aria-label={tx('ed_fwd_frame', 'Forward 1 frame')} title={tx('ed_fwd_frame', 'Forward 1 frame') + ' (→)'}><ChevronRight className="w-4 h-4" /></button>
+                        <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => paso(1)} disabled={!selLista} aria-label={tx('ed_fwd_1s', 'Forward 1 second')} title={tx('ed_fwd_1s', 'Forward 1 second') + ' (Shift+→)'}><ChevronsRight className="w-4 h-4" /></button>
+                      </div>
 
-                        {/* Tramo marcado: entrada y salida, y qué hacer con él */}
-                        <div className="rounded-xl border border-white/10 bg-white/[0.02] p-2.5 space-y-2">
-                          <p className="text-[11px] font-bold text-gray-400 leading-snug">{tx('ed_mark_hint', 'Mark where a part starts and where it ends, then remove it or keep only that.')}</p>
+                      {/* Tramo marcado: entrada y salida, y qué hacer con él */}
+                      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-3 space-y-2.5">
+                        <p className="text-[11px] font-medium text-gray-400 leading-snug">{tx('ed_mark_hint', 'Mark where a part starts and where it ends, then remove it or keep only that.')}</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button type="button" className={boton + ' justify-center' + (marcas.a !== null ? ' !border-red-400/50 !text-white bg-red-500/10' : '')} onClick={marcarEntrada} disabled={!selLista} title="I">
+                            [ {tx('ed_mark_in', 'Mark start')}{marcas.a !== null && <span className="font-mono text-red-300">{mmss(marcas.a, true)}</span>}
+                          </button>
+                          <button type="button" className={boton + ' justify-center' + (marcas.b !== null ? ' !border-red-400/50 !text-white bg-red-500/10' : '')} onClick={marcarSalida} disabled={!selLista} title="O">
+                            {tx('ed_mark_out', 'Mark end')}{marcas.b !== null && <span className="font-mono text-red-300">{mmss(marcas.b, true)}</span>} ]
+                          </button>
+                        </div>
+                        {tramo && (
                           <div className="grid grid-cols-2 gap-2">
-                            <button type="button" className={boton + ' justify-center' + (marcas.a !== null ? ' !border-red-400/50 !text-white' : '')} onClick={marcarEntrada} disabled={!selLista} title="I">
-                              [ {tx('ed_mark_in', 'Mark start')}{marcas.a !== null && <span className="font-mono text-red-300">{mmss(marcas.a, true)}</span>}
+                            <button type="button" className={boton + ' justify-center !border-red-400/40 !text-red-200 hover:!bg-red-500/15'} onClick={quitarTramo} title="Supr">
+                              <Trash2 className="w-3.5 h-3.5" />{tx('ed_remove_marked', 'Remove this part')}
                             </button>
-                            <button type="button" className={boton + ' justify-center' + (marcas.b !== null ? ' !border-red-400/50 !text-white' : '')} onClick={marcarSalida} disabled={!selLista} title="O">
-                              {tx('ed_mark_out', 'Mark end')}{marcas.b !== null && <span className="font-mono text-red-300">{mmss(marcas.b, true)}</span>} ]
+                            <button type="button" className={boton + ' justify-center'} onClick={quedarseConTramo}>
+                              <Crop className="w-3.5 h-3.5 text-twitch" />{tx('ed_keep_marked', 'Keep only this')}
+                            </button>
+                            <button type="button" className="col-span-2 text-[11px] font-bold text-gray-500 hover:text-white cursor-pointer" onClick={() => setMarcas({ a: null, b: null })}>
+                              {tx('ed_clear_marks', 'Clear the marks')} · {mmss(tramo.b - tramo.a, true)}
                             </button>
                           </div>
-                          {tramo && (
-                            <div className="grid grid-cols-2 gap-2">
-                              <button type="button" className={boton + ' justify-center !border-red-400/40 !text-red-200 hover:!bg-red-500/15'} onClick={quitarTramo} title="Supr">
-                                <Trash2 className="w-3.5 h-3.5" />{tx('ed_remove_marked', 'Remove this part')}
-                              </button>
-                              <button type="button" className={boton + ' justify-center'} onClick={quedarseConTramo}>
-                                <Crop className="w-3.5 h-3.5 text-twitch" />{tx('ed_keep_marked', 'Keep only this')}
-                              </button>
-                              <button type="button" className="col-span-2 text-[11px] font-bold text-gray-500 hover:text-white cursor-pointer" onClick={() => setMarcas({ a: null, b: null })}>
-                                {tx('ed_clear_marks', 'Clear the marks')} · {mmss(tramo.b - tramo.a, true)}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-
-                        {(sel.inicio > 0.01 || sel.fin < sel.total - 0.01) && (
-                          <button type="button" className={boton + ' justify-center w-full'} onClick={() => cambiar(sel.id, { inicio: 0, fin: sel.total })}>
-                            <RotateCcw className="w-3.5 h-3.5" />{tx('ed_reset_trim', 'Undo the trim')}
-                          </button>
                         )}
-                      </section>
+                      </div>
 
-                      <section className="space-y-3">
-                        <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tx('ed_audio', 'Sound')}</h4>
-                        <div className="flex items-center gap-3">
-                          <button type="button" onClick={() => cambiar(sel.id, { silencio: !sel.silencio })} aria-label={sel.silencio ? tx('ed_unmute', 'Unmute') : tx('ed_mute', 'Mute')} className={`w-9 h-9 rounded-xl border flex items-center justify-center cursor-pointer shrink-0 ${sel.silencio ? 'border-red-400/50 text-red-300 bg-red-500/10' : 'border-white/10 text-gray-300 hover:text-white'}`}>
-                            {sel.silencio ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-                          </button>
-                          <input type="range" min={0} max={100} value={Math.round(sel.volumen * 100)} disabled={sel.silencio} onChange={e => cambiarAgrupado(sel.id, { volumen: parseInt(e.target.value, 10) / 100 })} aria-label={tx('ed_volume', 'Volume')} className="flex-1 accent-twitch h-1.5 cursor-pointer disabled:opacity-30" />
-                          <span className="w-10 text-right text-xs font-mono font-bold text-twitch">{sel.silencio ? '0' : Math.round(sel.volumen * 100)}%</span>
-                        </div>
-                      </section>
-
-                      <section className="space-y-3">
-                        <h4 className="text-[11px] font-black uppercase tracking-widest text-gray-400">{tx('ed_speed', 'Speed')}</h4>
-                        <div className="flex p-1 rounded-xl bg-dark-950 border border-white/10 gap-1">
-                          {VELOCIDADES.map(v => (
-                            <button key={v} type="button" onClick={() => cambiar(sel.id, { velocidad: v })} aria-pressed={sel.velocidad === v} className={`flex-1 py-2 rounded-lg text-[11px] font-bold cursor-pointer ${sel.velocidad === v ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>{v}x</button>
-                          ))}
-                        </div>
-                      </section>
+                      {(sel.inicio > 0.01 || sel.fin < sel.total - 0.01) && (
+                        <button type="button" className={boton + ' justify-center w-full'} onClick={() => cambiar(sel.id, { inicio: 0, fin: sel.total })}>
+                          <RotateCcw className="w-3.5 h-3.5" />{tx('ed_reset_trim', 'Undo the trim')}
+                        </button>
+                      )}
                     </>
+                  ) : pestanaActiva === 'sonido' ? (
+                    <div className="space-y-4">
+                      <span className={titulo}>{tx('ed_volume', 'Volume')}</span>
+                      <div className="flex items-center gap-3 p-3 rounded-2xl border border-white/[0.08] bg-white/[0.02]">
+                        <button type="button" onClick={() => cambiar(sel.id, { silencio: !sel.silencio })} aria-label={sel.silencio ? tx('ed_unmute', 'Unmute') : tx('ed_mute', 'Mute')} className={`w-10 h-10 rounded-xl border flex items-center justify-center cursor-pointer shrink-0 ${sel.silencio ? 'border-red-400/50 text-red-300 bg-red-500/10' : 'border-white/10 text-gray-300 hover:text-white'}`}>
+                          {sel.silencio ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+                        </button>
+                        <input type="range" min={0} max={100} value={Math.round(sel.volumen * 100)} disabled={sel.silencio} onChange={e => cambiarAgrupado(sel.id, { volumen: parseInt(e.target.value, 10) / 100 })} aria-label={tx('ed_volume', 'Volume')} className="flex-1 accent-twitch h-1.5 cursor-pointer disabled:opacity-30" />
+                        <span className="w-11 text-right text-sm font-mono font-black text-twitch tabular-nums">{sel.silencio ? '0' : Math.round(sel.volumen * 100)}%</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <span className={titulo}>{tx('ed_speed', 'Speed')}</span>
+                      <div className="grid grid-cols-5 gap-1.5">
+                        {VELOCIDADES.map(v => (
+                          <button key={v} type="button" onClick={() => cambiar(sel.id, { velocidad: v })} aria-pressed={sel.velocidad === v} className={`h-12 rounded-xl border text-xs font-black cursor-pointer transition-colors ${sel.velocidad === v ? 'bg-twitch border-twitch text-[var(--color-accent-ink)] shadow-lg shadow-twitch/20' : 'border-white/10 text-gray-400 hover:text-white hover:border-white/25'}`}>{v}x</button>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-gray-500 tabular-nums">{mmss((sel.fin - sel.inicio), true)} → <span className="text-white font-bold">{mmss(durFinal(sel), true)}</span></p>
+                    </div>
                   )}
-
-                  <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button type="button" className={boton + ' justify-center'} onClick={duplicar}><Copy className="w-3.5 h-3.5" />{tx('ed_duplicate', 'Duplicate')}</button>
-                    <button type="button" className={boton + ' justify-center hover:!text-red-300 hover:!border-red-400/40'} onClick={borrar}><Trash2 className="w-3.5 h-3.5" />{tx('ed_delete', 'Remove')}</button>
-                  </div>
-                </>
-              ) : (
-                <p className="text-xs text-gray-500">{tx('ed_empty', 'The timeline is empty. Add a video or an image.')}</p>
-              )}
-            </div>
-
-            {/* ---- exportar ---- */}
-            <div className="shrink-0 border-t border-white/10 p-3 space-y-2.5">
-              {exp ? (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-[11px] font-bold">
-                    <span className="text-twitch uppercase tracking-widest flex items-center gap-1.5">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      {exp.fase === 'preparando' ? tx('ed_preparing', 'Preparing') : `${tx('mergeRecording', 'Recording clip')} ${exp.pieza}/${exp.total}`}
-                    </span>
-                    <span className="text-gray-400 tabular-nums">{exp.pct}%{exp.fase === 'grabando' ? ` · ${mmss(exp.queda)}` : ''}</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-white/5 overflow-hidden"><div className="h-full bg-twitch transition-[width] duration-300" style={{ width: `${Math.max(2, exp.pct)}%` }} /></div>
-                  <button type="button" onClick={() => abortRef.current?.abort()} className="w-full py-2 rounded-xl border border-white/10 text-[11px] font-bold text-gray-400 hover:text-white cursor-pointer">{tx('cancel', 'Cancel')}</button>
                 </div>
-              ) : (
-                <>
-                  <div className="flex p-1 rounded-xl bg-dark-950 border border-white/10 gap-1">
-                    {([['uno', <Film key="f" className="w-3.5 h-3.5" />, tx('ed_one_video', 'One video')], ['separado', <Package key="p" className="w-3.5 h-3.5" />, tx('ed_separate', 'Separate (ZIP)')]] as const).map(([id, icono, txt]) => (
-                      <button key={id} type="button" onClick={() => setModo(id)} aria-pressed={modo === id} className={`flex-1 py-2 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer ${modo === id ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>{icono}{txt}</button>
-                    ))}
-                  </div>
-                  <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
-                  <div className="flex gap-2">
-                    {[
-                      { on: fundido, set: setFundido, icon: <Blend className="w-3.5 h-3.5" />, label: tx('ed_fades', 'Fades') },
-                      ...(sinMarca ? [] : [{ on: conMarca, set: setConMarca, icon: <Sparkles className="w-3.5 h-3.5" />, label: tx('ed_watermark', 'Watermark') }]),
-                    ].map((o, i) => (
-                      <button key={i} type="button" role="switch" aria-checked={o.on} onClick={() => o.set(!o.on)} className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl border text-[11px] font-bold cursor-pointer ${o.on ? 'border-twitch/50 bg-twitch/10 text-white' : 'border-white/10 text-gray-500 hover:text-white'}`}>
-                        {o.icon}{o.label}
-                      </button>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={exportar}
-                    disabled={!piezas.length}
-                    className="w-full h-11 rounded-xl bg-twitch hover:bg-twitch-dark text-[var(--color-accent-ink)] text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-twitch/25 disabled:opacity-40 active:scale-[0.98] transition-all"
-                  >
-                    <Download className="w-4 h-4" />{tx('ed_export', 'Export')} · {mmss(totalFinal)}
-                  </button>
-                  <p className="text-[10px] text-gray-500 leading-snug">{tx('ed_export_hint', 'It records in real time, so it takes about as long as the result. Keep this tab open.')} {alto}p</p>
-                </>
-              )}
-              {hecho && !exp && <p className="text-[11px] font-bold text-green-400">{tx('mergeDone', 'Done! The video is in your downloads.')}</p>}
-              {errorExp && <p className="text-[11px] font-bold text-red-400 bg-red-500/10 border border-red-500/25 rounded-xl px-3 py-2">{errorExp}</p>}
-            </div>
+              </>
+            ) : (
+              <div className="flex-1 flex items-center justify-center p-6 text-center text-xs text-gray-500">{tx('ed_empty', 'The timeline is empty. Add a video or an image.')}</div>
+            )}
           </aside>
         </div>
 
         {/* ---- línea de tiempo (estilo CapCut: herramientas encima) ---- */}
-        <div className="shrink-0 border-t border-white/10 bg-[#0b0a0f] px-3 md:px-5 pt-2 pb-3">
+        <div className="shrink-0 border-t border-white/[0.06] bg-[#0e0d13] px-3 md:px-4 pt-2 pb-3">
           <input ref={inputRef} type="file" accept="video/*,image/*" multiple className="hidden" onChange={e => { anadir(e.target.files); e.target.value = ''; }} />
           {errorPropio && <p className="text-[11px] font-bold text-red-400 mb-1">{errorPropio}</p>}
           <Timeline
@@ -890,29 +968,30 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
             onTrim={cambiarSinGuardar}
             onPreview={(id, t) => { if (id === selId) buscarEnPieza(t); }}
             herramientas={<>
-              <button type="button" className={herramienta} onClick={deshacer} disabled={!hayDeshacer} title={tx('ed_undo', 'Undo') + ' (Ctrl+Z)'} aria-label={tx('ed_undo', 'Undo')}><Undo2 className="w-4 h-4" /></button>
-              <button type="button" className={herramienta} onClick={rehacer} disabled={!hayRehacer} title={tx('ed_redo', 'Redo') + ' (Ctrl+Shift+Z)'} aria-label={tx('ed_redo', 'Redo')}><Redo2 className="w-4 h-4" /></button>
-              <span className="w-px h-6 bg-white/10 mx-0.5" />
-              <button type="button" className={herramienta + ' !border-twitch/40 !text-white'} onClick={cortar} disabled={!selLista || !puedeCortar} title={tx('ed_split', 'Split at the playhead') + ' (Ctrl+B)'}>
-                <Scissors className="w-4 h-4 text-twitch" /><span className="hidden md:inline">{tx('ed_split_short', 'Split')}</span>
-              </button>
-              <button type="button" className={herramienta} onClick={quitarAntes} disabled={!selLista || !puedeAntes} title={tx('ed_cut_before', 'Remove before') + ' (Q)'}>
-                <ArrowLeftToLine className="w-4 h-4 text-twitch" /><span className="hidden lg:inline">{tx('ed_cut_before', 'Remove before')}</span>
-              </button>
-              <button type="button" className={herramienta} onClick={quitarDespues} disabled={!selLista || !puedeDespues} title={tx('ed_cut_after', 'Remove after') + ' (W)'}>
-                <span className="hidden lg:inline">{tx('ed_cut_after', 'Remove after')}</span><ArrowRightToLine className="w-4 h-4 text-twitch" />
-              </button>
-              <button type="button" className={herramienta + ' hover:!text-red-300 hover:!border-red-400/40'} onClick={() => (tramo ? quitarTramo() : borrar())} disabled={!sel} title={(tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')) + ' (Supr)'}>
-                <Trash2 className="w-4 h-4" /><span className="hidden md:inline">{tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')}</span>
-              </button>
-              <span className="w-px h-6 bg-white/10 mx-0.5" />
-              <button type="button" className={herramienta + ' !border-twitch/40 !text-white bg-twitch/10'} onClick={() => inputRef.current?.click()} title={`${tx('mergeAddOwn', 'Add your own video or image')} · ${tx('ed_drop_hint', 'Videos and images')}`}>
+              <div className="flex items-center rounded-xl bg-white/[0.03] border border-white/[0.06] p-0.5">
+                <button type="button" className={herramienta} onClick={deshacer} disabled={!hayDeshacer} title={tx('ed_undo', 'Undo') + ' (Ctrl+Z)'} aria-label={tx('ed_undo', 'Undo')}><Undo2 className="w-4 h-4" /></button>
+                <button type="button" className={herramienta} onClick={rehacer} disabled={!hayRehacer} title={tx('ed_redo', 'Redo') + ' (Ctrl+Shift+Z)'} aria-label={tx('ed_redo', 'Redo')}><Redo2 className="w-4 h-4" /></button>
+              </div>
+              <div className="flex items-center rounded-xl bg-white/[0.03] border border-white/[0.06] p-0.5">
+                <button type="button" className={herramienta + ' !text-white'} onClick={cortar} disabled={!selLista || !puedeCortar} title={tx('ed_split', 'Split at the playhead') + ' (Ctrl+B)'}>
+                  <Scissors className="w-4 h-4 text-twitch" /><span className="hidden md:inline">{tx('ed_split_short', 'Split')}</span>
+                </button>
+                <button type="button" className={herramienta} onClick={quitarAntes} disabled={!selLista || !puedeAntes} title={tx('ed_cut_before', 'Remove before') + ' (Q)'}>
+                  <ArrowLeftToLine className="w-4 h-4 text-twitch" /><span className="hidden xl:inline">{tx('ed_cut_before', 'Remove before')}</span>
+                </button>
+                <button type="button" className={herramienta} onClick={quitarDespues} disabled={!selLista || !puedeDespues} title={tx('ed_cut_after', 'Remove after') + ' (W)'}>
+                  <span className="hidden xl:inline">{tx('ed_cut_after', 'Remove after')}</span><ArrowRightToLine className="w-4 h-4 text-twitch" />
+                </button>
+                <button type="button" className={herramienta + ' hover:!text-red-300 hover:!bg-red-500/10'} onClick={() => (tramo ? quitarTramo() : borrar())} disabled={!sel} title={(tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')) + ' (Supr)'}>
+                  <Trash2 className="w-4 h-4" /><span className="hidden md:inline">{tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')}</span>
+                </button>
+              </div>
+              <button type="button" className="h-9 px-3 rounded-xl bg-twitch/15 border border-twitch/40 text-[11px] font-bold text-white hover:bg-twitch/25 flex items-center gap-1.5 cursor-pointer transition-colors" onClick={() => inputRef.current?.click()} title={`${tx('mergeAddOwn', 'Add your own video or image')} · ${tx('ed_drop_hint', 'Videos and images')}`}>
                 <Plus className="w-4 h-4 text-twitch" /><span className="hidden sm:inline">{tx('ed_add', 'Add media')}</span>
               </button>
-              <span className="ml-1 text-[11px] font-mono font-bold text-gray-500 tabular-nums hidden sm:inline">{mmss(posicion, true)} / {mmss(totalFinal, true)}</span>
             </>}
           />
-          <p className="mt-1 text-[10px] font-bold text-gray-600 hidden md:block">{tx('ed_tl_hint', 'Click a clip to put the playhead there · drag its white edges to trim · drag a clip to move it · Ctrl + wheel to zoom')}</p>
+          <p className="mt-1.5 text-[10px] font-medium text-gray-600 hidden md:block">{tx('ed_tl_hint', 'Click a clip to put the playhead there · drag its white edges to trim · drag a clip to move it · Ctrl + wheel to zoom')}</p>
         </div>
       </div>
     </div>,

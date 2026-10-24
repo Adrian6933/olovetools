@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "क्लिप फ़ॉर्मैट",
   "mergeSummary": "{n} क्लिप · {d}",
   "ed_drop": "टाइमलाइन में जोड़ने के लिए छोड़ें",
-  "ed_drop_hint": "वीडियो और इमेज"
+  "ed_drop_hint": "वीडियो और इमेज",
+  "ed_play": "चलाएं"
 };

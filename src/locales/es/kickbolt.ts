@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "Formato de los clips",
   "mergeSummary": "{n} clips · {d}",
   "ed_drop": "Suéltalo para añadirlo a la línea de tiempo",
-  "ed_drop_hint": "Vídeos e imágenes"
+  "ed_drop_hint": "Vídeos e imágenes",
+  "ed_play": "Reproducir"
 };

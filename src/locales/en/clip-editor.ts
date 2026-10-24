@@ -202,5 +202,6 @@ export default {
   "en_error": "Could not process the clip.",
   "en_unsupported": "Your browser can't process video this way. Try Chrome or Edge.",
   "ed_drop": "Drop to add it to the timeline",
-  "ed_drop_hint": "Videos and images"
+  "ed_drop_hint": "Videos and images",
+  "ed_play": "Play"
 };

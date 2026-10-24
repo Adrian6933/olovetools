@@ -202,5 +202,6 @@ export default {
   "en_error": "Der Clip konnte nicht verarbeitet werden.",
   "en_unsupported": "Dein Browser kann Video so nicht verarbeiten. Versuche Chrome oder Edge.",
   "ed_drop": "Loslassen, um es zur Zeitleiste hinzuzufügen",
-  "ed_drop_hint": "Videos und Bilder"
+  "ed_drop_hint": "Videos und Bilder",
+  "ed_play": "Abspielen"
 };

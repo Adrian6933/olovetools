@@ -478,5 +478,6 @@ export default {
   "fmtSectionClips": "Format des clips",
   "mergeSummary": "{n} clips · {d}",
   "ed_drop": "Déposez pour l’ajouter à la timeline",
-  "ed_drop_hint": "Vidéos et images"
+  "ed_drop_hint": "Vidéos et images",
+  "ed_play": "Lire"
 };

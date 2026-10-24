@@ -304,14 +304,14 @@ const Timeline: React.FC<Props> = ({
     return { a, b };
   })();
 
-  const botonZoom = 'w-8 h-8 rounded-lg border border-white/10 text-gray-400 hover:text-white hover:border-white/25 flex items-center justify-center cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed';
+  const botonZoom = 'w-8 h-8 rounded-lg text-gray-400 hover:text-white hover:bg-white/[0.06] flex items-center justify-center cursor-pointer transition-colors disabled:opacity-25 disabled:cursor-not-allowed';
 
   return (
     <div className="flex flex-col gap-1.5 select-none">
       {/* Herramientas (del editor) y zoom */}
       <div className="flex items-center gap-1.5 flex-wrap">
         <div className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0">{herramientas}</div>
-        <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1 shrink-0 rounded-xl bg-white/[0.03] border border-white/[0.06] p-0.5 pr-1.5">
           <button type="button" className={botonZoom} onClick={() => setZoom(z => Math.max(1, z / 1.5))} disabled={zoom <= 1} title={tx('ed_zoom_out', 'Zoom out') + ' (Ctrl −)'} aria-label={tx('ed_zoom_out', 'Zoom out')}><ZoomOut className="w-4 h-4" /></button>
           <input
             type="range" min={0} max={100} step={1}
@@ -325,7 +325,7 @@ const Timeline: React.FC<Props> = ({
         </div>
       </div>
 
-      <div ref={scroller} className="overflow-x-auto overflow-y-hidden custom-scrollbar rounded-xl bg-black/30 border border-white/5">
+      <div ref={scroller} className="overflow-x-auto overflow-y-hidden custom-scrollbar rounded-2xl bg-black/40 border border-white/[0.06]">
         <div
           ref={lienzo}
           className="relative touch-none"
