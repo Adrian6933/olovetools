@@ -11,6 +11,7 @@ import React, { useCallback, useState } from 'react';
 import { Scissors, Upload, Loader2, Film, ImageIcon, RotateCcw, ArrowRight, Zap, Lock, Gauge, ListVideo } from 'lucide-react';
 
 import ClipEditor from '../../components/clipstudio/editor/ClipEditor';
+import type { Capa } from '../../components/clipstudio/editor/animaciones';
 import { BrandContext, type ClipBrand } from '../../components/clipstudio/brand';
 import { prepararVideo } from '../../components/clipstudio/editor/ownMedia';
 import { durFinal, mmss, nuevoId, registrarFuente, type Pieza } from '../../components/clipstudio/editor/model';
@@ -58,6 +59,7 @@ const ClipEditorTool: React.FC<{ lang: Language; dictionary?: any }> = ({ lang =
   const tx = (k: string, fb: string) => (typeof dictionary?.[k] === 'string' && dictionary[k]) || fb;
 
   const [piezas, setPiezas] = useState<Pieza[]>([]);
+  const [capas, setCapas] = useState<Capa[]>([]);
   const [abierto, setAbierto] = useState(false);
   const [leyendo, setLeyendo] = useState(0);
   const [errores, setErrores] = useState<string[]>([]);
@@ -280,6 +282,8 @@ const ClipEditorTool: React.FC<{ lang: Language; dictionary?: any }> = ({ lang =
             clips={SIN_SELECCION}
             piezas={piezas}
             setPiezas={setPiezas}
+            capas={capas}
+            setCapas={setCapas}
             quality="1080"
             watermarkOn={false}
             watermarkConfig={null}

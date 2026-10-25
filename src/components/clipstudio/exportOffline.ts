@@ -30,6 +30,7 @@ import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 import { bitrateDeGrabacion, suavizar } from './recorder';
 import { crearNitidez } from './nitidez';
 import { crearEncaje, medidasDe, type Encaje, type Formato } from './formato';
+import { dibujarCapas, type Capa } from './editor/animaciones';
 
 export interface PiezaOffline {
   blob: Blob;
@@ -61,6 +62,8 @@ export interface OpcionesOffline {
   fade?: boolean;
   /** Nitidez CAS de 0 (nada) a 1 (fuerte); ver nitidez.ts. */
   nitidez?: number;
+  /** Animaciones encima (suscríbete...), en segundos del resultado. */
+  capas?: Capa[];
 }
 
 export interface ProgresoOffline {
@@ -203,6 +206,9 @@ export const exportarSinTiempoReal = async (
         if (conMarca) drawWatermarkOnCanvas(ctx, opts.watermark!, p.channelName, width, height, t, dur);
         const alfa = velo(t, dur);
         if (alfa > 0) { ctx.fillStyle = `rgba(0,0,0,${Math.min(1, alfa)})`; ctx.fillRect(0, 0, width, height); }
+        // Las animaciones van por encima de todo, también del fundido: un
+        // "suscríbete" que cruza un corte no se apaga con el clip.
+        if (opts.capas?.length) dibujarCapas(ctx, opts.capas, acumulado + t, width, height);
       };
       const avisar = (t: number) => onProgress?.({
         index: i + 1, total: abiertas.length, elapsed: acumulado + t, duration: total,

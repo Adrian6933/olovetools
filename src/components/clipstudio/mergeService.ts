@@ -17,6 +17,7 @@ import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 import { alPresentarFotograma, bitrateDeGrabacion, formatoDeGrabacion, suavizar } from './recorder';
 import { medidasDe, type Encaje, type Formato } from './formato';
+import type { Capa } from './editor/animaciones';
 
 export interface MergeItem {
   blob: Blob;
@@ -47,6 +48,8 @@ export interface MergeOptions {
   /** 16:9 (también "original") o 9:16; ver formato.ts. */
   formato?: Formato;
   encaje?: Encaje;
+  /** Animaciones encima (solo fotograma a fotograma; en tiempo real no salen). */
+  capas?: Capa[];
   /** Nitidez CAS 0-1 (solo fotograma a fotograma; ver nitidez.ts). */
   nitidez?: number;
 }
@@ -121,7 +124,7 @@ export const mergeClipsToVideo = async (
     const offline = await import('./exportOffline');
     if (await offline.sePuedeSinTiempoReal(items, ancho, alto)) {
       try {
-        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, encaje: opts.encaje, watermark: opts.watermark, fade: opts.fade, nitidez: opts.nitidez }, onProgress, signal);
+        return await offline.exportarSinTiempoReal(items, { width: ancho, height: alto, encaje: opts.encaje, watermark: opts.watermark, fade: opts.fade, nitidez: opts.nitidez, capas: opts.capas }, onProgress, signal);
       } catch (e: any) {
         if (e?.name === 'AbortError' || signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
         console.warn('Export frame by frame failed; recording in real time instead', e);

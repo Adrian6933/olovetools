@@ -31,6 +31,7 @@ import { CALIDAD_POR_DEFECTO, FUERZA, guardarCalidad, leerCalidad, type CalidadE
 import CalidadSelector from './CalidadSelector';
 import AvisoGrafica from './AvisoGrafica';
 import { obtenerFuente, soltarFuentes, type Pieza } from './editor/model';
+import type { Capa } from './editor/animaciones';
 import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
 import {
@@ -220,6 +221,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     [clips],
   );
   const [piezasEditor, setPiezasEditor] = useState<Pieza[]>([]);
+  const [capasEditor, setCapasEditor] = useState<Capa[]>([]);
 
   // ---- "Abrir en Clip Editor": los clips, a la herramienta suelta ----------
   // Se bajan (o se toman de la caché del editor, si ya se abrió) y viajan por
@@ -319,6 +321,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const handleReset = useCallback(() => {
     setEditor(null);
     setPiezasEditor([]);
+    setCapasEditor([]);
     soltarFuentes();
     resolveRequestRef.current += 1;
     if (abortControllerRef.current) {
@@ -1334,6 +1337,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
           clips={clipsListos}
           piezas={piezasEditor}
           setPiezas={setPiezasEditor}
+          capas={capasEditor}
+          setCapas={setCapasEditor}
           enfoque={editor.enfoque}
           quality={selectedQuality}
           watermarkOn={marcaActiva}

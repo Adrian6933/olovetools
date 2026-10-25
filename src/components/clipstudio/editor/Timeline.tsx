@@ -18,12 +18,17 @@
 //
 // Entre pieza y pieza queda un hueco a la vista (solo dibujado: en el vídeo
 // final van pegadas) para distinguirlas de un vistazo.
+// Encima de los clips, si hay alguna, va la fila de animaciones (suscríbete y
+// compañía, ver animaciones.ts): cada una se arrastra para moverla en el
+// tiempo y su borde derecho cambia cuánto dura, con el mismo imán.
+//
 // Las herramientas (cortar, quitar…) llegan del editor por `herramientas`: es
 // él quien sabe hacerlas; aquí solo se colocan a la izquierda del zoom.
 // ============================================================================
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { ImageIcon, VolumeX, Gauge, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import { durFinal, fuenteLista, mmss, tiraDeFotogramas, type Pieza } from './model';
+import { plantilla, type Capa } from './animaciones';
 
 interface Props {
   piezas: Pieza[];
@@ -45,6 +50,15 @@ interface Props {
   /** Enseñar en el reproductor el fotograma del borde que se arrastra. */
   onPreview: (id: string, tOriginal: number) => void;
   tx: (k: string, fb: string) => string;
+  /** Animaciones encima de los clips. */
+  capas?: Capa[];
+  capaElegida?: string | null;
+  onSelectCapa?: (id: string) => void;
+  /** Antes de mover o alargar una (un paso de deshacer). */
+  onCapaStart?: () => void;
+  onCapa?: (id: string, parche: Partial<Capa>) => void;
+  /** Nombre de cada plantilla, para su bloque. */
+  nombreCapa?: (c: Capa) => string;
 }
 
 const MIN_TRAMO = 0.3;
@@ -69,12 +83,21 @@ type Gesto =
   | { tipo: 'pulsado'; id: string; x0: number; tx0: number }
   | { tipo: 'arrastre'; id: string; agarre: number }
   | { tipo: 'borde'; id: string; lado: 'izq' | 'der'; x0: number; inicio: number; fin: number; total: number }
-  | { tipo: 'buscar' };
+  | { tipo: 'buscar' }
+  | { tipo: 'capa'; id: string; x0: number; inicio: number; movida: boolean }
+  | { tipo: 'capaBorde'; id: string; x0: number; dur: number };
+
+/** Alto de la fila de animaciones (con su respiro). */
+const ALTO_CAPAS = 30;
 
 const Timeline: React.FC<Props> = ({
   piezas, seleccionada, posicion, reproduciendo, marcas, version, herramientas,
   onSeek, onSelect, onReorder, onTrimStart, onTrim, onPreview, tx,
+  capas = [], capaElegida = null, onSelectCapa, onCapaStart, onCapa, nombreCapa,
 }) => {
+  const conCapas = capas.length > 0;
+  /** Dónde empieza la pista de clips: debajo de la regla y de las animaciones. */
+  const topPista = 30 + (conCapas ? ALTO_CAPAS : 0);
   const scroller = useRef<HTMLDivElement>(null);
   const lienzo = useRef<HTMLDivElement>(null);
   const [ancho, setAncho] = useState(800);
@@ -215,9 +238,57 @@ const Timeline: React.FC<Props> = ({
     capturar(e);
   };
 
+  const alPulsarCapa = (e: React.PointerEvent, c: Capa) => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    onSelectCapa?.(c.id);
+    gesto.current = { tipo: 'capa', id: c.id, x0: e.clientX, inicio: c.inicio, movida: false };
+    capturar(e);
+  };
+  const alPulsarBordeCapa = (e: React.PointerEvent, c: Capa) => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    onSelectCapa?.(c.id);
+    onCapaStart?.();
+    gesto.current = { tipo: 'capaBorde', id: c.id, x0: e.clientX, dur: c.dur };
+    capturar(e);
+  };
+  /** Imán para las animaciones: al cursor y a los cortes. */
+  const pegar = (t: number) => {
+    const cerca = [posicion, ...cortes].find(c => Math.abs(c - t) * pxSeg < IMAN);
+    setGuia(cerca ?? null);
+    return cerca ?? t;
+  };
+
   const alMover = (e: React.PointerEvent) => {
     const g = gesto.current;
     if (!g) return;
+    if (g.tipo === 'capa') {
+      if (!g.movida) {
+        if (Math.abs(e.clientX - g.x0) < 4) return;
+        g.movida = true;
+        onCapaStart?.();
+      }
+      const c = capas.find(x => x.id === g.id);
+      if (!c) return;
+      let inicio = Math.max(0, g.inicio + (e.clientX - g.x0) / pxSeg);
+      // Se pega por el principio o por el final, lo que quede más cerca.
+      const porInicio = pegar(inicio);
+      if (porInicio !== inicio) inicio = porInicio;
+      else {
+        const fin = pegar(inicio + c.dur);
+        if (fin !== inicio + c.dur) inicio = Math.max(0, fin - c.dur);
+      }
+      onCapa?.(g.id, { inicio: Math.round(inicio * 100) / 100 });
+      return;
+    }
+    if (g.tipo === 'capaBorde') {
+      const c = capas.find(x => x.id === g.id);
+      if (!c) return;
+      const fin = pegar(c.inicio + Math.max(0.8, g.dur + (e.clientX - g.x0) / pxSeg));
+      onCapa?.(g.id, { dur: Math.round(Math.max(0.8, Math.min(30, fin - c.inicio)) * 100) / 100 });
+      return;
+    }
     if (g.tipo === 'buscar') { buscarCon(e.clientX); return; }
     if (g.tipo === 'pulsado') {
       if (Math.abs(e.clientX - g.x0) < 6) return;
@@ -329,7 +400,7 @@ const Timeline: React.FC<Props> = ({
         <div
           ref={lienzo}
           className="relative touch-none"
-          style={{ width: anchoTotal, height: ALTO_PISTA + 34 }}
+          style={{ width: anchoTotal, height: topPista + ALTO_PISTA + 4 }}
           onPointerDown={alPulsarFondo}
           onPointerMove={alMover}
           onPointerUp={alSoltar}
@@ -349,8 +420,38 @@ const Timeline: React.FC<Props> = ({
             ))}
           </div>
 
+          {/* Animaciones, encima de los clips */}
+          {conCapas && (
+            <div className="absolute inset-x-0" style={{ top: 30, height: ALTO_CAPAS - 6 }}>
+              {capas.map(c => {
+                const izq = xDe(c.inicio);
+                const w = Math.max(10, c.dur * pxSeg);
+                const elegida = c.id === capaElegida;
+                const color = plantilla(c.plantilla).color;
+                return (
+                  <div
+                    key={c.id}
+                    onPointerDown={e => alPulsarCapa(e, c)}
+                    className={`absolute top-0 h-full rounded-lg flex items-center gap-1 px-2 overflow-hidden cursor-grab active:cursor-grabbing text-[10px] font-black text-white whitespace-nowrap ${elegida ? 'ring-2 ring-white z-10' : 'ring-1 ring-inset ring-black/40 hover:brightness-110'}`}
+                    style={{ left: izq + 1, width: w - 2, background: `linear-gradient(180deg, ${color}, ${color}cc)` }}
+                    title={`${nombreCapa ? nombreCapa(c) : c.plantilla} · ${mmss(c.dur, true)}`}
+                  >
+                    <span className="truncate">{nombreCapa ? nombreCapa(c) : c.plantilla}</span>
+                    {elegida && (
+                      <span
+                        onPointerDown={e => alPulsarBordeCapa(e, c)}
+                        className="absolute right-0 top-0 h-full w-2.5 bg-white/90 cursor-ew-resize rounded-r-lg"
+                        title={tx('ed_tl_trim', 'Drag to trim')}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
           {/* Pista */}
-          <div className="absolute inset-x-0" style={{ top: 30, height: ALTO_PISTA }}>
+          <div className="absolute inset-x-0" style={{ top: topPista, height: ALTO_PISTA }}>
             {piezas.map((p, i) => {
               const d = durFinal(p);
               const izq = xDe(inicios[i]);

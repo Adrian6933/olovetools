@@ -18,7 +18,7 @@ import {
   Scissors, X, Play, Pause, SkipBack, SkipForward, ListVideo, Plus, Copy, Trash2, ChevronLeft, ChevronRight,
   Volume2, VolumeX, RotateCcw, Download, Loader2, Blend, Sparkles, Film, Package, AlertCircle,
   ChevronsLeft, ChevronsRight, ArrowLeftToLine, ArrowRightToLine, Crop, Undo2, Redo2,
-  Clock, Gauge, Keyboard, ChevronDown, Image as ImageIcon,
+  Clock, Gauge, Keyboard, ChevronDown, Image as ImageIcon, Wand2, Languages, Maximize, Move,
 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from '../types';
 import { useBrand } from '../brand';
@@ -30,6 +30,9 @@ import AvisoGrafica from '../AvisoGrafica';
 import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from '../nitidez';
 import TrimBar from './TrimBar';
 import Timeline from './Timeline';
+import GaleriaAnimaciones from './GaleriaAnimaciones';
+import { IDIOMAS_ANIM, PLANTILLAS, dibujarCapas, plantilla, type Capa, type IdiomaAnim, type PlantillaId } from './animaciones';
+import { POS_MAX, POS_MIN } from '../watermarkService';
 import {
   aMergeItem, claveFuente, durFinal, fuenteLista, mmss, nuevoId, obtenerFuente, piezaDeClip, registrarFuente,
   tiraDeFotogramas, type Pieza,
@@ -51,6 +54,12 @@ interface Props {
    * plataforma que firmar, así que el interruptor no se enseña.
    */
   sinMarca?: boolean;
+  /**
+   * Animaciones encima del vídeo (suscríbete...). Viven en el padre, como las
+   * piezas, para que cerrar el editor no las pierda; sin ellas, en el editor.
+   */
+  capas?: Capa[];
+  setCapas?: React.Dispatch<React.SetStateAction<Capa[]>>;
 }
 
 const VELOCIDADES = [0.5, 0.75, 1, 1.5, 2];
@@ -68,9 +77,12 @@ type Export =
   | { fase: 'preparando'; pct: number }
   | { fase: 'grabando'; pieza: number; total: number; pct: number; queda: number };
 
-const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, quality, watermarkOn, watermarkConfig, t, onClose, sinMarca = false }) => {
+const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, quality, watermarkOn, watermarkConfig, t, onClose, sinMarca = false, capas: capasPadre, setCapas: setCapasPadre }) => {
   const brand = useBrand();
   const tx = (k: string, fb: string) => (typeof t?.[k] === 'string' && t[k]) || fb;
+  const [capasPropias, setCapasPropias] = useState<Capa[]>([]);
+  const capas = capasPadre ?? capasPropias;
+  const setCapas = setCapasPadre ?? setCapasPropias;
 
   // ---- piezas en sincronía con los clips de la herramienta ----------------
   useEffect(() => {
@@ -303,19 +315,23 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   // ---- edición ------------------------------------------------------------
   // Deshacer: antes de cada edición se guarda la lista como estaba. Arrastrar
   // un tirador guarda una sola vez, al cogerlo, y no en cada movimiento.
-  const historial = useRef<Pieza[][]>([]);
-  const rehechos = useRef<Pieza[][]>([]);
+  // Cada paso guarda piezas Y animaciones: deshacer vale para las dos.
+  type Paso = { piezas: Pieza[]; capas: Capa[] };
+  const historial = useRef<Paso[]>([]);
+  const rehechos = useRef<Paso[]>([]);
   const [hayDeshacer, setHayDeshacer] = useState(false);
   const [hayRehacer, setHayRehacer] = useState(false);
   const piezasRef = useRef(piezas);
   piezasRef.current = piezas;
+  const capasRef = useRef(capas);
+  capasRef.current = capas;
   const ultimoGuardado = useRef(0);
   const guardar = useCallback((agrupar = false) => {
     const ahora = performance.now();
     const seguido = agrupar && ahora - ultimoGuardado.current < 700;
     ultimoGuardado.current = ahora;
     if (seguido) return;
-    historial.current.push(piezasRef.current);
+    historial.current.push({ piezas: piezasRef.current, capas: capasRef.current });
     if (historial.current.length > 60) historial.current.shift();
     // Una edición nueva tira lo que se podía rehacer.
     rehechos.current = [];
@@ -326,19 +342,21 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     const previo = historial.current.pop();
     setHayDeshacer(historial.current.length > 0);
     if (!previo) return;
-    rehechos.current.push(piezasRef.current);
+    rehechos.current.push({ piezas: piezasRef.current, capas: capasRef.current });
     setHayRehacer(true);
     parar();
-    setPiezas(previo);
+    setPiezas(previo.piezas);
+    setCapas(previo.capas);
   };
   const rehacer = () => {
     const siguiente = rehechos.current.pop();
     setHayRehacer(rehechos.current.length > 0);
     if (!siguiente) return;
-    historial.current.push(piezasRef.current);
+    historial.current.push({ piezas: piezasRef.current, capas: capasRef.current });
     setHayDeshacer(true);
     parar();
-    setPiezas(siguiente);
+    setPiezas(siguiente.piezas);
+    setCapas(siguiente.capas);
   };
   /** Saltar al corte anterior o siguiente (↑ / ↓, como en CapCut). */
   const irACorte = (dir: -1 | 1) => {
@@ -467,28 +485,96 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
     }
   };
 
+  // ---- animaciones (suscríbete...) ----------------------------------------
+  const [capaSel, setCapaSel] = useState<string | null>(null);
+  const capa = capas.find(c => c.id === capaSel) || null;
+  const [galeria, setGaleria] = useState(false);
+  // El idioma de la última que se puso: quien hace vídeos en un idioma los
+  // hace todos en ese. Por defecto inglés, el más usado en YouTube.
+  const [idiomaAnim, setIdiomaAnim] = useState<IdiomaAnim>('en');
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem('clipstudio_anim_lang') as IdiomaAnim | null;
+      if (v && IDIOMAS_ANIM.some(i => i.id === v)) setIdiomaAnim(v);
+    } catch { /* inglés */ }
+  }, []);
+  const elegirIdiomaAnim = (i: IdiomaAnim) => {
+    setIdiomaAnim(i);
+    try { localStorage.setItem('clipstudio_anim_lang', i); } catch { /* vale para esta visita */ }
+  };
+  const nombrePlantilla = (id: PlantillaId) => tx(`an_${id}`, ({
+    suscribir: 'Subscribe button', combo: 'Like + subscribe + bell', banner: 'Subscribe banner', minimo: 'Mini subscribe',
+    final: 'End screen', twitch: 'Twitch follow', campana: 'Notification bell', comentario: 'Leave a comment',
+  } as Record<PlantillaId, string>)[id]);
+  /** El canal para las que lo enseñan: el del primer clip que tenga. */
+  const canalPorDefecto = piezas.find(p => p.canal)?.canal || '';
+
+  const anadirCapa = (id: PlantillaId) => {
+    const pl = plantilla(id);
+    // La pantalla final, al final; las demás, donde está el cursor.
+    const inicio = pl.pantalla ? Math.max(0, totalFinal - pl.dur) : Math.max(0, Math.min(posicion, Math.max(0, totalFinal - 0.5)));
+    const nueva: Capa = { id: nuevoId(), plantilla: id, idioma: idiomaAnim, inicio: Math.round(inicio * 100) / 100, dur: pl.dur, x: pl.x, y: pl.y, escala: 1, canal: canalPorDefecto };
+    guardar();
+    setCapas(prev => [...prev, nueva]);
+    setCapaSel(nueva.id);
+    setGaleria(false);
+  };
+  const cambiarCapaSinGuardar = (id: string, parche: Partial<Capa>) => setCapas(prev => prev.map(c => (c.id === id ? { ...c, ...parche } : c)));
+  const cambiarCapa = (id: string, parche: Partial<Capa>, agrupar = false) => { guardar(agrupar); cambiarCapaSinGuardar(id, parche); };
+  const borrarCapa = (id: string) => { guardar(); setCapas(prev => prev.filter(c => c.id !== id)); setCapaSel(null); };
+  const duplicarCapa = (c: Capa) => {
+    const copia = { ...c, id: nuevoId(), inicio: Math.round((c.inicio + c.dur) * 100) / 100 };
+    guardar();
+    setCapas(prev => [...prev, copia]);
+    setCapaSel(copia.id);
+  };
+
+  // Vista previa en el visor: el mismo dibujo que al exportar, en un canvas
+  // encima del vídeo, repintado cada vez que se mueve el cursor.
+  const lienzoCapas = useRef<HTMLCanvasElement>(null);
+  const [tamVisor, setTamVisor] = useState({ w: 0, h: 0 });
+  useEffect(() => {
+    const cv = lienzoCapas.current;
+    if (!cv) return;
+    const ro = new ResizeObserver(() => setTamVisor({ w: cv.clientWidth, h: cv.clientHeight }));
+    ro.observe(cv);
+    setTamVisor({ w: cv.clientWidth, h: cv.clientHeight });
+    return () => ro.disconnect();
+  }, []);
+  useEffect(() => {
+    const cv = lienzoCapas.current;
+    if (!cv || !tamVisor.w) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = Math.round(tamVisor.w * dpr);
+    const H = Math.round(tamVisor.h * dpr);
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+    const ctx = cv.getContext('2d')!;
+    ctx.clearRect(0, 0, W, H);
+    if (capas.length) dibujarCapas(ctx, capas, posicion, W, H);
+  }, [capas, posicion, tamVisor]);
+
   // ---- arrastrar archivos del ordenador ------------------------------------
   // Soltar vídeos o imágenes en cualquier parte del editor los añade al final,
   // igual que el botón. El contador evita el parpadeo del aviso al pasar por
   // encima de los hijos (cada uno lanza su dragenter/dragleave).
   const [soltando, setSoltando] = useState(false);
-  const capas = useRef(0);
+  const entradas = useRef(0);
   const conArchivos = (e: React.DragEvent) => Array.from(e.dataTransfer?.types || []).includes('Files');
   const alEntrarArchivo = (e: React.DragEvent) => {
     if (!conArchivos(e)) return;
     e.preventDefault();
-    capas.current += 1;
+    entradas.current += 1;
     setSoltando(true);
   };
   const alSalirArchivo = (e: React.DragEvent) => {
     if (!conArchivos(e)) return;
-    capas.current = Math.max(0, capas.current - 1);
-    if (capas.current === 0) setSoltando(false);
+    entradas.current = Math.max(0, entradas.current - 1);
+    if (entradas.current === 0) setSoltando(false);
   };
   const alSoltarArchivo = (e: React.DragEvent) => {
     if (!conArchivos(e)) return;
     e.preventDefault();
-    capas.current = 0;
+    entradas.current = 0;
     setSoltando(false);
     const validos = Array.from(e.dataTransfer.files).filter(f => /^(video|image)\//.test(f.type) || /\.(mp4|webm|mov|m4v|mkv)$/i.test(f.name));
     if (!validos.length) return;
@@ -553,7 +639,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
         setExp({ fase: 'preparando', pct: Math.round((listas / clips.length) * 100) });
       }
       const marca = conMarca ? (watermarkConfig ?? loadStoredWatermarkConfig(brand)) : null;
-      const opts = { watermark: marca, fade: fundido, height: alto, nitidez: FUERZA[calidad.nitidez] };
+      const opts = { watermark: marca, fade: fundido, height: alto, nitidez: FUERZA[calidad.nitidez], capas };
       const items = piezas.map(aMergeItem);
 
       if (modo === 'uno') {
@@ -567,8 +653,15 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
         const durs = piezas.map(durFinal);
         const totalSeg = durs.reduce((a, b) => a + b, 0) || 1;
         let hechoSeg = 0;
+        let desde = 0;
         for (let i = 0; i < items.length; i += 1) {
-          const video = await mergeClipsToVideo([items[i]], opts, pr => {
+          // Cada archivo suelto lleva las animaciones que caen en su tramo,
+          // contadas desde su propio principio.
+          const suyas = capas
+            .filter(c => c.inicio < desde + durs[i] && c.inicio + c.dur > desde)
+            .map(c => ({ ...c, inicio: c.inicio - desde }));
+          desde += durs[i];
+          const video = await mergeClipsToVideo([items[i]], { ...opts, capas: suyas }, pr => {
             const seg = hechoSeg + pr.elapsed;
             setExp({ fase: 'grabando', pieza: i + 1, total: items.length, pct: Math.min(100, Math.round((seg / totalSeg) * 100)), queda: Math.max(0, totalSeg - seg) });
           }, ctrl.signal);
@@ -609,7 +702,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
       else if (e.key === 'o' || e.key === 'O') marcarSalida();
       else if (e.key === 'q' || e.key === 'Q') quitarAntes();
       else if (e.key === 'w' || e.key === 'W') quitarDespues();
-      else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); if (tramo) quitarTramo(); else borrar(); }
+      else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); if (capaSel) borrarCapa(capaSel); else if (tramo) quitarTramo(); else borrar(); }
       else if (e.key === 'ArrowUp') { e.preventDefault(); irACorte(-1); }
       else if (e.key === 'ArrowDown') { e.preventDefault(); irACorte(1); }
       else if (e.key === 'Home') { e.preventDefault(); parar(); saltarGlobal(0); }
@@ -656,6 +749,18 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
       onDragLeave={alSalirArchivo}
       onDrop={alSoltarArchivo}
     >
+      {galeria && (
+        <GaleriaAnimaciones
+          idioma={idiomaAnim}
+          onIdioma={elegirIdiomaAnim}
+          canal={canalPorDefecto}
+          nombre={nombrePlantilla}
+          onElegir={anadirCapa}
+          onCerrar={() => setGaleria(false)}
+          tx={tx}
+          estilo={brand.cssVars}
+        />
+      )}
       {soltando && (
         <div className="absolute inset-3 z-[60] rounded-3xl border-2 border-dashed border-twitch bg-twitch/10 backdrop-blur-sm flex flex-col items-center justify-center gap-3 pointer-events-none">
           <span className="p-4 rounded-2xl bg-twitch text-[var(--color-accent-ink)] shadow-2xl shadow-twitch/40"><Plus className="w-8 h-8" /></span>
@@ -768,6 +873,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                   {sel?.tipo === 'imagen' && fuenteLista(sel) && (
                     <img src={fuenteLista(sel)!.url} alt="" className="absolute inset-0 w-full h-full object-contain" />
                   )}
+                  <canvas ref={lienzoCapas} className="absolute inset-0 w-full h-full pointer-events-none" />
                   {sel && !lista(sel) && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs font-bold text-gray-400">
                       {carga?.error
@@ -814,7 +920,71 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
 
           {/* ---- propiedades de la pieza, por pestañas ---- */}
           <aside className="lg:w-[360px] shrink-0 border-t lg:border-t-0 lg:border-l border-white/[0.06] bg-[#0e0d13] flex flex-col min-h-0">
-            {sel ? (
+            {capa ? (
+              <>
+                <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
+                  <span className="w-14 aspect-video rounded-lg flex items-center justify-center shrink-0 ring-1 ring-white/10" style={{ background: plantilla(capa.plantilla).color }}>
+                    <Wand2 className="w-4 h-4 text-white" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-twitch">{tx('ed_anim_layer', 'Animation')} <span className="text-gray-500 font-mono normal-case tracking-normal">· {mmss(capa.inicio, true)} – {mmss(capa.inicio + capa.dur, true)}</span></p>
+                    <p className="text-sm font-bold text-white truncate">{nombrePlantilla(capa.plantilla)}</p>
+                  </div>
+                  <div className="flex items-center shrink-0 -mr-1.5">
+                    <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => duplicarCapa(capa)} title={tx('ed_duplicate', 'Duplicate')} aria-label={tx('ed_duplicate', 'Duplicate')}><Copy className="w-3.5 h-3.5" /></button>
+                    <button type="button" className={icono + ' !w-8 !h-8 hover:!text-red-300 hover:!bg-red-500/10'} onClick={() => borrarCapa(capa.id)} title={tx('ed_delete', 'Remove')} aria-label={tx('ed_delete', 'Remove')}><Trash2 className="w-3.5 h-3.5" /></button>
+                    <button type="button" className={icono + ' !w-8 !h-8'} onClick={() => setCapaSel(null)} title={tx('wm_close', 'Close')} aria-label={tx('wm_close', 'Close')}><X className="w-3.5 h-3.5" /></button>
+                  </div>
+                </div>
+                <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar p-4 space-y-5">
+                  <div className="space-y-2">
+                    <span className={titulo + ' flex items-center gap-1.5'}><Languages className="w-3.5 h-3.5 text-twitch" />{tx('ed_anim_lang', 'Text language')}</span>
+                    <div className="grid grid-cols-5 gap-1">
+                      {IDIOMAS_ANIM.map(i => (
+                        <button key={i.id} type="button" onClick={() => { cambiarCapa(capa.id, { idioma: i.id }); elegirIdiomaAnim(i.id); }} aria-pressed={capa.idioma === i.id} title={i.nombre} className={`h-8 rounded-lg text-[11px] font-black uppercase cursor-pointer transition-colors ${capa.idioma === i.id ? 'bg-twitch text-[var(--color-accent-ink)]' : 'bg-white/[0.04] text-gray-400 hover:text-white'}`}>{i.id}</button>
+                      ))}
+                    </div>
+                  </div>
+                  {(capa.plantilla === 'banner' || capa.plantilla === 'final') && (
+                    <label className="block space-y-2">
+                      <span className={titulo}>{tx('ed_anim_channel', 'Channel name')}</span>
+                      <input value={capa.canal} onChange={e => cambiarCapa(capa.id, { canal: e.target.value.slice(0, 40) }, true)} className="w-full h-10 rounded-xl bg-dark-950 border border-white/10 px-3 text-sm text-white outline-none focus:border-twitch" />
+                    </label>
+                  )}
+                  <label className="block">
+                    <span className="flex justify-between mb-2"><span className={titulo + ' flex items-center gap-1.5'}><Clock className="w-3.5 h-3.5 text-twitch" />{tx('ed_anim_dur', 'Duration')}</span><span className="text-xs font-mono font-bold text-twitch">{capa.dur.toFixed(1)}s</span></span>
+                    <input type="range" min={1} max={15} step={0.1} value={capa.dur} onChange={e => cambiarCapa(capa.id, { dur: parseFloat(e.target.value) }, true)} className="w-full accent-twitch h-1.5 cursor-pointer" />
+                  </label>
+                  {!plantilla(capa.plantilla).pantalla && (
+                    <>
+                      <label className="block">
+                        <span className="flex justify-between mb-2"><span className={titulo + ' flex items-center gap-1.5'}><Maximize className="w-3.5 h-3.5 text-twitch" />{tx('ed_anim_size', 'Size')}</span><span className="text-xs font-mono font-bold text-twitch">{Math.round(capa.escala * 100)}%</span></span>
+                        <input type="range" min={40} max={200} value={Math.round(capa.escala * 100)} onChange={e => cambiarCapa(capa.id, { escala: parseInt(e.target.value, 10) / 100 }, true)} className="w-full accent-twitch h-1.5 cursor-pointer" />
+                      </label>
+                      <div className="space-y-2">
+                        <span className={titulo + ' flex items-center gap-1.5'}><Move className="w-3.5 h-3.5 text-twitch" />{tx('ed_anim_pos', 'Position')}</span>
+                        <div className="flex gap-3">
+                          {/* Las nueve posiciones de siempre, como en la marca de agua */}
+                          <div className="grid grid-cols-3 gap-1 p-1 rounded-xl bg-dark-950 border border-white/10 shrink-0">
+                            {[3, 50, 97].flatMap(yy => [3, 50, 97].map(xx => (
+                              <button key={`${xx}-${yy}`} type="button" onClick={() => cambiarCapa(capa.id, { x: xx, y: yy })} aria-label={`${xx}% · ${yy}%`} className={`w-8 h-6 rounded-md cursor-pointer transition-colors ${capa.x === xx && capa.y === yy ? 'bg-twitch' : 'bg-white/[0.06] hover:bg-white/15'}`} />
+                            )))}
+                          </div>
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <input type="range" min={POS_MIN} max={POS_MAX} value={capa.x} onChange={e => cambiarCapa(capa.id, { x: parseInt(e.target.value, 10) }, true)} aria-label="X" className="w-full accent-twitch h-1.5 cursor-pointer" />
+                            <input type="range" min={POS_MIN} max={POS_MAX} value={capa.y} onChange={e => cambiarCapa(capa.id, { y: parseInt(e.target.value, 10) }, true)} aria-label="Y" className="w-full accent-twitch h-1.5 cursor-pointer" />
+                            <p className="text-[10px] font-mono text-gray-500">X {capa.x}% · Y {capa.y}%</p>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                  <button type="button" className={boton + ' w-full justify-center'} onClick={() => { parar(); saltarGlobal(capa.inicio); }}>
+                    <Play className="w-3.5 h-3.5 text-twitch" />{tx('ed_anim_goto', 'Go to its start')}
+                  </button>
+                </div>
+              </>
+            ) : sel ? (
               <>
                 <div className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
                   <span className="relative w-14 aspect-video rounded-lg overflow-hidden bg-black ring-1 ring-white/10 shrink-0">
@@ -963,7 +1133,13 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
             marcas={marcas}
             version={Object.values(cargas).filter(c => c.pct === 100).length}
             tx={tx}
-            onSelect={(id, tg) => { parar(); saltarGlobal(tg, id); }}
+            onSelect={(id, tg) => { parar(); setCapaSel(null); saltarGlobal(tg, id); }}
+            capas={capas}
+            capaElegida={capaSel}
+            onSelectCapa={id => setCapaSel(id)}
+            onCapaStart={() => guardar()}
+            onCapa={cambiarCapaSinGuardar}
+            nombreCapa={c => nombrePlantilla(c.plantilla)}
             onSeek={tg => { parar(); saltarGlobal(tg); }}
             onReorder={next => { guardar(true); setPiezas(next); }}
             onTrimStart={() => { parar(); guardar(); }}
@@ -988,6 +1164,9 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                   <Trash2 className="w-4 h-4" /><span className="hidden md:inline">{tramo ? tx('ed_remove_marked', 'Remove this part') : tx('ed_delete', 'Remove')}</span>
                 </button>
               </div>
+              <button type="button" className="h-9 px-3 rounded-xl bg-gradient-to-r from-red-500/25 to-twitch/25 border border-red-400/40 text-[11px] font-bold text-white hover:brightness-125 flex items-center gap-1.5 cursor-pointer transition-all" onClick={() => setGaleria(true)} title={tx('ed_anims_title', 'Ready-made animations')}>
+                <Wand2 className="w-4 h-4 text-red-300" /><span className="hidden sm:inline">{tx('ed_anims', 'Animations')}</span>
+              </button>
               <button type="button" className="h-9 px-3 rounded-xl bg-twitch/15 border border-twitch/40 text-[11px] font-bold text-white hover:bg-twitch/25 flex items-center gap-1.5 cursor-pointer transition-colors" onClick={() => inputRef.current?.click()} title={`${tx('mergeAddOwn', 'Add your own video or image')} · ${tx('ed_drop_hint', 'Videos and images')}`}>
                 <Plus className="w-4 h-4 text-twitch" /><span className="hidden sm:inline">{tx('ed_add', 'Add media')}</span>
               </button>
