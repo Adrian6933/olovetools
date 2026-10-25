@@ -26,6 +26,7 @@ import { duracionDe, mergeClipsToVideo, soltarVideo } from '../mergeService';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from '../watermarkService';
 import { prepararVideo } from './ownMedia';
 import CalidadSelector from '../CalidadSelector';
+import AvisoGrafica from '../AvisoGrafica';
 import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from '../nitidez';
 import TrimBar from './TrimBar';
 import Timeline from './Timeline';
@@ -724,6 +725,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                   ))}
                 </div>
                 <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
+                <AvisoGrafica tx={tx} />
                 <div className="flex gap-2">
                   {[
                     { on: fundido, set: setFundido, icon: <Blend className="w-3.5 h-3.5" />, label: tx('ed_fades', 'Fades') },

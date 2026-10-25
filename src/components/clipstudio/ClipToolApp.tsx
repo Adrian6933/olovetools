@@ -29,11 +29,13 @@ import MergePanel, { type MergePanelHandle } from './MergePanel';
 import ClipEditor from './editor/ClipEditor';
 import { CALIDAD_POR_DEFECTO, FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from './nitidez';
 import CalidadSelector from './CalidadSelector';
+import { ComparadorDeClip } from './ComparadorNitidez';
+import AvisoGrafica from './AvisoGrafica';
 import { obtenerFuente, soltarFuentes, type Pieza } from './editor/model';
 import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
 import {
-  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink, Clapperboard, Layers, Download, Crop, Blend
+  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink, Clapperboard, Layers, Download, Crop, Blend, Eye
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
@@ -187,6 +189,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const [calidad, setCalidad] = useState<CalidadExport>(CALIDAD_POR_DEFECTO);
   useEffect(() => { setCalidad(leerCalidad(brand.storagePrefix)); }, []);
   const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
+  /** Antes/después de la nitidez sobre un fotograma del primer clip. */
+  const [verComparacion, setVerComparacion] = useState(false);
 
   // Forma de lo que se exporta: por separado para el vídeo unido y para los
   // clips (p. ej. el vídeo en 16:9 y los clips en vertical para el móvil).
@@ -1005,6 +1009,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                  vídeo que unir, así que solo sale el formato de los clips. */}
              {clipsListos.length > 0 && (() => {
                const ocupado = !!zipProgress || !!wmAll || uniendo;
+               // ¿Algo se va a recodificar? Solo entonces importa la gráfica.
+               const necesitaProcesar = modo !== 'clips' || marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off' || calidad.alto > 1080;
                const usaVideo = modo !== 'clips';
                const usaClips = modo !== 'video';
                const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && formatoClips === '9:16');
@@ -1128,10 +1134,28 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                          onBusyChange={setUniendo}
                        />
                      </div>
-                     <div className={`min-w-0 ${ocupado ? 'opacity-50 pointer-events-none' : ''} lg:flex-1`}>
+                     <div className={`min-w-0 space-y-2 ${ocupado ? 'opacity-50 pointer-events-none' : ''} lg:flex-1`}>
                        <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
+                       {/* Ver qué hace cada nivel, sobre el propio clip: los
+                           nombres "suave / media / fuerte" solos no dicen nada. */}
+                       <button
+                         type="button"
+                         onClick={() => setVerComparacion(v => !v)}
+                         aria-expanded={verComparacion}
+                         className={`w-full h-9 rounded-xl border text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${verComparacion ? 'border-twitch/50 bg-twitch/10 text-white' : 'border-white/10 text-gray-400 hover:text-white hover:border-white/25'}`}
+                       >
+                         <Eye className="w-3.5 h-3.5 text-twitch" />
+                         {verComparacion ? (t.q_preview_hide || 'Hide the comparison') : (t.q_preview || 'See how it looks')}
+                       </button>
                      </div>
                    </div>
+                   {verComparacion && clipsListos[0] && (
+                     <div className="mt-3 space-y-1.5">
+                       <ComparadorDeClip clip={clipsListos[0]} calidad={calidad} tx={(k, fb) => (typeof t?.[k] === 'string' && t[k]) || fb} alto="h-[240px] sm:h-[320px]" />
+                       <p className="px-1 text-[10px] text-gray-500">{t.en_compare || 'Drag the line to compare · drag the picture to move around'}</p>
+                     </div>
+                   )}
+                   {necesitaProcesar && <AvisoGrafica tx={(k, fb) => (typeof t?.[k] === 'string' && t[k]) || fb} className="mt-3" />}
                    {resumen && <p className="mt-3 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
                  </div>
                );

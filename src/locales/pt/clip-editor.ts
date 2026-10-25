@@ -203,5 +203,9 @@ export default {
   "en_unsupported": "Seu navegador não consegue processar vídeo assim. Tente o Chrome ou o Edge.",
   "ed_drop": "Solte para adicionar à linha do tempo",
   "ed_drop_hint": "Vídeos e imagens",
-  "ed_play": "Reproduzir"
+  "ed_play": "Reproduzir",
+  "gpu_off_title": "Sua placa de vídeo não está sendo usada.",
+  "gpu_off_text": "A marca d’água, juntar e a nitidez funcionam mesmo assim, mas bem mais devagar. Ative «Usar aceleração gráfica quando disponível» nas configurações do navegador (Sistema) e reinicie-o.",
+  "gpu_old_title": "Este navegador grava em tempo real.",
+  "gpu_old_text": "Demora o mesmo que o vídeo e a aba precisa ficar visível. Chrome ou Edge processam várias vezes mais rápido."
 };

@@ -479,5 +479,11 @@ export default {
   "mergeSummary": "{n} clips · {d}",
   "ed_drop": "Drop to add it to the timeline",
   "ed_drop_hint": "Videos and images",
-  "ed_play": "Play"
+  "ed_play": "Play",
+  "gpu_off_title": "Your graphics card is not being used.",
+  "gpu_off_text": "The watermark, joining and sharpening work anyway, but much slower. Turn on \"Use graphics acceleration when available\" in your browser settings (System) and restart it.",
+  "gpu_old_title": "This browser records in real time.",
+  "gpu_old_text": "It takes as long as the video lasts and the tab must stay visible. Chrome or Edge process it several times faster.",
+  "q_preview": "See how it looks",
+  "q_preview_hide": "Hide the comparison"
 };

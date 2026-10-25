@@ -479,5 +479,11 @@ export default {
   "mergeSummary": "{n} clips · {d}",
   "ed_drop": "Suéltalo para añadirlo a la línea de tiempo",
   "ed_drop_hint": "Vídeos e imágenes",
-  "ed_play": "Reproducir"
+  "ed_play": "Reproducir",
+  "gpu_off_title": "No se está usando tu tarjeta gráfica.",
+  "gpu_off_text": "La marca, unir y la nitidez funcionan igual, pero mucho más lento. Activa «Usar aceleración gráfica cuando esté disponible» en los ajustes del navegador (Sistema) y reinícialo.",
+  "gpu_old_title": "Este navegador graba en tiempo real.",
+  "gpu_old_text": "Tarda lo que dura el vídeo y la pestaña tiene que quedarse a la vista. Chrome o Edge lo procesan varias veces más rápido.",
+  "q_preview": "Ver cómo queda",
+  "q_preview_hide": "Ocultar la comparación"
 };

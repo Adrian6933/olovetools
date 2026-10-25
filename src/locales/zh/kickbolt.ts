@@ -479,5 +479,11 @@ export default {
   "mergeSummary": "{n} 个剪辑 · {d}",
   "ed_drop": "松开即可添加到时间线",
   "ed_drop_hint": "视频和图片",
-  "ed_play": "播放"
+  "ed_play": "播放",
+  "gpu_off_title": "没有使用你的显卡。",
+  "gpu_off_text": "水印、合并和锐化仍然可用，但会慢很多。请在浏览器设置（系统）中开启“使用图形加速（如果可用）”，然后重启浏览器。",
+  "gpu_old_title": "此浏览器会实时录制。",
+  "gpu_old_text": "耗时与视频时长相同，且标签页必须保持可见。Chrome 或 Edge 的处理速度快好几倍。",
+  "q_preview": "查看效果",
+  "q_preview_hide": "隐藏对比"
 };

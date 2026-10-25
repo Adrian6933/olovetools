@@ -479,5 +479,11 @@ export default {
   "mergeSummary": "{n} clips · {d}",
   "ed_drop": "Déposez pour l’ajouter à la timeline",
   "ed_drop_hint": "Vidéos et images",
-  "ed_play": "Lire"
+  "ed_play": "Lire",
+  "gpu_off_title": "Votre carte graphique n’est pas utilisée.",
+  "gpu_off_text": "Le filigrane, l’assemblage et la netteté fonctionnent quand même, mais beaucoup plus lentement. Activez « Utiliser l’accélération graphique si disponible » dans les paramètres du navigateur (Système) puis redémarrez-le.",
+  "gpu_old_title": "Ce navigateur enregistre en temps réel.",
+  "gpu_old_text": "Cela prend la durée de la vidéo et l’onglet doit rester visible. Chrome ou Edge le traitent plusieurs fois plus vite.",
+  "q_preview": "Voir le rendu",
+  "q_preview_hide": "Masquer la comparaison"
 };

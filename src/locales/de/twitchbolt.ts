@@ -479,5 +479,11 @@ export default {
   "mergeSummary": "{n} Clips · {d}",
   "ed_drop": "Loslassen, um es zur Zeitleiste hinzuzufügen",
   "ed_drop_hint": "Videos und Bilder",
-  "ed_play": "Abspielen"
+  "ed_play": "Abspielen",
+  "gpu_off_title": "Deine Grafikkarte wird nicht genutzt.",
+  "gpu_off_text": "Wasserzeichen, Zusammenfügen und Schärfe funktionieren trotzdem, aber viel langsamer. Aktiviere „Grafikbeschleunigung verwenden, wenn verfügbar“ in den Browser-Einstellungen (System) und starte ihn neu.",
+  "gpu_old_title": "Dieser Browser nimmt in Echtzeit auf.",
+  "gpu_old_text": "Es dauert so lange wie das Video und der Tab muss sichtbar bleiben. Chrome oder Edge verarbeiten es um ein Vielfaches schneller.",
+  "q_preview": "So sieht es aus",
+  "q_preview_hide": "Vergleich ausblenden"
 };
