@@ -7,15 +7,13 @@
 // resolución elegidas. Arrastrar la imagen mueve la vista. Cambiar el nivel
 // lo repinta al momento, así se ve qué hace cada uno.
 //
-// Lo usan la descarga "más nítida" de cada clip (MejoraPanel) y la tarjeta de
-// exportación de arriba; el clip se lo baja quien lo usa.
+// Lo usa la descarga "más nítida" de cada clip (MejoraPanel), que es quien
+// baja el clip. En los selectores de calidad, en cambio, la vista previa es
+// una foto de ejemplo (muestraNitidez.ts): no se baja nada.
 // ============================================================================
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Loader2, RefreshCw, AlertCircle } from 'lucide-react';
 import { crearNitidez, FUERZA, type CalidadExport } from './nitidez';
-import type { ClipData } from './types';
-import { useBrand } from './brand';
-import { obtenerFuente } from './editor/model';
 
 interface Props {
   /** El clip entero; null mientras se baja. */
@@ -176,28 +174,6 @@ const ComparadorNitidez: React.FC<Props> = ({ blob, carga, error, calidad, tx, a
       )}
     </div>
   );
-};
-
-/**
- * El comparador sobre un clip de la lista: lo baja en su mejor calidad (la
- * misma caché que la descarga "más nítida", así no se baja dos veces).
- */
-export const ComparadorDeClip: React.FC<{ clip: ClipData; calidad: CalidadExport; tx: Props['tx']; alto?: string }> = ({ clip, calidad, tx, alto }) => {
-  const brand = useBrand();
-  const [blob, setBlob] = useState<Blob | null>(null);
-  const [carga, setCarga] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  useEffect(() => {
-    let vivo = true;
-    setBlob(null);
-    setError(null);
-    const mejor = clip.resolutions[0];
-    obtenerFuente(`max:${clip.id}`, () => brand.fetchMovieBlob(mejor.url, (l, tot) => { if (vivo && tot > 0) setCarga(Math.round((l / tot) * 100)); }))
-      .then(f => { if (vivo) setBlob(f.blob); })
-      .catch(() => { if (vivo) setError(tx('en_error', 'Could not process the clip.')); });
-    return () => { vivo = false; };
-  }, [clip.id]); // eslint-disable-line react-hooks/exhaustive-deps
-  return <ComparadorNitidez blob={blob} carga={carga} error={error} calidad={calidad} tx={tx} alto={alto} />;
 };
 
 export default ComparadorNitidez;
