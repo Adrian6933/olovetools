@@ -16,7 +16,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 import { Loader2, Blend, CheckCircle2 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from './types';
 import { useBrand } from './brand';
-import { mergeClipsToVideo } from './mergeService';
+import { mergeClipsToVideo, ultimoFalloOffline } from './mergeService';
 import { FUERZA, type CalidadExport } from './nitidez';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from './watermarkService';
 import { procesarClips, soltarDescarga, type ProgresoLote } from './lotes';
@@ -68,6 +68,8 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
   const [fundido, setFundido] = useState(true);
   const [estado, setEstado] = useState<Estado | null>(null);
   const [error, setError] = useState<string | null>(null);
+  /** En qué paso y por qué (técnico, en pequeño): sin esto "no se pudo" no dice nada. */
+  const [detalle, setDetalle] = useState<string | null>(null);
   const [hecho, setHecho] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -82,7 +84,9 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
   const empezar = async () => {
     if (piezas < 2 || estado) return;
     setError(null);
+    setDetalle(null);
     setHecho(false);
+    let paso = 'download';
     const ctrl = new AbortController();
     abortRef.current = ctrl;
     onBusyChange(true);
@@ -105,7 +109,9 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
         onProgress: p => setEstado({ fase: 'descarga', ...p }),
       });
       // Al vídeo unido no le puede faltar un trozo.
-      if (resultados.some(r => !r.original)) throw new Error('Download failed');
+      const sinBajar = resultados.filter(r => !r.original).length;
+      if (sinBajar) throw new Error(`${sinBajar} clip(s) could not be downloaded`);
+      paso = 'render';
 
       const video = await mergeClipsToVideo(
         resultados.map((r, i) => ({ blob: r.original!, channelName: clips[i].broadcaster || 'Streamer' })),
@@ -114,6 +120,7 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
         ctrl.signal,
       );
 
+      paso = 'zip';
       const ext = video.type.includes('webm') ? 'webm' : 'mp4';
       const sello = Date.now();
       if (conClips) {
@@ -132,6 +139,8 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
       setHecho(true);
     } catch (e: any) {
       if (e?.name !== 'AbortError' && e?.message !== 'AbortError') {
+        console.error(`Compilation failed at ${paso}`, e);
+        setDetalle(`${paso}: ${e?.name && e.name !== 'Error' ? `${e.name} · ` : ''}${e?.message || String(e)}${paso === 'render' && ultimoFalloOffline ? ` (offline: ${ultimoFalloOffline})` : ''}`.slice(0, 400));
         setError(
           e?.message === 'BACKGROUND_PAUSE'
             ? (t.wm_export_paused || 'The browser paused the video to save power. Keep this tab visible and try again.')
@@ -211,7 +220,12 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
       )}
 
       {hecho && !estado && <p className="flex items-center gap-2 text-xs font-bold text-green-400"><CheckCircle2 className="w-4 h-4" />{t.mergeDone || 'Done! The video is in your downloads.'}</p>}
-      {error && <p className="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/25 rounded-xl px-3 py-2">{error}</p>}
+      {error && (
+        <p className="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/25 rounded-xl px-3 py-2">
+          {error}
+          {detalle && <span className="block mt-1 font-mono font-normal text-[10px] text-red-300/70 break-all">{detalle}</span>}
+        </p>
+      )}
     </div>
   );
 });

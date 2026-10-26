@@ -108,6 +108,9 @@ export const soltarVideo = (v: HTMLVideoElement) => {
   v.load();
 };
 
+/** Por qué falló el último intento fotograma a fotograma (para el aviso de error). */
+export let ultimoFalloOffline: string | null = null;
+
 export const mergeClipsToVideo = async (
   items: MergeItem[],
   opts: MergeOptions,
@@ -115,6 +118,7 @@ export const mergeClipsToVideo = async (
   signal?: AbortSignal,
 ): Promise<Blob> => {
   if (items.length === 0) throw new Error('Nothing to merge');
+  ultimoFalloOffline = null;
   if (opts.watermark) await ensureWatermarkFont(opts.watermark);
 
   // Primero, fotograma a fotograma (exportOffline.ts): mejor calidad, sin
@@ -128,6 +132,7 @@ export const mergeClipsToVideo = async (
       } catch (e: any) {
         if (e?.name === 'AbortError' || signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
         console.warn('Export frame by frame failed; recording in real time instead', e);
+        ultimoFalloOffline = `${e?.name || 'Error'}: ${e?.message || String(e)}`;
       }
     }
   }
