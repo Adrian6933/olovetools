@@ -26,16 +26,12 @@ import ClipSortBar from './ClipSortBar';
 import SortableClipList, { type SortableClipListHandle } from './SortableClipList';
 import ClipOrderPanel from './ClipOrderPanel';
 import MergePanel, { type MergePanelHandle } from './MergePanel';
-import ClipEditor from './editor/ClipEditor';
 import { CALIDAD_POR_DEFECTO, FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from './nitidez';
 import CalidadSelector from './CalidadSelector';
 import AvisoGrafica from './AvisoGrafica';
-import { obtenerFuente, soltarFuentes, type Pieza } from './editor/model';
-import type { Capa } from './editor/animaciones';
-import { sendToTool } from '../../lib/handoff';
 import { BrandContext, type ClipBrand } from './brand';
 import {
-  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge, Scissors, ExternalLink, Clapperboard, Layers, Download, Crop, Blend
+  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge,  Clapperboard, Layers, Download, Crop, Blend
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
@@ -212,43 +208,10 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     try { localStorage.setItem(FORMATO_KEY, JSON.stringify(siguiente)); } catch { /* vale para esta visita */ }
   };
 
-  // ---- editor de clips ----------------------------------------------------
-  // Las piezas viven aquí y no en el editor: cerrarlo y volver a abrirlo
-  // conserva los recortes.
-  const [editor, setEditor] = useState<{ enfoque: string | null } | null>(null);
   const clipsListos = React.useMemo(
     () => clips.filter(c => c.status === 'success' && c.data).map(c => c.data!),
     [clips],
   );
-  const [piezasEditor, setPiezasEditor] = useState<Pieza[]>([]);
-  const [capasEditor, setCapasEditor] = useState<Capa[]>([]);
-
-  // ---- "Abrir en Clip Editor": los clips, a la herramienta suelta ----------
-  // Se bajan (o se toman de la caché del editor, si ya se abrió) y viajan por
-  // el traspaso de lib/handoff, todos en un solo registro.
-  const [enviando, setEnviando] = useState<number | null>(null);
-  const enviarAlEditor = async () => {
-    if (enviando !== null || !clipsListos.length) return;
-    setEnviando(0);
-    try {
-      const archivos: Array<{ blob: Blob; name: string }> = [];
-      for (let i = 0; i < clipsListos.length; i += 1) {
-        const c = clipsListos[i];
-        const r = selectedQuality === 'max'
-          ? c.resolutions[0]
-          : c.resolutions.find(x => x.quality === `${selectedQuality}p`) || c.resolutions.find(x => x.quality.startsWith(selectedQuality)) || c.resolutions[0];
-        const f = await obtenerFuente(`clip:${c.id}`, () => fetchMovieBlob(r.url, (l, tot) => {
-          if (tot > 0) setEnviando(Math.round(((i + l / tot) / clipsListos.length) * 100));
-        }));
-        archivos.push({ blob: f.blob, name: `${nombreDeArchivo(c.title, c.broadcaster, c.id)}.mp4` });
-        setEnviando(Math.round(((i + 1) / clipsListos.length) * 100));
-      }
-      const [primero, ...resto] = archivos;
-      await sendToTool('clip-editor', lang, primero.blob, primero.name, slug, resto);
-    } catch {
-      setEnviando(null);
-    }
-  };
 
   // Cambiar el orden desde fuera de las tarjetas (panel, atajos de orden):
   // primero se le avisa a la lista para que las tarjetas se deslicen.
@@ -319,10 +282,6 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   // function it was a new value on every render, so the popstate listener was
   // torn down and re-attached on each one.
   const handleReset = useCallback(() => {
-    setEditor(null);
-    setPiezasEditor([]);
-    setCapasEditor([]);
-    soltarFuentes();
     resolveRequestRef.current += 1;
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -1246,41 +1205,6 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
              )}
 
 
-             {clipsListos.length > 0 && (
-               <button
-                 type="button"
-                 onClick={() => setEditor({ enfoque: null })}
-                 disabled={!!zipProgress || !!wmAll || uniendo}
-                 className="w-full rounded-[2rem] border border-twitch/40 bg-[linear-gradient(120deg,rgba(var(--color-accent-rgb),0.16),rgba(var(--color-accent-rgb),0.04))] hover:bg-twitch/[0.14] p-5 flex items-center gap-4 text-left transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed group"
-               >
-                 <span className="p-3 rounded-2xl bg-twitch text-[var(--color-accent-ink)] shrink-0 group-hover:scale-105 transition-transform shadow-lg shadow-twitch/25">
-                   <Scissors className="w-5 h-5" />
-                 </span>
-                 <span className="min-w-0 flex-1">
-                   <span className="block text-sm font-black uppercase tracking-widest text-white">{t.ed_title || 'Clip editor'}</span>
-                   <span className="block text-xs text-gray-400 mt-0.5">{t.ed_card || 'Trim, split, reorder, change speed or volume and export, without leaving this page.'}</span>
-                 </span>
-                 <ArrowRight className="w-5 h-5 text-twitch shrink-0 group-hover:translate-x-1 transition-transform" />
-               </button>
-             )}
-
-             {clipsListos.length > 0 && (
-               <div className="!mt-3 flex justify-end">
-               <button
-                 type="button"
-                 onClick={enviarAlEditor}
-                 disabled={enviando !== null || !!zipProgress || !!wmAll || uniendo}
-                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-xs font-bold text-gray-400 hover:text-white hover:border-twitch/40 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                 title={t.ed_send_hint || 'The standalone editor, with these clips already on the timeline'}
-               >
-                 {enviando !== null ? <Loader2 className="w-3.5 h-3.5 animate-spin text-twitch" /> : <ExternalLink className="w-3.5 h-3.5 text-twitch" />}
-                 {enviando !== null
-                   ? (t.ed_send_busy || 'Preparing the clips… {p}%').replace('{p}', String(enviando))
-                   : (t.ed_send_title || 'Open in Clip Editor')}
-               </button>
-               </div>
-             )}
-
              {clips.length > 1 && <ClipSortBar clips={clips} onReorder={reordenar} t={t} />}
 
              {/* El panel de orden va solo junto a las tarjetas: la barra de
@@ -1306,7 +1230,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                     );
                   }
                   if (c.data) {
-                    return <ClipResult data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} onEdit={() => setEditor({ enfoque: c.data!.id })} />;
+                    return <ClipResult data={c.data} index={i+1} onReset={() => setClips(prev => prev.filter(x => x.id !== c.id))} lang={lang} dictionary={dictionary} />;
                   }
                   return null;
                }}
@@ -1331,21 +1255,6 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       <LegalModal type={activeLegal} lang={lang} dictionary={dictionary} onClose={() => setActiveLegal(null)} />
 
       <button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className={`fixed bottom-8 right-8 p-4 bg-twitch text-white rounded-full shadow-2xl transition-all ${showScrollTop ? 'scale-100 opacity-100' : 'scale-0 opacity-0'} hover:scale-110 hover:-translate-y-2 active:scale-95 z-50 cursor-pointer group`}><ArrowUp className="w-6 h-6 group-hover:scale-110 transition-transform" /></button>
-      {editor && (
-        <ClipEditor
-          clips={clipsListos}
-          piezas={piezasEditor}
-          setPiezas={setPiezasEditor}
-          capas={capasEditor}
-          setCapas={setCapasEditor}
-          enfoque={editor.enfoque}
-          quality={selectedQuality}
-          watermarkOn={marcaActiva}
-          watermarkConfig={wmAllConfig}
-          t={t}
-          onClose={() => setEditor(null)}
-        />
-      )}
     </div>
     </BrandContext.Provider>
   );

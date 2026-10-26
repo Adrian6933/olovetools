@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ClipData, Resolution } from './types';
-import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles, Scissors, Wand2 } from 'lucide-react';
+import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkles, Wand2 } from 'lucide-react';
 import { attachVideo, useBrand } from './brand';
 import WatermarkPreview from './WatermarkPreview';
 import MejoraPanel from './MejoraPanel';
@@ -21,8 +21,6 @@ interface ClipResultProps {
   onReset: () => void;
   lang: string;
   dictionary?: any;
-  /** Abre el editor con este clip elegido. */
-  onEdit?: () => void;
 }
 
 
@@ -35,7 +33,7 @@ const formatBytes = (bytes: number, decimals = 2) => {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 };
 
-const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dictionary, onEdit }) => {
+const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dictionary }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [downloadingRes, setDownloadingRes] = useState<Record<string, { progress: number, completed: boolean, preparing: boolean, loaded: number, total: number, speed: number }>>({});
   const t = dictionary || {};
@@ -312,19 +310,10 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
                     <p className="text-xs font-bold text-gray-500 flex items-center gap-2 justify-end"><Calendar className="w-3.5 h-3.5" /> {data.date}</p>
                 </div>
              </div>
-             {/* Editar a la izquierda y marca de agua a la derecha, bajo el
-                 canal: la columna de la derecha queda solo para descargar. */}
+             {/* Marca de agua a la derecha, bajo el canal: la columna de la
+                 derecha queda solo para descargar. */}
              <div className="flex items-center justify-between gap-3 mt-5 pt-5 border-t border-white/5">
-               {onEdit ? (
-                 <button
-                   type="button"
-                   onClick={onEdit}
-                   className="h-10 px-4 rounded-xl flex items-center gap-2 border text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40"
-                 >
-                   <Scissors className="w-4 h-4 text-twitch" />
-                   {t.ed_open_clip || 'Trim / edit'}
-                 </button>
-               ) : <span />}
+               <span />
                <button
                  type="button"
                  onClick={wmAbierto ? () => setWmAbierto(false) : abrirWatermark}
