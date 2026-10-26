@@ -23,7 +23,7 @@
 // ============================================================================
 import {
   ALL_FORMATS, AudioBufferSink, AudioBufferSource, BlobSource, BufferTarget, CanvasSink, CanvasSource, Input,
-  Mp4OutputFormat, Output, Quality, canEncodeAudio, canEncodeVideo,
+  Mp4OutputFormat, Output, Quality, StreamTarget, canEncodeAudio, canEncodeVideo, type StreamTargetChunk,
 } from 'mediabunny';
 import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
@@ -94,6 +94,53 @@ export const sePuedeSinTiempoReal = async (piezas: PiezaOffline[], width: number
 };
 
 const abortado = () => new DOMException('Cancelled', 'AbortError');
+
+/**
+ * Pasado este tamaño (estimado) el MP4 no se arma en memoria. BufferTarget con
+ * fastStart 'in-memory' guarda todo y al cerrar lo copia a un único
+ * ArrayBuffer: con 24 clips (más de 1 GB) eso pedía dos bloques enormes y el
+ * navegador lo negaba justo al terminar ("No se pudo crear el vídeo").
+ */
+const LIMITE_EN_MEMORIA = 256 * 2 ** 20;
+
+/**
+ * Destino que va soltando lo escrito en Blobs (el navegador los pasa a disco
+ * si hace falta) y al final los junta sin copiarlos. Sin fastStart, mediabunny
+ * escribe seguido y solo vuelve atrás para cerrar la cabecera del mdat: esa
+ * reescritura se hace recortando los Blobs, que tampoco copia.
+ */
+const destinoEnBlobs = () => {
+  let partes: Blob[] = [];
+  let fin = 0;
+  /** Los trozos que cubren [desde, hasta), recortados. */
+  const tramo = (desde: number, hasta: number) => {
+    const out: Blob[] = [];
+    let at = 0;
+    for (const b of partes) {
+      const a0 = at;
+      const a1 = at + b.size;
+      at = a1;
+      if (a1 <= desde || a0 >= hasta) continue;
+      out.push(a0 >= desde && a1 <= hasta ? b : b.slice(Math.max(0, desde - a0), Math.min(b.size, hasta - a0)));
+    }
+    return out;
+  };
+  const writable = new WritableStream<StreamTargetChunk>({
+    write({ data, position }) {
+      const trozo = new Blob([data]);
+      if (position === fin) {
+        partes.push(trozo);
+      } else if (position > fin) {
+        partes.push(new Blob([new Uint8Array(position - fin)]), trozo);
+      } else {
+        const hasta = position + data.byteLength;
+        partes = [...tramo(0, position), trozo, ...tramo(hasta, fin)];
+      }
+      fin = Math.max(fin, position + data.byteLength);
+    },
+  });
+  return { writable, blob: () => new Blob(partes, { type: 'video/mp4' }) };
+};
 
 /**
  * Renderiza las piezas una detrás de otra en un MP4 (H.264 + AAC u Opus).
@@ -175,12 +222,20 @@ export const exportarSinTiempoReal = async (
   }
 
   const aac = await canEncodeAudio('aac', { numberOfChannels: 2, sampleRate: FRECUENCIA }).catch(() => false);
-  const output = new Output({ format: new Mp4OutputFormat({ fastStart: 'in-memory' }), target: new BufferTarget() });
+  const bitrate = bitrateDeSalida();
+  // Un clip suelto sigue saliendo con la cabecera delante (se previsualiza y
+  // se sube mejor); el vídeo unido largo, por trozos y con ella al final.
+  const enTrozos = ((bitrate + 192_000) * total) / 8 > LIMITE_EN_MEMORIA;
+  const destino = enTrozos ? destinoEnBlobs() : null;
+  const output = new Output({
+    format: new Mp4OutputFormat({ fastStart: destino ? false : 'in-memory' }),
+    target: destino ? new StreamTarget(destino.writable, { chunked: true, chunkSize: 8 * 2 ** 20 }) : new BufferTarget(),
+  });
   const fuenteVideo = new CanvasSource(canvas, {
     codec: 'avc',
     // Calidad constante (como el CRF de ffmpeg); si el codificador no la
     // admite, una tasa holgada para que recomprimir no se note.
-    quality: new Quality({ bitrate: bitrateDeSalida() }),
+    quality: new Quality({ bitrate }),
     keyFrameInterval: 2,
   });
   const fuenteAudio = new AudioBufferSource({ codec: aac ? 'aac' : 'opus', quality: new Quality({ bitrate: 192_000 }) });
@@ -285,6 +340,7 @@ export const exportarSinTiempoReal = async (
     fuenteVideo.close();
     fuenteAudio.close();
     await output.finalize();
+    if (destino) return destino.blob();
     const buffer = (output.target as BufferTarget).buffer;
     if (!buffer) throw new Error('Empty output');
     return new Blob([buffer], { type: 'video/mp4' });

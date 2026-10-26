@@ -13,7 +13,6 @@
 // suelto al lado (con la marca, si va puesta).
 // ============================================================================
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import JSZip from 'jszip';
 import { Loader2, Blend, CheckCircle2 } from 'lucide-react';
 import type { ClipData, WatermarkConfig } from './types';
 import { useBrand } from './brand';
@@ -21,6 +20,7 @@ import { mergeClipsToVideo } from './mergeService';
 import { FUERZA, type CalidadExport } from './nitidez';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from './watermarkService';
 import { procesarClips, soltarDescarga, type ProgresoLote } from './lotes';
+import { zipEnBlob, type EntradaZip } from './zipBlob';
 import { sufijoFormato, type Encaje, type Formato } from './formato';
 
 interface Props {
@@ -77,7 +77,7 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
   const total = clips.reduce((s, c) => s + (c.duration || 0), 0);
   const piezas = clips.length;
 
-  const alto = calidad.alto === 1440 ? 1440 : quality === '360' ? 360 : quality === '720' ? 720 : 1080;
+  const alto = quality === '360' ? 360 : quality === '720' ? 720 : 1080;
 
   const empezar = async () => {
     if (piezas < 2 || estado) return;
@@ -118,15 +118,13 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
       const sello = Date.now();
       if (conClips) {
         setEstado({ fase: 'zip' });
-        const zip = new JSZip();
-        zip.file(`${brand.storagePrefix}_compilation_${piezas}parts${sufijoFormato(formatoVideo)}.${ext}`, video);
-        const carpeta = zip.folder('clips')!;
+        const entradas: EntradaZip[] = [{ nombre: `${brand.storagePrefix}_compilation_${piezas}parts${sufijoFormato(formatoVideo)}.${ext}`, datos: video }];
         resultados.forEach(({ clip, res, final }, i) => {
           if (!final) return;
           const e = final.type.includes('webm') ? 'webm' : 'mp4';
-          carpeta.file(`${i + 1}_${nombreDeArchivo(clip.title, clip.broadcaster, clip.id)}_${res.quality}${marca ? '_watermark' : ''}${final === resultados[i].original ? '' : sufijoFormato(formatoClips)}.${e}`, final);
+          entradas.push({ nombre: `clips/${i + 1}_${nombreDeArchivo(clip.title, clip.broadcaster, clip.id)}_${res.quality}${marca ? '_watermark' : ''}${final === resultados[i].original ? '' : sufijoFormato(formatoClips)}.${e}`, datos: final });
         });
-        const contenido = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+        const contenido = await zipEnBlob(entradas, ctrl.signal);
         soltarDescarga(contenido, `${brand.storagePrefix}_${quality}_video_and_clips_${sello}.zip`);
       } else {
         soltarDescarga(video, `${brand.storagePrefix}_compilation_${piezas}parts${sufijoFormato(formatoVideo)}_${sello}.${ext}`);

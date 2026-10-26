@@ -39,9 +39,9 @@ import {
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
-import JSZip from 'jszip';
 import { FORMATOS, sufijoFormato, type Encaje, type Formato } from './formato';
 import { DESCARGAS_A_LA_VEZ, procesarClips, resolucionDe, semaforo, soltarDescarga, type ProgresoLote } from './lotes';
+import { zipEnBlob, type EntradaZip } from './zipBlob';
 
 type Ilustracion = React.FC<{ className?: string }>;
 
@@ -431,7 +431,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     const signal = abortControllerRef.current.signal;
 
     setZipProgress({ current: 0, total: validClips.length, percentage: 0, loadedBytes: 0, totalBytes: 0, speed: 0 });
-    const zip = new JSZip();
+    // En el orden de la lista, no en el que acaban de bajar.
+    const entradas: Array<EntradaZip | undefined> = [];
     
     let completedCount = 0;
     // Antes un clip que fallaba se quedaba fuera del ZIP sin decir nada.
@@ -483,7 +484,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
               updateProgress();
           }, signal);
           const fileName = `${index + 1}_${nombreDeArchivo(clip.title, clip.broadcaster, clip.id)}_${chosenRes.quality}.mp4`;
-          zip.file(fileName, blob);
+          entradas[index] = { nombre: fileName, datos: blob };
         } catch (err: any) {
           if (err.message !== "AbortError") {
             console.error(`Error downloading clip ${clip.id}`, err);
@@ -508,11 +509,11 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
 
       setZipProgress(prev => prev ? { ...prev, preparingZip: true } : null);
 
-      const content = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+      const content = await zipEnBlob(entradas.filter((e): e is EntradaZip => !!e), signal);
       soltarDescarga(content, `${slug}_${selectedQuality}_pack_${new Date().getTime()}.zip`);
       setLastRouteHost(getLastRoute()?.host ?? null);
     } catch (error: any) {
-      if (error.message !== "AbortError") {
+      if (error.message !== "AbortError" && error.name !== 'AbortError') {
         alert(t.zipError || "Error generating ZIP");
       }
     } finally {
@@ -556,19 +557,17 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
         onProgress: p => { fallos = p.fallos; setWmAll({ ...p, fase: 'trabajo' }); },
       });
 
-      const zip = new JSZip();
-      let metidos = 0;
+      const entradas: EntradaZip[] = [];
       resultados.forEach(({ clip, res, final }, i) => {
         if (!final) return;
         const nombre = nombreDeArchivo(clip.title, clip.broadcaster, clip.id);
         const ext = final.type.includes('webm') ? 'webm' : 'mp4';
-        zip.file(`${i + 1}_${nombre}_${res.quality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}.${ext}`, final);
-        metidos += 1;
+        entradas.push({ nombre: `${i + 1}_${nombre}_${res.quality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}.${ext}`, datos: final });
       });
-      if (metidos === 0) return;
+      if (entradas.length === 0) return;
 
       setWmAll(prev => prev ? { ...prev, fase: 'zip', pct: 100 } : prev);
-      const contenido = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+      const contenido = await zipEnBlob(entradas, abort.signal);
       soltarDescarga(contenido, `${slug}_${selectedQuality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}_pack_${Date.now()}.zip`);
       setLastRouteHost(getLastRoute()?.host ?? null);
     } catch {
@@ -930,7 +929,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                       return (
                         <button
                           onClick={modo === 'clips'
-                            ? (marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off' || calidad.alto > 1080 ? descargarZipConMarca : downloadAllAsZip)
+                            ? (marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off' ? descargarZipConMarca : downloadAllAsZip)
                             : () => mergeRef.current?.empezar()}
                           disabled={!!zipProgress || !!wmAll || isAnyLoading || uniendo}
                           className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-6 xl:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
@@ -1010,7 +1009,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
              {clipsListos.length > 0 && (() => {
                const ocupado = !!zipProgress || !!wmAll || uniendo;
                // ¿Algo se va a recodificar? Solo entonces importa la gráfica.
-               const necesitaProcesar = modo !== 'clips' || marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off' || calidad.alto > 1080;
+               const necesitaProcesar = modo !== 'clips' || marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off';
                const usaVideo = modo !== 'clips';
                const usaClips = modo !== 'video';
                const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && formatoClips === '9:16');

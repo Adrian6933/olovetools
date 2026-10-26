@@ -13,7 +13,6 @@
 // ============================================================================
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import JSZip from 'jszip';
 import {
   Scissors, X, Play, Pause, SkipBack, SkipForward, ListVideo, Plus, Copy, Trash2, ChevronLeft, ChevronRight,
   Volume2, VolumeX, RotateCcw, Download, Loader2, Blend, Sparkles, Film, Package, AlertCircle,
@@ -24,6 +23,7 @@ import type { ClipData, WatermarkConfig } from '../types';
 import { useBrand } from '../brand';
 import { duracionDe, mergeClipsToVideo, soltarVideo } from '../mergeService';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from '../watermarkService';
+import { zipEnBlob, type EntradaZip } from '../zipBlob';
 import { prepararVideo } from './ownMedia';
 import CalidadSelector from '../CalidadSelector';
 import AvisoGrafica from '../AvisoGrafica';
@@ -606,7 +606,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
   useEffect(() => () => abortRef.current?.abort(), []);
   const [calidad, setCalidad] = useState<CalidadExport>(() => leerCalidad(brand.storagePrefix));
   const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
-  const alto = calidad.alto === 1440 ? 1440 : quality === '360' ? 360 : quality === '720' ? 720 : 1080;
+  const alto = quality === '360' ? 360 : quality === '720' ? 720 : 1080;
 
   const descargar = (blob: Blob, nombre: string) => {
     const url = URL.createObjectURL(blob);
@@ -649,7 +649,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
         descargar(video, `${brand.storagePrefix}_edit_${Date.now()}.${video.type.includes('webm') ? 'webm' : 'mp4'}`);
       } else {
         // Uno detrás de otro: grabar va a tiempo real y en paralelo se pisan.
-        const zip = new JSZip();
+        const entradas: EntradaZip[] = [];
         const durs = piezas.map(durFinal);
         const totalSeg = durs.reduce((a, b) => a + b, 0) || 1;
         let hechoSeg = 0;
@@ -667,9 +667,9 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
           }, ctrl.signal);
           hechoSeg += durs[i];
           const ext = video.type.includes('webm') ? 'webm' : 'mp4';
-          zip.file(`${i + 1}_${nombreDeArchivo(piezas[i].nombre, piezas[i].canal, piezas[i].id)}.${ext}`, video);
+          entradas.push({ nombre: `${i + 1}_${nombreDeArchivo(piezas[i].nombre, piezas[i].canal, piezas[i].id)}.${ext}`, datos: video });
         }
-        const contenido = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+        const contenido = await zipEnBlob(entradas, ctrl.signal);
         descargar(contenido, `${brand.storagePrefix}_edit_${items.length}parts_${Date.now()}.zip`);
       }
       setHecho(true);

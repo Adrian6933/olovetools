@@ -14,6 +14,7 @@ import type { Encaje, Formato } from './formato';
 
 /** Descargas a la vez: más no acelera (el ancho de banda es el mismo) y satura los relés. */
 export const DESCARGAS_A_LA_VEZ = 4;
+const INTENTOS_DESCARGA = 2;
 
 /** La resolución que toca a un clip: la pedida si la tiene, si no la mejor. */
 export const resolucionDe = (c: ClipData, quality: string): Resolution =>
@@ -140,10 +141,19 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
         bajando += 1;
         avisar(true);
         try {
-          return await o.fetchMovieBlob(res.url, (l, t) => {
-            avance[i] = (t > 0 ? Math.min(1, l / t) : 0) * pesoBajada;
-            avisar();
-          }, o.signal);
+          // Otra vuelta si falla: con 24 clips, que un relé tropiece una vez
+          // es lo normal, y al vídeo unido no le puede faltar ninguno.
+          for (let intento = 1; ; intento += 1) {
+            try {
+              return await o.fetchMovieBlob(res.url, (l, t) => {
+                avance[i] = (t > 0 ? Math.min(1, l / t) : 0) * pesoBajada;
+                avisar();
+              }, o.signal);
+            } catch (e) {
+              if (o.signal?.aborted || intento >= INTENTOS_DESCARGA) throw e;
+              console.warn(`Clip ${clip.id}: download failed, retrying`, e);
+            }
+          }
         } finally {
           bajando -= 1;
         }

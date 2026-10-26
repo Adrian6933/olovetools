@@ -10,10 +10,10 @@
 // local y MENOS donde ya hay un borde fuerte: así la hierba gana textura sin
 // que salgan halos blancos alrededor del texto del HUD o de la webcam, que es
 // lo que hace un "unsharp mask" normal. Es el mismo filtro que usan los juegos
-// después de escalar, por eso combina bien con exportar a 1440p.
+// después de escalar.
 //
 // Un pase de shader por fotograma: en una GPU cualquiera son milisegundos
-// incluso a 1440p, nada comparado con decodificar y codificar.
+// incluso en vertical a 1080x1920, nada comparado con decodificar y codificar.
 // ============================================================================
 
 const VERTICES = `
@@ -125,8 +125,8 @@ export const FUERZA: Record<NivelNitidez, number> = { off: 0, suave: 0.3, media:
 
 export interface CalidadExport {
   nitidez: NivelNitidez;
-  /** 1080 = como viene el clip; 1440 = escalado (YouTube lo guarda mejor). */
-  alto: 1080 | 1440;
+  /** Como viene el clip. Hubo un 1440p escalado; se quitó (no gustaba). */
+  alto: 1080;
 }
 
 export const CALIDAD_POR_DEFECTO: CalidadExport = { nitidez: 'off', alto: 1080 };
@@ -137,7 +137,8 @@ export const leerCalidad = (prefijo: string): CalidadExport => {
   if (typeof window === 'undefined') return CALIDAD_POR_DEFECTO;
   try {
     const g = JSON.parse(localStorage.getItem(clave(prefijo)) || 'null');
-    if (g && g.nitidez in FUERZA && (g.alto === 1080 || g.alto === 1440)) return g;
+    // Quien guardó 1440p vuelve a 1080p conservando su nitidez.
+    if (g && g.nitidez in FUERZA) return { nitidez: g.nitidez, alto: 1080 };
   } catch { /* nada guardado */ }
   return CALIDAD_POR_DEFECTO;
 };
