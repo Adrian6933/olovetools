@@ -159,14 +159,21 @@ export const getClipById = async (clipId: string): Promise<Clip | null> => {
 // which is what lets us force 2x playback: the embed iframe is cross-origin,
 // so there's no way to reach its internal <video> element or set its
 // playbackRate from the parent page.
+// Twitch's own web Client-ID goes first: since October 2026 the other two
+// answer 400, and trying them first cost two round trips before every clip.
 const CLIP_SOURCE_CLIENT_IDS = [
+    "kimne78kx3ncx6brgo4mv6wki5h1ko",
     "ue6666qo983sx6so1c0vnaz41db287",
     "kd1unb4r3yd4g17k2488dbw3v89usf",
-    "kimne78kx3ncx6brgo4mv6wki5h1ko",
 ];
 const GQL_ENDPOINT = "https://gql.twitch.tv/gql";
 
-export const getClipVideoSource = async (slug: string): Promise<string | null> => {
+/**
+ * maxHeight caps the quality picked. New clips come in 1080p at ~8 Mbps, so
+ * played at 4x they need ~31 Mbps sustained and stall on any dip in the
+ * connection; 720p is about a third of that.
+ */
+export const getClipVideoSource = async (slug: string, maxHeight?: number): Promise<string | null> => {
     const query = `query GetClip($slug: ID!) { clip(slug: $slug) { playbackAccessToken(params: { platform: "web", playerBackend: "mediaplayer", playerType: "site" }) { signature value } videoQualities { quality sourceURL } } }`;
 
     for (const clientId of CLIP_SOURCE_CLIENT_IDS) {
@@ -182,7 +189,8 @@ export const getClipVideoSource = async (slug: string): Promise<string | null> =
             const qualities = clip?.videoQualities;
             if (!clip || !Array.isArray(qualities) || qualities.length === 0) continue;
 
-            const best = [...qualities].sort((a: any, b: any) => (parseInt(b.quality, 10) || 0) - (parseInt(a.quality, 10) || 0))[0];
+            const sorted = [...qualities].sort((a: any, b: any) => (parseInt(b.quality, 10) || 0) - (parseInt(a.quality, 10) || 0));
+            const best = (maxHeight && sorted.find((q: any) => (parseInt(q.quality, 10) || 0) <= maxHeight)) || sorted[0];
             if (!best?.sourceURL) continue;
 
             const sig = clip.playbackAccessToken?.signature;

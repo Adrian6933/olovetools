@@ -1,10 +1,12 @@
 import { VodInfo, VodQuality, HlsSegment, SegmentIndex } from '../types';
 import { noteRoute, usableProxies } from './route';
 
+// Twitch's own web Client-ID goes first: since October 2026 the next two
+// answer 400.
 const CLIENT_IDS = [
+  "kimne78kx3ncx6brgo4mv6wki5h1ko",
   "ue6666qo983sx6so1c0vnaz41db287",
   "kd1unb4r3yd4g17k2488dbw3v89usf",
-  "kimne78kx3ncx6brgo4mv6wki5h1ko",
   "jzkbprff40iqj646a697cyrvl0zt2m6",
   "7tk7hk3hyx098935r20s880r66e92b"
 ];

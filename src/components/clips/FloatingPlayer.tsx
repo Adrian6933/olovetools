@@ -30,7 +30,7 @@ interface FloatingPlayerProps {
    * porque este componente lo comparten Clipy (Twitch) y Klipy (Kick), y cada
    * una lo resuelve contra su propia API.
    */
-  getVideoSource: (clipId: string) => Promise<string | null>;
+  getVideoSource: (clipId: string, maxHeight?: number) => Promise<string | null>;
   playbackSpeed: number;
   onPlaybackSpeedChange: (speed: number) => void;
 }
@@ -161,7 +161,12 @@ const FloatingPlayer: React.FC<FloatingPlayerProps> = ({ clip, onClose, isSaved,
       return;
     }
     let cancelled = false;
-    getVideoSource(clip.id).then(url => {
+    // A x3 y x4 el 1080p de los clips nuevos de Twitch pide ~31 Mbps seguidos y
+    // se corta en cuanto la conexión flojea; 720p pide un tercio y en el
+    // reproductor flotante apenas se nota. Se decide al abrir el clip: cambiar
+    // la velocidad a mitad no recarga el vídeo.
+    const maxHeight = playbackSpeed >= 3 ? 720 : undefined;
+    getVideoSource(clip.id, maxHeight).then(url => {
       if (cancelled) return;
       if (url) setVideoSrc(url);
       else setVideoResolveFailed(true);
