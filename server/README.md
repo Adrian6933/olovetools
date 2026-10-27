@@ -45,16 +45,33 @@ además **distinta** de la que sonaba al pulsar "Escuchar" (esa usaba
 reemplaza ambas cosas por una sola fuente real:
 
 - Habla con el mismo servicio que usa la función "Leer en voz alta" de
-  Microsoft Edge — sin API key, sin coste. El protocolo (token, `Sec-MS-GEC`,
-  formato de los mensajes) se portó de `msedge-tts` 2.1.0, que dependía de
-  `ws` y de los streams de Node.
+  Microsoft Edge — sin API key, sin coste. El formato de los mensajes se portó
+  de `msedge-tts` 2.1.0 (que dependía de `ws` y de los streams de Node); el
+  endpoint, las cabeceras y el token salen de la librería de Python `edge-tts`
+  7.3.1, porque Microsoft cambió el token el 27-10-2026 y `msedge-tts` dejó de
+  funcionar (el handshake devolvía 200 en vez de 101).
+- Conexión: `wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=…`
+  con `Sec-MS-GEC-Version=2-143.0.3650.75`, cookie `muid` aleatoria y las
+  cabeceras de Edge (`Pragma`, `Cache-Control`, `Sec-WebSocket-Version`,
+  `Accept-Encoding`, `Accept-Language`, `Origin` de la extensión).
+- **Token `Sec-MS-GEC` v2**: `"<CS64 hex>-<SHA-256 hex>"` de la ventana de 5
+  minutos en ticks de Windows + el client token. Ese SHA-256 no es el estándar:
+  arranca de un estado intermedio precalculado (un prefijo secreto de 57
+  bytes), así que Web Crypto no sirve y está escrito a mano en JS puro, igual
+  que el CS64. Si Microsoft lo vuelve a cambiar, el síntoma es el mismo (200 o
+  403 en el handshake): mirar `edge_tts/drm.py` y `constants.py` de la última
+  versión de `edge-tts` en PyPI y portar las constantes.
+- En el Worker los frames binarios llegan como `Blob`, no como `ArrayBuffer`:
+  se guardan en orden como promesas y se leen al llegar `turn.end`.
 - `GET /api/tts?action=voices` → lista completa de voces neuronales reales de
   Microsoft (~400, cientos de idiomas/acentos), cacheada 6h en memoria.
-- `POST /api/tts` con `{ text, voice, rate, pitch }` → MP3 real
+- `POST /api/tts` con `{ text, voice, rate, pitch }` → una línea JSON con las
+  marcas de palabra/frase y, detrás, el MP3 real
   (`audio-24khz-96kbitrate-mono-mp3`), la **misma** voz para escuchar y para
-  descargar. Límite de 5000 caracteres por petición (`MAX_TEXT_LENGTH` en
-  `server/ttsGenerate.mjs`), para que la síntesis sea rápida y no abra la
-  puerta a abuso de un endpoint gratuito sin autenticación.
+  descargar. Límite de 3000 caracteres por petición (`MAX_TEXT_LENGTH` en
+  `server/ttsGenerate.mjs`; el cliente trocea los guiones largos), para que la
+  síntesis sea rápida y no abra la puerta a abuso de un endpoint gratuito sin
+  autenticación.
 ## `/api/whois` — WHOIS real para WhoisBolt
 
 WhoisBolt ya hacía DNS-over-HTTPS (A/AAAA/MX/TXT/NS/CNAME/SOA) directo desde
