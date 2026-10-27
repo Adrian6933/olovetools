@@ -1,6 +1,5 @@
-// WhoisBolt real WHOIS lookups — Node-only (raw TCP socket to port 43 via the
-// `net` module), so like imageConvert.mjs/ttsGenerate.mjs this only runs on
-// Vercel/self-hosted Node, never on Cloudflare Workers/edge.
+// WhoisBolt real WHOIS lookups — raw TCP socket to port 43 through the Workers
+// `connect()` API, so this runs inside the Cloudflare Worker.
 //
 // Why this exists: the tool is named "WhoisBolt" but only ever did DNS-over-
 // HTTPS lookups (A/AAAA/MX/TXT/NS/CNAME/SOA) — genuinely useful, but not WHOIS
@@ -11,32 +10,43 @@
 // "Registrar WHOIS Server" pointer (thin registries like .com/.net only hand
 // out the full record at the registrar's own server).
 
-import net from 'node:net';
+import { connect } from 'cloudflare:sockets';
 
 const CONNECT_TIMEOUT_MS = 8000;
 
-function queryRaw(server, query, port = 43) {
-  return new Promise((resolve, reject) => {
-    const socket = net.createConnection({ host: server, port });
-    // Buffers, not strings: decoding chunk by chunk splits the multi-byte
-    // characters of .cn/.jp records that fall on a packet boundary.
-    const chunks = [];
-    const text = () => Buffer.concat(chunks).toString('utf8');
-    let settled = false;
-    const finish = (fn, value) => {
-      if (settled) return;
-      settled = true;
-      socket.destroy();
-      fn(value);
-    };
-    socket.setTimeout(CONNECT_TIMEOUT_MS);
-    socket.on('connect', () => socket.write(query + '\r\n'));
-    socket.on('data', (chunk) => { chunks.push(chunk); });
-    socket.on('end', () => finish(resolve, text()));
-    socket.on('close', () => finish(resolve, text()));
-    socket.on('timeout', () => finish(reject, new Error(`WHOIS query to ${server} timed out`)));
-    socket.on('error', (err) => finish(reject, err));
+async function readAll(socket, query) {
+  const writer = socket.writable.getWriter();
+  await writer.write(new TextEncoder().encode(query + '\r\n'));
+  writer.releaseLock();
+  // Bytes, not strings: decoding chunk by chunk splits the multi-byte
+  // characters of .cn/.jp records that fall on a packet boundary.
+  const chunks = [];
+  let size = 0;
+  const reader = socket.readable.getReader();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    size += value.byteLength;
+  }
+  const all = new Uint8Array(size);
+  let at = 0;
+  for (const c of chunks) { all.set(c, at); at += c.byteLength; }
+  return new TextDecoder('utf-8').decode(all);
+}
+
+async function queryRaw(server, query, port = 43) {
+  const socket = connect({ hostname: server, port });
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`WHOIS query to ${server} timed out`)), CONNECT_TIMEOUT_MS);
   });
+  try {
+    return await Promise.race([readAll(socket, query), timeout]);
+  } finally {
+    clearTimeout(timer);
+    socket.close().catch(() => {});
+  }
 }
 
 // WHOIS text commonly indents field labels with leading spaces/tabs, so every

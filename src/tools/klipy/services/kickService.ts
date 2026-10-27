@@ -1,6 +1,6 @@
 // Klipy data layer.
 //
-// Categorias y directos van por /api/kick (funcion serverless en Vercel), que
+// Categorias y directos van por /api/kick (el Worker de Cloudflare), que
 // guarda el client_secret de Kick del lado del servidor. Eso es API oficial y
 // es fiable.
 //

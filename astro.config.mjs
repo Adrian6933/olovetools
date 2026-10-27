@@ -4,8 +4,8 @@ import { loadEnv } from 'vite';
 // `astro dev` carga el .env en import.meta.env, no en process.env, así que el
 // contador de visitas quedaba inerte en local y no había forma de probarlo. Se
 // copia aquí, en la configuración, que corre en Node y fuera del bundle: nada
-// de esto llega a incrustarse en el código compilado. En Vercel estas variables
-// ya vienen puestas y este bloque no las pisa.
+// de esto llega a incrustarse en el código compilado. En Cloudflare estas
+// variables son secretos del Worker y este bloque no las pisa.
 {
   const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
   for (const clave of ['UPSTASH_REDIS_REST_URL', 'UPSTASH_REDIS_REST_TOKEN', 'COBALT_API_URL', 'COBALT_API_KEY']) {
@@ -16,23 +16,24 @@ import { loadEnv } from 'vite';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
-import vercel from '@astrojs/vercel';
-import vercelHeaders from './integrations/vercel-headers.mjs';
+import cloudflare from '@astrojs/cloudflare';
 import { NOINDEX_LANGS } from './src/config/search-languages.mjs';
 
-// output: 'server' + the Vercel adapter turns src/pages/proxy.ts and
-// src/pages/api/** into real serverless functions (same origin as the site —
-// no separate worker or PUBLIC_API_BASE needed). Every other page keeps
-// `export const prerender = true` so it's still built as a static HTML file
-// exactly like before (578 pages), only those 3 API routes are dynamic.
+// output: 'server' + the Cloudflare adapter builds one Worker for "/",
+// src/pages/proxy.ts and src/pages/api/** (same origin as the site). Every other
+// page keeps `export const prerender = true` and ships as a static asset, which
+// Cloudflare serves without running the Worker. Config lives in wrangler.jsonc.
 export default defineConfig({
   site: 'https://olovetools.com',
   output: 'server',
-  adapter: vercel(),
+  // Prerenderiza en Node, como antes: las 578 páginas no tienen por qué
+  // compilarse dentro de workerd. Sin sesiones: el adaptador crearía un KV que
+  // nada usa.
+  adapter: cloudflare({ imageService: 'passthrough', prerenderEnvironment: 'node' }),
+  session: { driver: 'memory' },
 
   integrations: [
     react(),
-    vercelHeaders(),
     sitemap({
       // La raíz "/" es una página noindex de redirección por idioma: fuera del
       // sitemap (además duplicaba hreflang="en" en los clusters de los hubs).

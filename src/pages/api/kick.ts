@@ -1,6 +1,6 @@
 // Kick API proxy: categories, livestreams (official API, server-side app
 // token) and clips/clip (unofficial, Cloudflare-protected, best effort). Used
-// by Klipy and KickBolt. Runs as a real serverless function on Vercel.
+// by Klipy and KickBolt. Runs in the Cloudflare Worker.
 import type { APIRoute } from 'astro';
 import { handleKick, errorResponse } from '../../../server/core.mjs';
 

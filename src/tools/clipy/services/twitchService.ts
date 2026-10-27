@@ -1,7 +1,7 @@
 import { Category, Clip, TimeFilter, SortType, DayRange, CustomSpan } from '../../../components/clips/types';
 
 // The Twitch app token is issued by /api/twitch/token (src/pages/api/twitch/
-// token.ts, same origin — Vercel serverless function) so the client_secret
+// token.ts, same origin — Cloudflare Worker) so the client_secret
 // never ships in the browser bundle.
 let cachedAuth: { token: string; clientId: string; expiresAt: number } | null = null;
 

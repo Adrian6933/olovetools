@@ -3,7 +3,7 @@
 Suite de 60 herramientas web gratuitas, en 9 idiomas, que funcionan en el
 navegador. <https://olovetools.com>
 
-Astro 6 con islas de React, Tailwind 4 y despliegue en Vercel.
+Astro 6 con islas de React, Tailwind 4 y despliegue en Cloudflare Workers.
 
 ## Poner en marcha
 
@@ -20,19 +20,21 @@ funciona sin ellas.
 | Comando | Qué hace |
 |---|---|
 | `npm run dev` | Servidor de desarrollo con recarga en caliente |
-| `npm run build` | Genera las 594 páginas y las funciones serverless |
+| `npm run build` | Genera las páginas estáticas y el Worker (`dist/`) |
+| `npx wrangler dev --config dist/server/wrangler.json` | Sirve el build en `workerd`, el motor de Cloudflare |
+| `npx wrangler deploy --config dist/server/wrangler.json` | Publica el build en producción |
 | `node scripts/check-translations.mjs` | Compara los 9 idiomas contra el inglés |
 | `node scripts/generate-tool.mjs` | Andamiaje de una herramienta nueva |
 
-`npm run preview` no funciona: el adaptador de Vercel no lo soporta. Para ver el
-resultado de un build, despliega una preview en Vercel.
+Para ver el resultado de un build tal cual corre en producción, usa el
+`wrangler dev` de la tabla.
 
 ## Cómo está montado
 
 ```
 src/
   pages/[lang]/[tool]/    Una ruta que sirve las 60 herramientas en 9 idiomas
-  pages/api/              Endpoints serverless (Node, no edge)
+  pages/api/              Endpoints del Worker de Cloudflare
   tools/<slug>/           Una carpeta por herramienta, con su propio React
   locales/<lang>/         Un fichero de textos por herramienta e idioma
   components/shared/      Anuncios, movimiento y piezas comunes
@@ -68,18 +70,28 @@ con el resto de la suite.
 
 ## Despliegue
 
-Vercel construye desde `main` al hacer push. Las cuatro variables de entorno se
-configuran en *Project Settings → Environment Variables*, y **no se aplican a un
-despliegue ya existente**: hay que volver a desplegar.
+Todo vive en Cloudflare, en un Worker llamado `olovetools` (`wrangler.jsonc`).
+Las páginas prerenderizadas se sirven como archivos estáticos, gratis y sin
+límite de tráfico; el Worker solo se ejecuta para `/`, `/proxy` y `/api/*`.
 
-El DNS lo gestiona Cloudflare (el dominio está comprado en Hostinger). Los
-registros del sitio deben estar en **DNS only**, con la nube gris: con el proxy
-de Cloudflare activo, Vercel no puede verificar el dominio ni emitir el
-certificado.
+```bash
+npm run build
+npx wrangler deploy --config dist/server/wrangler.json
+```
 
-Las cabeceras de seguridad y de caché las inyecta
-`integrations/vercel-headers.mjs` en el `config.json` que genera el adaptador.
-No se pueden poner en `vercel.json`: con la Build Output API se ignoran.
+Los secretos (`TWITCH_*`, `KICK_*`, `UPSTASH_*`, `COBALT_*`) se suben una vez
+con `npx wrangler secret bulk .env` y persisten entre despliegues.
+
+El dominio y su DNS están en Cloudflare. `olovetools.com` y
+`www.olovetools.com` son *custom domains* del Worker (los crea `wrangler deploy`
+a partir de `routes`); `www` redirige a la raíz con una Redirect Rule de la zona.
+
+La web estuvo en Vercel hasta octubre de 2026. Se fue porque el proxy de vídeo
+pasaba gigas por sus funciones y agotó el Fast Origin Transfer del plan
+gratuito, que pausó el sitio.
+
+Las cabeceras de seguridad y de caché de los archivos estáticos están en
+`public/_headers`; las de las respuestas del Worker, en `src/middleware.ts`.
 
 ## Documentación
 

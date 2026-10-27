@@ -3,7 +3,7 @@ import { noteRoute, usableProxies } from "./route";
 import { tsToMp4 } from "../../../components/clipstudio/tsToMp4";
 
 // Backend at the same origin (src/pages/api/kick.ts, src/pages/proxy.ts, run
-// as Vercel serverless functions): /api/kick?action=clip fetches clip info
+// in the Cloudflare Worker): /api/kick?action=clip fetches clip info
 // with browser-like headers server-side, and /proxy relays the clip CDN with
 // CORS. Public proxies below remain as fallback.
 export const DOWNLOAD_PROXIES = [

@@ -1,7 +1,6 @@
 // CORS relay for Twitch VOD/clip CDNs and the Kick clip CDN. Used by ClipFlow,
-// TwitchBolt and KickBolt. Runs as a real serverless function on Vercel (this
-// route is excluded from prerendering below); the equivalent Node-http and
-// Cloudflare Worker versions share the same logic in server/core.mjs.
+// TwitchBolt and KickBolt. Runs in the Cloudflare Worker (this route is excluded
+// from prerendering below); the logic lives in server/core.mjs.
 import type { APIRoute } from 'astro';
 import { handleProxy, errorResponse } from '../../server/core.mjs';
 

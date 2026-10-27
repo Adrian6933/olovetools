@@ -1,21 +1,15 @@
-// oLoveTools backend — platform-agnostic core logic, shared by:
-//   - Astro API routes (src/pages/proxy.ts, src/pages/api/kick.ts, src/pages/api/twitch/token.ts)
-//     used when deployed to Vercel (or any Astro SSR adapter) — same origin as the site.
-//   - The standalone Node server (server/index.mjs, via server/app.mjs) for
-//     self-hosting outside Vercel.
-//   - cloudflare-worker/worker.js is a separate self-contained copy (Workers
-//     can't easily import local Node modules without a bundler) for static-only
-//     hosting that isn't Vercel.
+// oLoveTools backend — core logic for the Astro API routes (src/pages/proxy.ts,
+// src/pages/api/kick.ts, src/pages/api/twitch/token.ts), which the Cloudflare
+// adapter bundles into the site's Worker — same origin as the site.
 //
 // Every handler here returns a plain { status, headers, body } descriptor —
 // callers translate that into whatever response type their platform needs.
 // Uses only Web-standard fetch/URLSearchParams/AbortSignal, no Node APIs, so
-// the same file works unmodified under Vercel's Node runtime, plain Node, and
-// (if ever bundled) edge runtimes.
+// the same file works unmodified in the Worker and under plain Node.
 
 if (typeof process !== 'undefined' && typeof process.loadEnvFile === 'function') {
   // Local dev convenience: load a gitignored .env file if present. Real hosts
-  // (Vercel, a VPS, Cloudflare Worker secrets…) set these directly, so a
+  // (Cloudflare Worker secrets, a VPS…) set these directly, so a
   // missing .env here is not an error.
   try { process.loadEnvFile(); } catch { /* no .env file — fine */ }
 }

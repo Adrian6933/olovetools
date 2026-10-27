@@ -1,7 +1,7 @@
 ---
 // Server-side language redirect (replaces the old Apache/.htaccess
 // Accept-Language rule from the Hostinger deployment, now that hosting is
-// Vercel). Not prerendered — needs to run per-request to read the header.
+// Cloudflare). Not prerendered — needs to run per-request to read the header.
 // A server redirect avoids the "avoid client-side redirects" PageSpeed/
 // Lighthouse warning that a pure client-side JS redirect would trigger.
 export const prerender = false;

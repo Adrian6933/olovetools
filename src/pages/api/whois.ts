@@ -1,4 +1,4 @@
-// WhoisBolt real WHOIS lookups — Vercel Node serverless function. See
+// WhoisBolt real WHOIS lookups — runs in the Cloudflare Worker. See
 // server/whoisLookup.mjs for why this needs raw TCP sockets (impossible from
 // a browser) rather than an HTTP API.
 import type { APIRoute } from 'astro';

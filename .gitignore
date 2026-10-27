@@ -64,3 +64,7 @@ public/review-local.html
 # Artefactos de empaquetado (el zip de 17 MB estuvo commiteado hasta 2026-08-31)
 *.zip
 .vercel
+
+# Cloudflare (wrangler dev)
+.wrangler/
+.dev.vars

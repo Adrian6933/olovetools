@@ -3,70 +3,37 @@
 Klipy, Clipy, ClipFlow, TwitchBolt y KickBolt necesitan un pequeño backend
 (proxy CORS de vídeo + tokens de app de Kick/Twitch, para que el
 `client_secret` nunca llegue al navegador). El sitio se despliega en
-**Vercel**, así que ese backend corre como **funciones serverless de Astro en
-el mismo dominio** — no hace falta un servidor ni un worker aparte.
+**Cloudflare**: `@astrojs/cloudflare` empaqueta estas rutas en un único
+**Worker en el mismo dominio**, y las páginas prerenderizadas se sirven como
+archivos estáticos sin ejecutarlo.
 
 ## Cómo está montado
 
 - `server/core.mjs` — toda la lógica (fetch a Kick/Twitch, caché de tokens,
-  allowlist de hosts del proxy). Usa solo `fetch`/`URL` estándar, sin APIs de
-  Node, para que funcione igual en local y en el runtime serverless de Vercel.
+  allowlist de hosts del proxy). Usa solo `fetch`/`URL` estándar.
 - `src/pages/proxy.ts` → ruta `/proxy?url=<encoded>` (relay CORS para los CDNs
   de vídeo de Twitch y Kick — solo permite esos hosts, no es un proxy abierto).
+  Mueve gigas al mes: por eso la web salió de Vercel, que cobra el tráfico que
+  pasa por sus funciones (Fast Origin Transfer, 10 GB gratis) y la pausó en
+  octubre de 2026. Cloudflare no cobra el ancho de banda de los Workers.
 - `src/pages/api/kick.ts` → ruta `/api/kick?action=categories|livestreams|clips|clip`.
 - `src/pages/api/twitch/token.ts` → ruta `/api/twitch/token`.
-- `server/imageConvert.mjs` + `src/pages/api/convert.ts` → ruta `/api/convert`
-  para FormatFlow (ver sección propia más abajo). A diferencia de las 3 rutas
-  anteriores, esta usa `sharp` (binario nativo), así que **solo funciona en
-  Node** (Vercel o self-host), nunca en Cloudflare Workers/edge.
 - `server/ttsGenerate.mjs` + `src/pages/api/tts.ts` → ruta `/api/tts` para
-  TTSBolt (ver sección propia más abajo). Usa `msedge-tts` (cliente WebSocket
-  puro en JS, sin binarios nativos), así que en teoría sí podría adaptarse a un
-  Worker — pero de momento vive junto a las demás rutas Node.
+  TTSBolt (ver sección propia más abajo). Cliente WebSocket propio, abierto con
+  `fetch` + `Upgrade: websocket`, la forma que tienen los Workers.
 - `server/whoisLookup.mjs` + `src/pages/api/whois.ts` → ruta `/api/whois` para
-  WhoisBolt (ver sección propia más abajo). Usa el módulo `net` de Node para
-  abrir una conexión TCP al puerto 43 (WHOIS real) — **solo funciona en Node**,
-  igual que `/api/convert`, nunca en Cloudflare Workers/edge.
+  WhoisBolt (ver sección propia más abajo). Abre la conexión TCP al puerto 43
+  con `connect()` de `cloudflare:sockets`.
 - `server/socialResolve.mjs` + `src/pages/api/social.ts` → ruta `/api/social`
-  para SocialBolt (ver sección propia más abajo). Solo usa `fetch`/`URL`, como
-  `core.mjs`, así que sí podría adaptarse a un Worker.
+  para SocialBolt (ver sección propia más abajo).
+- `server/visitStats.mjs` + `src/pages/api/stats.ts` → contador de visitas
+  (Upstash Redis por REST).
 
-Estas rutas tienen `export const prerender = false`, así que Astro las deja
-fuera del sitio estático y Vercel las sirve como funciones serverless. El
-resto de páginas siguen siendo HTML estático de toda la vida
-(`export const prerender = true`).
-
-## `/api/convert` — conversión real de imágenes para FormatFlow
-
-`canvas.toBlob()` en el navegador no puede producir AVIF real en la mayoría
-de motores, y no da control de calidad/compresión para WebP/TIFF. Este
-endpoint usa `sharp` (libvips) para una conversión de verdad:
-
-- **Soportado de verdad:** AVIF (codec AV1, sin patentes), WebP, TIFF (LZW),
-  JPEG, PNG, GIF — con resize incluido.
-- **NO soportado aquí (y no es un bug, es una limitación real):**
-  - **HEIC de salida** — el códec HEVC que usa un `.heic` real está bajo
-    patente y no viene incluido en el build open-source de libheif que trae
-    sharp (falla con "Unsupported compression"). No hay forma gratuita de
-    generar un `.heic` de verdad; el cliente sigue haciendo fallback honesto a
-    JPG (ya estaba así, y ahora la extensión del ZIP por lotes también lo
-    refleja correctamente).
-  - **EPS y RAW de salida** — conceptualmente RAW ni siquiera tiene sentido
-    como formato de exportación (es un volcado de sensor de cámara, no algo
-    que se "genera" desde un bitmap ya renderizado). EPS real necesitaría
-    Ghostscript, que no corre en una función serverless. Ambos siguen cayendo
-    a PNG en el cliente, con la extensión del archivo ya corregida para
-    coincidir con los bytes reales.
-
-`FormatFlow` intenta primero este endpoint (`src/tools/formatflow/services/imageService.ts`,
-función `tryServerConversion`) y si falla por cualquier motivo (self-host sin
-esta ruta desplegada, offline, imagen > 4.5MB, etc.) cae automáticamente al
-`canvas`/`utif` de siempre — nunca rompe, solo pierde la mejora de calidad.
-
-**Despliegue:** no necesita nada especial — `sharp` se instala como cualquier
-dependencia de npm y Vercel descarga el binario nativo correcto (Linux x64)
-durante su propio build, igual que hace Next.js con `next/image`. En local
-(`npm run dev`) usa el binario de tu SO tal cual.
+Estas rutas tienen `export const prerender = false`; el resto de páginas son
+HTML estático (`export const prerender = true`). Ojo con el plan gratuito de
+Workers: **10 ms de CPU por petición**. Esperar a la red no cuenta, así que
+reenviar vídeo o hablar con APIs cabe de sobra, pero nada que procese datos
+pesados (convertir imágenes, por ejemplo) puede vivir aquí: va en el navegador.
 
 ## `/api/tts` — voces neuronales reales para TTSBolt
 
@@ -77,8 +44,10 @@ además **distinta** de la que sonaba al pulsar "Escuchar" (esa usaba
 `window.speechSynthesis`, dependiente del sistema operativo). Este endpoint
 reemplaza ambas cosas por una sola fuente real:
 
-- Usa `msedge-tts`, un cliente WebSocket en JS puro del mismo servicio que usa
-  la función "Léelo en voz alta" de Microsoft Edge — sin API key, sin coste.
+- Habla con el mismo servicio que usa la función "Leer en voz alta" de
+  Microsoft Edge — sin API key, sin coste. El protocolo (token, `Sec-MS-GEC`,
+  formato de los mensajes) se portó de `msedge-tts` 2.1.0, que dependía de
+  `ws` y de los streams de Node.
 - `GET /api/tts?action=voices` → lista completa de voces neuronales reales de
   Microsoft (~400, cientos de idiomas/acentos), cacheada 6h en memoria.
 - `POST /api/tts` con `{ text, voice, rate, pitch }` → MP3 real
@@ -86,11 +55,6 @@ reemplaza ambas cosas por una sola fuente real:
   descargar. Límite de 5000 caracteres por petición (`MAX_TEXT_LENGTH` en
   `server/ttsGenerate.mjs`), para que la síntesis sea rápida y no abra la
   puerta a abuso de un endpoint gratuito sin autenticación.
-- **Limitación real, no un bug:** no se puede generar HEIC en `/api/convert`
-  por patentes de códec; aquí no hay equivalente — la síntesis de voz no tiene
-  esa restricción, así que esta ruta sí cubre el 100% de lo que promete
-  TTSBolt (a diferencia de FormatFlow con EPS/RAW).
-
 ## `/api/whois` — WHOIS real para WhoisBolt
 
 WhoisBolt ya hacía DNS-over-HTTPS (A/AAAA/MX/TXT/NS/CNAME/SOA) directo desde
@@ -117,7 +81,9 @@ existía en la herramienta pese al nombre "WhoisBolt".
 
 `npm run dev` ya sirve estas rutas de verdad (no hace falta nada aparte):
 `http://localhost:4321/api/kick`, `/proxy`, `/api/twitch/token` funcionan
-igual que en producción.
+igual que en producción. Para probar el build tal cual corre en Cloudflare
+(motor `workerd`): `npm run build` y luego
+`npx wrangler dev --config dist/server/wrangler.json`.
 
 ## Variables de entorno
 
@@ -128,10 +94,11 @@ TWITCH_CLIENT_ID
 TWITCH_CLIENT_SECRET
 ```
 
-**En Vercel:** Project Settings → Environment Variables → añadir las 4, en
-"Production" (y "Preview"/"Development" si quieres probarlas en esos entornos
-también). Sin ellas, `/api/kick` y `/api/twitch/token` responden con un error
-claro en vez de arrancar con credenciales antiguas.
+**En Cloudflare:** son secretos del Worker. Se suben todos de una vez desde
+el `.env` con `npx wrangler secret bulk .env` (o a mano en Workers → olovetools
+→ Settings → Variables and Secrets). Llegan al código como `process.env`
+gracias a `nodejs_compat`. Sin ellas, `/api/kick` y `/api/twitch/token`
+responden con un error claro en vez de arrancar con credenciales antiguas.
 
 **En local:** crea un archivo `.env` en la raíz del proyecto (ya está en
 `.gitignore`, nunca se sube) con esas 4 líneas — `server/core.mjs` lo carga
@@ -140,7 +107,7 @@ automáticamente al arrancar `npm run dev`.
 ⚠️ Las credenciales que llevaba el proyecto hasta ahora estuvieron
 hardcodeadas en el código (en el bundle del navegador, en el caso de Twitch) y
 llevan tiempo en el historial de git. Conviene **rotarlas** en los paneles de
-desarrollador de Kick y Twitch antes de poner las nuevas en Vercel.
+desarrollador de Kick y Twitch antes de subir las nuevas a Cloudflare.
 
 ## Cómo obtener las credenciales
 

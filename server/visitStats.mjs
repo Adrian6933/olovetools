@@ -21,7 +21,8 @@
 // Y se leen de process.env a secas, nunca de import.meta.env: Vite sustituye
 // import.meta.env en tiempo de compilación, así que el token acabaría escrito
 // dentro del bundle. Para desarrollo, astro.config.mjs copia el .env a
-// process.env, que es donde Vercel ya las pone en producción.
+// process.env, que es donde Cloudflare deja los secretos del Worker
+// (con nodejs_compat).
 const cfg = (nombre) => process.env[nombre] || '';
 const urlBase = () => cfg('UPSTASH_REDIS_REST_URL');
 const token = () => cfg('UPSTASH_REDIS_REST_TOKEN');

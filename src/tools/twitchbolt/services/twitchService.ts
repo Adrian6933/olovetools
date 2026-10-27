@@ -24,7 +24,7 @@ const GQL_PROXIES = [
   (url: string) => `https://thingproxy.freeboard.io/fetch/${url}`
 ];
 
-// /proxy (src/pages/proxy.ts, same origin — Vercel serverless function) adds
+// /proxy (src/pages/proxy.ts, same origin — Cloudflare Worker) adds
 // CORS headers for Twitch's clip CDNs; public proxies below remain as fallback.
 const DOWNLOAD_PROXIES = [
   (url: string) => `/proxy?url=${encodeURIComponent(url)}`,

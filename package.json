@@ -13,13 +13,14 @@
     "preview": "astro preview",
     "check": "tsc --noEmit",
     "test:tools": "node scripts/test-tool-review.mjs && node scripts/test-suite-engines.mjs && node scripts/test-review-regressions.cjs",
-    "test:media:prepare": "node scripts/create-review-fixtures.mjs artifacts/review --browser"
+    "test:media:prepare": "node scripts/create-review-fixtures.mjs artifacts/review --browser",
+    "deploy": "astro build && wrangler deploy --config dist/server/wrangler.json"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",
+    "@astrojs/cloudflare": "^13.7.0",
     "@astrojs/react": "^5.0.1",
     "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/vercel": "^10.0.8",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
     "@google/genai": "^1.30.0",
@@ -27,7 +28,7 @@
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "astro": "^6.0.8",
+    "astro": "^6.4.8",
     "cropperjs": "^2.1.1",
     "dompurify": "^3.3.3",
     "framer-motion": "^12.36.0",
@@ -42,7 +43,6 @@
     "lottie-web": "^5.13.0",
     "lucide-react": "^0.555.0",
     "mediabunny": "1.61.3",
-    "msedge-tts": "2.1.0",
     "mux.js": "^6.3.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.1.200",
@@ -51,7 +51,6 @@
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-i18next": "^16.5.8",
-    "sharp": "^0.34.5",
     "sql-formatter": "^15.8.2",
     "svgo": "^4.0.1",
     "tailwindcss": "^4.2.2",
@@ -60,6 +59,8 @@
   "devDependencies": {
     "@types/node": "^22.14.0",
     "@types/prismjs": "^1.26.6",
-    "typescript": "~5.8.2"
+    "sharp": "^0.34.5",
+    "typescript": "~5.8.2",
+    "wrangler": "^4.153.0"
   }
 }

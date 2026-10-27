@@ -1,0 +1,18 @@
+// Worker de olovetools.com en Cloudflare. Las páginas prerenderizadas se sirven
+// como archivos estáticos sin ejecutar el Worker (gratis y sin límite de
+// tráfico); el Worker solo atiende "/", /proxy y /api/*.
+//
+// "main" y el binding ASSETS los añade @astrojs/cloudflare al compilar.
+// Los secretos (TWITCH_*, KICK_*, UPSTASH_*, COBALT_*) no van aquí: se suben con
+// `npx wrangler secret bulk .env` y llegan al código como process.env.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "olovetools",
+  "compatibility_date": "2026-04-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "routes": [
+    { "pattern": "olovetools.com", "custom_domain": true },
+    { "pattern": "www.olovetools.com", "custom_domain": true }
+  ]
+}

@@ -9,8 +9,7 @@
 // servir gratis.
 //
 // Solo usa fetch/URL/URLSearchParams estándar (sin APIs de Node), igual que
-// server/core.mjs, para que corra tal cual en Vercel, en Node a pelo y —si
-// algún día hace falta— en un Worker.
+// server/core.mjs, para que corra tal cual en el Worker de Cloudflare y en Node.
 
 import { BROWSER_UA } from './core.mjs';
 

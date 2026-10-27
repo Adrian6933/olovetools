@@ -21,7 +21,7 @@ const GQL_PROXIES = [
 // usher.ttvnw.net (VOD master playlist) sends CORS headers and works with a direct
 // fetch, but the actual video segment CDN (CloudFront/S3) does not, so segment and
 // media-playlist downloads need a proxy. /proxy (src/pages/proxy.ts) runs at the
-// same origin as a Vercel serverless function. Public CORS proxies below remain
+// same origin, inside the Cloudflare Worker. Public CORS proxies below remain
 // as fallback.
 const WORKER_PROXY_URL = '/proxy';
 

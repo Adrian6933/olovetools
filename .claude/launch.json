@@ -237,6 +237,20 @@
         "4507"
       ],
       "port": 4507
+    },
+    {
+      "//": "La web compilada corriendo en workerd, el mismo motor que Cloudflare en produccion (npm run build antes).",
+      "name": "olovetools-cf-preview",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": [
+        "wrangler",
+        "dev",
+        "--config",
+        "dist/server/wrangler.json",
+        "--port",
+        "8799"
+      ],
+      "port": 8799
     }
   ]
 }

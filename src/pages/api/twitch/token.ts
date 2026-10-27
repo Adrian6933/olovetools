@@ -1,6 +1,6 @@
 // Issues a Twitch app access token for Clipy. Keeps the client_secret on the
-// server — it used to be hardcoded in the browser bundle. Runs as a real
-// serverless function on Vercel.
+// server — it used to be hardcoded in the browser bundle. Runs in the
+// Cloudflare Worker.
 import type { APIRoute } from 'astro';
 import { handleTwitchToken, errorResponse } from '../../../../server/core.mjs';
 

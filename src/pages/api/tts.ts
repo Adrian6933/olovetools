@@ -1,4 +1,4 @@
-// TTSBolt real speech synthesis — Vercel Node serverless function.
+// TTSBolt real speech synthesis — runs in the Cloudflare Worker.
 // See server/ttsGenerate.mjs for why this replaces the old Google-Translate-
 // via-third-party-proxy download hack.
 import type { APIRoute } from 'astro';
