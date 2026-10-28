@@ -31,11 +31,12 @@ import CalidadSelector from './CalidadSelector';
 import AvisoGrafica from './AvisoGrafica';
 import { BrandContext, type ClipBrand } from './brand';
 import {
-  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge,  Clapperboard, Layers, Download, Crop, Blend
+  ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge,  Clapperboard, Layers, Download, Crop, Blend, Scaling
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
-import { FORMATOS, sufijoFormato, type Encaje, type Formato } from './formato';
+import { FORMATOS, ESCALA_MAX, ESCALA_MIN, limitarEscala, sufijoFormato, type Encaje, type Formato, type ModoEncaje } from './formato';
+import VistaEncaje from './VistaEncaje';
 import { DESCARGAS_A_LA_VEZ, procesarClips, resolucionDe, semaforo, soltarDescarga, type ProgresoLote } from './lotes';
 import { zipEnBlob, type EntradaZip } from './zipBlob';
 
@@ -191,22 +192,28 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const FORMATO_KEY = `${brand.storagePrefix}_export_format`;
   const [formatoVideo, setFormatoVideo] = useState<Formato>('original');
   const [formatoClips, setFormatoClips] = useState<Formato>('original');
-  const [encaje, setEncaje] = useState<Encaje>('recortar');
+  const [modoEncaje, setModoEncaje] = useState<ModoEncaje>('recortar');
+  // Tamaño del clip sobre el fondo en el modo 'escalar' (1 = entero).
+  const [escala, setEscala] = useState(1);
   useEffect(() => {
     try {
       const v = JSON.parse(localStorage.getItem(FORMATO_KEY) || 'null');
       if (v && FORMATOS.includes(v.video)) setFormatoVideo(v.video);
       if (v && FORMATOS.includes(v.clips)) setFormatoClips(v.clips);
-      if (v && (v.encaje === 'recortar' || v.encaje === 'difuminar')) setEncaje(v.encaje);
+      if (v && ['recortar', 'difuminar', 'escalar'].includes(v.encaje)) setModoEncaje(v.encaje);
+      if (v && typeof v.escala === 'number') setEscala(limitarEscala(v.escala));
     } catch { /* el de serie */ }
   }, []);
-  const guardarFormato = (cambio: Partial<{ video: Formato; clips: Formato; encaje: Encaje }>) => {
-    const siguiente = { video: formatoVideo, clips: formatoClips, encaje, ...cambio };
+  const guardarFormato = (cambio: Partial<{ video: Formato; clips: Formato; encaje: ModoEncaje; escala: number }>) => {
+    const siguiente = { video: formatoVideo, clips: formatoClips, encaje: modoEncaje, escala, ...cambio };
     setFormatoVideo(siguiente.video);
     setFormatoClips(siguiente.clips);
-    setEncaje(siguiente.encaje);
+    setModoEncaje(siguiente.encaje);
+    setEscala(siguiente.escala);
     try { localStorage.setItem(FORMATO_KEY, JSON.stringify(siguiente)); } catch { /* vale para esta visita */ }
   };
+  /** Lo que se pasa a la exportación (formato.ts): el modo, o el tamaño si se escala. */
+  const encaje = React.useMemo<Encaje>(() => (modoEncaje === 'escalar' ? { escala } : modoEncaje), [modoEncaje, escala]);
 
   const clipsListos = React.useMemo(
     () => clips.filter(c => c.status === 'success' && c.data).map(c => c.data!),
@@ -1006,10 +1013,11 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                });
                const encajeGrupo: Grupo | null = !hayVertical ? null : {
                  id: 'encaje', titulo: t.fitLabel || 'Vertical', icono: forma('9:16'), ancho: 'xl:flex-[1.2]',
-                 valor: encaje, elegir: id => guardarFormato({ encaje: id as Encaje }),
+                 valor: modoEncaje, elegir: id => guardarFormato({ encaje: id as ModoEncaje }),
                  opciones: [
                    { id: 'recortar', icon: <Crop className="w-4 h-4 shrink-0" />, label: t.fitCrop || 'Crop the centre', hint: t.fitCropHint || 'The centre fills the screen; what is at the sides is cut off' },
                    { id: 'difuminar', icon: <Blend className="w-4 h-4 shrink-0" />, label: t.fitBlur || 'Blurred background', hint: t.fitBlurHint || 'The whole clip in the middle, with a blurred copy behind it' },
+                   { id: 'escalar', icon: <Scaling className="w-4 h-4 shrink-0" />, label: t.fitScale || 'Resize on blur', hint: t.fitScaleHint || 'Like the blurred background, but you choose how big the clip is' },
                  ],
                };
 
@@ -1017,7 +1025,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                // en el title de cada botón y no se veía sin pasar el ratón.
                const resumen = [
                  grupos.find(g => g.id === 'modo')?.opciones.find(o => o.id === modo)?.hint,
-                 encajeGrupo?.opciones.find(o => o.id === encaje)?.hint,
+                 encajeGrupo?.opciones.find(o => o.id === modoEncaje)?.hint,
                ].filter(Boolean).join(' · ');
 
                const selector = (g: Grupo, extra = '') => (
@@ -1074,6 +1082,37 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                              <span className="text-twitch flex">{encajeGrupo.icono}</span>{encajeGrupo.titulo}
                            </span>
                            {selector(encajeGrupo, 'flex-1')}
+                         </div>
+                       )}
+                       {/* Cómo queda el vertical, con la miniatura del primer clip
+                           y el mismo dibujo que la exportación; al escalar, al
+                           lado el deslizador del tamaño. */}
+                       {encajeGrupo && (
+                         <div className="flex items-center gap-4 px-1">
+                           <VistaEncaje src={clipsListos[0]?.thumbnail} encaje={encaje} etiqueta={t.fitPreview || 'Preview of the vertical format'} />
+                           {modoEncaje === 'escalar' && (
+                             <label className={`flex-1 min-w-0 flex flex-col gap-2 ${ocupado ? 'opacity-50 pointer-events-none' : ''}`}>
+                               <span className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                                 {t.fitScaleSize || 'Clip size'}
+                                 <span className="text-white tabular-nums">{Math.round(escala * 100)}%</span>
+                               </span>
+                               <input
+                                 type="range"
+                                 min={Math.round(ESCALA_MIN * 100)}
+                                 max={Math.round(ESCALA_MAX * 100)}
+                                 step={5}
+                                 value={Math.round(escala * 100)}
+                                 onChange={e => guardarFormato({ escala: parseInt(e.target.value, 10) / 100 })}
+                                 disabled={ocupado}
+                                 className="w-full accent-twitch h-1.5 cursor-pointer"
+                               />
+                               <span className="flex justify-between gap-2 text-[10px] font-medium text-gray-500">
+                                 <span>{t.fitScaleSmaller || 'Smaller'}</span>
+                                 <button type="button" onClick={() => guardarFormato({ escala: 1 })} className="text-gray-400 hover:text-white underline-offset-2 hover:underline cursor-pointer">{t.fitScaleReset || 'Whole clip'}</button>
+                                 <span>{t.fitScaleBigger || 'Bigger (crops the edges)'}</span>
+                               </span>
+                             </label>
+                           )}
                          </div>
                        )}
                        <MergePanel

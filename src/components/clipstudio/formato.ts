@@ -11,10 +11,20 @@
 //     pierde: si la cámara del streamer va en una esquina, no sale).
 //   - difuminar: el clip entero en medio y, detrás, él mismo ampliado y
 //     desenfocado en vez de franjas negras. No se pierde nada.
+//   - escalar: lo mismo que difuminar, pero el clip de delante a otro tamaño
+//     ({ escala }): por debajo de 1 más pequeño, por encima más grande hasta
+//     cortarle los bordes. 1 es exactamente difuminar.
 // ============================================================================
 
 export type Formato = 'original' | '16:9' | '9:16';
-export type Encaje = 'recortar' | 'difuminar';
+export type ModoEncaje = 'recortar' | 'difuminar' | 'escalar';
+export type Encaje = 'recortar' | 'difuminar' | { escala: number };
+
+/** Lo que deja el deslizador de 'escalar', sobre el clip entero (1). */
+export const ESCALA_MIN = 0.7;
+export const ESCALA_MAX = 1.6;
+export const limitarEscala = (n: number) =>
+  Number.isFinite(n) ? Math.min(ESCALA_MAX, Math.max(ESCALA_MIN, n)) : 1;
 
 export const FORMATOS: Formato[] = ['original', '16:9', '9:16'];
 
@@ -38,14 +48,15 @@ export const medidasDe = (formato: Formato, ancho: number, alto: number, base?: 
 /**
  * Devuelve la función que pinta una imagen o fotograma (w x h) en el lienzo
  * de W x H según el encaje. Lo que sobra queda en negro (el que llama lo
- * pinta antes) salvo con `difuminar`.
+ * pinta antes) salvo con `difuminar` o `{ escala }`.
  */
 export const crearEncaje = (ctx: CanvasRenderingContext2D, W: number, H: number, encaje: Encaje = 'difuminar') => {
   // El fondo se pinta en pequeño y se amplía: el propio escalado ya lo
   // desenfoca, y cuesta casi nada por fotograma (ctx.filter = blur a 1080x1920
   // en cada uno sí se notaba).
+  const escala = typeof encaje === 'object' ? limitarEscala(encaje.escala) : 1;
   let fondo: CanvasRenderingContext2D | null = null;
-  if (encaje === 'difuminar') {
+  if (encaje !== 'recortar') {
     const c = document.createElement('canvas');
     c.width = Math.max(2, Math.round(W / 16));
     c.height = Math.max(2, Math.round(H / 16));
@@ -72,6 +83,7 @@ export const crearEncaje = (ctx: CanvasRenderingContext2D, W: number, H: number,
       ctx.fillStyle = 'rgba(0,0,0,0.45)';
       ctx.fillRect(0, 0, W, H);
     }
-    ctx.drawImage(src, (W - w * contener) / 2, (H - h * contener) / 2, w * contener, h * contener);
+    const k = contener * escala;
+    ctx.drawImage(src, (W - w * k) / 2, (H - h * k) / 2, w * k, h * k);
   };
 };
