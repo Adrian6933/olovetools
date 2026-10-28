@@ -11,6 +11,7 @@
 import type { ClipData, Resolution, WatermarkConfig } from './types';
 import { processVideoWithWatermark } from './watermarkService';
 import type { Encaje, Formato } from './formato';
+import { mantenerPestanaActiva } from './mantenerActiva';
 
 /** Descargas a la vez: más no acelera (el ancho de banda es el mismo) y satura los relés. */
 export const DESCARGAS_A_LA_VEZ = 4;
@@ -204,9 +205,16 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
     return { clip, res, original: procesar && !o.guardarOriginal ? null : original, final };
   };
 
-  const resultados = await Promise.all(clips.map(uno));
-  if (o.signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
-  return resultados;
+  // Todo el lote, no solo cada render: entre uno y otro, con la pestaña
+  // minimizada, Chrome podría congelarla con las descargas a medias.
+  const soltar = procesar ? mantenerPestanaActiva() : () => {};
+  try {
+    const resultados = await Promise.all(clips.map(uno));
+    if (o.signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
+    return resultados;
+  } finally {
+    soltar();
+  }
 };
 
 /** Suelta un blob como descarga del navegador. */

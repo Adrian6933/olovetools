@@ -1137,6 +1137,11 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                    </div>
                    {necesitaProcesar && <AvisoGrafica tx={(k, fb) => (typeof t?.[k] === 'string' && t[k]) || fb} className="mt-3" />}
                    {resumen && <p className="mt-3 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
+                   {/* Mientras exporta, mantenerActiva.ts pone el altavoz en la
+                       pestaña: que no extrañe, y que se sepa que puede irse a otra. */}
+                   {ocupado && necesitaProcesar && (
+                     <p className="mt-2 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{t.bgExportHint || 'You can minimise or switch tabs: it keeps exporting. The tab shows a speaker icon meanwhile; nothing plays.'}</p>
+                   )}
                  </div>
                );
              })()}

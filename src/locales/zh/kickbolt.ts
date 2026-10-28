@@ -415,6 +415,7 @@ export default {
   "fitScaleReset": "完整剪辑",
   "fitScaleBigger": "更大（会裁掉边缘）",
   "fitPreview": "竖屏格式预览",
+  "bgExportHint": "可以最小化或切换标签页，导出会继续。期间标签页会显示声音图标，但不会发出任何声音。",
   "fmtSectionVideo": "视频格式",
   "fmtSectionClips": "剪辑格式",
   "mergeSummary": "{n} 个剪辑 · {d}",

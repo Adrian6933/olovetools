@@ -415,6 +415,7 @@ export default {
   "fitScaleReset": "クリップ全体",
   "fitScaleBigger": "大きく（端が切れます）",
   "fitPreview": "縦向きのプレビュー",
+  "bgExportHint": "最小化したり別のタブに切り替えても書き出しは続きます。その間タブにスピーカーのアイコンが出ますが、音は鳴りません。",
   "fmtSectionVideo": "動画の形式",
   "fmtSectionClips": "クリップの形式",
   "mergeSummary": "{n} クリップ · {d}",

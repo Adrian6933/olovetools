@@ -415,6 +415,7 @@ export default {
   "fitScaleReset": "Whole clip",
   "fitScaleBigger": "Bigger (crops the edges)",
   "fitPreview": "Preview of the vertical format",
+  "bgExportHint": "You can minimise or switch tabs: it keeps exporting. The tab shows a speaker icon meanwhile; nothing plays.",
   "fmtSectionVideo": "Video format",
   "fmtSectionClips": "Clips format",
   "mergeSummary": "{n} clips · {d}",

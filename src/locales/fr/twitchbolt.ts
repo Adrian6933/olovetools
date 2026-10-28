@@ -415,6 +415,7 @@ export default {
   "fitScaleReset": "Clip entier",
   "fitScaleBigger": "Plus grand (coupe les bords)",
   "fitPreview": "Aperçu du format vertical",
+  "bgExportHint": "Vous pouvez réduire la fenêtre ou changer d’onglet : l’export continue. Pendant ce temps, l’onglet affiche une icône de son ; rien ne joue.",
   "fmtSectionVideo": "Format de la vidéo",
   "fmtSectionClips": "Format des clips",
   "mergeSummary": "{n} clips · {d}",

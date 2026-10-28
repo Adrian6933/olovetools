@@ -415,6 +415,7 @@ export default {
   "fitScaleReset": "Clipe inteiro",
   "fitScaleBigger": "Maior (corta as bordas)",
   "fitPreview": "Prévia do formato vertical",
+  "bgExportHint": "Você pode minimizar ou trocar de aba: a exportação continua. Enquanto isso, a aba mostra o ícone de som; nada toca.",
   "fmtSectionVideo": "Formato do vídeo",
   "fmtSectionClips": "Formato dos clipes",
   "mergeSummary": "{n} clipes · {d}",

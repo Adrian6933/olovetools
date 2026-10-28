@@ -30,6 +30,7 @@ import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
 import { bitrateDeGrabacion, suavizar } from './recorder';
 import { crearNitidez } from './nitidez';
 import { crearEncaje, medidasDe, type Encaje, type Formato } from './formato';
+import { mantenerPestanaActiva } from './mantenerActiva';
 import { dibujarCapas, type Capa } from './editor/animaciones';
 
 export interface PiezaOffline {
@@ -146,7 +147,7 @@ const destinoEnBlobs = () => {
  * Renderiza las piezas una detrás de otra en un MP4 (H.264 + AAC u Opus).
  * Lanza si algo no se puede leer: el que llama decide si grabar en tiempo real.
  */
-export const exportarSinTiempoReal = async (
+const exportar = async (
   piezas: PiezaOffline[],
   opts: OpcionesOffline,
   onProgress?: (p: ProgresoOffline) => void,
@@ -350,5 +351,24 @@ export const exportarSinTiempoReal = async (
   } finally {
     filtro?.liberar();
     abiertas.forEach(a => { try { a.input?.dispose(); } catch { /* ya cerrado */ } });
+  }
+};
+
+/**
+ * Decodifica, compone y codifica las piezas en un MP4. Mientras dura, la
+ * pestaña se mantiene "activa" (mantenerActiva.ts) para que Chrome no la
+ * frene ni la congele si se minimiza o se cambia de pestaña.
+ */
+export const exportarSinTiempoReal = async (
+  piezas: PiezaOffline[],
+  opts: OpcionesOffline,
+  onProgress?: (p: ProgresoOffline) => void,
+  signal?: AbortSignal,
+): Promise<Blob> => {
+  const soltar = mantenerPestanaActiva();
+  try {
+    return await exportar(piezas, opts, onProgress, signal);
+  } finally {
+    soltar();
   }
 };

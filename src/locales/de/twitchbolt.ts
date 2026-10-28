@@ -415,6 +415,7 @@ export default {
   "fitScaleReset": "Ganzer Clip",
   "fitScaleBigger": "Größer (schneidet die Ränder ab)",
   "fitPreview": "Vorschau des Hochformats",
+  "bgExportHint": "Du kannst minimieren oder den Tab wechseln: Der Export läuft weiter. Solange zeigt der Tab ein Lautsprechersymbol; es ist nichts zu hören.",
   "fmtSectionVideo": "Videoformat",
   "fmtSectionClips": "Clip-Format",
   "mergeSummary": "{n} Clips · {d}",
