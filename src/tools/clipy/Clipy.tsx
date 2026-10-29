@@ -1401,6 +1401,19 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     [keywords],
   );
 
+  // Orden de lo que ya se ha enseñado, para no recolocarlo al llegar más.
+  // Ordenar por vistas la lista entera en cada tanda nueva hacía que los
+  // clips recién llegados con más vistas se colaran por arriba y empujaran
+  // hacia abajo lo que se estaba mirando: un tirón justo cuando ibas a abrir
+  // uno. Ahora lo ya mostrado conserva su sitio y lo nuevo va detrás,
+  // ordenado entre sí. Se vuelve a ordenar todo solo al cambiar la lista
+  // (la misma clave que devuelve la rejilla arriba del todo, donde no se nota)
+  // y al acabar un "Load all", que es pedir la lista completa ordenada.
+  // Los ids se quedan aunque un clip se oculte (streamer bloqueado), así que
+  // si se desbloquea vuelve a su sitio.
+  const ordenEstableRef = useRef<{ clave: string; ids: string[] }>({ clave: '', ids: [] });
+  const claveOrden = JSON.stringify([state.activeCategory?.id || '', state.timeFilter, state.sortType, state.anchorTime, keywordNeedles, activeOnlyLanguages, activeExcludeLanguages]);
+
   const visibleClips = useMemo(() => {
     const blockedIds = new Set(activeBlockedList.map(s => s.id));
     const onlySet = activeOnlyLanguages.length > 0 ? new Set(activeOnlyLanguages) : null;
@@ -1424,6 +1437,25 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       filtered = [...filtered].sort((a, b) => b.view_count - a.view_count);
     }
 
+    // Durante el barrido el orden ya es el de llegada; al acabar, uno nuevo.
+    if (isDeepCrawling || state.clips.length === 0) ordenEstableRef.current = { clave: '', ids: [] };
+    else if (!groupByChannel) {
+      const previo = ordenEstableRef.current;
+      if (previo.clave !== claveOrden || !previo.ids.length) {
+        ordenEstableRef.current = { clave: claveOrden, ids: filtered.map(c => c.id) };
+      } else {
+        const porId = new Map(filtered.map(c => [c.id, c]));
+        const yaEstaban = new Set(previo.ids);
+        const estable: Clip[] = [];
+        for (const id of previo.ids) {
+          const clip = porId.get(id);
+          if (clip) estable.push(clip);
+        }
+        const nuevos = filtered.filter(c => !yaEstaban.has(c.id));
+        if (nuevos.length) ordenEstableRef.current = { clave: claveOrden, ids: [...previo.ids, ...nuevos.map(c => c.id)] };
+        filtered = [...estable, ...nuevos];
+      }
+    }
 
     if (!groupByChannel) return filtered;
     
@@ -1451,7 +1483,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       grouped.push(...groups[channelId]);
     }
     return grouped;
-  }, [state.clips, activeBlockedList, groupByChannel, state.sortType, isDeepCrawling, activeOnlyLanguages, activeExcludeLanguages, keywordNeedles]);
+  }, [state.clips, activeBlockedList, groupByChannel, state.sortType, isDeepCrawling, activeOnlyLanguages, activeExcludeLanguages, keywordNeedles, claveOrden]);
 
   const totalRenderPages = Math.max(1, Math.ceil(visibleClips.length / RENDER_PAGE_SIZE));
 
