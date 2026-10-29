@@ -35,6 +35,20 @@ const getHeaders = async () => {
     };
 };
 
+// The app token is shared by every visitor and Helix allows it 800 requests a
+// minute. A 429 used to throw straight away, so a burst of "Load all" crawls
+// left the grid failing to load for a while. Twitch doesn't expose
+// Ratelimit-Reset to the browser (no Access-Control-Expose-Headers), so this
+// backs off blindly: the bucket refills continuously, a few seconds is enough.
+const HELIX_RETRY_DELAYS_MS = [1500, 3000, 6000];
+const helixFetch = async (url: string, headers: Record<string, string>): Promise<Response> => {
+    for (let attempt = 0; ; attempt++) {
+        const response = await fetch(url, { headers });
+        if (response.status !== 429 || attempt >= HELIX_RETRY_DELAYS_MS.length) return response;
+        await new Promise(resolve => setTimeout(resolve, HELIX_RETRY_DELAYS_MS[attempt]));
+    }
+};
+
 // Mapeo de alias comunes para mejorar la precisión de búsqueda
 const ALIASES: Record<string, string> = {
     'gta 5': 'grand theft auto v',
@@ -83,7 +97,7 @@ export const searchTwitchCategories = async (query: string, cursor?: string | nu
             endpoint = `https://api.twitch.tv/helix/search/categories?query=${encodeURIComponent(query)}&first=24${cursor ? `&after=${cursor}` : ''}`;
         }
 
-        const response = await fetch(endpoint, { headers });
+        const response = await helixFetch(endpoint, headers);
         if (!response.ok) throw new Error("Twitch API Error: " + response.statusText);
         
         const data = await response.json();
@@ -128,7 +142,7 @@ export const searchTwitchCategories = async (query: string, cursor?: string | nu
 export const getClipById = async (clipId: string): Promise<Clip | null> => {
     try {
         const headers = await getHeaders();
-        const response = await fetch(`https://api.twitch.tv/helix/clips?id=${clipId}`, { headers });
+        const response = await helixFetch(`https://api.twitch.tv/helix/clips?id=${clipId}`, headers);
         if (!response.ok) return null;
         const data = await response.json();
         if (!data.data || data.data.length === 0) return null;
@@ -322,7 +336,7 @@ export const searchTwitchClips = async (
         let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
         if (range) url += `&started_at=${new Date(range.startMs).toISOString()}&ended_at=${new Date(range.endMs).toISOString()}`;
         if (after) url += `&after=${after}`;
-        const response = await fetch(url, { headers });
+        const response = await helixFetch(url, headers);
         if (!response.ok) throw new Error(`Twitch Clip API Error: ${response.status}`);
         const data = await response.json();
         return { clips: (data.data || []) as any[], next: (data.pagination?.cursor || null) as string | null };
@@ -428,7 +442,7 @@ export const searchAllTwitchClips = async (
             let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100${rangeQuery}`;
             if (cursor) url += `&after=${cursor}`;
 
-            const response = await fetch(url, { headers });
+            const response = await helixFetch(url, headers);
             if (!response.ok) throw new Error(`Twitch Clip API Error: ${response.status}`);
 
             const data = await response.json();
@@ -454,7 +468,7 @@ export const getTwitchUserAvatars = async (userIds: string[]): Promise<Record<st
         for (let i = 0; i < userIds.length; i += batchSize) {
             const batch = userIds.slice(i, i + batchSize);
             const idQuery = batch.map(id => `id=${id}`).join('&');
-            const response = await fetch(`https://api.twitch.tv/helix/users?${idQuery}`, { headers });
+            const response = await helixFetch(`https://api.twitch.tv/helix/users?${idQuery}`, headers);
             if (response.ok) {
                 const data = await response.json();
                 data.data.forEach((user: any) => {

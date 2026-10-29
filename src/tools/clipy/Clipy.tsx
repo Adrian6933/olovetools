@@ -217,6 +217,13 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
 
   const lastSearchId = useRef(0);
+  // Sube cada vez que la rejilla pasa a otra lista de clips (otro juego, otro
+  // filtro, vuelta a categorías). Las cargas que siguen en vuelo comparan su
+  // número con este: si ya no coincide, se paran y tiran lo que traen. Antes
+  // el barrido de "Load all" de Rust seguía pidiendo cientos de páginas al
+  // pasar a Valorant, competía con las peticiones nuevas y además volcaba sus
+  // clips de Rust encima de la rejilla de Valorant.
+  const clipsGenRef = useRef(0);
   const playingClipRef = useRef<Clip | null>(null);
   const modeRef = useRef<string>(state.mode);
   const categoriesRef = useRef<any[]>(state.categories);
@@ -701,6 +708,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   const handleSearch = useCallback(async (query: string) => {
     const isClipUrl = query.includes('clips.twitch.tv') || query.includes('/clip/');
     const searchId = ++lastSearchId.current;
+    clipsGenRef.current++;
 
     setState(prev => ({
       ...prev,
@@ -791,6 +799,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     setRenderPage(0);
     setAllClipsLoaded(false);
     deepCrawlResumeRef.current = null;
+    const gen = ++clipsGenRef.current;
 
     if (typeof window !== 'undefined') {
       window.history.pushState({ view: 'clips' }, '');
@@ -798,6 +807,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
     try {
       const { clips, cursor } = await pedirTanda(category.id, category.name, resolveClipWindow(time, state.anchorTime || undefined, range, span), null, PAGINAS_PRIMERA_TANDA);
+      if (gen !== clipsGenRef.current) return;
       // Evitar duplicados por id
       const uniqueClips: Clip[] = [];
       const seen = new Set<string>();
@@ -814,12 +824,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         isLoading: false
       }));
     } catch (error: any) {
+      if (gen !== clipsGenRef.current) return;
       setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
     }
   }, [t, handleSearch, state.anchorTime, dayRange, customSpan]);
 
   const loadMoreClips = useCallback(async () => {
     if (state.isLoading || !state.paginationCursor || !state.activeCategory) return;
+    const gen = clipsGenRef.current;
     setState(prev => ({ ...prev, isLoading: true }));
     try {
       const { clips: newClips, cursor: nextCursor } = await pedirTanda(
@@ -829,6 +841,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         state.paginationCursor,
         PAGINAS_POR_TANDA
       );
+      if (gen !== clipsGenRef.current) return;
       setState(prev => {
         const mergedClips = [...prev.clips, ...newClips];
         const uniqueClips: Clip[] = [];
@@ -847,6 +860,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         };
       });
     } catch (error) {
+      if (gen !== clipsGenRef.current) return;
       setState(prev => ({ ...prev, isLoading: false }));
     }
   }, [state.isLoading, state.paginationCursor, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, customSpan]);
@@ -873,7 +887,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     // Solo la carga automática (en segundo plano, ligada a que el modo
     // rendimiento siga activo) se para a medio camino si se desactiva; un
     // "Load all" pulsado a mano siempre termina, esté o no el modo activado.
-    const shouldContinue = opts?.cancelIfPerfModeOff ? () => perfModeRef.current : undefined;
+    const gen = clipsGenRef.current;
+    const isCurrent = () => gen === clipsGenRef.current;
+    const shouldContinue = opts?.cancelIfPerfModeOff ? () => isCurrent() && perfModeRef.current : isCurrent;
 
     // Ya se hizo el crawl completo para esta categoría/filtro: no repetirlo
     // (serían cientos de peticiones de nuevo solo para no encontrar nada
@@ -900,6 +916,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         state.activeCategory.id,
         resolveClipWindow(state.timeFilter, state.anchorTime || undefined, dayRange, customSpan),
         (newClips) => {
+          if (!isCurrent()) return;
           let changed = false;
           for (const clip of newClips) {
             if (!seen.has(clip.id)) {
@@ -915,6 +932,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         },
         shouldContinue
       );
+      if (!isCurrent()) return;
       if (completed) {
         setState(prev => ({ ...prev, isLoading: false, paginationCursor: null }));
         setAllClipsLoaded(true);
@@ -926,9 +944,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       }
     } catch (error) {
       // Keep whatever was loaded before the failure; only stop the spinner.
-      setState(prev => ({ ...prev, isLoading: false }));
+      if (isCurrent()) setState(prev => ({ ...prev, isLoading: false }));
     } finally {
-      setIsDeepCrawling(false);
+      if (isCurrent()) setIsDeepCrawling(false);
     }
   }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, customSpan, state.clips, allClipsLoaded, jumpToLoadedEnd]);
 
@@ -940,6 +958,8 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
   // volver a pedir las franjas ya recorridas.
   const loadNextChunk = useCallback(async () => {
     if (state.isLoading || !state.activeCategory || allClipsLoaded) return;
+    const gen = clipsGenRef.current;
+    const isCurrent = () => gen === clipsGenRef.current;
     setState(prev => ({ ...prev, isLoading: true }));
 
     const seen = new Set(state.clips.map(c => c.id));
@@ -957,10 +977,11 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
             }
           }
         },
-        undefined,
+        isCurrent,
         deepCrawlResumeRef.current || undefined,
         1
       );
+      if (!isCurrent()) return;
       setState(prev => ({ ...prev, clips: [...mergedClips], isLoading: false }));
       if (completed) {
         deepCrawlResumeRef.current = null;
@@ -969,7 +990,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         deepCrawlResumeRef.current = resumeFrom || null;
       }
     } catch (error) {
-      setState(prev => ({ ...prev, isLoading: false }));
+      if (isCurrent()) setState(prev => ({ ...prev, isLoading: false }));
     }
   }, [state.isLoading, state.activeCategory, state.timeFilter, state.anchorTime, dayRange, customSpan, state.clips, allClipsLoaded]);
 
@@ -1017,11 +1038,14 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
       setRenderPage(0);
       setAllClipsLoaded(false);
       deepCrawlResumeRef.current = null;
+      const gen = ++clipsGenRef.current;
       searchTwitchClips(state.activeCategory.id, state.activeCategory.name, resolveClipWindow(state.timeFilter, value || undefined, dayRange, customSpan), null)
         .then(({ clips, cursor }) => {
+          if (gen !== clipsGenRef.current) return;
           setState(prev => ({ ...prev, clips, paginationCursor: cursor, isLoading: false }));
         })
         .catch(() => {
+          if (gen !== clipsGenRef.current) return;
           setState(prev => ({ ...prev, error: t('error_clips'), isLoading: false }));
         });
     }
@@ -1132,6 +1156,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
         
         if (!isLandingOnClips) {
           if (categoriesRef.current.length > 0) {
+            clipsGenRef.current++;
             setState(prev => ({ ...prev, mode: 'categories', activeCategory: null }));
           } else if (handleSearchRef.current) {
             handleSearchRef.current("popular");
@@ -1398,6 +1423,7 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
     if (state.sortType === SortType.VIEWS && !isDeepCrawling) {
       filtered = [...filtered].sort((a, b) => b.view_count - a.view_count);
     }
+
 
     if (!groupByChannel) return filtered;
     
