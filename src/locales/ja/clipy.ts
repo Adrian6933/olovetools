@@ -114,6 +114,7 @@ export default {
   "trending_rank": "ランキング",
   "tag_top_category": "トレンド",
   "tag_twitch_category": "TWITCH",
+  "tag_twitch_channel": "チャンネル",
   "privacy_policy": "プライバシーポリシー",
   "terms_of_service": "利用規約",
   "cookie_policy": "クッキーポリシー",

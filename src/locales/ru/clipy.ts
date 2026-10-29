@@ -114,6 +114,7 @@ export default {
   "trending_rank": "РЕЙТИНГ",
   "tag_top_category": "ТРЕНД",
   "tag_twitch_category": "TWITCH",
+  "tag_twitch_channel": "КАНАЛ",
   "privacy_policy": "Приватность",
   "terms_of_service": "Условия",
   "cookie_policy": "Cookies",

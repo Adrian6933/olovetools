@@ -114,6 +114,7 @@ export default {
   "trending_rank": "RANGLISTE",
   "tag_top_category": "TRENDING",
   "tag_twitch_category": "TWITCH",
+  "tag_twitch_channel": "KANAL",
   "privacy_policy": "Datenschutz",
   "terms_of_service": "AGB",
   "cookie_policy": "Cookies",

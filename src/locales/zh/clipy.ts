@@ -114,6 +114,7 @@ export default {
   "trending_rank": "排名",
   "tag_top_category": "热门",
   "tag_twitch_category": "TWITCH",
+  "tag_twitch_channel": "频道",
   "privacy_policy": "隐私政策",
   "terms_of_service": "服务条款",
   "cookie_policy": "Cookie 政策",

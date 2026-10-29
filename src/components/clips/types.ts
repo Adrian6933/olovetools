@@ -42,6 +42,9 @@ export interface Category {
   box_art_url: string;
   viewer_count: number; // Total viewers watching this category
   tag_ids?: string[];
+  // A Twitch channel shown among the search results. Its id carries the
+  // "u:" prefix (see channelCategoryId) so clips are asked by broadcaster.
+  kind?: 'channel';
 }
 
 export interface Clip {

@@ -72,7 +72,7 @@ const CategoryCard: React.FC<{
                 traducida ("Categoría de Twitch", "Twitch-Kategorie"...) es más
                 larga que eso en varios idiomas. */}
             <span className="text-[9px] uppercase font-black bg-white/5 px-2.5 md:px-4 py-1 md:py-1.5 rounded-full text-gray-500 border border-white/5 tracking-[0.15em] md:tracking-[0.2em] opacity-40 truncate">
-              {showRank ? t('tag_top_category') : t('tag_twitch_category')}
+              {category.kind === 'channel' ? t('tag_twitch_channel') : showRank ? t('tag_top_category') : t('tag_twitch_category')}
             </span>
         </div>
       </div>

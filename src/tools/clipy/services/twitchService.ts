@@ -72,6 +72,29 @@ const getThumbnailUrl = (url: string) => {
     return templated.replace(/-\d+x\d+(\.\w+)(\?.*)?$/, '-640x360$1$2');
 };
 
+// Channels ride in the same list as categories, so everything keyed by the
+// active category (lists, keyword and language filters, saved clips) works
+// unchanged. The prefix tells the clip queries to ask by broadcaster.
+const CHANNEL_PREFIX = 'u:';
+const clipSourceParam = (categoryId: string) =>
+    categoryId.startsWith(CHANNEL_PREFIX)
+        ? `broadcaster_id=${categoryId.slice(CHANNEL_PREFIX.length)}`
+        : `game_id=${categoryId}`;
+
+const searchTwitchChannels = async (query: string, headers: Record<string, string>): Promise<(Category & { login: string })[]> => {
+    const response = await fetch(`https://api.twitch.tv/helix/search/channels?query=${encodeURIComponent(query)}&first=8`, { headers });
+    if (!response.ok) return [];
+    const data = await response.json();
+    return (data.data || []).map((item: any) => ({
+        id: CHANNEL_PREFIX + item.id,
+        name: item.display_name || item.broadcaster_login,
+        box_art_url: item.thumbnail_url || getBoxArtUrl(''),
+        viewer_count: 0,
+        kind: 'channel' as const,
+        login: (item.broadcaster_login || '').toLowerCase(),
+    }));
+};
+
 export const searchTwitchCategories = async (query: string, cursor?: string | null): Promise<{ categories: Category[], cursor: string | null }> => {
     const headers = await getHeaders();
         let endpoint = '';
@@ -83,6 +106,11 @@ export const searchTwitchCategories = async (query: string, cursor?: string | nu
             endpoint = `https://api.twitch.tv/helix/search/categories?query=${encodeURIComponent(query)}&first=24${cursor ? `&after=${cursor}` : ''}`;
         }
 
+        // Channels only on the first page of a typed search: "ibai" or "xqc"
+        // are streamers, and searching them used to return only games.
+        const channelsPromise = !isPopular && !cursor
+            ? searchTwitchChannels(query.trim(), headers).catch(() => [])
+            : Promise.resolve([]);
         const response = await fetch(endpoint, { headers });
         if (!response.ok) throw new Error("Twitch API Error: " + response.statusText);
         
@@ -121,6 +149,19 @@ export const searchTwitchCategories = async (query: string, cursor?: string | nu
                 return 0;
             });
         }
+
+    const channels = await channelsPromise;
+    if (channels.length > 0) {
+        const compactQuery = query.toLowerCase().replace(/\s+/g, '');
+        const isExact = (c: Category & { login: string }) =>
+            c.login === compactQuery || c.name.toLowerCase().replace(/\s+/g, '') === compactQuery;
+        // An exact streamer name goes first; other channels after the games.
+        results = [
+            ...channels.filter(isExact),
+            ...results,
+            ...channels.filter(c => !isExact(c)),
+        ].map(({ login, ...category }: any) => category);
+    }
 
     return { categories: results, cursor: nextCursor };
 };
@@ -319,7 +360,7 @@ export const searchTwitchClips = async (
     const headers = await getHeaders();
 
     const fetchPage = async (range: { startMs: number; endMs: number } | null, after: string | null) => {
-        let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100`;
+        let url = `https://api.twitch.tv/helix/clips?${clipSourceParam(categoryId)}&first=100`;
         if (range) url += `&started_at=${new Date(range.startMs).toISOString()}&ended_at=${new Date(range.endMs).toISOString()}`;
         if (after) url += `&after=${after}`;
         const response = await fetch(url, { headers });
@@ -425,7 +466,7 @@ export const searchAllTwitchClips = async (
             if (shouldContinue && !shouldContinue()) return { completed: false, resumeFrom: { sliceIndex, cursor } };
             if (totalPages >= pageLimit) return { completed: false, resumeFrom: { sliceIndex, cursor } };
             const headers = await getHeaders();
-            let url = `https://api.twitch.tv/helix/clips?game_id=${categoryId}&first=100${rangeQuery}`;
+            let url = `https://api.twitch.tv/helix/clips?${clipSourceParam(categoryId)}&first=100${rangeQuery}`;
             if (cursor) url += `&after=${cursor}`;
 
             const response = await fetch(url, { headers });
