@@ -34,6 +34,13 @@ const VIEW_FORMATTER = new Intl.NumberFormat('en-US', {
 export interface ClipGridHandle {
   /** Lleva la vista a ese clip y lo resalta. `false` si no está en la rejilla. */
   scrollToClip: (clipId: string) => boolean;
+  /**
+   * Pinta todo lo cargado y lo que llegue después, hasta el próximo resetKey.
+   * Es lo que pide "Cargar todo": sin esto el barrido traía los clips pero la
+   * rejilla seguía con sus tandas de 48, y el salto al final se quedaba en el
+   * final de lo pintado, como si no hubiera cargado nada.
+   */
+  mostrarTodo: () => void;
 }
 
 interface ClipGridProps {
@@ -273,6 +280,7 @@ const ClipGrid = forwardRef<ClipGridHandle, ClipGridProps>(({
       }, 50);
       return true;
     },
+    mostrarTodo: () => setMontados(Infinity),
   }), []);
 
   useEffect(() => {

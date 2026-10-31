@@ -883,6 +883,9 @@ export const Clipy: React.FC<ClipyProps> = ({ lang = 'en', dictionary }) => {
 
   const loadAllClips = useCallback(async (opts?: { silent?: boolean; cancelIfPerfModeOff?: boolean }) => {
     if (state.isLoading || !state.activeCategory) return;
+    // Pulsado a mano (no la carga en segundo plano): la rejilla pinta todo,
+    // también si ya estaba todo cargado y solo faltaba pintarlo.
+    if (!opts?.silent) clipGridRef.current?.mostrarTodo();
     const silent = opts?.silent === true;
     // Solo la carga automática (en segundo plano, ligada a que el modo
     // rendimiento siga activo) se para a medio camino si se desactiva; un
