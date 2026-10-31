@@ -401,6 +401,8 @@ export default {
   "fmtOriginal": "मूल",
   "fmt169": "16:9",
   "fmt916": "9:16 वर्टिकल",
+  "fmtBoth": "दोनों",
+  "fmtBothHint": "हर क्लिप दो बार: एक 16:9 में और एक वर्टिकल",
   "fmtVideo": "वीडियो",
   "fmtClips": "क्लिप",
   "fitLabel": "वर्टिकल",

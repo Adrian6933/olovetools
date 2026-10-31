@@ -401,6 +401,8 @@ export default {
   "fmtOriginal": "オリジナル",
   "fmt169": "16:9",
   "fmt916": "9:16 縦",
+  "fmtBoth": "両方",
+  "fmtBothHint": "各クリップを2本ずつ：16:9 と縦",
   "fmtVideo": "動画",
   "fmtClips": "クリップ",
   "fitLabel": "縦向き",

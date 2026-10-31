@@ -10,7 +10,7 @@
 // ============================================================================
 import type { ClipData, Resolution, WatermarkConfig } from './types';
 import { processVideoWithWatermark } from './watermarkService';
-import type { Encaje, Formato } from './formato';
+import { formasDe, type Encaje, type Formato, type FormatoClips } from './formato';
 import { mantenerPestanaActiva } from './mantenerActiva';
 
 /** Descargas a la vez: más no acelera (el ancho de banda es el mismo) y satura los relés. */
@@ -80,6 +80,11 @@ export interface ResultadoClip {
   original: Blob | null;
   /** Con la marca si se pidió (si no, el original); null si falló. */
   final: Blob | null;
+  /**
+   * Con formato 'ambos', las dos formas (16:9 y 9:16), en ese orden; `final`
+   * es la primera. Con cualquier otro, solo `final`.
+   */
+  salidas: { formato: Formato; blob: Blob }[];
 }
 
 export interface OpcionesLote {
@@ -87,8 +92,8 @@ export interface OpcionesLote {
   fetchMovieBlob: (url: string, onProgress: (loaded: number, total: number) => void, signal?: AbortSignal) => Promise<Blob>;
   /** Sin marca ni formato, solo se bajan. */
   marca?: { config: WatermarkConfig; nitidez?: number; alto?: number } | null;
-  /** Pasarlos a 16:9 o 9:16 (formato.ts); 'original' o nada, tal cual. */
-  formato?: Formato;
+  /** Pasarlos a 16:9, 9:16 o los dos (formato.ts); 'original' o nada, tal cual. */
+  formato?: FormatoClips;
   encaje?: Encaje;
   /** Nitidez y alto; si piden algo (nitidez > 0 o más de 1080), se recodifica. */
   calidad?: { nitidez?: number; alto?: number };
@@ -135,6 +140,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
     const res = resolucionDe(clip, o.quality);
     let original: Blob | null = null;
     let final: Blob | null = null;
+    const salidas: { formato: Formato; blob: Blob }[] = [];
     try {
       if (!res) throw new Error('No resolution');
       original = await bajar(async () => {
@@ -162,36 +168,45 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
       avance[i] = pesoBajada;
       if (procesar) {
         const m = o.marca;
-        final = await marcar(async () => {
-          if (o.signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
-          marcando += 1;
-          avisar(true);
-          const progreso = (pct: number) => { avance[i] = pesoBajada + (1 - pesoBajada) * (pct / 100); avisar(); };
-          try {
-            if (m) {
-              return await processVideoWithWatermark(
-                original!,
-                clip.broadcaster || 'Streamer',
-                m.config,
-                ({ pct }) => progreso(pct),
+        // Con 'ambos' son dos renders del mismo original, uno detrás de otro
+        // (cada uno coge su turno: no se adelanta a los clips que esperan).
+        const formas = formasDe(o.formato ?? 'original');
+        for (let n = 0; n < formas.length; n++) {
+          const formato = formas[n];
+          const blob = await marcar(async () => {
+            if (o.signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
+            marcando += 1;
+            avisar(true);
+            const progreso = (pct: number) => { avance[i] = pesoBajada + (1 - pesoBajada) * ((n + pct / 100) / formas.length); avisar(); };
+            try {
+              if (m) {
+                return await processVideoWithWatermark(
+                  original!,
+                  clip.broadcaster || 'Streamer',
+                  m.config,
+                  ({ pct }) => progreso(pct),
+                  o.signal,
+                  { nitidez: m.nitidez, alto: m.alto, formato, encaje: o.encaje },
+                );
+              }
+              const { exportarSinTiempoReal } = await import('./exportOffline');
+              const alto = o.calidad?.alto;
+              return await exportarSinTiempoReal(
+                [{ blob: original!, channelName: clip.broadcaster || '' }],
+                { formato, encaje: o.encaje, nitidez: o.calidad?.nitidez, alto: alto && alto > 1080 ? alto : undefined },
+                p => progreso(p.pct),
                 o.signal,
-                { nitidez: m.nitidez, alto: m.alto, formato: o.formato, encaje: o.encaje },
               );
+            } finally {
+              marcando -= 1;
             }
-            const { exportarSinTiempoReal } = await import('./exportOffline');
-            const alto = o.calidad?.alto;
-            return await exportarSinTiempoReal(
-              [{ blob: original!, channelName: clip.broadcaster || '' }],
-              { formato: o.formato, encaje: o.encaje, nitidez: o.calidad?.nitidez, alto: alto && alto > 1080 ? alto : undefined },
-              p => progreso(p.pct),
-              o.signal,
-            );
-          } finally {
-            marcando -= 1;
-          }
-        });
+          });
+          salidas.push({ formato, blob });
+        }
+        final = salidas[0]?.blob ?? null;
       } else {
         final = original;
+        if (final) salidas.push({ formato: 'original', blob: final });
       }
     } catch (e) {
       if (!o.signal?.aborted) {
@@ -202,7 +217,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
     avance[i] = 1;
     hechos += 1;
     avisar(true);
-    return { clip, res, original: procesar && !o.guardarOriginal ? null : original, final };
+    return { clip, res, original: procesar && !o.guardarOriginal ? null : original, final, salidas };
   };
 
   // Todo el lote, no solo cada render: entre uno y otro, con la pestaña

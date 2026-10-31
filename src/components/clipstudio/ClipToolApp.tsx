@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 import { AdBanner } from '../shared/AdBanner';
 import { createTranslator, type Language } from '../../locales/meta';
-import { FORMATOS, ESCALA_MAX, ESCALA_MIN, limitarEscala, sufijoFormato, type Encaje, type Formato, type ModoEncaje } from './formato';
+import { FORMATOS, FORMATOS_CLIPS, ESCALA_MAX, ESCALA_MIN, limitarEscala, sufijoFormato, type Encaje, type Formato, type FormatoClips, type ModoEncaje } from './formato';
 import VistaEncaje from './VistaEncaje';
 import { DESCARGAS_A_LA_VEZ, procesarClips, resolucionDe, semaforo, soltarDescarga, type ProgresoLote } from './lotes';
 import { zipEnBlob, type EntradaZip } from './zipBlob';
@@ -191,7 +191,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   // clips (p. ej. el vídeo en 16:9 y los clips en vertical para el móvil).
   const FORMATO_KEY = `${brand.storagePrefix}_export_format`;
   const [formatoVideo, setFormatoVideo] = useState<Formato>('original');
-  const [formatoClips, setFormatoClips] = useState<Formato>('original');
+  const [formatoClips, setFormatoClips] = useState<FormatoClips>('original');
   const [modoEncaje, setModoEncaje] = useState<ModoEncaje>('recortar');
   // Tamaño del clip sobre el fondo en el modo 'escalar' (1 = entero).
   const [escala, setEscala] = useState(1);
@@ -199,12 +199,12 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     try {
       const v = JSON.parse(localStorage.getItem(FORMATO_KEY) || 'null');
       if (v && FORMATOS.includes(v.video)) setFormatoVideo(v.video);
-      if (v && FORMATOS.includes(v.clips)) setFormatoClips(v.clips);
+      if (v && FORMATOS_CLIPS.includes(v.clips)) setFormatoClips(v.clips);
       if (v && ['recortar', 'difuminar', 'escalar'].includes(v.encaje)) setModoEncaje(v.encaje);
       if (v && typeof v.escala === 'number') setEscala(limitarEscala(v.escala));
     } catch { /* el de serie */ }
   }, []);
-  const guardarFormato = (cambio: Partial<{ video: Formato; clips: Formato; encaje: ModoEncaje; escala: number }>) => {
+  const guardarFormato = (cambio: Partial<{ video: Formato; clips: FormatoClips; encaje: ModoEncaje; escala: number }>) => {
     const siguiente = { video: formatoVideo, clips: formatoClips, encaje: modoEncaje, escala, ...cambio };
     setFormatoVideo(siguiente.video);
     setFormatoClips(siguiente.clips);
@@ -524,17 +524,20 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       });
 
       const entradas: EntradaZip[] = [];
-      resultados.forEach(({ clip, res, final }, i) => {
+      resultados.forEach(({ clip, res, final, salidas }, i) => {
         if (!final) return;
         const nombre = nombreDeArchivo(clip.title, clip.broadcaster, clip.id);
-        const ext = final.type.includes('webm') ? 'webm' : 'mp4';
-        entradas.push({ nombre: `${i + 1}_${nombre}_${res.quality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}.${ext}`, datos: final });
+        // Con 16:9 + 9:16 salen dos archivos por clip, uno al lado del otro.
+        for (const { formato, blob } of salidas) {
+          const ext = blob.type.includes('webm') ? 'webm' : 'mp4';
+          entradas.push({ nombre: `${i + 1}_${nombre}_${res.quality}${config ? '_watermark' : ''}${sufijoFormato(formato)}.${ext}`, datos: blob });
+        }
       });
       if (entradas.length === 0) return;
 
       setWmAll(prev => prev ? { ...prev, fase: 'zip', pct: 100 } : prev);
       const contenido = await zipEnBlob(entradas, abort.signal);
-      soltarDescarga(contenido, `${slug}_${selectedQuality}${config ? '_watermark' : ''}${sufijoFormato(formatoClips)}_pack_${Date.now()}.zip`);
+      soltarDescarga(contenido, `${slug}_${selectedQuality}${config ? '_watermark' : ''}${formatoClips === 'ambos' ? '_16x9_vertical' : sufijoFormato(formatoClips)}_pack_${Date.now()}.zip`);
       setLastRouteHost(getLastRoute()?.host ?? null);
     } catch {
       // Cancelar a mitad no deja medio ZIP: o sale entero o no sale.
@@ -978,7 +981,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                const necesitaProcesar = modo !== 'clips' || marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off';
                const usaVideo = modo !== 'clips';
                const usaClips = modo !== 'video';
-               const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && formatoClips === '9:16');
+               const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && (formatoClips === '9:16' || formatoClips === 'ambos'));
 
                /** El dibujo de la forma: un rectángulo tumbado o de pie. */
                const forma = (f: Formato) => f === 'original'
@@ -1008,8 +1011,14 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                  valor: formatoVideo, elegir: id => guardarFormato({ video: id as Formato }), opciones: opcionesFormato,
                });
                if (usaClips) grupos.push({
-                 id: 'clips', titulo: t.fmtSectionClips || 'Clips format', icono: <FolderDown className="w-3.5 h-3.5" />, ancho: 'xl:flex-1',
-                 valor: formatoClips, elegir: id => guardarFormato({ clips: id as Formato }), opciones: opcionesFormato,
+                 id: 'clips', titulo: t.fmtSectionClips || 'Clips format', icono: <FolderDown className="w-3.5 h-3.5" />, ancho: 'xl:flex-[1.4]',
+                 valor: formatoClips, elegir: id => guardarFormato({ clips: id as FormatoClips }),
+                 opciones: [...opcionesFormato, {
+                   id: 'ambos',
+                   icon: <span aria-hidden="true" className="shrink-0 flex items-end gap-[3px]">{forma('16:9')}{forma('9:16')}</span>,
+                   label: t.fmtBoth || 'Both',
+                   hint: t.fmtBothHint || 'Each clip twice: one in 16:9 and one vertical',
+                 }],
                });
                const encajeGrupo: Grupo | null = !hayVertical ? null : {
                  id: 'encaje', titulo: t.fitLabel || 'Vertical', icono: forma('9:16'), ancho: 'xl:flex-[1.2]',
@@ -1025,6 +1034,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                // en el title de cada botón y no se veía sin pasar el ratón.
                const resumen = [
                  grupos.find(g => g.id === 'modo')?.opciones.find(o => o.id === modo)?.hint,
+                 usaClips && formatoClips === 'ambos' ? (t.fmtBothHint || 'Each clip twice: one in 16:9 and one vertical') : null,
                  encajeGrupo?.opciones.find(o => o.id === modoEncaje)?.hint,
                ].filter(Boolean).join(' · ');
 
@@ -1041,7 +1051,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                          title={o.hint}
                          onClick={() => g.elegir(o.id)}
                          disabled={ocupado}
-                         className={`flex-1 min-w-0 min-h-[40px] px-2.5 py-2 rounded-xl flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center leading-tight sm:whitespace-nowrap transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                         className={`flex-1 min-w-0 min-h-[40px] px-1.5 sm:px-2.5 py-2 rounded-xl flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center leading-tight text-balance transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
                            activa
                              ? 'bg-twitch text-[var(--color-accent-ink)] shadow-lg shadow-twitch/20'
                              : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
@@ -1056,29 +1066,38 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
 
                return (
                  <div className="!mt-3 w-full bg-[#111114] border border-white/5 rounded-[2rem] p-3 sm:p-4 shadow-2xl relative z-30">
-                   <div className="flex flex-col xl:flex-row gap-3 xl:gap-0">
-                     {grupos.map((g, i) => (
-                       <div
-                         key={g.id}
-                         className={`min-w-0 flex flex-col sm:flex-row xl:flex-col gap-2 sm:items-center xl:items-stretch ${g.ancho} ${i > 0 ? 'xl:pl-4 xl:ml-4 xl:border-l xl:border-white/5' : ''}`}
-                       >
-                         <span className="sm:w-44 xl:w-auto shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                           <span className="text-twitch flex">{g.icono}</span>{g.titulo}
-                         </span>
-                         {selector(g, 'flex-1')}
+                   {/* Más de seis botones en una fila (el modo y los formatos con
+                       "16:9 + 9:16") no caben y las etiquetas se salían: entonces
+                       el modo va solo arriba y los formatos debajo. */}
+                   <div className="flex flex-col gap-3">
+                     {(grupos.length > 1 && grupos.reduce((n, g) => n + g.opciones.length, 0) > 6 ? [grupos.slice(0, 1), grupos.slice(1)] : [grupos]).map(fila => (
+                       <div key={fila[0].id} className="flex flex-col xl:flex-row gap-3 xl:gap-0">
+                         {fila.map((g, i) => (
+                           <div
+                             key={g.id}
+                             className={`min-w-0 flex flex-col sm:flex-row xl:flex-col gap-2 sm:items-center xl:items-stretch ${fila.length > 1 ? g.ancho : 'xl:flex-1'} ${i > 0 ? 'xl:pl-4 xl:ml-4 xl:border-l xl:border-white/5' : ''}`}
+                           >
+                             <span className="sm:w-44 xl:w-auto shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                               <span className="text-twitch flex">{g.icono}</span>{g.titulo}
+                             </span>
+                             {selector(g, 'flex-1')}
+                           </div>
+                         ))}
                        </div>
                      ))}
                    </div>
-                   {/* Abajo: a la izquierda lo del vídeo (cómo llenar el vertical, el
-                       fundido, el progreso de unir) y a la derecha la nitidez y
-                       la resolución, que valen para todo lo que se recodifica.
+                   {/* Abajo: primero lo del vídeo (cómo llenar el vertical, el
+                       fundido, el progreso de unir) y debajo la nitidez y la
+                       resolución, que valen para todo lo que se recodifica. En
+                       dos columnas, los botones del vertical no cabían y su
+                       texto se metía debajo de los de la nitidez.
                        Antes el vídeo unido era un panel aparte al final de la
                        página, con sus propios interruptores repetidos. */}
-                   <div className="mt-3 pt-3 border-t border-white/5 flex flex-col lg:flex-row gap-4">
-                     <div className="lg:flex-1 min-w-0 space-y-3 empty:hidden">
+                   <div className="mt-3 pt-3 border-t border-white/5 flex flex-col gap-4">
+                     <div className="min-w-0 space-y-3 empty:hidden">
                        {encajeGrupo && (
-                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                           <span className="sm:w-44 lg:w-auto shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                         <div className="flex flex-col lg:flex-row lg:items-center gap-2">
+                           <span className="lg:w-44 shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
                              <span className="text-twitch flex">{encajeGrupo.icono}</span>{encajeGrupo.titulo}
                            </span>
                            {selector(encajeGrupo, 'flex-1')}
@@ -1131,7 +1150,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                          onBusyChange={setUniendo}
                        />
                      </div>
-                     <div className={`min-w-0 ${ocupado ? 'opacity-50 pointer-events-none' : ''} lg:flex-1`}>
+                     <div className={`min-w-0 ${ocupado ? 'opacity-50 pointer-events-none' : ''}`}>
                        <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
                      </div>
                    </div>

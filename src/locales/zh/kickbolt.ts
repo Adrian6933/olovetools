@@ -401,6 +401,8 @@ export default {
   "fmtOriginal": "原始",
   "fmt169": "16:9",
   "fmt916": "9:16 竖屏",
+  "fmtBoth": "两种都要",
+  "fmtBothHint": "每个剪辑出两份：16:9 一份，竖屏一份",
   "fmtVideo": "视频",
   "fmtClips": "剪辑",
   "fitLabel": "竖屏",

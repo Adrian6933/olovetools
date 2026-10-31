@@ -28,6 +28,16 @@ export const limitarEscala = (n: number) =>
 
 export const FORMATOS: Formato[] = ['original', '16:9', '9:16'];
 
+/**
+ * Los clips sueltos pueden salir además en las dos formas a la vez: cada clip
+ * se baja una vez y se exporta en 16:9 y en 9:16 (dos archivos por clip). El
+ * vídeo unido es uno solo, así que ahí no se ofrece.
+ */
+export type FormatoClips = Formato | 'ambos';
+export const FORMATOS_CLIPS: FormatoClips[] = [...FORMATOS, 'ambos'];
+/** Las formas que salen de cada clip con ese formato. */
+export const formasDe = (f: FormatoClips): Formato[] => (f === 'ambos' ? ['16:9', '9:16'] : [f]);
+
 /** Para el nombre del archivo: "_vertical", "_16x9" o nada. */
 export const sufijoFormato = (f: Formato) => (f === '9:16' ? '_vertical' : f === '16:9' ? '_16x9' : '');
 

@@ -401,6 +401,8 @@ export default {
   "fmtOriginal": "Оригинал",
   "fmt169": "16:9",
   "fmt916": "9:16 вертикально",
+  "fmtBoth": "Оба",
+  "fmtBothHint": "Каждый клип дважды: в 16:9 и вертикально",
   "fmtVideo": "Видео",
   "fmtClips": "Клипы",
   "fitLabel": "Вертикаль",

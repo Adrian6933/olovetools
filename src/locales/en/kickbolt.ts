@@ -401,6 +401,8 @@ export default {
   "fmtOriginal": "Original",
   "fmt169": "16:9",
   "fmt916": "9:16 vertical",
+  "fmtBoth": "Both",
+  "fmtBothHint": "Each clip twice: one in 16:9 and one vertical",
   "fmtVideo": "Video",
   "fmtClips": "Clips",
   "fitLabel": "Vertical",

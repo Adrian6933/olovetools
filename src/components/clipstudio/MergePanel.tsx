@@ -21,7 +21,7 @@ import { FUERZA, type CalidadExport } from './nitidez';
 import { loadStoredWatermarkConfig, nombreDeArchivo } from './watermarkService';
 import { procesarClips, soltarDescarga, type ProgresoLote } from './lotes';
 import { zipEnBlob, type EntradaZip } from './zipBlob';
-import { sufijoFormato, type Encaje, type Formato } from './formato';
+import { sufijoFormato, type Encaje, type Formato, type FormatoClips } from './formato';
 
 interface Props {
   clips: ClipData[];
@@ -35,7 +35,7 @@ interface Props {
   conClips: boolean;
   /** Forma del vídeo unido y de los clips sueltos (formato.ts). */
   formatoVideo: Formato;
-  formatoClips: Formato;
+  formatoClips: FormatoClips;
   encaje: Encaje;
   /** Nitidez y resolución, elegidas en la tarjeta de arriba. */
   calidad: CalidadExport;
@@ -126,10 +126,12 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
       if (conClips) {
         setEstado({ fase: 'zip' });
         const entradas: EntradaZip[] = [{ nombre: `${brand.storagePrefix}_compilation_${piezas}parts${sufijoFormato(formatoVideo)}.${ext}`, datos: video }];
-        resultados.forEach(({ clip, res, final }, i) => {
+        resultados.forEach(({ clip, res, final, salidas }, i) => {
           if (!final) return;
-          const e = final.type.includes('webm') ? 'webm' : 'mp4';
-          entradas.push({ nombre: `clips/${i + 1}_${nombreDeArchivo(clip.title, clip.broadcaster, clip.id)}_${res.quality}${marca ? '_watermark' : ''}${final === resultados[i].original ? '' : sufijoFormato(formatoClips)}.${e}`, datos: final });
+          for (const { formato, blob } of salidas) {
+            const e = blob.type.includes('webm') ? 'webm' : 'mp4';
+            entradas.push({ nombre: `clips/${i + 1}_${nombreDeArchivo(clip.title, clip.broadcaster, clip.id)}_${res.quality}${marca ? '_watermark' : ''}${blob === resultados[i].original ? '' : sufijoFormato(formato)}.${e}`, datos: blob });
+          }
         });
         const contenido = await zipEnBlob(entradas, ctrl.signal);
         soltarDescarga(contenido, `${brand.storagePrefix}_${quality}_video_and_clips_${sello}.zip`);
