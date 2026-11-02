@@ -21,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import { createTranslator } from '../../locales/meta';
+import { HeavyTaskNote } from '../../components/shared/HeavyTaskNote';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
@@ -1279,12 +1280,15 @@ export const GIFBolt: React.FC<GIFBoltProps> = ({ lang, dictionary }) => {
                           </button>
                         </div>
                       ) : (
+                        <>
                         <button
                           onClick={() => void encode()}
                           className="w-full py-4 rounded-2xl bg-gradient-to-r from-fuchsia-500 to-purple-600 hover:from-fuchsia-400 hover:to-purple-500 text-black font-black text-sm uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] border-none shadow-lg shadow-fuchsia-500/20"
                         >
                           {t.btn_generate || 'Generate GIF'}
                         </button>
+                        <HeavyTaskNote lang={lang} kind="images" />
+                        </>
                       )}
                     </div>
                   )}

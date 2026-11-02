@@ -29,6 +29,7 @@ import MergePanel, { type MergePanelHandle } from './MergePanel';
 import { CALIDAD_POR_DEFECTO, FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from './nitidez';
 import CalidadSelector from './CalidadSelector';
 import AvisoGrafica from './AvisoGrafica';
+import { HeavyTaskNote } from '../shared/HeavyTaskNote';
 import { BrandContext, type ClipBrand } from './brand';
 import {
   ArrowRight, Loader2, FileText, Zap, Sparkles, ArrowUp, Lightbulb, CheckCircle2, FolderDown, X, ChevronDown, Diamond, Film, Gauge,  Clapperboard, Layers, Download, Crop, Blend, Scaling
@@ -1155,6 +1156,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                      </div>
                    </div>
                    {necesitaProcesar && <AvisoGrafica tx={(k, fb) => (typeof t?.[k] === 'string' && t[k]) || fb} className="mt-3" />}
+                   {necesitaProcesar && <HeavyTaskNote lang={lang} kind="video" className="mt-3" />}
                    {resumen && <p className="mt-3 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
                    {/* Mientras exporta, mantenerActiva.ts pone el altavoz en la
                        pestaña: que no extrañe, y que se sepa que puede irse a otra. */}

@@ -10,6 +10,7 @@
 // ============================================================================
 import type { ClipData, Resolution, WatermarkConfig } from './types';
 import { processVideoWithWatermark } from './watermarkService';
+import { trabajosALaVez } from '../../lib/deviceTier';
 import { formasDe, type Encaje, type Formato, type FormatoClips } from './formato';
 import { mantenerPestanaActiva } from './mantenerActiva';
 
@@ -50,8 +51,9 @@ const rendersALaVez = async (): Promise<number> => {
     if (!(await sePuedeSinTiempoReal([{ blob: new Blob(), channelName: '' }], 1920, 1080))) return 1;
     // Medido con 4 clips de 8 s a 1080p60: 1 a la vez 29 s, 2 16 s, 3 14 s,
     // 4 12 s. Pasado 2 se gana poco y cada uno más es otro vídeo entero
-    // decodificándose en memoria, así que 3 solo en equipos con margen.
-    return (navigator.hardwareConcurrency || 4) >= 8 ? 3 : 2;
+    // decodificándose en memoria, así que 3 solo en equipos con margen y 1 en
+    // los justos (móvil, 4 núcleos o 4 GB), que con 2 cierran la pestaña.
+    return trabajosALaVez((navigator.hardwareConcurrency || 4) >= 8 ? 3 : 2);
   } catch {
     return 1;
   }

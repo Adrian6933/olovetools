@@ -15,6 +15,7 @@ import { makeThumbnail, runEncode } from './encode';
 import type { EncodeOutcome } from './encode';
 import type { WorkerCall, WorkerResponse } from './convert.worker';
 import type { Settings } from './types';
+import { trabajosALaVez } from '../../../lib/deviceTier';
 
 /** Cuatro es donde deja de notarse la ganancia y empieza a notarse la RAM. */
 const MAX_WORKERS = 4;
@@ -34,9 +35,8 @@ export function useConverter() {
   const nextSlot = useRef(0);
   const counter = useRef(0);
 
-  const poolSize = useRef(
-    Math.max(1, Math.min(MAX_WORKERS, (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 2))
-  );
+  // En un equipo justo, dos: cada worker guarda sus imágenes enteras en memoria.
+  const poolSize = useRef(trabajosALaVez(MAX_WORKERS, 2));
 
   const workerAt = useCallback((slot: number): Worker | null => {
     if (disabled.current || typeof Worker === 'undefined') return null;

@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import JSZip from 'jszip';
+import { trabajosALaVez } from '../../lib/deviceTier';
 import {
   AlertTriangle,
   Check,
@@ -16,6 +17,7 @@ import {
 
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { HeavyTaskNote } from '../../components/shared/HeavyTaskNote';
 import { AdBanner } from '../../components/shared/AdBanner';
 import type { Language } from '../../locales/meta';
 import { useHandoffIntake } from '../../lib/useHandoff';
@@ -51,6 +53,8 @@ const STEP_ART = [StepDrop, StepChoose, StepRun, StepTake];
  * of memory.
  */
 const CONCURRENCY = 2;
+/** En un equipo justo, de una en una: con dos fotos de 48 MP ya no cabe. */
+const concurrencia = () => trabajosALaVez(CONCURRENCY);
 
 const EXTENSION: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -251,7 +255,7 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
     const queue = items.filter(item => item.status === 'queued' || item.status === 'error');
     let cursor = 0;
 
-    const workers = Array.from({ length: Math.min(CONCURRENCY, queue.length) }, async () => {
+    const workers = Array.from({ length: Math.min(concurrencia(), queue.length) }, async () => {
       while (cursor < queue.length && !cancelled.current) {
         const item = queue[cursor++];
         await compressOne(item, item.settings || settings);
@@ -486,6 +490,8 @@ export const Compresssnap: React.FC<CompresssnapProps> = ({ lang, dictionary }) 
                   <span>{(t.rejectedFiles || '{n} file(s) were not images and were left out.').replace('{n}', String(rejected))}</span>
                 </div>
               )}
+
+              {items.length > 0 && <HeavyTaskNote lang={lang} kind="images" />}
 
               {/* Run bar */}
               {items.length > 0 && (

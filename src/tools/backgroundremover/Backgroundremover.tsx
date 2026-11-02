@@ -36,10 +36,12 @@ import {
   StepRefine,
 } from './components/Illustrations';
 import type { Language } from '../../locales/meta';
+import { HeavyTaskNote } from '../../components/shared/HeavyTaskNote';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { ImageItem, Quality } from './types';
 import { computeMask, detectDevice, MODEL_SIZE_MB, preloadModel, type ProgressStep } from './lib/engine';
 import { useHandoffIntake } from '../../lib/useHandoff';
+import { esEquipoFlojo } from '../../lib/deviceTier';
 import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 
 interface BackgroundremoverProps {
@@ -80,6 +82,9 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
 
   useEffect(() => {
     detectDevice().then(setDevice);
+    // En un equipo justo el modelo de 44 MB va lento y puede dejar la pestaña
+    // sin memoria: arranca en el de 20 MB, y quien quiera más lo cambia.
+    if (esEquipoFlojo()) setQuality(q => (q === 'balanced' ? 'fast' : q));
   }, []);
 
   const formatBytes = (bytes: number, decimals = 1) => {
@@ -458,6 +463,8 @@ export const Backgroundremover: React.FC<BackgroundremoverProps> = ({ lang, dict
                 </div>
               </div>
             </div>
+
+            <HeavyTaskNote lang={lang} kind="ai" />
 
             {items.length === 0 ? (
               /* ---- Dropzone ---- */

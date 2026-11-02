@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 
 import { createTranslator } from '../../locales/meta';
+import { HeavyTaskNote } from '../../components/shared/HeavyTaskNote';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { fadeInUp } from '../../components/shared/motion';
 import { useHandoffIntake } from '../../lib/useHandoff';
@@ -944,6 +945,7 @@ export const WatermarkSnap: React.FC<WatermarkSnapProps> = ({ lang, dictionary }
                           <Copy className="w-3.5 h-3.5" />
                           {t.copyBtn || 'Copy to clipboard'}
                         </button>
+                        {items.length > 1 && <HeavyTaskNote lang={lang} kind="images" />}
                       </div>
 
                       <div className="pt-1">

@@ -27,6 +27,7 @@ import { zipEnBlob, type EntradaZip } from '../zipBlob';
 import { prepararVideo } from './ownMedia';
 import CalidadSelector from '../CalidadSelector';
 import AvisoGrafica from '../AvisoGrafica';
+import { HeavyTaskNote } from '../../shared/HeavyTaskNote';
 import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from '../nitidez';
 import TrimBar from './TrimBar';
 import Timeline from './Timeline';
@@ -39,6 +40,8 @@ import {
 } from './model';
 
 interface Props {
+  /** Idioma de la página, para el aviso de consumo. */
+  lang?: string;
   clips: ClipData[];
   piezas: Pieza[];
   setPiezas: React.Dispatch<React.SetStateAction<Pieza[]>>;
@@ -77,7 +80,7 @@ type Export =
   | { fase: 'preparando'; pct: number }
   | { fase: 'grabando'; pieza: number; total: number; pct: number; queda: number };
 
-const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, quality, watermarkOn, watermarkConfig, t, onClose, sinMarca = false, capas: capasPadre, setCapas: setCapasPadre }) => {
+const ClipEditor: React.FC<Props> = ({ lang = 'en', clips, piezas, setPiezas, enfoque, quality, watermarkOn, watermarkConfig, t, onClose, sinMarca = false, capas: capasPadre, setCapas: setCapasPadre }) => {
   const brand = useBrand();
   const tx = (k: string, fb: string) => (typeof t?.[k] === 'string' && t[k]) || fb;
   const [capasPropias, setCapasPropias] = useState<Capa[]>([]);
@@ -831,6 +834,7 @@ const ClipEditor: React.FC<Props> = ({ clips, piezas, setPiezas, enfoque, qualit
                 </div>
                 <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
                 <AvisoGrafica tx={tx} />
+                <HeavyTaskNote lang={lang} kind="video" />
                 <div className="flex gap-2">
                   {[
                     { on: fundido, set: setFundido, icon: <Blend className="w-3.5 h-3.5" />, label: tx('ed_fades', 'Fades') },

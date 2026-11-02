@@ -12,6 +12,7 @@ import NextStepBar from './components/NextStepBar';
 import {
   HeroArt, IconHistory, IconLocal, IconMask, IconPatch, IconStructure, IconWorker, STEP_ART,
 } from './components/Illustrations';
+import { HeavyTaskNote } from '../../components/shared/HeavyTaskNote';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { legalTranslations } from '../../locales/legal';
 import { useHandoffIntake } from '../../lib/useHandoff';
@@ -372,6 +373,8 @@ export default function Cleansnap({ lang, dictionary }: CleansnapProps) {
                   onMaskChanged={bump}
                   t={ui}
                 />
+
+                <HeavyTaskNote lang={lang} kind="images" />
 
                 <div className="flex flex-wrap items-center gap-3">
                   <button type="button" onClick={() => void apply(settings)} disabled={busy}

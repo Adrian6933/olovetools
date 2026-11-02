@@ -10,6 +10,7 @@
 // colours stay put and one that shimmers.
 // ============================================================================
 
+import { trabajosALaVez } from '../../../lib/deviceTier';
 import {
   assembleGif,
   buildPalette,
@@ -78,8 +79,7 @@ const PALETTE_SAMPLE_TARGET = 400_000;
 
 function poolSize(frameCount: number): number {
   if (frameCount < 8) return 1;
-  const cores = typeof navigator !== 'undefined' ? navigator.hardwareConcurrency || 4 : 4;
-  return Math.max(1, Math.min(4, cores - 1, Math.floor(frameCount / 4)));
+  return Math.max(1, Math.min(trabajosALaVez(4, 2), Math.floor(frameCount / 4)));
 }
 
 class WorkerChunk {

@@ -279,6 +279,7 @@ const ClipEditorTool: React.FC<{ lang: Language; dictionary?: any }> = ({ lang =
 
         {abierto && (
           <ClipEditor
+            lang={lang}
             clips={SIN_SELECCION}
             piezas={piezas}
             setPiezas={setPiezas}
