@@ -22,8 +22,9 @@
 //   - Navegadores sin VideoEncoder / sin H.264 o AAC/Opus para codificar.
 // ============================================================================
 import {
-  ALL_FORMATS, AudioBufferSink, AudioBufferSource, BlobSource, BufferTarget, CanvasSink, CanvasSource, Input,
-  Mp4OutputFormat, Output, Quality, StreamTarget, canEncodeAudio, canEncodeVideo, type StreamTargetChunk,
+  ALL_FORMATS, AudioBufferSink, AudioBufferSource, BlobSource, BufferTarget, CanvasSink, Input,
+  Mp4OutputFormat, Output, Quality, StreamTarget, VideoSample, VideoSampleSource, canEncodeAudio, canEncodeVideo,
+  type StreamTargetChunk,
 } from 'mediabunny';
 import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
@@ -76,6 +77,16 @@ export interface ProgresoOffline {
 }
 
 const FUNDIDO = 0.35;
+
+/**
+ * BT.709 en rango TV (16-235): como vienen los clips de Twitch y de Kick, y
+ * como los convierte de verdad el codificador del navegador. Un fotograma
+ * sacado de un canvas va etiquetado como sRGB de rango completo, y Chrome
+ * copiaba esa etiqueta al MP4 aunque los datos fueran de rango TV: cualquier
+ * reproductor que la respeta (Chrome, VLC, el móvil, Premiere) estiraba mal
+ * los niveles y el clip salía lavado, con otro tono que en Twitch.
+ */
+const COLOR_DE_SALIDA: VideoColorSpaceInit = { primaries: 'bt709', transfer: 'bt709', matrix: 'bt709', fullRange: false };
 const FRECUENCIA = 48_000;
 
 /** ¿Se puede hacer así, o hay que grabar en tiempo real? */
@@ -194,7 +205,9 @@ const exportar = async (
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
-  const ctx = canvas.getContext('2d', { alpha: false });
+  // willReadFrequently: cada fotograma se lee para el codificador (anadirFotograma),
+  // y así el lienzo vive en memoria y no se para la GPU para leerlo.
+  const ctx = canvas.getContext('2d', { alpha: false, willReadFrequently: true });
   if (!ctx) throw new Error('Canvas not available');
   suavizar(ctx);
   // Sin WebGL no hay nitidez, pero se exporta igual.
@@ -207,19 +220,21 @@ const exportar = async (
 
   /**
    * Bitrate de salida: el del clip original por píxel, escalado al tamaño de
-   * salida y con margen (x1,5) para que recomprimir no se note; algo más si se
-   * afila, porque la nitidez añade detalle fino que también cuesta bits.
-   * Medido con un clip de Rust (7,5 Mbps, mucha hierba): x2,2 pesaba un 50 %
-   * más sin diferencia visible (45 dB entre una y otra), y x1,5 pierde 0,35 dB
-   * frente al cuantizador 20 ocupando la mitad. Sin dato del original, la
-   * tabla de recorder.ts.
+   * salida y con margen x3; nunca menos que la tabla de recorder.ts (16 Mbps a
+   * 1080p). Recomprimir algo ya comprimido con el codificador del navegador
+   * (más simple que el x264 de Twitch) se come antes que nada el detalle de lo
+   * que se mueve rápido. Medido con un 1080p60 a 6 Mbps con mucho movimiento:
+   * con x1,5 (unos 9 Mbps) salía 36,7 dB de PSNR frente al original y se veía
+   * borroso al girar la cámara; con 25 Mbps, 42 dB. Algo más si se afila,
+   * porque la nitidez añade detalle fino que también cuesta bits.
    */
   function bitrateDeSalida() {
+    const minimo = bitrateDeGrabacion(height);
     const conDato = abiertas.filter(a => a.bps > 0 && a.area > 0);
-    if (!conDato.length) return bitrateDeGrabacion(height);
+    if (!conDato.length) return minimo;
     const porPixel = Math.max(...conDato.map(a => a.bps / a.area));
-    const objetivo = porPixel * width * height * 1.5 * (fuerza > 0 ? 1.25 : 1);
-    return Math.round(Math.max(6_000_000, Math.min(45_000_000, objetivo)));
+    const objetivo = porPixel * width * height * 3 * (fuerza > 0 ? 1.25 : 1);
+    return Math.round(Math.max(minimo, Math.min(50_000_000, objetivo)));
   }
 
   const aac = await canEncodeAudio('aac', { numberOfChannels: 2, sampleRate: FRECUENCIA }).catch(() => false);
@@ -232,7 +247,7 @@ const exportar = async (
     format: new Mp4OutputFormat({ fastStart: destino ? false : 'in-memory' }),
     target: destino ? new StreamTarget(destino.writable, { chunked: true, chunkSize: 8 * 2 ** 20 }) : new BufferTarget(),
   });
-  const fuenteVideo = new CanvasSource(canvas, {
+  const fuenteVideo = new VideoSampleSource({
     codec: 'avc',
     // Calidad constante (como el CRF de ffmpeg); si el codificador no la
     // admite, una tasa holgada para que recomprimir no se note.
@@ -243,6 +258,23 @@ const exportar = async (
   output.addVideoTrack(fuenteVideo, { frameRate: fps });
   output.addAudioTrack(fuenteAudio);
   await output.start();
+
+  /**
+   * Manda al codificador lo que hay en el lienzo, diciendo en qué color está.
+   * Ver COLOR_DE_SALIDA: sin esto el MP4 sale marcado como sRGB de rango
+   * completo y se ve lavado.
+   */
+  const anadirFotograma = async (timestamp: number, duration: number) => {
+    const { data } = ctx.getImageData(0, 0, width, height);
+    const muestra = new VideoSample(data, {
+      format: 'RGBX', codedWidth: width, codedHeight: height, timestamp, duration, colorSpace: COLOR_DE_SALIDA,
+    });
+    try {
+      await fuenteVideo.add(muestra);
+    } finally {
+      muestra.close();
+    }
+  };
 
   const cancelar = async () => { try { await output.cancel(); } catch { /* ya cancelado */ } };
   const negro = () => { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height); };
@@ -281,7 +313,7 @@ const exportar = async (
           encajar(img, img.width, img.height);
           afilar();
           pintarEncima(t);
-          await fuenteVideo.add(acumulado + t, 1 / fps);
+          await anadirFotograma(acumulado + t, 1 / fps);
           if (f % 15 === 0) avisar(t);
         }
         img.close();
@@ -303,7 +335,7 @@ const exportar = async (
         if (envuelto) encajar(envuelto.canvas, envuelto.canvas.width, envuelto.canvas.height);
         afilar();
         pintarEncima(t);
-        await fuenteVideo.add(acumulado + t, 1 / fps);
+        await anadirFotograma(acumulado + t, 1 / fps);
         if (f % 15 === 0) avisar(t);
         f += 1;
       }
