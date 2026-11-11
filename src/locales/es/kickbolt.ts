@@ -258,6 +258,7 @@ export default {
   "watermarkAllCustomize": "Personalizar la marca",
   "cancel": "Cancelar",
   "watermarkAllFailed": "{n} clips se han quedado por el camino. Los demás sí se han guardado.",
+  "watermarkAllFailedAll": "No se ha podido guardar ningún clip. Recarga la página y vuelve a probar.",
   "wm_test": "Probar",
   "wm_test_in": "Animación de entrada",
   "wm_test_out": "Animación de salida",

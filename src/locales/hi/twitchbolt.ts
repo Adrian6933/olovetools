@@ -259,6 +259,7 @@ export default {
   "watermarkAllCustomize": "वॉटरमार्क कस्टमाइज़ करें",
   "cancel": "रद्द करें",
   "watermarkAllFailed": "{n} क्लिप प्रोसेस नहीं हो सके। बाक़ी सहेज लिए गए।",
+  "watermarkAllFailedAll": "कोई भी क्लिप सहेजी नहीं जा सकी। पेज रीलोड करके फिर से कोशिश करें।",
   "wm_test": "आज़माएँ",
   "wm_test_in": "आने का एनिमेशन",
   "wm_test_out": "जाने का एनिमेशन",

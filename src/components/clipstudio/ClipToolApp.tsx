@@ -157,7 +157,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const [wmAll, setWmAll] = useState<(ProgresoLote & { fase: 'trabajo' | 'zip' }) | null>(null);
   const wmAllAbort = useRef<AbortController | null>(null);
   /** Cuántos se quedaron por el camino en la última pasada. */
-  const [wmAllFallos, setWmAllFallos] = useState<{ fallos: number; hevcNoDisponible?: boolean } | null>(null);
+  const [wmAllFallos, setWmAllFallos] = useState<{ fallos: number; total?: number; hevcNoDisponible?: boolean } | null>(null);
   const [isQualityOpen, setIsQualityOpen] = useState(false);
   /** Mientras se une el vídeo, el ZIP y la marca en lote esperan. */
   const [uniendo, setUniendo] = useState(false);
@@ -483,7 +483,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       await Promise.all(validClips.map((clip, i) => turno(() => downloadTask(clip, i))));
 
       if (signal.aborted) throw new Error("AbortError");
-      setWmAllFallos({ fallos: fallidos });
+      setWmAllFallos({ fallos: fallidos, total: validClips.length });
       if (fallidos === validClips.length) throw new Error('Nothing downloaded');
 
       setZipProgress(prev => prev ? { ...prev, preparingZip: true } : null);
@@ -1271,7 +1271,10 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
 
              {wmAllFallos && wmAllFallos.fallos > 0 && !wmAll && (
                <div className="w-full rounded-[2rem] border border-amber-500/25 bg-amber-500/5 px-6 py-4 text-xs font-bold text-amber-300">
-                 {(t.watermarkAllFailed || '{n} clips could not be processed.').replace('{n}', String(wmAllFallos.fallos))}
+                 {/* Si no se salvó ninguno, "los demás sí se han guardado" sería mentira. */}
+                 {wmAllFallos.total !== undefined && wmAllFallos.fallos >= wmAllFallos.total
+                   ? (t.watermarkAllFailedAll || 'None of the clips could be saved. Reload the page and try again.')
+                   : (t.watermarkAllFailed || '{n} clips could not be processed.').replace('{n}', String(wmAllFallos.fallos))}
                  {wmAllFallos.hevcNoDisponible && <p className="mt-1">{t.wm_export_hevc_unsupported || 'This browser cannot export HEVC with a watermark. Select an H.264 quality to continue.'}</p>}
                </div>
              )}

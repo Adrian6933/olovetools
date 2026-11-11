@@ -259,6 +259,7 @@ export default {
   "watermarkAllCustomize": "透かしを調整",
   "cancel": "キャンセル",
   "watermarkAllFailed": "{n} 件は処理できませんでした。残りは保存済みです。",
+  "watermarkAllFailedAll": "クリップを1件も保存できませんでした。ページを再読み込みして、もう一度お試しください。",
   "wm_test": "確認",
   "wm_test_in": "表示アニメーション",
   "wm_test_out": "消えるアニメーション",

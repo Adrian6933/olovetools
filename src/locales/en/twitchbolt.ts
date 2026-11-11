@@ -259,6 +259,7 @@ export default {
   "watermarkAllCustomize": "Customise the watermark",
   "cancel": "Cancel",
   "watermarkAllFailed": "{n} clips could not be processed. The rest were saved.",
+  "watermarkAllFailedAll": "None of the clips could be saved. Reload the page and try again.",
   "wm_test": "Test",
   "wm_test_in": "Entry animation",
   "wm_test_out": "Exit animation",

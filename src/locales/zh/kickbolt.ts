@@ -258,6 +258,7 @@ export default {
   "watermarkAllCustomize": "自定义水印",
   "cancel": "取消",
   "watermarkAllFailed": "{n} 个剪辑没能处理。其余的已经保存。",
+  "watermarkAllFailedAll": "没有保存任何剪辑。请刷新页面后重试。",
   "wm_test": "试看",
   "wm_test_in": "入场动画",
   "wm_test_out": "退场动画",

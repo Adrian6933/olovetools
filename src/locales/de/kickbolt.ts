@@ -258,6 +258,7 @@ export default {
   "watermarkAllCustomize": "Wasserzeichen anpassen",
   "cancel": "Abbrechen",
   "watermarkAllFailed": "{n} Clips konnten nicht verarbeitet werden. Der Rest wurde gespeichert.",
+  "watermarkAllFailedAll": "Keiner der Clips konnte gespeichert werden. Lade die Seite neu und versuche es noch einmal.",
   "wm_test": "Testen",
   "wm_test_in": "Einblend-Animation",
   "wm_test_out": "Ausblend-Animation",

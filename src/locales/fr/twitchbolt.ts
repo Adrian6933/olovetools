@@ -259,6 +259,7 @@ export default {
   "watermarkAllCustomize": "Personnaliser le filigrane",
   "cancel": "Annuler",
   "watermarkAllFailed": "{n} clips n'ont pas pu être traités. Les autres ont bien été enregistrés.",
+  "watermarkAllFailedAll": "Aucun clip n'a pu être enregistré. Rechargez la page et réessayez.",
   "wm_test": "Tester",
   "wm_test_in": "Animation d'entrée",
   "wm_test_out": "Animation de sortie",
