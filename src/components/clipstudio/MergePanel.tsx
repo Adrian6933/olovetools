@@ -93,7 +93,8 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
     try {
       const marca = watermarkOn ? (watermarkConfig ?? loadStoredWatermarkConfig(brand)) : null;
       const nitidez = FUERZA[calidad.nitidez];
-      const soloMarca = brand.id === 'twitch' && formatoClips === 'original';
+      // lotes.ts decide en cada clip si basta con poner solo la marca.
+      const soloMarca = brand.id === 'twitch';
       let hevcNoDisponible = false;
       setEstado({ fase: 'descarga', hechos: 0, total: clips.length, pct: 0, bajando: 0, marcando: 0, fallos: 0 });
       // Con los clips sueltos y marca, se marcan aquí mismo mientras bajan

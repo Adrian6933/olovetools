@@ -28,7 +28,7 @@ import { prepararVideo } from './ownMedia';
 import CalidadSelector from '../CalidadSelector';
 import AvisoGrafica from '../AvisoGrafica';
 import { HeavyTaskNote } from '../../shared/HeavyTaskNote';
-import { FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from '../nitidez';
+import { CALIDAD_POR_DEFECTO, FUERZA, guardarCalidad, leerCalidad, type CalidadExport } from '../nitidez';
 import TrimBar from './TrimBar';
 import Timeline from './Timeline';
 import GaleriaAnimaciones from './GaleriaAnimaciones';
@@ -607,7 +607,8 @@ const ClipEditor: React.FC<Props> = ({ lang = 'en', clips, piezas, setPiezas, en
   const [hecho, setHecho] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
   useEffect(() => () => abortRef.current?.abort(), []);
-  const [calidad, setCalidad] = useState<CalidadExport>(() => leerCalidad(brand.storagePrefix));
+  // TwitchBolt no afila (brand.sinNitidez), ni con una preferencia que quedara guardada.
+  const [calidad, setCalidad] = useState<CalidadExport>(() => (brand.sinNitidez ? CALIDAD_POR_DEFECTO : leerCalidad(brand.storagePrefix)));
   const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
   const alto = quality === '360' ? 360 : quality === '480' ? 480 : quality === '720' ? 720 : 1080;
 
@@ -832,7 +833,7 @@ const ClipEditor: React.FC<Props> = ({ lang = 'en', clips, piezas, setPiezas, en
                     <button key={id} type="button" onClick={() => setModo(id)} aria-pressed={modo === id} className={`flex-1 py-2 rounded-lg text-[11px] font-bold flex items-center justify-center gap-1.5 cursor-pointer ${modo === id ? 'bg-twitch text-[var(--color-accent-ink)]' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}>{ic}{txt}</button>
                   ))}
                 </div>
-                <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
+                {!brand.sinNitidez && <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />}
                 <AvisoGrafica tx={tx} />
                 <HeavyTaskNote lang={lang} kind="video" />
                 <div className="flex gap-2">

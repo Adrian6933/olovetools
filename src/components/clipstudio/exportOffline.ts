@@ -22,8 +22,8 @@
 //   - Navegadores sin VideoEncoder / sin H.264 o AAC/Opus para codificar.
 // ============================================================================
 import {
-  ALL_FORMATS, AudioBufferSink, AudioBufferSource, BlobSource, BufferTarget, CanvasSink, CanvasSource, Input,
-  Mp4OutputFormat, Output, Quality, StreamTarget, canEncodeAudio, canEncodeVideo, type StreamTargetChunk,
+  ALL_FORMATS, AudioBufferSink, AudioBufferSource, BlobSource, BufferTarget, CanvasSink, Input,
+  Mp4OutputFormat, Output, Quality, StreamTarget, VideoSampleSource, canEncodeAudio, canEncodeVideo, type StreamTargetChunk,
 } from 'mediabunny';
 import type { WatermarkConfig } from './types';
 import { drawWatermarkOnCanvas, ensureWatermarkFont } from './watermarkService';
@@ -31,6 +31,7 @@ import { bitrateDeGrabacion, suavizar } from './recorder';
 import { crearNitidez } from './nitidez';
 import { crearEncaje, medidasDe, type Encaje, type Formato } from './formato';
 import { mantenerPestanaActiva } from './mantenerActiva';
+import { lienzoAMuestra } from './aYuv';
 import { dibujarCapas, type Capa } from './editor/animaciones';
 
 export interface PiezaOffline {
@@ -159,7 +160,7 @@ const exportar = async (
   // ---- abrir cada pieza y saber cuánto dura y a cuántos fps va -------------
   const abiertas = await Promise.all(piezas.map(async p => {
     if (p.imagenSegundos !== undefined) {
-      return { p, input: null as Input | null, video: null as any, audio: null as any, desde: 0, hasta: p.imagenSegundos, dur: p.imagenSegundos, fps: 0, bps: 0, area: 0 };
+      return { p, input: null as Input | null, video: null as any, audio: null as any, desde: 0, hasta: p.imagenSegundos, dur: p.imagenSegundos, fps: 0, bps: 0, area: 0, hevc: false };
     }
     const input = new Input({ source: new BlobSource(p.blob), formats: ALL_FORMATS });
     const video = await input.getPrimaryVideoTrack();
@@ -176,7 +177,8 @@ const exportar = async (
       bps = est.averageBitrate || 0;
     } catch { /* 30 fps, bitrate desconocido */ }
     const area = (await video.getDisplayWidth()) * (await video.getDisplayHeight());
-    return { p, input, video, audio: audio && (await audio.canDecode()) ? audio : null, desde, hasta, dur: Math.max(0, hasta - desde), fps, bps, area };
+    const hevc = (await video.getCodec()) === 'hevc';
+    return { p, input, video, audio: audio && (await audio.canDecode()) ? audio : null, desde, hasta, dur: Math.max(0, hasta - desde), fps, bps, area, hevc };
   }));
   // El vídeo final va al ritmo del clip más fluido, sin pasar de 60.
   const fps = Math.min(60, Math.max(24, Math.round(Math.max(30, ...abiertas.map(a => a.fps)))));
@@ -194,6 +196,7 @@ const exportar = async (
   const canvas = document.createElement('canvas');
   canvas.width = width;
   canvas.height = height;
+  // Se lee cada fotograma para pasarlo a YUV (aYuv.ts).
   const ctx = canvas.getContext('2d', { alpha: false });
   if (!ctx) throw new Error('Canvas not available');
   suavizar(ctx);
@@ -212,12 +215,14 @@ const exportar = async (
    * Medido con un clip de Rust (7,5 Mbps, mucha hierba): x2,2 pesaba un 50 %
    * más sin diferencia visible (45 dB entre una y otra), y x1,5 pierde 0,35 dB
    * frente al cuantizador 20 ocupando la mitad. Sin dato del original, la
-   * tabla de recorder.ts.
+   * tabla de recorder.ts. Un original en HEVC cuenta 1,7 veces su bitrate:
+   * H.264 necesita eso para la misma calidad, y si no, los movimientos
+   * rápidos salen emborronados.
    */
   function bitrateDeSalida() {
     const conDato = abiertas.filter(a => a.bps > 0 && a.area > 0);
     if (!conDato.length) return bitrateDeGrabacion(height);
-    const porPixel = Math.max(...conDato.map(a => a.bps / a.area));
+    const porPixel = Math.max(...conDato.map(a => (a.bps * (a.hevc ? 1.7 : 1)) / a.area));
     const objetivo = porPixel * width * height * 1.5 * (fuerza > 0 ? 1.25 : 1);
     return Math.round(Math.max(6_000_000, Math.min(45_000_000, objetivo)));
   }
@@ -232,7 +237,7 @@ const exportar = async (
     format: new Mp4OutputFormat({ fastStart: destino ? false : 'in-memory' }),
     target: destino ? new StreamTarget(destino.writable, { chunked: true, chunkSize: 8 * 2 ** 20 }) : new BufferTarget(),
   });
-  const fuenteVideo = new CanvasSource(canvas, {
+  const fuenteVideo = new VideoSampleSource({
     codec: 'avc',
     // Calidad constante (como el CRF de ffmpeg); si el codificador no la
     // admite, una tasa holgada para que recomprimir no se note.
@@ -245,6 +250,11 @@ const exportar = async (
   await output.start();
 
   const cancelar = async () => { try { await output.cancel(); } catch { /* ya cancelado */ } };
+  /** Codifica lo que hay en el lienzo, con el color del original (aYuv.ts). */
+  const codificar = async (t: number, d: number) => {
+    const muestra = lienzoAMuestra(ctx, width, height, t, d);
+    try { await fuenteVideo.add(muestra); } finally { muestra.close(); }
+  };
   const negro = () => { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, width, height); };
   /** Opacidad del velo negro del fundido en el segundo t de una pieza de d. */
   const velo = (t: number, d: number) => (!opts.fade || d <= FUNDIDO * 2 ? 0
@@ -281,7 +291,7 @@ const exportar = async (
           encajar(img, img.width, img.height);
           afilar();
           pintarEncima(t);
-          await fuenteVideo.add(acumulado + t, 1 / fps);
+          await codificar(acumulado + t, 1 / fps);
           if (f % 15 === 0) avisar(t);
         }
         img.close();
@@ -303,7 +313,7 @@ const exportar = async (
         if (envuelto) encajar(envuelto.canvas, envuelto.canvas.width, envuelto.canvas.height);
         afilar();
         pintarEncima(t);
-        await fuenteVideo.add(acumulado + t, 1 / fps);
+        await codificar(acumulado + t, 1 / fps);
         if (f % 15 === 0) avisar(t);
         f += 1;
       }

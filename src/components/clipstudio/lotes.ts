@@ -26,6 +26,27 @@ export const resolucionDe = (c: ClipData, quality: string, preferirHevc = false)
       || c.resolutions.find(r => r.quality.startsWith(quality))
       || c.resolutions[0];
 
+/**
+ * ¿El clip ya tiene esa forma? Los de Twitch llegan en 16:9: pedir 16:9 es
+ * pedir el clip tal cual, y recodificarlo solo le quitaría calidad.
+ */
+const yaTieneForma = async (blob: Blob, formato: Formato): Promise<boolean> => {
+  if (formato === 'original') return true;
+  const { ALL_FORMATS, BlobSource, Input } = await import('mediabunny');
+  const input = new Input({ source: new BlobSource(blob), formats: ALL_FORMATS });
+  try {
+    const video = await input.getPrimaryVideoTrack();
+    if (!video) return false;
+    const proporcion = (await video.getDisplayWidth()) / (await video.getDisplayHeight());
+    const buscada = formato === '16:9' ? 16 / 9 : 9 / 16;
+    return Math.abs(proporcion - buscada) / buscada < 0.01;
+  } catch {
+    return false;
+  } finally {
+    input.dispose();
+  }
+};
+
 /** Como mucho n tareas a la vez, en el orden en que se piden. */
 export const semaforo = (n: number) => {
   let libres = n;
@@ -115,7 +136,13 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
   const reformatear = !!o.formato && o.formato !== 'original';
   // Nitidez o 1440p también obligan a recodificar, aunque no haya marca.
   const mejorar = (o.calidad?.nitidez ?? 0) > 0 || (o.calidad?.alto ?? 0) > 1080;
-  const soloMarca = !!o.marca?.soloMarca && !reformatear && !mejorar;
+  // Solo la marca (exportarSoloMarca.ts: mismo códec y color) cuando no hace
+  // falta otra forma; el 16:9 de un clip que ya lo es cuenta como original.
+  const formasPedidas = formasDe(o.formato ?? 'original');
+  const sinVertical = !formasPedidas.includes('9:16');
+  const soloMarca = !!o.marca?.soloMarca && !mejorar && sinVertical;
+  // El HEVC solo si nada lo tiene que pasar por el lienzo.
+  const preferirHevc = !mejorar && sinVertical && (o.marca ? !!o.marca.soloMarca : true);
   // Cambiar el formato o mejorar sin marca solo se puede fotograma a
   // fotograma; donde no hay WebCodecs, salen tal cual en vez de no salir.
   const aLaVez = !soloMarca && (o.marca || reformatear || mejorar) ? await rendersALaVez() : 1;
@@ -142,7 +169,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
   };
 
   const uno = async (clip: ClipData, i: number): Promise<ResultadoClip> => {
-    const res = resolucionDe(clip, o.quality, soloMarca);
+    const res = resolucionDe(clip, o.quality, preferirHevc);
     let original: Blob | null = null;
     let final: Blob | null = null;
     const salidas: { formato: Formato; blob: Blob }[] = [];
@@ -175,9 +202,13 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
         const m = o.marca;
         // Con 'ambos' son dos renders del mismo original, uno detrás de otro
         // (cada uno coge su turno: no se adelanta a los clips que esperan).
-        const formas = formasDe(o.formato ?? 'original');
+        const formas = formasPedidas;
         for (let n = 0; n < formas.length; n++) {
-          const formato = formas[n];
+          const pedido = formas[n];
+          const igual = !mejorar && await yaTieneForma(original!, pedido);
+          const formato: Formato = igual ? 'original' : pedido;
+          // Sin marca y con la forma que ya tiene: el clip tal cual.
+          if (!m && igual) { salidas.push({ formato: pedido, blob: original! }); continue; }
           const blob = await marcar(async () => {
             if (o.signal?.aborted) throw new DOMException('Cancelled', 'AbortError');
             marcando += 1;
@@ -191,7 +222,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
                   m.config,
                   ({ pct }) => progreso(pct),
                   o.signal,
-                  { nitidez: m.nitidez, alto: m.alto, formato, encaje: o.encaje, soloMarca },
+                  { nitidez: m.nitidez, alto: m.alto, formato, encaje: o.encaje, soloMarca: !!m.soloMarca && igual },
                 );
               }
               const { exportarSinTiempoReal } = await import('./exportOffline');
@@ -206,7 +237,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
               marcando -= 1;
             }
           });
-          salidas.push({ formato, blob });
+          salidas.push({ formato: pedido, blob });
         }
         final = salidas[0]?.blob ?? null;
       } else {
