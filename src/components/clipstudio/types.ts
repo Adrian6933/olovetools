@@ -18,6 +18,12 @@ export interface ClipData {
   createdAt?: string;
   views: number;
   resolutions: Resolution[];
+  /**
+   * El HEVC que reproduce la web de Twitch, solo para descargar tal cual. Va
+   * aparte de `resolutions` porque la marca, el editor y el vídeo unido cogen
+   * resolutions[0] para recodificar, y no todos los equipos decodifican HEVC.
+   */
+  hevc?: Resolution;
 }
 
 export interface ClipItem {

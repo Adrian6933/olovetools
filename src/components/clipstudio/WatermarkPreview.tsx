@@ -6,9 +6,6 @@
 // hace scroll por dentro (antes era un vídeo diminuto y un menú larguísimo
 // hacia abajo). Un botón lo pasa a pantalla completa y otro lo devuelve.
 //
-// El exportado graba con MediaRecorder sobre un canvas y va A VELOCIDAD REAL:
-// un clip de 60 s tarda 60 s. Se avisa antes de empezar y se enseña lo que
-// queda. Ir más rápido exigiría pasar el codificador a WebCodecs.
 // ============================================================================
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
@@ -82,7 +79,8 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
   const [fuentesListas, setFuentesListas] = useState(0);
 
   // ---- Exportado --------------------------------------------------------
-  const [calidad, setCalidad] = useState(clip.resolutions[0]?.quality || '');
+  const resoluciones = clip.hevc ? [clip.hevc, ...clip.resolutions] : clip.resolutions;
+  const [calidad, setCalidad] = useState(resoluciones[0]?.quality || '');
   const [fase, setFase] = useState<'quieto' | 'descarga' | 'render'>('quieto');
   const [pct, setPct] = useState(0);
   const [restante, setRestante] = useState(0);
@@ -218,7 +216,9 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
     } catch (e: any) {
       if (e?.name !== 'AbortError') {
         setErrorExport(
-          e?.message === 'BACKGROUND_PAUSE'
+          e?.name === 'WatermarkCodecError' && calidad === clip.hevc?.quality
+            ? tr('wm_export_hevc_unsupported', 'This browser cannot export HEVC with a watermark. Select an H.264 quality to continue.')
+            : e?.message === 'BACKGROUND_PAUSE'
             ? tr('wm_export_paused', 'The browser paused the clip to save power, so the render stopped. Keep this tab visible and try again.')
             : (e?.message || tr('wm_export_error', 'The render failed'))
         );
@@ -424,14 +424,14 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
               ) : (
                 <>
                   <div className="flex items-center gap-2">
-                    {clip.resolutions.length > 1 && (
+                    {resoluciones.length > 1 && (
                       <select
                         value={calidad}
                         onChange={e => setCalidad(e.target.value)}
                         aria-label={tr('wm_export_quality', 'Quality')}
                         className="h-11 bg-dark-950 border border-white/10 rounded-xl px-2 text-xs font-bold text-gray-200 cursor-pointer outline-none focus:border-twitch"
                       >
-                        {clip.resolutions.map(r => <option key={r.quality} value={r.quality}>{r.quality}</option>)}
+                        {resoluciones.map(r => <option key={r.quality} value={r.quality}>{r.quality}</option>)}
                       </select>
                     )}
                     <button
@@ -444,8 +444,10 @@ const WatermarkPreview: React.FC<WatermarkPreviewProps> = ({
                     </button>
                   </div>
                   <p className="text-[10px] text-gray-500 leading-snug">
-                    {tr('wm_export_hint', 'Rendering runs in real time, so it takes about as long as the clip lasts')}
-                    {clip.duration > 0 ? ` — ~${mmss(clip.duration)}` : ''}
+                    {brand.id === 'twitch'
+                      ? tr('wm_export_original_hint', 'Keeps the selected codec, resolution, frame timing and original audio.')
+                      : <>{tr('wm_export_hint', 'Rendering runs in real time, so it takes about as long as the clip lasts')}
+                          {clip.duration > 0 ? ` — ~${mmss(clip.duration)}` : ''}</>}
                   </p>
                 </>
               )

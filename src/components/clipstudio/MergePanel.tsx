@@ -93,6 +93,8 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
     try {
       const marca = watermarkOn ? (watermarkConfig ?? loadStoredWatermarkConfig(brand)) : null;
       const nitidez = FUERZA[calidad.nitidez];
+      const soloMarca = brand.id === 'twitch' && formatoClips === 'original';
+      let hevcNoDisponible = false;
       setEstado({ fase: 'descarga', hechos: 0, total: clips.length, pct: 0, bajando: 0, marcando: 0, fallos: 0 });
       // Con los clips sueltos y marca, se marcan aquí mismo mientras bajan
       // los demás; el vídeo unido parte de los originales (pone su propia
@@ -100,17 +102,21 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
       const resultados = await procesarClips(clips, {
         quality,
         fetchMovieBlob: brand.fetchMovieBlob,
-        marca: conClips && marca ? { config: marca, nitidez, alto: calidad.alto } : null,
+        marca: conClips && marca ? { config: marca, nitidez, alto: calidad.alto, soloMarca } : null,
         formato: conClips ? formatoClips : 'original',
         encaje,
         calidad: conClips ? { nitidez, alto: calidad.alto } : undefined,
         guardarOriginal: true,
         signal: ctrl.signal,
-        onProgress: p => setEstado({ fase: 'descarga', ...p }),
+        onProgress: p => { hevcNoDisponible = !!p.hevcNoDisponible; setEstado({ fase: 'descarga', ...p }); },
       });
       // Al vídeo unido no le puede faltar un trozo.
       const sinBajar = resultados.filter(r => !r.original).length;
       if (sinBajar) throw new Error(`${sinBajar} clip(s) could not be downloaded`);
+      if (conClips && marca && soloMarca && resultados.some(r => !r.final)) {
+        if (hevcNoDisponible) throw new Error(t.wm_export_hevc_unsupported || 'This browser cannot export HEVC with a watermark. Select an H.264 quality to continue.');
+        throw new Error('Some clips could not be watermarked');
+      }
       paso = 'render';
 
       const video = await mergeClipsToVideo(

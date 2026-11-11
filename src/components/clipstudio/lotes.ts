@@ -19,9 +19,9 @@ export const DESCARGAS_A_LA_VEZ = 4;
 const INTENTOS_DESCARGA = 2;
 
 /** La resolución que toca a un clip: la pedida si la tiene, si no la mejor. */
-export const resolucionDe = (c: ClipData, quality: string): Resolution =>
+export const resolucionDe = (c: ClipData, quality: string, preferirHevc = false): Resolution =>
   quality === 'max'
-    ? c.resolutions[0]
+    ? (preferirHevc ? c.hevc : undefined) ?? c.resolutions[0]
     : c.resolutions.find(r => r.quality === `${quality}p`)
       || c.resolutions.find(r => r.quality.startsWith(quality))
       || c.resolutions[0];
@@ -69,6 +69,7 @@ export interface ProgresoLote {
   bajando: number;
   marcando: number;
   fallos: number;
+  hevcNoDisponible?: boolean;
 }
 
 export interface ResultadoClip {
@@ -93,7 +94,7 @@ export interface OpcionesLote {
   quality: string;
   fetchMovieBlob: (url: string, onProgress: (loaded: number, total: number) => void, signal?: AbortSignal) => Promise<Blob>;
   /** Sin marca ni formato, solo se bajan. */
-  marca?: { config: WatermarkConfig; nitidez?: number; alto?: number } | null;
+  marca?: { config: WatermarkConfig; nitidez?: number; alto?: number; soloMarca?: boolean } | null;
   /** Pasarlos a 16:9, 9:16 o los dos (formato.ts); 'original' o nada, tal cual. */
   formato?: FormatoClips;
   encaje?: Encaje;
@@ -114,9 +115,10 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
   const reformatear = !!o.formato && o.formato !== 'original';
   // Nitidez o 1440p también obligan a recodificar, aunque no haya marca.
   const mejorar = (o.calidad?.nitidez ?? 0) > 0 || (o.calidad?.alto ?? 0) > 1080;
+  const soloMarca = !!o.marca?.soloMarca && !reformatear && !mejorar;
   // Cambiar el formato o mejorar sin marca solo se puede fotograma a
   // fotograma; donde no hay WebCodecs, salen tal cual en vez de no salir.
-  const aLaVez = o.marca || reformatear || mejorar ? await rendersALaVez() : 1;
+  const aLaVez = !soloMarca && (o.marca || reformatear || mejorar) ? await rendersALaVez() : 1;
   const procesar = !!o.marca || ((reformatear || mejorar) && aLaVez > 1);
   const marcar = semaforo(aLaVez);
   // Con marca, bajar es una parte pequeña del trabajo de cada clip.
@@ -124,6 +126,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
   const avance = clips.map(() => 0);
   let hechos = 0;
   let fallos = 0;
+  let hevcNoDisponible = false;
   let bajando = 0;
   let marcando = 0;
   let ultimo = 0;
@@ -135,11 +138,11 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
     if (!forzar && ahora - ultimo < 100) return;
     ultimo = ahora;
     const pct = Math.round((avance.reduce((s, x) => s + x, 0) / Math.max(1, clips.length)) * 100);
-    o.onProgress?.({ hechos, total: clips.length, pct: Math.min(100, pct), bajando, marcando, fallos });
+    o.onProgress?.({ hechos, total: clips.length, pct: Math.min(100, pct), bajando, marcando, fallos, hevcNoDisponible });
   };
 
   const uno = async (clip: ClipData, i: number): Promise<ResultadoClip> => {
-    const res = resolucionDe(clip, o.quality);
+    const res = resolucionDe(clip, o.quality, soloMarca);
     let original: Blob | null = null;
     let final: Blob | null = null;
     const salidas: { formato: Formato; blob: Blob }[] = [];
@@ -188,7 +191,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
                   m.config,
                   ({ pct }) => progreso(pct),
                   o.signal,
-                  { nitidez: m.nitidez, alto: m.alto, formato, encaje: o.encaje },
+                  { nitidez: m.nitidez, alto: m.alto, formato, encaje: o.encaje, soloMarca },
                 );
               }
               const { exportarSinTiempoReal } = await import('./exportOffline');
@@ -213,6 +216,7 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
     } catch (e) {
       if (!o.signal?.aborted) {
         fallos += 1;
+        if (res === clip.hevc && e instanceof Error && e.name === 'WatermarkCodecError') hevcNoDisponible = true;
         console.error(`Clip ${clip.id} failed`, e);
       }
     }

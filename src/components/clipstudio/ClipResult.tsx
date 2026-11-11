@@ -4,7 +4,7 @@ import { Download, Clock, Calendar, Eye, Play, X, Loader2, CheckCircle2, Sparkle
 import { attachVideo, useBrand } from './brand';
 import WatermarkPreview from './WatermarkPreview';
 import MejoraPanel from './MejoraPanel';
-import { FUERZA, leerCalidad } from './nitidez';
+import { CALIDAD_POR_DEFECTO, FUERZA, leerCalidad } from './nitidez';
 import { WatermarkConfig, PositionPreset } from './types';
 import {
   loadStoredWatermarkConfig,
@@ -76,29 +76,29 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
   };
 
   // Descarga el clip y le incrusta el cartel. Las dos fases informan por
-  // separado porque duran cosas muy distintas: la descarga va a la velocidad de
-  // la red y el render tarda lo que dura el clip, ni más ni menos.
+  // separado para mostrar el progreso de red y el de render.
   const exportarConMarca = async (
     quality: string,
     config: WatermarkConfig,
     signal: AbortSignal,
     onProgress: (fase: 'descarga' | 'render', pct: number, restante: number) => void
   ) => {
-    const res = data.resolutions.find((r) => r.quality === quality) || data.resolutions[0];
+    const res = data.hevc?.quality === quality ? data.hevc
+      : data.resolutions.find((r) => r.quality === quality) || data.resolutions[0];
     if (!res) throw new Error('No resolution available');
 
     const original = await brand.fetchMovieBlob(res.url, (loaded, total) => {
       onProgress('descarga', total > 0 ? Math.round((loaded / total) * 100) : 0, 0);
     }, signal);
 
-    const calidad = leerCalidad(brand.storagePrefix);
+    const calidad = brand.sinNitidez ? CALIDAD_POR_DEFECTO : leerCalidad(brand.storagePrefix);
     const conMarca = await processVideoWithWatermark(
       original,
       data.broadcaster || 'Streamer',
       config,
       ({ pct, elapsed, total }) => onProgress('render', pct, Math.max(0, total - elapsed)),
       signal,
-      { nitidez: FUERZA[calidad.nitidez], alto: calidad.alto },
+      { nitidez: FUERZA[calidad.nitidez], alto: calidad.alto, soloMarca: brand.id === 'twitch' },
     );
 
     const safeTitle = nombreDeArchivo(data.title, data.broadcaster, data.id);
@@ -332,7 +332,7 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
 
           {/* DOWNLOADS RIGHT */}
           <div className="@3xl:col-span-5 p-5 @lg:p-6 @4xl:p-7 bg-[#0c0c0e]/50 grid grid-cols-1 @md:grid-cols-2 @3xl:flex @3xl:flex-col justify-center gap-3">
-             {data.resolutions.map((res, i) => {
+             {(data.hevc ? [data.hevc, ...data.resolutions] : data.resolutions).map((res, i) => {
                 const state = downloadingRes[res.quality];
                 const isDownloading = state !== undefined;
                 const progress = state?.progress || 0;
@@ -391,17 +391,19 @@ const ClipResult: React.FC<ClipResultProps> = ({ data, index, onReset, lang, dic
              })}
 
              {/* La descarga normal es el archivo tal cual; esta lo afila (y escala). */}
-             <button
-               type="button"
-               onClick={() => { setMejoraAbierta(v => !v); setWmAbierto(false); }}
-               aria-expanded={mejoraAbierta}
-               className={`w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-3.5 flex items-center justify-center gap-2 border text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
-                 mejoraAbierta ? 'bg-twitch text-[var(--color-accent-ink)] border-twitch' : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40'
-               }`}
-             >
-               <Wand2 className="w-4 h-4" />
-               {t.en_btn || 'Sharper (HD)'}
-             </button>
+             {!brand.sinNitidez && (
+               <button
+                 type="button"
+                 onClick={() => { setMejoraAbierta(v => !v); setWmAbierto(false); }}
+                 aria-expanded={mejoraAbierta}
+                 className={`w-full @md:col-span-2 @3xl:col-span-1 rounded-2xl p-3.5 flex items-center justify-center gap-2 border text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer active:scale-[0.98] ${
+                   mejoraAbierta ? 'bg-twitch text-[var(--color-accent-ink)] border-twitch' : 'bg-dark-700 text-gray-300 border-white/5 hover:bg-dark-600 hover:text-white hover:border-twitch/40'
+                 }`}
+               >
+                 <Wand2 className="w-4 h-4" />
+                 {t.en_btn || 'Sharper (HD)'}
+               </button>
+             )}
           </div>
         </div>
 

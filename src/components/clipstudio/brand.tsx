@@ -36,6 +36,8 @@ export interface ClipBrand {
    * las heredaría.
    */
   cssVars?: React.CSSProperties;
+  /** Sin nitidez: ni sus controles ni la preferencia que hubiera guardada. */
+  sinNitidez?: boolean;
 }
 
 export const BrandContext = createContext<ClipBrand | null>(null);

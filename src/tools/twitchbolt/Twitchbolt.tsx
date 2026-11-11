@@ -21,6 +21,7 @@ const brand: ClipBrand = {
   accent: '#9146FF',
   fetchMovieBlob,
   downloadBlob,
+  sinNitidez: true,
 };
 
 const tool = (dictionary: any): ClipToolConfig => ({

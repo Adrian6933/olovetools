@@ -8,10 +8,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { loadImage } from '../../lib/loadImage';
 import { crearEncaje, type Encaje } from './formato';
 
-const ANCHO = 108;
-const ALTO = 192;
+// Resolución del lienzo: el tamaño en pantalla lo decide quien lo coloca.
+const LADO_LARGO = 640;
+const LADO_CORTO = 360;
 
-export default function VistaEncaje({ src, encaje, etiqueta }: { src?: string; encaje: Encaje; etiqueta: string }) {
+export default function VistaEncaje({ src, encaje, etiqueta, formato = '9:16' }: { src?: string; encaje: Encaje; etiqueta: string; formato?: '16:9' | '9:16' }) {
   const lienzo = useRef<HTMLCanvasElement>(null);
   const [img, setImg] = useState<HTMLImageElement | null>(null);
 
@@ -29,7 +30,6 @@ export default function VistaEncaje({ src, encaje, etiqueta }: { src?: string; e
     const c = lienzo.current;
     const ctx = c?.getContext('2d');
     if (!c || !ctx) return;
-    // El lienzo va al doble para que no se vea borroso en pantallas densas.
     const W = c.width;
     const H = c.height;
     ctx.fillStyle = '#000';
@@ -37,17 +37,16 @@ export default function VistaEncaje({ src, encaje, etiqueta }: { src?: string; e
     if (!img) return;
     ctx.imageSmoothingQuality = 'high';
     crearEncaje(ctx, W, H, encaje)(img, img.naturalWidth, img.naturalHeight);
-  }, [img, encaje]);
+  }, [img, encaje, formato]);
 
   return (
     <canvas
       ref={lienzo}
-      width={ANCHO * 2}
-      height={ALTO * 2}
+      width={formato === '9:16' ? LADO_CORTO : LADO_LARGO}
+      height={formato === '9:16' ? LADO_LARGO : LADO_CORTO}
       role="img"
       aria-label={etiqueta}
-      className="shrink-0 rounded-xl border border-white/10 bg-black"
-      style={{ width: ANCHO, height: ALTO }}
+      className="block w-full h-full rounded-xl border border-white/10 bg-black"
     />
   );
 }

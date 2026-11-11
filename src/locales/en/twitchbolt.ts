@@ -90,6 +90,8 @@ export default {
   },
   "qMaxLabel": "Max Quality",
   "qMaxSub": "Original source",
+  "qHevcSub": "H.264 if H.265 is unavailable",
+  "qAvcSub": "Wider compatibility",
   "q720Label": "720p HD",
   "q720Sub": "Balanced",
   "q360Label": "360p Fast",

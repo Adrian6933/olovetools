@@ -720,14 +720,10 @@ export interface WatermarkRenderProgress {
 }
 
 /**
- * Graba el clip con la marca de agua incrustada.
+ * Exporta el clip con la marca de agua incrustada.
  *
- * VA A VELOCIDAD REAL y no hay atajo: canvas.captureStream() muestrea a ritmo
- * de reloj de pared, así que acelerar el vídeo no acelera el render — sólo
- * comprime el contenido en menos tiempo, y el archivo resultante se reproduce
- * a esa misma velocidad de más, con el audio agudo. Un clip de 60 s tarda 60 s.
- * Por eso `onProgress` informa también de los segundos, para poder enseñar
- * cuánto queda de verdad en vez de una barra sin referencia.
+ * La ruta de reserva con MediaRecorder va a velocidad real. El progreso
+ * incluye los segundos del clip ya procesados, también en WebCodecs.
  */
 export const processVideoWithWatermark = async (
   originalBlob: Blob,
@@ -736,8 +732,12 @@ export const processVideoWithWatermark = async (
   onProgress?: (p: WatermarkRenderProgress) => void,
   signal?: AbortSignal,
   /** Nitidez (0-1) y alto de salida (1440 escala); ver nitidez.ts. */
-  calidad?: { nitidez?: number; alto?: number; formato?: Formato; encaje?: Encaje },
+  calidad?: { nitidez?: number; alto?: number; formato?: Formato; encaje?: Encaje; soloMarca?: boolean },
 ): Promise<Blob> => {
+  if (calidad?.soloMarca) {
+    const { exportarSoloMarca } = await import('./exportarSoloMarca');
+    return exportarSoloMarca(originalBlob, channelName, config, onProgress, signal);
+  }
   await ensureWatermarkFont(config);
 
   // Primero, fotograma a fotograma y al tamaño del clip (exportOffline.ts):

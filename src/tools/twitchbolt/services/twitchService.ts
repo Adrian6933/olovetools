@@ -62,6 +62,25 @@ const signUrl = (url: string, sig?: string, token?: string) => {
   return `${url}${separator}sig=${sig}&token=${encodeURIComponent(token)}`;
 };
 
+/**
+ * La web de Twitch reproduce un HEVC que videoQualities no lista: está junto al
+ * H.264, en la misma carpeta y con la misma firma. En noviembre de 2026, a igual
+ * momento de movimiento, tenía menos bloques que el H.264 de 1080p. Como la ruta
+ * no es pública se comprueba cada vez, por nuestro relé porque el CDN no da CORS;
+ * si no está o tarda, el clip se queda con sus H.264 de siempre.
+ */
+const findHevc = async (best: Resolution): Promise<Resolution | undefined> => {
+  const url = best.url.replace(/\/h264\/\d+\/index\.mp4/, '/hevc/source/index.mp4');
+  if (url === best.url) return undefined;
+  try {
+    const res = await fetch(`/proxy?url=${encodeURIComponent(url)}`, { method: 'HEAD', signal: AbortSignal.timeout(4_000) });
+    if (!res.ok) return undefined;
+  } catch {
+    return undefined;
+  }
+  return { ...best, quality: `${best.quality}-HEVC`, url };
+};
+
 export const fetchClipInfo = async (url: string): Promise<ClipData> => {
   const slug = getClipSlug(url);
   if (!slug) throw new Error("Invalid URL.");
@@ -118,6 +137,7 @@ export const fetchClipInfo = async (url: string): Promise<ClipData> => {
     createdAt: responseData.createdAt,
     views: responseData.viewCount,
     resolutions,
+    hevc: await findHevc(resolutions[0]),
   };
 };
 

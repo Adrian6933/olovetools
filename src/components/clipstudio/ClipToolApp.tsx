@@ -105,8 +105,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   // Se lee tras montar, no en el primer render: el servidor pinta 'max' y si
   // el navegador pintara otra cosa React se quejaría de la hidratación. Y se
   // guarda al elegir, no en un efecto, que la machacaría con 'max' al cargar.
-  const [selectedQuality, setSelectedQuality] = useState('max');
-  useEffect(() => { setSelectedQuality(loadStoredQuality(brand, 'max')); }, [brand]);
+  const [preferredQuality, setPreferredQuality] = useState('max');
+  useEffect(() => { setPreferredQuality(loadStoredQuality(brand, 'max')); }, [brand]);
 
   // ---- marca de agua en todos los clips de golpe --------------------------
   // Es un interruptor, no un botón de "hazlo ahora": con él puesto, el ZIP de
@@ -157,7 +157,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const [wmAll, setWmAll] = useState<(ProgresoLote & { fase: 'trabajo' | 'zip' }) | null>(null);
   const wmAllAbort = useRef<AbortController | null>(null);
   /** Cuántos se quedaron por el camino en la última pasada. */
-  const [wmAllFallos, setWmAllFallos] = useState(0);
+  const [wmAllFallos, setWmAllFallos] = useState<{ fallos: number; hevcNoDisponible?: boolean } | null>(null);
   const [isQualityOpen, setIsQualityOpen] = useState(false);
   /** Mientras se une el vídeo, el ZIP y la marca en lote esperan. */
   const [uniendo, setUniendo] = useState(false);
@@ -185,7 +185,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   // que usan el editor y la mejora de cada clip). Se lee tras montar, por la
   // hidratación.
   const [calidad, setCalidad] = useState<CalidadExport>(CALIDAD_POR_DEFECTO);
-  useEffect(() => { setCalidad(leerCalidad(brand.storagePrefix)); }, []);
+  useEffect(() => { if (!brand.sinNitidez) setCalidad(leerCalidad(brand.storagePrefix)); }, []);
   const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
 
   // Forma de lo que se exporta: por separado para el vídeo unido y para los
@@ -220,6 +220,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     () => clips.filter(c => c.status === 'success' && c.data).map(c => c.data!),
     [clips],
   );
+  const modo: ModoDescarga = clipsListos.length > 1 ? modoGuardado : 'clips';
 
   // Cambiar el orden desde fuera de las tarjetas (panel, atajos de orden):
   // primero se le avisa a la lista para que las tarjetas se deslicen.
@@ -238,13 +239,22 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   
   const t = createTranslator(dictionary);
 
-  // Labels used to be hardcoded English inside the component, so the three
-  // quality choices stayed in English in all nine languages.
+  // El vídeo unido y los clips reencuadrados pasan por otro exportador.
+  const zipConHevc = brand.id === 'twitch' && formatoClips === 'original'
+    && (modo === 'clips' || (modo === 'ambos' && marcaActiva));
+  const fuenteMaxima = { id: 'max', icon: <Diamond className="w-4 h-4 text-blue-400" /> };
   const qualityOptions = [
-    { id: 'max', label: t.qMaxLabel || 'Max Quality', sub: t.qMaxSub || 'Original Source', icon: <Diamond className="w-4 h-4 text-blue-400" /> },
+    ...(zipConHevc ? [
+      { ...fuenteMaxima, label: '1080p H.265', sub: t.qHevcSub || 'H.264 if H.265 is unavailable' },
+      { id: '1080', label: '1080p H.264', sub: t.qAvcSub || 'Wider compatibility', icon: <Film className="w-4 h-4 text-twitch" /> },
+    ] : [
+      { ...fuenteMaxima, label: t.qMaxLabel || 'Max Quality', sub: t.qMaxSub || 'Original Source' },
+    ]),
     { id: '720', label: t.q720Label || '720p HD', sub: t.q720Sub || 'Balanced', icon: <Film className="w-4 h-4 text-twitch" /> },
     { id: '360', label: t.q360Label || '360p Fast', sub: t.q360Sub || 'Low Data', icon: <Gauge className="w-4 h-4 text-green-400" /> }
   ];
+  const activeOption = qualityOptions.find(o => o.id === preferredQuality) || qualityOptions[0];
+  const selectedQuality = activeOption.id;
 
   useEffect(() => {
     const handleScroll = () => setShowScrollTop(window.scrollY > 400);
@@ -404,7 +414,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     let completedCount = 0;
     // Antes un clip que fallaba se quedaba fuera del ZIP sin decir nada.
     let fallidos = 0;
-    setWmAllFallos(0);
+    setWmAllFallos(null);
     let globalLoaded = 0;
     let globalTotal = 0;
     let lastTime = Date.now();
@@ -435,7 +445,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       const downloadTask = async (clip: ClipData, index: number) => {
         if (signal.aborted) return;
 
-        const chosenRes = resolucionDe(clip, selectedQuality);
+        // Este ZIP guarda los archivos tal cual, así que puede llevar el HEVC.
+        const chosenRes = resolucionDe(clip, selectedQuality, true);
 
         let clipLoaded = 0;
         let clipTotal = 0;
@@ -471,7 +482,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       await Promise.all(validClips.map((clip, i) => turno(() => downloadTask(clip, i))));
 
       if (signal.aborted) throw new Error("AbortError");
-      setWmAllFallos(fallidos);
+      setWmAllFallos({ fallos: fallidos });
       if (fallidos === validClips.length) throw new Error('Nothing downloaded');
 
       setZipProgress(prev => prev ? { ...prev, preparingZip: true } : null);
@@ -506,8 +517,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
 
     const abort = new AbortController();
     wmAllAbort.current = abort;
-    setWmAllFallos(0);
-    let fallos = 0;
+    setWmAllFallos(null);
+    let ultimoProgreso: ProgresoLote | null = null;
     setWmAll({ hechos: 0, total: listos.length, pct: 0, bajando: 0, marcando: 0, fallos: 0, fase: 'trabajo' });
 
     try {
@@ -516,12 +527,12 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
       const resultados = await procesarClips(listos, {
         quality: selectedQuality,
         fetchMovieBlob,
-        marca: config ? { config, nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto } : null,
+        marca: config ? { config, nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto, soloMarca: brand.id === 'twitch' } : null,
         formato: formatoClips,
         encaje,
         calidad: { nitidez: FUERZA[calidadGuardada.nitidez], alto: calidadGuardada.alto },
         signal: abort.signal,
-        onProgress: p => { fallos = p.fallos; setWmAll({ ...p, fase: 'trabajo' }); },
+        onProgress: p => { ultimoProgreso = p; setWmAll({ ...p, fase: 'trabajo' }); },
       });
 
       const entradas: EntradaZip[] = [];
@@ -545,13 +556,9 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
     } finally {
       wmAllAbort.current = null;
       setWmAll(null);
-      setWmAllFallos(abort.signal.aborted ? 0 : fallos);
+      setWmAllFallos(abort.signal.aborted ? null : ultimoProgreso);
     }
   }, [clips, wmAll, wmAllConfig, zipProgress, selectedQuality, marcaActiva, formatoClips, encaje, calidad]);
-
-  const modo: 'clips' | 'video' | 'ambos' = clipsListos.length > 1 ? modoGuardado : 'clips';
-
-  const activeOption = qualityOptions.find(o => o.id === selectedQuality) || qualityOptions[0];
 
   /** Sobre este se previsualiza la marca; la que se guarda va a todos. */
   const primerClipListo = clips.find(c => c.status === 'success' && c.data)?.data ?? null;
@@ -845,8 +852,8 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                   </div>
                 )}
                 
-                <div className="flex items-center gap-4 px-2 md:px-4 xl:px-6">
-                    <h2 className="text-sm font-black uppercase text-white tracking-widest">{clips.length} {t.clipsFound}</h2>
+                <div className="flex items-center gap-4 px-2 md:px-3">
+                    <h2 className="text-sm font-black uppercase text-white tracking-widest whitespace-nowrap">{clips.length} {t.clipsFound}</h2>
                 </div>
 
                 {/* CUSTOM SELECT QUALITY */}
@@ -855,16 +862,17 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                       onClick={() => setIsQualityOpen(!isQualityOpen)}
                       className="relative z-50 w-full bg-dark-950 text-white rounded-2xl p-4 border border-white/5 flex items-center justify-between group hover:border-twitch/30 transition-all cursor-pointer hover:bg-white/[0.03] active:scale-[0.98]"
                     >
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-white/5 rounded-lg group-hover:bg-twitch/10 transition-colors">
+                        <div className="flex items-center gap-3 min-w-0">
+                            {/* En la fila junto a los botones el texto no cabe con el icono. */}
+                            <div className="md:hidden 2xl:block p-2 bg-white/5 rounded-lg group-hover:bg-twitch/10 transition-colors shrink-0">
                               {activeOption.icon}
                             </div>
-                            <div className="text-left">
-                              <p className="text-xs font-black uppercase tracking-tight">{activeOption.label}</p>
-                              <p className="text-[9px] font-bold text-gray-500 uppercase">{activeOption.sub}</p>
+                            <div className="text-left min-w-0">
+                              <p className="text-xs font-black uppercase tracking-tight truncate">{activeOption.label}</p>
+                              <p className="text-[9px] font-bold text-gray-500 uppercase truncate">{activeOption.sub}</p>
                             </div>
                         </div>
-                        <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${isQualityOpen ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-4 h-4 text-gray-500 shrink-0 transition-transform ${isQualityOpen ? 'rotate-180' : ''}`} />
                     </button>
 
                     {isQualityOpen && (
@@ -874,7 +882,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                             {qualityOptions.map((opt) => (
                               <button 
                                 key={opt.id}
-                                onClick={() => { setSelectedQuality(opt.id); saveStoredQuality(brand, opt.id); setIsQualityOpen(false); }}
+                                onClick={() => { setPreferredQuality(opt.id); saveStoredQuality(brand, opt.id); setIsQualityOpen(false); }}
                                 className={`w-full flex items-center gap-4 p-4 text-left hover:bg-white/5 transition-colors border-b border-white/5 last:border-0 cursor-pointer ${selectedQuality === opt.id ? 'bg-twitch/5' : ''}`}
                               >
                                   <div className={`p-2 rounded-lg ${selectedQuality === opt.id ? 'bg-twitch/20' : 'bg-white/5'}`}>
@@ -902,7 +910,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                             ? (marcaActiva || formatoClips !== 'original' || calidad.nitidez !== 'off' ? descargarZipConMarca : downloadAllAsZip)
                             : () => mergeRef.current?.empezar()}
                           disabled={!!zipProgress || !!wmAll || isAnyLoading || uniendo}
-                          className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-6 xl:px-10 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
+                          className="flex-1 md:flex-none justify-center bg-white text-black font-[900] text-xs px-5 md:px-6 py-4 rounded-xl flex items-center gap-3 whitespace-nowrap hover:bg-gray-100 uppercase tracking-widest transition-all disabled:opacity-50 cursor-pointer hover:scale-[1.03] active:scale-[0.97] shadow-xl"
                         >
                           {isAnyLoading ? (
                             <> <Loader2 className="w-4 h-4 animate-spin" /> {t.loadingClips || 'LOADING CLIPS...'} </>
@@ -983,6 +991,11 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                const usaVideo = modo !== 'clips';
                const usaClips = modo !== 'video';
                const hayVertical = (usaVideo && formatoVideo === '9:16') || (usaClips && (formatoClips === '9:16' || formatoClips === 'ambos'));
+               /** Las formas que van a salir, para enseñarlas al lado de las opciones. */
+               const formasVista = (['16:9', '9:16'] as const).filter(f => (usaVideo && formatoVideo === f) || (usaClips && (formatoClips === f || formatoClips === 'ambos')));
+               const soloApaisado = formasVista.length === 1 && formasVista[0] === '16:9';
+               const tarjeta = 'bg-[#111114] border border-white/5 rounded-[2rem] p-3 sm:p-4 shadow-2xl';
+               const etiquetaFila = 'lg:w-44 shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500';
 
                /** El dibujo de la forma: un rectángulo tumbado o de pie. */
                const forma = (f: Formato) => f === 'original'
@@ -995,10 +1008,10 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                };
 
                type Opcion = { id: string; icon: React.ReactNode; label: string; hint?: string };
-               type Grupo = { id: string; titulo: string; icono: React.ReactNode; opciones: Opcion[]; valor: string; elegir: (id: string) => void; ancho: string };
+               type Grupo = { id: string; titulo: string; icono: React.ReactNode; opciones: Opcion[]; valor: string; elegir: (id: string) => void };
                const grupos: Grupo[] = [];
                if (clipsListos.length > 1) grupos.push({
-                 id: 'modo', titulo: t.modeLabel || 'Download as', icono: <Download className="w-3.5 h-3.5" />, ancho: 'xl:flex-[1.5]',
+                 id: 'modo', titulo: t.modeLabel || 'Download as', icono: <Download className="w-3.5 h-3.5" />,
                  valor: modo, elegir: id => cambiarModo(id as ModoDescarga),
                  opciones: [
                    { id: 'clips', icon: <FolderDown className="w-4 h-4 shrink-0" />, label: t.modeClips || 'Separate clips', hint: t.modeClipsHint || 'Each clip on its own, in a ZIP' },
@@ -1008,11 +1021,11 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                });
                const opcionesFormato: Opcion[] = FORMATOS.map(f => ({ id: f, icon: forma(f), label: f === 'original' ? tituloFormato.original : f, hint: tituloFormato[f] }));
                if (usaVideo) grupos.push({
-                 id: 'video', titulo: t.fmtSectionVideo || 'Video format', icono: <Clapperboard className="w-3.5 h-3.5" />, ancho: 'xl:flex-1',
+                 id: 'video', titulo: t.fmtSectionVideo || 'Video format', icono: <Clapperboard className="w-3.5 h-3.5" />,
                  valor: formatoVideo, elegir: id => guardarFormato({ video: id as Formato }), opciones: opcionesFormato,
                });
                if (usaClips) grupos.push({
-                 id: 'clips', titulo: t.fmtSectionClips || 'Clips format', icono: <FolderDown className="w-3.5 h-3.5" />, ancho: 'xl:flex-[1.4]',
+                 id: 'clips', titulo: t.fmtSectionClips || 'Clips format', icono: <FolderDown className="w-3.5 h-3.5" />,
                  valor: formatoClips, elegir: id => guardarFormato({ clips: id as FormatoClips }),
                  opciones: [...opcionesFormato, {
                    id: 'ambos',
@@ -1022,7 +1035,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                  }],
                });
                const encajeGrupo: Grupo | null = !hayVertical ? null : {
-                 id: 'encaje', titulo: t.fitLabel || 'Vertical', icono: forma('9:16'), ancho: 'xl:flex-[1.2]',
+                 id: 'encaje', titulo: t.fitLabel || 'Vertical', icono: forma('9:16'),
                  valor: modoEncaje, elegir: id => guardarFormato({ encaje: id as ModoEncaje }),
                  opciones: [
                    { id: 'recortar', icon: <Crop className="w-4 h-4 shrink-0" />, label: t.fitCrop || 'Crop the centre', hint: t.fitCropHint || 'The centre fills the screen; what is at the sides is cut off' },
@@ -1052,7 +1065,7 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                          title={o.hint}
                          onClick={() => g.elegir(o.id)}
                          disabled={ocupado}
-                         className={`flex-1 min-w-0 min-h-[40px] px-1.5 sm:px-2.5 py-2 rounded-xl flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-center leading-tight text-balance transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
+                         className={`flex-1 min-w-0 min-h-[40px] px-1.5 py-2 rounded-xl flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 text-[10px] sm:text-[11px] font-black uppercase tracking-wide text-center leading-tight text-balance transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed ${
                            activa
                              ? 'bg-twitch text-[var(--color-accent-ink)] shadow-lg shadow-twitch/20'
                              : 'text-gray-400 hover:text-white hover:bg-white/[0.04]'
@@ -1066,102 +1079,94 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                );
 
                return (
-                 <div className="!mt-3 w-full bg-[#111114] border border-white/5 rounded-[2rem] p-3 sm:p-4 shadow-2xl relative z-30">
-                   {/* Más de seis botones en una fila (el modo y los formatos con
-                       "16:9 + 9:16") no caben y las etiquetas se salían: entonces
-                       el modo va solo arriba y los formatos debajo. */}
-                   <div className="flex flex-col gap-3">
-                     {(grupos.length > 1 && grupos.reduce((n, g) => n + g.opciones.length, 0) > 6 ? [grupos.slice(0, 1), grupos.slice(1)] : [grupos]).map(fila => (
-                       <div key={fila[0].id} className="flex flex-col xl:flex-row gap-3 xl:gap-0">
-                         {fila.map((g, i) => (
-                           <div
-                             key={g.id}
-                             className={`min-w-0 flex flex-col sm:flex-row xl:flex-col gap-2 sm:items-center xl:items-stretch ${fila.length > 1 ? g.ancho : 'xl:flex-1'} ${i > 0 ? 'xl:pl-4 xl:ml-4 xl:border-l xl:border-white/5' : ''}`}
-                           >
-                             <span className="sm:w-44 xl:w-auto shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                               <span className="text-twitch flex">{g.icono}</span>{g.titulo}
-                             </span>
-                             {selector(g, 'flex-1')}
-                           </div>
-                         ))}
+                 <div className="!mt-3 w-full flex flex-col gap-3 relative z-30">
+                   <div className="flex flex-col lg:flex-row gap-3">
+                   {/* Una opción por fila, con la etiqueta a la izquierda: da igual
+                       qué combinación se elija, todas quedan alineadas. */}
+                   <div className={`${tarjeta} flex-1 min-w-0 flex flex-col gap-3`}>
+                     {[...grupos, ...(encajeGrupo ? [encajeGrupo] : [])].map(g => (
+                       <div key={g.id} className="flex flex-col lg:flex-row lg:items-center gap-2">
+                         <span className={etiquetaFila}>
+                           <span className="text-twitch flex">{g.icono}</span>{g.titulo}
+                         </span>
+                         {selector(g, 'flex-1')}
                        </div>
                      ))}
-                   </div>
-                   {/* Abajo: primero lo del vídeo (cómo llenar el vertical, el
-                       fundido, el progreso de unir) y debajo la nitidez y la
-                       resolución, que valen para todo lo que se recodifica. En
-                       dos columnas, los botones del vertical no cabían y su
-                       texto se metía debajo de los de la nitidez.
-                       Antes el vídeo unido era un panel aparte al final de la
-                       página, con sus propios interruptores repetidos. */}
-                   <div className="mt-3 pt-3 border-t border-white/5 flex flex-col gap-4">
-                     <div className="min-w-0 space-y-3 empty:hidden">
-                       {encajeGrupo && (
-                         <div className="flex flex-col lg:flex-row lg:items-center gap-2">
-                           <span className="lg:w-44 shrink-0 flex items-center gap-1.5 px-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                             <span className="text-twitch flex">{encajeGrupo.icono}</span>{encajeGrupo.titulo}
+                     {encajeGrupo && modoEncaje === 'escalar' && (
+                       <div className={`flex flex-col lg:flex-row lg:items-center gap-2 ${ocupado ? 'opacity-50 pointer-events-none' : ''}`}>
+                         <span className={`${etiquetaFila} justify-between`}>
+                           {t.fitScaleSize || 'Clip size'}
+                           <span className="text-white tabular-nums">{Math.round(escala * 100)}%</span>
+                         </span>
+                         <div className="flex-1 min-w-0 flex flex-col gap-2 px-1">
+                           <input
+                             type="range"
+                             aria-label={t.fitScaleSize || 'Clip size'}
+                             min={Math.round(ESCALA_MIN * 100)}
+                             max={Math.round(ESCALA_MAX * 100)}
+                             step={5}
+                             value={Math.round(escala * 100)}
+                             onChange={e => guardarFormato({ escala: parseInt(e.target.value, 10) / 100 })}
+                             disabled={ocupado}
+                             className="w-full accent-twitch h-1.5 cursor-pointer"
+                           />
+                           <span className="flex justify-between gap-2 text-[10px] font-medium text-gray-500">
+                             <span>{t.fitScaleSmaller || 'Smaller'}</span>
+                             <button type="button" onClick={() => guardarFormato({ escala: 1 })} className="text-gray-400 hover:text-white underline-offset-2 hover:underline cursor-pointer">{t.fitScaleReset || 'Whole clip'}</button>
+                             <span>{t.fitScaleBigger || 'Bigger (crops the edges)'}</span>
                            </span>
-                           {selector(encajeGrupo, 'flex-1')}
                          </div>
-                       )}
-                       {/* Cómo queda el vertical, con la miniatura del primer clip
-                           y el mismo dibujo que la exportación; al escalar, al
-                           lado el deslizador del tamaño. */}
-                       {encajeGrupo && (
-                         <div className="flex items-center gap-4 px-1">
-                           <VistaEncaje src={clipsListos[0]?.thumbnail} encaje={encaje} etiqueta={t.fitPreview || 'Preview of the vertical format'} />
-                           {modoEncaje === 'escalar' && (
-                             <label className={`flex-1 min-w-0 flex flex-col gap-2 ${ocupado ? 'opacity-50 pointer-events-none' : ''}`}>
-                               <span className="flex items-center justify-between gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                                 {t.fitScaleSize || 'Clip size'}
-                                 <span className="text-white tabular-nums">{Math.round(escala * 100)}%</span>
-                               </span>
-                               <input
-                                 type="range"
-                                 min={Math.round(ESCALA_MIN * 100)}
-                                 max={Math.round(ESCALA_MAX * 100)}
-                                 step={5}
-                                 value={Math.round(escala * 100)}
-                                 onChange={e => guardarFormato({ escala: parseInt(e.target.value, 10) / 100 })}
-                                 disabled={ocupado}
-                                 className="w-full accent-twitch h-1.5 cursor-pointer"
-                               />
-                               <span className="flex justify-between gap-2 text-[10px] font-medium text-gray-500">
-                                 <span>{t.fitScaleSmaller || 'Smaller'}</span>
-                                 <button type="button" onClick={() => guardarFormato({ escala: 1 })} className="text-gray-400 hover:text-white underline-offset-2 hover:underline cursor-pointer">{t.fitScaleReset || 'Whole clip'}</button>
-                                 <span>{t.fitScaleBigger || 'Bigger (crops the edges)'}</span>
-                               </span>
-                             </label>
-                           )}
-                         </div>
-                       )}
-                       <MergePanel
-                         ref={mergeRef}
-                         mostrarOpciones={modo !== 'clips'}
-                         calidad={calidad}
-                         formatoVideo={formatoVideo}
-                         formatoClips={formatoClips}
-                         encaje={encaje}
-                         conClips={modo === 'ambos'}
-                         clips={clipsListos}
-                         quality={selectedQuality}
-                         watermarkOn={marcaActiva}
-                         watermarkConfig={wmAllConfig}
-                         t={t}
-                         onBusyChange={setUniendo}
-                       />
-                     </div>
-                     <div className={`min-w-0 ${ocupado ? 'opacity-50 pointer-events-none' : ''}`}>
-                       <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
-                     </div>
+                       </div>
+                     )}
+                     <MergePanel
+                       ref={mergeRef}
+                       mostrarOpciones={modo !== 'clips'}
+                       calidad={calidad}
+                       formatoVideo={formatoVideo}
+                       formatoClips={formatoClips}
+                       encaje={encaje}
+                       conClips={modo === 'ambos'}
+                       clips={clipsListos}
+                       quality={selectedQuality}
+                       watermarkOn={marcaActiva}
+                       watermarkConfig={wmAllConfig}
+                       t={t}
+                       onBusyChange={setUniendo}
+                     />
+                     {!brand.sinNitidez && (
+                       <div className={`min-w-0 ${ocupado ? 'opacity-50 pointer-events-none' : ''}`}>
+                         <CalidadSelector valor={calidad} onChange={cambiarCalidad} t={t} compacto />
+                       </div>
+                     )}
                    </div>
-                   {necesitaProcesar && <AvisoGrafica tx={(k, fb) => (typeof t?.[k] === 'string' && t[k]) || fb} className="mt-3" />}
-                   {necesitaProcesar && <HeavyTaskNote lang={lang} kind="video" className="mt-3" />}
-                   {resumen && <p className="mt-3 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
+                   {/* Lo que va a salir, con la miniatura del primer clip y el mismo
+                       dibujo que la exportación. En escritorio el dibujo va por
+                       absoluto para que la altura la marquen las opciones: así las
+                       dos tarjetas miden lo mismo en cualquier combinación. */}
+                   {formasVista.length > 0 && (
+                     <div className={`${tarjeta} shrink-0 flex ${formasVista.length > 1 ? 'lg:w-[22rem]' : soloApaisado ? 'lg:w-72' : 'lg:w-56'}`}>
+                       <div className={`relative w-full ${soloApaisado ? 'h-36' : 'h-52'} lg:h-auto lg:min-h-[168px]`}>
+                         <div className="absolute inset-0 flex items-center justify-center gap-3">
+                           {formasVista.map(f => (
+                             <div key={f} className={`relative ${f === '9:16' ? 'h-full max-h-[320px] aspect-[9/16] shrink-0' : 'flex-1 min-w-0 max-w-64 aspect-video'}`}>
+                               <VistaEncaje src={clipsListos[0]?.thumbnail} encaje={encaje} formato={f} etiqueta={f === '9:16' ? (t.fitPreview || 'Preview of the vertical format') : f} />
+                               <span className="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-black/70 text-[9px] font-black text-white tabular-nums">{f}</span>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+                     </div>
+                   )}
+                   </div>
+                   {/* Los avisos van a todo el ancho: dentro de las opciones las
+                       alargaban y la vista previa quedaba con huecos. */}
+                   {necesitaProcesar && <AvisoGrafica tx={(k, fb) => (typeof t?.[k] === 'string' && t[k]) || fb} />}
+                   {necesitaProcesar && <HeavyTaskNote lang={lang} kind="video" />}
+                   {resumen && <p className="px-4 text-[11px] font-medium text-gray-500 leading-relaxed">{resumen}</p>}
                    {/* Mientras exporta, mantenerActiva.ts pone el altavoz en la
                        pestaña: que no extrañe, y que se sepa que puede irse a otra. */}
                    {ocupado && necesitaProcesar && (
-                     <p className="mt-2 px-1 text-[11px] font-medium text-gray-500 leading-relaxed">{t.bgExportHint || 'You can minimise or switch tabs: it keeps exporting. The tab shows a speaker icon meanwhile; nothing plays.'}</p>
+                     <p className="px-4 text-[11px] font-medium text-gray-500 leading-relaxed">{t.bgExportHint || 'You can minimise or switch tabs: it keeps exporting. The tab shows a speaker icon meanwhile; nothing plays.'}</p>
                    )}
                  </div>
                );
@@ -1263,9 +1268,10 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
                </div>
              )}
 
-             {wmAllFallos > 0 && !wmAll && (
+             {wmAllFallos && wmAllFallos.fallos > 0 && !wmAll && (
                <div className="w-full rounded-[2rem] border border-amber-500/25 bg-amber-500/5 px-6 py-4 text-xs font-bold text-amber-300">
-                 {(t.watermarkAllFailed || '{n} clips could not be processed.').replace('{n}', String(wmAllFallos))}
+                 {(t.watermarkAllFailed || '{n} clips could not be processed.').replace('{n}', String(wmAllFallos.fallos))}
+                 {wmAllFallos.hevcNoDisponible && <p className="mt-1">{t.wm_export_hevc_unsupported || 'This browser cannot export HEVC with a watermark. Select an H.264 quality to continue.'}</p>}
                </div>
              )}
 
