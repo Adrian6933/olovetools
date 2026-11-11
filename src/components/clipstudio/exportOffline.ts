@@ -215,20 +215,25 @@ const exportar = async (
    * Medido con un clip de Rust (7,5 Mbps, mucha hierba): x2,2 pesaba un 50 %
    * más sin diferencia visible (45 dB entre una y otra), y x1,5 pierde 0,35 dB
    * frente al cuantizador 20 ocupando la mitad. Sin dato del original, la
-   * tabla de recorder.ts. Un original en HEVC cuenta 1,7 veces su bitrate:
-   * H.264 necesita eso para la misma calidad, y si no, los movimientos
-   * rápidos salen emborronados.
+   * tabla de recorder.ts. Un original en HEVC que sale en H.264 cuenta 1,7
+   * veces su bitrate: H.264 necesita eso para la misma calidad, y si no, los
+   * movimientos rápidos salen emborronados.
    */
-  function bitrateDeSalida() {
+  function bitrateDeSalida(salida: 'avc' | 'hevc') {
     const conDato = abiertas.filter(a => a.bps > 0 && a.area > 0);
     if (!conDato.length) return bitrateDeGrabacion(height);
-    const porPixel = Math.max(...conDato.map(a => (a.bps * (a.hevc ? 1.7 : 1)) / a.area));
+    const porPixel = Math.max(...conDato.map(a => (a.bps * (a.hevc && salida === 'avc' ? 1.7 : 1)) / a.area));
     const objetivo = porPixel * width * height * 1.5 * (fuerza > 0 ? 1.25 : 1);
     return Math.round(Math.max(6_000_000, Math.min(45_000_000, objetivo)));
   }
 
   const aac = await canEncodeAudio('aac', { numberOfChannels: 2, sampleRate: FRECUENCIA }).catch(() => false);
-  const bitrate = bitrateDeSalida();
+  // Con algún original en HEVC (el que reproduce Twitch), sale en HEVC si el
+  // navegador lo sabe codificar; si no, en H.264 con más bitrate.
+  const enHevc = abiertas.some(a => a.hevc)
+    && await canEncodeVideo('hevc', { width, height, bitrate: bitrateDeSalida('hevc') }).catch(() => false);
+  const codec = enHevc ? 'hevc' : 'avc';
+  const bitrate = bitrateDeSalida(codec);
   // Un clip suelto sigue saliendo con la cabecera delante (se previsualiza y
   // se sube mejor); el vídeo unido largo, por trozos y con ella al final.
   const enTrozos = ((bitrate + 192_000) * total) / 8 > LIMITE_EN_MEMORIA;
@@ -238,7 +243,7 @@ const exportar = async (
     target: destino ? new StreamTarget(destino.writable, { chunked: true, chunkSize: 8 * 2 ** 20 }) : new BufferTarget(),
   });
   const fuenteVideo = new VideoSampleSource({
-    codec: 'avc',
+    codec,
     // Calidad constante (como el CRF de ffmpeg); si el codificador no la
     // admite, una tasa holgada para que recomprimir no se note.
     quality: new Quality({ bitrate }),

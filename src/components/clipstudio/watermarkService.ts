@@ -736,7 +736,22 @@ export const processVideoWithWatermark = async (
 ): Promise<Blob> => {
   if (calidad?.soloMarca) {
     const { exportarSoloMarca } = await import('./exportarSoloMarca');
-    return exportarSoloMarca(originalBlob, channelName, config, onProgress, signal);
+    try {
+      return await exportarSoloMarca(originalBlob, channelName, config, onProgress, signal);
+    } catch (e) {
+      if (!(e instanceof Error && e.name === 'WatermarkCodecError')) throw e;
+      // Lo lee pero no lo sabe codificar (HEVC en algunos navegadores): la
+      // marca por el lienzo, en H.264 con el color del original. Si tampoco
+      // lo lee, el aviso de elegir H.264.
+      const offline = await import('./exportOffline');
+      try {
+        return await offline.exportarSinTiempoReal([{ blob: originalBlob, channelName }], { watermark: config },
+          p => onProgress?.({ pct: p.pct, elapsed: p.elapsed, total: p.duration }), signal);
+      } catch (e2: any) {
+        if (e2?.name === 'AbortError' || signal?.aborted) throw e2;
+        throw e;
+      }
+    }
   }
   await ensureWatermarkFont(config);
 

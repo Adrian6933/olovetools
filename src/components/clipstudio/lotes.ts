@@ -47,6 +47,17 @@ const yaTieneForma = async (blob: Blob, formato: Formato): Promise<boolean> => {
   }
 };
 
+/** ¿Sabe este navegador decodificar el HEVC de 1080p60 de Twitch? */
+const hevcDecodificable = async (): Promise<boolean> => {
+  try {
+    if (typeof VideoDecoder === 'undefined') return false;
+    const r = await VideoDecoder.isConfigSupported({ codec: 'hvc1.1.6.L123.B0', codedWidth: 1920, codedHeight: 1080 });
+    return !!r.supported;
+  } catch {
+    return false;
+  }
+};
+
 /** Como mucho n tareas a la vez, en el orden en que se piden. */
 export const semaforo = (n: number) => {
   let libres = n;
@@ -141,8 +152,10 @@ export const procesarClips = async (clips: ClipData[], o: OpcionesLote): Promise
   const formasPedidas = formasDe(o.formato ?? 'original');
   const sinVertical = !formasPedidas.includes('9:16');
   const soloMarca = !!o.marca?.soloMarca && !mejorar && sinVertical;
-  // El HEVC solo si nada lo tiene que pasar por el lienzo.
-  const preferirHevc = !mejorar && sinVertical && (o.marca ? !!o.marca.soloMarca : true);
+  // El HEVC (el que reproduce Twitch) también para lo que pasa por el lienzo,
+  // si el navegador lo sabe leer; si no, el vertical baja en H.264.
+  const preferirHevc = !mejorar && (o.marca ? !!o.marca.soloMarca : true)
+    && (sinVertical || await hevcDecodificable());
   // Cambiar el formato o mejorar sin marca solo se puede fotograma a
   // fotograma; donde no hay WebCodecs, salen tal cual en vez de no salir.
   const aLaVez = !soloMarca && (o.marca || reformatear || mejorar) ? await rendersALaVez() : 1;
