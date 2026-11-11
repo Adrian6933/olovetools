@@ -609,7 +609,7 @@ const ClipEditor: React.FC<Props> = ({ lang = 'en', clips, piezas, setPiezas, en
   useEffect(() => () => abortRef.current?.abort(), []);
   const [calidad, setCalidad] = useState<CalidadExport>(() => leerCalidad(brand.storagePrefix));
   const cambiarCalidad = (c: CalidadExport) => { setCalidad(c); guardarCalidad(brand.storagePrefix, c); };
-  const alto = quality === '360' ? 360 : quality === '720' ? 720 : 1080;
+  const alto = quality === '360' ? 360 : quality === '480' ? 480 : quality === '720' ? 720 : 1080;
 
   const descargar = (blob: Blob, nombre: string) => {
     const url = URL.createObjectURL(blob);

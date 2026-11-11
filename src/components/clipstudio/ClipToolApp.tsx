@@ -243,14 +243,15 @@ const ClipToolApp: React.FC<ClipToolAppProps> = ({ lang = 'en', dictionary, tool
   const zipConHevc = brand.id === 'twitch' && formatoClips === 'original'
     && (modo === 'clips' || (modo === 'ambos' && marcaActiva));
   const fuenteMaxima = { id: 'max', icon: <Diamond className="w-4 h-4 text-blue-400" /> };
+  // 1080p H.264 sale siempre, también sin HEVC: es el que se abre en cualquier
+  // programa. Un clip sin la calidad pedida baja la mejor que tenga.
   const qualityOptions = [
-    ...(zipConHevc ? [
-      { ...fuenteMaxima, label: '1080p H.265', sub: t.qHevcSub || 'H.264 if H.265 is unavailable' },
-      { id: '1080', label: '1080p H.264', sub: t.qAvcSub || 'Wider compatibility', icon: <Film className="w-4 h-4 text-twitch" /> },
-    ] : [
-      { ...fuenteMaxima, label: t.qMaxLabel || 'Max Quality', sub: t.qMaxSub || 'Original Source' },
-    ]),
+    zipConHevc
+      ? { ...fuenteMaxima, label: '1080p H.265', sub: t.qHevcSub || 'H.264 if H.265 is unavailable' }
+      : { ...fuenteMaxima, label: t.qMaxLabel || 'Max Quality', sub: t.qMaxSub || 'Original Source' },
+    { id: '1080', label: '1080p H.264', sub: t.qAvcSub || 'Wider compatibility', icon: <Film className="w-4 h-4 text-twitch" /> },
     { id: '720', label: t.q720Label || '720p HD', sub: t.q720Sub || 'Balanced', icon: <Film className="w-4 h-4 text-twitch" /> },
+    { id: '480', label: t.q480Label || '480p', sub: t.q480Sub || 'Light', icon: <Gauge className="w-4 h-4 text-green-400" /> },
     { id: '360', label: t.q360Label || '360p Fast', sub: t.q360Sub || 'Low Data', icon: <Gauge className="w-4 h-4 text-green-400" /> }
   ];
   const activeOption = qualityOptions.find(o => o.id === preferredQuality) || qualityOptions[0];

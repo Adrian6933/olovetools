@@ -79,7 +79,7 @@ const MergePanel = forwardRef<MergePanelHandle, Props>(({
   const total = clips.reduce((s, c) => s + (c.duration || 0), 0);
   const piezas = clips.length;
 
-  const alto = quality === '360' ? 360 : quality === '720' ? 720 : 1080;
+  const alto = quality === '360' ? 360 : quality === '480' ? 480 : quality === '720' ? 720 : 1080;
 
   const empezar = async () => {
     if (piezas < 2 || estado) return;
