@@ -1,96 +1,33 @@
 export default {
-  "frame_constraints": "Mit dieser Größe und diesem Pixelvielfachen passt kein exakter Rahmen. Vergrößere das Bild oder wähle ein kleineres Vielfaches.",
   "resetHint": "Neu anfangen",
   "title": "Aspect Ratio",
-  "badge": "Werkzeugkasten für Seitenverhältnisse",
-  "seo_title": "Seitenverhältnis-Rechner | Skalieren und zuschneiden",
-  "seo_description": "Ermittle das Seitenverhältnis jeder Größe, skaliere mit codec-sicheren Vielfachen und sieh genau, wie viel ein 9:16-Zuschnitt wegwirft. Rahme ein echtes Bild und exportiere es. Alles im Browser.",
-  "seoHeroTitle": "Jedes Verhältnis – und was es dich kostet",
-  "seoHeroText": "Gib zwei Zahlen ein und erhalte das Verhältnis, den Dezimalwert, die Megapixel und den Namen, unter dem es verkauft wird. Dann weiter: Eine Seite festhalten und mit encoder-sicheren Vielfachen skalieren, oder ein Bild ablegen und genau sehen, wie viel davon ein 9:16-Rahmen frisst.",
-  "description": "Gib zwei Zahlen ein und erhalte das Verhältnis, den Dezimalwert, die Megapixel und den Namen, unter dem es verkauft wird. Danach ein Bild ablegen und genau sehen, wie viel davon ein 9:16-Rahmen frisst.",
-  "seoHeroList": [
-    "Erkennt 1,85:1 und 2,39:1, nicht nur 16:9",
-    "Sagt dir, was ein Zuschnitt wegwirft",
-    "Kein Upload, kein Konto"
-  ],
-  "tab_calculate": "Verhältnis",
-  "tab_resize": "Skalieren",
-  "tab_fit": "Einpassen und zuschneiden",
-  "tab_presets": "Vorlagen",
-  "tabsLabel": "Arbeitsbereich",
-  "sourceTitle": "Quelle (optional)",
-  "sourceIntro": "Der Rechner kommt mit getippten Zahlen aus – eine Datei brauchst du nie. Füge nur dann eine hinzu, wenn du den Rahmen auf einem echten Bild sehen willst.",
-  "chooseFile": "Bild oder Video wählen",
-  "readDimensions": "Abmessungen auslesen",
-  "waiting": "wartet – es wurde noch nichts gelesen",
-  "fromTool": "übergeben von {tool}",
   "removeFile": "Datei entfernen",
   "errorDecode": "Dein Browser konnte diese Datei nicht dekodieren ({format}). Wandle sie vorher um – HEIC und manche AVIF-Dateien werden nicht überall unterstützt.",
-  "errorClipboard": "Dein Browser hat den Zugriff auf die Zwischenablage blockiert.",
-  "label_dimensions": "Abmessungen",
   "label_width": "Breite",
   "label_height": "Höhe",
   "label_max_den": "Größter Nenner",
   "hint_max_den": "Hält das Verhältnis lesbar. Bei {n} kommt 1998×1080 als 1,85:1 zurück statt als 999:540.",
   "button_swap": "Tauschen",
-  "label_result": "Ergebnis",
-  "label_simplified_ratio": "Gekürztes Verhältnis",
-  "label_approx_ratio": "Nächstes Verhältnis",
   "label_error": "Abweichung {p}",
-  "label_decimal": "Dezimal",
-  "label_megapixels": "Megapixel",
-  "label_orientation": "Ausrichtung",
-  "label_input": "Eingabe",
   "orient_landscape": "Querformat",
   "orient_portrait": "Hochformat",
   "orient_square": "Quadratisch",
   "placeholder_enter_dims": "Gib eine Breite und eine Höhe ein, um das Verhältnis zu erhalten.",
   "label_original": "Ursprungsgröße",
-  "label_lock_target": "Diese Seite festhalten",
-  "target_width": "Breite",
-  "target_height": "Höhe",
   "label_multiple": "Beide Seiten anpassen an ein Vielfaches von",
   "multiple_none": "aus",
   "hint_multiple": "H.264 verweigert ungerade Abmessungen, und die meisten Hardware-Encoder wollen Vielfache von 4 oder 8.",
-  "label_new_size": "Neue Größe",
-  "label_result_dimensions": "Ergebnis-Abmessungen",
-  "label_ratio_kept": "Verhältnis exakt erhalten",
   "label_drift": "Verhältnis weicht um {p} ab",
-  "label_scale": "Skalierung",
-  "label_multiple_short": "Vielfaches",
-  "placeholder_resize": "Gib die Ursprungsgröße und die Seite ein, die festgehalten werden soll.",
-  "label_editor": "Rahmen-Editor",
   "canvasEmpty": "Lade ein Bild, um es in den Rahmen zu legen. Nichts wird hochgeladen, und nichts läuft los, bevor du es verlangst.",
   "canvasHint": "Ziehen zum Verschieben · Mausrad zum Zoomen · Alt oder Rechtsklick wechselt zwischen Zuschnitt und Letterbox",
   "holdCompare": "Gedrückt halten für das Original",
-  "modeCover": "Füllen (schneidet zu)",
-  "modeContain": "Einpassen (Letterbox)",
   "bar_black": "Schwarz",
   "bar_white": "Weiß",
   "bar_blur": "unscharf",
   "bar_transparent": "transparent",
   "undo": "Rückgängig",
   "redo": "Wiederholen",
-  "label_output": "Ausgabe",
-  "label_frame": "Rahmen",
-  "label_cropped": "Weggeschnitten",
-  "label_bars": "Balken",
-  "hint_cropped": "des Originals",
-  "hint_letterbox": "Letterbox",
-  "hint_pillarbox": "Pillarbox",
-  "fitNeedsSize": "Gib im Reiter Skalieren eine Ursprungsgröße ein oder lade oben eine Datei, dann erscheint hier die Rahmen-Rechnung.",
   "label_output_width": "Ausgabebreite",
-  "button_download": "Gerahmtes Bild herunterladen",
-  "exportNeedsFile": "Der Export braucht eine Datei. Die Zahlen darüber funktionieren auch ohne.",
-  "shortcutsTitle": "Tastenkürzel",
-  "sc_undo": "rückgängig, wiederholen",
-  "sc_mode": "Füllen / Einpassen wechseln",
-  "sc_reset": "zentrieren und Zoom zurücksetzen",
-  "sc_alt": "den anderen Modus vorschauen",
-  "group_screen": "Bildschirme",
-  "group_cinema": "Kino",
-  "group_social": "Soziale Netzwerke",
-  "group_print": "Druck und Foto",
   "ratio_16_9": "Breitbild HD",
   "ratio_16_10": "Notebook-Breitbild",
   "ratio_4_3": "Klassischer Bildschirm",
@@ -111,7 +48,6 @@ export default {
   "ratio_5_4": "Abzug 8×10",
   "ratio_7_5": "Abzug 5×7",
   "label_snippets": "Zum Einfügen bereit",
-  "button_reset": "Alles zurücksetzen",
   "tooltip_copy": "Kopieren",
   "nextStepTitle": "Weitermachen",
   "nextStepHint": "Das gerahmte Bild reist mit – kein erneuter Upload",
@@ -120,104 +56,132 @@ export default {
   "nextFormat": "Format ändern",
   "nextWatermark": "Wasserzeichen hinzufügen",
   "nextSocial": "Für Social Media anpassen",
-  "howItWorksTitle": "So funktioniert es",
-  "step1Title": "Wähle das Verhältnis",
-  "step1Text": "Gib zwei Abmessungen ein oder wähle eine Vorlage: Bildschirme, Kino, soziale Feeds und Papierformate.",
-  "step2Title": "Füge ein Bild hinzu, wenn du magst",
-  "step2Text": "Optional, und es startet nie von selbst: Die Datei wartet, bis du den Knopf drückst, der sie ausliest.",
-  "step3Title": "Bewege den Rahmen selbst",
-  "step3Text": "Ziehen zum Verschieben, Mausrad zum Zoomen, gedrückt halten für den Vergleich mit dem Original, Alt zum Wechsel zwischen Zuschnitt und Letterbox.",
-  "step4Title": "Nimm das Ergebnis mit",
-  "step4Text": "Kopiere die CSS-, Tailwind- oder FFmpeg-Zeile, lade das gerahmte Bild herunter oder schicke es direkt in ein anderes Werkzeug.",
-  "features": [
-    {
-      "title": "Kinoverhältnisse, nicht nur 16:9",
-      "text": "Ein bloßer größter gemeinsamer Teiler macht aus 1998×1080 ein 999:540, das niemandem hilft. Eine begrenzte rationale Näherung liefert 1,85:1 und nennt die Abweichung."
-    },
-    {
-      "title": "Sagt, was ein Zuschnitt zerstört",
-      "text": "Ein Foto mit 4000×3000 in 9:16 zu pressen wirft 58 % davon weg. Diese Zahl steht auf dem Schirm, bevor du dich festlegst – samt Balkenhöhe für die andere Variante."
-    },
-    {
-      "title": "Encoder-sichere Abmessungen",
-      "text": "H.264 lehnt ungerade Seiten ab, Hardware-Encoder mögen Vielfache von 4 oder 8. Rasten beide Seiten auf 2, 4, 8 oder 16 ein und sieh, wie weit das Verhältnis abgedriftet ist."
-    },
-    {
-      "title": "Beim Ablegen passiert nichts",
-      "text": "Eine abgelegte Datei wartet nur. Lesen, Dekodieren und Zeichnen beginnen erst auf Knopfdruck, und der manuelle Weg braucht überhaupt keine Datei."
-    },
-    {
-      "title": "Du bewegst den Rahmen",
-      "text": "Ziehen, am Zeiger zoomen, halten für den Vergleich mit dem Original, Alt für den anderen Modus, Strg+Z bis ganz zurück. Der Verlauf speichert sechs Zahlen pro Schritt, keine Bitmaps."
-    },
-    {
-      "title": "Direkt ins nächste Werkzeug",
-      "text": "Schick das gerahmte Bild an CropSnap, CompressSnap, FormatFlow, WatermarkSnap oder SocialBolt, ohne es herunter- und wieder hochzuladen."
-    }
-  ],
-  "seoBrowserSpeedTitle": "Es läuft dort, wo deine Datei schon liegt",
-  "seoBrowserSpeedText": "Die Rechnerei besteht aus einer Handvoll reiner Funktionen, das Rahmen aus einem Canvas in deinem eigenen Tab. Bilder werden vom Browser dekodiert, lokal gezeichnet und mit canvas.toBlob exportiert. Kein Bild, keine Abmessung und kein Dateiname wird je übertragen, und das Werkzeug funktioniert auch ohne Netz weiter.",
-  "seoUseCaseTitle": "Die Momente, in denen das wirklich hilft",
-  "seoUseCaseText": "Ein Querformat-Foto, das ein Reel werden muss. Ein Screenshot mit 3440×1440, den du gleich in eine 16:9-Folie letterboxen willst. Eine Thumbnail-Vorgabe, die 1280×720 verlangt, während dein Export 1279×721 hat. Ein Plakat in 2,39:1, das einen quadratischen Zuschnitt für einen Feed überstehen muss. Jedes davon ist eine Verhältnisentscheidung mit einem Preis – und genau diesen Preis bekommst du hier.",
-  "seoPrivacyTitle": "Nichts, was hinausgelangen könnte",
-  "seoPrivacyText": "Es gibt keinen Upload-Endpunkt. Die einzige Einschränkung, klar gesagt: Diese Seite trägt Werbung, das Werbenetz sieht den Besuch also wie auf jeder anderen Seite – deine Datei sieht es nie, denn sie verlässt den Tab nicht. Schließe ihn, und alles ist weg, auch der Bearbeitungsverlauf.",
-  "seoKeywordsTitle": "Schlüsselwörter",
-  "seoKeywords": [
-    "Seitenverhältnis-Rechner",
-    "Bild proportional skalieren",
-    "16:9 Verhältnis berechnen",
-    "Kinoformat 2.39:1",
-    "auf 9:16 zuschneiden",
-    "Letterbox-Rechner",
-    "Bildabmessungen berechnen",
-    "Seitenverhältnis aus Bild"
-  ],
   "faqTitle": "Häufige Fragen",
-  "faq": [
-    {
-      "question": "Wird irgendetwas hochgeladen?",
-      "answer": "Nein. Die Berechnungen sind schlichte Arithmetik, und das Rahmen passiert auf einem Canvas in deinem Tab. Dein Bild wird vom Browser dekodiert und vom Browser exportiert. Trenne nach dem Laden der Seite das Netz, und alles funktioniert weiter. Die Seite trägt Werbung – das Einzige hier, das mit einem Server spricht – und sie sieht deine Datei nie."
-    },
-    {
-      "question": "Warum ergibt 1998×1080 ein 1,85:1 und kein 999:540?",
-      "answer": "Weil 999:540 die exakte und zugleich nutzlose Antwort ist. Das Kürzen über den größten gemeinsamen Teiler hilft nur, solange das Ergebnis klein bleibt; darüber hinaus suchen wir den besten Bruch mit einem Nenner unter der von dir gesetzten Grenze – genau so werden Kinoformate wie 1,85:1 und 2,39:1 tatsächlich geschrieben. Ist dieser Bruch nicht exakt, steht die Abweichung daneben."
-    },
-    {
-      "question": "Was macht der Regler „größter Nenner“?",
-      "answer": "Er begrenzt, wie kompliziert das Verhältnis werden darf. Niedrige Werte erzwingen ein einfaches, merkbares Paar und nehmen einen kleinen Fehler in Kauf; hohe Werte jagen der Exaktheit nach und geben irgendwann den rohen Bruch zurück. Vierzig ist ein guter Mittelweg: 16:9, 4:3, 2,39:1 und 1,414:1 überstehen ihn alle."
-    },
-    {
-      "question": "Warum sollte ich Abmessungen auf Vielfache von 2, 4 oder 8 rasten?",
-      "answer": "H.264 kann kein Bild mit ungerader Breite oder Höhe kodieren, und die meisten Hardware-Encoder und Skalierer arbeiten wegen der Chroma-Unterabtastung am liebsten mit Vielfachen von 4 oder 8. Das Runden verschiebt das Verhältnis minimal, deshalb wird die Abweichung in Prozent angezeigt und du entscheidest, ob sie stört."
-    },
-    {
-      "question": "Was ist der Unterschied zwischen Füllen und Einpassen?",
-      "answer": "Füllen füllt den Rahmen und schneidet alles ab, was übersteht. Einpassen bringt das ganze Bild unter und ergänzt Balken: Letterbox oben und unten, Pillarbox an den Seiten. Das Werkzeug schreibt genau hin, was jede Variante kostet: den Prozentsatz, der beim Zuschnitt verloren geht, oder die Balkenstärke in Pixeln. Halte Alt, um die andere Variante zu sehen, ohne etwas zu ändern."
-    },
-    {
-      "question": "Kann ich hier wirklich zuschneiden oder nur rechnen?",
-      "answer": "Beides. Lade ein Bild, setze den Rahmen per Ziehen, zoome mit dem Rad und lade das Ergebnis als PNG, JPEG oder WebP in der Ausgabebreite deiner Wahl herunter. Willst du das ganze Bild behalten, wechsle auf Einpassen und wähle, was die Balken füllt: Schwarz, Weiß, transparent oder eine unscharfe Kopie des Bildes selbst."
-    },
-    {
-      "question": "Startet das Ablegen einer Datei irgendetwas?",
-      "answer": "Nein, und das ist Absicht. Die Datei bleibt im Wartezustand und zeigt nur Namen und Größe. Es wird nichts dekodiert, bis du den Knopf drückst, der die Abmessungen ausliest – und du kannst sie vorher jederzeit entfernen."
-    },
-    {
-      "question": "Mein HEIC-Foto vom iPhone öffnet nicht.",
-      "answer": "Die HEIC-Dekodierung hängt an Browser und Betriebssystem, und die meisten Desktop-Browser verweigern sie weiterhin. Für manche AVIF-Dateien gilt dasselbe. Wandle sie vorher in JPEG oder PNG um – FormatFlow in dieser Suite tut das ebenfalls lokal – dann lädt sie hier. Du bekommst eine klare Meldung mit dem Format statt eines stillen Fehlschlags."
-    },
-    {
-      "question": "Wohin geht das Ergebnis danach?",
-      "answer": "Direkt in ein anderes Werkzeug, wenn du magst. Die Knöpfe unter dem Editor übergeben das gerahmte Bild an CropSnap, CompressSnap, FormatFlow, WatermarkSnap oder SocialBolt über den Speicher deines Browsers – es landet dabei nie in deinem Download-Ordner."
-    }
-  ],
-  "footerTagline": "Seitenverhältnisse, proportionales Skalieren und ehrliche Zuschnitt-Rechnung, vollständig im Browser.",
   "footerCredit": "Teil der oLoveTools-Suite",
-  "scrollTopLabel": "Nach oben",
   "privacyPolicy": "Datenschutzerklärung",
   "termsOfService": "Nutzungsbedingungen",
   "cookiePolicy": "Cookie-Richtlinie",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
-  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:"
+  "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
+  "seo_title": "Seitenverhältnis-Rechner: berechnen und umrechnen (16:9, 9:16)",
+  "seo_title_exact": true,
+  "seo_description": "Kostenloser Seitenverhältnis-Rechner: Verhältnis jeder Größe berechnen (1920×1080 = 16:9), ohne Verzerren skalieren, ein Bild in 9:16, 1:1 oder 4:5 umwandeln und die richtige Größe für YouTube, TikTok und Instagram finden.",
+  "h1": "Seitenverhältnis-Rechner",
+  "subtitle": "Berechne das Seitenverhältnis jeder Größe, skaliere ohne Verzerren und wandle ein Bild in 16:9, 9:16 oder 1:1 um. Kostenlos, im Browser.",
+  "quickRatios": "Gängige Verhältnisse",
+  "calcOriginal": "Originalgröße (oder ein Verhältnis)",
+  "calcNew": "Neue Größe, gleiches Verhältnis",
+  "calcNewHint": "Gib die gewünschte Breite oder Höhe ein: Die andere Seite wird berechnet.",
+  "label_simplified_ratio": "Seitenverhältnis",
+  "rotated": "gedreht",
+  "target_width": "Neue Breite",
+  "target_height": "Neue Höhe",
+  "sameRatioTitle": "Größen mit diesem Verhältnis",
+  "advancedTitle": "Erweiterte Optionen und Code",
+  "framerTitle": "Ein Bild in ein anderes Seitenverhältnis umwandeln",
+  "framerIntro": "Mach aus einem Querformat-Foto ein 9:16 für Reels und TikTok oder aus jedem Bild ein Quadrat. Zuschneiden oder Balken hinzufügen, dann herunterladen.",
+  "framerDrop": "Bild auswählen oder ablegen",
+  "framerDropHint": "Oder mit Strg+V einfügen. JPG, PNG, WebP oder das erste Bild eines Videos.",
+  "framerTarget": "Umwandeln in",
+  "framerCropped": "{p} des Bildes wird abgeschnitten",
+  "framerBars": "Balken füllen {p} des Rahmens",
+  "framerOther": "Anderes Bild",
+  "modeCover": "Zuschneiden und füllen",
+  "modeContain": "Mit Balken einpassen",
+  "button_download": "Bild herunterladen",
+  "platformsTitle": "Größen für Social Media und Bildschirme",
+  "platformsIntro": "Empfohlene Größen für jede Plattform. Mit „Übernehmen“ landet sie im Rechner.",
+  "colPlatform": "Plattform",
+  "colUse": "Einsatz",
+  "colRatio": "Verhältnis",
+  "colSize": "Größe (px)",
+  "colDecimal": "Dezimal",
+  "colSizes": "Typische Größen",
+  "useBtn": "Übernehmen",
+  "useInCalc": "Im Rechner verwenden",
+  "plat_video": "Video",
+  "plat_shorts": "Shorts",
+  "plat_thumbnail": "Vorschaubild",
+  "plat_banner": "Kanalbanner",
+  "plat_square": "Quadratischer Post",
+  "plat_portrait": "Hochformat-Post",
+  "plat_stories": "Stories und Reels",
+  "plat_link": "Link-Bild",
+  "plat_cover": "Titelbild",
+  "plat_image": "Post-Bild",
+  "plat_header": "Header",
+  "plat_pin": "Pin",
+  "plat_screen": "Bildschirm",
+  "howTitle": "So berechnest du das Seitenverhältnis",
+  "howIntro": "Das Seitenverhältnis ist das Verhältnis von Breite zu Höhe, geschrieben mit zwei Zahlen: 16:9 heißt 16 Teile breit auf 9 Teile hoch. Es sagt nichts über die Größe, nur über die Form.",
+  "howSteps": [
+    "Nimm Breite und Höhe in Pixeln, zum Beispiel 1920 × 1080.",
+    "Bestimme ihren größten gemeinsamen Teiler (die größte Zahl, die beide teilt): 120.",
+    "Teile beide Seiten dadurch: 1920 ÷ 120 = 16 und 1080 ÷ 120 = 9. Das Verhältnis ist 16:9.",
+    "Zum Skalieren mit gleichem Verhältnis die neue Seite mit dem Verhältnis multiplizieren: neue Breite = neue Höhe × 16 ÷ 9."
+  ],
+  "exampleTitle": "Beispiel",
+  "exampleResize": "Gleiches Verhältnis bei 720 px Höhe:",
+  "gcdLabel": "ggT",
+  "sections": [
+    {
+      "title": "Skalieren ohne Verzerren",
+      "text": "Ein Bild wird verzerrt, wenn sich Breite und Höhe unterschiedlich stark ändern. Behalte das Verhältnis und lege eine Seite fest: Gib die neue Breite oder Höhe in den Rechner ein, die andere wird berechnet.\n\nBei Video müssen beide Seiten gerade sein (H.264 lehnt ungerade ab); schalte in den erweiterten Optionen „auf ein Vielfaches runden“ ein, um gültige Größen zu bekommen."
+    },
+    {
+      "title": "Von 16:9 zu 9:16 (quer zu hoch)",
+      "text": "Ein 16:9-Video passt nicht auf einen 9:16-Bildschirm: Entweder schneidest du die Seiten ab oder fügst Balken hinzu. Zuschneiden füllt den Bildschirm, kostet aber etwa zwei Drittel des Bildes; Balken behalten alles, lassen aber leeren Raum.\n\nUnter „Ein Bild in ein anderes Seitenverhältnis umwandeln“ siehst du vor dem Download genau, wie viel abgeschnitten wird, und kannst das Bild verschieben, damit das Wichtige im Rahmen bleibt."
+    },
+    {
+      "title": "Kinoformate: 1.85:1 und 2.39:1",
+      "text": "Im Kino schreibt man das Verhältnis als Dezimalzahl zu 1: 1.85:1 ist „Flat“, 2.39:1 ist „Scope“, das breite anamorphotische Format. Ein einfacher Teiler würde aus 1998×1080 999:540 machen; dieser Rechner erkennt es als 1.85:1.\n\nUltrawide-Monitore werden als 21:9 verkauft, aber 2560×1080 ist eigentlich 64:27 und 3440×1440 ist 43:18, beide etwa 2.37:1."
+    },
+    {
+      "title": "Seitenverhältnis in CSS und Code",
+      "text": "Im Web hält die CSS-Eigenschaft aspect-ratio eine Box bei jeder Breite in Form: aspect-ratio: 16 / 9. In den erweiterten Optionen kopierst du die Zeile für CSS, Tailwind, FFmpeg oder ImageMagick zum aktuellen Verhältnis und zur Größe."
+    }
+  ],
+  "chartTitle": "Gängige Seitenverhältnisse",
+  "chartText": "Die Verhältnisse von Bildschirmen, Kameras, Kino, sozialen Netzwerken und Papier, mit Dezimalwert und typischen Pixelgrößen.",
+  "faq": [
+    {
+      "question": "Welches Seitenverhältnis hat 1920×1080?",
+      "answer": "16:9. Der größte gemeinsame Teiler von 1920 und 1080 ist 120, und 1920 ÷ 120 = 16, 1080 ÷ 120 = 9. Dasselbe Verhältnis haben 1280×720, 2560×1440 und 3840×2160 (4K)."
+    },
+    {
+      "question": "Wie berechnet man das Seitenverhältnis?",
+      "answer": "Breite und Höhe werden durch ihren größten gemeinsamen Teiler geteilt. Gib beide Zahlen oben in den Rechner ein und du bekommst das Verhältnis, den Dezimalwert und den üblichen Namen."
+    },
+    {
+      "question": "Wie skaliere ich ein Bild ohne Verzerren?",
+      "answer": "Mit gleichem Verhältnis: neue Höhe = neue Breite × Originalhöhe ÷ Originalbreite. Im Rechner gibst du die neue Breite oder Höhe ein, die andere Seite erscheint automatisch."
+    },
+    {
+      "question": "Welche Größe hat 9:16?",
+      "answer": "Üblich sind 1080×1920 Pixel, das Format von TikTok, Instagram Reels und Stories sowie YouTube Shorts. 720×1280 ist die kleinere Variante."
+    },
+    {
+      "question": "Wie wandle ich ein 16:9-Bild in 9:16 um?",
+      "answer": "Lade es unter „Ein Bild in ein anderes Seitenverhältnis umwandeln“, wähle 9:16 und entscheide zwischen Zuschneiden oder Einpassen mit Balken (unscharf, schwarz oder weiß). Verschiebe das Bild, um den Ausschnitt zu wählen, und lade es herunter."
+    },
+    {
+      "question": "Welches Seitenverhältnis ist am besten für Instagram?",
+      "answer": "4:5 (1080×1350) nimmt im Feed am meisten Platz ein, 1:1 (1080×1080) ist das klassische Quadrat und 9:16 (1080×1920) ist für Stories und Reels."
+    },
+    {
+      "question": "Was ist der Unterschied zwischen 16:9 und 16:10?",
+      "answer": "16:10 ist etwas höher (1,6 statt 1,78). Es ist bei Laptops und MacBooks üblich: 1920×1200 oder 2560×1600 statt 1920×1080 oder 2560×1440."
+    },
+    {
+      "question": "Was bedeutet 21:9?",
+      "answer": "Das ist der Verkaufsname für Ultrawide-Monitore. Die echten Verhältnisse sind 64:27 (2560×1080) und 43:18 (3440×1440), beide etwa 2.37:1 und damit nahe am Kinoformat 2.39:1."
+    },
+    {
+      "question": "Wird mein Bild irgendwo hochgeladen?",
+      "answer": "Nein. Berechnung und Umwandlung finden in deinem Browser statt. Das Bild wird nie an einen Server gesendet."
+    }
+  ],
+  "privacyLine": "Alles wird in deinem Browser berechnet. Kein Bild wird hochgeladen.",
+  "footerTagline": "Kostenloser Seitenverhältnis-Rechner: Verhältnis berechnen, ohne Verzerren skalieren und Bilder umwandeln."
 };

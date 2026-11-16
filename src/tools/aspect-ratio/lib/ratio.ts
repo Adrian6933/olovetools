@@ -440,3 +440,32 @@ export function buildSnippets(ratio: RationalRatio, size: Size): { id: string; l
     { id: 'svg', label: 'SVG', code: `<svg viewBox="0 0 ${ratio.w} ${ratio.h}" preserveAspectRatio="xMidYMid meet"></svg>` },
   ];
 }
+
+// ---------------------------------------------------------------------------
+// Sizes that share a ratio
+// ---------------------------------------------------------------------------
+
+/**
+ * Familiar sizes for a ratio, smallest first: the catalogue's own list when
+ * the ratio is a known one, otherwise sizes built on the usual video heights
+ * (or widths, for portrait). Every side is even so the sizes are encodable.
+ */
+export function sizesForRatio(w: number, h: number): Size[] {
+  if (!(w > 0) || !(h > 0)) return [];
+  const decimal = w / h;
+  const known = matchKnown(decimal, 0.002);
+  const list: Size[] = [];
+  const push = (s: Size) => {
+    if (s.w > 0 && s.h > 0 && !list.some(x => x.w === s.w && x.h === s.h)) list.push(s);
+  };
+  if (known && known.ratio.resolutions) {
+    for (const r of known.ratio.resolutions) push(known.flipped ? { w: r.h, h: r.w } : r);
+  }
+  const even = (n: number) => Math.max(2, Math.round(n / 2) * 2);
+  const bases = [480, 720, 1080, 1440, 2160];
+  for (const b of bases) {
+    if (decimal >= 1) push({ w: even(b * decimal), h: b });
+    else push({ w: b, h: even(b / decimal) });
+  }
+  return list.sort((a, b) => a.w * a.h - b.w * b.h).slice(0, 8);
+}

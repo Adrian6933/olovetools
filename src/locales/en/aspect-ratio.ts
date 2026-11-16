@@ -1,96 +1,33 @@
 export default {
-  "frame_constraints": "No exact frame fits this size and pixel multiple. Increase the size or choose a smaller multiple.",
   "resetHint": "Start over",
   "title": "Aspect Ratio",
-  "badge": "Aspect ratio toolkit",
-  "seo_title": "Aspect Ratio Calculator | Resize, crop and letterbox",
-  "seo_description": "Work out the aspect ratio of any size, resize proportionally with codec-safe multiples, and see exactly how much a 9:16 crop throws away. Frame a real image and export it. Runs in your browser.",
-  "seoHeroTitle": "Every ratio, and what it costs you",
-  "seoHeroText": "Type two numbers and get the ratio, the decimal, the megapixels and the name it is sold under. Then take it further: pin a dimension and resize with encoder-safe multiples, or drop an image in and see precisely how much of it a 9:16 frame eats.",
-  "description": "Type two numbers and get the ratio, the decimal, the megapixels and the name it is sold under. Then drop an image in and see precisely how much of it a 9:16 frame eats.",
-  "seoHeroList": [
-    "Recognises 1.85:1 and 2.39:1, not just 16:9",
-    "Tells you what a crop throws away",
-    "No upload, no account"
-  ],
-  "tab_calculate": "Ratio",
-  "tab_resize": "Resize",
-  "tab_fit": "Fit & crop",
-  "tab_presets": "Presets",
-  "tabsLabel": "Workspace",
-  "sourceTitle": "Source (optional)",
-  "sourceIntro": "The calculator works on typed numbers alone — you never need a file. Add one only if you want to see the frame on a real image.",
-  "chooseFile": "Choose an image or video",
-  "readDimensions": "Read its dimensions",
-  "waiting": "waiting — nothing has been read yet",
-  "fromTool": "handed over by {tool}",
   "removeFile": "Remove the file",
   "errorDecode": "Your browser could not decode this file ({format}). Convert it first — HEIC and some AVIF files are not supported everywhere.",
-  "errorClipboard": "Your browser blocked clipboard access.",
-  "label_dimensions": "Dimensions",
   "label_width": "Width",
   "label_height": "Height",
   "label_max_den": "Largest denominator",
   "hint_max_den": "Keeps the ratio readable. At {n}, 1998×1080 comes back as 1.85:1 instead of 999:540.",
   "button_swap": "Swap",
-  "label_result": "Result",
-  "label_simplified_ratio": "Simplified ratio",
-  "label_approx_ratio": "Closest ratio",
   "label_error": "off by {p}",
-  "label_decimal": "Decimal",
-  "label_megapixels": "Megapixels",
-  "label_orientation": "Orientation",
-  "label_input": "Input",
   "orient_landscape": "Landscape",
   "orient_portrait": "Portrait",
   "orient_square": "Square",
   "placeholder_enter_dims": "Enter a width and a height to get the ratio.",
   "label_original": "Original size",
-  "label_lock_target": "Pin this dimension",
-  "target_width": "Width",
-  "target_height": "Height",
   "label_multiple": "Snap both sides to a multiple of",
   "multiple_none": "off",
   "hint_multiple": "H.264 refuses odd dimensions and most hardware encoders want multiples of 4 or 8.",
-  "label_new_size": "New size",
-  "label_result_dimensions": "Resulting dimensions",
-  "label_ratio_kept": "ratio preserved exactly",
   "label_drift": "ratio drifts by {p}",
-  "label_scale": "Scale",
-  "label_multiple_short": "Multiple",
-  "placeholder_resize": "Enter the original size and the dimension you want to pin.",
-  "label_editor": "Frame editor",
   "canvasEmpty": "Load an image to place it inside the frame. Nothing is uploaded, and nothing runs until you ask.",
   "canvasHint": "Drag to reposition · wheel to zoom · Alt or right-click flips cover/contain",
   "holdCompare": "Hold to see the original",
-  "modeCover": "Cover (crop)",
-  "modeContain": "Contain (letterbox)",
   "bar_black": "black",
   "bar_white": "white",
   "bar_blur": "blurred",
   "bar_transparent": "transparent",
   "undo": "Undo",
   "redo": "Redo",
-  "label_output": "Output",
-  "label_frame": "Frame",
-  "label_cropped": "Cropped away",
-  "label_bars": "Bars",
-  "hint_cropped": "of the original",
-  "hint_letterbox": "letterbox",
-  "hint_pillarbox": "pillarbox",
-  "fitNeedsSize": "Type an original size in the Resize tab, or load a file above, and the frame maths appears here.",
   "label_output_width": "Output width",
-  "button_download": "Download the framed image",
-  "exportNeedsFile": "Exporting needs a file. The numbers above work without one.",
-  "shortcutsTitle": "Shortcuts",
-  "sc_undo": "undo, redo",
-  "sc_mode": "flip cover / contain",
-  "sc_reset": "recentre and reset zoom",
-  "sc_alt": "preview the other mode",
-  "group_screen": "Screens",
-  "group_cinema": "Cinema",
-  "group_social": "Social",
-  "group_print": "Print & photo",
   "ratio_16_9": "Widescreen HD",
   "ratio_16_10": "Laptop widescreen",
   "ratio_4_3": "Classic display",
@@ -111,7 +48,6 @@ export default {
   "ratio_5_4": "8×10 print",
   "ratio_7_5": "5×7 print",
   "label_snippets": "Ready to paste",
-  "button_reset": "Reset everything",
   "tooltip_copy": "Copy",
   "nextStepTitle": "Keep going",
   "nextStepHint": "The framed image travels with you — no re-upload",
@@ -120,104 +56,132 @@ export default {
   "nextFormat": "Change format",
   "nextWatermark": "Add a watermark",
   "nextSocial": "Size it for social",
-  "howItWorksTitle": "How it works",
-  "step1Title": "Pick the ratio",
-  "step1Text": "Type two dimensions, or choose one of the presets — screens, cinema, social feeds and paper sizes.",
-  "step2Title": "Add a picture, if you want one",
-  "step2Text": "Optional, and it never runs on its own: the file waits until you press the button that reads it.",
-  "step3Title": "Move the frame yourself",
-  "step3Text": "Drag to reposition, wheel to zoom, hold to compare with the original, Alt to flip between crop and letterbox.",
-  "step4Title": "Take the result with you",
-  "step4Text": "Copy the CSS, Tailwind or FFmpeg line, download the framed image, or send it straight to another tool.",
-  "features": [
-    {
-      "title": "Cinema ratios, not just 16:9",
-      "text": "A plain greatest-common-divisor turns 1998×1080 into 999:540, which helps nobody. A bounded rational approximation gives you 1.85:1 and tells you how far off it is."
-    },
-    {
-      "title": "Says what a crop destroys",
-      "text": "Fitting a 4000×3000 photo into 9:16 throws away 58% of it. That number is on screen before you commit, along with the letterbox bars for the other option."
-    },
-    {
-      "title": "Encoder-safe dimensions",
-      "text": "H.264 rejects odd sides and hardware encoders prefer multiples of 4 or 8. Snap both sides to 2, 4, 8 or 16 and see how far the ratio drifted."
-    },
-    {
-      "title": "Nothing happens on drop",
-      "text": "A dropped file just waits. Reading it, decoding it and drawing it only start when you press the button, and the manual path never needs a file at all."
-    },
-    {
-      "title": "You move the frame",
-      "text": "Drag, zoom at the cursor, hold to compare against the original, Alt to preview the other fit mode, Ctrl+Z all the way back. Undo stores six numbers a step, not bitmaps."
-    },
-    {
-      "title": "Straight into the next tool",
-      "text": "Send the framed image to CropSnap, CompressSnap, FormatFlow, WatermarkSnap or SocialBolt without downloading and uploading it again."
-    }
-  ],
-  "seoBrowserSpeedTitle": "It runs where your file already is",
-  "seoBrowserSpeedText": "The arithmetic is a handful of pure functions and the framing is a canvas in your own tab. Images are decoded by the browser, drawn locally and exported with canvas.toBlob. No image, no dimension and no filename is ever transmitted, and the tool keeps working with the network off.",
-  "seoUseCaseTitle": "The moments this actually saves you",
-  "seoUseCaseText": "A landscape photo that has to become a Reel. A 3440×1440 screenshot you are about to letterbox into a 16:9 deck. A thumbnail spec that says 1280×720 when your export is 1279×721. A poster at 2.39:1 that has to survive being cropped square for a feed. Each of those is a ratio decision with a cost attached, and the cost is what you get here.",
-  "seoPrivacyTitle": "Nothing to leak",
-  "seoPrivacyText": "There is no upload endpoint. The one caveat worth stating plainly: this page carries advertising, so the ad network sees the visit like it does on any site — but it never sees your file, because your file never leaves the tab. Close it and everything, including the edit history, is gone.",
-  "seoKeywordsTitle": "Keywords",
-  "seoKeywords": [
-    "aspect ratio calculator",
-    "resize image proportionally",
-    "16:9 ratio calculator",
-    "2.39:1 cinema ratio",
-    "crop to 9:16",
-    "letterbox calculator",
-    "image dimensions calculator",
-    "aspect ratio from image"
-  ],
   "faqTitle": "Frequently asked questions",
-  "faq": [
-    {
-      "question": "Is anything uploaded?",
-      "answer": "No. The calculations are plain arithmetic and the framing happens on a canvas inside your tab. Your image is decoded by the browser and exported by the browser. Turn the network off after the page loads and everything still works. The page does carry ads, which is the only thing here that talks to a server, and it never sees your file."
-    },
-    {
-      "question": "Why does 1998×1080 come out as 1.85:1 rather than 999:540?",
-      "answer": "Because 999:540 is the exact answer and a useless one. Dividing by the greatest common divisor only helps when the result is small; beyond that we look for the best fraction with a denominator under the limit you set, which is how cinema ratios like 1.85:1 and 2.39:1 are actually written. When that fraction is not exact, the error is shown next to it."
-    },
-    {
-      "question": "What does the 'largest denominator' slider do?",
-      "answer": "It caps how complicated the ratio is allowed to get. Low values force a simple, memorable pair and accept a small error; high values chase exactness and eventually give you back the raw fraction. Forty is a good middle ground: 16:9, 4:3, 2.39:1 and 1.414:1 all survive it."
-    },
-    {
-      "question": "Why would I snap dimensions to a multiple of 2, 4 or 8?",
-      "answer": "H.264 cannot encode a frame with an odd width or height, and most hardware encoders and scalers are happiest on multiples of 4 or 8 because of how chroma is subsampled. Rounding shifts the ratio very slightly, so the drift is shown as a percentage and you can decide whether it matters."
-    },
-    {
-      "question": "What is the difference between cover and contain?",
-      "answer": "Cover fills the frame and cuts off whatever hangs outside it. Contain fits the whole picture in and adds bars — letterbox above and below, pillarbox at the sides. The tool prints exactly what each costs: the percentage lost to the crop, or the thickness of the bars in pixels. Hold Alt to see the other one without changing anything."
-    },
-    {
-      "question": "Can I actually crop an image here, or only calculate?",
-      "answer": "Both. Load an image, position the frame by dragging, zoom with the wheel, then download the result as PNG, JPEG or WebP at whatever output width you choose. If you would rather keep the whole picture, switch to contain and pick what fills the bars — black, white, transparent, or a blurred copy of the image itself."
-    },
-    {
-      "question": "Does dropping a file start anything?",
-      "answer": "No, and that is deliberate. The file sits in a waiting state showing only its name and size. Nothing is decoded until you press the button that reads its dimensions, and you can remove it before that ever happens."
-    },
-    {
-      "question": "My HEIC photo from an iPhone will not open.",
-      "answer": "HEIC decoding depends on the browser and the operating system, and most desktop browsers still refuse it. The same goes for some AVIF files. Convert it to JPEG or PNG first — FormatFlow in this suite does that locally too — and it will load here. You will get a clear message naming the format rather than a silent failure."
-    },
-    {
-      "question": "Where does the result go afterwards?",
-      "answer": "Straight into another tool, if you want. The buttons under the editor hand the framed image over to CropSnap, CompressSnap, FormatFlow, WatermarkSnap or SocialBolt through your browser's own storage, so it never touches your Downloads folder on the way."
-    }
-  ],
-  "footerTagline": "Aspect ratios, proportional resizing and honest crop maths, entirely in your browser.",
   "footerCredit": "Part of the oLoveTools suite",
-  "scrollTopLabel": "Back to top",
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
   "cookiePolicy": "Cookie Policy",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "contactForIdeas": "Contact for ideas and comments:",
+  "seo_title": "Aspect Ratio Calculator: Find, Convert and Resize (16:9, 9:16)",
+  "seo_title_exact": true,
+  "seo_description": "Free aspect ratio calculator: get the ratio of any size (1920×1080 = 16:9), resize without distorting, convert an image to 9:16, 1:1 or 4:5, and see the right size for YouTube, TikTok and Instagram.",
+  "h1": "Aspect ratio calculator",
+  "subtitle": "Get the ratio of any size, resize without distorting, and convert an image to 16:9, 9:16 or 1:1. Free and in your browser.",
+  "quickRatios": "Common ratios",
+  "calcOriginal": "Original size (or a ratio)",
+  "calcNew": "New size, same ratio",
+  "calcNewHint": "Type the width or the height you need: the other side is calculated.",
+  "label_simplified_ratio": "Aspect ratio",
+  "rotated": "rotated",
+  "target_width": "New width",
+  "target_height": "New height",
+  "sameRatioTitle": "Sizes with this ratio",
+  "advancedTitle": "Advanced options and code",
+  "framerTitle": "Convert an image to another ratio",
+  "framerIntro": "Turn a horizontal photo into 9:16 for Reels and TikTok, or any picture into a square. Crop it or add bars, then download.",
+  "framerDrop": "Choose or drop an image",
+  "framerDropHint": "Or paste it with Ctrl+V. JPG, PNG, WebP, or the first frame of a video.",
+  "framerTarget": "Convert to",
+  "framerCropped": "{p} of the picture is cut off",
+  "framerBars": "Bars fill {p} of the frame",
+  "framerOther": "Another image",
+  "modeCover": "Crop to fill",
+  "modeContain": "Fit with bars",
+  "button_download": "Download the image",
+  "platformsTitle": "Sizes for social media and screens",
+  "platformsIntro": "Recommended sizes for each platform. Press “Use” to load one into the calculator.",
+  "colPlatform": "Platform",
+  "colUse": "Use",
+  "colRatio": "Ratio",
+  "colSize": "Size (px)",
+  "colDecimal": "Decimal",
+  "colSizes": "Typical sizes",
+  "useBtn": "Use",
+  "useInCalc": "Use in the calculator",
+  "plat_video": "Video",
+  "plat_shorts": "Shorts",
+  "plat_thumbnail": "Thumbnail",
+  "plat_banner": "Banner",
+  "plat_square": "Square post",
+  "plat_portrait": "Portrait post",
+  "plat_stories": "Stories and Reels",
+  "plat_link": "Link image",
+  "plat_cover": "Cover photo",
+  "plat_image": "Post image",
+  "plat_header": "Header",
+  "plat_pin": "Pin",
+  "plat_screen": "Screen",
+  "howTitle": "How to calculate an aspect ratio",
+  "howIntro": "The aspect ratio is the relation between width and height, written as two numbers: 16:9 means 16 units wide for every 9 tall. It says nothing about size, only about shape.",
+  "howSteps": [
+    "Take the width and the height in pixels, for example 1920 × 1080.",
+    "Find their greatest common divisor (the largest number that divides both): 120.",
+    "Divide both sides by it: 1920 ÷ 120 = 16 and 1080 ÷ 120 = 9. The ratio is 16:9.",
+    "To resize while keeping it, multiply the new side by the ratio: new width = new height × 16 ÷ 9."
+  ],
+  "exampleTitle": "Worked example",
+  "exampleResize": "Same ratio, 720 px tall:",
+  "gcdLabel": "GCD",
+  "sections": [
+    {
+      "title": "Resize without distorting",
+      "text": "An image stretches when width and height change by different amounts. Keep the ratio and pin one side: type the new width or the new height in the calculator and the other one is worked out for you.\n\nFor video, both sides must be even numbers (H.264 rejects odd ones); turn on “snap to a multiple” in the advanced options to get encoder-safe sizes."
+    },
+    {
+      "title": "From 16:9 to 9:16 (horizontal to vertical)",
+      "text": "A 16:9 video does not fit a 9:16 screen: you either crop the sides or add bars. Cropping fills the screen but loses about two thirds of the picture; bars keep everything but leave empty space.\n\nIn “Convert an image to another ratio” you see exactly how much is cut off before you download, and you can drag the picture to keep the important part in frame."
+    },
+    {
+      "title": "Cinema ratios: 1.85:1 and 2.39:1",
+      "text": "Films are usually written as a decimal against 1: 1.85:1 is “flat” and 2.39:1 is “scope”, the wide anamorphic format. A plain divisor would turn 1998×1080 into 999:540; this calculator recognises it as 1.85:1.\n\nUltrawide monitors are sold as 21:9, but 2560×1080 is really 64:27 and 3440×1440 is 43:18. They are all close to 2.37:1."
+    },
+    {
+      "title": "Aspect ratio in CSS and code",
+      "text": "On the web, the CSS property aspect-ratio keeps a box in shape at any width: aspect-ratio: 16 / 9. Open the advanced options to copy the CSS, Tailwind, FFmpeg or ImageMagick line for the current ratio and size."
+    }
+  ],
+  "chartTitle": "Common aspect ratios",
+  "chartText": "The ratios used by screens, cameras, films, social networks and paper, with their decimal value and typical sizes in pixels.",
+  "faq": [
+    {
+      "question": "What is the aspect ratio of 1920×1080?",
+      "answer": "16:9. 1920 and 1080 share a greatest common divisor of 120, and 1920 ÷ 120 = 16, 1080 ÷ 120 = 9. The same ratio applies to 1280×720, 2560×1440 and 3840×2160 (4K)."
+    },
+    {
+      "question": "How do I calculate an aspect ratio?",
+      "answer": "Divide the width and the height by their greatest common divisor. Type both numbers in the calculator above and you get the ratio, its decimal value and the name it is known by."
+    },
+    {
+      "question": "How do I resize an image without stretching it?",
+      "answer": "Keep the ratio: new height = new width × original height ÷ original width. In the calculator, type the new width or height and the other side appears automatically."
+    },
+    {
+      "question": "What size is 9:16?",
+      "answer": "The usual size is 1080×1920 pixels, used by TikTok, Instagram Reels and Stories, and YouTube Shorts. 720×1280 is the smaller version."
+    },
+    {
+      "question": "How do I convert a 16:9 image to 9:16?",
+      "answer": "Load it in “Convert an image to another ratio”, choose 9:16, and pick between cropping to fill the screen or fitting it with bars (blurred, black or white). Drag the image to choose what stays in frame and download it."
+    },
+    {
+      "question": "Which aspect ratio is best for Instagram?",
+      "answer": "4:5 (1080×1350) takes up the most space in the feed, 1:1 (1080×1080) is the classic square, and 9:16 (1080×1920) is for Stories and Reels."
+    },
+    {
+      "question": "What is the difference between 16:9 and 16:10?",
+      "answer": "16:10 is slightly taller (1.6 against 1.78). It is common on laptops and MacBooks: 1920×1200 or 2560×1600 instead of 1920×1080 or 2560×1440."
+    },
+    {
+      "question": "What does 21:9 mean?",
+      "answer": "It is the marketing name for ultrawide monitors. The real ratios are 64:27 (2560×1080) and 43:18 (3440×1440), both around 2.37:1, close to the 2.39:1 cinema scope format."
+    },
+    {
+      "question": "Is my image uploaded anywhere?",
+      "answer": "No. The calculations and the image conversion happen in your browser. The picture is never sent to a server."
+    }
+  ],
+  "privacyLine": "Everything is calculated in your browser. No image is uploaded.",
+  "footerTagline": "Free aspect ratio calculator: find the ratio, resize without distorting and convert images to any format."
 };

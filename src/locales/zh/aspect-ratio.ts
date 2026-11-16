@@ -1,96 +1,33 @@
 export default {
-  "frame_constraints": "在此尺寸和像素倍数下放不下精确的画框。请增大尺寸或选择更小的倍数。",
   "resetHint": "重新开始",
   "title": "Aspect Ratio",
-  "badge": "宽高比工具箱",
-  "seo_title": "宽高比计算器 | 比例、等比缩放、裁剪与黑边",
-  "seo_description": "算出任意尺寸的宽高比，按编解码器安全的倍数缩放，并看清 9:16 裁剪究竟丢掉多少。还能把真实图片放进画框并导出。一切都在浏览器里完成。",
-  "seoHeroTitle": "每一种比例，以及它的代价",
-  "seoHeroText": "输入两个数字，就能得到比例、小数值、像素总量，以及它在业内被叫什么。然后再往前一步：锁定一条边、按编码器安全的倍数缩放，或者放进一张图片，看清 9:16 的画框到底吃掉了它多少。",
-  "description": "输入两个数字，就能得到比例、小数值、像素总量，以及它在业内被叫什么。再放进一张图片，就能看清 9:16 的画框到底吃掉了它多少。",
-  "seoHeroList": [
-    "认得 1.85:1 和 2.39:1，不只是 16:9",
-    "告诉你裁剪丢掉了什么",
-    "不上传，不注册"
-  ],
-  "tab_calculate": "比例",
-  "tab_resize": "缩放",
-  "tab_fit": "适配与裁剪",
-  "tab_presets": "预设",
-  "tabsLabel": "工作区",
-  "sourceTitle": "素材（可选）",
-  "sourceIntro": "计算器只靠你输入的数字就能工作，从来不需要文件。只有当你想在真实图片上看画框时，才需要加一张。",
-  "chooseFile": "选择图片或视频",
-  "readDimensions": "读取它的尺寸",
-  "waiting": "等待中 — 还没有读取任何内容",
-  "fromTool": "由 {tool} 交接过来",
   "removeFile": "移除文件",
   "errorDecode": "浏览器无法解码这个文件（{format}）。请先转换：HEIC 和部分 AVIF 并非处处都受支持。",
-  "errorClipboard": "浏览器阻止了剪贴板访问。",
-  "label_dimensions": "尺寸",
   "label_width": "宽度",
   "label_height": "高度",
   "label_max_den": "最大分母",
   "hint_max_den": "让比例保持可读。取 {n} 时，1998×1080 会返回 1.85:1，而不是 999:540。",
   "button_swap": "互换",
-  "label_result": "结果",
-  "label_simplified_ratio": "化简后的比例",
-  "label_approx_ratio": "最接近的比例",
   "label_error": "误差 {p}",
-  "label_decimal": "小数",
-  "label_megapixels": "百万像素",
-  "label_orientation": "方向",
-  "label_input": "输入",
   "orient_landscape": "横向",
   "orient_portrait": "纵向",
   "orient_square": "正方形",
   "placeholder_enter_dims": "输入宽度和高度即可得到比例。",
   "label_original": "原始尺寸",
-  "label_lock_target": "锁定这一边",
-  "target_width": "宽度",
-  "target_height": "高度",
   "label_multiple": "把两边都对齐到这个倍数",
   "multiple_none": "关闭",
   "hint_multiple": "H.264 不接受奇数尺寸，大多数硬件编码器则希望是 4 或 8 的倍数。",
-  "label_new_size": "新尺寸",
-  "label_result_dimensions": "计算所得尺寸",
-  "label_ratio_kept": "比例完全保持不变",
   "label_drift": "比例偏移 {p}",
-  "label_scale": "缩放比",
-  "label_multiple_short": "倍数",
-  "placeholder_resize": "输入原始尺寸，以及你想锁定的那一边。",
-  "label_editor": "画框编辑器",
   "canvasEmpty": "载入一张图片，把它放进画框。什么都不会上传，在你开口之前也什么都不会运行。",
   "canvasHint": "拖动可移动 · 滚轮缩放 · Alt 或右键在裁剪与黑边之间切换",
   "holdCompare": "按住查看原图",
-  "modeCover": "填满（裁剪）",
-  "modeContain": "完整放入（加黑边）",
   "bar_black": "黑色",
   "bar_white": "白色",
   "bar_blur": "模糊",
   "bar_transparent": "透明",
   "undo": "撤销",
   "redo": "重做",
-  "label_output": "输出",
-  "label_frame": "画框",
-  "label_cropped": "被裁掉",
-  "label_bars": "边条",
-  "hint_cropped": "占原图",
-  "hint_letterbox": "上下黑边",
-  "hint_pillarbox": "左右黑边",
-  "fitNeedsSize": "在“缩放”标签里输入原始尺寸，或在上方载入一个文件，画框的计算就会出现在这里。",
   "label_output_width": "输出宽度",
-  "button_download": "下载裁好的图片",
-  "exportNeedsFile": "导出需要文件。上面的数字没有文件也能算。",
-  "shortcutsTitle": "快捷键",
-  "sc_undo": "撤销、重做",
-  "sc_mode": "切换填满／完整放入",
-  "sc_reset": "回到中心并重置缩放",
-  "sc_alt": "预览另一种模式",
-  "group_screen": "屏幕",
-  "group_cinema": "电影",
-  "group_social": "社交平台",
-  "group_print": "印刷与摄影",
   "ratio_16_9": "宽屏 HD",
   "ratio_16_10": "笔记本宽屏",
   "ratio_4_3": "传统屏幕",
@@ -111,7 +48,6 @@ export default {
   "ratio_5_4": "8×10 相片",
   "ratio_7_5": "5×7 相片",
   "label_snippets": "可直接粘贴",
-  "button_reset": "全部重置",
   "tooltip_copy": "复制",
   "nextStepTitle": "继续处理",
   "nextStepHint": "裁好的图片会跟着你走，无需重新上传",
@@ -120,104 +56,132 @@ export default {
   "nextFormat": "换个格式",
   "nextWatermark": "加水印",
   "nextSocial": "按社交平台调整尺寸",
-  "howItWorksTitle": "工作方式",
-  "step1Title": "选定比例",
-  "step1Text": "输入两个尺寸，或者挑一个预设：屏幕、电影、社交信息流和纸张开本。",
-  "step2Title": "想要的话再加一张图",
-  "step2Text": "这是可选的，而且绝不会自行启动：文件会一直等着，直到你按下读取它的按钮。",
-  "step3Title": "画框由你来挪",
-  "step3Text": "拖动移动、滚轮缩放、按住与原图对比、按 Alt 在裁剪与黑边之间切换。",
-  "step4Title": "把结果带走",
-  "step4Text": "复制 CSS、Tailwind 或 FFmpeg 那一行，下载裁好的图片，或者直接送进另一个工具。",
-  "features": [
-    {
-      "title": "电影比例，不只是 16:9",
-      "text": "单纯求最大公约数会把 1998×1080 变成 999:540，对谁都没用。有上限的有理逼近会给出 1.85:1，并告诉你误差有多大。"
-    },
-    {
-      "title": "说清裁剪毁掉了什么",
-      "text": "把 4000×3000 的照片塞进 9:16，会丢掉其中的 58%。这个数字在你拍板之前就摆在屏幕上，旁边还有另一种做法的黑边厚度。"
-    },
-    {
-      "title": "对编码器友好的尺寸",
-      "text": "H.264 拒绝奇数边长，硬件编码器偏爱 4 或 8 的倍数。把两边对齐到 2、4、8 或 16，并看清比例偏移了多少。"
-    },
-    {
-      "title": "放下文件不会触发任何事",
-      "text": "拖进来的文件只是等着。读取、解码和绘制都要等你按下按钮，而纯手输入的路径压根不需要文件。"
-    },
-    {
-      "title": "画框由你操控",
-      "text": "拖动、以光标为中心缩放、按住与原图对比、Alt 看另一种模式、Ctrl+Z 一路退回。历史每一步只存六个数字，不存位图。"
-    },
-    {
-      "title": "直接进入下一个工具",
-      "text": "把裁好的图片送进 CropSnap、CompressSnap、FormatFlow、WatermarkSnap 或 SocialBolt，不必先下载再上传。"
-    }
-  ],
-  "seoBrowserSpeedTitle": "它就在你的文件所在之处运行",
-  "seoBrowserSpeedText": "算术只是几个纯函数，画框则是你自己标签页里的一块 canvas。图片由浏览器解码、在本地绘制，并用 canvas.toBlob 导出。没有任何图片、尺寸或文件名被传出去，断网之后这个工具照样能用。",
-  "seoUseCaseTitle": "真正派上用场的时刻",
-  "seoUseCaseText": "一张必须变成 Reel 的横向照片。一张 3440×1440 的截图，你正打算把它加黑边塞进 16:9 的幻灯片。缩略图规范要求 1280×720，而你导出的是 1279×721。一张 2.39:1 的海报，必须挺过信息流的方形裁剪。每一件都是带着代价的比例决定，而这个代价正是你在这里能拿到的东西。",
-  "seoPrivacyTitle": "没有可泄露的东西",
-  "seoPrivacyText": "根本不存在上传接口。唯一值得直说的保留意见是：这个页面带广告，所以广告网络会像在任何网站上一样看到这次访问——但它永远看不到你的文件，因为你的文件不会离开这个标签页。关掉它，一切都没了，包括编辑历史。",
-  "seoKeywordsTitle": "关键词",
-  "seoKeywords": [
-    "宽高比计算器",
-    "图片等比缩放",
-    "16:9 比例计算",
-    "2.39:1 电影比例",
-    "裁剪成 9:16",
-    "黑边计算器",
-    "图片尺寸计算器",
-    "从图片得出宽高比"
-  ],
   "faqTitle": "常见问题",
-  "faq": [
-    {
-      "question": "会上传任何东西吗？",
-      "answer": "不会。计算就是普通算术，画框处理发生在你标签页内的一块 canvas 上。你的图片由浏览器解码、由浏览器导出。页面加载完之后断开网络，一切照常运行。页面确实带广告，那是这里唯一会与服务器通信的东西，而它永远看不到你的文件。"
-    },
-    {
-      "question": "为什么 1998×1080 得到的是 1.85:1 而不是 999:540？",
-      "answer": "因为 999:540 是既准确又没用的答案。只有当结果足够小时，用最大公约数约分才有帮助；超出之后，我们会在你设定的上限内寻找分母最合适的分数——电影里的 1.85:1 和 2.39:1 本来就是这么写的。当这个分数并不精确时，误差会显示在旁边。"
-    },
-    {
-      "question": "“最大分母”滑块有什么用？",
-      "answer": "它限制比例可以复杂到什么程度。较小的值会强制给出一个简单好记的数对，并接受一点误差；较大的值追求精确，最终会把原始分数还给你。四十是个不错的折中：16:9、4:3、2.39:1 和 1.414:1 都能通过。"
-    },
-    {
-      "question": "为什么要把尺寸对齐到 2、4 或 8 的倍数？",
-      "answer": "H.264 无法编码宽度或高度为奇数的画面，而多数硬件编码器和缩放器因为色度二次采样的缘故，更喜欢 4 或 8 的倍数。取整会让比例轻微偏移，所以偏移量会以百分比显示，是否在意由你决定。"
-    },
-    {
-      "question": "“填满”和“完整放入”有什么区别？",
-      "answer": "填满会占满整个画框，并切掉溢出的部分。完整放入会把整张图装进去并补上边条：上下是黑边，两侧是竖边。工具会直接写明各自的代价：裁剪损失的百分比，或者边条的像素厚度。按住 Alt 就能在不改动任何设置的情况下看另一种。"
-    },
-    {
-      "question": "这里真能裁剪图片，还是只能算数？",
-      "answer": "两者都能。载入图片，拖动定位画框，用滚轮缩放，然后按你选的输出宽度下载 PNG、JPEG 或 WebP。如果你更想保留整张图，就切到完整放入，并挑选边条的填充：黑色、白色、透明，或者图片自身的模糊副本。"
-    },
-    {
-      "question": "放下文件会启动什么吗？",
-      "answer": "不会，这是刻意为之。文件停在等待状态，只显示名称和大小。在你按下读取尺寸的按钮之前不会解码任何东西，而且在那之前你随时可以移除它。"
-    },
-    {
-      "question": "我 iPhone 拍的 HEIC 照片打不开。",
-      "answer": "HEIC 解码取决于浏览器和操作系统，多数桌面浏览器至今仍不接受。部分 AVIF 文件同样如此。请先转成 JPEG 或 PNG——本套件里的 FormatFlow 同样在本地完成转换——然后就能在这里载入了。你会收到一条点名格式的清晰提示，而不是无声的失败。"
-    },
-    {
-      "question": "结果之后去哪里？",
-      "answer": "你愿意的话，可以直接进入另一个工具。编辑器下方的按钮会通过浏览器自身的存储，把裁好的图片交给 CropSnap、CompressSnap、FormatFlow、WatermarkSnap 或 SocialBolt，所以它一路上都不会碰到你的下载文件夹。"
-    }
-  ],
-  "footerTagline": "宽高比、等比缩放，以及关于裁剪的诚实计算，全部在浏览器里完成。",
   "footerCredit": "oLoveTools 套件的一部分",
-  "scrollTopLabel": "回到顶部",
   "privacyPolicy": "隐私政策",
   "termsOfService": "服务条款",
   "cookiePolicy": "Cookie 政策",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
-  "contactForIdeas": "意见与建议联系方式："
+  "contactForIdeas": "意见与建议联系方式：",
+  "seo_title": "宽高比计算器：计算与转换画面比例（16:9、9:16）",
+  "seo_title_exact": true,
+  "seo_description": "免费宽高比计算器：算出任意尺寸的比例（1920×1080 = 16:9），不变形地调整尺寸，把图片转换为 9:16、1:1 或 4:5，并查看 YouTube、TikTok 和 Instagram 的推荐尺寸。",
+  "h1": "宽高比计算器",
+  "subtitle": "算出任意尺寸的宽高比，不变形地调整尺寸，并把图片转换为 16:9、9:16 或 1:1。免费，在浏览器中完成。",
+  "quickRatios": "常用比例",
+  "calcOriginal": "原始尺寸（或比例）",
+  "calcNew": "新尺寸，比例不变",
+  "calcNewHint": "输入需要的宽度或高度，另一边会自动算出。",
+  "label_simplified_ratio": "宽高比",
+  "rotated": "旋转",
+  "target_width": "新宽度",
+  "target_height": "新高度",
+  "sameRatioTitle": "相同比例的尺寸",
+  "advancedTitle": "高级选项和代码",
+  "framerTitle": "把图片转换为其他比例",
+  "framerIntro": "把横向照片转成适合 Reels 和 TikTok 的 9:16，或把任意图片转成正方形。裁剪或加边后下载。",
+  "framerDrop": "选择或拖入一张图片",
+  "framerDropHint": "也可以用 Ctrl+V 粘贴。支持 JPG、PNG、WebP 或视频的第一帧。",
+  "framerTarget": "转换为",
+  "framerCropped": "将裁掉图片的 {p}",
+  "framerBars": "边框占画面的 {p}",
+  "framerOther": "换一张图片",
+  "modeCover": "裁剪填满",
+  "modeContain": "加边完整显示",
+  "button_download": "下载图片",
+  "platformsTitle": "社交媒体和屏幕尺寸",
+  "platformsIntro": "各平台的推荐尺寸。点“使用”即可载入计算器。",
+  "colPlatform": "平台",
+  "colUse": "用途",
+  "colRatio": "比例",
+  "colSize": "尺寸（px）",
+  "colDecimal": "小数",
+  "colSizes": "常见尺寸",
+  "useBtn": "使用",
+  "useInCalc": "在计算器中使用",
+  "plat_video": "视频",
+  "plat_shorts": "短视频",
+  "plat_thumbnail": "封面缩略图",
+  "plat_banner": "横幅",
+  "plat_square": "方形帖子",
+  "plat_portrait": "竖版帖子",
+  "plat_stories": "快拍和 Reels",
+  "plat_link": "链接图片",
+  "plat_cover": "封面照片",
+  "plat_image": "帖子图片",
+  "plat_header": "页眉",
+  "plat_pin": "图钉",
+  "plat_screen": "屏幕",
+  "howTitle": "如何计算宽高比",
+  "howIntro": "宽高比是宽度与高度之比，用两个数字表示：16:9 表示每 9 份高度对应 16 份宽度。它只描述形状，不涉及大小。",
+  "howSteps": [
+    "取宽度和高度的像素值，例如 1920 × 1080。",
+    "求它们的最大公约数（能同时整除两者的最大数）：120。",
+    "两边都除以它：1920 ÷ 120 = 16，1080 ÷ 120 = 9。比例为 16:9。",
+    "要保持比例调整尺寸，用新边乘以比例：新宽度 = 新高度 × 16 ÷ 9。"
+  ],
+  "exampleTitle": "示例",
+  "exampleResize": "相同比例、高 720 px 时：",
+  "gcdLabel": "最大公约数",
+  "sections": [
+    {
+      "title": "不变形地调整尺寸",
+      "text": "宽和高按不同比例改变时，图片就会被拉伸。保持比例并固定一边：在计算器中输入新宽度或新高度，另一边会自动算出。\n\n视频的两条边都必须是偶数（H.264 不接受奇数）；在高级选项中打开“对齐到倍数”，即可得到可编码的尺寸。"
+    },
+    {
+      "title": "从 16:9 到 9:16（横屏转竖屏）",
+      "text": "16:9 的视频放不进 9:16 的屏幕：要么裁掉两侧，要么加边。裁剪能填满屏幕，但会损失约三分之二的画面；加边保留全部内容，但会留下空白。\n\n在“把图片转换为其他比例”中，下载前就能准确看到会裁掉多少，还可以拖动图片，把重要部分留在画面里。"
+    },
+    {
+      "title": "电影比例：1.85:1 和 2.39:1",
+      "text": "电影中的比例通常写成相对于 1 的小数：1.85:1 是“遮幅”，2.39:1 是“宽银幕”，即变形宽银幕格式。简单约分会把 1998×1080 变成 999:540；本计算器能识别为 1.85:1。\n\n带鱼屏显示器以 21:9 销售，但 2560×1080 实际是 64:27，3440×1440 是 43:18，都约为 2.37:1。"
+    },
+    {
+      "title": "CSS 和代码中的宽高比",
+      "text": "在网页中，CSS 属性 aspect-ratio 可以让元素在任何宽度下保持形状：aspect-ratio: 16 / 9。打开高级选项，即可复制当前比例和尺寸对应的 CSS、Tailwind、FFmpeg 或 ImageMagick 代码。"
+    }
+  ],
+  "chartTitle": "常见宽高比",
+  "chartText": "屏幕、相机、电影、社交网络和纸张使用的比例，附小数值和常见像素尺寸。",
+  "faq": [
+    {
+      "question": "1920×1080 的宽高比是多少？",
+      "answer": "16:9。1920 和 1080 的最大公约数是 120，1920 ÷ 120 = 16，1080 ÷ 120 = 9。1280×720、2560×1440 和 3840×2160（4K）也是这个比例。"
+    },
+    {
+      "question": "宽高比怎么计算？",
+      "answer": "用宽度和高度分别除以它们的最大公约数。在上面的计算器中输入两个数字，就能得到比例、小数值和常用名称。"
+    },
+    {
+      "question": "怎样调整图片尺寸而不变形？",
+      "answer": "保持比例：新高度 = 新宽度 × 原高度 ÷ 原宽度。在计算器中输入新宽度或新高度，另一边会自动出现。"
+    },
+    {
+      "question": "9:16 是多大尺寸？",
+      "answer": "常用尺寸是 1080×1920 像素，用于 TikTok、Instagram Reels 和快拍以及 YouTube Shorts。720×1280 是较小的版本。"
+    },
+    {
+      "question": "怎样把 16:9 的图片转成 9:16？",
+      "answer": "在“把图片转换为其他比例”中载入图片，选择 9:16，然后选择裁剪填满屏幕，或加边完整显示（模糊、黑色或白色）。拖动图片选好画面后下载。"
+    },
+    {
+      "question": "Instagram 用什么比例最好？",
+      "answer": "4:5（1080×1350）在信息流中占的面积最大，1:1（1080×1080）是经典正方形，9:16（1080×1920）用于快拍和 Reels。"
+    },
+    {
+      "question": "16:9 和 16:10 有什么区别？",
+      "answer": "16:10 稍高一些（1.6 对 1.78），常见于笔记本和 MacBook：用 1920×1200 或 2560×1600 代替 1920×1080 或 2560×1440。"
+    },
+    {
+      "question": "21:9 是什么意思？",
+      "answer": "这是带鱼屏显示器的商业名称。实际比例是 64:27（2560×1080）和 43:18（3440×1440），都约为 2.37:1，接近电影宽银幕 2.39:1。"
+    },
+    {
+      "question": "我的图片会被上传吗？",
+      "answer": "不会。计算和图片转换都在你的浏览器中完成，图片绝不会发送到服务器。"
+    }
+  ],
+  "privacyLine": "所有计算都在你的浏览器中完成，不上传任何图片。",
+  "footerTagline": "免费宽高比计算器：计算比例、不变形地调整尺寸，并转换图片比例。"
 };

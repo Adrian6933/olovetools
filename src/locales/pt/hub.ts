@@ -142,7 +142,7 @@ export default {
       "description": "Converte entre HEX, RGB, HSL e CMYK, com opacidade e verificação de contraste. Tudo no navegador."
     },
     "40": {
-      "description": "Calcula proporções e resoluções equivalentes para vídeo, imagens e ecrãs. Tudo no navegador."
+      "description": "Calculadora de proporção de tela: descubra a proporção de qualquer tamanho, redimensione sem distorcer e converta imagens para 16:9, 9:16 ou 1:1."
     },
     "41": {
       "description": "Converte unidades de comprimento, peso, temperatura, velocidade, volume e muitas mais. Tudo no navegador."

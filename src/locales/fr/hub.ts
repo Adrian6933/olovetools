@@ -142,7 +142,7 @@ export default {
       "description": "Convertissez entre HEX, RGB, HSL et CMJN, avec opacité et vérification du contraste. Tout dans le navigateur."
     },
     "40": {
-      "description": "Calculez des rapports d'aspect et des résolutions proportionnelles pour la vidéo, les images et les écrans. Tout dans le navigateur."
+      "description": "Calculateur de rapport d'aspect : trouvez le ratio de n'importe quelle taille, redimensionnez sans déformer et convertissez vos images en 16:9, 9:16 ou 1:1."
     },
     "41": {
       "description": "Convertissez des unités de longueur, poids, température, vitesse, volume et bien d'autres. Tout dans le navigateur."

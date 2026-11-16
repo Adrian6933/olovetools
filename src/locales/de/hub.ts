@@ -142,7 +142,7 @@ export default {
       "description": "Zwischen HEX, RGB, HSL und CMYK umrechnen, mit Deckkraft und Kontrastprüfung. Alles im Browser."
     },
     "40": {
-      "description": "Seitenverhältnisse und passende Auflösungen für Video, Bilder und Bildschirme berechnen. Alles im Browser."
+      "description": "Seitenverhältnis-Rechner: Verhältnis jeder Größe berechnen, ohne Verzerren skalieren und Bilder in 16:9, 9:16 oder 1:1 umwandeln."
     },
     "41": {
       "description": "Einheiten umrechnen: Länge, Gewicht, Temperatur, Geschwindigkeit, Volumen und vieles mehr. Alles im Browser."

@@ -490,7 +490,7 @@ export const MOCK_PROJECTS: Project[] = [
     id: '40',
     name: 'Aspect Ratio',
     slug: 'aspect-ratio',
-    description: 'Calculate aspect ratios and proportional resolutions for video, images and screens 100% locally.',
+    description: 'Aspect ratio calculator: get the ratio of any size, resize without distorting and convert images to 16:9, 9:16 or 1:1.',
     category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Ratio', 'Calculator', 'Resolution', 'Video'],
     icon: 'Ratio',

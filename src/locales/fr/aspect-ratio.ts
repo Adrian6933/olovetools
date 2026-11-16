@@ -1,96 +1,33 @@
 export default {
-  "frame_constraints": "Aucun cadre exact ne tient avec cette taille et ce multiple de pixels. Augmentez la taille ou choisissez un multiple plus petit.",
   "resetHint": "Recommencer",
   "title": "Aspect Ratio",
-  "badge": "Boîte à outils des ratios",
-  "seo_title": "Calculateur de format d'image | Redimensionner et recadrer",
-  "seo_description": "Trouvez le rapport d'aspect de n'importe quelle taille, redimensionnez avec des multiples compatibles codec et voyez exactement ce qu'un recadrage 9:16 supprime. Cadrez une vraie image et exportez-la. Tout dans votre navigateur.",
-  "seoHeroTitle": "Chaque ratio, et ce qu’il vous coûte",
-  "seoHeroText": "Saisissez deux nombres et obtenez le ratio, la décimale, les mégapixels et le nom sous lequel il est vendu. Allez ensuite plus loin : fixez une dimension et redimensionnez avec des multiples sûrs pour l'encodeur, ou déposez une image et voyez précisément ce qu'un cadre 9:16 lui prend.",
-  "description": "Saisissez deux nombres et obtenez le ratio, la décimale, les mégapixels et le nom sous lequel il est vendu. Déposez ensuite une image et voyez précisément ce qu'un cadre 9:16 lui prend.",
-  "seoHeroList": [
-    "Reconnaît le 1.85:1 et le 2.39:1, pas seulement le 16:9",
-    "Vous dit ce qu’un recadrage supprime",
-    "Sans envoi ni compte"
-  ],
-  "tab_calculate": "Rapport",
-  "tab_resize": "Redimensionner",
-  "tab_fit": "Cadrage et recadrage",
-  "tab_presets": "Préréglages",
-  "tabsLabel": "Espace de travail",
-  "sourceTitle": "Source (facultatif)",
-  "sourceIntro": "Le calculateur fonctionne avec de simples nombres saisis : vous n'avez jamais besoin d'un fichier. N'en ajoutez un que si vous voulez voir le cadre sur une vraie image.",
-  "chooseFile": "Choisir une image ou une vidéo",
-  "readDimensions": "Lire ses dimensions",
-  "waiting": "en attente — rien n'a encore été lu",
-  "fromTool": "transmis par {tool}",
   "removeFile": "Retirer le fichier",
   "errorDecode": "Votre navigateur n'a pas pu décoder ce fichier ({format}). Convertissez-le d'abord : le HEIC et certains AVIF ne sont pas pris en charge partout.",
-  "errorClipboard": "Votre navigateur a bloqué l'accès au presse-papiers.",
-  "label_dimensions": "Dimensions",
   "label_width": "Largeur",
   "label_height": "Hauteur",
   "label_max_den": "Dénominateur maximal",
   "hint_max_den": "Garde le ratio lisible. À {n}, 1998×1080 revient en 1.85:1 au lieu de 999:540.",
   "button_swap": "Permuter",
-  "label_result": "Résultat",
-  "label_simplified_ratio": "Ratio simplifié",
-  "label_approx_ratio": "Ratio le plus proche",
   "label_error": "écart de {p}",
-  "label_decimal": "Décimale",
-  "label_megapixels": "Mégapixels",
-  "label_orientation": "Orientation",
-  "label_input": "Saisie",
   "orient_landscape": "Paysage",
   "orient_portrait": "Portrait",
   "orient_square": "Carré",
   "placeholder_enter_dims": "Saisissez une largeur et une hauteur pour obtenir le ratio.",
   "label_original": "Taille d’origine",
-  "label_lock_target": "Fixez cette dimension",
-  "target_width": "Largeur",
-  "target_height": "Hauteur",
   "label_multiple": "Aligner les deux côtés sur un multiple de",
   "multiple_none": "non",
   "hint_multiple": "H.264 refuse les dimensions impaires et la plupart des encodeurs matériels préfèrent des multiples de 4 ou de 8.",
-  "label_new_size": "Nouvelle taille",
-  "label_result_dimensions": "Dimensions obtenues",
-  "label_ratio_kept": "ratio préservé exactement",
   "label_drift": "le ratio dérive de {p}",
-  "label_scale": "Échelle",
-  "label_multiple_short": "Multiple",
-  "placeholder_resize": "Saisissez la taille d’origine et la dimension à fixer.",
-  "label_editor": "Éditeur de cadre",
   "canvasEmpty": "Chargez une image pour la placer dans le cadre. Rien n'est envoyé, et rien ne démarre tant que vous ne le demandez pas.",
   "canvasHint": "Glissez pour repositionner · molette pour zoomer · Alt ou clic droit bascule entre recadrage et letterbox",
   "holdCompare": "Maintenez pour voir l’original",
-  "modeCover": "Couvrir (recadre)",
-  "modeContain": "Contenir (letterbox)",
   "bar_black": "noir",
   "bar_white": "blanc",
   "bar_blur": "flouté",
   "bar_transparent": "transparent",
   "undo": "Annuler",
   "redo": "Rétablir",
-  "label_output": "Sortie",
-  "label_frame": "Cadre",
-  "label_cropped": "Supprimé",
-  "label_bars": "Bandes",
-  "hint_cropped": "de l’original",
-  "hint_letterbox": "letterbox",
-  "hint_pillarbox": "pillarbox",
-  "fitNeedsSize": "Saisissez une taille d'origine dans l'onglet Redimensionner, ou chargez un fichier ci-dessus, et les calculs du cadre apparaissent ici.",
   "label_output_width": "Largeur de sortie",
-  "button_download": "Télécharger l’image cadrée",
-  "exportNeedsFile": "L'export nécessite un fichier. Les nombres ci-dessus fonctionnent sans.",
-  "shortcutsTitle": "Raccourcis",
-  "sc_undo": "annuler, rétablir",
-  "sc_mode": "basculer couvrir / contenir",
-  "sc_reset": "recentrer et réinitialiser le zoom",
-  "sc_alt": "aperçu de l’autre mode",
-  "group_screen": "Écrans",
-  "group_cinema": "Cinéma",
-  "group_social": "Réseaux sociaux",
-  "group_print": "Impression et photo",
   "ratio_16_9": "Écran large HD",
   "ratio_16_10": "Écran large de portable",
   "ratio_4_3": "Écran classique",
@@ -111,7 +48,6 @@ export default {
   "ratio_5_4": "Tirage 8×10",
   "ratio_7_5": "Tirage 5×7",
   "label_snippets": "Prêt à coller",
-  "button_reset": "Tout réinitialiser",
   "tooltip_copy": "Copier",
   "nextStepTitle": "Continuez",
   "nextStepHint": "L’image cadrée vous suit, sans nouvel envoi",
@@ -120,104 +56,132 @@ export default {
   "nextFormat": "Changer de format",
   "nextWatermark": "Ajouter un filigrane",
   "nextSocial": "L’adapter aux réseaux",
-  "howItWorksTitle": "Comment ça marche",
-  "step1Title": "Choisissez le ratio",
-  "step1Text": "Saisissez deux dimensions ou choisissez un préréglage : écrans, cinéma, fils sociaux et formats papier.",
-  "step2Title": "Ajoutez une image, si vous voulez",
-  "step2Text": "C'est facultatif et cela ne démarre jamais tout seul : le fichier attend que vous appuyiez sur le bouton qui le lit.",
-  "step3Title": "Déplacez le cadre vous-même",
-  "step3Text": "Glissez pour repositionner, molette pour zoomer, maintenez pour comparer avec l'original, Alt pour basculer entre recadrage et letterbox.",
-  "step4Title": "Emportez le résultat",
-  "step4Text": "Copiez la ligne CSS, Tailwind ou FFmpeg, téléchargez l’image cadrée, ou envoyez-la directement vers un autre outil.",
-  "features": [
-    {
-      "title": "Des ratios de cinéma, pas seulement le 16:9",
-      "text": "Un simple PGCD transforme 1998×1080 en 999:540, ce qui n'aide personne. Une approximation rationnelle bornée donne 1.85:1 et indique l'écart."
-    },
-    {
-      "title": "Dit ce qu’un recadrage détruit",
-      "text": "Faire entrer une photo 4000×3000 en 9:16 en supprime 58 %. Ce nombre est affiché avant de valider, avec l’épaisseur des bandes de l’autre option."
-    },
-    {
-      "title": "Des dimensions sûres pour l’encodeur",
-      "text": "H.264 refuse les côtés impairs et les encodeurs matériels préfèrent les multiples de 4 ou 8. Alignez les deux côtés sur 2, 4, 8 ou 16 et voyez la dérive du ratio."
-    },
-    {
-      "title": "Le dépôt ne déclenche rien",
-      "text": "Un fichier déposé ne fait qu'attendre. Sa lecture, son décodage et son affichage ne démarrent qu'au clic, et la voie manuelle n'a jamais besoin de fichier."
-    },
-    {
-      "title": "C’est vous qui déplacez le cadre",
-      "text": "Glissez, zoomez sur le curseur, maintenez pour comparer à l'original, Alt pour l'autre mode, Ctrl+Z jusqu'au début. L'annulation stocke six nombres par étape, pas des images."
-    },
-    {
-      "title": "Directement vers l’outil suivant",
-      "text": "Envoyez l’image cadrée vers CropSnap, CompressSnap, FormatFlow, WatermarkSnap ou SocialBolt sans la télécharger puis la renvoyer."
-    }
-  ],
-  "seoBrowserSpeedTitle": "Tout s’exécute là où votre fichier se trouve déjà",
-  "seoBrowserSpeedText": "L'arithmétique tient en quelques fonctions pures et le cadrage se fait sur un canvas dans votre propre onglet. Les images sont décodées par le navigateur, dessinées localement et exportées avec canvas.toBlob. Aucune image, aucune dimension et aucun nom de fichier n'est transmis, et l'outil continue de fonctionner hors ligne.",
-  "seoUseCaseTitle": "Les moments où cela vous sauve vraiment",
-  "seoUseCaseText": "Une photo paysage qui doit devenir un Reel. Une capture 3440×1440 que vous vous apprêtez à letterboxer dans une diapositive 16:9. Une spécification de miniature qui exige 1280×720 alors que votre export fait 1279×721. Une affiche en 2.39:1 qui doit survivre à un recadrage carré pour un fil. Chacun est une décision de ratio avec un coût, et c'est ce coût que vous obtenez ici.",
-  "seoPrivacyTitle": "Rien à divulguer",
-  "seoPrivacyText": "Il n'existe aucun point d'envoi. La seule réserve, dite clairement : cette page affiche de la publicité, la régie voit donc la visite comme sur n'importe quel site — mais elle ne voit jamais votre fichier, car votre fichier ne quitte pas l'onglet. Fermez-le et tout disparaît, y compris l'historique d'édition.",
-  "seoKeywordsTitle": "Mots-clés",
-  "seoKeywords": [
-    "calculateur de rapport d'aspect",
-    "redimensionner une image proportionnellement",
-    "calculateur de ratio 16:9",
-    "ratio cinéma 2.39:1",
-    "recadrer en 9:16",
-    "calculateur de letterbox",
-    "calculateur de dimensions d'image",
-    "rapport d'aspect à partir d'une image"
-  ],
   "faqTitle": "Questions fréquentes",
-  "faq": [
-    {
-      "question": "Quelque chose est-il envoyé ?",
-      "answer": "Non. Les calculs sont de l'arithmétique pure et le cadrage se fait sur un canvas dans votre onglet. Votre image est décodée par le navigateur et exportée par le navigateur. Coupez le réseau après le chargement de la page et tout continue de fonctionner. La page affiche bien de la publicité, seule chose ici qui parle à un serveur, et elle ne voit jamais votre fichier."
-    },
-    {
-      "question": "Pourquoi 1998×1080 donne-t-il 1.85:1 plutôt que 999:540 ?",
-      "answer": "Parce que 999:540 est la réponse exacte et inutile. Diviser par le PGCD n'aide que si le résultat reste petit ; au-delà, nous cherchons la meilleure fraction dont le dénominateur reste sous la limite que vous fixez, ce qui correspond à la façon dont s'écrivent réellement les ratios de cinéma 1.85:1 et 2.39:1. Quand cette fraction n'est pas exacte, l'écart est affiché à côté."
-    },
-    {
-      "question": "À quoi sert le curseur « dénominateur maximal » ?",
-      "answer": "Il limite la complexité autorisée du ratio. Les valeurs basses imposent une paire simple et mémorisable en acceptant une petite erreur ; les valeurs hautes cherchent l'exactitude et finissent par rendre la fraction brute. Quarante est un bon compromis : 16:9, 4:3, 2.39:1 et 1.414:1 y survivent tous."
-    },
-    {
-      "question": "Pourquoi aligner les dimensions sur un multiple de 2, 4 ou 8 ?",
-      "answer": "H.264 ne peut pas encoder une image de largeur ou de hauteur impaire, et la plupart des encodeurs et redimensionneurs matériels préfèrent les multiples de 4 ou 8 à cause du sous-échantillonnage de la chrominance. L'arrondi décale légèrement le ratio, la dérive est donc affichée en pourcentage et vous jugez si elle compte."
-    },
-    {
-      "question": "Quelle est la différence entre couvrir et contenir ?",
-      "answer": "Couvrir remplit le cadre et coupe tout ce qui dépasse. Contenir fait entrer toute l'image et ajoute des bandes : letterbox en haut et en bas, pillarbox sur les côtés. L'outil affiche exactement le coût de chacun : le pourcentage perdu au recadrage, ou l'épaisseur des bandes en pixels. Maintenez Alt pour voir l'autre sans rien changer."
-    },
-    {
-      "question": "Puis-je vraiment recadrer une image ici, ou seulement calculer ?",
-      "answer": "Les deux. Chargez une image, positionnez le cadre en glissant, zoomez à la molette, puis téléchargez le résultat en PNG, JPEG ou WebP à la largeur de sortie de votre choix. Si vous préférez garder toute l'image, passez en contenir et choisissez ce qui remplit les bandes : noir, blanc, transparent, ou une copie floutée de l'image elle-même."
-    },
-    {
-      "question": "Déposer un fichier déclenche-t-il quelque chose ?",
-      "answer": "Non, et c'est délibéré. Le fichier reste en attente en n'affichant que son nom et sa taille. Rien n'est décodé tant que vous n'appuyez pas sur le bouton qui lit ses dimensions, et vous pouvez le retirer avant que cela n'arrive."
-    },
-    {
-      "question": "Ma photo HEIC d’iPhone refuse de s’ouvrir.",
-      "answer": "Le décodage HEIC dépend du navigateur et du système, et la plupart des navigateurs de bureau le refusent encore. Idem pour certains fichiers AVIF. Convertissez-la d'abord en JPEG ou PNG — FormatFlow, dans cette suite, le fait aussi localement — et elle se chargera ici. Vous recevrez un message clair nommant le format, pas un échec silencieux."
-    },
-    {
-      "question": "Où va le résultat ensuite ?",
-      "answer": "Directement vers un autre outil, si vous le souhaitez. Les boutons sous l'éditeur transmettent l'image cadrée à CropSnap, CompressSnap, FormatFlow, WatermarkSnap ou SocialBolt via le stockage du navigateur : elle ne passe donc pas par votre dossier Téléchargements."
-    }
-  ],
-  "footerTagline": "Rapports d'aspect, redimensionnement proportionnel et calculs de recadrage honnêtes, entièrement dans votre navigateur.",
   "footerCredit": "Fait partie de la suite oLoveTools",
-  "scrollTopLabel": "Retour en haut",
   "privacyPolicy": "Politique de confidentialité",
   "termsOfService": "Conditions d’utilisation",
   "cookiePolicy": "Politique relative aux cookies",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "seo_title": "Calculateur de rapport d'aspect : calculer et convertir (16:9, 9:16)",
+  "seo_title_exact": true,
+  "seo_description": "Calculateur de rapport d'aspect gratuit : trouvez le ratio de n'importe quelle taille (1920×1080 = 16:9), redimensionnez sans déformer, convertissez une image en 9:16, 1:1 ou 4:5 et voyez la bonne taille pour YouTube, TikTok et Instagram.",
+  "h1": "Calculateur de rapport d'aspect",
+  "subtitle": "Trouvez le ratio de n'importe quelle taille, redimensionnez sans déformer et convertissez une image en 16:9, 9:16 ou 1:1. Gratuit, dans votre navigateur.",
+  "quickRatios": "Ratios courants",
+  "calcOriginal": "Taille d'origine (ou un ratio)",
+  "calcNew": "Nouvelle taille, même ratio",
+  "calcNewHint": "Tapez la largeur ou la hauteur voulue : l'autre côté est calculé.",
+  "label_simplified_ratio": "Rapport d'aspect",
+  "rotated": "pivoté",
+  "target_width": "Nouvelle largeur",
+  "target_height": "Nouvelle hauteur",
+  "sameRatioTitle": "Tailles avec ce ratio",
+  "advancedTitle": "Options avancées et code",
+  "framerTitle": "Convertir une image vers un autre ratio",
+  "framerIntro": "Passez une photo horizontale en 9:16 pour les Reels et TikTok, ou n'importe quelle image en carré. Recadrez ou ajoutez des bandes, puis téléchargez.",
+  "framerDrop": "Choisissez ou déposez une image",
+  "framerDropHint": "Ou collez-la avec Ctrl+V. JPG, PNG, WebP ou la première image d'une vidéo.",
+  "framerTarget": "Convertir en",
+  "framerCropped": "{p} de l'image est coupé",
+  "framerBars": "Les bandes occupent {p} du cadre",
+  "framerOther": "Une autre image",
+  "modeCover": "Recadrer pour remplir",
+  "modeContain": "Ajuster avec des bandes",
+  "button_download": "Télécharger l'image",
+  "platformsTitle": "Tailles pour les réseaux sociaux et les écrans",
+  "platformsIntro": "Tailles recommandées pour chaque plateforme. Touchez « Utiliser » pour la charger dans le calculateur.",
+  "colPlatform": "Plateforme",
+  "colUse": "Usage",
+  "colRatio": "Ratio",
+  "colSize": "Taille (px)",
+  "colDecimal": "Décimal",
+  "colSizes": "Tailles typiques",
+  "useBtn": "Utiliser",
+  "useInCalc": "Utiliser dans le calculateur",
+  "plat_video": "Vidéo",
+  "plat_shorts": "Shorts",
+  "plat_thumbnail": "Miniature",
+  "plat_banner": "Bannière",
+  "plat_square": "Post carré",
+  "plat_portrait": "Post vertical",
+  "plat_stories": "Stories et Reels",
+  "plat_link": "Image de lien",
+  "plat_cover": "Photo de couverture",
+  "plat_image": "Image de post",
+  "plat_header": "En-tête",
+  "plat_pin": "Épingle",
+  "plat_screen": "Écran",
+  "howTitle": "Comment calculer un rapport d'aspect",
+  "howIntro": "Le rapport d'aspect est la relation entre la largeur et la hauteur, écrite avec deux nombres : 16:9 veut dire 16 unités de large pour 9 de haut. Il ne dit rien de la taille, seulement de la forme.",
+  "howSteps": [
+    "Prenez la largeur et la hauteur en pixels, par exemple 1920 × 1080.",
+    "Trouvez leur plus grand commun diviseur (le plus grand nombre qui divise les deux) : 120.",
+    "Divisez les deux côtés par lui : 1920 ÷ 120 = 16 et 1080 ÷ 120 = 9. Le ratio est 16:9.",
+    "Pour redimensionner en le gardant, multipliez le nouveau côté par le ratio : nouvelle largeur = nouvelle hauteur × 16 ÷ 9."
+  ],
+  "exampleTitle": "Exemple",
+  "exampleResize": "Même ratio, 720 px de haut :",
+  "gcdLabel": "PGCD",
+  "sections": [
+    {
+      "title": "Redimensionner sans déformer",
+      "text": "Une image s'étire quand la largeur et la hauteur ne changent pas dans la même proportion. Gardez le ratio et fixez un côté : tapez la nouvelle largeur ou la nouvelle hauteur et l'autre est calculée.\n\nEn vidéo, les deux côtés doivent être pairs (H.264 refuse les impairs) ; activez « arrondir à un multiple » dans les options avancées pour obtenir des tailles valides."
+    },
+    {
+      "title": "Du 16:9 au 9:16 (de l'horizontal au vertical)",
+      "text": "Une vidéo 16:9 ne tient pas dans un écran 9:16 : il faut soit couper les côtés, soit ajouter des bandes. Recadrer remplit l'écran mais perd environ deux tiers de l'image ; les bandes gardent tout mais laissent du vide.\n\nDans « Convertir une image vers un autre ratio », vous voyez exactement ce qui est coupé avant de télécharger, et vous pouvez faire glisser l'image pour garder l'essentiel."
+    },
+    {
+      "title": "Les ratios du cinéma : 1.85:1 et 2.39:1",
+      "text": "Au cinéma, on écrit le ratio en décimal contre 1 : 1.85:1 est le format « flat » et 2.39:1 le « scope », l'anamorphique large. Un simple diviseur transformerait 1998×1080 en 999:540 ; ce calculateur le reconnaît comme 1.85:1.\n\nLes écrans ultralarges sont vendus en 21:9, mais 2560×1080 est en réalité 64:27 et 3440×1440 est 43:18, tous deux proches de 2.37:1."
+    },
+    {
+      "title": "Le rapport d'aspect en CSS et en code",
+      "text": "Sur le web, la propriété CSS aspect-ratio garde la forme d'un bloc à toute largeur : aspect-ratio: 16 / 9. Ouvrez les options avancées pour copier la ligne CSS, Tailwind, FFmpeg ou ImageMagick du ratio et de la taille actuels."
+    }
+  ],
+  "chartTitle": "Rapports d'aspect courants",
+  "chartText": "Les ratios utilisés par les écrans, les appareils photo, le cinéma, les réseaux sociaux et le papier, avec leur valeur décimale et leurs tailles typiques en pixels.",
+  "faq": [
+    {
+      "question": "Quel est le rapport d'aspect de 1920×1080 ?",
+      "answer": "16:9. Le plus grand commun diviseur de 1920 et 1080 est 120, et 1920 ÷ 120 = 16, 1080 ÷ 120 = 9. 1280×720, 2560×1440 et 3840×2160 (4K) ont le même ratio."
+    },
+    {
+      "question": "Comment calculer un rapport d'aspect ?",
+      "answer": "On divise la largeur et la hauteur par leur plus grand commun diviseur. Tapez les deux nombres dans le calculateur ci-dessus pour obtenir le ratio, sa valeur décimale et son nom usuel."
+    },
+    {
+      "question": "Comment redimensionner une image sans la déformer ?",
+      "answer": "En gardant le ratio : nouvelle hauteur = nouvelle largeur × hauteur d'origine ÷ largeur d'origine. Dans le calculateur, tapez la nouvelle largeur ou hauteur et l'autre côté s'affiche."
+    },
+    {
+      "question": "Quelle taille fait le 9:16 ?",
+      "answer": "La taille habituelle est 1080×1920 pixels, celle de TikTok, des Reels et Stories Instagram et des YouTube Shorts. 720×1280 est la version plus petite."
+    },
+    {
+      "question": "Comment passer une image de 16:9 à 9:16 ?",
+      "answer": "Chargez-la dans « Convertir une image vers un autre ratio », choisissez 9:16, puis recadrez pour remplir l'écran ou ajustez avec des bandes (floues, noires ou blanches). Faites glisser l'image pour choisir ce qui reste dans le cadre et téléchargez-la."
+    },
+    {
+      "question": "Quel ratio choisir pour Instagram ?",
+      "answer": "Le 4:5 (1080×1350) prend le plus de place dans le fil, le 1:1 (1080×1080) est le carré classique et le 9:16 (1080×1920) sert aux Stories et aux Reels."
+    },
+    {
+      "question": "Quelle différence entre 16:9 et 16:10 ?",
+      "answer": "Le 16:10 est un peu plus haut (1,6 contre 1,78). On le trouve sur les ordinateurs portables et les MacBook : 1920×1200 ou 2560×1600 au lieu de 1920×1080 ou 2560×1440."
+    },
+    {
+      "question": "Que veut dire 21:9 ?",
+      "answer": "C'est le nom commercial des écrans ultralarges. Les ratios réels sont 64:27 (2560×1080) et 43:18 (3440×1440), tous deux vers 2.37:1, proches du format cinéma 2.39:1."
+    },
+    {
+      "question": "Mon image est-elle envoyée quelque part ?",
+      "answer": "Non. Les calculs et la conversion de l'image se font dans votre navigateur. L'image n'est jamais envoyée à un serveur."
+    }
+  ],
+  "privacyLine": "Tout est calculé dans votre navigateur. Aucune image n'est envoyée.",
+  "footerTagline": "Calculateur de rapport d'aspect gratuit : trouvez le ratio, redimensionnez sans déformer et convertissez vos images."
 };

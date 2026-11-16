@@ -142,7 +142,7 @@ export default {
       "description": "Convert between HEX, RGB, HSL and CMYK color formats with opacity and contrast tools 100% locally."
     },
     "40": {
-      "description": "Calculate aspect ratios and proportional resolutions for video, images and screens 100% locally."
+      "description": "Aspect ratio calculator: get the ratio of any size, resize without distorting and convert images to 16:9, 9:16 or 1:1."
     },
     "41": {
       "description": "Convert units of measurement: length, weight, temperature, speed, volume and more 100% locally."

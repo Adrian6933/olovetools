@@ -1,96 +1,33 @@
 export default {
-  "frame_constraints": "No cabe un encuadre exacto con este tamaño y múltiplo de píxeles. Aumenta el tamaño o elige un múltiplo menor.",
   "resetHint": "Empezar de nuevo",
   "title": "Aspect Ratio",
-  "badge": "Kit de proporciones",
-  "seo_title": "Calculadora de relación de aspecto | Redimensiona y recorta",
-  "seo_description": "Averigua la proporción de cualquier tamaño, redimensiona con múltiplos seguros para códecs y comprueba cuánto se pierde en un recorte 9:16. Encuadra una imagen real y expórtala. Todo en tu navegador.",
-  "seoHeroTitle": "Cada proporción, y lo que te cuesta",
-  "seoHeroText": "Escribe dos números y obtén la proporción, el decimal, los megapíxeles y el nombre con el que se vende. Después ve más lejos: fija una dimensión y redimensiona con múltiplos seguros para el codificador, o suelta una imagen y comprueba exactamente cuánto se come de ella un marco 9:16.",
-  "description": "Escribe dos números y obtén la proporción, el decimal, los megapíxeles y el nombre con el que se vende. Después suelta una imagen y comprueba exactamente cuánto se come de ella un marco 9:16.",
-  "seoHeroList": [
-    "Reconoce 1.85:1 y 2.39:1, no solo 16:9",
-    "Te dice qué descarta un recorte",
-    "Sin subidas ni cuenta"
-  ],
-  "tab_calculate": "Proporción",
-  "tab_resize": "Redimensionar",
-  "tab_fit": "Encaje y recorte",
-  "tab_presets": "Preajustes",
-  "tabsLabel": "Área de trabajo",
-  "sourceTitle": "Origen (opcional)",
-  "sourceIntro": "La calculadora funciona solo con números escritos: nunca necesitas un archivo. Añade uno únicamente si quieres ver el marco sobre una imagen real.",
-  "chooseFile": "Elegir una imagen o un vídeo",
-  "readDimensions": "Leer sus dimensiones",
-  "waiting": "en espera: todavía no se ha leído nada",
-  "fromTool": "te lo pasó {tool}",
   "removeFile": "Quitar el archivo",
   "errorDecode": "Tu navegador no ha podido descodificar este archivo ({format}). Conviértelo antes: HEIC y algunos AVIF no funcionan en todas partes.",
-  "errorClipboard": "Tu navegador ha bloqueado el acceso al portapapeles.",
-  "label_dimensions": "Dimensiones",
   "label_width": "Anchura",
   "label_height": "Altura",
   "label_max_den": "Denominador máximo",
   "hint_max_den": "Mantiene la proporción legible. Con {n}, 1998×1080 devuelve 1.85:1 en lugar de 999:540.",
   "button_swap": "Intercambiar",
-  "label_result": "Resultado",
-  "label_simplified_ratio": "Proporción simplificada",
-  "label_approx_ratio": "Proporción más cercana",
   "label_error": "se desvía {p}",
-  "label_decimal": "Decimal",
-  "label_megapixels": "Megapíxeles",
-  "label_orientation": "Orientación",
-  "label_input": "Entrada",
   "orient_landscape": "Horizontal",
   "orient_portrait": "Vertical",
   "orient_square": "Cuadrada",
   "placeholder_enter_dims": "Escribe una anchura y una altura para obtener la proporción.",
   "label_original": "Tamaño original",
-  "label_lock_target": "Fija esta dimensión",
-  "target_width": "Anchura",
-  "target_height": "Altura",
   "label_multiple": "Ajusta ambos lados a un múltiplo de",
   "multiple_none": "no",
   "hint_multiple": "H.264 rechaza las dimensiones impares y casi todos los codificadores por hardware prefieren múltiplos de 4 o de 8.",
-  "label_new_size": "Tamaño nuevo",
-  "label_result_dimensions": "Dimensiones resultantes",
-  "label_ratio_kept": "proporción conservada exactamente",
   "label_drift": "la proporción se desvía {p}",
-  "label_scale": "Escala",
-  "label_multiple_short": "Múltiplo",
-  "placeholder_resize": "Escribe el tamaño original y la dimensión que quieres fijar.",
-  "label_editor": "Editor de marco",
   "canvasEmpty": "Carga una imagen para colocarla dentro del marco. No se sube nada, y nada se ejecuta hasta que lo pidas.",
   "canvasHint": "Arrastra para recolocar · rueda para el zoom · Alt o clic derecho alterna recorte y letterbox",
   "holdCompare": "Mantén pulsado para ver el original",
-  "modeCover": "Cubrir (recorta)",
-  "modeContain": "Contener (letterbox)",
   "bar_black": "negro",
   "bar_white": "blanco",
   "bar_blur": "desenfocado",
   "bar_transparent": "transparente",
   "undo": "Deshacer",
   "redo": "Rehacer",
-  "label_output": "Salida",
-  "label_frame": "Marco",
-  "label_cropped": "Descartado",
-  "label_bars": "Barras",
-  "hint_cropped": "del original",
-  "hint_letterbox": "letterbox",
-  "hint_pillarbox": "pillarbox",
-  "fitNeedsSize": "Escribe un tamaño original en la pestaña Redimensionar, o carga un archivo arriba, y aquí aparecerán las cuentas del marco.",
   "label_output_width": "Anchura de salida",
-  "button_download": "Descargar la imagen encuadrada",
-  "exportNeedsFile": "Exportar necesita un archivo. Los números de arriba funcionan sin él.",
-  "shortcutsTitle": "Atajos",
-  "sc_undo": "deshacer, rehacer",
-  "sc_mode": "alternar cubrir / contener",
-  "sc_reset": "recentrar y reiniciar el zoom",
-  "sc_alt": "previsualizar el otro modo",
-  "group_screen": "Pantallas",
-  "group_cinema": "Cine",
-  "group_social": "Redes sociales",
-  "group_print": "Impresión y fotografía",
   "ratio_16_9": "Panorámica HD",
   "ratio_16_10": "Panorámica de portátil",
   "ratio_4_3": "Pantalla clásica",
@@ -111,7 +48,6 @@ export default {
   "ratio_5_4": "Copia 8×10",
   "ratio_7_5": "Copia 5×7",
   "label_snippets": "Listo para pegar",
-  "button_reset": "Reiniciar todo",
   "tooltip_copy": "Copiar",
   "nextStepTitle": "Sigue adelante",
   "nextStepHint": "La imagen encuadrada viaja contigo, sin volver a subirla",
@@ -120,104 +56,132 @@ export default {
   "nextFormat": "Cambiar de formato",
   "nextWatermark": "Añadir marca de agua",
   "nextSocial": "Ajustarla a redes sociales",
-  "howItWorksTitle": "Cómo funciona",
-  "step1Title": "Elige la proporción",
-  "step1Text": "Escribe dos dimensiones o elige uno de los preajustes: pantallas, cine, redes sociales y tamaños de papel.",
-  "step2Title": "Añade una imagen, si quieres",
-  "step2Text": "Es opcional y nunca se ejecuta sola: el archivo espera hasta que pulses el botón que lo lee.",
-  "step3Title": "Mueve el marco tú mismo",
-  "step3Text": "Arrastra para recolocar, usa la rueda para el zoom, mantén pulsado para comparar con el original y Alt para alternar entre recorte y letterbox.",
-  "step4Title": "Llévate el resultado",
-  "step4Text": "Copia la línea de CSS, Tailwind o FFmpeg, descarga la imagen encuadrada o mándala directamente a otra herramienta.",
-  "features": [
-    {
-      "title": "Proporciones de cine, no solo 16:9",
-      "text": "Un simple máximo común divisor convierte 1998×1080 en 999:540, que no le sirve a nadie. Una aproximación racional acotada te da 1.85:1 y te dice cuánto se desvía."
-    },
-    {
-      "title": "Dice qué destruye un recorte",
-      "text": "Meter una foto de 4000×3000 en 9:16 descarta el 58% de ella. Ese número está en pantalla antes de decidir, junto a las barras de letterbox de la otra opción."
-    },
-    {
-      "title": "Dimensiones seguras para el codificador",
-      "text": "H.264 rechaza los lados impares y los codificadores por hardware prefieren múltiplos de 4 o de 8. Ajusta ambos lados a 2, 4, 8 o 16 y comprueba cuánto se desvió la proporción."
-    },
-    {
-      "title": "Al soltar el archivo no pasa nada",
-      "text": "Un archivo soltado solo espera. Leerlo, descodificarlo y dibujarlo empieza cuando pulsas el botón, y la vía manual no necesita ningún archivo."
-    },
-    {
-      "title": "El marco lo mueves tú",
-      "text": "Arrastra, haz zoom sobre el cursor, mantén pulsado para comparar con el original, Alt para ver el otro modo y Ctrl+Z hasta el principio. Deshacer guarda seis números por paso, no mapas de bits."
-    },
-    {
-      "title": "Directo a la siguiente herramienta",
-      "text": "Manda la imagen encuadrada a CropSnap, CompressSnap, FormatFlow, WatermarkSnap o SocialBolt sin descargarla y volverla a subir."
-    }
-  ],
-  "seoBrowserSpeedTitle": "Se ejecuta donde ya está tu archivo",
-  "seoBrowserSpeedText": "La aritmética son unas pocas funciones puras y el encuadre es un canvas en tu propia pestaña. Las imágenes las descodifica el navegador, se dibujan en local y se exportan con canvas.toBlob. Ninguna imagen, dimensión o nombre de archivo se transmite nunca, y la herramienta sigue funcionando sin conexión.",
-  "seoUseCaseTitle": "Los momentos en los que esto te salva de verdad",
-  "seoUseCaseText": "Una foto horizontal que tiene que convertirse en un Reel. Una captura de 3440×1440 que vas a meter con letterbox en una diapositiva 16:9. Una especificación de miniatura que pide 1280×720 cuando tu exportación es 1279×721. Un cartel a 2.39:1 que tiene que sobrevivir a un recorte cuadrado para un feed. Cada uno es una decisión de proporción con un coste asociado, y el coste es lo que obtienes aquí.",
-  "seoPrivacyTitle": "Nada que filtrar",
-  "seoPrivacyText": "No hay ningún punto de subida. La única salvedad, dicha claramente: esta página lleva publicidad, así que la red de anuncios ve la visita como en cualquier otro sitio, pero nunca ve tu archivo, porque tu archivo no sale de la pestaña. Ciérrala y todo desaparece, incluido el historial de edición.",
-  "seoKeywordsTitle": "Palabras clave",
-  "seoKeywords": [
-    "calculadora de proporción de aspecto",
-    "redimensionar imagen proporcionalmente",
-    "calculadora de proporción 16:9",
-    "proporción de cine 2.39:1",
-    "recortar a 9:16",
-    "calculadora de letterbox",
-    "calculadora de dimensiones de imagen",
-    "proporción a partir de una imagen"
-  ],
   "faqTitle": "Preguntas frecuentes",
-  "faq": [
-    {
-      "question": "¿Se sube algo?",
-      "answer": "No. Los cálculos son aritmética pura y el encuadre ocurre en un canvas dentro de tu pestaña. Tu imagen la descodifica el navegador y la exporta el navegador. Desconecta la red después de cargar la página y todo sigue funcionando. La página sí lleva anuncios, que es lo único aquí que habla con un servidor, y nunca ve tu archivo."
-    },
-    {
-      "question": "¿Por qué 1998×1080 sale como 1.85:1 y no como 999:540?",
-      "answer": "Porque 999:540 es la respuesta exacta y además inútil. Dividir por el máximo común divisor solo ayuda cuando el resultado es pequeño; más allá buscamos la mejor fracción con un denominador por debajo del límite que fijes, que es como se escriben de verdad las proporciones de cine 1.85:1 y 2.39:1. Cuando esa fracción no es exacta, el error se muestra al lado."
-    },
-    {
-      "question": "¿Qué hace el control de \"denominador máximo\"?",
-      "answer": "Limita lo complicada que puede llegar a ser la proporción. Los valores bajos fuerzan un par simple y memorable y aceptan un pequeño error; los altos persiguen la exactitud y acaban devolviéndote la fracción en bruto. Cuarenta es un buen término medio: 16:9, 4:3, 2.39:1 y 1.414:1 lo superan todos."
-    },
-    {
-      "question": "¿Por qué querría ajustar las dimensiones a un múltiplo de 2, 4 u 8?",
-      "answer": "H.264 no puede codificar un fotograma con anchura o altura impar, y la mayoría de codificadores y escaladores por hardware trabajan mejor con múltiplos de 4 u 8 por cómo se submuestrea la crominancia. Redondear desplaza mínimamente la proporción, así que la desviación se muestra en porcentaje y tú decides si importa."
-    },
-    {
-      "question": "¿Cuál es la diferencia entre cubrir y contener?",
-      "answer": "Cubrir llena el marco y corta todo lo que sobresale. Contener mete la imagen entera y añade barras: letterbox arriba y abajo, pillarbox a los lados. La herramienta imprime exactamente lo que cuesta cada uno: el porcentaje perdido en el recorte o el grosor de las barras en píxeles. Mantén Alt para ver el otro modo sin cambiar nada."
-    },
-    {
-      "question": "¿Puedo recortar una imagen aquí de verdad, o solo calcular?",
-      "answer": "Las dos cosas. Carga una imagen, coloca el marco arrastrando, haz zoom con la rueda y descarga el resultado como PNG, JPEG o WebP con la anchura de salida que elijas. Si prefieres conservar la imagen entera, cambia a contener y elige qué rellena las barras: negro, blanco, transparente o una copia desenfocada de la propia imagen."
-    },
-    {
-      "question": "¿Soltar un archivo pone algo en marcha?",
-      "answer": "No, y es a propósito. El archivo se queda en espera mostrando solo su nombre y su tamaño. No se descodifica nada hasta que pulsas el botón que lee sus dimensiones, y puedes quitarlo antes de que eso llegue a ocurrir."
-    },
-    {
-      "question": "Mi foto HEIC del iPhone no se abre.",
-      "answer": "La descodificación de HEIC depende del navegador y del sistema operativo, y la mayoría de navegadores de escritorio siguen rechazándola. Lo mismo pasa con algunos archivos AVIF. Conviértela antes a JPEG o PNG (FormatFlow, en esta misma suite, también lo hace en local) y se cargará aquí. Recibirás un mensaje claro con el formato, no un fallo silencioso."
-    },
-    {
-      "question": "¿A dónde va el resultado después?",
-      "answer": "Directo a otra herramienta, si quieres. Los botones bajo el editor entregan la imagen encuadrada a CropSnap, CompressSnap, FormatFlow, WatermarkSnap o SocialBolt a través del almacenamiento del propio navegador, así que no pasa por tu carpeta de Descargas."
-    }
-  ],
-  "footerTagline": "Proporciones de aspecto, redimensionado proporcional y cuentas honestas de recorte, íntegramente en tu navegador.",
   "footerCredit": "Parte de la suite oLoveTools",
-  "scrollTopLabel": "Volver arriba",
   "privacyPolicy": "Política de privacidad",
   "termsOfService": "Términos del servicio",
   "cookiePolicy": "Política de cookies",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "¡Copiado!",
-  "contactForIdeas": "Contacto para ideas y comentarios:"
+  "contactForIdeas": "Contacto para ideas y comentarios:",
+  "seo_title": "Calculadora de relación de aspecto: calcula y convierte (16:9, 9:16)",
+  "seo_title_exact": true,
+  "seo_description": "Calculadora de relación de aspecto gratis: saca la proporción de cualquier tamaño (1920×1080 = 16:9), cambia el tamaño sin deformar, convierte una imagen a 9:16, 1:1 o 4:5 y mira el tamaño para YouTube, TikTok e Instagram.",
+  "h1": "Calculadora de relación de aspecto",
+  "subtitle": "Saca la proporción de cualquier tamaño, cambia el tamaño sin deformar y convierte una imagen a 16:9, 9:16 o 1:1. Gratis y en tu navegador.",
+  "quickRatios": "Proporciones habituales",
+  "calcOriginal": "Tamaño original (o una proporción)",
+  "calcNew": "Nuevo tamaño, misma proporción",
+  "calcNewHint": "Escribe el ancho o el alto que necesitas: el otro lado se calcula solo.",
+  "label_simplified_ratio": "Relación de aspecto",
+  "rotated": "girado",
+  "target_width": "Nuevo ancho",
+  "target_height": "Nuevo alto",
+  "sameRatioTitle": "Tamaños con esta proporción",
+  "advancedTitle": "Opciones avanzadas y código",
+  "framerTitle": "Convertir una imagen a otra proporción",
+  "framerIntro": "Pasa una foto horizontal a 9:16 para Reels y TikTok, o cualquier imagen a cuadrado. Recórtala o añade bandas y descárgala.",
+  "framerDrop": "Elige o suelta una imagen",
+  "framerDropHint": "O pégala con Ctrl+V. JPG, PNG, WebP o el primer fotograma de un vídeo.",
+  "framerTarget": "Convertir a",
+  "framerCropped": "Se recorta el {p} de la imagen",
+  "framerBars": "Las bandas ocupan el {p} del marco",
+  "framerOther": "Otra imagen",
+  "modeCover": "Recortar para llenar",
+  "modeContain": "Encajar con bandas",
+  "button_download": "Descargar la imagen",
+  "platformsTitle": "Tamaños para redes sociales y pantallas",
+  "platformsIntro": "Tamaños recomendados para cada plataforma. Pulsa «Usar» para cargarlo en la calculadora.",
+  "colPlatform": "Plataforma",
+  "colUse": "Uso",
+  "colRatio": "Proporción",
+  "colSize": "Tamaño (px)",
+  "colDecimal": "Decimal",
+  "colSizes": "Tamaños típicos",
+  "useBtn": "Usar",
+  "useInCalc": "Usar en la calculadora",
+  "plat_video": "Vídeo",
+  "plat_shorts": "Shorts",
+  "plat_thumbnail": "Miniatura",
+  "plat_banner": "Banner",
+  "plat_square": "Post cuadrado",
+  "plat_portrait": "Post vertical",
+  "plat_stories": "Stories y Reels",
+  "plat_link": "Imagen de enlace",
+  "plat_cover": "Foto de portada",
+  "plat_image": "Imagen de post",
+  "plat_header": "Cabecera",
+  "plat_pin": "Pin",
+  "plat_screen": "Pantalla",
+  "howTitle": "Cómo calcular la relación de aspecto",
+  "howIntro": "La relación de aspecto es la proporción entre el ancho y el alto, escrita con dos números: 16:9 significa 16 partes de ancho por cada 9 de alto. No dice nada del tamaño, solo de la forma.",
+  "howSteps": [
+    "Toma el ancho y el alto en píxeles, por ejemplo 1920 × 1080.",
+    "Busca su máximo común divisor (el número más grande que divide a los dos): 120.",
+    "Divide los dos lados entre él: 1920 ÷ 120 = 16 y 1080 ÷ 120 = 9. La proporción es 16:9.",
+    "Para cambiar el tamaño sin perderla, multiplica el lado nuevo por la proporción: nuevo ancho = nuevo alto × 16 ÷ 9."
+  ],
+  "exampleTitle": "Ejemplo",
+  "exampleResize": "Misma proporción con 720 px de alto:",
+  "gcdLabel": "MCD",
+  "sections": [
+    {
+      "title": "Cambiar el tamaño sin deformar",
+      "text": "Una imagen se estira cuando el ancho y el alto cambian en distinta medida. Mantén la proporción y fija un lado: escribe el nuevo ancho o el nuevo alto en la calculadora y el otro sale solo.\n\nEn vídeo, los dos lados tienen que ser pares (H.264 no acepta impares); activa «ajustar a un múltiplo» en las opciones avanzadas para tener tamaños válidos."
+    },
+    {
+      "title": "De 16:9 a 9:16 (de horizontal a vertical)",
+      "text": "Un vídeo 16:9 no cabe en una pantalla 9:16: o recortas los lados o añades bandas. Recortar llena la pantalla pero pierde unos dos tercios de la imagen; las bandas lo conservan todo pero dejan espacio vacío.\n\nEn «Convertir una imagen a otra proporción» ves exactamente cuánto se recorta antes de descargar, y puedes arrastrar la imagen para dejar dentro lo importante."
+    },
+    {
+      "title": "Proporciones de cine: 1.85:1 y 2.39:1",
+      "text": "En cine se escriben como un decimal contra 1: 1.85:1 es el formato «flat» y 2.39:1 el «scope», el panorámico anamórfico. Un divisor normal convertiría 1998×1080 en 999:540; esta calculadora lo reconoce como 1.85:1.\n\nLos monitores ultrapanorámicos se venden como 21:9, pero 2560×1080 es en realidad 64:27 y 3440×1440 es 43:18. Todos rondan 2.37:1."
+    },
+    {
+      "title": "La relación de aspecto en CSS y en código",
+      "text": "En la web, la propiedad CSS aspect-ratio mantiene la forma de una caja a cualquier ancho: aspect-ratio: 16 / 9. Abre las opciones avanzadas para copiar la línea de CSS, Tailwind, FFmpeg o ImageMagick de la proporción y el tamaño actuales."
+    }
+  ],
+  "chartTitle": "Proporciones de aspecto más comunes",
+  "chartText": "Las proporciones que usan pantallas, cámaras, cine, redes sociales y papel, con su valor decimal y sus tamaños típicos en píxeles.",
+  "faq": [
+    {
+      "question": "¿Qué relación de aspecto tiene 1920×1080?",
+      "answer": "16:9. El máximo común divisor de 1920 y 1080 es 120, y 1920 ÷ 120 = 16, 1080 ÷ 120 = 9. La misma proporción tienen 1280×720, 2560×1440 y 3840×2160 (4K)."
+    },
+    {
+      "question": "¿Cómo se calcula la relación de aspecto?",
+      "answer": "Se dividen el ancho y el alto entre su máximo común divisor. Escribe los dos números en la calculadora de arriba y obtienes la proporción, su valor decimal y el nombre con el que se conoce."
+    },
+    {
+      "question": "¿Cómo cambio el tamaño de una imagen sin que se deforme?",
+      "answer": "Manteniendo la proporción: nuevo alto = nuevo ancho × alto original ÷ ancho original. En la calculadora escribe el nuevo ancho o alto y el otro lado aparece solo."
+    },
+    {
+      "question": "¿Qué tamaño es 9:16?",
+      "answer": "El tamaño habitual es 1080×1920 píxeles, el de TikTok, Instagram Reels y Stories y YouTube Shorts. 720×1280 es la versión más pequeña."
+    },
+    {
+      "question": "¿Cómo paso una imagen de 16:9 a 9:16?",
+      "answer": "Cárgala en «Convertir una imagen a otra proporción», elige 9:16 y decide entre recortar para llenar la pantalla o encajarla con bandas (desenfocadas, negras o blancas). Arrastra la imagen para elegir qué queda dentro y descárgala."
+    },
+    {
+      "question": "¿Qué proporción es mejor para Instagram?",
+      "answer": "4:5 (1080×1350) es la que más espacio ocupa en el feed, 1:1 (1080×1080) es el cuadrado clásico y 9:16 (1080×1920) es para Stories y Reels."
+    },
+    {
+      "question": "¿Qué diferencia hay entre 16:9 y 16:10?",
+      "answer": "16:10 es algo más alta (1,6 frente a 1,78). Es habitual en portátiles y MacBook: 1920×1200 o 2560×1600 en vez de 1920×1080 o 2560×1440."
+    },
+    {
+      "question": "¿Qué significa 21:9?",
+      "answer": "Es el nombre comercial de los monitores ultrapanorámicos. Las proporciones reales son 64:27 (2560×1080) y 43:18 (3440×1440), ambas cerca de 2.37:1, casi el formato de cine 2.39:1."
+    },
+    {
+      "question": "¿Se sube mi imagen a algún sitio?",
+      "answer": "No. Los cálculos y la conversión de la imagen se hacen en tu navegador. La imagen nunca se envía a ningún servidor."
+    }
+  ],
+  "privacyLine": "Todo se calcula en tu navegador. No se sube ninguna imagen.",
+  "footerTagline": "Calculadora de relación de aspecto gratis: saca la proporción, cambia el tamaño sin deformar y convierte imágenes a cualquier formato."
 };
