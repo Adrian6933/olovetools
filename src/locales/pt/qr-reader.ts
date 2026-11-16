@@ -1,28 +1,8 @@
 export default {
   "resetHint": "Começar de novo",
   "title": "QR Reader",
-  "badge": "Leitor de códigos QR",
-  "description": "Leia um QR com a câmara, uma imagem ou a área de transferência e veja exatamente o que traz dentro. Mostra-lhe o destino: nunca o abre por si.",
-  "seo_title": "QR Reader | Leitor de QR online grátis que mostra o conteúdo",
-  "seo_description": "Leia qualquer código QR a partir da câmara, de uma foto ou de uma captura e veja todo o conteúdo antes de abrir seja o que for. Deteta domínios sósias e encurtadores. 100 % local, grátis e sem app.",
-  "sourceImage": "Imagem",
-  "sourceCamera": "Câmara",
-  "sourceText": "Texto simples",
-  "dropTitle": "Largue aqui uma imagem com QR",
-  "dropHint": "PNG, JPG, WebP, capturas… ou carregue em Ctrl+V em qualquer ponto desta página",
-  "browseBtn": "Escolher um ficheiro",
-  "pasteBtn": "Colar da área de transferência",
-  "startCameraBtn": "Ligar a câmara",
-  "stopCameraBtn": "Desligar a câmara",
-  "torchBtn": "Lanterna",
-  "cameraDefault": "Câmara predefinida",
-  "cameraIdle": "A câmara fica desligada até a ligar, e os fotogramas só são lidos em memória.",
   "manualLabel": "Cole o conteúdo em bruto de um código QR",
-  "manualHint": "Salta o descodificador por completo: útil quando já tem o texto e só quer que seja desmontado e verificado.",
   "analyseBtn": "Analisar",
-  "emptyResult": "O que o código contiver aparecerá aqui, por inteiro, antes de acontecer seja o que for.",
-  "scanAgainBtn": "Ler outro",
-  "historyTitle": "Esta sessão",
   "clearBtn": "Limpar",
   "copyBtn": "Copiar",
   "showBtn": "Ver",
@@ -31,7 +11,6 @@ export default {
   "openAnywayBtn": "Abrir mesmo assim",
   "destinationLabel": "Destino completo",
   "rawLabel": "Conteúdo em bruto",
-  "saveContactBtn": "Guardar como .vcf",
   "kindUrl": "Ligação",
   "kindWifi": "Rede WiFi",
   "kindContact": "Cartão de contacto",
@@ -77,118 +56,178 @@ export default {
   "warnLongUrl": "A ligação é invulgarmente longa, o que costuma servir para enterrar o destino real.",
   "warnOpenWifi": "Esta rede não tem palavra-passe, por isso o tráfego nela não vai cifrado.",
   "warnExecutable": "A ligação aponta diretamente para um ficheiro instalável.",
-  "errorNoCode": "Não encontrámos nenhum código QR nessa imagem. Tente uma foto mais próxima e nítida.",
   "errorBadImage": "Não foi possível ler esse ficheiro como imagem.",
-  "errorCameraDenied": "A permissão da câmara foi negada. Ainda pode ler uma imagem ou colá-la.",
-  "errorCameraMissing": "Não há nenhuma câmara disponível neste dispositivo.",
-  "errorNoClipboardImage": "Não há nenhuma imagem na sua área de transferência.",
   "errorClipboardBlocked": "O seu navegador bloqueou o acesso à área de transferência. Carregue antes em Ctrl+V sobre a página.",
-  "makerCta": "Prefere criar um QR? Abra o QRBolt",
   "makerCtaLong": "Criar um código QR",
-  "makerCardTitle": "Precisa de criar um?",
-  "makerCardText": "O QRBolt faz códigos QR com estilo e prova que são legíveis antes de os imprimir.",
-  "howItWorksTitle": "Como funciona",
-  "step1Title": "Traga o código",
-  "step1Text": "Aponte a câmara, largue uma captura, ou simplesmente cole da área de transferência.",
-  "step2Title": "É descodificado aqui",
-  "step2Text": "O descodificador corre no seu navegador. A imagem nunca sai da máquina.",
-  "step3Title": "Leia antes de agir",
-  "step3Text": "Vê o destino completo, os campos que traz dentro e qualquer sinal de alarme.",
-  "step4Title": "E depois decide",
-  "step4Text": "Copie um campo, guarde o contacto ou abra a ligação — só se for essa a sua escolha.",
-  "scrollTopLabel": "Voltar ao topo",
-  "features": [
-    {
-      "title": "Mostra, nunca redireciona",
-      "text": "Um autocolante com QR pode apontar para onde quer que seja. Este leitor escreve o destino por inteiro e espera que decida."
-    },
-    {
-      "title": "Assinala os truques do costume",
-      "text": "Domínios sósias, alfabetos misturados, encurtadores, endereços IP em bruto, credenciais embutidas e ligações para instaladores."
-    },
-    {
-      "title": "100 % local",
-      "text": "O descodificador corre no seu navegador. Nem a imagem, nem a leitura, nem a ligação chegam alguma vez a um servidor."
-    },
-    {
-      "title": "Câmara, ficheiro ou área de transferência",
-      "text": "Leia em direto com a câmara traseira, largue uma captura, ou carregue apenas em Ctrl+V na página."
-    },
-    {
-      "title": "Percebe a estrutura",
-      "text": "WiFi, vCard, MeCard, e-mail, SMS, telefone, mapa e eventos de calendário são separados em campos identificados."
-    },
-    {
-      "title": "Nada fica guardado",
-      "text": "A lista de leituras vive no separador e desaparece assim que o fecha. Não há histórico em servidor nenhum."
-    }
-  ],
   "footerCredit": "Part of the oLoveTools suite",
-  "seoHeroTitle": "Veja o que diz um QR antes de lhe obedecer",
-  "seoHeroText": "A câmara do seu telemóvel lê um código QR e oferece-se para o abrir, mostrando normalmente um domínio encurtado e mais nada. É exatamente dessa brecha que vivem os autocolantes fraudulentos em parquímetros e mesas de restaurante. Este leitor faz o contrário: descodifica o código, escreve o destino completo, separa os conteúdos estruturados em campos identificados e aponta os truques que fazem uma ligação má parecer vulgar.",
-  "seoHeroList": [
-    "Nunca abre uma ligação sozinho",
-    "Funciona offline depois de carregado",
-    "Sem app, sem conta, sem envios"
-  ],
-  "seoBrowserSpeedTitle": "Tudo acontece dentro do separador",
-  "seoBrowserSpeedText": "O descodificador é uma pequena biblioteca JavaScript que corre na sua máquina. Os fotogramas da câmara são amostrados em memória e deitados fora, as imagens que larga são lidas localmente, e nada — nem a foto, nem o texto descodificado, nem a ligação — é alguma vez enviado para lado nenhum.",
-  "seoSecondaryTitle": "Um leitor de QR para quem prefere olhar primeiro",
-  "seoKeywordsTitle": "Palavras-chave",
-  "seoKeywords": [
-    "Leitor de QR online",
-    "Ler QR a partir de imagem",
-    "Scanner de QR sem app",
-    "Ler código QR de uma foto",
-    "Verificar se um QR é seguro",
-    "Descodificar QR online",
-    "Leitor de QR WiFi",
-    "Ver conteúdo de um QR"
-  ],
-  "seoUseCaseTitle": "Autocolantes, faturas, cartazes e embalagens",
-  "seoUseCaseText": "Um código colado por cima do verdadeiro num parquímetro, um QR de pagamento numa fatura inesperada, um cartaz na rua, um cartão de visita que lhe acabaram de dar: todos merecem ser lidos antes de abertos. Aponte a câmara ou largue a foto e tem o destino em texto simples.",
-  "seoPrivacyTitle": "Não pode vazar o que nunca envia",
-  "seoPrivacyText": "Não há ponto de envio nem análise sobre o conteúdo. As palavras-passe de WiFi encontradas dentro de um código ficam tapadas até pedir para as ver, e a lista da sessão vive apenas na memória do separador, por isso fechá-lo basta para apagar tudo.",
   "faqTitle": "Perguntas frequentes",
-  "faq": [
-    {
-      "question": "Abre a ligação automaticamente?",
-      "answer": "Nunca. É esse o sentido inteiro da ferramenta. Tem o URL completo, o domínio numa linha própria e a lista de tudo o que é questionável. Abrir exige um clique deliberado, e se a ligação parecer perigosa esse botão passa a ter aspeto de aviso."
-    },
-    {
-      "question": "A minha imagem ou o que a câmara vê é enviado para algum lado?",
-      "answer": "Não. O descodificador é uma biblioteca JavaScript a correr no seu navegador. Os fotogramas da câmara são copiados para um canvas em memória e descartados de imediato, e as imagens que larga são lidas com a API de ficheiros do próprio navegador. Nada é transmitido."
-    },
-    {
-      "question": "O que é a fraude com códigos QR?",
-      "answer": "Um código impresso que leva a um sítio hostil, muitas vezes um autocolante colado por cima de um legítimo num parquímetro, numa ementa ou num terminal de pagamento. Resulta porque a app da câmara quase nada lhe mostra antes de abrir a página. Ler o código aqui primeiro fecha essa brecha."
-    },
-    {
-      "question": "Porque me avisa sobre uma ligação encurtada?",
-      "answer": "Porque um encurtador esconde o destino real atrás de um redirecionamento: o que consegue ver não é onde vai acabar. De propósito não o resolvemos por si: fazê-lo contactaria esse servidor em seu nome e diria-lhe que leu o código."
-    },
-    {
-      "question": "O que é um domínio em punycode ou com alfabetos misturados?",
-      "answer": "Algumas letras são idênticas entre alfabetos — um а cirílico aparece exatamente como um a latino. Um domínio construído assim lê-se como um nome que reconhece mas pertence a outra pessoa. O punycode (xn--) é a forma como esse nome é codificado, por isso assinalamos os dois casos."
-    },
-    {
-      "question": "Não consegue ler a minha foto. O que posso fazer?",
-      "answer": "Aproxime-se para o código ocupar mais do enquadramento, segure o telemóvel de frente em vez de na diagonal, e evite reflexos de um ecrã ou da plastificação. A ferramenta já tenta de novo com recortes cada vez maiores, mas a uma foto desfocada ou muito inclinada resta demasiado pouco detalhe para recuperar."
-    },
-    {
-      "question": "Que tipos de conteúdo de QR percebe?",
-      "answer": "Ligações, texto simples, credenciais de WiFi, contactos vCard e MeCard, e-mail, SMS, números de telefone, coordenadas de mapa e eventos de calendário. Os estruturados são desdobrados em campos identificados que pode copiar um a um, e um contacto pode ser guardado logo num ficheiro .vcf."
-    }
-  ],
-  "footerTagline": "Leitor de códigos QR gratuito que lhe mostra o conteúdo em vez de o abrir.",
   "privacyPolicy": "Política de Privacidade",
   "termsOfService": "Termos de Serviço",
   "cookiePolicy": "Política de Cookies",
   "contactForIdeas": "Contact for ideas and comments:",
   "emailCopied": "Copied!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
-  "privacyContent": "A sua privacidade é importante para nós.\n\nToda a descodificação acontece localmente no seu navegador. Nenhuma imagem, fotograma de câmara, texto descodificado ou ligação é enviado para os nossos servidores, e não registamos o que lê.\n\nA lista da sessão vive na memória do seu separador e desaparece quando o fecha.",
   "termsContent": "Ao usar o QR Reader, aceita estes termos.\n\n1. Esta ferramenta é fornecida «tal como está», sem garantias.\n2. Os avisos de segurança são heurísticas, não uma garantia: um código sem avisos também pode ser malicioso.\n3. É responsável por aquilo que decidir abrir.\n4. Reservamo-nos o direito de alterar estes termos a qualquer momento.",
   "cookiesContent": "Usamos cookies para melhorar a sua experiência.\n\n1. Cookies essenciais: necessários para o funcionamento do site.\n2. Cookies de preferências: guardam o seu idioma e as suas preferências de cookies.\n\nPode configurá-los nas definições do navegador.",
-  "contact": "Contato"
+  "contact": "Contato",
+  "seo_title": "Leitor de QR Code online grátis: câmera, imagem, tela ou PDF",
+  "seo_title_exact": true,
+  "seo_description": "Leia QR Codes e códigos de barras online e grátis: com a câmera do celular ou a webcam, de uma foto, print, PDF ou direto da sua tela. Mostra a senha de um QR de Wi-Fi, contatos e links, e avisa sobre golpes. Nada é enviado.",
+  "h1": "Leitor de QR Code online",
+  "subtitle": "Leia QR Codes e códigos de barras com a câmera, de uma foto, um print, um PDF ou da sua própria tela. Grátis, sem app e sem enviar nada.",
+  "heroPoints": [
+    "Sem app e sem cadastro",
+    "Nada sai do seu aparelho",
+    "Nunca abre links sozinho"
+  ],
+  "srcCamera": "Ler com a câmera",
+  "srcCameraHint": "Aponte para o código e ele é lido sozinho.",
+  "srcWebcam": "Usar a webcam",
+  "srcUpload": "Foto ou PDF",
+  "srcPaste": "Colar imagem",
+  "srcScreen": "Ler um QR da minha tela",
+  "srcScreenHint": "Para um código em outra janela, numa videochamada ou num site",
+  "srcText": "Já tenho o texto do código",
+  "dropTitle": "Solte aqui uma imagem ou um PDF",
+  "dropHint": "ou pressione Ctrl+V para colar um print",
+  "busyReading": "Procurando códigos…",
+  "busyPdf": "Lendo a página {n} de {total}…",
+  "busyScreen": "Escolha a janela, aba ou tela onde está o código…",
+  "screenSearching": "Procurando um código na sua tela…",
+  "pdfTruncated": "Só as primeiras {n} páginas foram verificadas.",
+  "errorNoCode": "Nenhum código encontrado nessa imagem. Tente uma foto mais de perto e nítida, ou recorte em volta do código.",
+  "errorNoCodePdf": "Não há QR Code nem código de barras nesse PDF.",
+  "errorPdf": "Não foi possível abrir esse PDF.",
+  "errorScreenNoCode": "Nenhum código apareceu na tela compartilhada. Aumente o código ou compartilhe a janela onde ele está.",
+  "errorCameraDenied": "O acesso à câmera está bloqueado. Permita pelo cadeado ao lado do endereço (no iPhone: Ajustes › Safari › Câmera) ou use uma foto.",
+  "errorCameraMissing": "Este aparelho não tem câmera. Use uma foto ou um print.",
+  "errorInsecure": "A câmera só funciona com conexão segura (https).",
+  "errorNoClipboardImage": "Não há imagem na área de transferência. Copie antes um print do código.",
+  "emptyResult": "O conteúdo do código aparece aqui, completo, antes de qualquer coisa ser aberta.",
+  "resultTitle": "Resultado",
+  "foundCount": "{n} códigos encontrados",
+  "pageLabel": "pág. {n}",
+  "scanAgainBtn": "Ler outro",
+  "cameraTitle": "Leitor com câmera",
+  "cameraStarting": "Ligando a câmera…",
+  "cameraHint": "Aponte para um QR Code ou código de barras",
+  "cameraHintContinuous": "Aponte para cada código. Eles vão sendo guardados.",
+  "closeBtn": "Fechar",
+  "soundBtn": "Bipe ao ler",
+  "torchBtn": "Lanterna",
+  "switchCameraBtn": "Trocar de câmera",
+  "zoomLabel": "Zoom",
+  "continuousBtn": "Vários códigos",
+  "finishBtn": "Pronto ({n})",
+  "kindProduct": "Código de barras de produto",
+  "kindIsbn": "Livro (ISBN)",
+  "fieldGtin": "Número do código",
+  "fieldIsbn": "ISBN",
+  "fieldFormat": "Tipo",
+  "copyPasswordBtn": "Copiar senha",
+  "shareWifiBtn": "Mostrar QR para compartilhar",
+  "shareWifiHint": "Outro celular pode entrar na rede lendo este código com a câmera.",
+  "wifiJoinHint": "Um site não consegue conectar ao Wi-Fi por você: copie a senha e cole nas configurações de Wi-Fi.",
+  "badCheckDigit": "O dígito verificador não confere, o número pode ter sido lido errado. Leia de novo.",
+  "searchOnBtn": "Buscar no {site}",
+  "copyTextBtn": "Copiar texto",
+  "searchWebBtn": "Buscar na web",
+  "addCalendarBtn": "Adicionar à agenda",
+  "openMapBtn": "Abrir no mapa",
+  "callBtn": "Ligar",
+  "sendSmsBtn": "Escrever o SMS",
+  "writeEmailBtn": "Escrever o e-mail",
+  "shareBtn": "Compartilhar",
+  "saveContactBtn": "Salvar contato",
+  "yes": "Sim",
+  "historyTitle": "Suas leituras",
+  "historyEmpty": "Os códigos que você ler vão aparecer aqui.",
+  "historyOff": "O histórico está desativado.",
+  "exportCsvBtn": "Exportar CSV",
+  "keepHistoryLabel": "Guardar histórico neste aparelho",
+  "historyPrivacy": "Fica só neste navegador e nunca é enviado para lugar nenhum.",
+  "makerCardTitle": "Precisa criar um QR Code?",
+  "makerCardText": "O QRBolt cria QR Codes estilizados e confere se eles são lidos antes de imprimir.",
+  "guideTitle": "Como ler um QR Code online",
+  "guideIntro": "São quatro jeitos, dependendo de onde está o código. Todos funcionam no navegador, no Android, iPhone, Windows e Mac, sem instalar nada.",
+  "guideSteps": [
+    {
+      "title": "No celular: com a câmera",
+      "text": "Toque em “Ler com a câmera”, permita o acesso na primeira vez e aponte para o código. Ele é lido sozinho, o celular vibra e mostra o conteúdo. Use a lanterna com pouca luz e o zoom para códigos pequenos ou distantes."
+    },
+    {
+      "title": "No computador: arraste ou cole uma imagem",
+      "text": "O QR está num e-mail, numa conversa ou numa foto? Arraste o arquivo para o quadro, ou tire um print e pressione Ctrl+V nesta página. Ele também encontra códigos pequenos, girados ou com cores invertidas."
+    },
+    {
+      "title": "Um código na sua tela",
+      "text": "Para um QR que aparece numa videochamada, num site ou em outro programa, toque em “Ler um QR da minha tela”, escolha a janela e ele é lido direto dali. Não precisa do celular."
+    },
+    {
+      "title": "Dentro de um PDF",
+      "text": "Ingressos, boletos e cartões de embarque costumam chegar em PDF. Solte o arquivo e todas as páginas são verificadas; se houver vários códigos, cada um aparece com sua página."
+    }
+  ],
+  "sections": [
+    {
+      "title": "Ver a senha de um QR Code de Wi-Fi",
+      "text": "Um QR de Wi-Fi guarda o nome da rede, o tipo de segurança e a senha. Ao ler aqui você vê os três, com um botão para copiar a senha e colar onde precisar, por exemplo num notebook que não lê códigos.\n\nVocê também pode mostrar o mesmo QR na tela para outra pessoa entrar na rede apontando o celular."
+    },
+    {
+      "title": "Também leitor de código de barras",
+      "text": "Não é só um leitor de QR. Ele lê os códigos de barras de produtos (EAN-13, UPC), livros (ISBN), pacotes e etiquetas (Code 128, Code 39, ITF), além de Data Matrix, Aztec e PDF417, o dos cartões de embarque e documentos.\n\nPara produtos e livros você recebe o número e um botão de busca. Ative “Vários códigos” na câmera para ler uma sequência e exportar em CSV."
+    },
+    {
+      "title": "Olhe antes de abrir: golpes com QR Code",
+      "text": "Um adesivo sobre o código verdadeiro de um parquímetro, um QR de pagamento numa carta inesperada, o cardápio de um restaurante: o golpe do QR Code funciona porque a câmera abre o link quase sem mostrar.\n\nEste leitor nunca abre nada sozinho. Ele mostra o endereço completo e avisa sobre domínios que imitam outros, alfabetos misturados, encurtadores de link, endereços IP, senhas dentro do link e links para arquivos instaláveis."
+    },
+    {
+      "title": "Privado: nada é enviado",
+      "text": "A leitura acontece dentro do seu navegador, com um motor que roda no seu próprio aparelho. Fotos, imagens da câmera, PDFs e o conteúdo dos códigos não vão para nenhum servidor, e depois de carregada a página funciona até sem internet.\n\nO histórico fica só neste navegador. Você pode desativar ou apagar quando quiser."
+    }
+  ],
+  "formatsTitle": "Códigos que ele lê",
+  "formatsText": "Todos os códigos 2D e de barras comuns, de qualquer ângulo, escuros sobre claro ou claros sobre escuro.",
+  "formats2d": "Códigos 2D",
+  "formats1d": "Códigos de barras",
+  "faq": [
+    {
+      "question": "Como ler um QR Code no computador?",
+      "answer": "Se o código está numa imagem, solte o arquivo aqui ou tire um print e pressione Ctrl+V. Se aparece na tela (videochamada, site, leitor de PDF), use “Ler um QR da minha tela” e escolha a janela. Para um código impresso, use a webcam."
+    },
+    {
+      "question": "Como ler um QR Code de uma foto ou print no celular?",
+      "answer": "Toque em “Foto ou PDF” e escolha a imagem na galeria ou nos arquivos. O leitor procura na imagem inteira, inclusive códigos pequenos ou um pouco girados, e se houver vários mostra todos."
+    },
+    {
+      "question": "Dá para ver a senha do Wi-Fi dentro de um QR Code?",
+      "answer": "Sim. Um QR de Wi-Fi guarda o nome da rede e a senha como texto. O leitor mostra os dois, esconde a senha até você tocar no olho e oferece um botão para copiá-la."
+    },
+    {
+      "question": "Ele também lê código de barras?",
+      "answer": "Sim: EAN-13, EAN-8, UPC-A, UPC-E, ISBN, Code 128, Code 39, Code 93, Codabar, ITF e GS1 DataBar, além de QR, Micro QR, Data Matrix, Aztec e PDF417."
+    },
+    {
+      "question": "Ele abre o link automaticamente?",
+      "answer": "Nunca. Primeiro mostra o destino completo e qualquer sinal de alerta. Abrir sempre depende de um toque seu, e se o link parece perigoso o botão avisa."
+    },
+    {
+      "question": "Minhas imagens ou a câmera são enviadas para algum lugar?",
+      "answer": "Não. Tudo é decodificado no seu navegador. Nada do que você lê, fotografa ou cola chega a um servidor, e a página continua funcionando sem internet depois de carregada."
+    },
+    {
+      "question": "Por que ele não lê o meu código?",
+      "answer": "Quase sempre o código está pequeno, borrado ou com reflexo. Chegue mais perto ou use o zoom, ligue a lanterna no escuro, deixe o celular reto em frente ao código e limpe a lente. Com uma foto, recorte em volta do código e tente de novo."
+    },
+    {
+      "question": "A câmera não liga. O que fazer?",
+      "answer": "O navegador precisa de permissão. Toque no cadeado ao lado do endereço e permita a câmera. No iPhone: Ajustes › Safari › Câmera. Se outro app estiver usando a câmera, feche-o. Você sempre pode usar uma foto do código."
+    },
+    {
+      "question": "Preciso instalar um app ou criar uma conta?",
+      "answer": "Não. Funciona em qualquer navegador atual, no celular ou no computador, grátis e sem cadastro. Você pode adicionar a página à tela inicial para abrir como um app."
+    }
+  ],
+  "footerTagline": "Leitor de QR Code e código de barras online e grátis que mostra o conteúdo em vez de abri-lo.",
+  "privacyContent": "Sua privacidade é importante para nós.\n\nToda a leitura acontece localmente no seu navegador. Nenhuma imagem, quadro da câmera, PDF, texto decodificado ou link é enviado aos nossos servidores, e não registramos o que você lê.\n\nSe o histórico estiver ativado, suas leituras ficam salvas apenas no armazenamento local deste navegador. Você pode apagá-las ou desativar o histórico a qualquer momento na ferramenta."
 };

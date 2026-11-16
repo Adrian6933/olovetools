@@ -205,7 +205,7 @@ export default {
       "description": "JWT-Token dekodieren und prüfen: Header, Payload und Signatur, mit laufender Ablaufkontrolle. Alles im Browser."
     },
     "61": {
-      "description": "Jeden QR-Code mit der Kamera, aus einem Bild oder aus der Zwischenablage lesen — und sehen, was drinsteht, bevor du etwas öffnest. Alles im Browser."
+      "description": "QR-Codes und Barcodes mit der Kamera, aus einem Foto, einem PDF oder vom Bildschirm scannen – und sehen, was drinsteht, bevor du etwas öffnest. Alles im Browser."
     }
   },
   "tags": {

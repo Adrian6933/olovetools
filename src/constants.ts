@@ -700,9 +700,9 @@ export const MOCK_PROJECTS: Project[] = [
     id: '61',
     name: 'QR Reader',
     slug: 'qr-reader',
-    description: 'Read any QR code from your camera, an image or the clipboard and see exactly what it contains before you open anything. 100% local.',
+    description: 'Scan QR codes and barcodes with your camera, from a photo, a PDF or your screen, and see what they contain before opening anything. 100% local.',
     category: ProjectCategory.IMAGE_DESIGN,
-    tags: ['QR', 'Scanner', 'Reader', 'Decoder'],
+    tags: ['QR', 'Scanner', 'Reader', 'Barcode'],
     icon: 'ScanLine',
     color: 'bg-gradient-to-br from-cyan-500 to-sky-600'
   },

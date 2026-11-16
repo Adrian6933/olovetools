@@ -16,6 +16,8 @@ export type PayloadKind =
   | 'tel'
   | 'geo'
   | 'event'
+  | 'product'
+  | 'isbn'
   | 'text';
 
 export interface PayloadField {
@@ -46,6 +48,8 @@ export interface ParsedPayload {
   href?: string;
   host?: string;
   warnings: WarningKind[];
+  /** Symbology it was read from, e.g. `QRCode` or `EAN13`, when known. */
+  format?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -379,95 +383,74 @@ export function parsePayload(raw: string): ParsedPayload {
 }
 
 // ---------------------------------------------------------------------------
-// Decoding
+// Barcodes
 // ---------------------------------------------------------------------------
 
-export interface DecodeResult {
-  data: string;
-  /** Corner coordinates in image space, for drawing the found box. */
-  corners?: { x: number; y: number }[];
-}
+/** Retail codes: what is printed on a product, a book or a shelf label. */
+const RETAIL = /^(EAN|UPC|ISBN)/i;
 
-let jsQRPromise: Promise<typeof import('jsqr').default> | null = null;
-
-function loadDecoder() {
-  if (!jsQRPromise) jsQRPromise = import('jsqr').then(m => m.default);
-  return jsQRPromise;
-}
-
-/**
- * Byte mode carries no charset. jsQR always reads it as UTF-8 and, when the
- * bytes are not valid UTF-8, silently appends nothing — so a code holding
- * ISO-8859-1 (which the QR spec names as the default, and which several
- * generators still emit) decodes to an empty string. Falling back to Latin-1
- * on the raw bytes recovers those instead of showing the user nothing.
- */
-function decodeText(found: any): string {
-  const text: string = found.data || '';
-  if (text) return text;
-  const bytes = found.binaryData;
-  if (!Array.isArray(bytes) || bytes.length === 0) return text;
-  return new TextDecoder('iso-8859-1').decode(new Uint8Array(bytes));
-}
-
-export async function decodeImageData(image: ImageData): Promise<DecodeResult | null> {
-  const jsQR = await loadDecoder();
-  const found = jsQR(image.data, image.width, image.height, { inversionAttempts: 'attemptBoth' });
-  if (!found) return null;
-  const loc = found.location;
-  return {
-    data: decodeText(found),
-    corners: loc
-      ? [loc.topLeftCorner, loc.topRightCorner, loc.bottomRightCorner, loc.bottomLeftCorner]
-      : undefined,
-  };
+/** The GS1 check digit, the same for EAN-8, EAN-13, UPC-A and GTIN-14. */
+export function gtinIsValid(code: string): boolean {
+  if (!/^\d{8}$|^\d{12,14}$/.test(code)) return false;
+  const digits = code.split('').map(Number);
+  const check = digits.pop()!;
+  const sum = digits
+    .reverse()
+    .reduce((acc, d, i) => acc + d * (i % 2 === 0 ? 3 : 1), 0);
+  return (10 - (sum % 10)) % 10 === check;
 }
 
 /**
- * Photos of codes fail far more often than screenshots: the code is small in
- * frame, slightly rotated and low contrast. Retrying on progressively larger
- * upscales of the centre recovers a lot of those without asking the user to
- * crop anything.
+ * Takes a decoded symbol and describes it. QR, Data Matrix, Aztec and PDF417
+ * carry the same kinds of payload, so they go through `parsePayload`; retail
+ * barcodes only carry a number and get a product view instead.
  */
-export async function decodeBitmap(bitmap: ImageBitmap): Promise<DecodeResult | null> {
-  const attempts: { scale: number; crop: number }[] = [
-    { scale: 1, crop: 1 },
-    { scale: 2, crop: 1 },
-    { scale: 2, crop: 0.6 },
-    { scale: 3, crop: 0.4 },
-  ];
-
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return null;
-
-  for (const attempt of attempts) {
-    const sw = bitmap.width * attempt.crop;
-    const sh = bitmap.height * attempt.crop;
-    const sx = (bitmap.width - sw) / 2;
-    const sy = (bitmap.height - sh) / 2;
-    // 2000px is plenty for a QR and keeps a 12 MP phone photo from allocating
-    // a 100 MB ImageData.
-    const target = Math.min(2000, Math.max(sw, sh) * attempt.scale);
-    const ratio = target / Math.max(sw, sh);
-
-    canvas.width = Math.max(1, Math.round(sw * ratio));
-    canvas.height = Math.max(1, Math.round(sh * ratio));
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(bitmap, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
-
-    const result = await decodeImageData(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    if (result) return result;
+export function parseScan(text: string, format = ''): ParsedPayload {
+  const raw = text.trim();
+  if (RETAIL.test(format) && /^\d+$/.test(raw)) {
+    const isBook = raw.length === 13 && /^97[89]/.test(raw);
+    const fields: PayloadField[] = [
+      { key: isBook ? 'fieldIsbn' : 'fieldGtin', value: raw, mono: true },
+      { key: 'fieldFormat', value: prettyFormat(format) },
+    ];
+    if (!gtinIsValid(raw)) fields.push({ key: 'fieldCheck', value: 'invalid' });
+    return { kind: isBook ? 'isbn' : 'product', raw, fields, warnings: [], format };
   }
-  return null;
+  const payload = parsePayload(raw);
+  payload.format = format || undefined;
+  return payload;
 }
 
-export async function decodeFile(file: File): Promise<DecodeResult | null> {
-  const bitmap = await createImageBitmap(file);
-  try {
-    return await decodeBitmap(bitmap);
-  } finally {
-    bitmap.close?.();
-  }
+const FORMAT_NAMES: Record<string, string> = {
+  QRCode: 'QR Code',
+  MicroQRCode: 'Micro QR',
+  RMQRCode: 'rMQR',
+  DataMatrix: 'Data Matrix',
+  Aztec: 'Aztec',
+  PDF417: 'PDF417',
+  MaxiCode: 'MaxiCode',
+  EAN13: 'EAN-13',
+  EAN8: 'EAN-8',
+  UPCA: 'UPC-A',
+  UPCE: 'UPC-E',
+  Code128: 'Code 128',
+  Code39: 'Code 39',
+  Code93: 'Code 93',
+  Codabar: 'Codabar',
+  ITF: 'ITF',
+  DataBar: 'GS1 DataBar',
+  DataBarExpanded: 'GS1 DataBar Exp.',
+  DataBarLimited: 'GS1 DataBar Ltd.',
+  DXFilmEdge: 'DX Film Edge',
+};
+
+/** `EAN13` → `EAN-13`; anything unknown is shown as it came. */
+export function prettyFormat(format: string): string {
+  const key = format.replace(/[\s-]/g, '');
+  return FORMAT_NAMES[key] || format;
+}
+
+/** QR-like symbols can hold structured payloads; linear ones only hold a string. */
+export function isMatrixFormat(format = ''): boolean {
+  return /qr|matrix|aztec|pdf417|maxi/i.test(format) || !format;
 }

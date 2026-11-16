@@ -205,7 +205,7 @@ export default {
       "description": "Décodez et inspectez des jetons JWT : en-tête, charge utile et signature, avec vérification de l'expiration à la volée. Tout dans le navigateur."
     },
     "61": {
-      "description": "Lisez n'importe quel QR code avec la caméra, depuis une image ou le presse-papiers, et voyez ce qu'il contient avant d'ouvrir quoi que ce soit. Tout dans le navigateur."
+      "description": "Scannez QR codes et codes-barres avec la caméra, depuis une photo, un PDF ou votre écran, et voyez ce qu'ils contiennent avant d'ouvrir quoi que ce soit. Tout dans le navigateur."
     }
   },
   "tags": {

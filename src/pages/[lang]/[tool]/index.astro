@@ -181,7 +181,10 @@ const toolNames: Record<string, string> = {
 const name = toolNames[tool as string] || ((tool as string).charAt(0).toUpperCase() + (tool as string).slice(1));
 let seoTitle = t('seo_title');
 seoTitle = seoTitle.replace(/^oLoveTools\s*[|\-]\s*/gi, '');
-const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase())
+// `seo_title_exact`: the tool's title already names it the way people search
+// for it in that language ("Lector QR online…"), so the English brand name in
+// front would only push the useful words out of the snippet.
+const finalTitle = seoTitle.toLowerCase().includes(name.toLowerCase()) || (dictionary as any)?.seo_title_exact === true
   ? seoTitle
   : `${name} | ${seoTitle}`;
 

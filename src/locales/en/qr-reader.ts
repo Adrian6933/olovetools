@@ -1,28 +1,8 @@
 export default {
   "resetHint": "Start over",
   "title": "QR Reader",
-  "badge": "QR code reader",
-  "description": "Scan a QR code with your camera, an image or the clipboard and see exactly what is inside it. It shows you the destination — it never opens it for you.",
-  "seo_title": "QR Reader | Free Online QR Code Scanner That Shows the Content",
-  "seo_description": "Read any QR code from your camera, a photo or a screenshot and see its full content before opening anything. Detects lookalike domains and link shorteners. 100% local, free, no app.",
-  "sourceImage": "Image",
-  "sourceCamera": "Camera",
-  "sourceText": "Raw text",
-  "dropTitle": "Drop a QR image",
-  "dropHint": "PNG, JPG, WebP, screenshots — or press Ctrl+V anywhere on this page",
-  "browseBtn": "Choose a file",
-  "pasteBtn": "Paste from clipboard",
-  "startCameraBtn": "Start camera",
-  "stopCameraBtn": "Stop camera",
-  "torchBtn": "Torch",
-  "cameraDefault": "Default camera",
-  "cameraIdle": "The camera stays off until you start it, and the frames are only read in memory.",
   "manualLabel": "Paste the raw content of a QR code",
-  "manualHint": "Skips the decoder entirely: useful when you already have the text and just want it taken apart and checked.",
   "analyseBtn": "Analyse it",
-  "emptyResult": "Whatever the code contains will be shown here, in full, before anything happens.",
-  "scanAgainBtn": "Scan again",
-  "historyTitle": "This session",
   "clearBtn": "Clear",
   "copyBtn": "Copy",
   "showBtn": "Show",
@@ -31,7 +11,6 @@ export default {
   "openAnywayBtn": "Open anyway",
   "destinationLabel": "Full destination",
   "rawLabel": "Raw content",
-  "saveContactBtn": "Save as .vcf",
   "kindUrl": "Link",
   "kindWifi": "WiFi network",
   "kindContact": "Contact card",
@@ -77,118 +56,178 @@ export default {
   "warnLongUrl": "The link is unusually long, which is often used to bury the real destination.",
   "warnOpenWifi": "This network has no password, so traffic on it is not encrypted.",
   "warnExecutable": "The link points straight at an installable file.",
-  "errorNoCode": "No QR code was found in that image. Try a closer, sharper shot.",
   "errorBadImage": "That file could not be read as an image.",
-  "errorCameraDenied": "Camera permission was denied. You can still scan an image or paste one.",
-  "errorCameraMissing": "No camera is available on this device.",
-  "errorNoClipboardImage": "There is no image in your clipboard.",
   "errorClipboardBlocked": "Your browser blocked clipboard access. Press Ctrl+V over the page instead.",
-  "makerCta": "Want to create a QR instead? Open QRBolt",
   "makerCtaLong": "Create a QR code instead",
-  "makerCardTitle": "Need to create one?",
-  "makerCardText": "QRBolt builds styled QR codes and proves they scan before you print them.",
-  "howItWorksTitle": "How it works",
-  "step1Title": "Bring the code in",
-  "step1Text": "Point your camera at it, drop a screenshot, or just paste from the clipboard.",
-  "step2Title": "It gets decoded here",
-  "step2Text": "The decoder runs in your browser. The image never leaves the machine.",
-  "step3Title": "Read before you act",
-  "step3Text": "You see the full destination, the fields inside it, and any red flags.",
-  "step4Title": "Then decide",
-  "step4Text": "Copy a field, save the contact, or open the link — only if you choose to.",
-  "scrollTopLabel": "Back to top",
-  "features": [
-    {
-      "title": "Shows, never redirects",
-      "text": "A QR sticker can point anywhere at all. This reader prints the destination in full and waits for you to decide."
-    },
-    {
-      "title": "Flags the classic tricks",
-      "text": "Lookalike domains, mixed alphabets, link shorteners, raw IP addresses, embedded credentials and installer links."
-    },
-    {
-      "title": "100% local",
-      "text": "The decoder runs in your browser. No image, no scan and no link ever reaches a server."
-    },
-    {
-      "title": "Camera, file or clipboard",
-      "text": "Scan live with the rear camera, drop a screenshot in, or just press Ctrl+V anywhere on the page."
-    },
-    {
-      "title": "Reads the structure",
-      "text": "WiFi, vCard, MeCard, email, SMS, phone, map and calendar payloads are broken out into labelled fields."
-    },
-    {
-      "title": "Nothing is stored",
-      "text": "The scan list lives in the tab and disappears the moment you close it. There is no history on any server."
-    }
-  ],
   "footerCredit": "Part of oLoveTools suite",
-  "seoHeroTitle": "See what a QR code says before you obey it",
-  "seoHeroText": "Your phone's camera reads a QR code and offers to open it, usually showing a shortened domain and nothing else. That is exactly the gap the sticker scams on parking meters and restaurant tables rely on. This reader does the opposite: it decodes the code, writes out the entire destination, breaks structured payloads into named fields, and points out the tricks used to make a bad link look ordinary.",
-  "seoHeroList": [
-    "Never opens a link by itself",
-    "Works offline once loaded",
-    "No app, no account, no upload"
-  ],
-  "seoBrowserSpeedTitle": "The whole thing runs in the tab",
-  "seoBrowserSpeedText": "The decoder is a small JavaScript library that runs on your machine. Camera frames are sampled in memory and thrown away, images you drop are read locally, and nothing — not the picture, not the decoded text, not the link — is ever sent anywhere.",
-  "seoSecondaryTitle": "A QR scanner for people who would rather look first",
-  "seoKeywordsTitle": "Keywords",
-  "seoKeywords": [
-    "QR code reader online",
-    "Scan QR from image",
-    "QR scanner without app",
-    "Read QR code from photo",
-    "Check QR code safety",
-    "Decode QR code online",
-    "WiFi QR code reader",
-    "QR code content viewer"
-  ],
-  "seoUseCaseTitle": "Stickers, invoices, posters and packaging",
-  "seoUseCaseText": "A code stuck over the real one on a parking meter, a payment QR in an unexpected invoice, a poster in the street, a business card you were handed: all of these are worth reading before opening. Point the camera or drop the photo in and you get the destination in plain text.",
-  "seoPrivacyTitle": "It cannot leak what it never sends",
-  "seoPrivacyText": "There is no upload endpoint and no analytics on the content. WiFi passwords found inside a code are masked until you ask to see them, and the session list is held in the tab's memory only, so closing it is enough to erase everything.",
   "faqTitle": "Frequently asked questions",
-  "faq": [
-    {
-      "question": "Does it open the link automatically?",
-      "answer": "Never. That is the entire point of the tool. You get the full URL, the domain on its own line, and a list of anything questionable about it. Opening it takes a deliberate click, and if the link looks dangerous that button is restyled as a warning."
-    },
-    {
-      "question": "Is my image or my camera feed uploaded anywhere?",
-      "answer": "No. The decoder is a JavaScript library running in your browser. Camera frames are sampled into a canvas in memory and discarded immediately, and images you drop in are read with the browser's own file API. Nothing is transmitted."
-    },
-    {
-      "question": "What is QR phishing?",
-      "answer": "A printed code that leads somewhere hostile, often a sticker placed over a legitimate one on a parking meter, a menu or a payment terminal. It works because a camera app shows you almost nothing before opening the page. Reading the code here first closes that gap."
-    },
-    {
-      "question": "Why does it warn me about a shortened link?",
-      "answer": "Because a shortener hides the real destination behind a redirect, so what you can see is not where you end up. We deliberately do not resolve it for you: doing so would contact that server on your behalf and tell it you scanned the code."
-    },
-    {
-      "question": "What is a punycode or mixed-alphabet domain?",
-      "answer": "Some letters look identical across alphabets — a Cyrillic а renders exactly like a Latin a. A domain built from that renders as a name you recognise while belonging to somebody else. Punycode (xn--) is how such a name is encoded, so we surface both."
-    },
-    {
-      "question": "It cannot read my photo. What can I do?",
-      "answer": "Get closer so the code fills more of the frame, hold the phone square to it rather than at an angle, and avoid glare from a screen or lamination. The tool already retries with progressively larger crops, but a blurry or heavily skewed photo has too little detail left to recover."
-    },
-    {
-      "question": "Which kinds of QR content does it understand?",
-      "answer": "Links, plain text, WiFi credentials, vCard and MeCard contacts, email, SMS, phone numbers, map coordinates and calendar events. Structured ones are unfolded into labelled fields you can copy one at a time, and a contact can be saved straight to a .vcf file."
-    }
-  ],
-  "footerTagline": "Free QR code reader that shows you the content instead of opening it.",
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
   "cookiePolicy": "Cookie Policy",
   "contactForIdeas": "Contact for ideas and feedback:",
   "emailCopied": "Email copied to clipboard!",
   "emailAddress": "adrian.contact.me.69@gmail.com",
-  "privacyContent": "Your privacy is important to us.\n\nAll decoding happens locally in your web browser. No image, camera frame, decoded text or link is ever sent to our servers, and we do not track what you scan.\n\nThe session list lives in your tab's memory and disappears when you close it.",
   "termsContent": "By using QR Reader, you agree to these terms.\n\n1. This tool is provided \"as-is\" without any warranties.\n2. The safety warnings are heuristics, not a guarantee: a code without warnings can still be malicious.\n3. You are responsible for what you choose to open.\n4. We reserve the right to modify these terms at any time.",
   "cookiesContent": "We use cookies to improve your experience.\n\n1. Essential Cookies: Required for site operations.\n2. Preference Cookies: Used to save your language and cookie preferences.\n\nYou can configure cookies in your browser settings.",
-  "contact": "Contact"
+  "contact": "Contact",
+  "seo_title": "Free QR Reader Online: Scan from Camera, Image, Screen or PDF",
+  "seo_title_exact": true,
+  "seo_description": "Scan QR codes and barcodes online for free: with your phone camera or webcam, from a photo, a screenshot, a PDF or straight from your screen. Reads WiFi passwords, contacts and links, flags scams. Nothing is uploaded.",
+  "h1": "QR code reader online",
+  "subtitle": "Scan QR codes and barcodes with your camera, from a photo, a screenshot, a PDF or your own screen. Free, no app, nothing uploaded.",
+  "heroPoints": [
+    "No app, no sign-up",
+    "Nothing leaves your device",
+    "Never opens links on its own"
+  ],
+  "srcCamera": "Scan with the camera",
+  "srcCameraHint": "Point it at the code. It reads on its own.",
+  "srcWebcam": "Use the webcam",
+  "srcUpload": "Photo or PDF",
+  "srcPaste": "Paste image",
+  "srcScreen": "Read a QR from my screen",
+  "srcScreenHint": "For a code in another window, a video call or a web page",
+  "srcText": "I already have the text of the code",
+  "dropTitle": "Drop an image or PDF here",
+  "dropHint": "or press Ctrl+V to paste a screenshot",
+  "busyReading": "Looking for codes…",
+  "busyPdf": "Reading page {n} of {total}…",
+  "busyScreen": "Choose the window, tab or screen where the code is…",
+  "screenSearching": "Searching your screen for a code…",
+  "pdfTruncated": "Only the first {n} pages were searched.",
+  "errorNoCode": "No code was found in that image. Try a closer, sharper photo, or crop around the code.",
+  "errorNoCodePdf": "No QR code or barcode was found in that PDF.",
+  "errorPdf": "That PDF could not be opened.",
+  "errorScreenNoCode": "No code appeared on the shared screen. Make the code bigger or share the window where it is.",
+  "errorCameraDenied": "Camera access is blocked. Allow it from the padlock icon next to the web address (on iPhone: Settings › Safari › Camera), or use a photo instead.",
+  "errorCameraMissing": "No camera was found on this device. Use a photo or screenshot instead.",
+  "errorInsecure": "The camera only works over a secure (https) connection.",
+  "errorNoClipboardImage": "There is no image in your clipboard. Copy a screenshot of the code first.",
+  "emptyResult": "What the code contains will appear here, in full, before anything is opened.",
+  "resultTitle": "Result",
+  "foundCount": "{n} codes found",
+  "pageLabel": "p. {n}",
+  "scanAgainBtn": "Scan another",
+  "cameraTitle": "Camera scanner",
+  "cameraStarting": "Starting the camera…",
+  "cameraHint": "Point at a QR code or barcode",
+  "cameraHintContinuous": "Point at each code. They are collected as you go.",
+  "closeBtn": "Close",
+  "soundBtn": "Beep on scan",
+  "torchBtn": "Torch",
+  "switchCameraBtn": "Switch camera",
+  "zoomLabel": "Zoom",
+  "continuousBtn": "Several codes",
+  "finishBtn": "Done ({n})",
+  "kindProduct": "Product barcode",
+  "kindIsbn": "Book (ISBN)",
+  "fieldGtin": "Barcode number",
+  "fieldIsbn": "ISBN",
+  "fieldFormat": "Type",
+  "copyPasswordBtn": "Copy password",
+  "shareWifiBtn": "Show QR to share",
+  "shareWifiHint": "Another phone can join the network by scanning this code with its camera.",
+  "wifiJoinHint": "A web page cannot join a WiFi network for you: copy the password and paste it in your WiFi settings.",
+  "badCheckDigit": "The check digit does not match, so the number may have been misread. Scan it again.",
+  "searchOnBtn": "Search on {site}",
+  "copyTextBtn": "Copy text",
+  "searchWebBtn": "Search the web",
+  "addCalendarBtn": "Add to calendar",
+  "openMapBtn": "Open in maps",
+  "callBtn": "Call",
+  "sendSmsBtn": "Write the SMS",
+  "writeEmailBtn": "Write the email",
+  "shareBtn": "Share",
+  "saveContactBtn": "Save contact",
+  "yes": "Yes",
+  "historyTitle": "Your scans",
+  "historyEmpty": "Codes you scan will be listed here.",
+  "historyOff": "History is off.",
+  "exportCsvBtn": "Export CSV",
+  "keepHistoryLabel": "Keep a history on this device",
+  "historyPrivacy": "It stays in this browser only and is never sent anywhere.",
+  "makerCardTitle": "Need to create a QR code?",
+  "makerCardText": "QRBolt builds styled QR codes and checks they scan before you print them.",
+  "guideTitle": "How to scan a QR code online",
+  "guideIntro": "There are four ways in, depending on where the code is. All of them work in the browser, on Android, iPhone, Windows and Mac, without installing anything.",
+  "guideSteps": [
+    {
+      "title": "On your phone: use the camera",
+      "text": "Tap “Scan with the camera”, allow access the first time and point it at the code. It reads on its own, vibrates and shows the content. Use the torch in dim light and the zoom for small or distant codes."
+    },
+    {
+      "title": "On a computer: drop or paste an image",
+      "text": "Got the QR in an email, a chat or a photo? Drag the file into the box, or take a screenshot and press Ctrl+V on this page. It also finds codes that are small, rotated or inverted."
+    },
+    {
+      "title": "A code on your screen",
+      "text": "For a QR shown in a video call, a web page or another program, press “Read a QR from my screen”, pick the window and it is read straight from there. No phone needed."
+    },
+    {
+      "title": "Inside a PDF",
+      "text": "Tickets, invoices and boarding passes often come as PDF. Drop the file and every page is searched; if there are several codes, each one is listed with its page."
+    }
+  ],
+  "sections": [
+    {
+      "title": "See the password of a WiFi QR code",
+      "text": "A WiFi QR holds the network name, the security type and the password. When you scan it here you see all three, with a button to copy the password and paste it wherever you need it, for example on a laptop that cannot scan codes.\n\nYou can also show the same QR on screen so a friend joins the network by pointing their phone at it."
+    },
+    {
+      "title": "A barcode scanner too",
+      "text": "It is not only a QR reader. It reads the barcodes on products (EAN-13, UPC), books (ISBN), parcels and labels (Code 128, Code 39, ITF), plus Data Matrix, Aztec and PDF417, the code on boarding passes and ID cards.\n\nFor products and books you get the number and a search button. Turn on “Several codes” in the camera to read a whole batch in a row and export it as CSV."
+    },
+    {
+      "title": "Look before you open: QR scams",
+      "text": "A sticker over the real code on a parking meter, a payment QR in an unexpected letter, a menu in a restaurant: QR phishing works because the camera opens the link with barely a glance at it.\n\nThis reader never opens anything on its own. It shows the full address and warns about lookalike domains, mixed alphabets, link shorteners, raw IP addresses, embedded passwords and links to installable files."
+    },
+    {
+      "title": "Private: nothing is uploaded",
+      "text": "Decoding happens inside your browser with an engine that runs on your device. Photos, camera frames, PDFs and the codes' contents are never sent to any server, and once the page has loaded it even works without a connection.\n\nThe history is kept in this browser only. You can switch it off or clear it at any time."
+    }
+  ],
+  "formatsTitle": "Codes it can read",
+  "formatsText": "Every common 2D code and barcode, from any angle and in light-on-dark or dark-on-light.",
+  "formats2d": "2D codes",
+  "formats1d": "Barcodes",
+  "faq": [
+    {
+      "question": "How do I scan a QR code on my computer?",
+      "answer": "If the code is in an image, drop the file here or take a screenshot and press Ctrl+V. If it is showing on your screen (a video call, a web page, a PDF viewer), use “Read a QR from my screen” and choose the window. If you have a printed code, use the webcam."
+    },
+    {
+      "question": "How do I read a QR code from a photo or screenshot on my phone?",
+      "answer": "Tap “Photo or PDF” and choose the image from your gallery or files. The reader searches the whole picture, including small or slightly rotated codes, and if there are several it shows all of them."
+    },
+    {
+      "question": "Can I see the WiFi password inside a QR code?",
+      "answer": "Yes. A WiFi QR stores the network name and password as text. The reader shows them, hides the password until you tap the eye, and gives you a button to copy it."
+    },
+    {
+      "question": "Does it also read barcodes?",
+      "answer": "Yes: EAN-13, EAN-8, UPC-A, UPC-E, ISBN, Code 128, Code 39, Code 93, Codabar, ITF and GS1 DataBar, as well as QR, Micro QR, Data Matrix, Aztec and PDF417."
+    },
+    {
+      "question": "Does it open the link automatically?",
+      "answer": "Never. It shows you the full destination and any warning signs first. Opening it always takes a tap from you, and if the link looks dangerous the button says so."
+    },
+    {
+      "question": "Are my images or my camera uploaded anywhere?",
+      "answer": "No. Everything is decoded in your browser. Nothing you scan, photograph or paste reaches any server, and the page keeps working offline once it has loaded."
+    },
+    {
+      "question": "Why can't it read my code?",
+      "answer": "Most failures come from a code that is too small, blurry or covered in glare. Get closer or use the zoom, turn on the torch in the dark, hold the phone square to the code and wipe the lens. For a photo, crop around the code and try again."
+    },
+    {
+      "question": "The camera does not start. What can I do?",
+      "answer": "The browser needs permission. Tap the padlock next to the address and allow the camera. On iPhone go to Settings › Safari › Camera. If another app is using the camera, close it. You can always use a photo of the code instead."
+    },
+    {
+      "question": "Do I need to install an app or create an account?",
+      "answer": "No. It works in any modern browser, on any phone or computer, for free and without signing up. You can add the page to your home screen to open it like an app."
+    }
+  ],
+  "footerTagline": "Free online QR code and barcode reader that shows you the content instead of opening it.",
+  "privacyContent": "Your privacy is important to us.\n\nAll decoding happens locally in your web browser. No image, camera frame, PDF, decoded text or link is ever sent to our servers, and we do not track what you scan.\n\nIf history is turned on, your scans are saved in this browser's local storage only. You can clear them or turn history off at any time from the tool."
 };

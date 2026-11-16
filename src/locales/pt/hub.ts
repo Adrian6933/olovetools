@@ -205,7 +205,7 @@ export default {
       "description": "Descodifica e inspeciona tokens JWT: cabeçalho, conteúdo e assinatura, com a validade verificada em tempo real. Tudo no navegador."
     },
     "61": {
-      "description": "Lê qualquer código QR com a câmara, a partir de uma imagem ou da área de transferência, e vê o que contém antes de abrires seja o que for. Tudo no navegador."
+      "description": "Leia QR Codes e códigos de barras com a câmera, de uma foto, um PDF ou da sua tela, e veja o que contêm antes de abrir qualquer coisa. Tudo no navegador."
     }
   },
   "tags": {

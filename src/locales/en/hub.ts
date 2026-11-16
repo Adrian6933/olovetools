@@ -205,7 +205,7 @@ export default {
       "description": "Decode and inspect JSON Web Tokens (JWT). Visualize header, payload and signature with live expiry validation 100% locally in your browser."
     },
     "61": {
-      "description": "Read any QR code from your camera, an image or the clipboard and see exactly what it contains before you open anything. 100% local."
+      "description": "Scan QR codes and barcodes with your camera, from a photo, a PDF or your screen, and see what they contain before opening anything. 100% local."
     }
   },
   "tags": {

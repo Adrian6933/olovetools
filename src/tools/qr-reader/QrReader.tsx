@@ -1,327 +1,255 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AlertTriangle,
   Camera,
-  Check,
   ClipboardPaste,
-  Copy,
   Download,
-  ExternalLink,
   FileText,
   History,
   Image as ImageIcon,
   Loader2,
+  MonitorUp,
   QrCode,
   RotateCcw,
   ScanLine,
   ShieldAlert,
-  ShieldCheck,
   Trash2,
   Upload,
   X,
-  Zap,
 } from 'lucide-react';
 
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { LegalModal } from './components/LegalModal';
-import {
-  IconCamera,
-  IconInspect,
-  IconLocalRead,
-  IconPaste,
-  IconSafety,
-  IconStructured,
-  ReaderHeroArt,
-  StepAct,
-  StepDecode,
-  StepReview,
-  StepSource,
-  ViewfinderArt,
-} from './components/Illustrations';
+import { CameraScanner } from './components/CameraScanner';
+import { ResultView, kindLabel } from './components/ResultView';
+import { SeoSections } from './components/SeoSections';
 import { legalTranslations } from '../../locales/legal';
 import { AdBanner } from '../../components/shared/AdBanner';
-import { useReducedMotion, fadeInUp } from '../../components/shared/motion';
 import { useHandoffIntake } from '../../lib/useHandoff';
-import { createTicker, type Ticker } from '../../lib/ticker';
 import {
-  decodeFile,
-  decodeImageData,
-  parsePayload,
-  type ParsedPayload,
-  type PayloadKind,
-  type WarningKind,
-} from './lib/parse';
+  cameraAlreadyAllowed,
+  canCaptureScreen,
+  canUseCamera,
+  decodeBitmap,
+  decodeFrame,
+  decodeImageFile,
+  decodePdfFile,
+  isTouchDevice,
+  warmUpDecoder,
+  type Detection,
+} from './lib/decode';
+import { parseScan, prettyFormat, type ParsedPayload } from './lib/parse';
+import {
+  DEFAULT_PREFS,
+  addToHistory,
+  historyToCsv,
+  readHistory,
+  readPrefs,
+  writeHistory,
+  writePrefs,
+  type HistoryItem,
+  type Prefs,
+} from './lib/history';
+import { downloadText } from './lib/actions';
 
 interface QrReaderProps {
   lang: string;
   dictionary: any;
 }
 
-type SourceMode = 'camera' | 'image' | 'text';
+type Source = 'camera' | 'image' | 'pdf' | 'screen' | 'text' | 'history';
 
-interface HistoryEntry {
-  id: number;
+interface Scan {
+  id: string;
   payload: ParsedPayload;
-  at: number;
+  corners?: { x: number; y: number }[];
+  page?: number;
 }
 
-/** Warnings that should stop someone before they tap a link. */
-const SEVERE: WarningKind[] = ['punycode', 'mixedScript', 'credentials', 'executable', 'ipHost'];
-
-const VCARD_PROPERTIES: Record<string, string> = {
-  fieldOrganization: 'ORG',
-  fieldJobTitle: 'TITLE',
-  fieldPhone: 'TEL',
-  fieldEmail: 'EMAIL',
-  fieldWebsite: 'URL',
-  fieldAddress: 'ADR',
-  fieldNote: 'NOTE',
-  fieldBirthday: 'BDAY',
-};
-
-function escapeVCardValue(value: string): string {
-  return value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
+interface Preview {
+  url: string;
+  width: number;
+  height: number;
 }
 
-function meCardName(raw: string, fallback: string): { family: string; given: string; formatted: string } {
-  const match = raw.match(/(?:^MECARD:|;)N:((?:\\.|[^;])*)/i);
-  const value = match?.[1] || fallback;
-  let separator = -1;
-  for (let index = 0; index < value.length; index += 1) {
-    if (value[index] === '\\') {
-      index += 1;
-    } else if (value[index] === ',') {
-      separator = index;
-      break;
-    }
-  }
-  const unescape = (part: string) => part.replace(/\\([,;:])/g, '$1').trim();
-  const family = unescape(separator < 0 ? value : value.slice(0, separator));
-  const given = unescape(separator < 0 ? '' : value.slice(separator + 1));
-  return { family, given, formatted: [given, family].filter(Boolean).join(' ') || fallback || 'Unknown' };
-}
-
-function contactAsVCard(payload: ParsedPayload): string {
-  if (payload.kind === 'vcard') return payload.raw;
-
-  const displayName = payload.fields.find(field => field.key === 'fieldName')?.value || '';
-  const name = meCardName(payload.raw, displayName);
-  // VERSION, N and FN are required in vCard 3.0. MeCard encodes its name as
-  // family,given, so preserve that structure instead of emitting only FN.
-  const lines = [
-    'BEGIN:VCARD',
-    'VERSION:3.0',
-    `N:${escapeVCardValue(name.family)};${escapeVCardValue(name.given)};;;`,
-    `FN:${escapeVCardValue(name.formatted)}`,
-  ];
-  for (const field of payload.fields) {
-    const property = VCARD_PROPERTIES[field.key];
-    if (!property || !field.value) continue;
-    // MeCard gives ADR as a single value. Put it in the street component of
-    // vCard's structured address instead of turning its separators into text.
-    if (property === 'ADR') lines.push(`ADR:;;${escapeVCardValue(field.value)};;;;`);
-    else lines.push(`${property}:${escapeVCardValue(field.value)}`);
-  }
-  lines.push('END:VCARD');
-  return lines.join('\r\n');
-}
+const AUTO_CAMERA_KEY = 'olovetools_qr_autocam';
 
 export default function QrReader({ lang, dictionary }: QrReaderProps) {
   const t = dictionary || {};
-  const prefersReduced = useReducedMotion();
 
   const [legalModal, setLegalModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
-  const [source, setSource] = useState<SourceMode>('image');
-  const [result, setResult] = useState<ParsedPayload | null>(null);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [scans, setScans] = useState<Scan[]>([]);
+  const [selected, setSelected] = useState(0);
+  const [preview, setPreview] = useState<Preview | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-  const [copied, setCopied] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
-  const [revealSecret, setRevealSecret] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [showText, setShowText] = useState(false);
   const [manualText, setManualText] = useState('');
+  const [prefs, setPrefs] = useState<Prefs>(DEFAULT_PREFS);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
+  // Capabilities are only known in the browser; until then render the
+  // universal layout so the server HTML and the first client render match.
+  const [env, setEnv] = useState({ ready: false, touch: false, screen: false, camera: true });
 
-  // Camera
-  const [cameraOn, setCameraOn] = useState(false);
-  const [cameras, setCameras] = useState<{ deviceId: string; label: string }[]>([]);
-  const [cameraId, setCameraId] = useState('');
-  const [torchOn, setTorchOn] = useState(false);
-  const [torchAvailable, setTorchAvailable] = useState(false);
-
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const tickerRef = useRef<Ticker | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const nextId = useRef(1);
+  const resultRef = useRef<HTMLDivElement | null>(null);
+  const screenStopRef = useRef<(() => void) | null>(null);
+  const prefsRef = useRef(prefs);
+  prefsRef.current = prefs;
 
   // ==========================================================================
-  // Result handling
+  // Mount: preferences, history, device, warm the decoder
   // ==========================================================================
-  const acceptDecoded = useCallback((raw: string) => {
-    const payload = parsePayload(raw);
-    setResult(payload);
-    setRevealSecret(false);
-    setError(null);
-    setHistory(prev => {
-      // Re-scanning the same sticker should not fill the list with duplicates.
-      const withoutDupe = prev.filter(entry => entry.payload.raw !== payload.raw);
-      return [{ id: nextId.current++, payload, at: Date.now() }, ...withoutDupe].slice(0, 12);
-    });
-  }, []);
-
-  // ==========================================================================
-  // Camera
-  // ==========================================================================
-  const stopCamera = useCallback(() => {
-    tickerRef.current?.stop();
-    tickerRef.current = null;
-    streamRef.current?.getTracks().forEach(track => track.stop());
-    streamRef.current = null;
-    if (videoRef.current) videoRef.current.srcObject = null;
-    setCameraOn(false);
-    setTorchOn(false);
-    setTorchAvailable(false);
-  }, []);
-
-  useEffect(() => stopCamera, [stopCamera]);
-
-  const scanFrame = useCallback(async () => {
-    const video = videoRef.current;
-    if (!video || video.videoWidth === 0) return;
-
-    let canvas = canvasRef.current;
-    if (!canvas) {
-      canvas = document.createElement('canvas');
-      canvasRef.current = canvas;
-    }
-    // Downscale wide frames: a QR needs resolution, not megapixels, and this
-    // keeps each pass cheap enough to run several times a second.
-    const scale = Math.min(1, 900 / Math.max(video.videoWidth, video.videoHeight));
-    canvas.width = Math.round(video.videoWidth * scale);
-    canvas.height = Math.round(video.videoHeight * scale);
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) return;
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    const found = await decodeImageData(ctx.getImageData(0, 0, canvas.width, canvas.height));
-    if (found) {
-      // Stop on the first hit: continuing would keep re-reading the same code
-      // and make the result flicker while the user is trying to read it.
-      stopCamera();
-      acceptDecoded(found.data);
-    }
-  }, [acceptDecoded, stopCamera]);
-
-  const startCamera = useCallback(async () => {
-    setError(null);
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: cameraId
-          ? { deviceId: { exact: cameraId }, width: { ideal: 1280 }, height: { ideal: 720 } }
-          : { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } },
-      });
-      streamRef.current = stream;
-      setCameraOn(true);
-
-      const track = stream.getVideoTracks()[0];
-      const capabilities: any = track.getCapabilities?.() || {};
-      setTorchAvailable(!!capabilities.torch);
-
-      // Labels only exist once permission has been granted at least once.
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      setCameras(
-        devices
-          .filter(d => d.kind === 'videoinput')
-          .map((d, i) => ({ deviceId: d.deviceId, label: d.label || `Camera ${i + 1}` }))
-      );
-
-      tickerRef.current?.stop();
-      tickerRef.current = createTicker(200, () => void scanFrame());
-    } catch (err: any) {
-      const denied = err?.name === 'NotAllowedError';
-      setError(
-        denied
-          ? t.errorCameraDenied || 'Camera permission was denied. You can still scan an image or paste one.'
-          : t.errorCameraMissing || 'No camera is available on this device.'
-      );
-      stopCamera();
-    }
-  }, [cameraId, scanFrame, stopCamera, t]);
-
   useEffect(() => {
-    const video = videoRef.current;
-    if (video && streamRef.current && cameraOn) {
-      video.srcObject = streamRef.current;
-      video.play().catch(() => undefined);
-    }
-  }, [cameraOn]);
+    const p = readPrefs();
+    setPrefs(p);
+    if (p.keepHistory) setHistory(readHistory());
+    const touch = isTouchDevice();
+    setEnv({ ready: true, touch, screen: canCaptureScreen(), camera: canUseCamera() });
+    warmUpDecoder();
 
-  const toggleTorch = useCallback(async () => {
-    const track = streamRef.current?.getVideoTracks()[0];
-    if (!track) return;
-    try {
-      await track.applyConstraints({ advanced: [{ torch: !torchOn }] } as any);
-      setTorchOn(v => !v);
-    } catch {
-      setTorchAvailable(false);
-    }
-  }, [torchOn]);
-
-  // ==========================================================================
-  // Image intake
-  // ==========================================================================
-  const readImage = useCallback(
-    async (file: File) => {
-      if (!file.type.startsWith('image/')) return;
-      setBusy(true);
-      setError(null);
-      setSource('image');
+    // A phone that already allowed the camera opens straight into the scanner,
+    // like the camera app. Once per tab: closing it must not reopen it.
+    if (touch) {
+      let already = false;
       try {
-        const found = await decodeFile(file);
-        if (found) acceptDecoded(found.data);
-        else setError(t.errorNoCode || 'No QR code was found in that image. Try a closer, sharper shot.');
+        already = sessionStorage.getItem(AUTO_CAMERA_KEY) === '1';
+        sessionStorage.setItem(AUTO_CAMERA_KEY, '1');
       } catch {
-        setError(t.errorBadImage || 'That file could not be read as an image.');
-      } finally {
-        setBusy(false);
+        /* private mode */
       }
+      if (!already) void cameraAlreadyAllowed().then(ok => ok && setCameraOpen(true));
+    }
+  }, []);
+
+  const updatePrefs = useCallback((next: Prefs) => {
+    setPrefs(next);
+    writePrefs(next);
+    if (!next.keepHistory) {
+      setHistory([]);
+      writeHistory([]);
+    }
+  }, []);
+
+  // ==========================================================================
+  // Accepting results
+  // ==========================================================================
+  const accept = useCallback(
+    (found: { text: string; format: string; corners?: { x: number; y: number }[]; page?: number }[], source: Source, pic?: Preview | null) => {
+      const list: Scan[] = found.map((d, i) => ({
+        id: `${Date.now()}-${i}`,
+        payload: parseScan(d.text, d.format),
+        corners: d.corners,
+        page: d.page,
+      }));
+      setScans(list);
+      setSelected(0);
+      setPreview(pic || null);
+      setError(null);
+      if (prefsRef.current.keepHistory && source !== 'history') {
+        setHistory(prev => {
+          let next = prev;
+          for (const d of [...found].reverse()) next = addToHistory(next, { text: d.text, format: d.format, source });
+          writeHistory(next);
+          return next;
+        });
+      }
+      // On a phone the result sits under the scanner: bring it into view.
+      window.setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
     },
-    [acceptDecoded, t]
+    []
   );
 
-  // Lets another tool hand an image straight over for reading.
-  useHandoffIntake(readImage);
+  const reset = useCallback(() => {
+    screenStopRef.current?.();
+    setScans([]);
+    setPreview(null);
+    setError(null);
+    setNotice(null);
+    setBusy(null);
+    setManualText('');
+    setShowText(false);
+  }, []);
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) void readImage(e.target.files[0]);
+  // ==========================================================================
+  // Files: images and PDFs
+  // ==========================================================================
+  const readFile = useCallback(
+    async (file: File) => {
+      const isPdf = file.type === 'application/pdf' || /\.pdf$/i.test(file.name);
+      if (!isPdf && !file.type.startsWith('image/') && !/\.(heic|heif|avif|webp|png|jpe?g|gif|bmp)$/i.test(file.name)) {
+        setError(t.errorBadImage || 'That file could not be read as an image.');
+        return;
+      }
+      setError(null);
+      setNotice(null);
+      setBusy(t.busyReading || 'Looking for codes…');
+      try {
+        if (isPdf) {
+          const res = await decodePdfFile(file, (n, total) =>
+            setBusy((t.busyPdf || 'Reading page {n} of {total}…').replace('{n}', String(n)).replace('{total}', String(total)))
+          );
+          const found = res.pages.flatMap(p => p.detections.map(d => ({ ...d, page: p.page })));
+          if (res.truncated) setNotice((t.pdfTruncated || 'Only the first {n} pages were searched.').replace('{n}', '20'));
+          if (found.length) {
+            const first = res.pages[0];
+            accept(found, 'pdf', res.pages.length === 1 ? { url: first.previewUrl, width: first.width, height: first.height } : null);
+          } else setError(t.errorNoCodePdf || 'No QR code or barcode was found in that PDF.');
+        } else {
+          const res = await decodeImageFile(file);
+          if (res.detections.length) accept(res.detections, 'image', { url: res.previewUrl, width: res.width, height: res.height });
+          else setError(t.errorNoCode || 'No code was found in that image. Try a closer, sharper photo, or crop around the code.');
+        }
+      } catch {
+        setError(isPdf ? t.errorPdf || 'That PDF could not be opened.' : t.errorBadImage || 'That file could not be read as an image.');
+      } finally {
+        setBusy(null);
+      }
+    },
+    [accept, t]
+  );
+
+  // Another oLoveTools tool can hand an image straight over.
+  useHandoffIntake(file => void readFile(file));
+
+  const onFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     e.target.value = '';
+    if (file) void readFile(file);
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
     const file = e.dataTransfer.files?.[0];
-    if (file) void readImage(file);
+    if (file) void readFile(file);
   };
 
-  // Pasting a screenshot is how most people arrive here from a chat app.
+  // Ctrl+V anywhere: the usual way a screenshot arrives on a computer.
   useEffect(() => {
     const onPaste = (e: ClipboardEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && /^(INPUT|TEXTAREA)$/.test(target.tagName)) return;
-      const item = Array.from(e.clipboardData?.items || []).find(i => i.type.startsWith('image/'));
-      const file = item?.getAsFile();
+      const file = Array.from(e.clipboardData?.files || [])[0]
+        || Array.from(e.clipboardData?.items || []).find(i => i.kind === 'file')?.getAsFile();
       if (file) {
         e.preventDefault();
-        void readImage(file);
+        void readFile(file);
+        return;
+      }
+      const text = e.clipboardData?.getData('text')?.trim();
+      if (text && /^(WIFI:|BEGIN:|MECARD:|https?:\/\/)/i.test(text)) {
+        e.preventDefault();
+        accept([{ text, format: '' }], 'text');
       }
     };
     window.addEventListener('paste', onPaste);
     return () => window.removeEventListener('paste', onPaste);
-  }, [readImage]);
+  }, [readFile, accept]);
 
   const pasteFromClipboard = useCallback(async () => {
     setError(null);
@@ -331,838 +259,486 @@ export default function QrReader({ lang, dictionary }: QrReaderProps) {
         const type = item.types.find(ty => ty.startsWith('image/'));
         if (type) {
           const blob = await item.getType(type);
-          await readImage(new File([blob], 'clipboard.png', { type }));
+          await readFile(new File([blob], 'clipboard.png', { type }));
           return;
         }
       }
-      setError(t.errorNoClipboardImage || 'There is no image in your clipboard.');
+      setError(t.errorNoClipboardImage || 'There is no image in your clipboard. Copy a screenshot of the code first.');
     } catch {
-      setError(t.errorClipboardBlocked || 'Your browser blocked clipboard access. Press Ctrl+V over the page instead.');
+      setError(t.errorClipboardBlocked || 'Your browser blocked clipboard access. Press Ctrl+V on this page instead.');
     }
-  }, [readImage, t]);
+  }, [readFile, t]);
 
   // ==========================================================================
-  // Output
+  // Screen: a QR shown in another window, a video call or a web page
   // ==========================================================================
-  const copy = useCallback(async (value: string, key: string) => {
-    try {
-      await navigator.clipboard.writeText(value);
-      setCopied(key);
-      window.setTimeout(() => setCopied(current => (current === key ? null : current)), 1600);
-    } catch {
-      /* clipboard blocked; the text is on screen anyway */
-    }
-  }, []);
-
-  const downloadVCard = useCallback(() => {
-    if (!result) return;
-    const blob = new Blob([contactAsVCard(result)], { type: 'text/vcard;charset=utf-8' });
-    const href = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = href;
-    a.download = 'contact.vcf';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.setTimeout(() => URL.revokeObjectURL(href), 60_000);
-  }, [result]);
-
-  const reset = useCallback(() => {
-    stopCamera();
-    setResult(null);
+  const scanScreen = useCallback(async () => {
     setError(null);
-    setManualText('');
-  }, [stopCamera]);
+    setNotice(null);
+    let stream: MediaStream;
+    try {
+      setBusy(t.busyScreen || 'Choose the window, tab or screen where the code is…');
+      stream = await (navigator.mediaDevices as any).getDisplayMedia({ video: { frameRate: 5 }, audio: false });
+    } catch {
+      setBusy(null);
+      return; // cancelled from the browser's picker: nothing to report
+    }
 
-  const analyseManual = useCallback(() => {
-    const value = manualText.trim();
-    if (value) acceptDecoded(value);
-  }, [manualText, acceptDecoded]);
+    setBusy(t.screenSearching || 'Searching your screen for a code…');
+    const video = document.createElement('video');
+    video.muted = true;
+    video.playsInline = true;
+    video.srcObject = stream;
+    await video.play().catch(() => undefined);
+
+    let stopped = false;
+    const stop = () => {
+      stopped = true;
+      stream.getTracks().forEach(tr => tr.stop());
+      screenStopRef.current = null;
+    };
+    screenStopRef.current = stop;
+    stream.getVideoTracks()[0]?.addEventListener('ended', () => {
+      if (!stopped) {
+        stop();
+        setBusy(null);
+      }
+    });
+
+    const canvas = document.createElement('canvas');
+    const deadline = Date.now() + 20_000;
+    while (!stopped && Date.now() < deadline) {
+      if (video.videoWidth) {
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (ctx) {
+          ctx.drawImage(video, 0, 0);
+          const quick = await decodeFrame(ctx.getImageData(0, 0, canvas.width, canvas.height));
+          if (quick.length && !stopped) {
+            // Found one: search the same frame properly for every code it shows.
+            const full = await decodeBitmap(canvas);
+            stop();
+            setBusy(null);
+            accept(full.detections.length ? full.detections : quick, 'screen', { url: full.previewUrl, width: full.width, height: full.height });
+            return;
+          }
+        }
+      }
+      await new Promise(r => setTimeout(r, 400));
+    }
+    if (!stopped) {
+      stop();
+      setBusy(null);
+      setError(t.errorScreenNoCode || 'No code appeared on the shared screen. Make the code bigger or share the window where it is.');
+    }
+  }, [accept, t]);
 
   // ==========================================================================
-  // Copy
+  // Camera
   // ==========================================================================
-  const kindLabels: Record<PayloadKind, string> = {
-    url: t.kindUrl || 'Link',
-    wifi: t.kindWifi || 'WiFi network',
-    vcard: t.kindContact || 'Contact card',
-    mecard: t.kindContact || 'Contact card',
-    email: t.kindEmail || 'Email',
-    sms: t.kindSms || 'SMS',
-    tel: t.kindTel || 'Phone number',
-    geo: t.kindGeo || 'Map location',
-    event: t.kindEvent || 'Calendar event',
-    text: t.kindText || 'Plain text',
+  const openCamera = () => {
+    setError(null);
+    setNotice(null);
+    setCameraOpen(true);
   };
 
-  const fieldLabels: Record<string, string> = {
-    fieldHost: t.fieldHost || 'Domain',
-    fieldSsid: t.fieldSsid || 'Network name',
-    fieldSecurity: t.fieldSecurity || 'Security',
-    fieldPassword: t.fieldPassword || 'Password',
-    fieldHidden: t.fieldHidden || 'Hidden network',
-    fieldName: t.fieldName || 'Name',
-    fieldOrganization: t.fieldOrganization || 'Organisation',
-    fieldJobTitle: t.fieldJobTitle || 'Job title',
-    fieldPhone: t.fieldPhone || 'Phone',
-    fieldEmail: t.fieldEmail || 'Email',
-    fieldWebsite: t.fieldWebsite || 'Website',
-    fieldAddress: t.fieldAddress || 'Address',
-    fieldNote: t.fieldNote || 'Note',
-    fieldBirthday: t.fieldBirthday || 'Birthday',
-    fieldSubject: t.fieldSubject || 'Subject',
-    fieldBody: t.fieldBody || 'Message',
-    fieldMessage: t.fieldMessage || 'Message',
-    fieldLatitude: t.fieldLatitude || 'Latitude',
-    fieldLongitude: t.fieldLongitude || 'Longitude',
-    fieldSummary: t.fieldSummary || 'Title',
-    fieldStart: t.fieldStart || 'Starts',
-    fieldEnd: t.fieldEnd || 'Ends',
-    fieldLocation: t.fieldLocation || 'Location',
+  const onCameraClose = useCallback(
+    (reason?: 'denied' | 'missing' | 'insecure') => {
+      setCameraOpen(false);
+      if (reason === 'denied')
+        setError(t.errorCameraDenied || 'Camera access was blocked. Allow it from the padlock icon next to the address, or use a photo instead.');
+      else if (reason === 'missing') setError(t.errorCameraMissing || 'No camera was found on this device. Use a photo or screenshot instead.');
+      else if (reason === 'insecure') setError(t.errorInsecure || 'The camera only works over a secure (https) connection.');
+    },
+    [t]
+  );
+
+  const onCameraResult = useCallback(
+    (found: Detection[]) => {
+      setCameraOpen(false);
+      accept(found, 'camera');
+    },
+    [accept]
+  );
+
+  // ==========================================================================
+  // History
+  // ==========================================================================
+  const openHistory = (item: HistoryItem) => accept([{ text: item.text, format: item.format }], 'history');
+
+  const clearHistory = () => {
+    setHistory([]);
+    writeHistory([]);
   };
 
-  const warningText: Record<WarningKind, string> = {
-    insecure: t.warnInsecure || 'This link is plain http, so anything you send over it travels unencrypted.',
-    punycode: t.warnPunycode || 'The domain uses punycode. It may be legitimate, or a lookalike of a name you trust.',
-    mixedScript: t.warnMixedScript || 'The domain mixes alphabets — a classic trick for impersonating a real site.',
-    shortener: t.warnShortener || 'This is a link shortener: the real destination is hidden behind a redirect.',
-    ipHost: t.warnIpHost || 'The link points at a raw IP address rather than a domain name.',
-    credentials: t.warnCredentials || 'The link carries a username and password inside it.',
-    longUrl: t.warnLongUrl || 'The link is unusually long, which is often used to bury the real destination.',
-    openWifi: t.warnOpenWifi || 'This network has no password, so traffic on it is not encrypted.',
-    executable: t.warnExecutable || 'The link points straight at an installable file.',
+  const exportHistory = () => downloadText(historyToCsv(history), 'qr-scans.csv', 'text/csv;charset=utf-8');
+
+  const timeFmt = (at: number) => {
+    try {
+      return new Intl.DateTimeFormat(lang, { dateStyle: 'short', timeStyle: 'short' }).format(at);
+    } catch {
+      return new Date(at).toLocaleString();
+    }
   };
 
-  const severity = useMemo(() => {
-    if (!result || result.warnings.length === 0) return 'clean' as const;
-    return result.warnings.some(w => SEVERE.includes(w)) ? ('severe' as const) : ('caution' as const);
-  }, [result]);
+  // ==========================================================================
+  // UI
+  // ==========================================================================
+  const current = scans[selected];
+  const desktopFirst = env.ready && !env.touch;
 
-  const steps = [
-    { art: StepSource, title: t.step1Title || 'Bring the code in', text: t.step1Text || 'Point your camera at it, drop a screenshot, or just paste from the clipboard.' },
-    { art: StepDecode, title: t.step2Title || 'It gets decoded here', text: t.step2Text || 'The decoder runs in your browser. The image never leaves the machine.' },
-    { art: StepReview, title: t.step3Title || 'Read before you act', text: t.step3Text || 'You see the full destination, the fields inside it, and any red flags.' },
-    { art: StepAct, title: t.step4Title || 'Then decide', text: t.step4Text || 'Copy a field, save the contact, or open the link — only if you choose to.' },
-  ];
+  const bigBtn =
+    'w-full flex items-center gap-3.5 p-4 rounded-2xl border text-left transition-all cursor-pointer active:scale-[0.99]';
 
-  const featureIcons = [IconInspect, IconSafety, IconLocalRead, IconCamera, IconStructured, IconPaste];
-  const features = Array.isArray(t.features) && t.features.length ? t.features : [
-    { title: 'Shows, never redirects', text: 'A QR sticker can point anywhere. This reader prints the destination and waits for you.' },
-    { title: 'Flags the classic tricks', text: 'Lookalike domains, mixed alphabets, link shorteners, raw IPs and embedded credentials.' },
-    { title: '100% local', text: 'The decoder runs in your browser. No image, no scan and no link ever reaches a server.' },
-    { title: 'Camera, file or clipboard', text: 'Scan live with the rear camera, drop a screenshot, or hit Ctrl+V anywhere on the page.' },
-    { title: 'Reads the structure', text: 'WiFi, vCard, MeCard, email, SMS, phone, geo and calendar payloads are broken into fields.' },
-    { title: 'Nothing is stored', text: 'The scan list lives in the tab and disappears the moment you close it.' },
-  ];
+  const cameraButton = (
+    <button
+      onClick={openCamera}
+      disabled={!env.camera}
+      className={`${bigBtn} border-cyan-400/40 bg-gradient-to-br from-cyan-500 to-cyan-600 text-black hover:from-cyan-400 hover:to-cyan-500 disabled:opacity-40 shadow-[0_10px_40px_-10px_rgba(6,182,212,0.7)]`}
+    >
+      <span className="w-12 h-12 rounded-xl bg-black/15 flex items-center justify-center shrink-0">
+        <Camera className="w-6 h-6" />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-base font-black">{desktopFirst ? t.srcWebcam || 'Use the webcam' : t.srcCamera || 'Scan with the camera'}</span>
+        <span className="block text-xs font-bold opacity-75">{t.srcCameraHint || 'Point it at the code. It reads on its own.'}</span>
+      </span>
+    </button>
+  );
 
-  const faqs = Array.isArray(t.faq) ? t.faq : [];
-  const keywords = Array.isArray(t.seoKeywords) ? t.seoKeywords : [];
+  const dropZone = (
+    <div
+      onDragOver={e => {
+        e.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={onDrop}
+      onClick={() => fileInputRef.current?.click()}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && fileInputRef.current?.click()}
+      className={`rounded-2xl border-2 border-dashed px-5 py-8 md:py-12 text-center flex flex-col items-center gap-3 cursor-pointer transition-all ${
+        dragging ? 'border-cyan-400 bg-cyan-500/10' : 'border-white/15 hover:border-cyan-500/50 bg-black/25 hover:bg-black/40'
+      }`}
+    >
+      <span className="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/25 flex items-center justify-center text-cyan-300">
+        <Upload className="w-6 h-6" />
+      </span>
+      <span className="block text-base md:text-lg font-black text-white">{t.dropTitle || 'Drop an image or PDF here'}</span>
+      <span className="block text-sm text-slate-400">
+        {t.dropHint || 'or press Ctrl+V to paste a screenshot'}
+      </span>
+      <span className="text-[11px] text-slate-500 font-bold uppercase tracking-wider">PNG · JPG · WEBP · HEIC · PDF</span>
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-[#04080a] text-slate-200 font-sans relative overflow-x-hidden">
       <Header
         currentLang={lang}
-        onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/qr-reader`)}
+        onLanguageChange={l => (window.location.href = `/${l.toLowerCase()}/qr-reader/`)}
         onReset={reset}
         t={t}
       />
 
-      {/* Keep the workspace centered within its own maximum width. */}
-      <main className="flex-1 flex flex-col items-center pt-36 pb-32 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
-        <AdBanner id="adsense-qr-reader-top" />
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*,application/pdf,.pdf,.heic,.heif"
+        onChange={onFileInput}
+        className="hidden"
+      />
 
-        <div className="w-full space-y-20 md:space-y-28">
-          {/* ================================================================ */}
-          {/* Hero                                                             */}
-          {/* ================================================================ */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(6,182,212,0.15)]">
-                <ScanLine className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{t.badge || t.title}</span>
-              </div>
-
-              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
-                {t.title}
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 md:px-8 pt-20 md:pt-28 pb-24 relative z-10">
+        {/* ================================================================ */}
+        {/* Tool: visible without scrolling on a phone                       */}
+        {/* ================================================================ */}
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-start">
+          <div className="lg:col-span-7 space-y-4">
+            <div className="space-y-2 pt-1">
+              <h1 className="text-[1.7rem] leading-tight md:text-5xl font-black tracking-tight text-white">
+                {t.h1 || 'QR code reader online'}
               </h1>
-
-              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">{t.description}</p>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                {(t.seoHeroList || []).slice(0, 3).map((point: string, i: number) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
-                  >
-                    <Check className="w-3.5 h-3.5 text-cyan-400 stroke-[3]" />
-                    {point}
-                  </span>
-                ))}
-              </div>
-
-              <a
-                href={`/${lang.toLowerCase()}/qr-bolt/`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 text-xs font-bold transition-all"
-              >
-                <QrCode className="w-4 h-4" />
-                {t.makerCta || 'Want to create a QR instead? Open QRBolt'}
-              </a>
+              <p className="text-sm md:text-lg text-slate-400 leading-relaxed">
+                {t.subtitle || 'Scan QR codes and barcodes with your camera, from a photo, a screenshot, a PDF or your screen. Free, no app, nothing uploaded.'}
+              </p>
             </div>
 
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyan-500/10 blur-[80px] rounded-full" />
-              <ReaderHeroArt
-                className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
-                animated={!prefersReduced}
-              />
-            </div>
-          </section>
+            <div className="glass-card rounded-3xl p-3.5 md:p-5 space-y-3">
+              {/* Phones: camera first. Computers: drop/paste first. */}
+              {desktopFirst ? dropZone : cameraButton}
 
-          {/* ================================================================ */}
-          {/* Workspace                                                        */}
-          {/* ================================================================ */}
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            {/* Scanner */}
-            <div className="lg:col-span-7 space-y-5">
-              <div className="flex p-1 rounded-2xl bg-[#071319]/80 border border-white/5 gap-1 w-full">
-                {[
-                  { id: 'image' as SourceMode, label: t.sourceImage || 'Image', icon: ImageIcon },
-                  { id: 'camera' as SourceMode, label: t.sourceCamera || 'Camera', icon: Camera },
-                  { id: 'text' as SourceMode, label: t.sourceText || 'Raw text', icon: FileText },
-                ].map(tab => {
-                  const Icon = tab.icon;
-                  const active = source === tab.id;
-                  return (
-                    <button
-                      key={tab.id}
-                      onClick={() => {
-                        if (tab.id !== 'camera') stopCamera();
-                        setSource(tab.id);
-                      }}
-                      className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
-                        active
-                          ? 'bg-cyan-600 text-white shadow-[0_0_25px_rgba(6,182,212,0.35)]'
-                          : 'text-slate-400 hover:text-white hover:bg-white/5'
-                      }`}
-                    >
-                      <Icon className="w-4 h-4 shrink-0" />
-                      <span className="truncate">{tab.label}</span>
+              <div className="grid grid-cols-2 gap-2.5">
+                {desktopFirst ? (
+                  <>
+                    {env.screen && (
+                      <button
+                        onClick={scanScreen}
+                        className="col-span-2 flex items-center gap-3 p-3.5 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 hover:bg-cyan-500/20 text-left cursor-pointer transition-colors"
+                      >
+                        <MonitorUp className="w-5 h-5 text-cyan-300 shrink-0" />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-black text-white">{t.srcScreen || 'Read a QR from my screen'}</span>
+                          <span className="block text-xs text-slate-400">{t.srcScreenHint || 'For a code in another window, a video call or a web page'}</span>
+                        </span>
+                      </button>
+                    )}
+                    <button onClick={openCamera} disabled={!env.camera} className="flex items-center justify-center gap-2 h-12 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-bold text-white cursor-pointer disabled:opacity-40">
+                      <Camera className="w-4 h-4" />
+                      {t.srcWebcam || 'Use the webcam'}
                     </button>
-                  );
-                })}
+                  </>
+                ) : (
+                  <button onClick={() => fileInputRef.current?.click()} className="flex items-center justify-center gap-2 h-12 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-bold text-white cursor-pointer">
+                    <ImageIcon className="w-4 h-4" />
+                    {t.srcUpload || 'Photo or PDF'}
+                  </button>
+                )}
+                <button onClick={pasteFromClipboard} className="flex items-center justify-center gap-2 h-12 rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 text-sm font-bold text-white cursor-pointer">
+                  <ClipboardPaste className="w-4 h-4" />
+                  {t.srcPaste || 'Paste image'}
+                </button>
               </div>
 
-              <div className="glass-card rounded-3xl p-5 md:p-7 space-y-5 min-h-[380px]">
-                {/* ---------------------------------------------------- image */}
-                {source === 'image' && (
-                  <div className="space-y-4">
-                    <div
-                      onDragOver={e => {
-                        e.preventDefault();
-                        setDragging(true);
-                      }}
-                      onDragLeave={() => setDragging(false)}
-                      onDrop={handleDrop}
-                      onClick={() => fileInputRef.current?.click()}
-                      className={`rounded-2xl border-2 border-dashed p-10 text-center flex flex-col items-center gap-4 cursor-pointer transition-all ${
-                        dragging
-                          ? 'border-cyan-500/60 bg-cyan-500/5'
-                          : 'border-white/10 hover:border-cyan-500/40 bg-black/20 hover:bg-black/40'
-                      }`}
+              <button
+                onClick={() => setShowText(v => !v)}
+                className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-300 px-1 cursor-pointer"
+                aria-expanded={showText}
+              >
+                <FileText className="w-3.5 h-3.5" />
+                {t.srcText || 'I already have the text of the code'}
+              </button>
+              {showText && (
+                <div className="space-y-2">
+                  <label className="sr-only" htmlFor="qr-manual">{t.manualLabel || 'Paste the raw content of a QR code'}</label>
+                  <textarea
+                    id="qr-manual"
+                    value={manualText}
+                    onChange={e => setManualText(e.target.value)}
+                    rows={4}
+                    placeholder="WIFI:T:WPA;S:MyNetwork;P:secret;;"
+                    className="w-full bg-[#050f14] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-500 font-mono resize-y"
+                  />
+                  <button
+                    onClick={() => manualText.trim() && accept([{ text: manualText.trim(), format: '' }], 'text')}
+                    disabled={!manualText.trim()}
+                    className="flex items-center gap-2 px-5 h-11 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 text-black text-sm font-black cursor-pointer"
+                  >
+                    <ScanLine className="w-4 h-4" />
+                    {t.analyseBtn || 'Analyse it'}
+                  </button>
+                </div>
+              )}
+
+              {busy && (
+                <div className="flex items-center gap-3 rounded-2xl border border-cyan-500/25 bg-cyan-500/10 px-4 py-3" role="status">
+                  <Loader2 className="w-5 h-5 text-cyan-300 animate-spin shrink-0" />
+                  <p className="text-sm font-bold text-cyan-100 flex-1">{busy}</p>
+                  {screenStopRef.current && (
+                    <button onClick={() => { screenStopRef.current?.(); setBusy(null); }} className="p-1.5 rounded-lg hover:bg-white/10 text-slate-300 cursor-pointer" aria-label={t.closeBtn || 'Close'}>
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              )}
+              {error && (
+                <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3" role="alert">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                  <p className="text-sm font-bold text-amber-200 leading-snug">{error}</p>
+                </div>
+              )}
+              {notice && !error && <p className="text-xs text-slate-400 px-1">{notice}</p>}
+            </div>
+
+            <ul className="flex flex-wrap gap-x-4 gap-y-1.5 px-1">
+              {(Array.isArray(t.heroPoints) ? t.heroPoints : ['No app, no sign-up', 'Nothing is uploaded', 'Never opens links by itself']).map((p: string) => (
+                <li key={p} className="flex items-center gap-1.5 text-xs font-bold text-slate-400">
+                  <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* ---------------------------------------------------- result */}
+          <div ref={resultRef} className="lg:col-span-5 lg:sticky lg:top-28 space-y-4 scroll-mt-20">
+            <div className="glass-card rounded-3xl p-4 md:p-6">
+              {!current ? (
+                <div className="flex flex-col items-center justify-center text-center gap-3 py-10 md:py-16">
+                  <QrCode className="w-12 h-12 text-slate-700" />
+                  <p className="text-sm text-slate-500 font-bold max-w-[260px] leading-relaxed">
+                    {t.emptyResult || 'What the code contains will appear here, in full, before anything is opened.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="text-lg font-black text-white">
+                      {scans.length > 1
+                        ? (t.foundCount || '{n} codes found').replace('{n}', String(scans.length))
+                        : t.resultTitle || 'Result'}
+                    </h2>
+                    <button
+                      onClick={reset}
+                      className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-slate-300 cursor-pointer"
                     >
-                      {busy ? (
-                        <Loader2 className="w-10 h-10 text-cyan-400 animate-spin" />
-                      ) : (
-                        <ViewfinderArt className="w-24 h-24 text-cyan-400" animated={!prefersReduced} />
-                      )}
-                      <div className="space-y-1">
-                        <p className="text-sm font-black text-white uppercase tracking-wider">
-                          {t.dropTitle || 'Drop a QR image'}
-                        </p>
-                        <p className="text-xs text-slate-500 font-medium">
-                          {t.dropHint || 'PNG, JPG, WebP, screenshots — or press Ctrl+V anywhere on this page'}
-                        </p>
-                      </div>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileInput}
-                        className="hidden"
-                      />
-                    </div>
-
-                    <div className="flex flex-wrap gap-2.5">
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-black text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                      >
-                        <Upload className="w-4 h-4" />
-                        {t.browseBtn || 'Choose a file'}
-                      </button>
-                      <button
-                        onClick={pasteFromClipboard}
-                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-bold transition-all cursor-pointer"
-                      >
-                        <ClipboardPaste className="w-4 h-4" />
-                        {t.pasteBtn || 'Paste from clipboard'}
-                      </button>
-                    </div>
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      {t.scanAgainBtn || 'Scan another'}
+                    </button>
                   </div>
-                )}
 
-                {/* --------------------------------------------------- camera */}
-                {source === 'camera' && (
-                  <div className="space-y-4">
-                    <div className="relative aspect-video rounded-2xl overflow-hidden bg-black border border-white/10 flex items-center justify-center">
-                      <video
-                        ref={videoRef}
-                        autoPlay
-                        muted
-                        playsInline
-                        className={`w-full h-full object-cover ${cameraOn ? '' : 'hidden'}`}
-                      />
-                      {!cameraOn && (
-                        <div className="flex flex-col items-center gap-4 text-center px-8 text-cyan-400/70">
-                          <ViewfinderArt className="w-28 h-28" animated={!prefersReduced} />
-                          <p className="text-xs text-slate-500 font-medium max-w-xs leading-relaxed">
-                            {t.cameraIdle ||
-                              'The camera stays off until you start it, and the frames are only read in memory.'}
-                          </p>
-                        </div>
-                      )}
-                      {cameraOn && (
-                        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                          <div className="w-2/3 aspect-square max-w-[260px] border-2 border-cyan-400/70 rounded-2xl shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
-                        </div>
-                      )}
+                  {preview && (
+                    <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black/40">
+                      <img src={preview.url} alt="" className="w-full max-h-64 object-contain" />
+                      <svg viewBox={`0 0 ${preview.width} ${preview.height}`} className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                        {scans.map((s, i) =>
+                          s.corners && s.corners.length === 4 ? (
+                            <g key={s.id} onClick={() => setSelected(i)} className="cursor-pointer">
+                              <polygon
+                                points={s.corners.map(p => `${p.x},${p.y}`).join(' ')}
+                                fill={i === selected ? 'rgba(34,211,238,0.25)' : 'rgba(255,255,255,0.12)'}
+                                stroke={i === selected ? '#22d3ee' : '#ffffff'}
+                                strokeWidth={Math.max(3, preview.width / 160)}
+                              />
+                              {scans.length > 1 && (
+                                <text x={s.corners[0].x} y={s.corners[0].y - preview.width / 80} fill="#22d3ee" fontSize={Math.max(18, preview.width / 28)} fontWeight="900">
+                                  {i + 1}
+                                </text>
+                              )}
+                            </g>
+                          ) : null
+                        )}
+                      </svg>
                     </div>
+                  )}
 
-                    <div className="flex flex-wrap items-center gap-2.5">
-                      {!cameraOn ? (
+                  {scans.length > 1 && (
+                    <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+                      {scans.map((s, i) => (
                         <button
-                          onClick={startCamera}
-                          className="flex items-center gap-2 px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-black text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                        >
-                          <Camera className="w-4 h-4" />
-                          {t.startCameraBtn || 'Start camera'}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={stopCamera}
-                          className="flex items-center gap-2 px-5 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all cursor-pointer"
-                        >
-                          <X className="w-4 h-4" />
-                          {t.stopCameraBtn || 'Stop camera'}
-                        </button>
-                      )}
-
-                      {cameraOn && torchAvailable && (
-                        <button
-                          onClick={toggleTorch}
-                          className={`flex items-center gap-2 px-4 py-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-                            torchOn
-                              ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300'
-                              : 'border-white/10 bg-white/5 text-slate-300 hover:text-white'
+                          key={s.id}
+                          onClick={() => setSelected(i)}
+                          className={`shrink-0 max-w-[12rem] text-left px-3 py-2 rounded-xl border text-xs cursor-pointer ${
+                            i === selected ? 'border-cyan-400 bg-cyan-500/15 text-white' : 'border-white/10 bg-white/5 text-slate-400'
                           }`}
                         >
-                          <Zap className="w-4 h-4" />
-                          {t.torchBtn || 'Torch'}
-                        </button>
-                      )}
-
-                      {cameras.length > 1 && (
-                        <select
-                          value={cameraId}
-                          onChange={e => {
-                            setCameraId(e.target.value);
-                            if (cameraOn) stopCamera();
-                          }}
-                          className="bg-[#071319] border border-white/10 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-200 outline-none focus:border-cyan-500 cursor-pointer max-w-[200px]"
-                        >
-                          <option value="">{t.cameraDefault || 'Default camera'}</option>
-                          {cameras.map(cam => (
-                            <option key={cam.deviceId} value={cam.deviceId}>
-                              {cam.label}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* ----------------------------------------------------- text */}
-                {source === 'text' && (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                        {t.manualLabel || 'Paste the raw content of a QR code'}
-                      </span>
-                      <textarea
-                        value={manualText}
-                        onChange={e => setManualText(e.target.value)}
-                        rows={8}
-                        placeholder={'WIFI:T:WPA;S:MyNetwork;P:secret;;'}
-                        className="w-full bg-[#050f14] border border-white/10 rounded-xl px-4 py-3 text-sm text-slate-200 outline-none focus:border-cyan-500 font-mono resize-none"
-                      />
-                      <p className="text-[11px] text-slate-600 font-medium leading-snug">
-                        {t.manualHint ||
-                          'Skips the decoder entirely: useful when you already have the text and just want it taken apart and checked.'}
-                      </p>
-                    </div>
-                    <button
-                      onClick={analyseManual}
-                      disabled={!manualText.trim()}
-                      className="flex items-center gap-2 px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:opacity-40 disabled:cursor-not-allowed text-black text-xs font-black uppercase tracking-wider transition-all cursor-pointer"
-                    >
-                      <ScanLine className="w-4 h-4" />
-                      {t.analyseBtn || 'Analyse it'}
-                    </button>
-                  </div>
-                )}
-
-                {error && (
-                  <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 px-3.5 py-3">
-                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <p className="text-[12px] font-bold text-amber-300 leading-snug">{error}</p>
-                  </div>
-                )}
-              </div>
-
-              {/* History */}
-              {history.length > 0 && (
-                <div className="glass-card rounded-3xl p-5 space-y-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500">
-                      <History className="w-3.5 h-3.5 text-cyan-400" />
-                      {t.historyTitle || 'This session'}
-                    </span>
-                    <button
-                      onClick={() => setHistory([])}
-                      className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-red-400 transition-colors cursor-pointer"
-                    >
-                      <Trash2 className="w-3 h-3" />
-                      {t.clearBtn || 'Clear'}
-                    </button>
-                  </div>
-                  <ul className="space-y-1.5">
-                    {history.map(entry => (
-                      <li key={entry.id}>
-                        <button
-                          onClick={() => {
-                            setResult(entry.payload);
-                            setRevealSecret(false);
-                          }}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl border border-white/5 bg-black/20 hover:bg-black/40 hover:border-cyan-500/20 text-left transition-all cursor-pointer"
-                        >
-                          <span className="text-[9px] font-black uppercase tracking-wider text-cyan-400 shrink-0 w-16 truncate">
-                            {kindLabels[entry.payload.kind]}
+                          <span className="block font-black">
+                            {i + 1}. {kindLabel(t, s.payload.kind)}
+                            {s.page ? ` · ${(t.pageLabel || 'p. {n}').replace('{n}', String(s.page))}` : ''}
                           </span>
-                          <span className="text-[11px] text-slate-400 font-medium truncate flex-1 min-w-0">
-                            {entry.payload.raw}
-                          </span>
-                          {entry.payload.warnings.length > 0 && (
-                            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                          )}
+                          <span className="block truncate">{s.payload.raw}</span>
                         </button>
-                      </li>
-                    ))}
-                  </ul>
+                      ))}
+                    </div>
+                  )}
+
+                  <ResultView t={t} payload={current.payload} />
                 </div>
               )}
             </div>
 
-            {/* Result */}
-            <div className="lg:col-span-5 space-y-5">
-              <div className="glass-card rounded-3xl p-5 md:p-7 space-y-5">
-                {!result ? (
-                  <div className="flex flex-col items-center justify-center text-center gap-4 py-14">
-                    <QrCode className="w-10 h-10 text-slate-700" />
-                    <p className="text-xs text-slate-600 font-bold max-w-[220px] leading-relaxed">
-                      {t.emptyResult || 'Whatever the code contains will be shown here, in full, before anything happens.'}
-                    </p>
-                  </div>
-                ) : (
+            <a
+              href={`/${lang.toLowerCase()}/qr-bolt/`}
+              className="glass-card rounded-3xl p-4 flex items-center gap-4 hover:border-cyan-500/30 transition-all group"
+            >
+              <span className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0">
+                <QrCode className="w-5 h-5" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-bold text-white">{t.makerCardTitle || 'Need to create a QR code?'}</span>
+                <span className="block text-xs text-slate-500 leading-snug">
+                  {t.makerCardText || 'QRBolt builds styled QR codes and checks they scan before you print them.'}
+                </span>
+              </span>
+            </a>
+          </div>
+        </section>
+
+        {/* ================================================================ */}
+        {/* History                                                          */}
+        {/* ================================================================ */}
+        {env.ready && (
+          <section className="mt-8 glass-card rounded-3xl p-4 md:p-6 space-y-4" aria-labelledby="qr-history-title">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 id="qr-history-title" className="flex items-center gap-2 text-base font-black text-white">
+                <History className="w-4 h-4 text-cyan-400" />
+                {t.historyTitle || 'Your scans'}
+                {history.length > 0 && <span className="text-slate-500 font-bold">({history.length})</span>}
+              </h2>
+              <div className="flex items-center gap-2">
+                {history.length > 0 && (
                   <>
-                    <div className="flex items-center justify-between gap-3 border-b border-white/5 pb-4">
-                      <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-300 text-[10px] font-black uppercase tracking-wider">
-                        <ScanLine className="w-3.5 h-3.5" />
-                        {kindLabels[result.kind]}
-                      </span>
-                      <button
-                        onClick={reset}
-                        className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-white transition-colors cursor-pointer"
-                      >
-                        <RotateCcw className="w-3 h-3" />
-                        {t.scanAgainBtn || 'Scan again'}
-                      </button>
-                    </div>
-
-                    {/* Safety verdict */}
-                    <div
-                      className={`flex items-start gap-2.5 rounded-xl border px-3.5 py-3 ${
-                        severity === 'severe'
-                          ? 'border-red-500/30 bg-red-500/10'
-                          : severity === 'caution'
-                            ? 'border-amber-500/25 bg-amber-500/10'
-                            : 'border-emerald-500/25 bg-emerald-500/10'
-                      }`}
-                    >
-                      {severity === 'clean' ? (
-                        <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                      ) : (
-                        <ShieldAlert
-                          className={`w-4 h-4 shrink-0 mt-0.5 ${severity === 'severe' ? 'text-red-400' : 'text-amber-400'}`}
-                        />
-                      )}
-                      <div className="min-w-0 space-y-1.5">
-                        <p
-                          className={`text-[11px] font-black uppercase tracking-wider ${
-                            severity === 'severe'
-                              ? 'text-red-300'
-                              : severity === 'caution'
-                                ? 'text-amber-300'
-                                : 'text-emerald-300'
-                          }`}
-                        >
-                          {severity === 'severe'
-                            ? t.verdictSevere || 'Treat this one with suspicion'
-                            : severity === 'caution'
-                              ? t.verdictCaution || 'Worth a second look'
-                              : t.verdictClean || 'Nothing suspicious found'}
-                        </p>
-                        {result.warnings.length > 0 ? (
-                          <ul className="space-y-1">
-                            {result.warnings.map(warning => (
-                              <li key={warning} className="text-[11px] text-slate-400 font-medium leading-snug">
-                                {warningText[warning]}
-                              </li>
-                            ))}
-                          </ul>
-                        ) : (
-                          <p className="text-[11px] text-slate-400 font-medium leading-snug">
-                            {t.verdictCleanHint || 'We still never open anything on your behalf — that stays your call.'}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Destination */}
-                    {result.kind === 'url' && result.href && (
-                      <div className="space-y-2.5">
-                        <span className="block text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                          {t.destinationLabel || 'Full destination'}
-                        </span>
-                        <p className="text-sm text-white font-mono break-all bg-black/30 border border-white/5 rounded-xl px-3.5 py-3 leading-relaxed">
-                          {result.href}
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          <a
-                            href={result.href}
-                            target="_blank"
-                            rel="noopener noreferrer nofollow"
-                            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
-                              severity === 'severe'
-                                ? 'border border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20'
-                                : 'bg-cyan-600 hover:bg-cyan-500 text-black'
-                            }`}
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                            {severity === 'severe' ? t.openAnywayBtn || 'Open anyway' : t.openBtn || 'Open the link'}
-                          </a>
-                          <button
-                            onClick={() => copy(result.href!, 'href')}
-                            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-bold transition-all cursor-pointer"
-                          >
-                            {copied === 'href' ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
-                            {t.copyBtn || 'Copy'}
-                          </button>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Fields */}
-                    {result.fields.length > 0 && (
-                      <div className="space-y-2">
-                        {result.fields.map((field, i) => {
-                          const hidden = field.secret && !revealSecret;
-                          return (
-                            <div
-                              key={`${field.key}-${i}`}
-                              className="flex items-start gap-3 rounded-xl border border-white/5 bg-black/20 px-3.5 py-2.5"
-                            >
-                              <span className="text-[9px] font-black uppercase tracking-wider text-slate-500 w-20 shrink-0 pt-1">
-                                {fieldLabels[field.key] || field.key}
-                              </span>
-                              <span
-                                className={`flex-1 min-w-0 text-[13px] text-slate-200 break-words whitespace-pre-wrap ${
-                                  field.mono ? 'font-mono' : 'font-medium'
-                                }`}
-                              >
-                                {hidden ? '••••••••' : field.value}
-                              </span>
-                              <div className="flex items-center gap-1 shrink-0">
-                                {field.secret && (
-                                  <button
-                                    onClick={() => setRevealSecret(v => !v)}
-                                    className="text-[9px] font-black uppercase tracking-wider text-cyan-400 hover:text-cyan-300 transition-colors cursor-pointer px-1"
-                                  >
-                                    {revealSecret ? t.hideBtn || 'Hide' : t.showBtn || 'Show'}
-                                  </button>
-                                )}
-                                <button
-                                  onClick={() => copy(field.value, `${field.key}-${i}`)}
-                                  aria-label={t.copyBtn || 'Copy'}
-                                  className="text-slate-500 hover:text-white transition-colors cursor-pointer p-1"
-                                >
-                                  {copied === `${field.key}-${i}` ? (
-                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                  ) : (
-                                    <Copy className="w-3.5 h-3.5" />
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    {/* Raw */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                          {t.rawLabel || 'Raw content'}
-                        </span>
-                        <button
-                          onClick={() => copy(result.raw, 'raw')}
-                          className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-500 hover:text-white transition-colors cursor-pointer"
-                        >
-                          {copied === 'raw' ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                          {t.copyBtn || 'Copy'}
-                        </button>
-                      </div>
-                      <pre className="text-[11px] text-slate-400 font-mono bg-black/30 border border-white/5 rounded-xl px-3.5 py-3 max-h-48 overflow-auto whitespace-pre-wrap break-all">
-                        {result.raw}
-                      </pre>
-                    </div>
-
-                    {(result.kind === 'vcard' || result.kind === 'mecard') && (
-                      <button
-                        onClick={downloadVCard}
-                        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 text-white text-xs font-bold transition-all cursor-pointer"
-                      >
-                        <Download className="w-4 h-4" />
-                        {t.saveContactBtn || 'Save as .vcf'}
-                      </button>
-                    )}
+                    <button onClick={exportHistory} className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-bold text-slate-300 cursor-pointer">
+                      <Download className="w-3.5 h-3.5" />
+                      {t.exportCsvBtn || 'Export CSV'}
+                    </button>
+                    <button onClick={clearHistory} className="flex items-center gap-1.5 px-3 h-9 rounded-xl bg-white/5 hover:bg-red-500/15 hover:text-red-300 text-xs font-bold text-slate-300 cursor-pointer">
+                      <Trash2 className="w-3.5 h-3.5" />
+                      {t.clearBtn || 'Clear'}
+                    </button>
                   </>
                 )}
               </div>
-
-              <a
-                href={`/${lang.toLowerCase()}/qr-bolt/`}
-                className="glass-card rounded-3xl p-5 flex items-center gap-4 hover:border-cyan-500/20 transition-all group"
-              >
-                <span className="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 shrink-0 group-hover:scale-110 transition-transform">
-                  <QrCode className="w-5 h-5" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-bold text-white">{t.makerCardTitle || 'Need to create one?'}</span>
-                  <span className="block text-[11px] text-slate-500 font-medium leading-snug">
-                    {t.makerCardText || 'QRBolt builds styled QR codes and proves they scan before you print them.'}
-                  </span>
-                </span>
-              </a>
-            </div>
-          </section>
-
-          {/* ================================================================ */}
-          {/* How it works                                                     */}
-          {/* ================================================================ */}
-          <section className="space-y-10">
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-                {t.howItWorksTitle || 'How it works'}
-              </h2>
-              <div className="h-1 w-16 bg-cyan-500 mx-auto rounded-full" />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {steps.map((step, i) => {
-                const Art = step.art;
-                return (
-                  <div
-                    key={i}
-                    className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-cyan-500/20 transition-all group"
-                  >
-                    <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-cyan-500/10 transition-colors">
-                      {i + 1}
-                    </span>
-                    <Art className="w-24 h-auto text-cyan-400" />
-                    <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
-                    <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* ================================================================ */}
-          {/* Features                                                         */}
-          {/* ================================================================ */}
-          <motion.section
-            initial={prefersReduced ? false : 'hidden'}
-            whileInView={prefersReduced ? undefined : 'visible'}
-            viewport={{ once: true, amount: 0.15 }}
-            variants={fadeInUp}
-            className="grid grid-cols-1 md:grid-cols-3 gap-6"
-          >
-            {features.map((feature: any, idx: number) => {
-              const Icon = featureIcons[idx] || IconInspect;
-              return (
-                <div
-                  key={idx}
-                  className="p-7 glass-card rounded-3xl text-left hover:-translate-y-1.5 transition-all duration-300 group border border-white/5"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400 mb-5 group-hover:scale-110 group-hover:border-cyan-500/40 transition-all">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-white text-lg font-bold mb-2.5 group-hover:text-cyan-400 transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
-                </div>
-              );
-            })}
-          </motion.section>
-
-          {/* ================================================================ */}
-          {/* SEO content                                                      */}
-          {/* ================================================================ */}
-          <section className="space-y-24 text-left">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
-              <div className="space-y-7">
-                <div className="inline-block px-4 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 text-[11px] font-black uppercase tracking-[0.2em] border border-cyan-500/20">
-                  {keywords[0]}
-                </div>
-                <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
-                  {t.seoHeroTitle}
-                </h2>
-                <p className="text-slate-400 text-lg leading-relaxed font-medium">{t.seoHeroText}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {(t.seoHeroList || []).map((point: string, i: number) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/5 group hover:bg-white/10 transition-all"
-                    >
-                      <span className="w-7 h-7 shrink-0 bg-cyan-500/20 text-cyan-400 rounded-lg flex items-center justify-center group-hover:rotate-12 transition-transform">
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                      </span>
-                      <span className="text-slate-300 font-bold text-sm">{point}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="relative glass-card rounded-[3rem] p-10 py-16 min-h-[400px] flex flex-col items-center justify-center gap-7 text-center overflow-hidden">
-                <div className="absolute -top-16 -right-16 w-56 h-56 bg-cyan-500/10 rounded-full blur-3xl" />
-                <IconSafety className="w-20 h-20 text-cyan-400 relative" />
-                <div className="space-y-3 max-w-sm relative">
-                  <h3 className="text-2xl font-black text-white tracking-tight leading-tight">
-                    {t.seoBrowserSpeedTitle}
-                  </h3>
-                  <p className="text-slate-400 font-medium text-sm leading-relaxed">{t.seoBrowserSpeedText}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-8 md:p-14 rounded-3xl md:rounded-[2.5rem] bg-[#061218] border border-white/5 space-y-10">
-              <div className="max-w-4xl space-y-4">
-                <h2 className="text-2xl md:text-4xl font-black text-white leading-tight">{t.seoSecondaryTitle}</h2>
-                <div className="h-1.5 w-20 bg-cyan-500 rounded-full" />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-3">
-                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
-                    <span className="w-6 h-px bg-white/20" />
-                    {t.seoUseCaseTitle}
-                  </div>
-                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoUseCaseText}</p>
-                </div>
-                <div className="space-y-3">
-                  <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
-                    <span className="w-6 h-px bg-white/20" />
-                    {t.seoPrivacyTitle}
-                  </div>
-                  <p className="text-slate-400 text-base leading-relaxed font-medium">{t.seoPrivacyText}</p>
-                </div>
-              </div>
-
-              <a
-                href={`/${lang.toLowerCase()}/qr-bolt/`}
-                className="inline-flex items-center gap-2.5 px-5 py-3.5 rounded-2xl bg-cyan-600 hover:bg-cyan-500 text-black font-black text-xs uppercase tracking-wider transition-all"
-              >
-                <QrCode className="w-4 h-4" />
-                {t.makerCtaLong || 'Create a QR code instead'}
-              </a>
-            </div>
-
-            {/* FAQ */}
-            {faqs.length > 0 && (
-              <div className="max-w-4xl mx-auto w-full space-y-10">
-                <div className="text-center space-y-3">
-                  <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
-                  <div className="h-1 w-16 bg-cyan-500 mx-auto rounded-full" />
-                </div>
-                <div className="grid gap-3">
-                  {faqs.map((faq: any, idx: number) => (
-                    <details
-                      key={idx}
-                      className="glass-card rounded-2xl px-6 py-5 text-left border border-white/5 hover:border-cyan-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
-                    >
-                      <summary className="flex items-start gap-3 cursor-pointer list-none text-base font-bold text-white group-hover:text-cyan-400 transition-colors">
-                        <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-[11px] font-black">
-                          Q
-                        </span>
-                        <span className="flex-1">{faq.question}</span>
-                        <span className="shrink-0 text-cyan-400 transition-transform group-open:rotate-45 text-xl leading-none">
-                          +
-                        </span>
-                      </summary>
-                      <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
-                    </details>
-                  ))}
-                </div>
-              </div>
+            {history.length > 0 ? (
+              <ul className="divide-y divide-white/5 max-h-80 overflow-auto -mx-1">
+                {history.map(item => {
+                  const p = parseScan(item.text, item.format);
+                  return (
+                    <li key={item.id}>
+                      <button onClick={() => openHistory(item)} className="w-full flex items-center gap-3 px-1 py-2.5 text-left hover:bg-white/[0.03] rounded-lg cursor-pointer">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-cyan-400 w-20 shrink-0 truncate">{kindLabel(t, p.kind)}</span>
+                        <span className="flex-1 min-w-0 text-sm text-slate-300 truncate">{p.kind === 'wifi' ? p.fields[0]?.value : item.text}</span>
+                        {p.warnings.length > 0 && <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0" />}
+                        <span className="text-[11px] text-slate-600 shrink-0 hidden sm:block">{item.format ? prettyFormat(item.format) + ' · ' : ''}{timeFmt(item.at)}</span>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p className="text-sm text-slate-500">{prefs.keepHistory ? t.historyEmpty || 'Codes you scan will be listed here.' : t.historyOff || 'History is off.'}</p>
             )}
 
-            {keywords.length > 0 && (
-              <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-                  {t.seoKeywordsTitle}
-                </h2>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {keywords.map((keyword: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-cyan-500/10 hover:border-cyan-500/20 hover:text-cyan-400 transition-all cursor-default"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+            <label className="flex items-start gap-2.5 text-xs text-slate-400 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={prefs.keepHistory}
+                onChange={e => updatePrefs({ ...prefs, keepHistory: e.target.checked })}
+                className="mt-0.5 accent-cyan-500 w-4 h-4"
+              />
+              <span>
+                <span className="font-bold text-slate-300">{t.keepHistoryLabel || 'Keep a history on this device'}</span>
+                {' · '}
+                {t.historyPrivacy || 'It stays in this browser only and is never sent anywhere.'}
+              </span>
+            </label>
           </section>
-        </div>
+        )}
 
+        <AdBanner id="adsense-qr-reader-top" className="mt-10" />
+
+        <SeoSections t={t} lang={lang} />
       </main>
 
-      <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />
+      {cameraOpen && (
+        <CameraScanner
+          t={t}
+          prefs={prefs}
+          onPrefs={updatePrefs}
+          onResult={onCameraResult}
+          onBatch={found => {
+            setCameraOpen(false);
+            accept(found, 'camera');
+          }}
+          onClose={onCameraClose}
+        />
+      )}
 
+      <Footer lang={lang} t={t} onOpenModal={modal => setLegalModal(modal)} />
       <LegalModal
         isOpen={legalModal === 'privacy'}
         onClose={() => setLegalModal(null)}
