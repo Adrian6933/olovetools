@@ -3,7 +3,6 @@ export default {
   "contactForIdeas": "意见与建议联系方式：",
   "resetHint": "重新开始",
   "title": "Lottie Viewer",
-  "description": "打开 .lottie、.tgs 和 .json 动画，重新配置每个填充、描边和渐变色标，检查在其他播放器上会出问题的地方，并导出为 JSON、SVG、PNG、序列帧或 WebM——全部在浏览器中完成。",
   "drop_active": "拖到这里松开",
   "drop_inactive": "拖入 Lottie 文件，或点击选择",
   "label_lottie_file": "Lottie 文件",
@@ -26,50 +25,49 @@ export default {
   "status_paused": "已暂停",
   "error_invalid_json": "这不是有效的 JSON。",
   "error_no_lottie": "这个文件里没有 Lottie 动画。",
-  "seoHeroTitle": "Lottie 播放器、配色编辑器与优化器，全部本地运行",
-  "seoHeroText": "打开一个 Lottie 动画，看清它里面究竟有什么，重新配色，去掉多余的体积，再导出成你真正需要的格式——完全不用上传给任何人。",
-  "seoBrowserSpeedTitle": "这是真正在渲染的播放器，不是从远端拉取的预览",
-  "seoBrowserSpeedText": "动画由运行在本页面上的 lottie-web 渲染，按文档自身的帧率播放，支持逐帧精确拖动和真正的走带控制：一帧一帧地走、倒放、裁剪范围、覆盖帧率。渲染器就在本地，所以既没有上传等待，也没有预览服务强加的画质上限。",
-  "seoUseCaseTitle": "为把动画真正上线而做，而不只是看看",
-  "seoUseCaseText": "设计师交来一个 900 KB、在 Android 上会出问题的 Lottie。这个工具会在你上线之前告诉你原因，让你不用回 After Effects 就能把它改成品牌色，清掉导出时残留的隐藏图层，并把文件以 JSON、.lottie、SVG、PNG、序列帧或 WebM 的形式交还给你。",
-  "seoPrivacyTitle": "既不上传，也不外部拉取",
-  "seoPrivacyText": "一切都在这个标签页里完成。工具还会标出那些通过 URL 引用图片的动画——这是 Lottie 唯一不自包含的情况——并在它们随 .lottie 压缩包到来时替你内嵌进去。",
   "faqTitle": "常见问题",
   "faq": [
     {
+      "question": "怎样打开 Lottie JSON 文件？",
+      "answer": "把它拖到本页，或点击框选择文件。它会立即在浏览器中播放，无需应用和账号。也可以粘贴文件链接。"
+    },
+    {
+      "question": "可以查看 .lottie（dotLottie）文件吗？",
+      "answer": "可以。.lottie 文件会在浏览器中解压，其中第一个动画会立即播放。如有需要，可以导出为普通 JSON。"
+    },
+    {
+      "question": "怎样预览 Telegram 的 .tgs 贴纸？",
+      "answer": "把 .tgs 文件拖到这里。它是压缩的 Lottie 动画，会像其他动画一样播放，检查器还会显示它是否符合 Telegram 的规则：512×512、60 fps、不超过 3 秒。"
+    },
+    {
+      "question": "可以一次打开多个 Lottie 文件吗？",
+      "answer": "可以。选择或拖入多个文件，它们会以网格形式全部播放。点击其中一个即可在完整编辑器中打开。"
+    },
+    {
+      "question": "为什么我的链接打不开？",
+      "answer": "有些服务器不允许从其他网站加载其文件（CORS）。遇到这种情况，请下载文件后拖到这里，效果一样。"
+    },
+    {
       "question": "我的动画会被上传吗？",
-      "answer": "不会。文件通过浏览器自带的 File API 读取，在内存中处理，由随本页面一起打包的播放器渲染。整个过程没有任何服务器请求，两次访问之间也不会保存任何东西。"
+      "answer": "不会。文件在你的浏览器中读取和播放。打开链接时，文件会从该地址直接下载到你的浏览器，从不经过我们的服务器。"
     },
     {
-      "question": "可以打开哪些文件格式？",
-      "answer": "原始 .json 的 Lottie、.lottie 压缩包（lottiefiles.com 默认给你的格式）、Telegram 的 .tgs 贴纸，以及压缩过的 .json.gz。容器类型按内容识别，所以名字起错的文件照样能打开。"
+      "question": "可以把 Lottie 动画导出为视频或 GIF 吗？",
+      "answer": "可以导出 WebM 视频（在 Chrome 和 Edge 中支持透明）、PNG 帧序列，或单帧 PNG 和 SVG。需要 GIF 时，可用 GIF 工具转换 WebM 或帧序列。"
     },
     {
-      "question": "为什么拖进文件后没有立刻播放？",
-      "answer": "这是刻意的。拖入只做解析和检查：你先拿到它的体积、结构和兼容性报告，按下按钮播放器才启动。如果你想完全跳过这一步，手动粘贴 JSON，它会立即打开。"
+      "question": "可以修改哪些颜色？",
+      "answer": "文件中定义的纯色填充、描边和渐变色标。嵌入图片中的颜色或由表达式控制的颜色无法在这里修改。"
     },
     {
-      "question": "到底哪些颜色能改？",
-      "answer": "静态的填充和描边、填充或描边渐变的每一个色标、纯色层的颜色，以及动画颜色属性的每一个关键帧。已经烘焙进内嵌 PNG 里的颜色，或者由图层特效生成的颜色改不了——不重画素材的话，任何编辑器都做不到。"
-    },
-    {
-      "question": "优化器能把文件缩小多少？",
-      "answer": "完全取决于源文件，所以这个工具展示的是前后真实的字节数，而不是抛一个数字给你。刚从 After Effects 导出的文件，保留两位小数通常能小 40-60%，因为它们的体积几乎全是写成十五位有效数字的坐标。"
-    },
-    {
-      "question": "能导出 GIF 吗？",
-      "answer": "不能直接导出，这是有意为之：浏览器里的 GIF 编码器会把矢量动画的颜色压成色阶断层。请改为导出编号的 PNG 序列或 WebM——两者都保留完整调色板，任何编码器都能无损地把它们转成 GIF。"
-    },
-    {
-      "question": "改颜色会不会破坏动画？",
-      "answer": "不会。每一次编辑都以补丁的形式存放在原始文档之上，原文档从不被修改。你随时可以撤销、重做、重置调色板，或者按住“对比”查看未经改动的文件。"
+      "question": "可以离线使用吗？",
+      "answer": "页面加载后，本地文件无需联网也能使用。打开链接当然需要联网。"
     }
   ],
-  "footerTagline": "一个在本地运行的 Lottie 播放器、配色编辑器、优化器和导出工具。",
+  "footerTagline": "免费在线 Lottie 查看器：播放、检查、改色并导出 .json、.lottie 和 .tgs 动画。",
   "footerCredit": "oLoveTools 工具套件的一部分",
-  "seo_title": "Lottie Viewer | 免费在线 Lottie 播放器、编辑器与优化器",
-  "seo_description": "打开 .lottie、.tgs 和 .json 动画，重新配置填充、描边和渐变，检查各播放器之间的兼容性，并导出为 SVG、PNG、序列帧或 WebM。100% 在浏览器中完成。",
-  "badge_local": "100% 在浏览器中运行",
+  "seo_title": "在线 Lottie 查看器：播放 Lottie JSON、.lottie 和 TGS",
+  "seo_description": "免费在线 Lottie 播放器：拖入 .json、.lottie 或 Telegram .tgs 贴纸，或粘贴链接，即可立即播放。批量预览整套动画，修改颜色，检查兼容性，并导出为 WebM、PNG、SVG 或 JSON。不上传任何内容。",
   "btn_paste": "手动粘贴 JSON",
   "paste_placeholder": "{\"v\":\"5.5.2\",\"fr\":30,\"w\":200,\"h\":200,\"layers\":[…]}",
   "btn_open_pasted": "直接打开",
@@ -82,10 +80,6 @@ export default {
   "preset_circle_desc": "弹性缩放循环",
   "preset_gradient": "渐变扫光",
   "preset_gradient_desc": "带三个可编辑色标的渐变填充",
-  "label_staged": "可以打开了",
-  "btn_open": "在播放器中打开",
-  "btn_discard": "丢弃",
-  "staged_hint": "目前还没有渲染或修改任何东西——只是读取并检查了文件。",
   "label_reverse": "倒放",
   "bg_checkered": "棋盘格",
   "bg_white": "白色",
@@ -167,52 +161,69 @@ export default {
   "error_no_svg": "目前还没有渲染任何内容，没有可导出的 SVG。",
   "error_clipboard": "浏览器阻止了剪贴板访问。",
   "error_no_gzip": "这个浏览器无法解压 gzip 文件。",
-  "howItWorksTitle": "工作流程",
-  "step1Title": "拖入文件",
-  "step1Text": "原始 .json、.lottie 压缩包、Telegram 的 .tgs 贴纸，或者压缩过的 .json.gz。什么都不会上传。",
-  "step2Title": "先看报告",
-  "step2Text": "在渲染之前，你就能看到体积、图层数量，以及在 iOS、Android 或老播放器上会出问题的清单。",
-  "step3Title": "改色并裁剪",
-  "step3Text": "每一处填充、描边、渐变色标和颜色关键帧都会变成一个色块。可以隐藏图层、裁剪范围、覆盖帧率。",
-  "step4Title": "导出或继续",
-  "step4Text": "JSON、.lottie、SVG、PNG、编号的序列帧或 WebM 视频；也可以把结果直接送到套件里的另一个工具。",
-  "seoKeywordsTitle": "关键词",
-  "features": [
+  "seo_title_exact": true,
+  "h1": "在线 Lottie 查看器和播放器",
+  "subtitle": "在线播放 .json、.lottie 和 .tgs 动画，检查、改色并导出。免费，在浏览器中完成，不上传任何内容。",
+  "galleryTitle": "{n} 个动画",
+  "galleryHint": "点击任一动画，在播放器和编辑器中打开。",
+  "galleryLight": "浅色背景",
+  "galleryDark": "深色背景",
+  "galleryFailed": "有 {n} 个文件无法作为 Lottie 读取。",
+  "urlLabel": "Lottie 文件链接",
+  "urlPlaceholder": "粘贴链接：https://…/animation.json",
+  "urlOpen": "打开链接",
+  "urlInvalid": "请粘贴以 https:// 开头的链接",
+  "urlFailed": "无法加载该链接。服务器可能不允许从其他网站打开：请下载文件后拖到这里。",
+  "shareLink": "复制可播放此动画的链接",
+  "shareLinkShort": "分享链接",
+  "howTitle": "如何在线播放 Lottie 文件",
+  "howIntro": "Lottie 动画是用 Bodymovin 从 After Effects 导出的 JSON 文件，或用 LottieFiles、Figma 插件等工具制作的文件。浏览器无法双击打开它们，需要这样的播放器。",
+  "howSteps": [
+    "把 .json、.lottie 或 .tgs 文件拖进框里，或点击选择文件。可以一次选择多个，全部查看。",
+    "或者粘贴文件链接（LottieFiles、GitHub、你自己的服务器），点“打开链接”。",
+    "动画立即播放。可调速度、循环、逐帧查看，并切换背景检查透明效果。",
+    "需要的话，可以改色、隐藏图层、压缩体积，或导出为 WebM、PNG 帧序列、SVG、JSON 或 .lottie。"
+  ],
+  "formatsTitle": "支持的格式",
+  "formatsList": [
     {
-      "title": "什么都不会离开你的电脑",
-      "text": "播放器、配色编辑器、优化器和所有导出都跑在你自己的 CPU 上。不上传、不注册、不排队——拔掉网线也照样能用。"
+      "ext": ".json",
+      "text": "标准 Lottie / Bodymovin 文件，从 After Effects 导出，或从 LottieFiles 以“Lottie JSON”下载。"
     },
     {
-      "title": "别的查看器找不到的颜色",
-      "text": "大多数在线查看器只能找到静态填充。这个还会识别描边、渐变色标、纯色层和动画颜色关键帧，并告诉你每种颜色被用了多少次。"
+      "ext": ".lottie",
+      "text": "dotLottie：包含一个或多个动画及其图片的 zip。比 JSON 更小，新版 LottieFiles 播放器使用此格式。"
     },
     {
-      "title": "一棵真正的图层树",
-      "text": "每个顶层图层都列出类型、表达式和轨道遮罩，还有开关可以隐藏你不想要的图层。之后还能把它们从导出文件里彻底删掉。"
+      "ext": ".tgs",
+      "text": "Telegram 动态贴纸。它是 gzip 压缩的 Lottie JSON，512×512、60 fps，可以在上传前检查贴纸。"
     },
     {
-      "title": "一个把账算给你看的优化器",
-      "text": "把导出时写成十五位的坐标取整、去掉作者元数据、删除隐藏图层，通常就能让文件小一半。你看到的是前后的实际字节数，而不是一句承诺。"
-    },
-    {
-      "title": "图片与视频导出",
-      "text": "当前帧导出为 PNG 或 SVG，整段范围导出为 ZIP 里的编号 PNG 序列，或者一段逐帧精确的 WebM 视频。全部在本标签页的 canvas 上渲染。"
-    },
-    {
-      "title": "一份兼容性报告",
-      "text": "表达式、路径合并、图层特效、文本图层、3D 标记以及通过 URL 引用的图片——正是这些东西让动画在这里好看、在手机上出错。"
+      "ext": ".json.gz",
+      "text": "任何 gzip 压缩的 Lottie JSON，会在浏览器中解压。"
     }
   ],
-  "seoKeywords": [
-    "Lottie 查看器",
-    "在线 Lottie 播放器",
-    "编辑 Lottie 颜色",
-    "dotLottie",
-    "tgs 查看器",
-    "Lottie 优化",
-    "Lottie 转 WebM",
-    "Lottie 转 PNG 序列",
-    "Lottie 兼容性检查",
-    "After Effects Bodymovin"
+  "sections": [
+    {
+      "title": "一次预览整套动画",
+      "text": "选择或拖入多个文件，它们会以网格形式同时播放，背景可切换深色或浅色。这是检查图标集或贴纸包最快的方法。\n\n点击任一动画，即可在完整播放器中打开，使用检查器、颜色编辑器和导出功能。"
+    },
+    {
+      "title": "放进应用前先检查",
+      "text": "检查器会显示版本、尺寸、帧率、时长、图层数和文件大小，并提示在部分播放器中会出问题的内容：表达式、缺失的图片、lottie-web、iOS 或 Android 不支持的效果，以及过大的文件。\n\n这样就能在这里发现问题，而不是等到上线。"
+    },
+    {
+      "title": "改色并导出",
+      "text": "文件中所有填充、描边和渐变的颜色都会汇总到可编辑的调色板中。修改即时生效，并可撤销。\n\n满意后，可导出为 JSON 或 .lottie、当前帧的 SVG 或 PNG、编号 PNG 序列，或带透明通道的 WebM 视频。"
+    },
+    {
+      "title": "分享一个可直接播放的链接",
+      "text": "如果动画来自链接，“分享链接”按钮会复制一个地址，打开本页即可直接播放。方便把设计师的文件发给开发者或客户，而不需要他们下载任何东西。"
+    }
   ],
+  "finding_tgs_size": "Telegram 贴纸必须正好是 512×512。这个是 {d}。",
+  "finding_tgs_fps": "Telegram 贴纸必须是 30 或 60 fps。这个是 {d} fps。",
+  "finding_tgs_duration": "Telegram 贴纸最长 3 秒。这个时长为 {d} 秒。",
+  "finding_tgs_ok": "符合 Telegram 贴纸规则：512×512、30/60 fps、不超过 3 秒。",
+  "openAnother": "打开其他文件"
 };

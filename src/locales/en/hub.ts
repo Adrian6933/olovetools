@@ -112,7 +112,7 @@ export default {
       "description": "An interactive regular expression builder, tester, and visualizer with real-time match highlighting and syntax breakdown 100% locally."
     },
     "30": {
-      "description": "Render, inspect, and edit layer colors of Lottie JSON animations 100% locally in your browser with real-time playback controls."
+      "description": "Play .json, .lottie and Telegram .tgs animations online, preview whole packs, recolour them and export to WebM, PNG, SVG or JSON."
     },
     "31": {
       "description": "Optimize, clean and compress SVG files 100% locally in your browser with real-time side-by-side previews and code formatting."

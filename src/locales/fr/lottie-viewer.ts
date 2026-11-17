@@ -3,7 +3,6 @@ export default {
   "contactForIdeas": "Contact pour idées et commentaires :",
   "resetHint": "Recommencer",
   "title": "Lottie Viewer",
-  "description": "Ouvrez des animations .lottie, .tgs et .json, recolorez chaque remplissage, contour et arrêt de dégradé, vérifiez ce qui cassera sur les autres lecteurs et exportez en JSON, SVG, PNG, séquence d’images ou WebM — le tout dans votre navigateur.",
   "drop_active": "Déposez-le ici",
   "drop_inactive": "Glissez un fichier Lottie, ou cliquez pour le choisir",
   "label_lottie_file": "Fichier Lottie",
@@ -26,50 +25,49 @@ export default {
   "status_paused": "En pause",
   "error_invalid_json": "Ce n’est pas du JSON valide.",
   "error_no_lottie": "Ce fichier ne contient pas d’animation Lottie.",
-  "seoHeroTitle": "Lecteur, éditeur de couleurs et optimiseur Lottie, en local",
-  "seoHeroText": "Ouvrez une animation Lottie, voyez exactement ce qu’elle contient, recolorez-la, allégez-la et exportez-la dans le format dont vous avez vraiment besoin — sans l’envoyer à qui que ce soit.",
-  "seoBrowserSpeedTitle": "Un lecteur qui effectue le rendu, pas un aperçu qui se télécharge",
-  "seoBrowserSpeedText": "L’animation est rendue par lottie-web qui tourne dans cette page, à la cadence du document lui-même, avec un défilement exact à l’image près et de vrais contrôles : avancer image par image, lire à l’envers, rogner la plage, forcer les fps. Le moteur étant local, il n’y a ni attente d’envoi ni plafond de qualité imposé par un service d’aperçu.",
-  "seoUseCaseTitle": "Pensé pour publier des animations, pas seulement les regarder",
-  "seoUseCaseText": "Le designer vous livre un Lottie de 900 Ko qui casse sur Android. Cet outil vous dit pourquoi avant la mise en ligne, vous laisse le recolorer aux couleurs de la marque sans repasser par After Effects, supprime les calques masqués laissés par l’export et vous rend le fichier en JSON, .lottie, SVG, PNG, séquence d’images ou WebM.",
-  "seoPrivacyTitle": "Rien n’est envoyé, rien n’est téléchargé",
-  "seoPrivacyText": "Tout se passe dans cet onglet. L’outil signale en plus les animations qui référencent des images par URL — le seul cas où un Lottie n’est pas autonome — et les intègre pour vous lorsqu’elles arrivent dans une archive .lottie.",
   "faqTitle": "Questions fréquentes",
   "faq": [
     {
+      "question": "Comment ouvrir un fichier Lottie JSON ?",
+      "answer": "Déposez-le sur cette page ou cliquez sur le cadre pour le choisir. Il se lit tout de suite dans le navigateur, sans appli ni compte. Vous pouvez aussi coller un lien vers le fichier."
+    },
+    {
+      "question": "Puis-je voir un fichier .lottie (dotLottie) ?",
+      "answer": "Oui. Les .lottie sont décompressés dans le navigateur et la première animation qu'ils contiennent se lance aussitôt. Vous pouvez la réexporter en JSON simple si votre projet en a besoin."
+    },
+    {
+      "question": "Comment prévisualiser un sticker Telegram .tgs ?",
+      "answer": "Déposez le fichier .tgs ici. C'est une animation Lottie compressée, elle se lit comme les autres, et l'inspecteur indique si elle respecte les règles Telegram : 512×512, 60 fps, 3 s maximum."
+    },
+    {
+      "question": "Puis-je ouvrir plusieurs fichiers Lottie à la fois ?",
+      "answer": "Oui. Sélectionnez-en ou déposez-en plusieurs : ils s'affichent dans une grille, tous animés. Cliquez sur l'un d'eux pour l'ouvrir dans l'éditeur complet."
+    },
+    {
+      "question": "Pourquoi mon lien ne s'ouvre-t-il pas ?",
+      "answer": "Certains serveurs n'autorisent pas le chargement de leurs fichiers depuis un autre site (CORS). Dans ce cas, téléchargez le fichier et déposez-le ici, cela fonctionne de la même façon."
+    },
+    {
       "question": "Mes animations sont-elles envoyées quelque part ?",
-      "answer": "Non. Le fichier est lu avec la File API du navigateur, traité en mémoire et rendu par un lecteur embarqué dans cette page. Il n’y a aucun appel serveur à aucun moment, et rien n’est conservé entre deux visites."
+      "answer": "Non. Les fichiers sont lus et joués dans votre navigateur. Quand vous ouvrez un lien, le fichier est téléchargé directement depuis cette adresse vers votre navigateur, sans passer par nos serveurs."
     },
     {
-      "question": "Quels formats puis-je ouvrir ?",
-      "answer": "Un .json Lottie, une archive .lottie (le format que lottiefiles.com fournit par défaut), un sticker Telegram .tgs et un .json.gz compressé. Le conteneur est détecté par son contenu : un fichier mal nommé s’ouvre quand même."
+      "question": "Puis-je exporter une animation Lottie en vidéo ou en GIF ?",
+      "answer": "Vous pouvez exporter une vidéo WebM (avec transparence dans Chrome et Edge), une séquence d'images PNG ou des images isolées en PNG et SVG. Pour un GIF, convertissez le WebM ou les images avec un outil GIF."
     },
     {
-      "question": "Pourquoi rien ne se lance dès que je dépose un fichier ?",
-      "answer": "C’est voulu. Déposer un fichier ne fait que l’analyser et l’inspecter ; vous avez d’abord sa taille, sa structure et son rapport de compatibilité, et le lecteur démarre quand vous appuyez sur le bouton. Si vous préférez sauter tout ça, collez le JSON à la main : il s’ouvre immédiatement."
+      "question": "Quelles couleurs peut-on changer ?",
+      "answer": "Les remplissages unis, les contours et les arrêts de dégradé définis dans le fichier. Les couleurs contenues dans des images intégrées ou pilotées par des expressions ne se modifient pas ici."
     },
     {
-      "question": "Quelles couleurs sont réellement modifiables ?",
-      "answer": "Les remplissages et contours statiques, chaque arrêt d’un dégradé de remplissage ou de contour, la couleur d’un calque solide et chaque image clé d’une propriété de couleur animée. Les couleurs cuites dans un PNG intégré ou produites par un effet de calque ne peuvent pas être changées : aucun éditeur ne le peut sans redessiner la ressource."
-    },
-    {
-      "question": "De combien l’optimiseur allège-t-il un fichier ?",
-      "answer": "Cela dépend entièrement de la source, c’est pourquoi l’outil affiche les octets réels avant et après plutôt qu’un chiffre annoncé. Les fichiers sortis d’After Effects perdent en général 40 à 60 % à deux décimales, parce que l’essentiel de leur poids, ce sont des coordonnées écrites avec quinze chiffres significatifs."
-    },
-    {
-      "question": "Puis-je exporter un GIF ?",
-      "answer": "Pas directement, et c’est délibéré : un encodeur GIF dans le navigateur postériserait les couleurs d’une animation vectorielle. Exportez plutôt une séquence PNG numérotée ou un WebM — les deux gardent toute la palette, et n’importe quel encodeur les transformera en GIF sans perte."
-    },
-    {
-      "question": "Modifier les couleurs abîme-t-il l’animation ?",
-      "answer": "Non. Chaque modification est stockée comme un correctif au-dessus du document original, qui n’est jamais touché. Annulez, rétablissez, réinitialisez la palette ou maintenez Comparer pour revoir le fichier intact à tout moment."
+      "question": "Ça marche hors connexion ?",
+      "answer": "Une fois la page chargée, les fichiers locaux fonctionnent sans connexion. Ouvrir un lien demande évidemment internet."
     }
   ],
-  "footerTagline": "Un lecteur, éditeur de couleurs, optimiseur et exportateur Lottie qui tourne en local.",
+  "footerTagline": "Lecteur Lottie en ligne gratuit : lisez, vérifiez, recolorez et exportez des animations .json, .lottie et .tgs.",
   "footerCredit": "Fait partie de la suite oLoveTools",
-  "seo_title": "Lottie Viewer | Lecteur, éditeur et optimiseur Lottie en ligne et gratuit",
-  "seo_description": "Ouvrez des animations .lottie, .tgs et .json, recolorez remplissages, contours et dégradés, vérifiez la compatibilité entre lecteurs et exportez en SVG, PNG, séquence d’images ou WebM. 100 % dans votre navigateur.",
-  "badge_local": "100 % dans votre navigateur",
+  "seo_title": "Lecteur Lottie en ligne : lire Lottie JSON, .lottie et TGS",
+  "seo_description": "Lecteur Lottie en ligne gratuit : déposez un .json, un .lottie ou un sticker Telegram .tgs, ou collez un lien, et l'animation se lance aussitôt. Prévisualisez des packs entiers, changez les couleurs, vérifiez la compatibilité et exportez en WebM, PNG, SVG ou JSON. Rien n'est envoyé.",
   "btn_paste": "Coller le JSON à la main",
   "paste_placeholder": "{\"v\":\"5.5.2\",\"fr\":30,\"w\":200,\"h\":200,\"layers\":[…]}",
   "btn_open_pasted": "L’ouvrir directement",
@@ -82,10 +80,6 @@ export default {
   "preset_circle_desc": "Boucle de mise à l’échelle élastique",
   "preset_gradient": "Balayage de dégradé",
   "preset_gradient_desc": "Remplissage en dégradé avec trois arrêts modifiables",
-  "label_staged": "Prêt à ouvrir",
-  "btn_open": "Ouvrir dans le lecteur",
-  "btn_discard": "Abandonner",
-  "staged_hint": "Rien n’a encore été rendu ni modifié : le fichier a seulement été lu et inspecté.",
   "label_reverse": "À l’envers",
   "bg_checkered": "Damier",
   "bg_white": "Blanc",
@@ -167,52 +161,69 @@ export default {
   "error_no_svg": "Rien n’est encore rendu, il n’y a donc pas de SVG à exporter.",
   "error_clipboard": "Le navigateur a bloqué l’accès au presse-papiers.",
   "error_no_gzip": "Ce navigateur ne sait pas décompresser les fichiers gzip.",
-  "howItWorksTitle": "Comment ça marche",
-  "step1Title": "Déposez le fichier",
-  "step1Text": "Un .json brut, une archive .lottie, un sticker Telegram .tgs ou un .json.gz compressé. Rien n’est envoyé nulle part.",
-  "step2Title": "Lisez le rapport",
-  "step2Text": "Avant tout rendu, vous avez la taille, le nombre de calques et la liste de ce qui cassera sur iOS, Android ou les lecteurs plus anciens.",
-  "step3Title": "Recolorez et rognez",
-  "step3Text": "Chaque remplissage, contour, arrêt de dégradé et image clé de couleur devient un échantillon. Masquez des calques, rognez la plage, forcez les fps.",
-  "step4Title": "Exportez ou continuez",
-  "step4Text": "JSON, .lottie, SVG, PNG, une séquence d’images numérotée ou une vidéo WebM ; ou envoyez le résultat directement vers un autre outil de la suite.",
-  "seoKeywordsTitle": "Mots-clés",
-  "features": [
+  "seo_title_exact": true,
+  "h1": "Lecteur et visionneuse Lottie en ligne",
+  "subtitle": "Lisez des animations .json, .lottie et .tgs en ligne, vérifiez-les, changez leurs couleurs et exportez-les. Gratuit, dans votre navigateur, sans envoi.",
+  "galleryTitle": "{n} animations",
+  "galleryHint": "Cliquez sur une animation pour l'ouvrir dans le lecteur et l'éditeur.",
+  "galleryLight": "Fond clair",
+  "galleryDark": "Fond sombre",
+  "galleryFailed": "{n} fichiers n'ont pas pu être lus comme Lottie.",
+  "urlLabel": "Lien vers un fichier Lottie",
+  "urlPlaceholder": "Collez un lien : https://…/animation.json",
+  "urlOpen": "Ouvrir le lien",
+  "urlInvalid": "Collez un lien qui commence par https://",
+  "urlFailed": "Impossible de charger ce lien. Le serveur n'autorise peut-être pas l'ouverture depuis un autre site : téléchargez le fichier et déposez-le ici.",
+  "shareLink": "Copier un lien qui lit cette animation",
+  "shareLinkShort": "Partager le lien",
+  "howTitle": "Comment lire un fichier Lottie en ligne",
+  "howIntro": "Les animations Lottie sont des fichiers JSON exportés d'After Effects avec Bodymovin, ou créés avec LottieFiles, des plugins Figma et d'autres outils. Un navigateur ne les ouvre pas d'un double-clic : il faut un lecteur comme celui-ci.",
+  "howSteps": [
+    "Déposez votre fichier .json, .lottie ou .tgs dans le cadre, ou cliquez pour le choisir. Vous pouvez en sélectionner plusieurs pour tous les voir.",
+    "Ou collez un lien vers le fichier (LottieFiles, GitHub, votre serveur) et touchez « Ouvrir le lien ».",
+    "La lecture démarre aussitôt. Changez la vitesse, activez la boucle, avancez image par image et changez le fond pour vérifier la transparence.",
+    "Si vous voulez, changez les couleurs, masquez des calques, allégez-le ou exportez-le en WebM, images PNG, SVG, JSON ou .lottie."
+  ],
+  "formatsTitle": "Formats pris en charge",
+  "formatsList": [
     {
-      "title": "Rien ne quitte votre machine",
-      "text": "Le lecteur, l’éditeur de couleurs, l’optimiseur et tous les exports tournent sur votre propre processeur. Aucun envoi, aucun compte, aucune file d’attente — et ça marche encore avec le réseau débranché."
+      "ext": ".json",
+      "text": "Le fichier Lottie / Bodymovin classique, exporté d'After Effects ou téléchargé sur LottieFiles en « Lottie JSON »."
     },
     {
-      "title": "Des couleurs que les autres visionneuses ratent",
-      "text": "La plupart des visionneuses en ligne ne trouvent que les remplissages statiques. Celle-ci repère aussi les contours, les arrêts de dégradé, les calques solides et les images clés de couleur animée, et indique combien de fois chaque couleur sert."
+      "ext": ".lottie",
+      "text": "dotLottie : un zip avec une ou plusieurs animations et leurs images. Plus léger que le JSON, utilisé par les nouveaux lecteurs LottieFiles."
     },
     {
-      "title": "Un vrai arbre de calques",
-      "text": "Chaque calque de premier niveau avec son type, ses expressions et ses caches de piste, plus un interrupteur pour masquer ceux dont vous ne voulez pas. Ils peuvent ensuite être retirés du fichier exporté."
+      "ext": ".tgs",
+      "text": "Les stickers animés de Telegram. Ce sont des Lottie JSON compressés en gzip, en 512×512 et 60 fps : vous pouvez vérifier un sticker avant de le publier."
     },
     {
-      "title": "Un optimiseur qui montre ses calculs",
-      "text": "Arrondir les coordonnées écrites sur quinze chiffres par l’export, retirer les métadonnées d’auteur et supprimer les calques masqués divise souvent le fichier par deux. Vous voyez les octets avant et après, pas une promesse."
-    },
-    {
-      "title": "Export image et vidéo",
-      "text": "L’image courante en PNG ou SVG, toute la plage en séquence PNG numérotée dans un ZIP, ou une vidéo WebM exacte image par image. Tout est rendu sur un canvas dans cet onglet."
-    },
-    {
-      "title": "Un rapport de compatibilité",
-      "text": "Expressions, fusions de tracés, effets de calque, calques de texte, drapeaux 3D et images référencées par URL : exactement ce qui fait qu’une animation est belle ici et cassée sur un téléphone."
+      "ext": ".json.gz",
+      "text": "Tout Lottie JSON compressé en gzip. Il est décompressé dans le navigateur."
     }
   ],
-  "seoKeywords": [
-    "visionneuse Lottie",
-    "lecteur Lottie en ligne",
-    "modifier les couleurs Lottie",
-    "dotLottie",
-    "visionneuse tgs",
-    "optimiser Lottie",
-    "Lottie vers WebM",
-    "Lottie vers séquence PNG",
-    "compatibilité Lottie",
-    "After Effects Bodymovin"
+  "sections": [
+    {
+      "title": "Prévisualiser tout un pack d'un coup",
+      "text": "Sélectionnez ou déposez plusieurs fichiers : ils s'affichent dans une grille, tous animés en même temps, sur fond sombre ou clair. C'est le moyen le plus rapide de vérifier un jeu d'icônes ou un pack de stickers.\n\nCliquez sur l'un d'eux pour l'ouvrir dans le lecteur complet, avec l'inspecteur, l'éditeur de couleurs et les exports."
+    },
+    {
+      "title": "Le vérifier avant qu'il arrive dans votre app",
+      "text": "L'inspecteur indique la version, la taille, la cadence, la durée, le nombre de calques et le poids du fichier, et signale ce qui casse sur certains lecteurs : expressions, images manquantes, effets non gérés par lottie-web, iOS ou Android, fichiers trop lourds.\n\nVous trouvez ainsi les problèmes ici plutôt qu'en production."
+    },
+    {
+      "title": "Changer les couleurs et exporter",
+      "text": "Toutes les couleurs de remplissage, de contour et de dégradé du fichier sont réunies dans une palette modifiable. Les changements s'appliquent en direct et peuvent être annulés.\n\nUne fois prêt, exportez-le en JSON ou .lottie, en SVG ou PNG de l'image courante, en séquence de PNG numérotés ou en vidéo WebM avec transparence."
+    },
+    {
+      "title": "Partager un lien qui la lit",
+      "text": "Si l'animation vient d'un lien, le bouton « Partager le lien » copie une adresse qui ouvre cette page et la lit directement. Pratique pour transmettre le fichier d'un designer à un développeur ou à un client sans rien leur faire télécharger."
+    }
   ],
+  "finding_tgs_size": "Les stickers Telegram doivent mesurer exactement 512×512. Celui-ci mesure {d}.",
+  "finding_tgs_fps": "Les stickers Telegram doivent tourner à 30 ou 60 fps. Celui-ci est à {d} fps.",
+  "finding_tgs_duration": "Les stickers Telegram durent 3 secondes au maximum. Celui-ci dure {d} s.",
+  "finding_tgs_ok": "Respecte les règles des stickers Telegram : 512×512, 30/60 fps, 3 s maximum.",
+  "openAnother": "Ouvrir un autre"
 };

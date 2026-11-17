@@ -203,3 +203,41 @@ export function buildDiagnostics(json: LottieJson): Diagnostics {
     findings,
   };
 }
+
+/**
+ * Telegram's rules for animated stickers (.tgs): 512×512 canvas, 30 or 60 fps
+ * and at most 3 seconds. Checked only for files that arrived as .tgs, so an
+ * ordinary Lottie is never judged against sticker limits.
+ */
+export function telegramFindings(json: { w?: number; h?: number; fr?: number; ip?: number; op?: number }): Finding[] {
+  const findings: Finding[] = [];
+  if (json.w !== 512 || json.h !== 512) {
+    findings.push({
+      level: 'error',
+      key: 'finding_tgs_size',
+      fallback: 'Telegram stickers must be exactly 512×512. This one is {d}.',
+      detail: `${json.w || 0}×${json.h || 0}`,
+    });
+  }
+  if (json.fr !== 30 && json.fr !== 60) {
+    findings.push({
+      level: 'error',
+      key: 'finding_tgs_fps',
+      fallback: 'Telegram stickers must run at 30 or 60 fps. This one is {d} fps.',
+      detail: String(json.fr ?? 0),
+    });
+  }
+  const seconds = json.fr ? ((json.op || 0) - (json.ip || 0)) / json.fr : 0;
+  if (seconds > 3.0001) {
+    findings.push({
+      level: 'error',
+      key: 'finding_tgs_duration',
+      fallback: 'Telegram stickers can last 3 seconds at most. This one lasts {d} s.',
+      detail: seconds.toFixed(2),
+    });
+  }
+  if (!findings.length) {
+    findings.push({ level: 'info', key: 'finding_tgs_ok', fallback: 'Meets Telegram’s sticker rules: 512×512, 30/60 fps, 3 s or less.' });
+  }
+  return findings;
+}

@@ -390,7 +390,7 @@ export const MOCK_PROJECTS: Project[] = [
     id: '30',
     name: 'Lottie Viewer',
     slug: 'lottie-viewer',
-    description: 'Render, inspect, and edit layer colors of Lottie JSON animations 100% locally in your browser with real-time playback controls.',
+    description: 'Play .json, .lottie and Telegram .tgs animations online, preview whole packs, recolour them and export to WebM, PNG, SVG or JSON.',
     category: ProjectCategory.IMAGE_DESIGN,
     tags: ['Lottie', 'Animation', 'JSON', 'Design'],
     icon: 'Play',

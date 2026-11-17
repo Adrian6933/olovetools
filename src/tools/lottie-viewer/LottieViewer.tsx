@@ -12,6 +12,7 @@ import {
   FileDown,
   Film,
   Info,
+  Link2,
   Loader2,
   Redo2,
   RotateCcw,
@@ -29,6 +30,8 @@ import { LegalModal } from './components/LegalModal';
 import { AdBanner } from '../../components/shared/AdBanner';
 import { NextStepBar } from './components/NextStepBar';
 import { Stage, type StageHandle } from './components/Stage';
+import { Gallery } from './components/Gallery';
+import { SeoSections } from './components/SeoSections';
 import {
   IconFrames,
   IconHandoff,
@@ -73,7 +76,7 @@ import {
   exportWebm,
 } from './utils/exporters';
 import { buildEmbedSnippet, type EmbedFlavor } from './utils/embed';
-import { buildDiagnostics } from './utils/validate';
+import { buildDiagnostics, telegramFindings } from './utils/validate';
 import type {
   ColorSwatch,
   EditState,
@@ -136,6 +139,10 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
   const [pasteText, setPasteText] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [busyReading, setBusyReading] = useState(false);
+  const [gallery, setGallery] = useState<StagedFile[]>([]);
+  const [urlInput, setUrlInput] = useState('');
+  /** Remote file the open document came from, for the share link. */
+  const [docUrl, setDocUrl] = useState<string | null>(null);
 
   // --- Edit state ----------------------------------------------------------
   const [edit, setEdit] = useState<EditState>(EMPTY_EDIT);
@@ -161,6 +168,8 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
   const [embedFlavor, setEmbedFlavor] = useState<EmbedFlavor>('webComponent');
 
   const stageRef = useRef<StageHandle>(null);
+  const workspaceRef = useRef<HTMLElement | null>(null);
+  const otherInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const copyTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -255,7 +264,13 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
           return;
         }
         const result = await readLottieFile(file);
-        setStaged(result);
+        // Straight into the player: people come here to see it play. The
+        // checks still run and show up in the inspector.
+        resetEdits();
+        setGallery([]);
+        setDocUrl(null);
+        setDoc({ json: result.json, name: result.name, source: result.source });
+        window.setTimeout(() => workspaceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
       } catch (err: any) {
         const key = err instanceof LottieParseError ? err.key : 'error_no_lottie';
         setErrorMsg(t[key] || err?.message || 'Could not read that file');
@@ -263,8 +278,103 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
         setBusyReading(false);
       }
     },
-    [t]
+    [t, resetEdits]
   );
+
+  /** Several files at once become a gallery; one goes straight to the player. */
+  const stageFiles = useCallback(
+    async (files: File[]) => {
+      if (files.length <= 1) {
+        if (files[0]) await stageFile(files[0]);
+        return;
+      }
+      setErrorMsg('');
+      setBusyReading(true);
+      const read: StagedFile[] = [];
+      let failed = 0;
+      for (const file of files.slice(0, 60)) {
+        if (file.size > LARGE_FILE_BYTES) {
+          failed += 1;
+          continue;
+        }
+        try {
+          read.push(await readLottieFile(file));
+        } catch {
+          failed += 1;
+        }
+      }
+      setBusyReading(false);
+      if (read.length === 1) {
+        resetEdits();
+        setDoc({ json: read[0].json, name: read[0].name, source: read[0].source });
+      } else if (read.length) {
+        setDoc(null);
+        setGallery(read);
+      }
+      if (failed) setErrorMsg(interpolate(t.galleryFailed || '{n} files could not be read as Lottie.', failed));
+    },
+    [stageFile, resetEdits, t]
+  );
+
+  /** Fetches a .json / .lottie / .tgs from a link, then opens it like a file. */
+  const openFromUrl = useCallback(
+    async (raw: string) => {
+      const url = raw.trim();
+      if (!/^https?:\/\//i.test(url)) {
+        setErrorMsg(t.urlInvalid || 'Paste a link that starts with https://');
+        return;
+      }
+      setErrorMsg('');
+      setBusyReading(true);
+      try {
+        const res = await fetch(url, { mode: 'cors' });
+        if (!res.ok) throw new Error(String(res.status));
+        const blob = await res.blob();
+        const name = decodeURIComponent(new URL(url).pathname.split('/').pop() || 'animation.json') || 'animation.json';
+        const file = new File([blob], /\.(json|lottie|tgs|gz)$/i.test(name) ? name : `${name}.json`, { type: blob.type });
+        await stageFile(file);
+        setDocUrl(url);
+      } catch {
+        setBusyReading(false);
+        setErrorMsg(t.urlFailed || 'That link could not be loaded. The server may not allow it to be opened from another site: download the file and drop it here instead.');
+      }
+    },
+    [stageFile, t]
+  );
+
+  // `?url=` opens a remote animation straight away: a link that plays it.
+  useEffect(() => {
+    try {
+      const param = new URLSearchParams(window.location.search).get('url');
+      if (param) {
+        setUrlInput(param);
+        void openFromUrl(param);
+      }
+    } catch {
+      /* malformed query string */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Dropping a file anywhere on the page opens it, even with one already open.
+  useEffect(() => {
+    const over = (e: DragEvent) => {
+      if (e.dataTransfer?.types?.includes('Files')) e.preventDefault();
+    };
+    const drop = (e: DragEvent) => {
+      const files = Array.from(e.dataTransfer?.files || []);
+      if (!files.length) return;
+      e.preventDefault();
+      setIsDragging(false);
+      void stageFiles(files);
+    };
+    window.addEventListener('dragover', over);
+    window.addEventListener('drop', drop);
+    return () => {
+      window.removeEventListener('dragover', over);
+      window.removeEventListener('drop', drop);
+    };
+  }, [stageFiles]);
 
   // Receives a file handed over by another tool in the suite.
   useHandoffIntake(file => {
@@ -307,10 +417,10 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
     (event: React.DragEvent) => {
       event.preventDefault();
       setIsDragging(false);
-      const file = event.dataTransfer.files?.[0];
-      if (file) void stageFile(file);
+      const files = Array.from(event.dataTransfer.files || []);
+      if (files.length) void stageFiles(files);
     },
-    [stageFile]
+    [stageFiles]
   );
 
   // -------------------------------------------------------------------------
@@ -514,7 +624,12 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
   // -------------------------------------------------------------------------
   // Derived display values
   // -------------------------------------------------------------------------
-  const liveDiagnostics = useMemo(() => (doc ? buildDiagnostics(doc.json) : null), [doc]);
+  const liveDiagnostics = useMemo(() => {
+    if (!doc) return null;
+    const report = buildDiagnostics(doc.json);
+    // A .tgs is a Telegram sticker: also check it against Telegram's rules.
+    return doc.source === 'tgs' ? { ...report, findings: [...telegramFindings(doc.json as any), ...report.findings] } : report;
+  }, [doc]);
   const embedSnippet = useMemo(
     () =>
       buildEmbedSnippet(embedFlavor, {
@@ -554,7 +669,7 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
           ) : (
             <AlertTriangle className="w-4 h-4 shrink-0 mt-px" />
           )}
-          <span>{interpolate(t[finding.key] || finding.fallback, finding.count)}</span>
+          <span>{interpolate(t[finding.key] || finding.fallback, finding.count).replace('{d}', finding.detail || '')}</span>
         </li>
       ))}
     </ul>
@@ -579,37 +694,15 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
       />
 
       {/* Keep the workspace centered within its own maximum width. */}
-      <main className="flex-1 flex flex-col gap-10 pt-32 pb-24 px-4 md:px-8 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
-        <AdBanner id="adsense-lottie-viewer-top" />
-
-        {/* ================================================================= */}
-        {/* Hero                                                              */}
-        {/* ================================================================= */}
-        <section className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 items-center">
-          <div className="space-y-5 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/30 px-4 py-1.5 rounded-full text-[11px] font-black uppercase tracking-[0.18em] text-indigo-300">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>{t.badge_local || '100% in your browser'}</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter bg-gradient-to-r from-white via-indigo-200 to-cyan-400 bg-clip-text text-transparent leading-[1.05]">
-              {t.seoHeroTitle}
-            </h1>
-            <p className="text-slate-400 text-sm md:text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
-              {t.description}
-            </p>
-            <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-              {['.json', '.lottie', '.tgs', '.json.gz'].map(format => (
-                <span
-                  key={format}
-                  className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] font-mono text-slate-400"
-                >
-                  {format}
-                </span>
-              ))}
-            </div>
-          </div>
-          <PlayerHeroArt className="w-full max-w-md mx-auto h-auto" animated={!prefersReduced} />
-        </section>
+      <main className="flex-1 flex flex-col gap-6 md:gap-8 pt-20 md:pt-28 pb-24 px-4 md:px-8 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
+        <div className="space-y-2">
+          <h1 className="text-[1.7rem] leading-tight md:text-5xl font-black tracking-tight text-white">
+            {t.h1 || 'Lottie viewer and player online'}
+          </h1>
+          <p className="text-sm md:text-lg text-slate-400 leading-relaxed max-w-3xl">
+            {t.subtitle || 'Play .json, .lottie and .tgs animations online, check them, change their colours and export them. Free, in your browser.'}
+          </p>
+        </div>
 
         {errorMsg && (
           <div className="flex items-start gap-3 px-4 py-3.5 rounded-2xl border border-red-500/30 bg-red-500/10 text-red-300 text-sm font-semibold">
@@ -628,7 +721,37 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
         {/* ================================================================= */}
         {/* Workspace                                                         */}
         {/* ================================================================= */}
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {gallery.length > 0 && (
+          <Gallery
+            lottie={lottie}
+            files={gallery}
+            t={t}
+            onOpen={file => {
+              resetEdits();
+              setDocUrl(null);
+              setDoc({ json: file.json, name: file.name, source: file.source });
+              window.setTimeout(() => workspaceRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+            }}
+            onClose={() => setGallery([])}
+          />
+        )}
+
+        <input
+          ref={otherInputRef}
+          type="file"
+          accept=".json,.lottie,.tgs,.gz,application/json"
+          multiple
+          className="hidden"
+          aria-hidden="true"
+          tabIndex={-1}
+          onChange={event => {
+            const files = Array.from(event.target.files || []);
+            if (files.length) void stageFiles(files);
+            event.target.value = '';
+          }}
+        />
+
+        <section ref={workspaceRef} className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start scroll-mt-24">
           <div className="lg:col-span-2 flex flex-col gap-6">
             {/* ---------------------------------------------------------- */}
             {/* Staged file: nothing renders until the user says so         */}
@@ -685,6 +808,28 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
                     {doc.name}
                   </span>
                   <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => otherInputRef.current?.click()}
+                      className="px-3 h-9 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 cursor-pointer transition-colors flex items-center gap-1.5 text-xs font-bold"
+                    >
+                      <Upload className="w-4 h-4" />
+                      {t.openAnother || 'Open another'}
+                    </button>
+                    {docUrl && (
+                      <button
+                        onClick={() =>
+                          copyToClipboard(
+                            'share',
+                            `${window.location.origin}${window.location.pathname}?url=${encodeURIComponent(docUrl)}`
+                          )
+                        }
+                        title={t.shareLink || 'Copy a link that plays this animation'}
+                        className="px-3 h-9 rounded-lg bg-white/5 border border-white/10 text-slate-300 hover:bg-white/10 cursor-pointer transition-colors flex items-center gap-1.5 text-xs font-bold"
+                      >
+                        {copied === 'share' ? <Check className="w-4 h-4 text-emerald-400" /> : <Link2 className="w-4 h-4" />}
+                        {t.shareLinkShort || 'Share link'}
+                      </button>
+                    )}
                     <button
                       onClick={undo}
                       disabled={historyIndex <= 0}
@@ -750,9 +895,10 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
                       ref={fileInputRef}
                       type="file"
                       accept=".json,.lottie,.tgs,.gz,application/json"
+                      multiple
                       onChange={event => {
-                        const file = event.target.files?.[0];
-                        if (file) void stageFile(file);
+                        const files = Array.from(event.target.files || []);
+                        if (files.length) void stageFiles(files);
                         event.target.value = '';
                       }}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
@@ -770,6 +916,35 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
                       .json · .lottie · .tgs · .json.gz
                     </span>
                   </div>
+
+                  <form
+                    onSubmit={event => {
+                      event.preventDefault();
+                      void openFromUrl(urlInput);
+                    }}
+                    className="flex flex-col sm:flex-row gap-2"
+                  >
+                    <label className="sr-only" htmlFor="lv-url">{t.urlLabel || 'Link to a Lottie file'}</label>
+                    <div className="flex-1 min-w-0 flex items-center gap-2 px-3 rounded-2xl bg-black/30 border border-white/10 focus-within:border-indigo-400/60">
+                      <Link2 className="w-4 h-4 text-slate-500 shrink-0" />
+                      <input
+                        id="lv-url"
+                        type="url"
+                        inputMode="url"
+                        value={urlInput}
+                        onChange={event => setUrlInput(event.target.value)}
+                        placeholder={t.urlPlaceholder || 'https://…/animation.json'}
+                        className="flex-1 min-w-0 h-12 bg-transparent text-sm text-slate-200 placeholder-slate-600 focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={!urlInput.trim() || busyReading}
+                      className="h-12 px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white text-sm font-bold cursor-pointer"
+                    >
+                      {t.urlOpen || 'Open link'}
+                    </button>
+                  </form>
 
                   {/* Manual route: skip the file intake and the report entirely. */}
                   <div className="flex flex-col gap-3">
@@ -1331,124 +1506,9 @@ export const LottieViewer: React.FC<LottieViewerProps> = ({ lang, dictionary }) 
           </div>
         </section>
 
-        {/* ================================================================= */}
-        {/* How it works                                                      */}
-        {/* ================================================================= */}
-        <section className="space-y-8">
-          <div className="text-center space-y-3">
-            <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
-              {t.howItWorksTitle || 'How it works'}
-            </h2>
-            <div className="h-1 w-16 bg-indigo-500 mx-auto rounded-full" />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {steps.map((step, index) => {
-              const Art = step.art;
-              return (
-                <div
-                  key={index}
-                  className="relative glass-card rounded-3xl p-6 space-y-4 border border-white/5 hover:border-indigo-500/20 transition-all group"
-                >
-                  <span className="absolute top-5 right-6 text-5xl font-black text-white/5 group-hover:text-indigo-500/10 transition-colors">
-                    {index + 1}
-                  </span>
-                  <Art className="w-24 h-auto text-indigo-400" />
-                  <h3 className="text-base font-bold text-white leading-snug">{step.title}</h3>
-                  <p className="text-slate-500 text-[13px] leading-relaxed font-medium">{step.text}</p>
-                </div>
-              );
-            })}
-          </div>
-        </section>
+        <AdBanner id="adsense-lottie-viewer-top" />
 
-        {/* ================================================================= */}
-        {/* Features                                                          */}
-        {/* ================================================================= */}
-        {Array.isArray(t.features) && (
-          <section className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {t.features.map((feature: any, index: number) => {
-              const Icon = featureIcons[index % featureIcons.length];
-              return (
-                <div
-                  key={index}
-                  className="p-7 glass-card rounded-3xl text-left hover:-translate-y-1 transition-all duration-300 group border border-white/5"
-                >
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-5 group-hover:border-indigo-500/40 transition-all">
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <h3 className="text-white text-lg font-bold mb-2.5 group-hover:text-indigo-400 transition-colors">
-                    {feature.title}
-                  </h3>
-                  <p className="text-slate-500 text-sm leading-relaxed font-medium">{feature.text}</p>
-                </div>
-              );
-            })}
-          </section>
-        )}
-
-        {/* ================================================================= */}
-        {/* SEO copy                                                          */}
-        {/* ================================================================= */}
-        <section className="space-y-16 text-left">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div className="space-y-5">
-              <div className="inline-block px-4 py-1.5 rounded-lg bg-indigo-500/10 text-indigo-300 text-[11px] font-black uppercase tracking-[0.2em] border border-indigo-500/20">
-                {t.title}
-              </div>
-              <h2 className="text-2xl md:text-4xl font-black text-white leading-tight tracking-tighter">
-                {t.seoBrowserSpeedTitle}
-              </h2>
-              <p className="text-slate-400 leading-relaxed font-medium">{t.seoBrowserSpeedText}</p>
-              <p className="text-slate-400 leading-relaxed font-medium">{t.seoHeroText}</p>
-            </div>
-            <div className="p-8 md:p-10 rounded-3xl bg-[#0b0a1f] border border-white/5 space-y-8">
-              <div className="space-y-3">
-                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
-                  <span className="w-6 h-px bg-white/20" />
-                  {t.seoUseCaseTitle}
-                </div>
-                <p className="text-slate-400 text-sm leading-relaxed font-medium">{t.seoUseCaseText}</p>
-              </div>
-              <div className="space-y-3">
-                <div className="text-white text-[11px] font-black uppercase tracking-[0.3em] opacity-40 flex items-center gap-3">
-                  <span className="w-6 h-px bg-white/20" />
-                  {t.seoPrivacyTitle}
-                </div>
-                <p className="text-slate-400 text-sm leading-relaxed font-medium">{t.seoPrivacyText}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* FAQ */}
-          {Array.isArray(t.faq) && (
-            <div className="max-w-4xl mx-auto w-full space-y-8">
-              <div className="text-center space-y-3">
-                <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">{t.faqTitle}</h2>
-                <div className="h-1 w-16 bg-indigo-500 mx-auto rounded-full" />
-              </div>
-              <div className="grid gap-3">
-                {t.faq.map((item: any, index: number) => (
-                  <details
-                    key={index}
-                    className="glass-card rounded-2xl px-5 md:px-6 py-5 text-left border border-white/5 hover:border-indigo-500/20 transition-colors group [&_summary::-webkit-details-marker]:hidden"
-                  >
-                    <summary className="flex items-start gap-3 cursor-pointer list-none text-base font-bold text-white group-hover:text-indigo-400 transition-colors">
-                      <span className="mt-0.5 shrink-0 w-6 h-6 rounded-lg bg-indigo-500/10 flex items-center justify-center text-indigo-400 text-[11px] font-black">
-                        Q
-                      </span>
-                      <span className="flex-1">{item.question}</span>
-                      <span className="shrink-0 text-indigo-400 transition-transform group-open:rotate-45 text-xl leading-none">
-                        +
-                      </span>
-                    </summary>
-                    <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{item.answer}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
-          )}
-        </section>
-
+        <SeoSections t={t} />
       </main>
 
       <Footer lang={lang} t={t} onOpenModal={modal => setActiveModal(modal)} />

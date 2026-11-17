@@ -112,7 +112,7 @@ export default {
       "description": "Un générateur, testeur et visualiseur interactif d'expressions régulières avec surbrillance en temps réel et décomposition syntaxique 100% local."
     },
     "30": {
-      "description": "Affichez, inspectez et modifiez les couleurs des calques des animations Lottie JSON 100% localement dans votre navigateur avec contrôle de lecture."
+      "description": "Lisez des animations .json, .lottie et .tgs Telegram en ligne, prévisualisez des packs entiers, recolorez-les et exportez en WebM, PNG, SVG ou JSON."
     },
     "31": {
       "description": "Optimisez, nettoyez et compressez les fichiers SVG 100% localement dans votre navigateur avec prévisualisation en temps réel."

@@ -112,7 +112,7 @@ export default {
       "description": "一个交互式的正则表达式构建、测试与可视化分析工具，支持实时匹配高亮与语法结构拆解，100% 本地运行。"
     },
     "30": {
-      "description": "一个交互式的 Lottie JSON 动画在线播放器与自定义配色修改器，支持实时播放控制与矢量图层调色，100% 本地运行。"
+      "description": "在线播放 .json、.lottie 和 Telegram .tgs 动画，批量预览整套动画，改色并导出为 WebM、PNG、SVG 或 JSON。"
     },
     "31": {
       "description": "一个强大的 SVG 矢量文件在线压缩与代码净化器，支持小数点精度四舍五入、标签清理及自适应布局调整，100% 本地运行。"

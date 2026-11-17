@@ -61,7 +61,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | klipy | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | list-mixer | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | lorem-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| lottie-viewer | Validación parcial | Optimización conserva bm e índices. Exportación espera la carga, utiliza el lienzo correcto y redibuja fotogramas estáticos. Libera pistas WebM. | Navegador con lottie-web real: PNG opaco e idéntico antes/después de optimizar una mezcla de capas; ZIP abierto y dos PNG decodificados sin quedar vacíos. Pendiente: interfaz completa, assets externos, TGS, WebM y dotLottie. | Pendiente |
+| lottie-viewer | Rediseño (17 nov) | H1 y herramienta arriba, cabecera de una fila. Al soltar se reproduce directo (sin paso intermedio); soltar en cualquier parte de la página y botón «Abrir otro». Varios archivos → galería con todas reproduciéndose (fondo claro/oscuro, pausa) y clic para abrir. Abrir desde URL y `?url=` que reproduce al entrar + botón «Compartir enlace». Avisos de reglas de Telegram para .tgs (512×512, 30/60 fps, ≤3 s). SEO nuevo en 9 idiomas (guía, formatos, 4 secciones, 9 FAQ). | Build de producción con workerd: .json único, .tgs que incumple (3 avisos) y que cumple, 4 archivos → galería y clic, URL del mismo origen, URL inválida con mensaje, `?url=`. Móvil y escritorio. Sin probar: una URL real de LottieFiles (depende de su CORS). | — |
 | markdown-live | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | meme-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | morse-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

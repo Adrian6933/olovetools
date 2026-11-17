@@ -112,7 +112,7 @@ export default {
       "description": "Un constructor, probador y visualizador interactivo de expresiones regulares con resaltado de coincidencias y desglose sintáctico 100% local."
     },
     "30": {
-      "description": "Renderiza, inspecciona y edita los colores de las capas de animaciones Lottie JSON 100% en local en tu navegador con controles de reproducción."
+      "description": "Reproduce animaciones .json, .lottie y .tgs de Telegram online, revisa packs enteros, cambia sus colores y exporta a WebM, PNG, SVG o JSON."
     },
     "31": {
       "description": "Optimiza, limpia y comprime archivos SVG 100% localmente en tu navegador con vistas previas en tiempo real y formateo de código."

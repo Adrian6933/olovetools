@@ -48,7 +48,7 @@ const UNIT_NAME_KEY = /^u_[a-z0-9_]+$/;
 // `acceptedHint` (pastesnap) es la lista de formatos aceptados
 // ("PNG · JPG · WebP · AVIF · GIF · HEIC · TIFF · SVG"): nombres de formato
 // separados por puntos, no prosa, asi que es identica en los nueve idiomas.
-const SKIP_KEYS = new Set(['title', 'acceptedHint', 'emailAddress', 'languageName', 'seoHeroTitle', 'keys', 'paste_placeholder', 'placeholder_input', 'd_clauseOrder', 'd_weekdayGenders', 'stamp_format', 'batch_placeholder']);
+const SKIP_KEYS = new Set(['title', 'ext', 'acceptedHint', 'emailAddress', 'languageName', 'seoHeroTitle', 'keys', 'paste_placeholder', 'placeholder_input', 'd_clauseOrder', 'd_weekdayGenders', 'stamp_format', 'batch_placeholder']);
 // Valores exactos permitidos aunque coincidan con el inglés (marcas y tecnicismos)
 const ALLOW_VALUES = new Set([
   'oLoveTools', 'FAQ', 'OK', 'URL', 'PNG', 'JPG', 'JPEG', 'SVG', 'GIF', 'PDF', 'ZIP',

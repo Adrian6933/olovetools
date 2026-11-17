@@ -112,7 +112,7 @@ export default {
       "description": "Ein interaktiver regulärer Ausdrucks-Builder, Tester und Visualisierer mit Echtzeit-Hervorhebung und Syntaxanalyse 100% lokal im Browser."
     },
     "30": {
-      "description": "Rendern, inspizieren und bearbeiten Sie Vektor-Ebenenfarben von Lottie JSON-Animationen 100% lokal im Browser mit Wiedergabesteuerung."
+      "description": ".json-, .lottie- und Telegram-.tgs-Animationen online abspielen, ganze Packs ansehen, umfärben und als WebM, PNG, SVG oder JSON exportieren."
     },
     "31": {
       "description": "Optimieren, bereinigen und komprimieren Sie SVG-Dateien zu 100% lokal im Browser mit Echtzeit-Vorschau und Formatierung."
