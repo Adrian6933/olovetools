@@ -3,8 +3,8 @@ export default {
   "previewTitle": "Pré-visualização do HTML limpo",
   "resetHint": "Começar de novo",
   "title": "HTML Sanitizer",
-  "seo_title": "HTML Sanitizer | Sanitizador e limpador de HTML online com relatório de remoções",
-  "seo_description": "Limpe HTML com uma política de lista branca real: remova scripts, manipuladores de eventos, URLs javascript: e etiquetas indesejadas, veja exatamente o que saiu e devolva o que quiser. Tudo no seu navegador.",
+  "seo_title": "Limpar HTML online: HTML limpo a partir do Word e do Google Docs",
+  "seo_description": "Limpador e sanitizador de HTML online grátis: cole texto do Word, Google Docs ou de um site e receba HTML limpo sem estilos, spans ou tags vazias, ou sanitize HTML contra XSS com DOMPurify. Mostra cada remoção. Nada é enviado.",
   "seoHeroTitle": "Limpador e sanitizador de HTML",
   "badge": "Sanitizador com lista branca",
   "description": "Cole HTML, escolha uma política e carregue no botão. Recebe a marcação limpa mais um relatório detalhado de cada etiqueta e atributo descartado — e pode anular qualquer decisão sem voltar a colar nada.",
@@ -15,7 +15,7 @@ export default {
   ],
   "label_input": "HTML de entrada",
   "label_policy": "Política de limpeza",
-  "placeholder_input": "Cole aqui o seu HTML, largue um ficheiro .html ou carregue um dos exemplos. Nada corre até carregar em Sanear.",
+  "placeholder_input": "Cole texto formatado do Word, Google Docs ou de um site (ele é limpo na hora), ou cole código HTML, solte um arquivo .html ou carregue um exemplo.",
   "button_open_file": "Abrir ficheiro",
   "button_clear": "Limpar tudo",
   "button_run": "Sanear",
@@ -155,7 +155,7 @@ export default {
       "text": "O saneador é uma biblioteca JavaScript empacotada com a página. Não há envio, nem chamada a uma API, nem pedido a um CDN em momento algum."
     }
   ],
-  "seoSecondaryTitle": "Um saneador que mostra o seu trabalho",
+  "seoSecondaryTitle": "HTML limpo a partir do Word e do Google Docs",
   "seoHeroText": "A maioria dos limpadores de HTML online entrega-lhe uma cadeia de texto e espera que confie. Este guarda o registo de decisões: que etiqueta foi descartada, que atributo foi retirado, que URL falhou a verificação de esquema — e deixa-o anular qualquer uma delas com um clique, porque a saída limpa é regenerada a partir da sua política em vez de remendada depois.",
   "seoHeroList": [
     "Lista branca, não lista negra",
@@ -163,29 +163,21 @@ export default {
     "Contagens e motivos para cada remoção",
     "Desfazer e refazer sobre a política"
   ],
-  "seoUseCaseTitle": "Quando precisa disto",
-  "seoUseCaseText": "Limpar o que um editor de texto rico produziu antes de o guardar. Retirar o lixo do Word e do Google Docs de uma colagem no CMS. Tornar seguro marcação de terceiros antes de a desenhar. Extrair texto legível de uma página guardada. Verificar se a marcação em que vai confiar contém algo executável — o exemplo de payloads conhecidos está ali para que veja a resposta em vez de a supor.",
+  "seoUseCaseTitle": "Dois trabalhos, uma ferramenta",
+  "seoUseCaseText": "Quem escreve cola um documento e precisa de HTML simples e semântico para um CMS, newsletter ou blog: títulos, parágrafos, listas, links, negrito e itálico, sem as fontes, cores, spans e parágrafos vazios que o Word e o Google Docs adicionam. Quem programa cola HTML não confiável e precisa deixá-lo seguro antes de salvar ou exibir: sem scripts, eventos ou links javascript:.",
   "seoBrowserSpeedTitle": "Construído sobre DOMPurify",
   "seoBrowserSpeedText": "A análise e as decisões de segurança vêm do DOMPurify, a biblioteca que as próprias equipas de segurança dos navegadores citam, e não de uma passagem escrita à mão sobre querySelectorAll. É usada através da sua API de hooks e pede-se-lhe o DOM intermédio em vez de uma cadeia acabada, que é o que torna possíveis o relatório de remoções e as exceções item a item. Trata do XSS por mutação, da confusão de espaços de nomes e dos truques de URL que um limpador ingénuo deixa passar.",
   "seoPrivacyTitle": "100% privado e seguro",
   "seoPrivacyText": "Sem envios, sem chaves de API e sem rastrear o que cola. A biblioteca vai empacotada com a página, por isso também não se descarrega nada de um CDN. O seu HTML fica na memória do separador e desaparece quando o fecha.",
-  "seoKeywordsTitle": "Também conhecido como",
-  "seoKeywords": [
-    "sanitizador html",
-    "limpador html",
-    "remover scripts de html",
-    "limpar html online",
-    "sanear html",
-    "retirar etiquetas",
-    "dompurify online",
-    "filtro xss",
-    "lista branca html"
-  ],
   "faqTitle": "Perguntas frequentes",
   "faq": [
     {
-      "question": "Porque é que não acontece nada quando colo?",
-      "answer": "É de propósito. Colar ou abrir um ficheiro só carrega o HTML; o saneamento corre quando carrega em Sanear. Assim escolhe primeiro a política em vez de ver a ferramenta adivinhar, e um documento grande nunca é analisado a cada tecla premida."
+      "question": "Como consigo HTML limpo a partir do Word ou Google Docs?",
+      "answer": "Copie o texto no Word ou no Google Docs e cole no quadro. A área de transferência leva o HTML formatado, então ele é limpo na hora com “Limpar HTML”: títulos, listas, links, negrito e itálico ficam; fontes, cores, classes, spans e parágrafos vazios saem."
+    },
+    {
+      "question": "Qual a diferença entre limpar e sanitizar HTML?",
+      "answer": "Limpar tira a bagunça (estilos, classes, tags vazias) para ter um HTML organizado. Sanitizar tira tudo o que pode executar código (scripts, eventos, links javascript:) para que seja seguro exibir. “Limpar HTML” faz as duas coisas; as outras predefinições focam na segurança."
     },
     {
       "question": "O que é que o relatório de remoções me permite mesmo fazer?",
@@ -212,9 +204,16 @@ export default {
       "answer": "A análise é aproximadamente linear, por isso alguns megabytes de marcação terminam bem abaixo do segundo num portátil normal; o tempo medido aparece depois de cada execução. O realce de sintaxe do painel de saída desliga-se acima de 200 KB, porque a esse tamanho colorir custa mais do que rende."
     }
   ],
-  "footerTagline": "Um sanitizador HTML com política de lista branca real e um relatório de remoções que pode contestar — 100% local no seu navegador.",
+  "footerTagline": "Limpador e sanitizador de HTML online grátis: limpe o HTML colado do Word ou Google Docs e remova XSS.",
   "footerCredit": "Parte do conjunto oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copiado!",
-  "contactForIdeas": "Contato para ideias e comentários:"
+  "contactForIdeas": "Contato para ideias e comentários:",
+  "h1": "Limpar e sanitizar HTML online",
+  "subtitle": "Cole texto do Word, Google Docs ou de um site e receba HTML limpo, ou sanitize HTML contra XSS. Grátis, no navegador.",
+  "toast_pasted_rich": "Colado com a formatação e limpo.",
+  "sample_docs": "Colado do Google Docs",
+  "preset_clean": "Limpar HTML",
+  "preset_clean_hint": "Colado do Word ou Google Docs: mantém a estrutura, tira estilos e lixo.",
+  "seo_title_exact": true
 };

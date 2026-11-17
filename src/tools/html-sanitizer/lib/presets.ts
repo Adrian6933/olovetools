@@ -26,6 +26,27 @@ const BLOCKS = ['div', 'section', 'article', 'aside', 'header', 'footer', 'main'
 export const ALWAYS_STRIP = ['script', 'style', 'noscript', 'template', 'base', 'meta', 'link', 'title', 'head'];
 
 export const PRESETS: Record<Exclude<PresetId, 'custom'>, Policy> = {
+  // Text pasted from Word, Google Docs or a web page: keep the structure
+  // (headings, lists, links, tables, bold, italics) and throw away every
+  // style, class, font, span and empty paragraph that came with it.
+  clean: {
+    allowedTags: ['p', 'br', 'strong', 'b', 'em', 'i', 'u', 's', 'sub', 'sup', 'mark', ...HEADINGS, ...LISTS, ...TABLES, 'a', 'img', 'blockquote', 'pre', 'code', 'hr', 'figure', 'figcaption'],
+    allowedAttrs: ['href', 'src', 'alt', 'title', 'colspan', 'rowspan', 'start'],
+    unknownTags: 'unwrap',
+    stripWithContents: [...ALWAYS_STRIP, 'iframe', 'object', 'embed', 'form', 'input', 'button', 'select', 'textarea', 'canvas', 'svg', 'xml'],
+    allowedSchemes: ['http', 'https', 'mailto', 'tel', 'relative'],
+    allowDataAttrs: false,
+    allowAriaAttrs: false,
+    keepComments: false,
+    keepInlineStyle: false,
+    keepClasses: false,
+    keepIds: false,
+    allowSvgMath: false,
+    hardenLinks: false,
+    stripTargets: true,
+    tidy: true,
+  },
+
   // Nothing but structural text. What you want before storing user input.
   strict: {
     allowedTags: [...TEXT_TAGS, ...HEADINGS, ...LISTS, 'a', 'blockquote', 'pre', 'code', 'hr'],
@@ -128,13 +149,14 @@ export const samePolicy = (a: Policy, b: Policy): boolean => {
     a.keepIds === b.keepIds &&
     a.allowSvgMath === b.allowSvgMath &&
     a.hardenLinks === b.hardenLinks &&
-    a.stripTargets === b.stripTargets
+    a.stripTargets === b.stripTargets &&
+    !!a.tidy === !!b.tidy
   );
 };
 
 /** Which preset (if any) a policy currently matches, for the UI badge. */
 export const matchPreset = (policy: Policy): PresetId => {
-  for (const id of ['strict', 'email', 'content', 'text'] as const) {
+  for (const id of ['clean', 'strict', 'email', 'content', 'text'] as const) {
     if (samePolicy(policy, PRESETS[id])) return id;
   }
   return 'custom';

@@ -286,7 +286,7 @@ export function sanitize({ html, policy, format, overrides, textOnly }: Sanitize
   let fragment: DocumentFragment | null = null;
   let failure: string | undefined;
   try {
-    fragment = DOMPurify.sanitize(html, config) as unknown as DocumentFragment;
+    fragment = DOMPurify.sanitize(policy.tidy ? styledToSemantic(html) : html, config) as unknown as DocumentFragment;
   } catch (error) {
     failure = error instanceof Error ? error.message : String(error);
   } finally {
@@ -308,6 +308,7 @@ export function sanitize({ html, policy, format, overrides, textOnly }: Sanitize
     };
   }
 
+  if (policy.tidy) tidyFragment(fragment);
   const output = textOnly ? extractText(fragment) : serialize(fragment, format);
 
   const removals = [...found.values()].sort((a, b) => {
@@ -417,6 +418,101 @@ function serialize(fragment: DocumentFragment, format: OutputFormat): string {
 
   for (const child of [...fragment.childNodes]) walk(child, 0, false);
   return out.join('').replace(/\n{3,}/g, '\n\n').trimEnd();
+}
+
+// ---------------------------------------------------------------------------
+// Tidy: the "clean HTML" pass for text pasted from Word, Google Docs or a web
+// page. Runs after DOMPurify, on markup that is already safe.
+// ---------------------------------------------------------------------------
+
+/** Inline wrappers that carry no meaning once their attributes are gone. */
+const BARE_WRAPPERS = new Set(['span', 'font']);
+/** Elements that are content even when they have no text. */
+const KEEP_EMPTY = new Set(['br', 'hr', 'img', 'td', 'th', 'col', 'colgroup', 'source', 'track', 'video', 'audio', 'iframe', 'picture']);
+
+/**
+ * Google Docs and many editors mark bold and italics with inline style on a
+ * <span> rather than <b>/<i>. Those styles are about to be dropped, so turn
+ * them into <strong>/<em> first or the cleaned text loses its emphasis.
+ * Runs on an inert DOMParser document; DOMPurify still sanitises the result.
+ */
+export function styledToSemantic(html: string): string {
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    for (const el of [...doc.body.querySelectorAll<HTMLElement>('span[style], font[style]')]) {
+      const style = el.style;
+      const weight = style.fontWeight;
+      const bold = weight === 'bold' || weight === 'bolder' || Number(weight) >= 600;
+      const italic = style.fontStyle === 'italic';
+      if (!bold && !italic) continue;
+      // Links keep their own styling; only wrap the text inside them.
+      let inner: Node[] = [...el.childNodes];
+      if (italic) {
+        const em = doc.createElement('em');
+        em.append(...inner);
+        inner = [em];
+      }
+      if (bold) {
+        const strong = doc.createElement('strong');
+        strong.append(...inner);
+        inner = [strong];
+      }
+      el.replaceChildren(...inner);
+    }
+    return doc.body.innerHTML;
+  } catch {
+    return html;
+  }
+}
+
+export function tidyFragment(fragment: DocumentFragment): void {
+  // 1. Unwrap <span>/<font> left with no attributes: Docs wraps every run of
+  //    text in one, and they are pure noise without their styles.
+  for (const el of [...fragment.querySelectorAll('span, font')]) {
+    if (BARE_WRAPPERS.has(el.tagName.toLowerCase()) && el.attributes.length === 0) {
+      el.replaceWith(...el.childNodes);
+    }
+  }
+  // 2. Google Docs wraps the whole document in <b id="docs-internal-guid-…">,
+  //    which leaves one bold element around every paragraph once the id goes.
+  for (const el of [...fragment.querySelectorAll('b, strong')]) {
+    if (el.querySelector('p, h1, h2, h3, h4, h5, h6, ul, ol, table, div, blockquote')) el.replaceWith(...el.childNodes);
+  }
+  // 3. Non-breaking spaces used as padding become ordinary spaces.
+  const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_TEXT);
+  const texts: Text[] = [];
+  while (walker.nextNode()) texts.push(walker.currentNode as Text);
+  for (const node of texts) {
+    if (node.parentElement?.closest('pre, code')) continue;
+    node.nodeValue = (node.nodeValue || '').replace(/ /g, ' ').replace(/ {2,}/g, ' ');
+  }
+  // 4. Empty elements, repeatedly: removing an empty <span> can empty its <p>.
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const el of [...fragment.querySelectorAll('*')]) {
+      const name = el.tagName.toLowerCase();
+      if (KEEP_EMPTY.has(name) || el.querySelector('img, br, hr, video, audio, iframe, picture, svg, math')) continue;
+      if (!(el.textContent || '').trim() && !(name === 'a' && el.getAttribute('name'))) {
+        el.remove();
+        changed = true;
+      }
+    }
+  }
+  // 5. Paragraphs that only hold line breaks are spacing, not content.
+  for (const el of [...fragment.querySelectorAll('p, div, h1, h2, h3, h4, h5, h6')]) {
+    if (!(el.textContent || '').trim() && [...el.children].every(c => c.tagName === 'BR')) el.remove();
+  }
+  // 6. Docs and Word put a <p> inside every list item: one is just a wrapper.
+  for (const li of [...fragment.querySelectorAll('li')]) {
+    const kids = [...li.childNodes].filter(n => n.nodeType !== 3 || (n.nodeValue || '').trim());
+    if (kids.length === 1 && (kids[0] as Element).tagName === 'P') (kids[0] as Element).replaceWith(...kids[0].childNodes);
+  }
+  // 7. Runs of <br> collapse to one.
+  for (const br of [...fragment.querySelectorAll('br + br')]) {
+    const next = br.nextSibling;
+    if (next && next.nodeName === 'BR') br.remove();
+  }
 }
 
 /**

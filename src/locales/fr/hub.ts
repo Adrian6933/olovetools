@@ -133,7 +133,7 @@ export default {
       "description": "Triez, inversez, mélangez, dédoublonnez et nettoyez des listes de texte. Tout dans le navigateur."
     },
     "37": {
-      "description": "Nettoyez du code HTML en retirant scripts, styles, iframes et balises indésirables. Tout dans le navigateur."
+      "description": "Nettoyez le HTML collé depuis Word ou Google Docs, ou assainissez du HTML contre le XSS, avec la liste de tout ce qui est retiré."
     },
     "38": {
       "description": "Extrayez les couleurs dominantes et la palette de n'importe quelle image. Tout dans le navigateur."

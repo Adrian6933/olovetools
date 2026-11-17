@@ -3,8 +3,8 @@ export default {
   "previewTitle": "清理后 HTML 的预览",
   "resetHint": "重新开始",
   "title": "HTML Sanitizer",
-  "seo_title": "HTML Sanitizer | 免费在线 HTML 清理工具，附移除报告",
-  "seo_description": "用真正的白名单策略清理 HTML：移除脚本、事件处理器、javascript: 链接和多余标签，并准确看到移除了什么、把需要的放回来。全部在浏览器内完成。",
+  "seo_title": "在线清理 HTML：把 Word 和 Google 文档转成干净的 HTML",
+  "seo_description": "免费在线 HTML 清理和净化工具：粘贴来自 Word、Google 文档或网页的文本，得到没有样式、span 和空标签的干净 HTML，或用 DOMPurify 净化 HTML 防止 XSS。列出每一项删除内容。不上传任何内容。",
   "seoHeroTitle": "HTML 清理器和净化器",
   "badge": "白名单净化器",
   "description": "粘贴 HTML，选择策略，按下按钮。你会得到清理后的标记，外加每一个被丢弃的标签和属性的明细报告——任何一条判定都可以推翻，无需重新粘贴。",
@@ -15,7 +15,7 @@ export default {
   ],
   "label_input": "原始 HTML 输入",
   "label_policy": "清理策略",
-  "placeholder_input": "在此粘贴 HTML、拖入 .html 文件，或加载下面的示例。在你按下「净化」之前不会执行任何操作。",
+  "placeholder_input": "粘贴来自 Word、Google 文档或网页的带格式文本（会立即清理），或粘贴 HTML 代码、拖入 .html 文件、载入示例。",
   "button_open_file": "打开文件",
   "button_clear": "全部清除",
   "button_run": "净化",
@@ -155,7 +155,7 @@ export default {
       "text": "净化器是与页面一起打包的 JavaScript 库。全程没有上传、没有 API 调用，也没有 CDN 请求。"
     }
   ],
-  "seoSecondaryTitle": "一个把过程摊开给你看的净化器",
+  "seoSecondaryTitle": "从 Word 和 Google 文档得到干净的 HTML",
   "seoHeroText": "多数在线 HTML 清理工具丢给你一串字符串，然后指望你相信它。这个保留了判定日志：哪个标签被丢弃、哪个属性被剥掉、哪个 URL 没通过方案检查——而且每一条都能一键推翻，因为清理后的输出是根据你的策略重新生成的，而不是事后打补丁。",
   "seoHeroList": [
     "白名单，而非黑名单",
@@ -163,29 +163,21 @@ export default {
     "每次移除都有次数和原因",
     "策略层面的撤销与重做"
   ],
-  "seoUseCaseTitle": "什么时候需要它",
-  "seoUseCaseText": "把富文本编辑器产出的内容在入库前清干净。把 Word 和 Google 文档的垃圾从 CMS 粘贴里剔掉。让第三方标记在渲染前变得安全。从保存下来的网页里抽出可读正文。检查你即将信任的标记里有没有能执行的东西——已知载荷的示例就在那里，让你看到答案而不是猜测答案。",
+  "seoUseCaseTitle": "两种用途，一个工具",
+  "seoUseCaseText": "写作者粘贴文档，需要用于 CMS、邮件简报或博客的简洁语义化 HTML：标题、段落、列表、链接、粗体和斜体，而不要 Word 和 Google 文档带来的字体、颜色、span 和空段落。开发者粘贴不可信的 HTML，需要在保存或显示前确保安全：没有脚本、事件处理器和 javascript: 链接。",
   "seoBrowserSpeedTitle": "构建在 DOMPurify 之上",
   "seoBrowserSpeedText": "解析和安全判定来自 DOMPurify——浏览器自家安全团队都会引用的那个库——而不是手写的一遍 querySelectorAll 扫描。这里通过它的 hook API 使用，并且要的是中间态 DOM 而非成品字符串，正是这一点让移除报告和逐项例外成为可能。它能应对变异型 XSS、命名空间混淆，以及朴素清理器会漏掉的各种 URL 花招。",
   "seoPrivacyTitle": "100% 隐私与安全",
   "seoPrivacyText": "没有上传，没有 API 密钥，也不会追踪你粘贴了什么。库与页面一起打包，所以也不会从 CDN 拉取任何东西。你的 HTML 留在标签页的内存里，关掉就消失。",
-  "seoKeywordsTitle": "也叫作",
-  "seoKeywords": [
-    "html 净化器",
-    "html 清理工具",
-    "从 html 移除脚本",
-    "在线清理 html",
-    "html 消毒",
-    "去除标签",
-    "dompurify 在线",
-    "xss 过滤器",
-    "html 白名单"
-  ],
   "faqTitle": "常见问题",
   "faq": [
     {
-      "question": "为什么粘贴之后什么都没发生？",
-      "answer": "这是刻意设计。粘贴或打开文件只是把 HTML 装进来；净化在你按下「净化」时才运行。这样你会先挑好策略，而不是看工具替你猜，而且大文档不会在每次敲键时都被解析一遍。"
+      "question": "怎样从 Word 或 Google 文档得到干净的 HTML？",
+      "answer": "在 Word 或 Google 文档中复制文本，粘贴到框中。剪贴板里带有格式化的 HTML，因此会立即用“清理 HTML”处理：标题、列表、链接、粗体和斜体保留；字体、颜色、类、span 和空段落被删除。"
+    },
+    {
+      "question": "清理 HTML 和净化 HTML 有什么区别？",
+      "answer": "清理是去掉杂乱内容（样式、类、空标签），得到整洁的标记。净化是去掉一切能执行代码的内容（脚本、事件处理器、javascript: 链接），让 HTML 可以安全显示。“清理 HTML”两者都做；其他预设侧重安全。"
     },
     {
       "question": "移除报告到底让我能做什么？",
@@ -212,9 +204,16 @@ export default {
       "answer": "解析大致是线性的，因此几兆字节的标记在普通笔记本上远远用不到一秒；每次运行后都会显示实测耗时。输出面板的语法高亮在超过 200 KB 时会关闭，因为到那个体量，着色的代价超过了它带来的好处。"
     }
   ],
-  "footerTagline": "一个带有真正白名单策略、并且移除报告可供你质疑的 HTML 净化器——在你的浏览器里 100% 本地运行。",
+  "footerTagline": "免费在线 HTML 清理和净化工具：清理从 Word 或 Google 文档粘贴的 HTML，并去除 XSS。",
   "footerCredit": "oLoveTools 套件的一部分",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "已复制！",
-  "contactForIdeas": "联系以提交想法和评论："
+  "contactForIdeas": "联系以提交想法和评论：",
+  "h1": "在线 HTML 清理和净化工具",
+  "subtitle": "粘贴来自 Word、Google 文档或网页的文本，得到干净的 HTML，或净化 HTML 防止 XSS。免费，在浏览器中完成。",
+  "toast_pasted_rich": "已带格式粘贴并清理。",
+  "sample_docs": "从 Google 文档粘贴",
+  "preset_clean": "清理 HTML",
+  "preset_clean_hint": "从 Word 或 Google 文档粘贴：保留结构，去掉样式和冗余。",
+  "seo_title_exact": true
 };

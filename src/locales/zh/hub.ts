@@ -133,7 +133,7 @@ export default {
       "description": "对文本列表排序、反转、打乱、去重和清理。全部在浏览器内完成。"
     },
     "37": {
-      "description": "清理 HTML 代码，移除脚本、样式、iframe 和不需要的标签。全部在浏览器内完成。"
+      "description": "清理从 Word 或 Google 文档粘贴的 HTML，或净化 HTML 防止 XSS，并列出所有删除内容。"
     },
     "38": {
       "description": "从任意图片中提取主色和配色板。全部在浏览器内完成。"

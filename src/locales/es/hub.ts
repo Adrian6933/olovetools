@@ -133,7 +133,7 @@ export default {
       "description": "Ordena, invierte, baraja, quita repetidos y limpia listas de texto. Todo en el navegador."
     },
     "37": {
-      "description": "Limpia código HTML quitando scripts, estilos, iframes y etiquetas que no quieres. Todo en el navegador."
+      "description": "Limpia el HTML pegado de Word o Google Docs, o sanea HTML contra XSS, con un informe de todo lo que se quita."
     },
     "38": {
       "description": "Saca los colores dominantes y la paleta de cualquier imagen. Todo en el navegador."

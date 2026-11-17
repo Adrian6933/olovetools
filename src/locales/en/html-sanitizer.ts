@@ -3,8 +3,8 @@ export default {
   "previewTitle": "Preview of the cleaned HTML",
   "resetHint": "Start over",
   "title": "HTML Sanitizer",
-  "seo_title": "HTML Sanitizer | Free Online HTML Cleaner with Removal Report",
-  "seo_description": "Clean HTML with a real allow-list policy: strip scripts, event handlers, javascript: URLs and unwanted tags, then see exactly what was removed and put any of it back. Runs entirely in your browser.",
+  "seo_title": "HTML Cleaner & Sanitizer Online: Clean HTML from Word and Google Docs",
+  "seo_description": "Free online HTML cleaner and sanitizer: paste text from Word, Google Docs or a web page and get clean HTML without styles, spans or empty tags, or sanitize HTML against XSS with DOMPurify. Shows every removal. Nothing is uploaded.",
   "seoHeroTitle": "HTML Cleaner & Sanitizer",
   "badge": "Allow-list sanitizer",
   "description": "Paste HTML, pick a policy, and press the button. You get the cleaned markup plus an itemised report of every tag and attribute that was dropped — and you can overrule any single decision without pasting anything again.",
@@ -13,11 +13,9 @@ export default {
     "Every removal is itemised",
     "Never leaves your browser"
   ],
-
   "label_input": "Raw HTML input",
   "label_policy": "Cleaning policy",
-  "placeholder_input": "Paste HTML here, drop a .html file, or load one of the samples below. Nothing runs until you press Sanitize.",
-
+  "placeholder_input": "Paste formatted text from Word, Google Docs or a web page (it is cleaned at once), or paste HTML code, drop a .html file or load a sample.",
   "button_open_file": "Open file",
   "button_clear": "Clear",
   "button_run": "Sanitize",
@@ -29,11 +27,9 @@ export default {
   "button_copied": "Copied!",
   "button_download": "Download",
   "button_reset": "Reset",
-
   "samples_title": "Try it",
   "sample_messy": "Messy CMS paste",
   "sample_attack": "Known XSS payloads",
-
   "preset_strict": "Strict",
   "preset_strict_hint": "Text and links only. For anything you are going to store.",
   "preset_email": "Email-safe",
@@ -43,29 +39,23 @@ export default {
   "preset_text": "Plain text",
   "preset_text_hint": "Drop all markup, keep the reading order.",
   "preset_custom_active": "Custom policy — edited by hand.",
-
   "stale_hint": "Policy changed — run it again",
   "shortcut_hint": "Ctrl+Enter to run · Ctrl+Z to undo a policy change",
-
   "tab_source": "Cleaned source",
   "tab_preview": "Preview",
   "tab_report": "Removed",
-
   "format_pretty": "Pretty",
   "format_min": "Minified",
   "format_raw": "As parsed",
-
   "compare_hold": "Hold to compare",
   "compare_showing": "Original",
   "output_empty": "Everything was removed — nothing survived this policy.",
   "copy_failed": "Your browser blocked clipboard access.",
-
   "stat_size": "size",
   "stat_elements": "elements",
   "stat_removed": "removed",
   "stat_dangerous": "executable",
   "stat_time": "time",
-
   "policy_allowed_tags": "Allowed tags",
   "policy_allowed_attrs": "Allowed attributes",
   "policy_add_tag": "add tag…",
@@ -91,7 +81,6 @@ export default {
   "policy_svg_math": "Allow <svg> and <math>",
   "policy_harden_links": "Add rel=\"noopener noreferrer\"",
   "policy_strip_target": "Remove target=\"_blank\"",
-
   "scheme_https_hint": "Encrypted links and images.",
   "scheme_http_hint": "Plain HTTP — fine for internal pages, leaks over the network.",
   "scheme_relative_hint": "Paths and anchors with no scheme: /page, #section, ?q=1.",
@@ -99,7 +88,6 @@ export default {
   "scheme_tel_hint": "Phone, SMS and click-to-call links.",
   "scheme_ftp_hint": "Legacy file transfer links.",
   "scheme_data_hint": "Images inlined as data URLs. Raster formats only.",
-
   "report_empty": "Nothing was removed — the input already matched the policy.",
   "report_dangerous": "{0} removals could have executed code.",
   "report_on": "on",
@@ -116,7 +104,6 @@ export default {
   "reason_inline-style": "Inline style attribute",
   "reason_class-attr": "class attribute",
   "reason_id-attr": "id / name attribute",
-
   "nextStepTitle": "Keep going",
   "nextStepHint": "The cleaned HTML travels with you — no re-upload",
   "nextDiff": "Compare with the original",
@@ -124,7 +111,6 @@ export default {
   "nextWordflow": "Analyse the text",
   "nextBase64": "Encode to Base64",
   "nextZip": "Zip it",
-
   "howItWorksTitle": "How it works",
   "step1Title": "Bring the HTML in",
   "step1Text": "Paste it, drop a .html file, or arrive from another tool. It just sits there — opening a file never starts the cleaning.",
@@ -134,7 +120,6 @@ export default {
   "step3Text": "One pass builds the cleaned tree and records every decision on the way. A megabyte of markup takes a few milliseconds.",
   "step4Title": "Review and overrule",
   "step4Text": "The report lists what went and why. Disagree with any row and press Keep: the pass runs again with that one exception.",
-
   "featuresTitle": "What it does",
   "features": [
     {
@@ -170,8 +155,7 @@ export default {
       "text": "The sanitiser is a JavaScript library bundled with the page. There is no upload, no API call and no CDN fetch at any point."
     }
   ],
-
-  "seoSecondaryTitle": "A sanitiser that shows its work",
+  "seoSecondaryTitle": "Clean HTML from Word and Google Docs",
   "seoHeroText": "Most online HTML cleaners hand you a string and expect you to trust it. This one keeps the decision log: which tag was dropped, which attribute was stripped, which URL failed the scheme check — and lets you overrule any of it in one click, because the cleaned output is regenerated from your policy rather than patched after the fact.",
   "seoHeroList": [
     "Allow-list, not block-list",
@@ -179,34 +163,21 @@ export default {
     "Counts and reasons for every removal",
     "Undo and redo on the policy"
   ],
-
-  "seoUseCaseTitle": "When you need it",
-  "seoUseCaseText": "Cleaning what a rich-text editor produced before storing it. Stripping Word and Google Docs cruft out of a CMS paste. Making third-party markup safe to render. Pulling readable text out of a saved page. Checking whether the markup you are about to trust contains anything that could execute — the sample of known payloads is there so you can see the answer rather than assume it.",
-
+  "seoUseCaseTitle": "Two jobs, one tool",
+  "seoUseCaseText": "Writers and editors paste a document and need plain, semantic HTML for a CMS, a newsletter or a blog: headings, paragraphs, lists, links, bold and italics, without the fonts, colours, spans and empty paragraphs Word and Google Docs add. Developers paste untrusted HTML and need it safe before it is stored or rendered: no scripts, event handlers or javascript: links.",
   "seoBrowserSpeedTitle": "Built on DOMPurify",
   "seoBrowserSpeedText": "The parsing and the security decisions come from DOMPurify, the library that browsers' own security teams cite, rather than a hand-written pass over querySelectorAll. It is used through its hook API and asked for the intermediate DOM rather than a finished string, which is what makes the removal report and the per-item overrides possible. It handles mutation XSS, namespace confusion and the URL tricks a naive cleaner misses.",
-
   "seoPrivacyTitle": "100% local",
   "seoPrivacyText": "No uploads, no API keys, no tracking of what you paste. The library is bundled with the page, so nothing is fetched from a CDN either. Your HTML stays in the tab's memory and disappears when you close it.",
-
-  "seoKeywordsTitle": "Also known as",
-  "seoKeywords": [
-    "html sanitizer",
-    "html cleaner",
-    "remove scripts from html",
-    "clean html online",
-    "sanitize html",
-    "strip tags",
-    "dompurify online",
-    "xss filter",
-    "html allow list"
-  ],
-
   "faqTitle": "Frequently Asked Questions",
   "faq": [
     {
-      "question": "Why does nothing happen when I paste?",
-      "answer": "By design. Pasting or opening a file only loads the HTML; the sanitiser runs when you press Sanitize. That way you choose the policy first instead of watching the tool guess, and a large document is never parsed on every keystroke."
+      "question": "How do I get clean HTML from Word or Google Docs?",
+      "answer": "Copy the text in Word or Google Docs and paste it into the box. The clipboard carries the formatted HTML, so it is cleaned straight away with the “Clean HTML” preset: headings, lists, links, bold and italics stay; fonts, colours, classes, spans and empty paragraphs go."
+    },
+    {
+      "question": "What is the difference between cleaning and sanitizing HTML?",
+      "answer": "Cleaning removes clutter (styles, classes, empty tags) to get tidy markup. Sanitizing removes anything that can run code (scripts, event handlers, javascript: links) so the HTML is safe to display. The Clean preset does both; Strict, Email-safe and Rich content focus on safety with different amounts of markup allowed."
     },
     {
       "question": "What does the removal report actually let me do?",
@@ -233,10 +204,16 @@ export default {
       "answer": "Parsing is roughly linear, so a few megabytes of markup finish in well under a second on a normal laptop; the measured time is shown after every run. Syntax highlighting in the output pane switches off above 200 KB, since colouring costs more than it is worth at that size."
     }
   ],
-
-  "footerTagline": "An HTML sanitizer with a real allow-list policy and a removal report you can argue with — 100% local in your browser.",
+  "footerTagline": "Free online HTML cleaner and sanitizer: clean HTML pasted from Word or Google Docs and strip XSS.",
   "footerCredit": "Part of the oLoveTools suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copied!",
-  "contactForIdeas": "Contact for ideas and comments:"
+  "contactForIdeas": "Contact for ideas and comments:",
+  "h1": "HTML cleaner and sanitizer online",
+  "subtitle": "Paste text from Word, Google Docs or a web page and get clean HTML, or sanitize HTML against XSS. Free, in your browser.",
+  "toast_pasted_rich": "Pasted with its formatting and cleaned.",
+  "sample_docs": "Pasted from Google Docs",
+  "preset_clean": "Clean HTML",
+  "preset_clean_hint": "Pasted from Word or Google Docs: keep the structure, drop styles and junk.",
+  "seo_title_exact": true
 };

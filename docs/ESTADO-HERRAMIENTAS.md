@@ -53,7 +53,7 @@ Comprobación: se compararon todas las claves `icon` de `src/constants.ts` con `
 | graph-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | hash-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | hex-to-rgb | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
-| html-sanitizer | Validación parcial | La descarga HTML/TXT inserta temporalmente el ancla Blob en el documento para evitar que Firefox o Safari ignoren el clic programático. | Revisión de DOMPurify, políticas de esquemas, estilos, `srcset` y reporte de eliminaciones; `tsc --noEmit` y `git diff --check` sin diagnósticos. Pendiente ejecutar muestras XSS reales en navegador, probar overrides y abrir los archivos descargados. | Pendiente |
+| html-sanitizer | Mejora (17 nov) | Preset nuevo por defecto «Limpiar HTML» (Word / Google Docs): convierte negrita/cursiva de estilos en strong/em, quita estilos, clases, span/font vacíos, envoltorio de Docs, nbsp, párrafos vacíos y <p> dentro de <li>. Pegar con formato usa el text/html del portapapeles y limpia al momento. Ejemplo «Pegado de Google Docs». H1 y herramienta arriba, cabecera de una fila, fuera la lista de keywords. SEO nuevo en 9 idiomas. | Build de producción con workerd: pegado simulado de Google Docs, ejemplo de Docs y de CMS/Word con salida limpia, ejemplo XSS con Limpiar y Estricto sin restos peligrosos. Sin probar: pegado real desde Word de escritorio. | — |
 | json-flow | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | jwt-bolt | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |
 | key-doctor | Pendiente | Ver ficha del plan | Sin ejecución registrada | — |

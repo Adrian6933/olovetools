@@ -3,8 +3,8 @@ export default {
   "previewTitle": "Aperçu du HTML nettoyé",
   "resetHint": "Recommencer",
   "title": "HTML Sanitizer",
-  "seo_title": "HTML Sanitizer | Nettoyeur et assainisseur HTML en ligne avec rapport de suppressions",
-  "seo_description": "Nettoyez le HTML avec une véritable politique de liste blanche : supprimez scripts, gestionnaires d’événements, URL javascript: et balises indésirables, puis voyez exactement ce qui a été retiré et remettez ce que vous voulez. Tout dans votre navigateur.",
+  "seo_title": "Nettoyer du HTML en ligne : HTML propre depuis Word et Google Docs",
+  "seo_description": "Nettoyeur et sanitizer HTML en ligne gratuit : collez un texte de Word, Google Docs ou d’une page web et obtenez un HTML propre sans styles, spans ni balises vides, ou assainissez du HTML contre le XSS avec DOMPurify. Chaque suppression est listée. Rien n’est envoyé.",
   "seoHeroTitle": "Nettoyeur et assainisseur HTML",
   "badge": "Assainisseur à liste blanche",
   "description": "Collez du HTML, choisissez une politique et appuyez sur le bouton. Vous obtenez le balisage nettoyé plus un rapport détaillé de chaque balise et attribut écarté — et vous pouvez annuler n’importe quelle décision sans rien recoller.",
@@ -15,7 +15,7 @@ export default {
   ],
   "label_input": "HTML source",
   "label_policy": "Politique de nettoyage",
-  "placeholder_input": "Collez votre HTML ici, déposez un fichier .html ou chargez un des exemples. Rien ne s’exécute avant que vous appuyiez sur Assainir.",
+  "placeholder_input": "Collez un texte mis en forme depuis Word, Google Docs ou une page web (il est nettoyé tout de suite), ou collez du code HTML, déposez un fichier .html ou chargez un exemple.",
   "button_open_file": "Ouvrir un fichier",
   "button_clear": "Tout effacer",
   "button_run": "Assainir",
@@ -155,7 +155,7 @@ export default {
       "text": "L’assainisseur est une bibliothèque JavaScript empaquetée avec la page. Aucun envoi, aucun appel d’API, aucune requête CDN à aucun moment."
     }
   ],
-  "seoSecondaryTitle": "Un assainisseur qui montre son travail",
+  "seoSecondaryTitle": "Un HTML propre depuis Word et Google Docs",
   "seoHeroText": "La plupart des nettoyeurs HTML en ligne vous rendent une chaîne et attendent que vous leur fassiez confiance. Celui-ci conserve le journal des décisions : quelle balise a été écartée, quel attribut retiré, quelle URL a échoué au contrôle de schéma — et vous laisse annuler n’importe laquelle en un clic, parce que la sortie nettoyée est régénérée à partir de votre politique au lieu d’être rafistolée après coup.",
   "seoHeroList": [
     "Liste blanche, pas liste noire",
@@ -163,29 +163,21 @@ export default {
     "Comptes et raisons pour chaque suppression",
     "Annuler et rétablir sur la politique"
   ],
-  "seoUseCaseTitle": "Quand vous en avez besoin",
-  "seoUseCaseText": "Nettoyer ce qu’a produit un éditeur de texte riche avant de le stocker. Retirer les scories de Word et Google Docs d’un collage dans le CMS. Rendre sûr un balisage tiers avant de l’afficher. Extraire du texte lisible d’une page enregistrée. Vérifier si le balisage auquel vous allez faire confiance contient quoi que ce soit d’exécutable — l’exemple de charges connues est là pour que vous voyiez la réponse au lieu de la supposer.",
+  "seoUseCaseTitle": "Deux besoins, un seul outil",
+  "seoUseCaseText": "Les rédacteurs collent un document et veulent un HTML simple et sémantique pour un CMS, une newsletter ou un blog : titres, paragraphes, listes, liens, gras et italique, sans les polices, couleurs, spans et paragraphes vides ajoutés par Word et Google Docs. Les développeurs collent du HTML non fiable et doivent le rendre sûr avant de l’enregistrer ou de l’afficher : pas de scripts, d’événements ni de liens javascript:.",
   "seoBrowserSpeedTitle": "Construit sur DOMPurify",
   "seoBrowserSpeedText": "L’analyse et les décisions de sécurité viennent de DOMPurify, la bibliothèque que citent les équipes de sécurité des navigateurs elles-mêmes, plutôt que d’une passe écrite à la main sur querySelectorAll. Elle est utilisée via son API de hooks et on lui demande le DOM intermédiaire plutôt qu’une chaîne finie, ce qui rend possibles le rapport de suppressions et les exceptions au cas par cas. Elle gère le XSS par mutation, la confusion d’espaces de noms et les ruses d’URL qu’un nettoyeur naïf laisse passer.",
   "seoPrivacyTitle": "100% privé et sécurisé",
   "seoPrivacyText": "Aucun envoi, aucune clé d’API, aucun suivi de ce que vous collez. La bibliothèque est empaquetée avec la page, donc rien n’est non plus récupéré depuis un CDN. Votre HTML reste dans la mémoire de l’onglet et disparaît à sa fermeture.",
-  "seoKeywordsTitle": "Aussi appelé",
-  "seoKeywords": [
-    "assainisseur html",
-    "nettoyeur html",
-    "supprimer les scripts html",
-    "nettoyer html en ligne",
-    "assainir html",
-    "retirer les balises",
-    "dompurify en ligne",
-    "filtre xss",
-    "liste blanche html"
-  ],
   "faqTitle": "Questions fréquentes",
   "faq": [
     {
-      "question": "Pourquoi rien ne se passe quand je colle ?",
-      "answer": "C’est voulu. Coller ou ouvrir un fichier ne fait que charger le HTML ; l’assainissement démarre quand vous appuyez sur Assainir. Vous choisissez ainsi la politique d’abord au lieu de regarder l’outil deviner, et un gros document n’est jamais analysé à chaque frappe."
+      "question": "Comment obtenir un HTML propre depuis Word ou Google Docs ?",
+      "answer": "Copiez le texte dans Word ou Google Docs et collez-le dans le cadre. Le presse-papiers contient le HTML mis en forme, il est donc nettoyé aussitôt avec « Nettoyer le HTML » : titres, listes, liens, gras et italique restent ; polices, couleurs, classes, spans et paragraphes vides disparaissent."
+    },
+    {
+      "question": "Quelle différence entre nettoyer et assainir du HTML ?",
+      "answer": "Nettoyer retire le désordre (styles, classes, balises vides) pour obtenir un balisage propre. Assainir retire tout ce qui peut exécuter du code (scripts, événements, liens javascript:) pour pouvoir l’afficher sans risque. « Nettoyer le HTML » fait les deux ; les autres préréglages se concentrent sur la sécurité."
     },
     {
       "question": "Que permet vraiment le rapport de suppressions ?",
@@ -212,9 +204,16 @@ export default {
       "answer": "L’analyse est à peu près linéaire, donc quelques mégaoctets de balisage finissent bien en dessous de la seconde sur un portable ordinaire ; la durée mesurée s’affiche après chaque exécution. La coloration syntaxique du panneau de sortie se coupe au-delà de 200 Ko, car à cette taille elle coûte plus qu’elle n’apporte."
     }
   ],
-  "footerTagline": "Un assainisseur HTML avec une vraie politique de liste blanche et un rapport de suppressions discutable — 100% local dans votre navigateur.",
+  "footerTagline": "Nettoyeur et sanitizer HTML en ligne gratuit : nettoyez le HTML collé depuis Word ou Google Docs et retirez le XSS.",
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Copié !",
-  "contactForIdeas": "Contact pour idées et commentaires :"
+  "contactForIdeas": "Contact pour idées et commentaires :",
+  "h1": "Nettoyer et assainir du HTML en ligne",
+  "subtitle": "Collez un texte de Word, Google Docs ou d’une page web et obtenez un HTML propre, ou assainissez du HTML contre le XSS. Gratuit, dans votre navigateur.",
+  "toast_pasted_rich": "Collé avec sa mise en forme et nettoyé.",
+  "sample_docs": "Collé depuis Google Docs",
+  "preset_clean": "Nettoyer le HTML",
+  "preset_clean_hint": "Collé depuis Word ou Google Docs : garde la structure, retire les styles et le superflu.",
+  "seo_title_exact": true
 };

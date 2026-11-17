@@ -42,7 +42,7 @@ import { legalTranslations } from '../../locales/legal';
 import { useHandoffIntake } from '../../lib/useHandoff';
 import { sanitize } from './lib/sanitize';
 import { matchPreset, presetPolicy } from './lib/presets';
-import { SAMPLE_ATTACK, SAMPLE_MESSY } from './lib/samples';
+import { SAMPLE_ATTACK, SAMPLE_MESSY, SAMPLE_DOCS } from './lib/samples';
 import { ensurePrism, tokenize, TOKEN_CLASS, HIGHLIGHT_LIMIT } from './lib/highlight';
 import type { OutputFormat, Policy, PresetId, SanitizeResult } from './types';
 
@@ -57,9 +57,10 @@ interface Snapshot {
   overrides: string[];
 }
 
-const PRESET_ORDER: PresetId[] = ['strict', 'email', 'content', 'text'];
+const PRESET_ORDER: PresetId[] = ['clean', 'strict', 'email', 'content', 'text'];
 
 const PRESET_FALLBACK: Record<PresetId, { label: string; hint: string }> = {
+  clean: { label: 'Clean HTML', hint: 'Pasted from Word or Google Docs: keep the structure, drop styles and junk.' },
   strict: { label: 'Strict', hint: 'Text and links only. For anything you will store.' },
   email: { label: 'Email-safe', hint: 'Tables and inline style survive; scripting does not.' },
   content: { label: 'Rich content', hint: 'A CMS body: media, tables, data-* and aria-*.' },
@@ -98,7 +99,7 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
   const [activeModal, setActiveModal] = useState<'privacy' | 'terms' | 'cookies' | null>(null);
   const [input, setInput] = useState('');
   const [sourceName, setSourceName] = useState<string | null>(null);
-  const [policy, setPolicy] = useState<Policy>(() => presetPolicy('content'));
+  const [policy, setPolicy] = useState<Policy>(() => presetPolicy('clean'));
   const [overrides, setOverrides] = useState<Set<string>>(() => new Set());
   const [format, setFormat] = useState<OutputFormat>('pretty');
   const [result, setResult] = useState<SanitizeResult | null>(null);
@@ -324,6 +325,31 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
     setView('source');
   }, []);
 
+  /**
+   * Text copied from Word, Google Docs or a web page carries its HTML on the
+   * clipboard next to the plain text. Use that, so "paste and clean" works
+   * without the person ever seeing the source, and clean it straight away.
+   */
+  const onPasteRich = useCallback(
+    (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      const html = event.clipboardData.getData('text/html');
+      if (!html || !/<[a-z][\s\S]*>/i.test(html)) return;
+      event.preventDefault();
+      const area = event.currentTarget;
+      const start = area.selectionStart ?? input.length;
+      const end = area.selectionEnd ?? input.length;
+      // Strip the <!--StartFragment--> wrapper Windows puts around clipboard HTML.
+      const body = html.replace(/^[\s\S]*?<!--StartFragment-->/i, '').replace(/<!--EndFragment-->[\s\S]*$/i, '');
+      const next = input.slice(0, start) + body + input.slice(end);
+      setInput(next);
+      setSourceName(null);
+      setResult(sanitize({ html: next, policy, format, overrides, textOnly }));
+      setStale(false);
+      showToast(t.toast_pasted_rich || 'Pasted with its formatting and cleaned.');
+    },
+    [input, policy, format, overrides, textOnly, showToast, t]
+  );
+
   const loadSample = useCallback((sample: string) => {
     setInput(sample);
     setSourceName(null);
@@ -451,49 +477,16 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
       />
 
       {/* Keep the workspace centered within its own maximum width. */}
-      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-32 md:pt-36 pb-20">
-        <AdBanner id="adsense-html-sanitizer-top" />
-
-        <div className="w-full space-y-20 md:space-y-28">
-          {/* ============================================================== */}
-          {/* Hero                                                           */}
-          {/* ============================================================== */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-cyan-950/40 border border-cyan-800/30 text-cyan-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(6,182,212,0.15)]">
-                <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{t.badge || t.title}</span>
-              </div>
-
-              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
-                {t.seoHeroTitle || 'HTML Cleaner & Sanitizer'}
-              </h1>
-
-              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-                {t.description || t.seoHeroText}
-              </p>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                {(t.heroPoints || []).slice(0, 3).map((point: string, i: number) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
-                  >
-                    <Check className="w-3.5 h-3.5 text-cyan-400 stroke-[3]" />
-                    {point}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-cyan-500/10 blur-[80px] rounded-full" />
-              <SanitizerHeroArt
-                className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
-                animated={!prefersReduced}
-              />
-            </div>
-          </section>
+      <main className="flex-1 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))] px-4 md:px-8 pt-20 md:pt-28 pb-20">
+        <div className="w-full space-y-10 md:space-y-16">
+          <div className="space-y-2">
+            <h1 className="text-[1.7rem] leading-tight md:text-5xl font-black tracking-tight text-white">
+              {t.h1 || 'HTML cleaner and sanitizer online'}
+            </h1>
+            <p className="text-sm md:text-lg text-slate-400 leading-relaxed max-w-3xl">
+              {t.subtitle || 'Paste text from Word, Google Docs or a web page and get clean HTML, or sanitize HTML against XSS. Free, in your browser.'}
+            </p>
+          </div>
 
           {/* ============================================================== */}
           {/* Workspace                                                      */}
@@ -543,6 +536,7 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
 
               <textarea
                 value={input}
+                onPaste={onPasteRich}
                 onChange={e => {
                   setInput(e.target.value);
                   if (result) setStale(true);
@@ -571,6 +565,12 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">
                   {t.samples_title || 'Try it'}
                 </span>
+                <button
+                  onClick={() => loadSample(SAMPLE_DOCS)}
+                  className="px-2.5 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/25 text-[11px] font-bold text-cyan-200 hover:bg-cyan-500/20 transition-all cursor-pointer outline-none"
+                >
+                  {t.sample_docs || 'Pasted from Google Docs'}
+                </button>
                 <button
                   onClick={() => loadSample(SAMPLE_MESSY)}
                   className="px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] font-bold text-slate-300 hover:text-cyan-300 hover:border-cyan-500/30 transition-all cursor-pointer outline-none"
@@ -851,6 +851,8 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
             )}
           </section>
 
+          <AdBanner id="adsense-html-sanitizer-top" />
+
           {/* ============================================================== */}
           {/* How it works                                                   */}
           {/* ============================================================== */}
@@ -1002,23 +1004,6 @@ export default function HtmlSanitizer({ lang, dictionary }: HtmlSanitizerProps) 
               </div>
             )}
 
-            {keywords.length > 0 && (
-              <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-                  {t.seoKeywordsTitle || 'Also known as'}
-                </h2>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {keywords.map((keyword, index) => (
-                    <span
-                      key={index}
-                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-cyan-500/10 hover:border-cyan-500/20 hover:text-cyan-400 transition-all cursor-default"
-                    >
-                      {keyword}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
           </section>
         </div>
 

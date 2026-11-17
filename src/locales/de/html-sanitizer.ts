@@ -3,8 +3,8 @@ export default {
   "previewTitle": "Vorschau des bereinigten HTML",
   "resetHint": "Neu anfangen",
   "title": "HTML Sanitizer",
-  "seo_title": "HTML Sanitizer | Kostenloser HTML-Cleaner mit Entfernungsbericht",
-  "seo_description": "HTML mit einer echten Whitelist-Richtlinie säubern: Skripte, Event-Handler, javascript:-URLs und unerwünschte Tags entfernen, genau sehen was wegfiel und Einzelnes zurückholen. Läuft vollständig im Browser.",
+  "seo_title": "HTML bereinigen online: sauberes HTML aus Word und Google Docs",
+  "seo_description": "Kostenloser Online-HTML-Cleaner und Sanitizer: Text aus Word, Google Docs oder einer Webseite einfügen und sauberes HTML ohne Styles, Spans und leere Tags erhalten, oder HTML mit DOMPurify gegen XSS absichern. Jede Entfernung wird aufgelistet. Nichts wird hochgeladen.",
   "seoHeroTitle": "HTML-Cleaner & Sanitizer",
   "badge": "Whitelist-Sanitizer",
   "description": "HTML einfügen, Richtlinie wählen, Knopf drücken. Sie bekommen das gesäuberte Markup plus einen aufgeschlüsselten Bericht über jedes verworfene Tag und Attribut — und können jede einzelne Entscheidung widerrufen, ohne irgendetwas erneut einzufügen.",
@@ -15,7 +15,7 @@ export default {
   ],
   "label_input": "HTML-Eingabe",
   "label_policy": "Säuberungsrichtlinie",
-  "placeholder_input": "HTML hier einfügen, eine .html-Datei ablegen oder eines der Beispiele laden. Nichts läuft, bis Sie auf Säubern drücken.",
+  "placeholder_input": "Füge formatierten Text aus Word, Google Docs oder einer Webseite ein (er wird sofort bereinigt), oder füge HTML-Code ein, lege eine .html-Datei ab oder lade ein Beispiel.",
   "button_open_file": "Datei öffnen",
   "button_clear": "Alles löschen",
   "button_run": "Säubern",
@@ -155,7 +155,7 @@ export default {
       "text": "Der Sanitizer ist eine mit der Seite gebündelte JavaScript-Bibliothek. Kein Upload, kein API-Aufruf und zu keinem Zeitpunkt ein CDN-Abruf."
     }
   ],
-  "seoSecondaryTitle": "Ein Sanitizer, der seine Arbeit offenlegt",
+  "seoSecondaryTitle": "Sauberes HTML aus Word und Google Docs",
   "seoHeroText": "Die meisten Online-HTML-Cleaner geben Ihnen eine Zeichenkette und erwarten Vertrauen. Dieser behält das Entscheidungsprotokoll: welches Tag verworfen wurde, welches Attribut entfernt, welche URL an der Schemaprüfung scheiterte — und lässt Sie jede Entscheidung mit einem Klick widerrufen, weil die gesäuberte Ausgabe aus Ihrer Richtlinie neu erzeugt und nicht nachträglich geflickt wird.",
   "seoHeroList": [
     "Whitelist statt Blacklist",
@@ -163,29 +163,21 @@ export default {
     "Anzahl und Grund für jede Entfernung",
     "Rückgängig und Wiederholen auf der Richtlinie"
   ],
-  "seoUseCaseTitle": "Wann Sie es brauchen",
-  "seoUseCaseText": "Säubern, was ein Rich-Text-Editor erzeugt hat, bevor es gespeichert wird. Word- und Google-Docs-Ballast aus einem CMS-Einfügetext entfernen. Fremdes Markup vor der Darstellung sicher machen. Lesbaren Text aus einer gespeicherten Seite ziehen. Prüfen, ob das Markup, dem Sie gleich vertrauen, etwas Ausführbares enthält — das Beispiel mit bekannten Payloads gibt es, damit Sie die Antwort sehen statt sie anzunehmen.",
+  "seoUseCaseTitle": "Zwei Aufgaben, ein Werkzeug",
+  "seoUseCaseText": "Redakteure fügen ein Dokument ein und brauchen schlichtes, semantisches HTML für ein CMS, einen Newsletter oder einen Blog: Überschriften, Absätze, Listen, Links, fett und kursiv, ohne die Schriften, Farben, Spans und leeren Absätze, die Word und Google Docs mitbringen. Entwickler fügen nicht vertrauenswürdiges HTML ein und müssen es vor dem Speichern oder Anzeigen absichern: keine Skripte, Event-Handler oder javascript:-Links.",
   "seoBrowserSpeedTitle": "Auf DOMPurify gebaut",
   "seoBrowserSpeedText": "Parsing und Sicherheitsentscheidungen stammen von DOMPurify, der Bibliothek, die die Sicherheitsteams der Browser selbst zitieren, statt von einem handgeschriebenen Durchlauf über querySelectorAll. Sie wird über ihre Hook-API genutzt und um das Zwischen-DOM statt um eine fertige Zeichenkette gebeten — genau das ermöglicht den Entfernungsbericht und die Ausnahmen pro Eintrag. Sie beherrscht Mutations-XSS, Namensraum-Verwechslung und die URL-Tricks, die ein naiver Cleaner übersieht.",
   "seoPrivacyTitle": "100% privat & sicher",
   "seoPrivacyText": "Keine Uploads, keine API-Schlüssel, keine Auswertung dessen, was Sie einfügen. Die Bibliothek ist mit der Seite gebündelt, es wird also auch nichts von einem CDN geladen. Ihr HTML bleibt im Speicher des Tabs und verschwindet beim Schließen.",
-  "seoKeywordsTitle": "Auch bekannt als",
-  "seoKeywords": [
-    "html sanitizer",
-    "html cleaner",
-    "skripte aus html entfernen",
-    "html online säubern",
-    "html bereinigen",
-    "tags entfernen",
-    "dompurify online",
-    "xss-filter",
-    "html-whitelist"
-  ],
   "faqTitle": "Häufig gestellte Fragen",
   "faq": [
     {
-      "question": "Warum passiert beim Einfügen nichts?",
-      "answer": "Das ist Absicht. Einfügen oder eine Datei öffnen lädt nur das HTML; der Sanitizer läuft, wenn Sie auf Säubern drücken. So wählen Sie erst die Richtlinie, statt dem Werkzeug beim Raten zuzusehen, und ein großes Dokument wird nie bei jedem Tastendruck geparst."
+      "question": "Wie bekomme ich sauberes HTML aus Word oder Google Docs?",
+      "answer": "Kopiere den Text in Word oder Google Docs und füge ihn ins Feld ein. Die Zwischenablage enthält das formatierte HTML, daher wird es sofort mit „HTML bereinigen“ gesäubert: Überschriften, Listen, Links, fett und kursiv bleiben; Schriften, Farben, Klassen, Spans und leere Absätze verschwinden."
+    },
+    {
+      "question": "Was ist der Unterschied zwischen HTML bereinigen und absichern?",
+      "answer": "Bereinigen entfernt Ballast (Styles, Klassen, leere Tags) für aufgeräumtes Markup. Absichern entfernt alles, was Code ausführen kann (Skripte, Event-Handler, javascript:-Links), damit die Anzeige sicher ist. „HTML bereinigen“ macht beides; die anderen Voreinstellungen konzentrieren sich auf Sicherheit."
     },
     {
       "question": "Was bringt mir der Entfernungsbericht wirklich?",
@@ -212,9 +204,16 @@ export default {
       "answer": "Das Parsen ist ungefähr linear, ein paar Megabyte Markup sind auf einem normalen Laptop also deutlich unter einer Sekunde fertig; die gemessene Zeit steht nach jedem Lauf da. Die Syntaxhervorhebung im Ausgabefeld schaltet sich oberhalb von 200 KB ab, weil das Einfärben in dieser Größe mehr kostet als es bringt."
     }
   ],
-  "footerTagline": "Ein HTML-Sanitizer mit echter Whitelist-Richtlinie und einem Entfernungsbericht, dem Sie widersprechen können — 100% lokal im Browser.",
+  "footerTagline": "Kostenloser Online-HTML-Cleaner und Sanitizer: HTML aus Word oder Google Docs bereinigen und XSS entfernen.",
   "footerCredit": "Teil der oLoveTools-Suite",
   "emailAddress": "adrian.contact.me.69@gmail.com",
   "emailCopied": "Kopiert!",
-  "contactForIdeas": "Kontakt für Ideen und Kommentare:"
+  "contactForIdeas": "Kontakt für Ideen und Kommentare:",
+  "h1": "HTML bereinigen und absichern online",
+  "subtitle": "Füge Text aus Word, Google Docs oder einer Webseite ein und erhalte sauberes HTML, oder sichere HTML gegen XSS ab. Kostenlos, im Browser.",
+  "toast_pasted_rich": "Mit Formatierung eingefügt und bereinigt.",
+  "sample_docs": "Aus Google Docs eingefügt",
+  "preset_clean": "HTML bereinigen",
+  "preset_clean_hint": "Aus Word oder Google Docs eingefügt: Struktur behalten, Styles und Ballast entfernen.",
+  "seo_title_exact": true
 };

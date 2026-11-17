@@ -46,6 +46,8 @@ export interface Policy {
   hardenLinks: boolean;
   /** Force `target="_blank"` links to keep the rel hardening (implied by above). */
   stripTargets: boolean;
+  /** Clean-HTML pass: unwrap bare spans, drop empty elements, normalise spaces. */
+  tidy?: boolean;
 }
 
 /** Why a node or attribute was taken out. Maps 1:1 to a translated string. */
@@ -91,6 +93,6 @@ export interface SanitizeResult {
   error?: string;
 }
 
-export type PresetId = 'strict' | 'email' | 'content' | 'text' | 'custom';
+export type PresetId = 'clean' | 'strict' | 'email' | 'content' | 'text' | 'custom';
 
 export type OutputFormat = 'pretty' | 'minified' | 'raw';

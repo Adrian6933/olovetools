@@ -133,7 +133,7 @@ export default {
       "description": "Sort, reverse, shuffle, deduplicate, trim and clean lists of text 100% locally in your browser."
     },
     "37": {
-      "description": "Clean and sanitize HTML code by removing scripts, styles, iframes and unwanted tags 100% locally."
+      "description": "Clean HTML pasted from Word or Google Docs, or sanitize HTML against XSS, with a report of everything removed."
     },
     "38": {
       "description": "Extract dominant colors and palettes from any image 100% locally in your browser."

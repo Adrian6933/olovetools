@@ -460,7 +460,7 @@ export const MOCK_PROJECTS: Project[] = [
     id: '37',
     name: 'HTML Sanitizer',
     slug: 'html-sanitizer',
-    description: 'Clean and sanitize HTML code by removing scripts, styles, iframes and unwanted tags 100% locally.',
+    description: 'Clean HTML pasted from Word or Google Docs, or sanitize HTML against XSS, with a report of everything removed.',
     category: ProjectCategory.DEVELOPER_TOOLS,
     tags: ['HTML', 'Sanitizer', 'Cleaner', 'Security'],
     icon: 'ShieldCheck',

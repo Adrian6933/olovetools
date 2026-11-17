@@ -11,7 +11,7 @@ Fuera del rediseño: Clipy y TwitchBolt (por decisión del dueño). KickBolt y K
 | 1 | QR Reader ✅ rehecho 16 nov | 1.476 | 58,5 | 43 (es) | 85 | La que más demanda tiene, con mucha diferencia: "qr reader", "qr code reader online", "lector qr online"… Son búsquedas enormes y no salimos en primera página. |
 | 2 | Aspect Ratio ✅ rehecho 16 nov | 702 | 65,3 | 30 (ru) | 99 | Palabra clave grande en todos los idiomas ("aspect ratio", "relación de aspecto", "seitenverhältnis", "rapport d'aspect"). |
 | 3 | Lottie Viewer ✅ rehecho 17 nov | 299 | 64,0 | 9,4 (ru) | 217 | Es la herramienta con más visitas reales, aparte de las de clips. "play lottie online" ya tiene impresiones. |
-| 4 | HTML Sanitizer | 132 | 60,3 | 32 (pt) | 148 | Tiene visitas de verdad y ya ha conseguido algún clic ("sanitize html online"). |
+| 4 | HTML Sanitizer ✅ rehecho 17 nov | 132 | 60,3 | 32 (pt) | 148 | Tiene visitas de verdad y ya ha conseguido algún clic ("sanitize html online"). |
 | 5 | DrawSnap | 155 | 64,2 | 6 (ru) | 114 | Un clic y una posición alta en ruso. |
 | 6 | UUID Generator | 193 | 62,9 | 37 (zh) | 69 | Mucho volumen de búsqueda entre desarrolladores. |
 | 7 | Lorem Flow | 188 | 76,0 | 25 (ja) | 87 | "lorem ipsum" es de las búsquedas de herramientas con más volumen, pero estamos en la posición 94. |

@@ -133,7 +133,7 @@ export default {
       "description": "Textlisten sortieren, umkehren, mischen, entdoppeln und säubern. Alles im Browser."
     },
     "37": {
-      "description": "HTML säubern: Skripte, Styles, iframes und unerwünschte Tags fliegen raus. Alles im Browser."
+      "description": "HTML aus Word oder Google Docs bereinigen oder HTML gegen XSS absichern, mit einer Liste aller Entfernungen."
     },
     "38": {
       "description": "Dominante Farben und Paletten aus jedem Bild herausziehen. Alles im Browser."
