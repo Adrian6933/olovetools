@@ -176,8 +176,8 @@ export default {
       "text": "Sin cuenta, sin subidas y sin servidor. Tu pizarra se guarda en tu propio navegador y sólo se recupera si tú lo pides."
     }
   ],
-  "seo_title": "DrawSnap | Pizarra online gratis para dibujar y calcar fotos",
-  "seo_description": "Dibuja online con trazo sensible a la presión, calca cualquier foto en trazos vectoriales editables y exporta PNG hasta 4× o un SVG de verdad. Gratis, privado y 100% en tu navegador.",
+  "seo_title": "Dibujar online gratis: pizarra para dibujar (PNG y SVG)",
+  "seo_description": "Dibuja online gratis con el ratón, el dedo o un lápiz: lápiz, rotulador, formas, texto y papel cuadriculado. Calca cualquier foto en líneas editables y descarga PNG o SVG de verdad. Sin registro, en móvil, tablet y PC.",
   "seoHeroTitle": "Dibuja, calca y exporta sin salir del navegador",
   "seoHeroText": "Una pizarra completa con tinta sensible a la presión, edición por objetos, zoom y desplazamiento, autoguardado y un calcador que convierte cualquier imagen en trazos editables. DrawSnap funciona 100% en local, dentro de tu pestaña.",
   "seoHeroList": [
@@ -195,19 +195,16 @@ export default {
   "seoUseCaseText": "Esboza un wireframe, anota una captura, explica una fórmula o suelta una fotografía y deja que el calcador la convierta en un dibujo lineal que después limpias a mano. Como el calcador devuelve los contornos en sí y no una imagen aplanada, cada línea sigue siendo seleccionable, movible y recoloreable.",
   "seoPrivacyTitle": "Sin cuentas, sin rastreo, 100% en el cliente",
   "seoPrivacyText": "Nada de lo que dibujas o importas se sube a ningún sitio: la pizarra, el calcador y los exportadores se ejecutan dentro de tu pestaña, y el calcador usa un hilo aparte de tu propia máquina en lugar de un servicio remoto. Tu trabajo se guarda en el almacenamiento local de este navegador para que cerrar la pestaña ya no lo pierda, y vaciar la pizarra borra también esa copia.",
-  "seoKeywordsTitle": "Búsquedas relacionadas",
-  "seoKeywords": [
-    "pizarra online para dibujar",
-    "pizarra digital gratis",
-    "dibujar en el navegador",
-    "convertir foto en dibujo lineal",
-    "calcar imagen a SVG",
-    "herramienta de boceto vectorial",
-    "dibujo PNG transparente",
-    "bocetar y anotar online"
-  ],
   "faqTitle": "Preguntas frecuentes",
   "faq": [
+    {
+      "question": "¿Cómo dibujo online en el móvil o la tablet?",
+      "answer": "Abre esta página y dibuja en la pizarra con el dedo o con un lápiz. Si el lápiz informa de la presión (Apple Pencil, S Pen, Wacom), se usa. Pulsa pantalla completa para tener toda la pantalla, usa dos dedos para hacer zoom y moverte, y la barra bajo la pizarra para el color, el grosor y el papel."
+    },
+    {
+      "question": "¿Es gratis? ¿Hace falta una cuenta?",
+      "answer": "Es gratis y no hay cuenta. Tu dibujo se guarda en este navegador, y al volver la página te ofrece recuperarlo. No se sube a ningún sitio."
+    },
     {
       "question": "¿Puedo importar una imagen y dibujar encima?",
       "answer": "Sí. Arrastra un archivo a la pizarra, pégalo con Ctrl+V o mándalo desde otra herramienta de oLoveTools. La imagen se queda en un panel de espera: tú eliges si simplemente colocarla o calcarla, y no se añade nada a la pizarra hasta que pulsas un botón."
@@ -242,5 +239,8 @@ export default {
     }
   ],
   "footerTagline": "Pizarra de dibujo gratuita y privada, en el navegador, con calcado de fotos y exportación vectorial de verdad.",
-  "footerCredit": "Parte de la suite oLoveTools"
+  "footerCredit": "Parte de la suite oLoveTools",
+  "h1": "Dibujar online: pizarra gratis",
+  "subtitle": "Dibuja con el ratón, el dedo o un lápiz, calca una foto y descárgala en PNG o SVG. Gratis, sin registro, en móvil, tablet u ordenador.",
+  "seo_title_exact": true
 };

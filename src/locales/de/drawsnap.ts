@@ -176,8 +176,8 @@ export default {
       "text": "Kein Konto, kein Upload, kein Server. Ihr Brett wird im eigenen Browser gesichert und nur auf Nachfrage wiederhergestellt."
     }
   ],
-  "seo_title": "DrawSnap | Kostenloses Online-Zeichenbrett, Whiteboard & Foto-Nachzeichner",
-  "seo_description": "Zeichnen Sie online mit drucksensitiver Tinte, zeichnen Sie jedes Foto in bearbeitbare Vektorstriche nach und exportieren Sie PNG bis 4× oder ein echtes SVG. Kostenlos, privat und vollständig im Browser.",
+  "seo_title": "Online zeichnen kostenlos: Zeichenbrett und Whiteboard (PNG & SVG)",
+  "seo_description": "Kostenlos online zeichnen mit Maus, Finger oder Stift: Bleistift, Marker, Formen, Text und Karopapier. Jedes Foto in bearbeitbare Linien nachzeichnen und als PNG oder echtes SVG herunterladen. Ohne Anmeldung, auf Handy, Tablet und PC.",
   "seoHeroTitle": "Zeichnen, nachzeichnen und exportieren, ohne den Browser zu verlassen",
   "seoHeroText": "Ein vollwertiges Zeichenbrett mit drucksensitiver Tinte, Bearbeitung auf Objektebene, Zoom und Verschieben, automatischer Sicherung und einem Nachzeichner, der jedes Bild in bearbeitbare Striche verwandelt. DrawSnap läuft zu 100 % lokal in Ihrem Browser-Tab.",
   "seoHeroList": [
@@ -195,19 +195,16 @@ export default {
   "seoUseCaseText": "Skizzieren Sie ein Wireframe, kommentieren Sie einen Screenshot, erklären Sie eine Formel oder legen Sie ein Foto ab und lassen Sie den Nachzeichner eine Strichzeichnung daraus machen, die Sie von Hand aufräumen. Weil er die Konturen selbst zurückgibt und kein flachgerechnetes Bild, bleibt jede Linie danach auswählbar, verschiebbar und umfärbbar.",
   "seoPrivacyTitle": "Keine Konten, kein Tracking, 100 % clientseitig",
   "seoPrivacyText": "Nichts, was Sie zeichnen oder importieren, wird irgendwohin hochgeladen: Brett, Nachzeichner und Exporte laufen in Ihrem Browser-Tab, und der Nachzeichner nutzt einen eigenen Thread auf Ihrem Rechner statt eines entfernten Dienstes. Ihre Arbeit liegt im lokalen Speicher dieses Browsers, damit ein geschlossener Tab sie nicht mehr verliert, und das Leeren des Bretts löscht auch diese Kopie.",
-  "seoKeywordsTitle": "Ähnliche Suchanfragen",
-  "seoKeywords": [
-    "Online-Zeichenbrett",
-    "kostenloses digitales Whiteboard",
-    "im Browser zeichnen",
-    "Foto in Strichzeichnung",
-    "Bild zu SVG nachzeichnen",
-    "Vektor-Skizzenwerkzeug",
-    "transparentes PNG zeichnen",
-    "online skizzieren und annotieren"
-  ],
   "faqTitle": "Häufige Fragen",
   "faq": [
+    {
+      "question": "Wie zeichne ich online auf dem Handy oder Tablet?",
+      "answer": "Öffne diese Seite und zeichne mit Finger oder Stift auf dem Brett. Druck wird genutzt, wenn der Stift ihn meldet (Apple Pencil, S Pen, Wacom). Mit dem Vollbild-Button nutzt du den ganzen Bildschirm, mit zwei Fingern zoomst und verschiebst du, und die Leiste unter dem Brett hat Farbe, Stärke und Papier."
+    },
+    {
+      "question": "Ist es kostenlos? Brauche ich ein Konto?",
+      "answer": "Es ist kostenlos und es gibt kein Konto. Deine Zeichnung wird in diesem Browser gespeichert, und beim nächsten Besuch bietet die Seite an, sie wiederherzustellen. Nichts wird hochgeladen."
+    },
     {
       "question": "Kann ich ein Bild importieren und darüber zeichnen?",
       "answer": "Ja. Ziehen Sie eine Datei auf das Brett, fügen Sie eine mit Strg+V ein oder schicken Sie eine aus einem anderen oLoveTools-Werkzeug herüber. Das Bild wartet in einem Zwischenbereich: Sie entscheiden, ob es einfach platziert oder nachgezeichnet wird, und bis zum Knopfdruck landet nichts auf dem Brett."
@@ -242,5 +239,8 @@ export default {
     }
   ],
   "footerTagline": "Kostenloses, privates Zeichenbrett im Browser, mit Foto-Nachzeichnung und echtem Vektor-Export.",
-  "footerCredit": "Teil der oLoveTools-Suite"
+  "footerCredit": "Teil der oLoveTools-Suite",
+  "h1": "Online zeichnen: kostenloses Zeichenbrett",
+  "subtitle": "Zeichne mit Maus, Finger oder Stift, zeichne ein Foto nach und lade es als PNG oder SVG herunter. Kostenlos, ohne Anmeldung, auf Handy, Tablet oder PC.",
+  "seo_title_exact": true
 };

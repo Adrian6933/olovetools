@@ -176,8 +176,8 @@ export default {
       "text": "Aucun compte, aucun envoi, aucun serveur. Votre tableau est enregistré dans votre navigateur et restauré uniquement si vous le demandez."
     }
   ],
-  "seo_title": "DrawSnap | Tableau de dessin en ligne gratuit et calque de photos",
-  "seo_description": "Dessinez en ligne avec une encre sensible à la pression, calquez n'importe quelle photo en tracés vectoriels modifiables et exportez en PNG jusqu'à 4× ou en vrai SVG. Gratuit, privé et entièrement côté client.",
+  "seo_title": "Dessiner en ligne gratuitement : tableau de dessin (PNG et SVG)",
+  "seo_description": "Dessinez en ligne gratuitement à la souris, au doigt ou au stylet : crayon, marqueur, formes, texte et papier quadrillé. Décalquez une photo en traits modifiables et téléchargez en PNG ou vrai SVG. Sans inscription, sur téléphone, tablette et PC.",
   "seoHeroTitle": "Dessinez, calquez et exportez sans quitter votre navigateur",
   "seoHeroText": "Un tableau complet avec encre sensible à la pression, édition par objets, zoom et déplacement, sauvegarde automatique et un calqueur qui convertit n'importe quelle image en tracés modifiables. DrawSnap fonctionne à 100% en local, dans votre onglet.",
   "seoHeroList": [
@@ -195,19 +195,16 @@ export default {
   "seoUseCaseText": "Esquissez un wireframe, annotez une capture, expliquez une formule, ou déposez une photographie et laissez le calqueur en faire un dessin au trait que vous nettoyez à la main. Comme le calqueur renvoie les contours eux-mêmes et non une image aplatie, chaque ligne reste sélectionnable, déplaçable et recolorable.",
   "seoPrivacyTitle": "Aucun compte, aucun suivi, 100% côté client",
   "seoPrivacyText": "Rien de ce que vous dessinez ou importez n'est envoyé où que ce soit : le tableau, le calqueur et les exportateurs s'exécutent dans votre onglet, et le calqueur utilise un thread dédié de votre propre machine plutôt qu'un service distant. Votre travail est conservé dans le stockage local de ce navigateur pour qu'un onglet fermé ne le perde plus, et vider le tableau supprime aussi cette copie.",
-  "seoKeywordsTitle": "Recherches associées",
-  "seoKeywords": [
-    "tableau de dessin en ligne",
-    "tableau blanc numérique gratuit",
-    "dessiner dans le navigateur",
-    "photo en dessin au trait",
-    "calquer une image en SVG",
-    "outil de croquis vectoriel",
-    "dessin PNG transparent",
-    "croquis et annotation en ligne"
-  ],
   "faqTitle": "Questions fréquentes",
   "faq": [
+    {
+      "question": "Comment dessiner en ligne sur téléphone ou tablette ?",
+      "answer": "Ouvrez cette page et dessinez sur le tableau au doigt ou au stylet. La pression est prise en compte si le stylet la transmet (Apple Pencil, S Pen, Wacom). Passez en plein écran pour tout l’écran, zoomez et déplacez-vous à deux doigts, et utilisez la barre sous le tableau pour la couleur, l’épaisseur et le papier."
+    },
+    {
+      "question": "C’est gratuit ? Faut-il un compte ?",
+      "answer": "C’est gratuit et il n’y a pas de compte. Votre dessin est gardé dans ce navigateur  et, à votre retour, la page propose de le récupérer. Rien n’est envoyé nulle part."
+    },
     {
       "question": "Puis-je importer une image et dessiner par-dessus ?",
       "answer": "Oui. Glissez un fichier sur le tableau, collez-en un avec Ctrl+V, ou envoyez-en un depuis un autre outil oLoveTools. L'image attend dans un panneau intermédiaire : vous choisissez de simplement la poser ou de la calquer, et rien n'est ajouté au tableau tant que vous n'appuyez pas sur un bouton."
@@ -242,5 +239,8 @@ export default {
     }
   ],
   "footerTagline": "Tableau de dessin gratuit et privé, côté client, avec calque de photos et véritable export vectoriel.",
-  "footerCredit": "Fait partie de la suite oLoveTools"
+  "footerCredit": "Fait partie de la suite oLoveTools",
+  "h1": "Dessiner en ligne : tableau gratuit",
+  "subtitle": "Dessinez à la souris, au doigt ou au stylet, décalquez une photo et téléchargez-la en PNG ou SVG. Gratuit, sans inscription, sur téléphone, tablette ou ordinateur.",
+  "seo_title_exact": true
 };

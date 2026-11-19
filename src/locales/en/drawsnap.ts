@@ -66,18 +66,54 @@ export default {
   "scrollTopLabel": "Back to top",
   "shortcutsTitle": "Keyboard shortcuts",
   "shortcuts": [
-    { "keys": "V / P / B / E", "label": "Select · Pencil · Marker · Eraser" },
-    { "keys": "L / A / R / O / G / T", "label": "Line · Arrow · Rectangle · Ellipse · Triangle · Text" },
-    { "keys": "Alt / right drag", "label": "Erase without changing tool" },
-    { "keys": "Space + drag", "label": "Pan the board" },
-    { "keys": "Ctrl + wheel", "label": "Zoom at the cursor" },
-    { "keys": "Shift", "label": "Square, circle and 45° lines" },
-    { "keys": "H (hold)", "label": "Show the picture without your strokes" },
-    { "keys": "[ / ]", "label": "Brush size" },
-    { "keys": "Ctrl+Z / Ctrl+Shift+Z", "label": "Undo · Redo" },
-    { "keys": "Ctrl+D / Del", "label": "Duplicate · delete the selection" },
-    { "keys": "Ctrl+0", "label": "Fit the board to the screen" },
-    { "keys": "Ctrl+V", "label": "Paste an image" }
+    {
+      "keys": "V / P / B / E",
+      "label": "Select · Pencil · Marker · Eraser"
+    },
+    {
+      "keys": "L / A / R / O / G / T",
+      "label": "Line · Arrow · Rectangle · Ellipse · Triangle · Text"
+    },
+    {
+      "keys": "Alt / right drag",
+      "label": "Erase without changing tool"
+    },
+    {
+      "keys": "Space + drag",
+      "label": "Pan the board"
+    },
+    {
+      "keys": "Ctrl + wheel",
+      "label": "Zoom at the cursor"
+    },
+    {
+      "keys": "Shift",
+      "label": "Square, circle and 45° lines"
+    },
+    {
+      "keys": "H (hold)",
+      "label": "Show the picture without your strokes"
+    },
+    {
+      "keys": "[ / ]",
+      "label": "Brush size"
+    },
+    {
+      "keys": "Ctrl+Z / Ctrl+Shift+Z",
+      "label": "Undo · Redo"
+    },
+    {
+      "keys": "Ctrl+D / Del",
+      "label": "Duplicate · delete the selection"
+    },
+    {
+      "keys": "Ctrl+0",
+      "label": "Fit the board to the screen"
+    },
+    {
+      "keys": "Ctrl+V",
+      "label": "Paste an image"
+    }
   ],
   "importedFrom": "Handed over by {tool} — nothing has been added to the board yet.",
   "importWaiting": "Nothing has run yet. Choose how it should land on the board.",
@@ -140,8 +176,8 @@ export default {
       "text": "No account, no upload, no server. Your board is saved in your own browser and restored only if you ask."
     }
   ],
-  "seo_title": "DrawSnap | Free Online Drawing Board, Whiteboard & Photo Tracer",
-  "seo_description": "Draw online with pressure-aware ink, trace any photo into editable vector strokes, and export PNG up to 4× or a real SVG. Free, private and entirely client-side.",
+  "seo_title": "Draw Online Free: Drawing Board and Whiteboard (PNG & SVG)",
+  "seo_description": "Draw online for free with your mouse, finger or stylus: pencil, marker, shapes, text and grid paper. Trace any photo into editable lines and download PNG or real SVG. No sign-up, works on phone, tablet and PC.",
   "seoHeroTitle": "Draw, trace and export without leaving your browser",
   "seoHeroText": "A full drawing board with pressure-aware ink, object-level editing, zoom and pan, autosave, and a tracer that converts any picture into strokes you can edit. DrawSnap runs 100% locally in your browser tab.",
   "seoHeroList": [
@@ -159,19 +195,16 @@ export default {
   "seoUseCaseText": "Sketch a wireframe, annotate a screenshot, explain a formula, or drop in a photograph and let the tracer turn it into line art you can clean up by hand. Because the tracer returns the contours themselves instead of a flattened image, every line stays selectable, movable and recolourable afterwards.",
   "seoPrivacyTitle": "No accounts, no tracking, 100% client-side",
   "seoPrivacyText": "Nothing you draw or import is uploaded anywhere: the board, the tracer and the exporters all run inside your browser tab, and the tracer uses a worker thread on your own machine rather than a remote service. Your work is kept in this browser's local storage so a closed tab no longer loses it, and clearing the board removes that copy as well.",
-  "seoKeywordsTitle": "Related searches",
-  "seoKeywords": [
-    "online drawing board",
-    "free digital whiteboard",
-    "draw in the browser",
-    "photo to line art",
-    "image to SVG tracer",
-    "vector sketch tool",
-    "transparent PNG drawing",
-    "sketch and annotate online"
-  ],
   "faqTitle": "Frequently asked questions",
   "faq": [
+    {
+      "question": "How do I draw online on my phone or tablet?",
+      "answer": "Open this page and draw on the board with your finger or stylus. Pressure is used when the stylus reports it (Apple Pencil, S Pen, Wacom). Use the full-screen button for the whole screen, two fingers to zoom and pan, and the toolbar under the board for colour, size and paper."
+    },
+    {
+      "question": "Is it free and do I need an account?",
+      "answer": "It is free and there is no account. Your drawing is saved in this browser, and when you come back the page offers to restore it. Nothing is uploaded anywhere."
+    },
     {
       "question": "Can I import a picture and draw on top of it?",
       "answer": "Yes. Drag a file onto the board, paste one with Ctrl+V, or send one over from another oLoveTools tool. The picture waits in a staging panel: you choose whether to simply place it or to trace it, and nothing is added to the board until you press a button."
@@ -206,5 +239,8 @@ export default {
     }
   ],
   "footerTagline": "Free, private, client-side drawing board with photo tracing and real vector export.",
-  "footerCredit": "Part of the oLoveTools suite"
+  "footerCredit": "Part of the oLoveTools suite",
+  "h1": "Draw online: free drawing board",
+  "subtitle": "Draw with your mouse, finger or stylus, trace a photo and download it as PNG or SVG. Free, no sign-up, on phone, tablet or PC.",
+  "seo_title_exact": true
 };

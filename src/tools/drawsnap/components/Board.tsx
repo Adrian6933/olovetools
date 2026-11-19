@@ -1353,7 +1353,7 @@ export const Board: React.FC<BoardProps> = ({ lang, t }) => {
       {/* ---------------------------------------------------------------- */}
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Properties */}
-        <aside className="w-full lg:w-60 lg:shrink-0 space-y-3 rounded-2xl border border-white/5 bg-black/30 p-3.5">
+        <aside className="order-2 lg:order-1 w-full lg:w-60 lg:shrink-0 space-y-3 rounded-2xl border border-white/5 bg-black/30 p-3.5">
           <div>
             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-1.5 mb-2">
               <Palette className="w-3 h-3 text-purple-400" />
@@ -1526,7 +1526,7 @@ export const Board: React.FC<BoardProps> = ({ lang, t }) => {
         {/* Canvas. `lg:flex-1`, never a bare `flex-1`: on the mobile
             flex-col layout that would set flex-basis on the vertical axis and
             collapse the whole column. */}
-        <div className="w-full lg:flex-1 min-w-0 space-y-3">
+        <div className="order-1 lg:order-2 w-full lg:flex-1 min-w-0 space-y-3">
           <div
             ref={wrapRef}
             onDragOver={e => {
@@ -1539,7 +1539,7 @@ export const Board: React.FC<BoardProps> = ({ lang, t }) => {
               setDragOver(false);
               openFiles(e.dataTransfer?.files || null);
             }}
-            className={`relative h-[58vh] min-h-[380px] lg:h-[66vh] w-full rounded-3xl overflow-hidden border transition-colors ${
+            className={`relative h-[68vh] min-h-[380px] lg:h-[66vh] w-full rounded-3xl overflow-hidden border transition-colors ${
               dragOver ? 'border-purple-500/60' : 'border-white/10'
             } bg-[#0a0710] glow-purple`}
           >

@@ -176,8 +176,8 @@ export default {
       "text": "Sem conta, sem upload e sem servidor. Seu quadro fica salvo no seu próprio navegador e só é restaurado se você pedir."
     }
   ],
-  "seo_title": "DrawSnap | Quadro de desenho online grátis, lousa digital e vetorizador de fotos",
-  "seo_description": "Desenhe online com traço sensível à pressão, vetorize qualquer foto em traços editáveis e exporte PNG até 4× ou um SVG de verdade. Grátis, privado e inteiramente no navegador.",
+  "seo_title": "Desenhar online grátis: quadro para desenhar (PNG e SVG)",
+  "seo_description": "Desenhe online grátis com o mouse, o dedo ou uma caneta: lápis, marcador, formas, texto e papel quadriculado. Decalque qualquer foto em linhas editáveis e baixe em PNG ou SVG de verdade. Sem cadastro, no celular, tablet e PC.",
   "seoHeroTitle": "Desenhe, vetorize e exporte sem sair do navegador",
   "seoHeroText": "Um quadro completo com tinta sensível à pressão, edição por objetos, zoom e deslocamento, salvamento automático e um vetorizador que converte qualquer imagem em traços editáveis. O DrawSnap roda 100% localmente na sua aba.",
   "seoHeroList": [
@@ -195,19 +195,16 @@ export default {
   "seoUseCaseText": "Esboce um wireframe, anote uma captura de tela, explique uma fórmula ou solte uma fotografia e deixe o vetorizador transformá-la em arte de linha que você limpa à mão. Como ele devolve os próprios contornos e não uma imagem achatada, cada linha continua selecionável, movível e recolorível depois.",
   "seoPrivacyTitle": "Sem contas, sem rastreamento, 100% no cliente",
   "seoPrivacyText": "Nada do que você desenha ou importa é enviado para lugar nenhum: o quadro, o vetorizador e os exportadores rodam dentro da sua aba, e o vetorizador usa uma thread separada da sua própria máquina em vez de um serviço remoto. Seu trabalho fica no armazenamento local deste navegador para que fechar a aba não o perca mais, e limpar o quadro apaga também essa cópia.",
-  "seoKeywordsTitle": "Buscas relacionadas",
-  "seoKeywords": [
-    "quadro de desenho online",
-    "lousa digital grátis",
-    "desenhar no navegador",
-    "foto para arte de linha",
-    "vetorizar imagem em SVG",
-    "ferramenta de esboço vetorial",
-    "desenho PNG transparente",
-    "esboçar e anotar online"
-  ],
   "faqTitle": "Perguntas frequentes",
   "faq": [
+    {
+      "question": "Como desenhar online no celular ou tablet?",
+      "answer": "Abra esta página e desenhe no quadro com o dedo ou uma caneta. A pressão é usada quando a caneta informa (Apple Pencil, S Pen, Wacom). Use o botão de tela cheia para ocupar toda a tela, dois dedos para zoom e mover, e a barra abaixo do quadro para cor, espessura e papel."
+    },
+    {
+      "question": "É grátis? Preciso de conta?",
+      "answer": "É grátis e não há conta. Seu desenho fica salvo neste navegador e, quando você volta, a página oferece recuperá-lo. Nada é enviado para lugar nenhum."
+    },
     {
       "question": "Posso importar uma imagem e desenhar por cima?",
       "answer": "Sim. Arraste um arquivo para o quadro, cole um com Ctrl+V ou mande um de outra ferramenta do oLoveTools. A imagem espera em um painel intermediário: você escolhe se quer apenas colocá-la ou vetorizá-la, e nada é adicionado ao quadro até você apertar um botão."
@@ -242,5 +239,8 @@ export default {
     }
   ],
   "footerTagline": "Quadro de desenho gratuito e privado, no navegador, com vetorização de fotos e exportação vetorial de verdade.",
-  "footerCredit": "Faz parte da suíte oLoveTools"
+  "footerCredit": "Faz parte da suíte oLoveTools",
+  "h1": "Desenhar online: quadro grátis",
+  "subtitle": "Desenhe com o mouse, o dedo ou uma caneta, decalque uma foto e baixe em PNG ou SVG. Grátis, sem cadastro, no celular, tablet ou computador.",
+  "seo_title_exact": true
 };

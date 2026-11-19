@@ -94,49 +94,16 @@ export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
       />
 
       {/* Keep the workspace centered within its own maximum width. */}
-      <main className="flex-1 flex flex-col items-center pt-32 md:pt-36 pb-24 px-3 sm:px-4 md:px-10 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
-        <AdBanner id="adsense-drawsnap-top" />
-
-        <div className="w-full space-y-16 md:space-y-24">
-          {/* ================================================================ */}
-          {/* Hero                                                             */}
-          {/* ================================================================ */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center pt-2">
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-purple-950/40 border border-purple-800/30 text-purple-300 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(168,85,247,0.15)]">
-                <PenTool className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{t.badge || t.title}</span>
-              </div>
-
-              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black font-outfit tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
-                {t.seoHeroTitle || t.title}
-              </h1>
-
-              <p className="text-slate-400 text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-                {t.description}
-              </p>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                {(t.seoHeroList || []).slice(0, 3).map((point: string, i: number) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
-                  >
-                    <Check className="w-3.5 h-3.5 text-purple-400 stroke-[3]" />
-                    {point}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-purple-500/10 blur-[80px] rounded-full" />
-              <DrawHeroArt
-                className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
-                animated={!prefersReduced}
-              />
-            </div>
-          </section>
+      <main className="flex-1 flex flex-col items-center pt-20 md:pt-28 pb-24 px-3 sm:px-4 md:px-10 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
+        <div className="w-full space-y-10 md:space-y-16">
+          <div className="space-y-2">
+            <h1 className="text-[1.7rem] leading-tight md:text-5xl font-black font-outfit tracking-tight text-white">
+              {t.h1 || 'Draw online: free drawing board'}
+            </h1>
+            <p className="text-sm md:text-lg text-slate-400 leading-relaxed max-w-3xl">
+              {t.subtitle || 'Draw with your mouse, finger or stylus, trace a photo and download it as PNG or SVG. Free, no sign-up.'}
+            </p>
+          </div>
 
           {/* ================================================================ */}
           {/* Workspace                                                        */}
@@ -144,6 +111,8 @@ export const DrawSnap: React.FC<DrawSnapProps> = ({ lang, dictionary }) => {
           <section id="board">
             <Board lang={lang} t={t} />
           </section>
+
+          <AdBanner id="adsense-drawsnap-top" />
 
           {/* ================================================================ */}
           {/* How it works                                                     */}
