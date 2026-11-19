@@ -3,8 +3,8 @@ export default {
   "title": "UUID Generator",
   "badge": "Unique identifiers",
   "description": "Generate UUID v1, v3, v4, v5, v6 and v7, plus ULID, NanoID and MongoDB ObjectId — in batches, in the exact shape your code expects, without a single network request.",
-  "seo_title": "UUID Generator | v4, v7, v5, ULID & NanoID in bulk",
-  "seo_description": "Free online UUID generator: v1, v3, v4, v5, v6, v7, nil and max UUIDs plus ULID, NanoID and MongoDB ObjectId. Bulk batches, custom output formatting and a byte-level inspector, all running in your browser.",
+  "seo_title": "UUID Generator Online: Random UUID v4 and v7, Copy in One Click",
+  "seo_description": "Free online UUID generator: get a random UUID v4 or a time-ordered v7 ready to copy, or generate thousands of UUIDs (v1–v7), ULIDs, NanoIDs and ObjectIds at once. Cryptographically random, in your browser.",
   "groupUuid": "RFC 9562 UUIDs",
   "groupOther": "Other identifiers",
   "kindHelp_v4": "122 bits of entropy from the browser's cryptographic random source. The default when you just need something unique.",
@@ -117,20 +117,16 @@ export default {
   "seoUseCaseText": "Generate a hundred thousand keys, export them straight as a SQL INSERT or a JSON array, and hand the list to the diff, hash or archive tool without touching your downloads folder.",
   "seoPrivacyTitle": "Local, and verifiably so",
   "seoPrivacyText": "Entropy comes from the Web Crypto API inside your tab. There is no API call, no CDN fetch and no WebAssembly download: the hashing used by v3 and v5 is embedded in the page itself, so the tool works with the network switched off.",
-  "seoKeywordsTitle": "Keywords",
-  "seoKeywords": [
-    "uuid generator",
-    "random uuid v4",
-    "time-ordered uuid v7",
-    "named uuid v5",
-    "guid generator",
-    "ulid generator",
-    "short nanoid",
-    "bulk uuid",
-    "uuid decoder"
-  ],
   "faqTitle": "Frequently Asked Questions",
   "faq": [
+    {
+      "question": "How do I generate a UUID?",
+      "answer": "A fresh UUID v4 appears at the top of this page as soon as it loads: press Copy. “New one” makes another, v7 switches to a time-ordered UUID, and “Copy 10” puts ten on the clipboard, one per line. For bulk, other versions or a custom format, use the generator below."
+    },
+    {
+      "question": "Is a UUID really unique?",
+      "answer": "A v4 UUID has 122 random bits. You would need to generate about a billion per second for decades before a collision became likely, so in practice they are unique. v7 adds the creation time, which also keeps them in order."
+    },
     {
       "question": "Which UUID version should I use?",
       "answer": "v4 when you just need uniqueness and nothing else. v7 when the identifier becomes a database primary key, because its leading timestamp keeps index writes local. v5 when the same input must always map to the same identifier."
@@ -160,5 +156,17 @@ export default {
   "footerCredit": "Part of the oLoveTools suite",
   "emailCopied": "Copied!",
   "contactForIdeas": "Contact for ideas and comments:",
-  "emailAddress": "adrian.contact.me.69@gmail.com"
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "h1": "UUID generator online",
+  "subtitle": "Get a random UUID v4 or a time-ordered v7 ready to copy, or generate thousands of UUIDs, ULIDs and NanoIDs at once. Free, in your browser.",
+  "quickHint": "Generated in your browser with a cryptographic random source. Need thousands, another version or a custom format? Use the full generator below.",
+  "quickLabel": "Your UUID",
+  "quickRandom": "random",
+  "quickSortable": "time-ordered",
+  "quickUpper": "Uppercase",
+  "quickCopy": "Copy",
+  "quickCopied": "Copied",
+  "quickNew": "New one",
+  "quickTen": "Copy 10",
+  "seo_title_exact": true
 };

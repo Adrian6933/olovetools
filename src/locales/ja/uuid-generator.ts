@@ -3,8 +3,8 @@ export default {
   "title": "UUID ジェネレーター",
   "badge": "一意な識別子",
   "description": "UUID v1・v3・v4・v5・v6・v7 に加えて ULID、NanoID、MongoDB の ObjectId を生成します。まとめて、コードが求める形そのままで、ネットワーク通信は一切ありません。",
-  "seo_title": "UUID ジェネレーター | v4・v7・v5・ULID・NanoID を一括生成",
-  "seo_description": "無料のオンライン UUID ジェネレーター。v1・v3・v4・v5・v6・v7・nil・max に加え ULID、NanoID、ObjectId に対応。大量生成、出力書式の細かい指定、バイト単位のインスペクターをすべてブラウザー内で。",
+  "seo_title": "UUID生成ツール オンライン｜ランダムなUUID v4・v7をワンクリックでコピー",
+  "seo_description": "無料のオンラインUUID生成ツール。ランダムなUUID v4や時刻順のv7をすぐコピー、またはUUID（v1〜v7）、ULID、NanoID、ObjectIdを一度に数千個生成。暗号論的乱数で、ブラウザ内で動作。",
   "groupUuid": "RFC 9562 の UUID",
   "groupOther": "その他の識別子",
   "kindHelp_v4": "ブラウザーの暗号論的乱数から 122 ビットのエントロピー。とにかく一意であればよいときの既定の選択肢です。",
@@ -117,20 +117,16 @@ export default {
   "seoUseCaseText": "10 万件のキーを生成し、そのまま SQL の INSERT や JSON 配列として書き出し、ダウンロードフォルダーを経由せずに差分・ハッシュ・アーカイブの各ツールへ渡せます。",
   "seoPrivacyTitle": "ローカルで、しかも確認できる",
   "seoPrivacyText": "エントロピーはタブ内の Web Crypto API から取得します。API 呼び出しも CDN 取得も、別途の WebAssembly ダウンロードもありません。v3 と v5 のハッシュはページ自体に埋め込まれているため、ネットワークを切っても動作します。",
-  "seoKeywordsTitle": "キーワード",
-  "seoKeywords": [
-    "uuid ジェネレーター",
-    "ランダムな uuid v4",
-    "時系列に並ぶ uuid v7",
-    "名前ベースの uuid v5",
-    "guid ジェネレーター",
-    "ulid ジェネレーター",
-    "短い nanoid",
-    "uuid 一括生成",
-    "uuid デコーダー"
-  ],
   "faqTitle": "よくある質問",
   "faq": [
+    {
+      "question": "UUIDを生成するには？",
+      "answer": "ページを開くと上部に新しいUUID v4が表示されるので、「コピー」を押します。「別のUUID」で作り直し、v7で時刻順のUUIDに切り替え、「10個コピー」で1行に1つずつ10個コピーできます。大量生成や別のバージョン、形式は下の生成ツールを使います。"
+    },
+    {
+      "question": "UUIDは本当に一意ですか？",
+      "answer": "UUID v4には122ビットの乱数が入っています。重複の可能性が出るまでには毎秒約10億個を何十年も作り続ける必要があるため、実用上は一意です。v7は作成時刻を含むので、順序も保たれます。"
+    },
     {
       "question": "どのバージョンを使えばよいですか。",
       "answer": "一意性だけが必要なら v4。主キーになるなら v7 で、先頭のタイムスタンプがインデックスへの書き込みをまとめてくれます。同じ入力から常に同じ識別子が要るなら v5 です。"
@@ -160,5 +156,17 @@ export default {
   "footerCredit": "oLoveTools スイートの一部",
   "emailCopied": "コピーしました！",
   "contactForIdeas": "ご意見・ご要望の連絡先:",
-  "emailAddress": "adrian.contact.me.69@gmail.com"
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "h1": "UUID生成ツール（オンライン）",
+  "subtitle": "ランダムなUUID v4や時刻順のv7をすぐにコピー、またはUUID・ULID・NanoIDを一度に数千個生成。無料、ブラウザ内で動作。",
+  "quickHint": "ブラウザ内で暗号論的な乱数源から生成しています。数千個、別のバージョン、独自の形式が必要なら、下の生成ツールを使ってください。",
+  "quickLabel": "あなたのUUID",
+  "quickRandom": "ランダム",
+  "quickSortable": "時刻順",
+  "quickUpper": "大文字",
+  "quickCopy": "コピー",
+  "quickCopied": "コピーしました",
+  "quickNew": "別のUUID",
+  "quickTen": "10個コピー",
+  "seo_title_exact": true
 };

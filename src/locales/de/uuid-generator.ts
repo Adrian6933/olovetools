@@ -3,8 +3,8 @@ export default {
   "title": "UUID-Generator",
   "badge": "Eindeutige Bezeichner",
   "description": "Erzeuge UUID v1, v3, v4, v5, v6 und v7 sowie ULID, NanoID und MongoDB-ObjectId — stapelweise, in genau der Form, die dein Code erwartet, und ohne eine einzige Netzwerkanfrage.",
-  "seo_title": "UUID-Generator | v4, v7, v5, ULID und NanoID im Stapel",
-  "seo_description": "Kostenloser Online-UUID-Generator: v1, v3, v4, v5, v6, v7, nil und max sowie ULID, NanoID und ObjectId. Große Stapel, frei konfigurierbare Ausgabe und ein Inspektor bis auf Byte-Ebene, komplett im Browser.",
+  "seo_title": "UUID-Generator online: zufällige UUID v4 und v7 mit einem Klick",
+  "seo_description": "Kostenloser Online-UUID-Generator: zufällige UUID v4 oder zeitlich sortierte v7 zum Kopieren, oder Tausende UUIDs (v1–v7), ULIDs, NanoIDs und ObjectIds auf einmal. Kryptografisch zufällig, im Browser.",
   "groupUuid": "UUIDs nach RFC 9562",
   "groupOther": "Andere Bezeichner",
   "kindHelp_v4": "122 Bit Entropie aus der kryptografischen Zufallsquelle des Browsers. Die Standardwahl, wenn etwas einfach nur eindeutig sein muss.",
@@ -117,20 +117,16 @@ export default {
   "seoUseCaseText": "Erzeuge hunderttausend Schlüssel, exportiere sie direkt als SQL-INSERT oder JSON-Array und reiche die Liste an das Vergleichs-, Prüfsummen- oder Archivwerkzeug weiter, ganz ohne Download-Ordner.",
   "seoPrivacyTitle": "Lokal, und nachprüfbar",
   "seoPrivacyText": "Die Entropie stammt aus der Web-Crypto-API in deinem Tab. Kein API-Aufruf, kein CDN-Abruf, kein nachgeladenes WebAssembly: Das Hashing für v3 und v5 steckt in der Seite selbst, das Werkzeug funktioniert also auch offline.",
-  "seoKeywordsTitle": "Schlüsselwörter",
-  "seoKeywords": [
-    "uuid-generator",
-    "zufälliges uuid v4",
-    "zeitlich sortiertes uuid v7",
-    "benanntes uuid v5",
-    "guid-generator",
-    "ulid-generator",
-    "kurzes nanoid",
-    "uuid stapelweise",
-    "uuid-decoder"
-  ],
   "faqTitle": "Häufige Fragen",
   "faq": [
+    {
+      "question": "Wie erzeuge ich eine UUID?",
+      "answer": "Sobald die Seite lädt, steht oben eine neue UUID v4: Drück auf Kopieren. „Neue“ erzeugt eine andere, v7 wechselt zu einer zeitlich sortierten UUID und „10 kopieren“ legt zehn in die Zwischenablage, eine pro Zeile. Für viele auf einmal, andere Versionen oder Formate nutze den Generator unten."
+    },
+    {
+      "question": "Ist eine UUID wirklich eindeutig?",
+      "answer": "Eine UUID v4 hat 122 Zufallsbits. Man müsste jahrzehntelang etwa eine Milliarde pro Sekunde erzeugen, bis eine Kollision wahrscheinlich wird – in der Praxis sind sie eindeutig. v7 fügt die Erstellungszeit hinzu und hält sie dadurch auch sortiert."
+    },
     {
       "question": "Welche UUID-Version soll ich nehmen?",
       "answer": "v4, wenn nur Eindeutigkeit zählt. v7, wenn der Bezeichner Primärschlüssel wird, weil sein führender Zeitstempel die Index-Schreibzugriffe beieinanderhält. v5, wenn dieselbe Eingabe immer denselben Bezeichner ergeben muss."
@@ -160,5 +156,17 @@ export default {
   "footerCredit": "Teil der oLoveTools-Suite",
   "emailCopied": "Kopiert!",
   "contactForIdeas": "Kontakt für Ideen und Anmerkungen:",
-  "emailAddress": "adrian.contact.me.69@gmail.com"
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "h1": "UUID-Generator online",
+  "subtitle": "Eine zufällige UUID v4 oder eine zeitlich sortierte v7 zum Kopieren, oder Tausende UUIDs, ULIDs und NanoIDs auf einmal. Kostenlos, im Browser.",
+  "quickHint": "Im Browser mit einer kryptografischen Zufallsquelle erzeugt. Tausende, eine andere Version oder ein eigenes Format? Nutze den vollständigen Generator unten.",
+  "quickLabel": "Deine UUID",
+  "quickRandom": "zufällig",
+  "quickSortable": "zeitlich sortiert",
+  "quickUpper": "Großbuchstaben",
+  "quickCopy": "Kopieren",
+  "quickCopied": "Kopiert",
+  "quickNew": "Neue",
+  "quickTen": "10 kopieren",
+  "seo_title_exact": true
 };

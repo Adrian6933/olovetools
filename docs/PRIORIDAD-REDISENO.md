@@ -13,7 +13,7 @@ Fuera del rediseño: Clipy y TwitchBolt (por decisión del dueño). KickBolt y K
 | 3 | Lottie Viewer ✅ rehecho 17 nov | 299 | 64,0 | 9,4 (ru) | 217 | Es la herramienta con más visitas reales, aparte de las de clips. "play lottie online" ya tiene impresiones. |
 | 4 | HTML Sanitizer ✅ rehecho 17 nov | 132 | 60,3 | 32 (pt) | 148 | Tiene visitas de verdad y ya ha conseguido algún clic ("sanitize html online"). |
 | 5 | DrawSnap ✅ mejorado 19 nov | 155 | 64,2 | 6 (ru) | 114 | Un clic y una posición alta en ruso. |
-| 6 | UUID Generator | 193 | 62,9 | 37 (zh) | 69 | Mucho volumen de búsqueda entre desarrolladores. |
+| 6 | UUID Generator ✅ mejorado 19 nov | 193 | 62,9 | 37 (zh) | 69 | Mucho volumen de búsqueda entre desarrolladores. |
 | 7 | Lorem Flow | 188 | 76,0 | 25 (ja) | 87 | "lorem ipsum" es de las búsquedas de herramientas con más volumen, pero estamos en la posición 94. |
 | 8 | Base64 Bolt | 114 | 70,2 | 42 (es) | 77 | Mucho volumen entre desarrolladores. |
 | 9 | RecordSnap | 137 | 63,0 | 46 (ru) | 79 | Grabador de pantalla online, búsqueda grande. |

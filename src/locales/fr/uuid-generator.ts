@@ -3,8 +3,8 @@ export default {
   "title": "Générateur d’UUID",
   "badge": "Identifiants uniques",
   "description": "Générez des UUID v1, v3, v4, v5, v6 et v7, ainsi que des ULID, NanoID et ObjectId MongoDB — par lots, exactement dans la forme attendue par votre code, sans la moindre requête réseau.",
-  "seo_title": "Générateur d’UUID | v4, v7, v5, ULID et NanoID en masse",
-  "seo_description": "Générateur d’UUID en ligne et gratuit : v1, v3, v4, v5, v6, v7, nil et max, plus ULID, NanoID et ObjectId. Lots massifs, mise en forme configurable et inspecteur octet par octet, le tout dans votre navigateur.",
+  "seo_title": "Générateur d'UUID en ligne : UUID v4 et v7 aléatoires, copie en un clic",
+  "seo_description": "Générateur d'UUID en ligne gratuit : obtenez un UUID v4 aléatoire ou un v7 ordonné dans le temps prêt à copier, ou générez des milliers d'UUID (v1–v7), ULID, NanoID et ObjectId d'un coup. Aléatoire cryptographique, dans votre navigateur.",
   "groupUuid": "UUID de la RFC 9562",
   "groupOther": "Autres identifiants",
   "kindHelp_v4": "122 bits d’entropie issus de la source aléatoire cryptographique du navigateur. Le choix par défaut quand il suffit que ce soit unique.",
@@ -117,20 +117,16 @@ export default {
   "seoUseCaseText": "Générez cent mille clés, exportez-les directement en INSERT SQL ou en tableau JSON, et passez la liste à l’outil de comparaison, d’empreinte ou d’archivage sans passer par le dossier de téléchargements.",
   "seoPrivacyTitle": "Local, et vérifiable",
   "seoPrivacyText": "L’entropie vient de l’API Web Crypto, dans votre onglet. Aucun appel d’API, aucun téléchargement depuis un CDN, aucun WebAssembly récupéré à part : le hachage utilisé par v3 et v5 est intégré à la page, si bien que l’outil fonctionne réseau coupé.",
-  "seoKeywordsTitle": "Mots-clés",
-  "seoKeywords": [
-    "générateur d’uuid",
-    "uuid v4 aléatoire",
-    "uuid v7 trié par le temps",
-    "uuid v5 nommé",
-    "générateur de guid",
-    "générateur d’ulid",
-    "nanoid court",
-    "uuid en masse",
-    "décodeur d’uuid"
-  ],
   "faqTitle": "Questions fréquentes",
   "faq": [
+    {
+      "question": "Comment générer un UUID ?",
+      "answer": "Un UUID v4 neuf apparaît en haut de la page dès son chargement : appuyez sur Copier. « Un autre » en crée un nouveau, v7 passe à un UUID ordonné dans le temps et « Copier 10 » en copie dix, un par ligne. Pour en générer beaucoup, une autre version ou un autre format, utilisez le générateur ci-dessous."
+    },
+    {
+      "question": "Un UUID est-il vraiment unique ?",
+      "answer": "Un UUID v4 contient 122 bits aléatoires. Il faudrait en générer environ un milliard par seconde pendant des décennies pour qu'une collision devienne probable : en pratique, ils sont uniques. Le v7 ajoute l'heure de création, ce qui les garde aussi dans l'ordre."
+    },
     {
       "question": "Quelle version d’UUID choisir ?",
       "answer": "v4 quand seule l’unicité compte. v7 quand l’identifiant devient une clé primaire, car son horodatage de tête garde les écritures d’index groupées. v5 quand une même entrée doit toujours donner le même identifiant."
@@ -160,5 +156,17 @@ export default {
   "footerCredit": "Fait partie de la suite oLoveTools",
   "emailCopied": "Copié !",
   "contactForIdeas": "Contact pour idées et commentaires :",
-  "emailAddress": "adrian.contact.me.69@gmail.com"
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "h1": "Générateur d'UUID en ligne",
+  "subtitle": "Obtenez un UUID v4 aléatoire ou un v7 ordonné dans le temps prêt à copier, ou générez des milliers d'UUID, ULID et NanoID d'un coup. Gratuit, dans votre navigateur.",
+  "quickHint": "Généré dans votre navigateur avec une source aléatoire cryptographique. Besoin de milliers, d'une autre version ou d'un autre format ? Utilisez le générateur complet ci-dessous.",
+  "quickLabel": "Votre UUID",
+  "quickRandom": "aléatoire",
+  "quickSortable": "ordonné dans le temps",
+  "quickUpper": "Majuscules",
+  "quickCopy": "Copier",
+  "quickCopied": "Copié",
+  "quickNew": "Un autre",
+  "quickTen": "Copier 10",
+  "seo_title_exact": true
 };

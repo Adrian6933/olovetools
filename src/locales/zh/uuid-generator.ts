@@ -3,8 +3,8 @@ export default {
   "title": "UUID 生成器",
   "badge": "唯一标识符",
   "description": "生成 UUID v1、v3、v4、v5、v6 与 v7，以及 ULID、NanoID 和 MongoDB ObjectId——批量生成，输出格式与你的代码要求完全一致，且没有任何网络请求。",
-  "seo_title": "UUID 生成器 | 批量生成 v4、v7、v5、ULID 与 NanoID",
-  "seo_description": "免费在线 UUID 生成器：支持 v1、v3、v4、v5、v6、v7、nil 与 max，另有 ULID、NanoID 和 ObjectId。大批量生成、可自定义输出格式、逐字节检查器，全部在浏览器中完成。",
+  "seo_title": "在线 UUID 生成器：随机 UUID v4 和 v7，一键复制",
+  "seo_description": "免费在线 UUID 生成器：获取随机 UUID v4 或按时间排序的 v7，一键复制；或一次生成成千上万个 UUID（v1–v7）、ULID、NanoID 和 ObjectId。加密级随机，在浏览器中完成。",
   "groupUuid": "RFC 9562 的 UUID",
   "groupOther": "其他标识符",
   "kindHelp_v4": "来自浏览器加密随机源的 122 位熵。只要求唯一时的默认选择。",
@@ -117,20 +117,16 @@ export default {
   "seoUseCaseText": "生成十万个主键，直接导出为 SQL INSERT 或 JSON 数组，再把列表交给比较、哈希或压缩工具，全程不经过下载文件夹。",
   "seoPrivacyTitle": "本地运行，且可验证",
   "seoPrivacyText": "熵来自标签页内的 Web Crypto API。没有 API 调用，没有 CDN 拉取，也没有额外下载的 WebAssembly：v3 与 v5 所用的哈希就嵌在页面里，因此断网也能照常使用。",
-  "seoKeywordsTitle": "关键词",
-  "seoKeywords": [
-    "uuid 生成器",
-    "随机 uuid v4",
-    "按时间排序的 uuid v7",
-    "基于名称的 uuid v5",
-    "guid 生成器",
-    "ulid 生成器",
-    "短小的 nanoid",
-    "批量 uuid",
-    "uuid 解析器"
-  ],
   "faqTitle": "常见问题",
   "faq": [
+    {
+      "question": "怎样生成 UUID？",
+      "answer": "页面一加载，顶部就会出现一个新的 UUID v4：点“复制”即可。“换一个”生成新的，v7 切换为按时间排序的 UUID，“复制 10 个”会复制十个，每行一个。需要大量生成、其他版本或格式，请使用下面的生成器。"
+    },
+    {
+      "question": "UUID 真的是唯一的吗？",
+      "answer": "UUID v4 有 122 位随机数。要连续几十年每秒生成约十亿个，才可能出现重复，所以实际上它们是唯一的。v7 加入了创建时间，因此还能保持顺序。"
+    },
     {
       "question": "该选哪个 UUID 版本？",
       "answer": "只要唯一性就用 v4。标识符要当主键就用 v7，因为开头的时间戳能让索引写入集中在一处。同样的输入必须得到同样的标识符时用 v5。"
@@ -160,5 +156,17 @@ export default {
   "footerCredit": "oLoveTools 套件的一部分",
   "emailCopied": "已复制！",
   "contactForIdeas": "想法与建议请联系：",
-  "emailAddress": "adrian.contact.me.69@gmail.com"
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "h1": "在线 UUID 生成器",
+  "subtitle": "获取随机 UUID v4 或按时间排序的 v7，一键复制；或一次生成成千上万个 UUID、ULID 和 NanoID。免费，在浏览器中完成。",
+  "quickHint": "在你的浏览器中用加密随机源生成。需要成千上万个、其他版本或自定义格式？请使用下面的完整生成器。",
+  "quickLabel": "你的 UUID",
+  "quickRandom": "随机",
+  "quickSortable": "按时间排序",
+  "quickUpper": "大写",
+  "quickCopy": "复制",
+  "quickCopied": "已复制",
+  "quickNew": "换一个",
+  "quickTen": "复制 10 个",
+  "seo_title_exact": true
 };

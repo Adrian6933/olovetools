@@ -32,6 +32,7 @@ import {
   UuidHeroArt,
 } from './components/Illustrations';
 import { AdBanner } from '../../components/shared/AdBanner';
+import { QuickUuid } from './components/QuickUuid';
 import { legalTranslations } from '../../locales/legal';
 import { useHandoffIntake } from '../../lib/useHandoff';
 import { useUuidEngine } from './lib/useUuidEngine';
@@ -502,47 +503,19 @@ export default function UuidGenerator({ lang, dictionary }: UuidGeneratorProps) 
       />
 
       {/* Keep the workspace centered within its own maximum width. */}
-      <main className="flex-1 flex flex-col items-center pt-40 md:pt-36 pb-24 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
-        <AdBanner id="adsense-uuid-generator-top" />
-
-        <div className="w-full space-y-20 md:space-y-28">
-          {/* ================================================================ */}
-          {/* Hero                                                             */}
-          {/* ================================================================ */}
-          <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-2">
-            <div className="space-y-6 text-center lg:text-left">
-              <div className="inline-flex max-w-full items-center gap-2 px-4 py-2 rounded-full bg-violet-950/40 border border-violet-800/30 text-violet-400 text-[11px] font-black tracking-[0.2em] uppercase shadow-[0_0_25px_rgba(139,92,246,0.15)]">
-                <Fingerprint className="w-3.5 h-3.5 shrink-0" />
-                <span className="truncate">{t.badge || t.title}</span>
-              </div>
-
-              <h1 className="text-4xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[0.95] text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-slate-400">
-                {t.title}
+      <main className="flex-1 flex flex-col items-center pt-20 md:pt-28 pb-24 px-4 md:px-12 relative z-10 w-full max-w-6xl mx-auto min-[1400px]:max-w-[min(72rem,calc(100vw-440px))]">
+        <div className="w-full space-y-10 md:space-y-16">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <h1 className="text-[1.7rem] leading-tight md:text-5xl font-black tracking-tight text-white">
+                {t.h1 || 'UUID generator online'}
               </h1>
-
-              <p className="text-slate-400 text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">{t.description}</p>
-
-              <div className="flex flex-wrap justify-center lg:justify-start gap-2">
-                {(t.seoHeroList || []).slice(0, 3).map((point: string, i: number) => (
-                  <span
-                    key={i}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-bold text-slate-300"
-                  >
-                    <Check className="w-3.5 h-3.5 text-violet-400 stroke-[3]" />
-                    {point}
-                  </span>
-                ))}
-              </div>
+              <p className="text-sm md:text-lg text-slate-400 leading-relaxed max-w-3xl">
+                {t.subtitle || 'Get a random UUID v4 or a time-ordered v7 ready to copy, or generate thousands of UUIDs, ULIDs and NanoIDs at once. Free, in your browser.'}
+              </p>
             </div>
-
-            <div className="relative">
-              <div className="absolute inset-0 bg-violet-500/10 blur-[80px] rounded-full" />
-              <UuidHeroArt
-                className="relative w-full max-w-lg mx-auto drop-shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
-                animated={!prefersReduced}
-              />
-            </div>
-          </section>
+            <QuickUuid t={t} />
+          </div>
 
           {/* ================================================================ */}
           {/* Workspace                                                        */}
@@ -1101,6 +1074,8 @@ export default function UuidGenerator({ lang, dictionary }: UuidGeneratorProps) 
             </div>
           </section>
 
+          <AdBanner id="adsense-uuid-generator-top" />
+
           {/* ================================================================ */}
           {/* How it works                                                     */}
           {/* ================================================================ */}
@@ -1161,9 +1136,6 @@ export default function UuidGenerator({ lang, dictionary }: UuidGeneratorProps) 
           <section className="space-y-24 text-left">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-24 items-center">
               <div className="space-y-7">
-                <div className="inline-block px-4 py-1.5 rounded-lg bg-violet-500/10 text-violet-400 text-[11px] font-black uppercase tracking-[0.2em] border border-violet-500/20">
-                  {keywords[0]}
-                </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white leading-[1.05] tracking-tighter">
                   {t.seoHeroTitle}
                 </h2>
@@ -1242,24 +1214,6 @@ export default function UuidGenerator({ lang, dictionary }: UuidGeneratorProps) 
                       </summary>
                       <p className="text-slate-400 leading-relaxed pl-9 pt-3 text-sm">{faq.answer}</p>
                     </details>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {keywords.length > 0 && (
-              <div className="max-w-4xl mx-auto w-full space-y-5 opacity-55 text-center">
-                <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
-                  {t.seoKeywordsTitle || 'Keywords'}
-                </h2>
-                <div className="flex flex-wrap justify-center gap-2">
-                  {keywords.map((keyword: string, idx: number) => (
-                    <span
-                      key={idx}
-                      className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-slate-400 hover:bg-violet-500/10 hover:border-violet-500/20 hover:text-violet-400 transition-all cursor-default"
-                    >
-                      {keyword}
-                    </span>
                   ))}
                 </div>
               </div>

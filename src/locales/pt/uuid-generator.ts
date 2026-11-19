@@ -3,8 +3,8 @@ export default {
   "title": "Gerador de UUID",
   "badge": "Identificadores únicos",
   "description": "Gera UUID v1, v3, v4, v5, v6 e v7, além de ULID, NanoID e ObjectId do MongoDB — em lotes, no formato exato que o teu código espera e sem um único pedido de rede.",
-  "seo_title": "Gerador de UUID | v4, v7, v5, ULID e NanoID em lote",
-  "seo_description": "Gerador de UUID online e gratuito: v1, v3, v4, v5, v6, v7, nil e max, mais ULID, NanoID e ObjectId. Lotes grandes, formatação de saída configurável e inspetor byte a byte, tudo dentro do navegador.",
+  "seo_title": "Gerador de UUID online: UUID v4 e v7 aleatórios, copie com um clique",
+  "seo_description": "Gerador de UUID online grátis: receba um UUID v4 aleatório ou um v7 ordenado por tempo pronto para copiar, ou gere milhares de UUIDs (v1–v7), ULIDs, NanoIDs e ObjectIds de uma vez. Aleatório criptográfico, no navegador.",
   "groupUuid": "UUID da RFC 9562",
   "groupOther": "Outros identificadores",
   "kindHelp_v4": "122 bits de entropia da fonte aleatória criptográfica do navegador. A escolha por omissão quando só precisas de algo único.",
@@ -117,20 +117,16 @@ export default {
   "seoUseCaseText": "Gera cem mil chaves, exporta-as diretamente como INSERT de SQL ou array JSON e passa a lista à ferramenta de diferenças, de hash ou de arquivo sem passar pela pasta de transferências.",
   "seoPrivacyTitle": "Local, e verificável",
   "seoPrivacyText": "A entropia vem da Web Crypto API dentro do teu separador. Não há chamada a API, nem descarga de CDN, nem WebAssembly obtido à parte: o hash usado pelo v3 e pelo v5 está embutido na própria página, por isso a ferramenta funciona com a rede desligada.",
-  "seoKeywordsTitle": "Palavras-chave",
-  "seoKeywords": [
-    "gerador de uuid",
-    "uuid v4 aleatório",
-    "uuid v7 ordenado por tempo",
-    "uuid v5 com nome",
-    "gerador de guid",
-    "gerador de ulid",
-    "nanoid curto",
-    "uuid em lote",
-    "descodificador de uuid"
-  ],
   "faqTitle": "Perguntas frequentes",
   "faq": [
+    {
+      "question": "Como gero um UUID?",
+      "answer": "Assim que a página carrega, aparece no topo um UUID v4 novo: toque em Copiar. “Outro” gera um diferente, v7 muda para um UUID ordenado por tempo e “Copiar 10” copia dez, um por linha. Para muitos de uma vez, outras versões ou formatos, use o gerador abaixo."
+    },
+    {
+      "question": "Um UUID é mesmo único?",
+      "answer": "Um UUID v4 tem 122 bits aleatórios. Seria preciso gerar cerca de um bilhão por segundo durante décadas para uma repetição ficar provável, então na prática eles são únicos. O v7 acrescenta a hora de criação, o que também os mantém em ordem."
+    },
     {
       "question": "Que versão de UUID devo usar?",
       "answer": "v4 quando só precisas de unicidade. v7 quando o identificador passa a chave primária, porque a marca temporal inicial mantém as escritas do índice juntas. v5 quando a mesma entrada tem de dar sempre o mesmo identificador."
@@ -160,5 +156,17 @@ export default {
   "footerCredit": "Parte da suite oLoveTools",
   "emailCopied": "Copiado!",
   "contactForIdeas": "Contacto para ideias e comentários:",
-  "emailAddress": "adrian.contact.me.69@gmail.com"
+  "emailAddress": "adrian.contact.me.69@gmail.com",
+  "h1": "Gerador de UUID online",
+  "subtitle": "Receba um UUID v4 aleatório ou um v7 ordenado por tempo pronto para copiar, ou gere milhares de UUIDs, ULIDs e NanoIDs de uma vez. Grátis, no navegador.",
+  "quickHint": "Gerado no seu navegador com uma fonte aleatória criptográfica. Precisa de milhares, outra versão ou outro formato? Use o gerador completo abaixo.",
+  "quickLabel": "Seu UUID",
+  "quickRandom": "aleatório",
+  "quickSortable": "ordenado por tempo",
+  "quickUpper": "Maiúsculas",
+  "quickCopy": "Copiar",
+  "quickCopied": "Copiado",
+  "quickNew": "Outro",
+  "quickTen": "Copiar 10",
+  "seo_title_exact": true
 };
